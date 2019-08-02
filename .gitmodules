@@ -1,0 +1,8 @@
+[submodule "terram"]
+	path = terram
+	url = https://github.com/xpring-eng/terram
+	branch = master
+[submodule "terram-protos"]
+	path = terram-protos
+	url = https://github.com/xpring-eng/terram-protos
+	branch = master

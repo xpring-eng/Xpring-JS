@@ -1,0 +1,19 @@
+{
+  "name": "xrp-js",
+  "version": "0.1.0",
+  "description": "XRP XRP JS provides a Javascript based SDK for interacting with the Ripple Ledger.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xpring-eng/XRP-JS.git"
+  },
+  "author": "Keefer Taylor | Xpring Engineering <keefer@ripple.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xpring-eng/XRP-JS/issues"
+  },
+  "homepage": "https://github.com/xpring-eng/XRP-JS#readme"
+}
