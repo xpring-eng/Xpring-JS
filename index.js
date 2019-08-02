@@ -7,3 +7,11 @@ const XRP = {
 }
 
 module.exports = XRP;
+
+async function main() {
+    const r = new RippleClient("127.0.0.1:3001");
+    const b = await r.getBalance("rnJfS9ozTiMXrQPTU53vxAgy9XWo9nGYNh");
+    console.log("Balance: " + b + " drops!");
+}
+
+main();

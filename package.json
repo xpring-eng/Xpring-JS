@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/xpring-eng/XRP-JS/issues"
   },
-  "homepage": "https://github.com/xpring-eng/XRP-JS#readme"
+  "homepage": "https://github.com/xpring-eng/XRP-JS#readme",
+  "dependencies": {
+    "google-protobuf": "^3.9.0",
+    "grpc": "^1.22.2",
+    "grpc-promise": "^1.4.0"
+  }
 }
