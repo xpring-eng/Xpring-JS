@@ -6,3 +6,7 @@
 	path = terram-protos
 	url = https://github.com/xpring-eng/terram-protos
 	branch = master
+[submodule "pera"]
+	path = pera
+	url = https://github.com/xpring-eng/pera
+	branch = master
