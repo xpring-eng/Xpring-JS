@@ -32,5 +32,15 @@
   },
   "dependencies": {
     "mocha": "6.2.0"
+  },
+  "nyc": {
+    "all": true,
+    "check-leaks": true,
+    "exclude": [
+      "test/**/*.js"
+    ],
+    "include": [
+      "src/**/*.js"
+    ]
   }
 }
