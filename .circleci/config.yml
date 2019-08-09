@@ -18,7 +18,9 @@ jobs:
       - run: npm install
       - run:
           name: "Install dependencies"
-          command: sudo npm -g i nyc
+          command: |
+            sudo npm -g i nyc
+            sudo npm -g i coveralls
       - save_cache:
           paths:
             - node_modules
