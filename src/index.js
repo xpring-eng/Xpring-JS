@@ -5,5 +5,6 @@ const x = function() {
 };
 
 console.log("Hello, world");
+console.log("Will PRs get comments?");
 
 module.exports = {};
