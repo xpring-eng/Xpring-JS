@@ -27,5 +27,8 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^8.0.1",
     "tslint-eslint-rules": "^5.4.0"
+  },
+  "dependencies": {
+    "mocha": "6.2.0"
   }
 }
