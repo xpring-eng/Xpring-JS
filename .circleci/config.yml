@@ -26,7 +26,7 @@ jobs:
 
       - run: nyc npm test
 
-      -run:
+      - run:
           name: Code Coverage
           run: |
             nyc report --reporter=text-lcov > coverage.lcov
