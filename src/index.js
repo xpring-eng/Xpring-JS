@@ -7,5 +7,6 @@ const x = function() {
 console.log("Hello, world");
 console.log("Will PRs get comments?");
 console.log("Will this make Coveralls accept my invite?");
+console.log("Maybe now?");
 
 module.exports = {};
