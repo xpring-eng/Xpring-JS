@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "mocha": "6.2.0"
-  }, 
+  },
   "nyc": {
     "all": true,
     "check-leaks": true,
