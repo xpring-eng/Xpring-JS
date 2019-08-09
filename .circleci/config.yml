@@ -29,6 +29,7 @@ jobs:
       - run:
           name: Code Coverage
           command: |
-            nyc report --reporter=text-lcov > coverage.lcov
-            cat coverage.lcov | ./node_modules/coveralls/bin/coveralls.js
+            nyc npm test
+            nyc report --reporter=text-lcov | coveralls
+
 
