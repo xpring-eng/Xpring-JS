@@ -1,1 +1,2 @@
-generated/*.js
+# Do not lint generated files.
+generated/*.ts

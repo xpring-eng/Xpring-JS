@@ -1,7 +1,7 @@
 {
   "name": "xpring-js",
   "version": "0.1.0",
-  "description": "XpringJS Xpring-JS provides a Javascript based SDK for interacting with the Ripple Ledger.",
+  "description": "XpringJS provides a Javascript based SDK for interacting with the Ripple Ledger.",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -13,7 +13,8 @@
     "url": "https://github.com/xpring-eng/Xpring-JS/issues"
   },
   "scripts": {
-    "test": "nyc --all mocha --check-leaks"
+    "pretest": "./scripts/regenerate_protos.sh && tsc",
+    "test": "nyc mocha"
   },
   "homepage": "https://github.com/xpring-eng/Xpring-JS#readme",
   "devDependencies": {
@@ -33,14 +34,21 @@
   "dependencies": {
     "mocha": "6.2.0"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "eslint **/*.ts --fix && prettier '**/*.ts' --write"
+    }
+  },
   "nyc": {
-    "all": true,
-    "check-leaks": true,
-    "exclude": [
-      "test/**/*.js"
+    "extension": [
+      ".ts",
+      ".tsx"
     ],
     "include": [
-      "src/**/*.js"
-    ]
+      "src/**/*.ts"
+    ],
+    "all": true,
+    "check-coverage": true,
+    "check-leaks": true
   }
 }
