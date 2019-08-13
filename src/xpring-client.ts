@@ -1,5 +1,5 @@
-class XpringClient{
-  constructor() {}
+class XpringClient {
+  public constructor() {}
 }
 
 export default XpringClient;
