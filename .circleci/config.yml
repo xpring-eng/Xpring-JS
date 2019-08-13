@@ -1,5 +1,6 @@
 version: 2.1
 orbs:
+  protobuf: izumin5210/protobuf@0.1.0
 jobs:
   build:
     docker:
@@ -16,6 +17,7 @@ jobs:
             - v1-dependencies-
 
       - run: npm install
+      - protobuf/install
       - run:
           name: "Install dependencies"
           command: |
