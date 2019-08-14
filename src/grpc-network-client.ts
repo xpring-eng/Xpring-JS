@@ -18,20 +18,16 @@ class GRPCNetworkClient implements Networking.NetworkClient {
     this.grpcClient = new RippledClient(grpcURL);
   }
 
-  getAccountInfo(
-    accountInfoRequest: AccountInfoRequest
-  ): Promise<AccountInfo> {
-    console.log("You called me!");
-
+  getAccountInfo(accountInfoRequest: AccountInfoRequest): Promise<AccountInfo> {
     return new Promise((resolve, reject) => {
       this.grpcClient.getAccountInfo(accountInfoRequest, (error, response) => {
         if (error != null || response == null) {
           reject(error);
-          return
+          return;
         }
         resolve(response);
       });
-    })
+    });
   }
 }
 

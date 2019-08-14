@@ -14,6 +14,6 @@ export interface NetworkServiceError {
  */
 export interface NetworkClient {
   getAccountInfo(
-    accountInfoRequest: rippled_pb.AccountInfoRequest,
+    accountInfoRequest: rippled_pb.AccountInfoRequest
   ): Promise<rippled_pb.AccountInfo>;
 }

@@ -9,6 +9,13 @@ import { XRPAmount } from "../generated/XRPAmount_pb";
 const defaultNetworkClient = new GRPCNetworkClient();
 
 /**
+ * Error messages from XpringClient.
+ */
+class XpringClientErrorMessages {
+  static readonly malformedResponse = "Malformed Response."
+}
+
+/**
  * XpringClient is a client which interacts with the Xpring platform.
  */
 class XpringClient {
@@ -31,9 +38,30 @@ class XpringClient {
     const accountInfoRequest = new AccountInfoRequest();
     accountInfoRequest.setAddress(address);
 
-    let accountInfo = await this.networkClient.getAccountInfo(accountInfoRequest);
+    return new Promise(async (resolve, reject) => { 
+      try {
+        const accountInfo = await this.networkClient.getAccountInfo(accountInfoRequest);
+        const accountData = accountInfo.getAccountData();
+        if (accountData == undefined) {
+          reject(new Error(XpringClientErrorMessages.malformedResponse));
+          return;
+        }
+  
+        const balance = accountData.getBalance();
+        if (balance == undefined) {
+          reject(new Error(XpringClientErrorMessages.malformedResponse));
+          return;
+        }
 
-    return new XRPAmount();
+        const xrpAmount = new XRPAmount();
+        xrpAmount.setDrops(balance);
+
+        resolve(xrpAmount);
+      } catch (error) {
+        reject(error);
+        return;
+      }
+    })
   }
 }
 
