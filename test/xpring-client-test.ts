@@ -7,7 +7,7 @@ const fakeNetworkClient = new FakeNetworkClient();
 const testAddress = "rnJfS9ozTiMXrQPTU53vxAgy9XWo9nGYNh";
 
 describe("Xpring Client", function(): void {
-  it("Get Account Balance - successful response", async function(): void {
+  it("Get Account Balance - successful response", async function(): Promise<void> {
     // GIVEN a XpringClient.
     const xpringClient = new XpringClient(fakeNetworkClient);
 

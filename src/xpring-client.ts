@@ -39,7 +39,7 @@ class XpringClient {
     accountInfoRequest.setAddress(address);
 
     return new Promise(
-      async (resolve, reject): Promise => {
+      async (resolve, reject): Promise<void> => {
         try {
           const accountInfo = await this.networkClient.getAccountInfo(
             accountInfoRequest

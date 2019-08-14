@@ -64,7 +64,6 @@
       "src/**/*.ts"
     ],
     "all": true,
-    "check-coverage": true,
     "check-leaks": true
   }
 }
