@@ -14,19 +14,24 @@ const defaultGRPCURL = "127.0.0.1:3001";
 class GRPCNetworkClient implements Networking.NetworkClient {
   private readonly grpcClient: RippledClient;
 
-  constructor(grpcURL = defaultGRPCURL) {
+  public constructor(grpcURL = defaultGRPCURL) {
     this.grpcClient = new RippledClient(grpcURL);
   }
 
-  getAccountInfo(accountInfoRequest: AccountInfoRequest): Promise<AccountInfo> {
-    return new Promise((resolve, reject) => {
-      this.grpcClient.getAccountInfo(accountInfoRequest, (error, response) => {
-        if (error != null || response == null) {
-          reject(error);
-          return;
+  public async getAccountInfo(
+    accountInfoRequest: AccountInfoRequest
+  ): Promise<AccountInfo> {
+    return new Promise((resolve, reject): void => {
+      this.grpcClient.getAccountInfo(
+        accountInfoRequest,
+        (error, response): void => {
+          if (error != null || response == null) {
+            reject(error);
+            return;
+          }
+          resolve(response);
         }
-        resolve(response);
-      });
+      );
     });
   }
 }

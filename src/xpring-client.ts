@@ -12,7 +12,7 @@ const defaultNetworkClient = new GRPCNetworkClient();
  * Error messages from XpringClient.
  */
 class XpringClientErrorMessages {
-  static readonly malformedResponse = "Malformed Response."
+  public static readonly malformedResponse = "Malformed Response.";
 }
 
 /**
@@ -34,19 +34,21 @@ class XpringClient {
    * @param address The address to retrieve a balance for.
    * @returns The amount of XRP in the account.
    */
-  async getBalance(address: string): Promise<XRPAmount> {
+  public async getBalance(address: string): Promise<XRPAmount> {
     const accountInfoRequest = new AccountInfoRequest();
     accountInfoRequest.setAddress(address);
 
-    return new Promise(async (resolve, reject) => { 
+    return new Promise(async (resolve, reject): Promise => {
       try {
-        const accountInfo = await this.networkClient.getAccountInfo(accountInfoRequest);
+        const accountInfo = await this.networkClient.getAccountInfo(
+          accountInfoRequest
+        );
         const accountData = accountInfo.getAccountData();
         if (accountData == undefined) {
           reject(new Error(XpringClientErrorMessages.malformedResponse));
           return;
         }
-  
+
         const balance = accountData.getBalance();
         if (balance == undefined) {
           reject(new Error(XpringClientErrorMessages.malformedResponse));
@@ -61,7 +63,7 @@ class XpringClient {
         reject(error);
         return;
       }
-    })
+    });
   }
 }
 
