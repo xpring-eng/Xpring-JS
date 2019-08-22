@@ -2,7 +2,7 @@
 
 set -e -o pipefail
 
-echo "Regenerating Terram Protos..."
+echo "Regenerating Protocol Buffers..."
 
 mkdir -p ./generated
 
