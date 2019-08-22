@@ -2,7 +2,7 @@
 
 set -e -o pipefail
 
-echo "Regenerating Protocol Buffers..."
+echo "Regenerating Protocol Buffers"
 
 mkdir -p ./generated
 
