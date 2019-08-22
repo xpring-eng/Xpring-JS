@@ -43,6 +43,7 @@
     "typescript-eslint-parser": "22.0.0"
   },
   "dependencies": {
+    "@improbable-eng/grpc-web": "0.11.0",
     "@types/google-protobuf": "3.7.1",
     "google-protobuf": "3.9.1",
     "mocha": "6.2.0",
@@ -63,7 +64,6 @@
       "src/**/*.ts"
     ],
     "all": true,
-    "check-coverage": true,
     "check-leaks": true
   }
 }
