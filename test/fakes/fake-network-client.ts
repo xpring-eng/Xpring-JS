@@ -13,14 +13,17 @@ export class FakeNetworkClientResponses {
   /**
    * A default set of responses that will always succeed.
    */
-  public static defaultResponses = new FakeNetworkClientResponses(FakeNetworkClientResponses.defaultAccountInfoResponse());
+  public static defaultResponses = new FakeNetworkClientResponses();
 
   /**
    * Construct a new set of responses.
-   * 
+   *
    * @param getAccountInfoResponse The response or error that will be returned from the getAccountInfo request.
-   */  
-  public constructor(public readonly getAccountInfoResponse: Response<AccountInfo>) {}
+   */
+
+  public constructor(
+    public readonly getAccountInfoResponse: Response<AccountInfo> = FakeNetworkClientResponses.defaultAccountInfoResponse()
+  ) {}
 
   /**
    * Construct a default AccountInfoResponse.
@@ -40,13 +43,15 @@ export class FakeNetworkClientResponses {
  * A fake network client which stubs network interaction.
  */
 export class FakeNetworkClient implements NetworkClient {
-  public constructor(private readonly responses: FakeNetworkClientResponses = FakeNetworkClientResponses.defaultResponses) {
-  }
+  public constructor(
+    private readonly responses: FakeNetworkClientResponses = FakeNetworkClientResponses.defaultResponses
+  ) {}
 
   getAccountInfo(
     _accountInfoRequest: AccountInfoRequest
   ): Promise<AccountInfo> {
-    const accountInfoResponse: AccountInfo | Error = this.responses.getAccountInfoResponse
+    const accountInfoResponse: AccountInfo | Error = this.responses
+      .getAccountInfoResponse;
     return new Promise((resolve, reject) => {
       if (accountInfoResponse instanceof Error) {
         reject(accountInfoResponse);
@@ -57,4 +62,3 @@ export class FakeNetworkClient implements NetworkClient {
     });
   }
 }
-
