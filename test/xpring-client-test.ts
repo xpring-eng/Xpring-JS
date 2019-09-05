@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import XpringClient from "../src/xpring-client";
-import FakeNetworkClient from "./fakes/fake-network-client";
+import { FakeNetworkClient } from "./fakes/fake-network-client";
 import "mocha";
 
 const fakeNetworkClient = new FakeNetworkClient();
