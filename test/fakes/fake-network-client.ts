@@ -4,7 +4,7 @@ import { AccountInfo } from "../../generated/rippled_pb";
 import { AccountInfoRequest } from "../../generated/rippled_pb";
 
 /**
- * A response for a request ot retrieve type T. Either an instance of T, or an error.
+ * A response for a request to retrieve type T. Either an instance of T, or an error.
  */
 type Response<T> = T | Error;
 
@@ -66,13 +66,10 @@ export class FakeNetworkClient implements NetworkClient {
     _accountInfoRequest: AccountInfoRequest
   ): Promise<AccountInfo> {
     const accountInfoResponse = this.responses.getAccountInfoResponse;
-    return new Promise(function(resolve, reject) {
-      if (accountInfoResponse instanceof Error) {
-        reject(accountInfoResponse);
-        return;
-      }
+    if (accountInfoResponse instanceof Error) {
+      return Promise.reject(accountInfoResponse);
+    }
 
-      resolve(accountInfoResponse);
-    });
+    return Promise.resolve(accountInfoResponse);
   }
 }

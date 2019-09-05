@@ -38,31 +38,28 @@ class XpringClient {
     const accountInfoRequest = new AccountInfoRequest();
     accountInfoRequest.setAddress(address);
 
-    return new Promise((resolve, reject) => {
-      this.networkClient
-        .getAccountInfo(accountInfoRequest)
-        .then(accountInfo => {
-          const accountData = accountInfo.getAccountData();
-          if (accountData == undefined) {
-            reject(new Error(XpringClientErrorMessages.malformedResponse));
-            return;
-          }
+    return this.networkClient
+      .getAccountInfo(accountInfoRequest)
+      .then(async accountInfo => {
+        const accountData = accountInfo.getAccountData();
+        if (accountData == undefined) {
+          return Promise.reject(
+            new Error(XpringClientErrorMessages.malformedResponse)
+          );
+        }
 
-          const balance = accountData.getBalance();
-          if (balance === "") {
-            reject(new Error(XpringClientErrorMessages.malformedResponse));
-            return;
-          }
+        const balance = accountData.getBalance();
+        if (balance === "") {
+          return Promise.reject(
+            new Error(XpringClientErrorMessages.malformedResponse)
+          );
+        }
 
-          const xrpAmount = new XRPAmount();
-          xrpAmount.setDrops(balance);
+        const xrpAmount = new XRPAmount();
+        xrpAmount.setDrops(balance);
 
-          resolve(xrpAmount);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
+        return xrpAmount;
+      });
   }
 }
 

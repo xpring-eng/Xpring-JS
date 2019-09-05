@@ -43,7 +43,9 @@ describe("Xpring Client", function(): void {
     // GIVEN a XpringClient which wraps a network client with a malformed response.
     const accountInfoResponse = FakeNetworkClientResponses.defaultAccountInfoResponse();
     accountInfoResponse.setAccountData(undefined);
-    const fakeNetworkClientResponses = new FakeNetworkClientResponses(accountInfoResponse);
+    const fakeNetworkClientResponses = new FakeNetworkClientResponses(
+      accountInfoResponse
+    );
     const fakeNetworkClient = new FakeNetworkClient(fakeNetworkClientResponses);
     const xpringClient = new XpringClient(fakeNetworkClient);
 
@@ -60,7 +62,9 @@ describe("Xpring Client", function(): void {
     const accountInfoResponse = FakeNetworkClientResponses.defaultAccountInfoResponse();
     const accountData = new AccountData();
     accountInfoResponse.setAccountData(accountData);
-    const fakeNetworkClientResponses = new FakeNetworkClientResponses(accountInfoResponse);
+    const fakeNetworkClientResponses = new FakeNetworkClientResponses(
+      accountInfoResponse
+    );
     const fakeNetworkClient = new FakeNetworkClient(fakeNetworkClientResponses);
     const xpringClient = new XpringClient(fakeNetworkClient);
 
