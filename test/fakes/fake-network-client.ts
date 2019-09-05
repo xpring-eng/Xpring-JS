@@ -15,7 +15,7 @@ export class FakeNetworkClientResponses {
   /**
    * A default error.
    */
-  public static defaultError = new Error("fake network client failure")
+  public static defaultError = new Error("fake network client failure");
 
   /**
    * A default set of responses that will always succeed.
@@ -25,11 +25,13 @@ export class FakeNetworkClientResponses {
   /**
    * A default set of responses that will always fail.
    */
-  public static defaultErrorResponses = new FakeNetworkClientResponses(FakeNetworkClientResponses.defaultError);
+  public static defaultErrorResponses = new FakeNetworkClientResponses(
+    FakeNetworkClientResponses.defaultError
+  );
 
   /**
    * Construct a new set of responses.
-   * 
+   *
    * @param getAccountInfoResponse The response or error that will be returned from the getAccountInfo request. Default is the default account info response.
    */
   public constructor(

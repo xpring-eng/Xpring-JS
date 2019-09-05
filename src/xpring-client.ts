@@ -11,7 +11,7 @@ const defaultNetworkClient = new GRPCNetworkClient();
 /**
  * Error messages from XpringClient.
  */
-class XpringClientErrorMessages {
+export class XpringClientErrorMessages {
   public static readonly malformedResponse = "Malformed Response.";
 }
 
@@ -49,7 +49,7 @@ class XpringClient {
           }
 
           const balance = accountData.getBalance();
-          if (balance == undefined) {
+          if (balance === "") {
             reject(new Error(XpringClientErrorMessages.malformedResponse));
             return;
           }
