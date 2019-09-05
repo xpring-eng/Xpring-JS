@@ -2,14 +2,21 @@ import { NetworkClient } from "../../src/network-client";
 import { AccountData } from "../../generated/rippled_pb";
 import { AccountInfo } from "../../generated/rippled_pb";
 import { AccountInfoRequest } from "../../generated/rippled_pb";
-import { rejects } from "assert";
 
+/**
+ * A response for a request ot retrieve type T. Either an instance of T, or an error.
+ */
 type Response<T> = T | Error;
 
 /**
  * A list of responses the fake network client will give.
  */
 export class FakeNetworkClientResponses {
+  /**
+   * A default error.
+   */
+  public static defaultError = new Error("fake network client failure")
+
   /**
    * A default set of responses that will always succeed.
    */
@@ -18,14 +25,13 @@ export class FakeNetworkClientResponses {
   /**
    * A default set of responses that will always fail.
    */
-  public static defaultErrorResponses = new FakeNetworkClientResponses(new Error("failure"));
+  public static defaultErrorResponses = new FakeNetworkClientResponses(FakeNetworkClientResponses.defaultError);
 
   /**
    * Construct a new set of responses.
-   *
-   * @param getAccountInfoResponse The response or error that will be returned from the getAccountInfo request.
+   * 
+   * @param getAccountInfoResponse The response or error that will be returned from the getAccountInfo request. Default is the default account info response.
    */
-
   public constructor(
     public readonly getAccountInfoResponse: Response<
       AccountInfo
@@ -57,12 +63,10 @@ export class FakeNetworkClient implements NetworkClient {
   getAccountInfo(
     _accountInfoRequest: AccountInfoRequest
   ): Promise<AccountInfo> {
-    const accountInfoResponse: AccountInfo | Error = this.responses
-      .getAccountInfoResponse;
-    return new Promise(function(resolve: (arg0: AccountInfo) => any, reject: (arg0: Error) => any) {
+    const accountInfoResponse = this.responses.getAccountInfoResponse;
+    return new Promise(function(resolve, reject) {
       if (accountInfoResponse instanceof Error) {
-        const error = new Error("WRONG");
-        reject(error);
+        reject(accountInfoResponse);
         return;
       }
 
