@@ -13,7 +13,12 @@ export class FakeNetworkClientResponses {
   /**
    * A default set of responses that will always succeed.
    */
-  public static defaultResponses = new FakeNetworkClientResponses();
+  public static defaultSuccessfulResponses = new FakeNetworkClientResponses();
+
+  /**
+   * A default set of responses that will always fail.
+   */
+  public static defaultErrorResponses = new FakeNetworkClientResponses(new Error("failure"));
 
   /**
    * Construct a new set of responses.
@@ -22,7 +27,9 @@ export class FakeNetworkClientResponses {
    */
 
   public constructor(
-    public readonly getAccountInfoResponse: Response<AccountInfo> = FakeNetworkClientResponses.defaultAccountInfoResponse()
+    public readonly getAccountInfoResponse: Response<
+      AccountInfo
+    > = FakeNetworkClientResponses.defaultAccountInfoResponse()
   ) {}
 
   /**
@@ -44,7 +51,7 @@ export class FakeNetworkClientResponses {
  */
 export class FakeNetworkClient implements NetworkClient {
   public constructor(
-    private readonly responses: FakeNetworkClientResponses = FakeNetworkClientResponses.defaultResponses
+    private readonly responses: FakeNetworkClientResponses = FakeNetworkClientResponses.defaultSuccessfulResponses
   ) {}
 
   getAccountInfo(
@@ -52,9 +59,10 @@ export class FakeNetworkClient implements NetworkClient {
   ): Promise<AccountInfo> {
     const accountInfoResponse: AccountInfo | Error = this.responses
       .getAccountInfoResponse;
-    return new Promise((resolve, reject) => {
+    return new Promise(function(resolve: (arg0: AccountInfo) => any, reject: (arg0: Error) => any) {
       if (accountInfoResponse instanceof Error) {
-        reject(accountInfoResponse);
+        const error = new Error("WRONG");
+        reject(error);
         return;
       }
 

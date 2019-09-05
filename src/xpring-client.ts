@@ -34,38 +34,38 @@ class XpringClient {
    * @param address The address to retrieve a balance for.
    * @returns The amount of XRP in the account.
    */
-  public async getBalance(address: string): Promise<XRPAmount> {
+  public getBalance(address: string): Promise<XRPAmount> {
     const accountInfoRequest = new AccountInfoRequest();
     accountInfoRequest.setAddress(address);
 
-    return new Promise(
-      async (resolve, reject): Promise<void> => {
-        try {
-          const accountInfo = await this.networkClient.getAccountInfo(
-            accountInfoRequest
-          );
-          const accountData = accountInfo.getAccountData();
-          if (accountData == undefined) {
-            reject(new Error(XpringClientErrorMessages.malformedResponse));
-            return;
-          }
+    return new Promise((resolve, reject) => {
+      let accountInfoPromise = this.networkClient.getAccountInfo(
+        accountInfoRequest
+      );
 
-          const balance = accountData.getBalance();
-          if (balance == undefined) {
-            reject(new Error(XpringClientErrorMessages.malformedResponse));
-            return;
-          }
-
-          const xrpAmount = new XRPAmount();
-          xrpAmount.setDrops(balance);
-
-          resolve(xrpAmount);
-        } catch (error) {
-          reject(error);
+      accountInfoPromise.then(accountInfo => {
+        const accountData = accountInfo.getAccountData();
+        if (accountData == undefined) {
+          reject(new Error(XpringClientErrorMessages.malformedResponse));
           return;
         }
-      }
-    );
+
+        const balance = accountData.getBalance();
+        if (balance == undefined) {
+          reject(new Error(XpringClientErrorMessages.malformedResponse));
+          return;
+        }
+
+        const xrpAmount = new XRPAmount();
+        xrpAmount.setDrops(balance);
+
+        resolve(xrpAmount);
+      });
+
+      accountInfoPromise.catch(error => {
+        reject(error);
+      });
+    });
   }
 }
 
