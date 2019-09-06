@@ -4,6 +4,35 @@
 # XRP-JS
 XRP JS provides a Javascript based SDK for interacting with the Ripple Ledger.
 
+# Setup
+
+These instructions assume you have Homebrew installed and are using OSX. 
+
+Install Homebrew: https://brew.sh/
+
+```shell
+# Clone repo
+$ git clone https://github.com/xpring-eng/xpring-js.git
+$ cd xpring-js
+
+# Pull submodules
+$ git submodule init
+$ git submodule update --remote
+
+# Install Protocol Buffers
+$ brew install protobuf
+
+# Install GRPC
+$ brew tap grpc/grpc
+$ brew install grpc
+
+# Install required modules.
+$ npm i 
+
+# Run tests
+$ npm test
+```
+
 # Dependencies:
 * AppianJS: Javascript based networking interface (_coming soon_)
 * [Terram(JS)](https://github.com/xpring-eng/terram): Core Ripple SDK functionality implemented in JS.
