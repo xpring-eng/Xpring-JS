@@ -1,15 +1,23 @@
 import { assert } from "chai";
-import XpringClient from "../src/xpring-client";
-import FakeNetworkClient from "./fakes/fake-network-client";
+import XpringClient, { XpringClientErrorMessages } from "../src/xpring-client";
+import {
+  FakeNetworkClient,
+  FakeNetworkClientResponses
+} from "./fakes/fake-network-client";
 import "mocha";
+import { AccountData } from "../generated/rippled_pb";
 
-const fakeNetworkClient = new FakeNetworkClient();
+const fakeSucceedingNetworkClient = new FakeNetworkClient();
+const fakeErroringNetworkClient = new FakeNetworkClient(
+  FakeNetworkClientResponses.defaultErrorResponses
+);
+
 const testAddress = "rnJfS9ozTiMXrQPTU53vxAgy9XWo9nGYNh";
 
 describe("Xpring Client", function(): void {
   it("Get Account Balance - successful response", async function() {
     // GIVEN a XpringClient.
-    const xpringClient = new XpringClient(fakeNetworkClient);
+    const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
 
     // WHEN the balance for an account is requested.
     const balance = await xpringClient.getBalance(testAddress);
@@ -17,5 +25,54 @@ describe("Xpring Client", function(): void {
     // THEN the balance is returned.
     assert.exists(balance);
     assert.exists(balance.getDrops());
+  });
+
+  it("Get Account Balance - error", function(done) {
+    // GIVEN a XpringClient which wraps an erroring network client.
+    const xpringClient = new XpringClient(fakeErroringNetworkClient);
+
+    // WHEN a balance is requested THEN an error is propagated.
+    xpringClient.getBalance(testAddress).catch(error => {
+      assert.typeOf(error, "Error");
+      assert.equal(error, FakeNetworkClientResponses.defaultError);
+      done();
+    });
+  });
+
+  it("Get Account Balance - malformed response, no account data", function(done) {
+    // GIVEN a XpringClient which wraps a network client with a malformed response.
+    const accountInfoResponse = FakeNetworkClientResponses.defaultAccountInfoResponse();
+    accountInfoResponse.setAccountData(undefined);
+    const fakeNetworkClientResponses = new FakeNetworkClientResponses(
+      accountInfoResponse
+    );
+    const fakeNetworkClient = new FakeNetworkClient(fakeNetworkClientResponses);
+    const xpringClient = new XpringClient(fakeNetworkClient);
+
+    // WHEN a balance is requested THEN an error is propagated.
+    xpringClient.getBalance(testAddress).catch(error => {
+      assert.typeOf(error, "Error");
+      assert.equal(error.message, XpringClientErrorMessages.malformedResponse);
+      done();
+    });
+  });
+
+  it("Get Account Balance - malformed response, no balance", function(done) {
+    // GIVEN a XpringClient which wraps a network client with a malformed response.
+    const accountInfoResponse = FakeNetworkClientResponses.defaultAccountInfoResponse();
+    const accountData = new AccountData();
+    accountInfoResponse.setAccountData(accountData);
+    const fakeNetworkClientResponses = new FakeNetworkClientResponses(
+      accountInfoResponse
+    );
+    const fakeNetworkClient = new FakeNetworkClient(fakeNetworkClientResponses);
+    const xpringClient = new XpringClient(fakeNetworkClient);
+
+    // WHEN a balance is requested THEN an error is propagated.
+    xpringClient.getBalance(testAddress).catch(error => {
+      assert.typeOf(error, "Error");
+      assert.equal(error.message, XpringClientErrorMessages.malformedResponse);
+      done();
+    });
   });
 });
