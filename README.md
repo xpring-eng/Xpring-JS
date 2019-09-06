@@ -6,11 +6,13 @@ XRP JS provides a Javascript based SDK for interacting with the Ripple Ledger.
 
 # Setup
 
-These instructions assume you have Homebrew installed and are using OSX. 
+These instructions assume you are using OSX. 
 
-Install Homebrew: https://brew.sh/
 
 ```shell
+# Install Homebrew
+$ /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
 # Clone repo
 $ git clone https://github.com/xpring-eng/xpring-js.git
 $ cd xpring-js
