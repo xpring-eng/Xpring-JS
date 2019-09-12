@@ -1,7 +1,7 @@
 import { NetworkClient } from "./network-client";
 import GRPCNetworkClient from "./grpc-network-client";
-import { AccountInfoRequest } from "../generated/rippled_pb";
-import { XRPAmount } from "../generated/XRPAmount_pb";
+import { GetAccountInfoRequest } from "../generated/get_account_info_request_pb";
+import { XRPAmount } from "../generated/xrp_amount_pb";
 
 /**
  * The default network client to use.
@@ -35,30 +35,20 @@ class XpringClient {
    * @returns The amount of XRP in the account.
    */
   public async getBalance(address: string): Promise<XRPAmount> {
-    const accountInfoRequest = new AccountInfoRequest();
+    const accountInfoRequest = new GetAccountInfoRequest();
     accountInfoRequest.setAddress(address);
 
     return this.networkClient
       .getAccountInfo(accountInfoRequest)
       .then(async accountInfo => {
-        const accountData = accountInfo.getAccountData();
-        if (accountData == undefined) {
+        const balance = accountInfo.getBalance();
+        if (balance === undefined) {
           return Promise.reject(
             new Error(XpringClientErrorMessages.malformedResponse)
           );
         }
 
-        const balance = accountData.getBalance();
-        if (balance === "") {
-          return Promise.reject(
-            new Error(XpringClientErrorMessages.malformedResponse)
-          );
-        }
-
-        const xrpAmount = new XRPAmount();
-        xrpAmount.setDrops(balance);
-
-        return xrpAmount;
+        return balance;
       });
   }
 }
