@@ -4,17 +4,12 @@ import { AccountInfo } from "../generated/rippled_pb";
 import { AccountInfoRequest } from "../generated/rippled_pb";
 
 /**
- * The default URL to look for a remote Xpring Platfrom GRPC service on.
- */
-const defaultGRPCURL = "127.0.0.1:3001";
-
-/**
  * A GRPC Based network client.
  */
 class GRPCNetworkClient implements Networking.NetworkClient {
   private readonly grpcClient: RippledClient;
 
-  public constructor(grpcURL = defaultGRPCURL) {
+  public constructor(grpcURL: string) {
     this.grpcClient = new RippledClient(grpcURL);
   }
 
