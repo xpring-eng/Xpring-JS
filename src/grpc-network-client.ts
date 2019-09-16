@@ -68,9 +68,7 @@ class GRPCNetworkClient implements Networking.NetworkClient {
     });
   }
 
-  private handleResponse(error, response, resolve, reject) {
-
-  }
+  private handleResponse(error, response, resolve, reject) {}
 }
 
 export default GRPCNetworkClient;
