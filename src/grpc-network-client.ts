@@ -9,13 +9,8 @@ import { GetAccountInfoRequest } from "../generated/get_account_info_request_pb"
 class GRPCNetworkClient implements Networking.NetworkClient {
   private readonly grpcClient: XRPLedgerClient;
 
-<<<<<<< HEAD
   public constructor(grpcURL: string) {
-    this.grpcClient = new RippledClient(grpcURL);
-=======
-  public constructor(grpcURL = defaultGRPCURL) {
     this.grpcClient = new XRPLedgerClient(grpcURL);
->>>>>>> master
   }
 
   public async getAccountInfo(
