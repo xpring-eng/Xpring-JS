@@ -18,7 +18,11 @@ export interface NetworkServiceError {
  * The network client interface provides a wrapper around network calls to the Xpring Platform.
  */
 export interface NetworkClient {
-  getAccountInfo(getAccountInfoRequest: GetAccountInfoRequest): Promise<AccountInfo>;
+  getAccountInfo(
+    getAccountInfoRequest: GetAccountInfoRequest
+  ): Promise<AccountInfo>;
   getFee(getFeeRequest: GetFeeRequest): Promise<Fee>;
-  submitSignedTransaction(submitSignedTransactionRequest: SubmitSignedTransactionRequest): Promise<SubmitSignedTransactionResponse>;
+  submitSignedTransaction(
+    submitSignedTransactionRequest: SubmitSignedTransactionRequest
+  ): Promise<SubmitSignedTransactionResponse>;
 }

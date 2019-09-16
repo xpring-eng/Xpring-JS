@@ -5,7 +5,7 @@ import { GetAccountInfoRequest } from "../../generated/get_account_info_request_
 import { GetFeeRequest } from "../../generated/get_fee_request_pb";
 import { SubmitSignedTransactionRequest } from "../../generated/submit_signed_transaction_request_pb";
 import { SubmitSignedTransactionResponse } from "../../generated/submit_signed_transaction_response_pb";
-import { XRPAmount } from "../../generated/xrp_amount_pb"
+import { XRPAmount } from "../../generated/xrp_amount_pb";
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -44,9 +44,15 @@ export class FakeNetworkClientResponses {
 
    */
   public constructor(
-    public readonly getAccountInfoResponse: Response<AccountInfo> = FakeNetworkClientResponses.defaultAccountInfoResponse(),
-    public readonly getFeeResponse: Response<Fee> = FakeNetworkClientResponses.defaultFeeResponse(),
-    public readonly submitSignedTransactionResponse: Response<SubmitSignedTransactionResponse> = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse()
+    public readonly getAccountInfoResponse: Response<
+      AccountInfo
+    > = FakeNetworkClientResponses.defaultAccountInfoResponse(),
+    public readonly getFeeResponse: Response<
+      Fee
+    > = FakeNetworkClientResponses.defaultFeeResponse(),
+    public readonly submitSignedTransactionResponse: Response<
+      SubmitSignedTransactionResponse
+    > = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse()
   ) {}
 
   /**
@@ -82,7 +88,9 @@ export class FakeNetworkClientResponses {
     const submitSignedTransactionResponse = new SubmitSignedTransactionResponse();
     submitSignedTransactionResponse.setEngineResult("tesSUCCESS");
     submitSignedTransactionResponse.setEngineResultCode(0);
-    submitSignedTransactionResponse.setEngineResultMessage( "The transaction was applied. Only final in a validated ledger.");
+    submitSignedTransactionResponse.setEngineResultMessage(
+      "The transaction was applied. Only final in a validated ledger."
+    );
 
     return submitSignedTransactionResponse;
   }
@@ -116,8 +124,11 @@ export class FakeNetworkClient implements NetworkClient {
     return Promise.resolve(feeResponse);
   }
 
-  submitSignedTransaction(_submitSignedTransactionRequest: SubmitSignedTransactionRequest): Promise<SubmitSignedTransactionResponse> {
-    const submitSignedTransactionResponse = this.responses.submitSignedTransactionResponse;
+  submitSignedTransaction(
+    _submitSignedTransactionRequest: SubmitSignedTransactionRequest
+  ): Promise<SubmitSignedTransactionResponse> {
+    const submitSignedTransactionResponse = this.responses
+      .submitSignedTransactionResponse;
     if (submitSignedTransactionResponse instanceof Error) {
       return Promise.reject(submitSignedTransactionResponse);
     }

@@ -39,24 +39,21 @@ class GRPCNetworkClient implements Networking.NetworkClient {
     });
   }
 
-  public async getFee(
-    getFeeRequest: GetFeeRequest
-  ): Promise<Fee> {
+  public async getFee(getFeeRequest: GetFeeRequest): Promise<Fee> {
     return new Promise((resolve, reject): void => {
-      this.grpcClient.getFee(
-        getFeeRequest,
-        (error, response): void => {
-          if (error != null || response == null) {
-            reject(error);
-            return;
-          }
-          resolve(response);
+      this.grpcClient.getFee(getFeeRequest, (error, response): void => {
+        if (error != null || response == null) {
+          reject(error);
+          return;
         }
-      );
+        resolve(response);
+      });
     });
   }
 
-  public async submitSignedTransaction(submitSignedTransactionRequest: SubmitSignedTransactionRequest): Promise<SubmitSignedTransactionResponse> {
+  public async submitSignedTransaction(
+    submitSignedTransactionRequest: SubmitSignedTransactionRequest
+  ): Promise<SubmitSignedTransactionResponse> {
     return new Promise((resolve, reject): void => {
       this.grpcClient.submitSignedTransaction(
         submitSignedTransactionRequest,
@@ -69,6 +66,10 @@ class GRPCNetworkClient implements Networking.NetworkClient {
         }
       );
     });
+  }
+
+  private handleResponse(error, response, resolve, reject) {
+
   }
 }
 
