@@ -1,7 +1,7 @@
 import { NetworkClient } from "../../src/network-client";
-import { AccountData } from "../../generated/rippled_pb";
-import { AccountInfo } from "../../generated/rippled_pb";
-import { AccountInfoRequest } from "../../generated/rippled_pb";
+import { AccountInfo } from "../../generated/account_info_pb";
+import { GetAccountInfoRequest } from "../../generated/get_account_info_request_pb";
+import { XRPAmount } from "../../generated/xrp_amount_pb"
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -44,11 +44,11 @@ export class FakeNetworkClientResponses {
    * Construct a default AccountInfoResponse.
    */
   public static defaultAccountInfoResponse(): AccountInfo {
-    const accountData = new AccountData();
-    accountData.setBalance("4000");
+    const balance = new XRPAmount();
+    balance.setDrops("4000");
 
     const accountInfo = new AccountInfo();
-    accountInfo.setAccountData(accountData);
+    accountInfo.setBalance(balance);
 
     return accountInfo;
   }
@@ -63,7 +63,7 @@ export class FakeNetworkClient implements NetworkClient {
   ) {}
 
   getAccountInfo(
-    _accountInfoRequest: AccountInfoRequest
+    _accountInfoRequest: GetAccountInfoRequest
   ): Promise<AccountInfo> {
     const accountInfoResponse = this.responses.getAccountInfoResponse;
     if (accountInfoResponse instanceof Error) {

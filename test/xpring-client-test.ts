@@ -5,7 +5,7 @@ import {
   FakeNetworkClientResponses
 } from "./fakes/fake-network-client";
 import "mocha";
-import { AccountData } from "../generated/rippled_pb";
+import { AccountInfo } from "../generated/account_info_pb";
 
 const fakeSucceedingNetworkClient = new FakeNetworkClient();
 const fakeErroringNetworkClient = new FakeNetworkClient(
@@ -39,29 +39,10 @@ describe("Xpring Client", function(): void {
     });
   });
 
-  it("Get Account Balance - malformed response, no account data", function(done) {
-    // GIVEN a XpringClient which wraps a network client with a malformed response.
-    const accountInfoResponse = FakeNetworkClientResponses.defaultAccountInfoResponse();
-    accountInfoResponse.setAccountData(undefined);
-    const fakeNetworkClientResponses = new FakeNetworkClientResponses(
-      accountInfoResponse
-    );
-    const fakeNetworkClient = new FakeNetworkClient(fakeNetworkClientResponses);
-    const xpringClient = new XpringClient(fakeNetworkClient);
-
-    // WHEN a balance is requested THEN an error is propagated.
-    xpringClient.getBalance(testAddress).catch(error => {
-      assert.typeOf(error, "Error");
-      assert.equal(error.message, XpringClientErrorMessages.malformedResponse);
-      done();
-    });
-  });
-
   it("Get Account Balance - malformed response, no balance", function(done) {
     // GIVEN a XpringClient which wraps a network client with a malformed response.
     const accountInfoResponse = FakeNetworkClientResponses.defaultAccountInfoResponse();
-    const accountData = new AccountData();
-    accountInfoResponse.setAccountData(accountData);
+    accountInfoResponse.setBalance(undefined);
     const fakeNetworkClientResponses = new FakeNetworkClientResponses(
       accountInfoResponse
     );
