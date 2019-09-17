@@ -1,7 +1,8 @@
 import * as Networking from "./network-client";
-import { XRPLedgerClient } from "../generated/xrp_ledger_pb_service";
+import { XRPLedgerClient } from "../generated/xrp_ledger_grpc_pb.js";
 import { AccountInfo } from "../generated/account_info_pb";
 import { GetAccountInfoRequest } from "../generated/get_account_info_request_pb";
+import grpc from "grpc";
 
 /**
  * The default URL to look for a remote Xpring Platfrom GRPC service on.
@@ -15,7 +16,10 @@ class GRPCNetworkClient implements Networking.NetworkClient {
   private readonly grpcClient: XRPLedgerClient;
 
   public constructor(grpcURL = defaultGRPCURL) {
-    this.grpcClient = new XRPLedgerClient(grpcURL);
+    this.grpcClient = new XRPLedgerClient(
+      grpcURL,
+      grpc.credentials.createInsecure()
+    );
   }
 
   public async getAccountInfo(

@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - checkout
-      
+
       - run:
           name: "Pull Submodules"
           command: |
@@ -29,6 +29,7 @@ jobs:
           command: |
             sudo npm -g i nyc
             sudo npm -g i coveralls
+            sudo npm -g i grpc-tools
       - save_cache:
           paths:
             - node_modules
@@ -41,5 +42,3 @@ jobs:
           command: |
             nyc npm test
             nyc report --reporter=text-lcov | coveralls
-
-

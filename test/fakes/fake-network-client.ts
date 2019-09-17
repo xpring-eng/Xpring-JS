@@ -1,7 +1,7 @@
 import { NetworkClient } from "../../src/network-client";
 import { AccountInfo } from "../../generated/account_info_pb";
 import { GetAccountInfoRequest } from "../../generated/get_account_info_request_pb";
-import { XRPAmount } from "../../generated/xrp_amount_pb"
+import { XRPAmount } from "../../generated/xrp_amount_pb";
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
