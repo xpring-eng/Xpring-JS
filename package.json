@@ -46,6 +46,7 @@
   "dependencies": {
     "@types/google-protobuf": "3.7.1",
     "google-protobuf": "3.9.1",
+    "grpc": "1.23.3",
     "grpc-tools": "1.8.0",
     "mocha": "6.2.0",
     "typescript": "3.5.3"
