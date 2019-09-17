@@ -1,6 +1,10 @@
 import { NetworkClient } from "../../src/network-client";
 import { AccountInfo } from "../../generated/account_info_pb";
+import { Fee } from "../../generated/fee_pb";
 import { GetAccountInfoRequest } from "../../generated/get_account_info_request_pb";
+import { GetFeeRequest } from "../../generated/get_fee_request_pb";
+import { SubmitSignedTransactionRequest } from "../../generated/submit_signed_transaction_request_pb";
+import { SubmitSignedTransactionResponse } from "../../generated/submit_signed_transaction_response_pb";
 import { XRPAmount } from "../../generated/xrp_amount_pb";
 
 /**
@@ -26,6 +30,8 @@ export class FakeNetworkClientResponses {
    * A default set of responses that will always fail.
    */
   public static defaultErrorResponses = new FakeNetworkClientResponses(
+    FakeNetworkClientResponses.defaultError,
+    FakeNetworkClientResponses.defaultError,
     FakeNetworkClientResponses.defaultError
   );
 
@@ -33,11 +39,20 @@ export class FakeNetworkClientResponses {
    * Construct a new set of responses.
    *
    * @param getAccountInfoResponse The response or error that will be returned from the getAccountInfo request. Default is the default account info response.
+   * @param getFeeResponse The response or error that will be returned from the getFee request. Defaults to the default fee response.
+   * @param submitSignedTransactionResponse The response or error that will be returned from the submitSignedTransaction request. Defaults to the default submit signed transaction response.
+
    */
   public constructor(
     public readonly getAccountInfoResponse: Response<
       AccountInfo
-    > = FakeNetworkClientResponses.defaultAccountInfoResponse()
+    > = FakeNetworkClientResponses.defaultAccountInfoResponse(),
+    public readonly getFeeResponse: Response<
+      Fee
+    > = FakeNetworkClientResponses.defaultFeeResponse(),
+    public readonly submitSignedTransactionResponse: Response<
+      SubmitSignedTransactionResponse
+    > = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse()
   ) {}
 
   /**
@@ -51,6 +66,33 @@ export class FakeNetworkClientResponses {
     accountInfo.setBalance(balance);
 
     return accountInfo;
+  }
+
+  /**
+   * Construct a default FeeResponse.
+   */
+  public static defaultFeeResponse(): Fee {
+    const amount = new XRPAmount();
+    amount.setDrops("10");
+
+    const fee = new Fee();
+    fee.setAmount(amount);
+
+    return fee;
+  }
+
+  /**
+   * Construct a default SubmitSignedTransactionResponse.
+   */
+  public static defaultSubmitSignedTransactionResponse(): SubmitSignedTransactionResponse {
+    const submitSignedTransactionResponse = new SubmitSignedTransactionResponse();
+    submitSignedTransactionResponse.setEngineResult("tesSUCCESS");
+    submitSignedTransactionResponse.setEngineResultCode(0);
+    submitSignedTransactionResponse.setEngineResultMessage(
+      "The transaction was applied. Only final in a validated ledger."
+    );
+
+    return submitSignedTransactionResponse;
   }
 }
 
@@ -71,5 +113,26 @@ export class FakeNetworkClient implements NetworkClient {
     }
 
     return Promise.resolve(accountInfoResponse);
+  }
+
+  getFee(_feeRequest: GetFeeRequest): Promise<Fee> {
+    const feeResponse = this.responses.getFeeResponse;
+    if (feeResponse instanceof Error) {
+      return Promise.reject(feeResponse);
+    }
+
+    return Promise.resolve(feeResponse);
+  }
+
+  submitSignedTransaction(
+    _submitSignedTransactionRequest: SubmitSignedTransactionRequest
+  ): Promise<SubmitSignedTransactionResponse> {
+    const submitSignedTransactionResponse = this.responses
+      .submitSignedTransactionResponse;
+    if (submitSignedTransactionResponse instanceof Error) {
+      return Promise.reject(submitSignedTransactionResponse);
+    }
+
+    return Promise.resolve(submitSignedTransactionResponse);
   }
 }
