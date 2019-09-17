@@ -1,11 +1,11 @@
 import { NetworkClient } from "../../src/network-client";
-import { AccountInfo } from "../../generated/account_info_pb";
-import { Fee } from "../../generated/fee_pb";
-import { GetAccountInfoRequest } from "../../generated/get_account_info_request_pb";
-import { GetFeeRequest } from "../../generated/get_fee_request_pb";
-import { SubmitSignedTransactionRequest } from "../../generated/submit_signed_transaction_request_pb";
-import { SubmitSignedTransactionResponse } from "../../generated/submit_signed_transaction_response_pb";
-import { XRPAmount } from "../../generated/xrp_amount_pb";
+import { AccountInfo } from "../../terram/generated/account_info_pb";
+import { Fee } from "../../terram/generated/fee_pb";
+import { GetAccountInfoRequest } from "../../terram/generated/get_account_info_request_pb";
+import { GetFeeRequest } from "../../terram/generated/get_fee_request_pb";
+import { SubmitSignedTransactionRequest } from "../../terram/generated/submit_signed_transaction_request_pb";
+import { SubmitSignedTransactionResponse } from "../../terram/generated/submit_signed_transaction_response_pb";
+import { XRPAmount } from "../../terram/generated/xrp_amount_pb";
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
