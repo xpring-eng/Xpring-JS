@@ -20,8 +20,6 @@ class GRPCNetworkClient implements Networking.NetworkClient {
       grpcURL,
       grpc.credentials.createInsecure()
     );
-    // grpc.setDefaultTransport(NodeHttpTransport());
-    // this.grpcClient.setDefaultTransport(NodeHttpTransport());
   }
 
   public async getAccountInfo(
