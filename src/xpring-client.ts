@@ -1,7 +1,7 @@
 import { NetworkClient } from "./network-client";
 import GRPCNetworkClient from "./grpc-network-client";
-import { GetAccountInfoRequest } from "../generated/get_account_info_request_pb";
-import { XRPAmount } from "../generated/xrp_amount_pb";
+import { GetAccountInfoRequest } from "../terram/generated/get_account_info_request_pb";
+import { XRPAmount } from "../terram/generated/xrp_amount_pb";
 
 /**
  * The default network client to use.
