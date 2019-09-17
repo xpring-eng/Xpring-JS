@@ -1,5 +1,5 @@
 import * as Networking from "./network-client";
-import { XRPLedgerClient } from "../terram/generated/xrp_ledger_grpc_pb.js";
+import { XRPLedgerClient } from "../terram/generated/xrp_ledger_grpc_pb";
 import { AccountInfo } from "../terram/generated/account_info_pb";
 import { Fee } from "../terram/generated/fee_pb";
 import { GetAccountInfoRequest } from "../terram/generated/get_account_info_request_pb";
