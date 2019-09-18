@@ -9,17 +9,12 @@ import { SubmitSignedTransactionResponse } from "../generated/submit_signed_tran
 import grpc from "grpc";
 
 /**
- * The default URL to look for a remote Xpring Platfrom GRPC service on.
- */
-const defaultGRPCURL = "127.0.0.1:3001";
-
-/**
  * A GRPC Based network client.
  */
 class GRPCNetworkClient implements Networking.NetworkClient {
   private readonly grpcClient: XRPLedgerClient;
 
-  public constructor(grpcURL = defaultGRPCURL) {
+  public constructor(grpcURL: string) {
     this.grpcClient = new XRPLedgerClient(
       grpcURL,
       grpc.credentials.createInsecure()
