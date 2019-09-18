@@ -14,15 +14,13 @@ jobs:
       - run:
           name: "Pull Submodules"
           command: |
-            git submodule init
-            git submodule update --remote
+            git submodule update --init --recursive
 
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
             - v1-dependencies-
 
-      - run: npm install
       - protobuf/install
       - run:
           name: "Install dependencies"
@@ -30,6 +28,8 @@ jobs:
             sudo npm -g i nyc
             sudo npm -g i coveralls
             sudo npm -g i grpc-tools
+            sudo npm i -g recursive-install
+      - run: npm-recursive-install
       - save_cache:
           paths:
             - node_modules

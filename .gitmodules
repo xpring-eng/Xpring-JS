@@ -1,4 +1,7 @@
 [submodule "terram-protos"]
 	path = terram-protos
-	url = http://github.com/xpring-eng/terram-protos
+	url = git@github.com:xpring-eng/terram-protos.git
 	branch = master
+[submodule "terram"]
+	path = terram
+	url = git@github.com:xpring-eng/terram.git

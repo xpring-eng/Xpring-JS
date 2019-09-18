@@ -5,7 +5,6 @@ import {
   FakeNetworkClientResponses
 } from "./fakes/fake-network-client";
 import "mocha";
-import { AccountInfo } from "../generated/account_info_pb";
 
 const fakeSucceedingNetworkClient = new FakeNetworkClient();
 const fakeErroringNetworkClient = new FakeNetworkClient(
