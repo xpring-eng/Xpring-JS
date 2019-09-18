@@ -9,17 +9,12 @@ import { SubmitSignedTransactionResponse } from "../terram/generated/submit_sign
 import terram from "../terram/src/index";
 
 /**
- * The default URL to look for a remote Xpring Platfrom GRPC service on.
- */
-const defaultGRPCURL = "127.0.0.1:3001";
-
-/**
  * A GRPC Based network client.
  */
 class GRPCNetworkClient implements Networking.NetworkClient {
   private readonly grpcClient: XRPLedgerClient;
 
-  public constructor(grpcURL = defaultGRPCURL) {
+  public constructor(grpcURL: string) {
     this.grpcClient = new XRPLedgerClient(
       grpcURL,
       terram.grpc.credentials.createInsecure()
