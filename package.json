@@ -13,7 +13,7 @@
     "url": "https://github.com/xpring-eng/Xpring-JS/issues"
   },
   "scripts": {
-    "pretest": "cd terram && npm i && ./scripts/regenerate_protos.sh && tsc",
+    "pretest": "cd terram && npm i && ./scripts/regenerate_protos.sh && tsc && cd .. && cp -r terram/node_modules build/",
     "test": "nyc mocha"
   },
   "homepage": "https://github.com/xpring-eng/Xpring-JS#readme",
