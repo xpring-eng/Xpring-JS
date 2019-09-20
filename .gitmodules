@@ -5,3 +5,4 @@
 [submodule "terram"]
 	path = terram
 	url = git@github.com:xpring-eng/terram.git
+	branch = master
