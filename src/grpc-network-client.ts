@@ -6,12 +6,7 @@ import { GetAccountInfoRequest } from "../terram/generated/get_account_info_requ
 import { GetFeeRequest } from "../terram/generated/get_fee_request_pb";
 import { SubmitSignedTransactionRequest } from "../terram/generated/submit_signed_transaction_request_pb";
 import { SubmitSignedTransactionResponse } from "../terram/generated/submit_signed_transaction_response_pb";
-import grpc from "grpc";
-
-/**
- * The default URL to look for a remote Xpring Platfrom GRPC service on.
- */
-const defaultGRPCURL = "127.0.0.1:3001";
+import terram from "../terram/src/index";
 
 /**
  * A GRPC Based network client.
@@ -19,10 +14,10 @@ const defaultGRPCURL = "127.0.0.1:3001";
 class GRPCNetworkClient implements Networking.NetworkClient {
   private readonly grpcClient: XRPLedgerClient;
 
-  public constructor(grpcURL = defaultGRPCURL) {
+  public constructor(grpcURL: string) {
     this.grpcClient = new XRPLedgerClient(
       grpcURL,
-      grpc.credentials.createInsecure()
+      terram.grpc.credentials.createInsecure()
     );
   }
 
