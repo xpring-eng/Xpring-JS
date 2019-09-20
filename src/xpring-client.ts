@@ -86,6 +86,7 @@ class XpringClient {
           transaction.setFee(fee);
           transaction.setSequence(accountInfo.getSequence());
           transaction.setPayment(payment);
+          transaction.setSigningPublicKeyHex(sender.getPublicKey());
 
           var signedTransaction;
           try {
