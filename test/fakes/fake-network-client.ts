@@ -1,11 +1,5 @@
 import { NetworkClient } from "../../src/network-client";
-import { AccountInfo } from "../../xpring-common-js/generated/account_info_pb";
-import { Fee } from "../../xpring-common-js/generated/fee_pb";
-import { GetAccountInfoRequest } from "../../xpring-common-js/generated/get_account_info_request_pb";
-import { GetFeeRequest } from "../../xpring-common-js/generated/get_fee_request_pb";
-import { SubmitSignedTransactionRequest } from "../../xpring-common-js/generated/submit_signed_transaction_request_pb";
-import { SubmitSignedTransactionResponse } from "../../xpring-common-js/generated/submit_signed_transaction_response_pb";
-import { XRPAmount } from "../../xpring-common-js/generated/xrp_amount_pb";
+import { AccountInfo, Fee, GetAccountInfoRequest, GetFeeRequest, SubmitSignedTransactionResponse, SubmitSignedTransactionRequest, XRPAmount } from "@xpring-eng/xpring-common-js";
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.

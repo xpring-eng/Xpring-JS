@@ -1,12 +1,14 @@
 import * as Networking from "./network-client";
-import { XRPLedgerClient } from "../xpring-common-js/generated/xrp_ledger_grpc_pb";
-import { AccountInfo } from "../xpring-common-js/generated/account_info_pb";
-import { Fee } from "../xpring-common-js/generated/fee_pb";
-import { GetAccountInfoRequest } from "../xpring-common-js/generated/get_account_info_request_pb";
-import { GetFeeRequest } from "../xpring-common-js/generated/get_fee_request_pb";
-import { SubmitSignedTransactionRequest } from "../xpring-common-js/generated/submit_signed_transaction_request_pb";
-import { SubmitSignedTransactionResponse } from "../xpring-common-js/generated/submit_signed_transaction_response_pb";
-import common from "../xpring-common-js/src/index";
+import {
+  XRPLedgerClient,
+  AccountInfo,
+  Fee,
+  GetAccountInfoRequest,
+  GetFeeRequest,
+  SubmitSignedTransactionRequest,
+  SubmitSignedTransactionResponse
+} from "@xpring-eng/xpring-common-js";
+import { grpc } from "@xpring-eng/xpring-common-js";
 
 /**
  * A GRPC Based network client.
@@ -17,7 +19,7 @@ class GRPCNetworkClient implements Networking.NetworkClient {
   public constructor(grpcURL: string) {
     this.grpcClient = new XRPLedgerClient(
       grpcURL,
-      common.grpc.credentials.createInsecure()
+      grpc.credentials.createInsecure()
     );
   }
 

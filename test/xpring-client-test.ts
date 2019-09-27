@@ -1,5 +1,11 @@
 import { assert } from "chai";
 
+import {
+  Wallet,
+  WalletGenerationResult,
+  XRPAmount
+} from "@xpring-eng/xpring-common-js";
+
 import chai from "chai";
 import chaiString from "chai-string";
 import XpringClient, { XpringClientErrorMessages } from "../src/xpring-client";
@@ -7,10 +13,7 @@ import {
   FakeNetworkClient,
   FakeNetworkClientResponses
 } from "./fakes/fake-network-client";
-import Wallet from "../xpring-common-js/src/wallet";
-import { WalletGenerationResult } from "../xpring-common-js/src/wallet"
 import "mocha";
-import { XRPAmount } from "../xpring-common-js/generated/xrp_amount_pb";
 
 const fakeSucceedingNetworkClient = new FakeNetworkClient();
 const fakeErroringNetworkClient = new FakeNetworkClient(
@@ -67,7 +70,8 @@ describe("Xpring Client", function(): void {
   it("Send XRP Transaction - success", async function() {
     // GIVEN a XpringClient and a wallet.
     const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
-    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult).wallet;
+    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
+      .wallet;
     const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
     const amount = new XRPAmount();
     amount.setDrops("10");
@@ -94,7 +98,8 @@ describe("Xpring Client", function(): void {
     );
     const feeFailingNetworkClient = new FakeNetworkClient(feeFailureResponses);
     const xpringClient = new XpringClient(feeFailingNetworkClient);
-    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult).wallet;
+    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
+      .wallet;
     const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
     const amount = new XRPAmount();
     amount.setDrops("10");
@@ -119,7 +124,8 @@ describe("Xpring Client", function(): void {
     );
     const feeFailingNetworkClient = new FakeNetworkClient(feeFailureResponses);
     const xpringClient = new XpringClient(feeFailingNetworkClient);
-    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult).wallet;
+    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
+      .wallet;
     const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
     const amount = new XRPAmount();
     amount.setDrops("10");
@@ -144,7 +150,8 @@ describe("Xpring Client", function(): void {
     );
     const feeFailingNetworkClient = new FakeNetworkClient(feeFailureResponses);
     const xpringClient = new XpringClient(feeFailingNetworkClient);
-    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult).wallet;
+    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
+      .wallet;
     const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
     const amount = new XRPAmount();
     amount.setDrops("10");
@@ -163,7 +170,8 @@ describe("Xpring Client", function(): void {
   it("Send XRP Transaction - failed signing", function(done) {
     // GIVEN a malformed transaction that cannot be signed.
     const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
-    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult).wallet;
+    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
+      .wallet;
     const destinationAddress = "invalid_xrp_address";
     const amount = new XRPAmount();
     amount.setDrops("10");
