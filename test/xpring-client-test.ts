@@ -7,10 +7,10 @@ import {
   FakeNetworkClient,
   FakeNetworkClientResponses
 } from "./fakes/fake-network-client";
-import Wallet from "../terram/src/wallet";
-import { WalletGenerationResult } from "../terram/src/wallet"
+import Wallet from "../xpring-common-js/src/wallet";
+import { WalletGenerationResult } from "../xpring-common-js/src/wallet"
 import "mocha";
-import { XRPAmount } from "../terram/generated/xrp_amount_pb";
+import { XRPAmount } from "../xpring-common-js/generated/xrp_amount_pb";
 
 const fakeSucceedingNetworkClient = new FakeNetworkClient();
 const fakeErroringNetworkClient = new FakeNetworkClient(

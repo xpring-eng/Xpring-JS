@@ -1,12 +1,12 @@
 import * as Networking from "./network-client";
-import { XRPLedgerClient } from "../terram/generated/xrp_ledger_grpc_pb";
-import { AccountInfo } from "../terram/generated/account_info_pb";
-import { Fee } from "../terram/generated/fee_pb";
-import { GetAccountInfoRequest } from "../terram/generated/get_account_info_request_pb";
-import { GetFeeRequest } from "../terram/generated/get_fee_request_pb";
-import { SubmitSignedTransactionRequest } from "../terram/generated/submit_signed_transaction_request_pb";
-import { SubmitSignedTransactionResponse } from "../terram/generated/submit_signed_transaction_response_pb";
-import terram from "../terram/src/index";
+import { XRPLedgerClient } from "../xpring-common-js/generated/xrp_ledger_grpc_pb";
+import { AccountInfo } from "../xpring-common-js/generated/account_info_pb";
+import { Fee } from "../xpring-common-js/generated/fee_pb";
+import { GetAccountInfoRequest } from "../xpring-common-js/generated/get_account_info_request_pb";
+import { GetFeeRequest } from "../xpring-common-js/generated/get_fee_request_pb";
+import { SubmitSignedTransactionRequest } from "../xpring-common-js/generated/submit_signed_transaction_request_pb";
+import { SubmitSignedTransactionResponse } from "../xpring-common-js/generated/submit_signed_transaction_response_pb";
+import { grpc } from "../xpring-common-js/src/index";
 
 /**
  * A GRPC Based network client.

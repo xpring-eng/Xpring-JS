@@ -1,8 +1,8 @@
-[submodule "terram-protos"]
-	path = terram-protos
-	url = git@github.com:xpring-eng/terram-protos.git
+[submodule "xpring-common-protocol-buffers"]
+	path = xpring-common-protocol-buffers
+	url = git@github.com:xpring-eng/xpring-common-protocol-buffers.git
 	branch = master
-[submodule "terram"]
-	path = terram
-	url = git@github.com:xpring-eng/terram.git
+[submodule "xpring-common-js"]
+	path = xpring-common-js
+	url = git@github.com:xpring-eng/xpring-common-js.git
 	branch = master
