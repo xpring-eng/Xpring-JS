@@ -1,4 +1,11 @@
-import { AccountInfo, Fee, GetAccountInfoRequest, GetFeeRequest, SubmitSignedTransactionRequest, SubmitSignedTransactionResponse } from "@xpring-eng/xpring-common-js";
+import {
+  AccountInfo,
+  Fee,
+  GetAccountInfoRequest,
+  GetFeeRequest,
+  SubmitSignedTransactionRequest,
+  SubmitSignedTransactionResponse
+} from "@xpring-eng/xpring-common-js";
 
 /**
  * An error that can occur when making a request.

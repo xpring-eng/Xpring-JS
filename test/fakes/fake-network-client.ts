@@ -1,5 +1,13 @@
 import { NetworkClient } from "../../src/network-client";
-import { AccountInfo, Fee, GetAccountInfoRequest, GetFeeRequest, SubmitSignedTransactionResponse, SubmitSignedTransactionRequest, XRPAmount } from "@xpring-eng/xpring-common-js";
+import {
+  AccountInfo,
+  Fee,
+  GetAccountInfoRequest,
+  GetFeeRequest,
+  SubmitSignedTransactionResponse,
+  SubmitSignedTransactionRequest,
+  XRPAmount
+} from "@xpring-eng/xpring-common-js";
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
