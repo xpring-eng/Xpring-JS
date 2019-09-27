@@ -17,6 +17,6 @@
     "src/**/*",
     "generated/*",
     "test/fakes",
-    "terram/*/*",
+    "xpring-common-js/*/*",
   ],
 }

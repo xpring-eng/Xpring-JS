@@ -35,6 +35,3 @@ $ npm i
 $ npm test
 ```
 
-# Dependencies:
-* [Terram(JS)](https://github.com/xpring-eng/terram): Core Ripple SDK functionality implemented in JS.
-* [Terram-Protos](https://github.com/xpring-eng/terram-protos): Common protobuf objects used across Ripple's SDK Libraries.
