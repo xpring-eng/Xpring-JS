@@ -6,7 +6,7 @@ import { GetAccountInfoRequest } from "../xpring-common-js/generated/get_account
 import { GetFeeRequest } from "../xpring-common-js/generated/get_fee_request_pb";
 import { SubmitSignedTransactionRequest } from "../xpring-common-js/generated/submit_signed_transaction_request_pb";
 import { SubmitSignedTransactionResponse } from "../xpring-common-js/generated/submit_signed_transaction_response_pb";
-import { grpc } from "../xpring-common-js/src/index";
+import common from "../xpring-common-js/src/index";
 
 /**
  * A GRPC Based network client.
@@ -17,7 +17,7 @@ class GRPCNetworkClient implements Networking.NetworkClient {
   public constructor(grpcURL: string) {
     this.grpcClient = new XRPLedgerClient(
       grpcURL,
-      terram.grpc.credentials.createInsecure()
+      common.grpc.credentials.createInsecure()
     );
   }
 
