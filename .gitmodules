@@ -1,8 +1,6 @@
 [submodule "xpring-common-protocol-buffers"]
 	path = xpring-common-protocol-buffers
 	url = git@github.com:xpring-eng/xpring-common-protocol-buffers.git
-	branch = master
 [submodule "xpring-common-js"]
 	path = xpring-common-js
 	url = git@github.com:xpring-eng/xpring-common-js.git
-	branch = master
