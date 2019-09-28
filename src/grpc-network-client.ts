@@ -6,9 +6,9 @@ import {
   GetAccountInfoRequest,
   GetFeeRequest,
   SubmitSignedTransactionRequest,
-  SubmitSignedTransactionResponse
+  SubmitSignedTransactionResponse,
+  grpcCredentials
 } from "@xpring-eng/xpring-common-js";
-import { grpc } from "@xpring-eng/xpring-common-js";
 
 /**
  * A GRPC Based network client.
@@ -19,7 +19,7 @@ class GRPCNetworkClient implements Networking.NetworkClient {
   public constructor(grpcURL: string) {
     this.grpcClient = new XRPLedgerClient(
       grpcURL,
-      grpc.credentials.createInsecure()
+      grpcCredentials.createInsecure()
     );
   }
 

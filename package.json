@@ -46,7 +46,7 @@
   "dependencies": {
     "@types/chai-string": "1.4.2",
     "@types/google-protobuf": "3.7.1",
-    "@xpring-eng/xpring-common-js": "1.0.18",
+    "@xpring-eng/xpring-common-js": "1.0.25",
     "chai-string": "1.5.0",
     "google-protobuf": "3.9.1",
     "grpc": "1.23.3",
