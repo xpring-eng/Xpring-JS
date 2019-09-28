@@ -3,6 +3,7 @@ import XpringClient from "../src/xpring-client";
 import { assert } from "chai";
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000; // 1 minute

@@ -1,8 +1,8 @@
 {
   "name": "xpring-js",
-  "version": "0.1.0",
+  "version": "1.0.2",
   "description": "XpringJS provides a Javascript based SDK for interacting with the Ripple Ledger.",
-  "main": "index.js",
+  "main": "build/src/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/xpring-eng/Xpring-JS.git"
@@ -14,8 +14,12 @@
   },
   "scripts": {
     "pretest": "",
-    "test": "nyc mocha"
+    "test": "nyc mocha",
+    "prepublishOnly": "npm test && tsc -d"
   },
+  "files": [
+    "build/**/*"
+  ],
   "homepage": "https://github.com/xpring-eng/Xpring-JS#readme",
   "devDependencies": {
     "@types/chai": "4.2.0",
