@@ -23,6 +23,7 @@ jobs:
             sudo npm -g i nyc
             sudo npm -g i coveralls
             sudo npm -g i grpc-tools
+            sudo npm -g i xpring-common-js
       - save_cache:
           paths:
             - node_modules
