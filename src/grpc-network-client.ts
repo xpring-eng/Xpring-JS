@@ -8,7 +8,7 @@ import {
   SubmitSignedTransactionRequest,
   SubmitSignedTransactionResponse,
   grpcCredentials
-} from "@xpring-eng/xpring-common-js";
+} from "xpring-common-js";
 
 /**
  * A GRPC Based network client.

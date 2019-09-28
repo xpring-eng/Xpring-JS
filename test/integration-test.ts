@@ -1,4 +1,4 @@
-import { Wallet, XRPAmount } from "@xpring-eng/xpring-common-js";
+import { Wallet, XRPAmount } from "xpring-common-js";
 import XpringClient from "../src/xpring-client";
 import { assert } from "chai";
 

@@ -7,7 +7,7 @@ import {
   SubmitSignedTransactionResponse,
   SubmitSignedTransactionRequest,
   XRPAmount
-} from "@xpring-eng/xpring-common-js";
+} from "xpring-common-js";
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.

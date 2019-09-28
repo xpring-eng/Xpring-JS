@@ -5,7 +5,7 @@ import {
   GetFeeRequest,
   SubmitSignedTransactionRequest,
   SubmitSignedTransactionResponse
-} from "@xpring-eng/xpring-common-js";
+} from "xpring-common-js";
 
 /**
  * An error that can occur when making a request.

@@ -9,7 +9,7 @@ import {
   Transaction,
   Wallet,
   XRPAmount
-} from "@xpring-eng/xpring-common-js";
+} from "xpring-common-js";
 import { NetworkClient } from "./network-client";
 import GRPCNetworkClient from "./grpc-network-client";
 

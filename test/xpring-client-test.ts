@@ -4,7 +4,7 @@ import {
   Wallet,
   WalletGenerationResult,
   XRPAmount
-} from "@xpring-eng/xpring-common-js";
+} from "xpring-common-js";
 
 import chai from "chai";
 import chaiString from "chai-string";
