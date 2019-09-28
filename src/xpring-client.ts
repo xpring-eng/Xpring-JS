@@ -1,15 +1,17 @@
-import { AccountInfo } from "../xpring-common-js/generated/account_info_pb";
+import {
+  AccountInfo,
+  GetAccountInfoRequest,
+  GetFeeRequest,
+  Payment,
+  Signer,
+  SubmitSignedTransactionRequest,
+  SubmitSignedTransactionResponse,
+  Transaction,
+  Wallet,
+  XRPAmount
+} from "xpring-common-js";
 import { NetworkClient } from "./network-client";
 import GRPCNetworkClient from "./grpc-network-client";
-import { GetAccountInfoRequest } from "../xpring-common-js/generated/get_account_info_request_pb";
-import Wallet from "../xpring-common-js/src/wallet";
-import Signer from "../xpring-common-js/src/signer";
-import { Payment } from "../xpring-common-js/generated/payment_pb";
-import { Transaction } from "../xpring-common-js/generated/transaction_pb";
-import { XRPAmount } from "../xpring-common-js/generated/xrp_amount_pb";
-import { GetFeeRequest } from "../xpring-common-js/generated/get_fee_request_pb";
-import { SubmitSignedTransactionResponse } from "../xpring-common-js/generated/submit_signed_transaction_response_pb";
-import { SubmitSignedTransactionRequest } from "../xpring-common-js/generated/submit_signed_transaction_request_pb";
 
 /**
  * Error messages from XpringClient.

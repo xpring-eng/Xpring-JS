@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "allowJs": true,
     "baseUrl": "src",
     "rootDir": "./",
     "outDir": "build",
@@ -11,12 +10,12 @@
     "removeComments": true,
     "strict": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
   "include": [
     "src/**/*",
     "generated/*",
     "test/fakes",
-    "xpring-common-js/*/*",
-  ],
+    "xpring-common-js/*/*"
+  ]
 }
