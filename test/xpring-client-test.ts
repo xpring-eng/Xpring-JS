@@ -1,10 +1,6 @@
 import { assert } from "chai";
 
-import {
-  Wallet,
-  WalletGenerationResult,
-  XRPAmount
-} from "xpring-common-js";
+import { Wallet, WalletGenerationResult, XRPAmount } from "xpring-common-js";
 
 import chai from "chai";
 import chaiString from "chai-string";
