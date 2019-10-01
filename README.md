@@ -43,7 +43,7 @@ A wallet is a fundamental model object in XpringKit which provides key managemen
 Xpring-JS can derive a wallet from a seed or it can derive a hierarchical deterministic wallet (HDWallet) from a mnemonic and derivation path.
 
 ##### Hierarchical Deterministic Wallets
-A hierarchical deterministic wallet is created using a mnemonic and a derivation path. Simply pass the mnemonic and derivation path to the wallet generation function. Note that you can omit the derivation path and have a default path be used.
+A hierarchical deterministic wallet is created using a mnemonic and a derivation path. Simply pass the mnemonic and derivation path to the wallet generation function. Note that you can omit the derivation path and have a default path be used instead.
 
 ```javascript
 const { Wallet } = require("xpring-js");
