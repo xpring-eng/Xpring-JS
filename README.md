@@ -33,7 +33,7 @@ To get developers started right away, Xpring currently provides the server side 
 grpc.xpring.tech:80
 ```
 
-Xpring is working on building a zero-config way for XRP node users to deploy and use the adapter as an open-source component of [rippled](https://github.com/ripple/rippled). Watch this space.
+Xpring is working on building a zero-config way for XRP node users to deploy and use the adapter as an open-source component of [rippled](https://github.com/ripple/rippled). Watch this space!
 
 ## Usage
 ### Wallets
