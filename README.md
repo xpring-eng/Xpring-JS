@@ -14,7 +14,7 @@ Xpring-JS provides the following features:
 
 ## Installation
 
-Xpring-JS utilizes two components to access the Xpring platform.
+Xpring-JS utilizes two components to access the Xpring Platform:
 1) The Xpring-JS client side library (This library)
 2) A server side component that handles requests from this library and proxies them to an XRP node.
 
@@ -37,7 +37,7 @@ Xpring is working on building a zero-config way for XRP node users to deploy and
 
 ## Usage
 ### Wallets
-A wallet is a fundamental model object in Xpring-JS which provides key management, address derivation, and signing functionality. Wallets can be derived from either a seed or a mnemonic and derivation path.
+A wallet is a fundamental model object in XpringKit which provides key management, address derivation, and signing functionality. Wallets can be derived from either a seed or a mnemonic and derivation path. You can also choose to generate a new random HD wallet.
 
 #### Wallet Derivation
 Xpring-JS can derive a wallet from a seed or it can derive a hierarchical deterministic wallet (HDWallet) from a mnemonic and derivation path.
