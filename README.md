@@ -37,7 +37,7 @@ Xpring is working on building a zero-config way for XRP node users to deploy and
 
 ## Usage
 ### Wallets
-A wallet is a fundamental model object in XRP-JS which provides key management, address derivation, and signing functionality. Wallets can be derived from either a seed or a mnemonic and derivation path.
+A wallet is a fundamental model object in Xpring-JS which provides key management, address derivation, and signing functionality. Wallets can be derived from either a seed or a mnemonic and derivation path.
 
 #### Wallet Derivation
 Xpring-JS can derive a wallet from a seed or it can derive a hierarchical deterministic wallet (HDWallet) from a mnemonic and derivation path.
@@ -66,7 +66,7 @@ const seedWallet = Wallet.generateWalletFromSeed("snRiAJGeKCkPVddbjB3zRwiYDBm1M"
 ```
 
 #### Wallet Generation
-XRP-JS can generate a new and random HD Wallet. The result of a wallet generation call is a tuple which contains the following:
+Xpring-JS can generate a new and random HD Wallet. The result of a wallet generation call is a tuple which contains the following:
 - A randomly generated mnemonic
 - The derivation path used, which is the default path
 - A reference to the new wallet
@@ -99,7 +99,7 @@ console.log(wallet.getPrivateKey()); // 0090802A50AA84EFB6CDB225F17C27616EA94048
 
 #### Signing / Verifying
 
-A wallet can also sign and verify arbitrary hex messages. Generally, users should use the functions on XRPClient to perform cryptographic functions rather than using these low level APIs.
+A wallet can also sign and verify arbitrary hex messages. Generally, users should use the functions on `XpringClient` to perform cryptographic functions rather than using these low level APIs.
 
 ```javascript
 const { Wallet } = require("xpringkit-js");
@@ -115,7 +115,7 @@ wallet.verify(message, signature); // true
 
 ### XpringClient
 
-XpringClient is a gateway into the XRP Ledger. XpringClient is initialized with a single parameter, which is the URL of the remote adapter (see: ‘Server Side Component’ section above).
+`XpringClient` is a gateway into the XRP Ledger. `XpringClient` is initialized with a single parameter, which is the URL of the remote adapter (see: ‘Server Side Component’ section above).
 
 ```javascript
 const { XpringClient } = require("xpring-js");
@@ -145,7 +145,7 @@ console.log(balance.drops); // Logs a balance in drops of XRP
 A `XpringClient` can send XRP to other accounts on the ledger.
 
 ```javascript
-const { Wallet, XRPAmount, XRPClient } = require("xpring-js");
+const { Wallet, XRPAmount, XpringClient } = require("xpring-js");
 
 const remoteURL = "grpc.xpring.tech:80";
 const xpringClient = new XpringClient(remoteURL);
@@ -179,7 +179,7 @@ Utils.siValidAddress(bitcoinAddress); // returns false
 ```
 
 ## Development
-To get set up for development on XRP-JS, use the following steps:
+To get set up for development on Xpring-JS, use the following steps:
 
 ```shell
 # Clone repository
