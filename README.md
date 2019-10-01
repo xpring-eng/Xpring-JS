@@ -16,7 +16,7 @@ Xpring-JS provides the following features:
 
 Xpring-JS utilizes two components to access the Xpring Platform:
 1) The Xpring-JS client side library (This library)
-2) A server side component that handles requests from this library and proxies them to an XRP node.
+2) A server side component that handles requests from this library and proxies them to an XRP node
 
 ### Client Side Library
 Xpring-JS is available as an NPM package. Simply install with:
