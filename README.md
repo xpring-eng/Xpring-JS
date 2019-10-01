@@ -183,8 +183,8 @@ To get set up for development on Xpring-JS, use the following steps:
 
 ```shell
 # Clone repository
-$ git clone https://github.com/xpring-eng/xrp-js.git
-$ cd xrp-js
+$ git clone https://github.com/xpring-eng/xpring-js.git
+$ cd xpring-js
 
 # Pull submodules
 $ git submodule init
