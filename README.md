@@ -175,7 +175,7 @@ const rippleAddress = rnysDDrRXxz9z66DmCmfWpq4Z5s4TyUP3G;
 const bitcoinAddress = 1DiqLtKZZviDxccRpowkhVowsbLSNQWBE8;
 
 Utils.isValidAddress(rippleAddress); // returns true
-Utils.siValidAddress(bitcoinAddress); // returns false
+Utils.isValidAddress(bitcoinAddress); // returns false
 ```
 
 ## Development
