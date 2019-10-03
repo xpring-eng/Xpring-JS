@@ -132,9 +132,9 @@ A `XpringClient` can check the balance of an account on the ledger.
 const { XpringClient } = require("xpring-js");
 
 const remoteURL = "grpc.xpring.tech:80";
-const xpringClient = new XpringClient(remoteURL);
+const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
 
-const address = "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3";
+const address = "r3v29rxf54cave7ooQE6eE7G5VFXofKZT7";
 
 const balance = await xpringClient.getBalance(address);
 console.log(balance.drops); // Logs a balance in drops of XRP
@@ -148,13 +148,13 @@ A `XpringClient` can send XRP to other accounts on the ledger.
 const { Wallet, XRPAmount, XpringClient } = require("xpring-js");
 
 const remoteURL = "grpc.xpring.tech:80";
-const xpringClient = new XpringClient(remoteURL);
+const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
 
 // Wallet which will send XRP
 const senderWallet = Wallet.generateRandomWallet();
 
 // Destination address.
-const address = "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3";
+const address = "r3v29rxf54cave7ooQE6eE7G5VFXofKZT7";
 
 // Amount of XRP to send
 const amount = new XRPAmount();
