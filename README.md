@@ -137,7 +137,7 @@ const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
 const address = "r3v29rxf54cave7ooQE6eE7G5VFXofKZT7";
 
 const balance = await xpringClient.getBalance(address);
-console.log(balance.drops); // Logs a balance in drops of XRP
+console.log(balance.getDrops()); // Logs a balance in drops of XRP
 ```
 
 #### Sending XRP
@@ -171,8 +171,8 @@ The Utils object provides an easy way to validate addresses.
 ```javascript
 const { Utils } = require("xpring-js")
 
-const rippleAddress = rnysDDrRXxz9z66DmCmfWpq4Z5s4TyUP3G;
-const bitcoinAddress = 1DiqLtKZZviDxccRpowkhVowsbLSNQWBE8;
+const rippleAddress = "rnysDDrRXxz9z66DmCmfWpq4Z5s4TyUP3G";
+const bitcoinAddress = "1DiqLtKZZviDxccRpowkhVowsbLSNQWBE8";
 
 Utils.isValidAddress(rippleAddress); // returns true
 Utils.isValidAddress(bitcoinAddress); // returns false
