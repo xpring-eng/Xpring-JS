@@ -121,7 +121,7 @@ wallet.verify(message, signature); // true
 const { XpringClient } = require("xpring-js");
 
 const remoteURL = "grpc.xpring.tech:80";
-const xpringClient = new XpringClient(remoteURL);
+const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
 ```
 
 #### Retrieving a Balance
