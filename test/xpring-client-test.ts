@@ -74,9 +74,9 @@ describe("Xpring Client", function(): void {
 
     // WHEN the account makes a transaction.
     const submissionResult = await xpringClient.send(
-      wallet,
       amount,
-      destinationAddress
+      destinationAddress,
+      wallet
     );
 
     // THEN the transaction has a success code attached.
@@ -101,7 +101,7 @@ describe("Xpring Client", function(): void {
     amount.setDrops("10");
 
     // WHEN a payment is attempted THEN an error is propagated.
-    xpringClient.send(wallet, amount, destinationAddress).catch(error => {
+    xpringClient.send(amount, destinationAddress, wallet).catch(error => {
       assert.typeOf(error, "Error");
       assert.equal(
         error.message,
@@ -127,7 +127,7 @@ describe("Xpring Client", function(): void {
     amount.setDrops("10");
 
     // WHEN a payment is attempted THEN an error is propagated.
-    xpringClient.send(wallet, amount, destinationAddress).catch(error => {
+    xpringClient.send(amount, destinationAddress, wallet).catch(error => {
       assert.typeOf(error, "Error");
       assert.equal(
         error.message,
@@ -153,7 +153,7 @@ describe("Xpring Client", function(): void {
     amount.setDrops("10");
 
     // WHEN a payment is attempted THEN an error is propagated.
-    xpringClient.send(wallet, amount, destinationAddress).catch(error => {
+    xpringClient.send(amount, destinationAddress, wallet).catch(error => {
       assert.typeOf(error, "Error");
       assert.equal(
         error.message,
@@ -173,7 +173,7 @@ describe("Xpring Client", function(): void {
     amount.setDrops("10");
 
     // WHEN a payment is attempted THEN an error is propagated.
-    xpringClient.send(wallet, amount, destinationAddress).catch(error => {
+    xpringClient.send(amount, destinationAddress, wallet).catch(error => {
       assert.typeOf(error, "Error");
       assert.startsWith(
         error.message,

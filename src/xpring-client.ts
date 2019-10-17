@@ -73,7 +73,7 @@ class XpringClient {
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    */
   public async send(
-    drops: string,
+    amount: XRPAmount,
     destination: string,
     sender: Wallet
   ): Promise<SubmitSignedTransactionResponse> {
