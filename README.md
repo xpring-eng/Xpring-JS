@@ -1,5 +1,4 @@
-[![CircleCI](https://img.shields.io/circleci/build/github/xpring-eng/Xpring-JS/master?style=flat&token=8f614950de4d2dc800bb51710667bbd90d82dda3)](https://circleci.com/gh/xpring-eng/Xpring-JS)
-[![Coverage](https://coveralls.io/repos/github/xpring-eng/Xpring-JS/badge.svg?branch=master&t=DkDKCV)](https://coveralls.io/github/xpring-eng/Xpring-JS?branch=master)
+[![CircleCI](https://img.shields.io/circleci/build/github/xpring-eng/xpring-js/master?style=flat-square&token=0ed9e0790d44d163a5bf2793724fc85d98c3845b)](https://circleci.com/gh/xpring-eng/xpring-js/tree/master) [![CodeCob](https://img.shields.io/codecov/c/github/xpring-eng/xpring-js/master?style=flat-square&token=08b799e2895a4dd6add40c4621880c1a)]((https://codecov.io/gh/xpring-eng/xpring-js))
 
 # Xpring-JS
 
