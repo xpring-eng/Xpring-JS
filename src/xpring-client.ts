@@ -67,9 +67,9 @@ class XpringClient {
 
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
-   * 
-   * @param drops A numeric string indicating the number of drops to send. 
-   * @param destination A destination address to send the drops to. 
+   *
+   * @param drops A numeric string indicating the number of drops to send.
+   * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    */
   public async send(
