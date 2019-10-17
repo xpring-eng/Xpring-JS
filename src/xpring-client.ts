@@ -50,9 +50,9 @@ class XpringClient {
    * Retrieve the balance for the given address.
    *
    * @param address The address to retrieve a balance for.
-   * @returns The amount of XRP in the account.
+   * @returns A numeric string representing the number of drops of XRP in the account.
    */
-  public async getBalance(address: string): Promise<XRPAmount> {
+  public async getBalance(address: string): Promise<string> {
     return this.getAccountInfo(address).then(async accountInfo => {
       const balance = accountInfo.getBalance();
       if (balance === undefined) {
@@ -61,7 +61,7 @@ class XpringClient {
         );
       }
 
-      return balance;
+      return balance.getDrops();
     });
   }
 

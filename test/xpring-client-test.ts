@@ -30,7 +30,6 @@ describe("Xpring Client", function(): void {
 
     // THEN the balance is returned.
     assert.exists(balance);
-    assert.exists(balance.getDrops());
   });
 
   it("Get Account Balance - error", function(done) {

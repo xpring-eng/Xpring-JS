@@ -27,7 +27,7 @@ describe("Xpring JS Integration Tests", function(): void {
     this.timeout(timeoutMs);
 
     const balance = await xrpClient.getBalance(recipientAddress);
-    assert.exists(balance.getDrops());
+    assert.exists(balance);
   });
 
   it("Send XRP", async function() {
