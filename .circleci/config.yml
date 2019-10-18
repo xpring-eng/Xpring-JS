@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   protobuf: izumin5210/protobuf@0.1.0
+  codecov: codecov/codecov@1.0.4
 jobs:
   build:
     docker:
@@ -20,9 +21,7 @@ jobs:
       - run:
           name: "Install dependencies"
           command: |
-            sudo npm -g i nyc
-            sudo npm -g i coveralls
-            sudo npm -g i grpc-tools
+            sudo npm -g i nyc codecov grpc-tools
             npm i xpring-common-js@latest
       - save_cache:
           paths:
@@ -34,4 +33,7 @@ jobs:
       - run:
           name: Code Coverage
           command: |
-            nyc report --reporter=text-lcov | coveralls
+            mkdir coverage
+            nyc report --reporter=text-lcov > coverage/coverage.json
+            codecov
+
