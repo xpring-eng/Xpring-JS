@@ -149,17 +149,17 @@ const { Wallet, XRPAmount, XpringClient } = require("xpring-js");
 const remoteURL = "grpc.xpring.tech:80";
 const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
 
-// Wallet which will send XRP
-const senderWallet = Wallet.generateRandomWallet();
-
-// Destination address.
-const address = "r3v29rxf54cave7ooQE6eE7G5VFXofKZT7";
-
 // Amount of XRP to send
 const amount = new XRPAmount();
 amount.setDrops("10");
 
-const result = await xpringClient.send(senderWallet, amount, destinationAddress);
+// Destination address.
+const destinationAddress = "r3v29rxf54cave7ooQE6eE7G5VFXofKZT7";
+
+// Wallet which will send XRP
+const senderWallet = Wallet.generateRandomWallet();
+
+const result = await xpringClient.send(amount, destinationAddress, senderWallet);
 ```
 
 ### Utilities

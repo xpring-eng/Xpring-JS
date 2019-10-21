@@ -33,7 +33,7 @@ describe("Xpring JS Integration Tests", function(): void {
   it("Send XRP", async function() {
     this.timeout(timeoutMs);
 
-    const result = await xrpClient.send(wallet, amount, recipientAddress);
+    const result = await xrpClient.send(amount, recipientAddress, wallet);
     assert.exists(result);
   });
 });

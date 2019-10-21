@@ -65,10 +65,17 @@ class XpringClient {
     });
   }
 
+  /**
+   * Send the given amount of XRP from the source wallet to the destination address.
+   *
+   * @param drops A numeric string indicating the number of drops to send.
+   * @param destination A destination address to send the drops to.
+   * @param sender The wallet that XRP will be sent from and which will sign the request.
+   */
   public async send(
-    sender: Wallet,
     amount: XRPAmount,
-    destination: string
+    destination: string,
+    sender: Wallet
   ): Promise<SubmitSignedTransactionResponse> {
     return this.getFee().then(async fee => {
       return this.getAccountInfo(sender.getAddress()).then(
