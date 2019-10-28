@@ -1,6 +1,11 @@
 import { assert } from "chai";
 
-import { Utils, Wallet, WalletGenerationResult, XRPAmount } from "xpring-common-js";
+import {
+  Utils,
+  Wallet,
+  WalletGenerationResult,
+  XRPAmount
+} from "xpring-common-js";
 
 import chai from "chai";
 import chaiString from "chai-string";
@@ -80,7 +85,9 @@ describe("Xpring Client", function(): void {
 
     // THEN the transaction hash exists and is the expected hash
     const expectedTransactionBlob = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse().getTransactionBlob();
-    const expectedTransactionHash = Utils.transactionBlobToTransactionHash(expectedTransactionBlob);
+    const expectedTransactionHash = Utils.transactionBlobToTransactionHash(
+      expectedTransactionBlob
+    );
 
     assert.exists(transactionHash);
     assert.strictEqual(transactionHash, expectedTransactionHash);

@@ -124,9 +124,13 @@ class XpringClient {
             .submitSignedTransaction(submitSignedTransactionRequest)
             .then(async response => {
               const transactionBlob = response.getTransactionBlob();
-              const transactionHash = Utils.transactionBlobToTransactionHash(transactionBlob);
+              const transactionHash = Utils.transactionBlobToTransactionHash(
+                transactionBlob
+              );
               if (!transactionHash) {
-                return Promise.reject(new Error(XpringClientErrorMessages.malformedResponse)) 
+                return Promise.reject(
+                  new Error(XpringClientErrorMessages.malformedResponse)
+                );
               }
               return Promise.resolve(transactionHash);
             });
