@@ -72,12 +72,13 @@ class XpringClient {
    * @param drops A numeric string indicating the number of drops to send.
    * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
     amount: XRPAmount,
     destination: string,
     sender: Wallet
-  ): Promise<SubmitSignedTransactionResponse> {
+  ): Promise<string> {
     return this.getFee().then(async fee => {
       return this.getAccountInfo(sender.getAddress()).then(
         async accountInfo => {
@@ -119,10 +120,16 @@ class XpringClient {
             signedTransaction
           );
 
-          return this.networkClient.submitSignedTransaction(submitSignedTransactionRequest).then(response => {
-            // const transactionHash = Utils.transactionBlobToTransactionHash()
-            return Promise.resolve(response);
-          });
+          return this.networkClient
+            .submitSignedTransaction(submitSignedTransactionRequest)
+            .then(async response => {
+              const transactionBlob = response.getTransactionBlob();
+              const transactionHash = Utils.transactionBlobToTransactionHash(transactionBlob);
+              if (!transactionHash) {
+                return Promise.reject(new Error(XpringClientErrorMessages.malformedResponse)) 
+              }
+              return Promise.resolve(transactionHash);
+            });
         }
       );
     });

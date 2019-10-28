@@ -1,6 +1,6 @@
 import { assert } from "chai";
 
-import { Wallet, WalletGenerationResult, XRPAmount } from "xpring-common-js";
+import { Utils, Wallet, WalletGenerationResult, XRPAmount } from "xpring-common-js";
 
 import chai from "chai";
 import chaiString from "chai-string";
@@ -72,16 +72,18 @@ describe("Xpring Client", function(): void {
     amount.setDrops("10");
 
     // WHEN the account makes a transaction.
-    const submissionResult = await xpringClient.send(
+    const transactionHash = await xpringClient.send(
       amount,
       destinationAddress,
       wallet
     );
 
-    // THEN the transaction has a success code attached.
-    const successCode = 0;
-    assert.exists(submissionResult);
-    assert.equal(submissionResult.getEngineResultCode(), successCode);
+    // THEN the transaction hash exists and is the expected hash
+    const expectedTransactionBlob = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse().getTransactionBlob();
+    const expectedTransactionHash = Utils.transactionBlobToTransactionHash(expectedTransactionBlob);
+
+    assert.exists(transactionHash);
+    assert.strictEqual(transactionHash, expectedTransactionHash);
   });
 
   it("Send XRP Transaction - get fee failure", function(done) {
