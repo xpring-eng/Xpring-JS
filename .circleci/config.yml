@@ -5,7 +5,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: circleci/node:7.10
+      - image: circleci/node:12.11.1
 
     working_directory: ~/repo
 
@@ -36,4 +36,3 @@ jobs:
             mkdir coverage
             nyc report --reporter=text-lcov > coverage/coverage.json
             codecov
-
