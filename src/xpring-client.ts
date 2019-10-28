@@ -5,7 +5,6 @@ import {
   Payment,
   Signer,
   SubmitSignedTransactionRequest,
-  SubmitSignedTransactionResponse,
   Transaction,
   Utils,
   Wallet,
@@ -13,6 +12,8 @@ import {
 } from "xpring-common-js";
 import { NetworkClient } from "./network-client";
 import GRPCNetworkClient from "./grpc-network-client";
+
+/* global BigInt */
 
 /**
  * Error messages from XpringClient.
@@ -51,9 +52,9 @@ class XpringClient {
    * Retrieve the balance for the given address.
    *
    * @param address The address to retrieve a balance for.
-   * @returns A numeric string representing the number of drops of XRP in the account.
+   * @returns A `BigInt` representing the number of drops of XRP in the account.
    */
-  public async getBalance(address: string): Promise<string> {
+  public async getBalance(address: string): Promise<BigInt> {
     return this.getAccountInfo(address).then(async accountInfo => {
       const balance = accountInfo.getBalance();
       if (balance === undefined) {
@@ -62,20 +63,20 @@ class XpringClient {
         );
       }
 
-      return balance.getDrops();
+      return BigInt(balance.getDrops());
     });
   }
 
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
-   * @param drops A numeric string indicating the number of drops to send.
+   * @param drops A `BigInt` representing the number of drops to send.
    * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    amount: XRPAmount,
+    amount: BigInt,
     destination: string,
     sender: Wallet
   ): Promise<string> {
@@ -88,8 +89,11 @@ class XpringClient {
             );
           }
 
+          const xrpAmount = new XRPAmount();
+          xrpAmount.setDrops(amount.toString());
+
           const payment = new Payment();
-          payment.setXrpAmount(amount);
+          payment.setXrpAmount(xrpAmount);
           payment.setDestination(destination);
 
           const transaction = new Transaction();
