@@ -7,6 +7,7 @@ import {
   SubmitSignedTransactionRequest,
   SubmitSignedTransactionResponse,
   Transaction,
+  Utils,
   Wallet,
   XRPAmount
 } from "xpring-common-js";
@@ -118,9 +119,10 @@ class XpringClient {
             signedTransaction
           );
 
-          return this.networkClient.submitSignedTransaction(
-            submitSignedTransactionRequest
-          );
+          return this.networkClient.submitSignedTransaction(submitSignedTransactionRequest).then(response => {
+            // const transactionHash = Utils.transactionBlobToTransactionHash()
+            return Promise.resolve(response);
+          });
         }
       );
     });
