@@ -30,7 +30,7 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      - run: nyc npm test
+      - run: npm rebuild && nyc npm test
 
       - run:
           name: Code Coverage
