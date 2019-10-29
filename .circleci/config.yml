@@ -25,6 +25,7 @@ jobs:
           command: |
             sudo npm -g i nyc codecov
             npm i xpring-common-js@latest
+            npm rebuild
       - save_cache:
           paths:
             - node_modules
