@@ -21,7 +21,7 @@ jobs:
       - run:
           name: "Install dependencies"
           command: |
-            sudo npm -g i nyc codecov grpc-tools
+            sudo npm -g i nyc codecov
             npm i xpring-common-js@latest
       - save_cache:
           paths:
