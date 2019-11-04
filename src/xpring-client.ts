@@ -49,7 +49,7 @@ class XpringClient {
   /**
    * Retrieve the balance for the given address.
    *
-   * @param address The address to retrieve a balance for.
+   * @param address The X-Address to retrieve a balance for.
    * @returns A numeric string representing the number of drops of XRP in the account.
    */
   public async getBalance(address: string): Promise<string> {
