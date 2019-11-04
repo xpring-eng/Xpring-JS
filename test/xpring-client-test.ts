@@ -148,7 +148,7 @@ describe("Xpring Client", function(): void {
     const amount = "not_a_number";
 
     // WHEN the account makes a transaction THEN an error is propagated.
-    const transactionHash = xpringClient
+    xpringClient
       .send(amount, destinationAddress, wallet)
       .catch(error => {
         assert.typeOf(error, "Error");
