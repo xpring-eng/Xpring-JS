@@ -67,7 +67,7 @@ class XpringClient {
     });
   }
 
-  /** eslint-disable no-dupe-class-members */
+  /* eslint-disable no-dupe-class-members */
 
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
@@ -188,6 +188,8 @@ class XpringClient {
       );
     });
   }
+
+  /* eslint-enable no-dupe-class-members */
 
   private async getAccountInfo(address: string): Promise<AccountInfo> {
     const getAccountInfoRequest = new GetAccountInfoRequest();
