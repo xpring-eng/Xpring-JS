@@ -66,7 +66,9 @@ class XpringClient {
       return BigInt(balance.getDrops());
     });
   }
-  
+
+  /** eslint-disable no-dupe-class-members */
+
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
@@ -209,12 +211,12 @@ class XpringClient {
 
   /**
    * Convert a polymorphic numeric value into a BigInt.
-   * 
+   *
    * @param value The value to convert.
-   * @returns A BigInt representing the input value. 
+   * @returns A BigInt representing the input value.
    */
   private toBigInt(value: string | number | BigInt): BigInt {
-    if (typeof value == 'string' || typeof value == 'number') {
+    if (typeof value == "string" || typeof value == "number") {
       return BigInt(value);
     } else {
       // Value is already a BigInt.
