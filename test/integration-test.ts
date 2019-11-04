@@ -4,6 +4,7 @@ import { assert } from "chai";
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+/* global BigInt */
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000; // 1 minute
@@ -19,8 +20,7 @@ const grpcURL = "grpc.xpring.tech:80";
 const xrpClient = XpringClient.xpringClientWithEndpoint(grpcURL);
 
 // Some amount of XRP to send.
-const amount = new XRPAmount();
-amount.setDrops("1");
+const amount = BigInt("1");
 
 describe("Xpring JS Integration Tests", function(): void {
   it("Get Account Balance", async function() {

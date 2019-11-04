@@ -1,6 +1,8 @@
 import { assert } from "chai";
 
-import { Wallet, WalletGenerationResult, XRPAmount } from "xpring-common-js";
+/* global BigInt */
+
+import { Utils, Wallet, WalletGenerationResult } from "xpring-common-js";
 
 import chai from "chai";
 import chaiString from "chai-string";
@@ -62,26 +64,96 @@ describe("Xpring Client", function(): void {
     });
   });
 
-  it("Send XRP Transaction - success", async function() {
-    // GIVEN a XpringClient and a wallet.
+  it("Send XRP Transaction - success with BigInt", async function() {
+    // GIVEN a XpringClient, a wallet, and a BigInt denomonated amount.
     const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
-    const amount = new XRPAmount();
-    amount.setDrops("10");
+    const amount = BigInt("10");
 
     // WHEN the account makes a transaction.
-    const submissionResult = await xpringClient.send(
+    const transactionHash = await xpringClient.send(
       amount,
       destinationAddress,
       wallet
     );
 
-    // THEN the transaction has a success code attached.
-    const successCode = 0;
-    assert.exists(submissionResult);
-    assert.equal(submissionResult.getEngineResultCode(), successCode);
+    // THEN the transaction hash exists and is the expected hash
+    const expectedTransactionBlob = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse().getTransactionBlob();
+    const expectedTransactionHash = Utils.transactionBlobToTransactionHash(
+      expectedTransactionBlob
+    );
+
+    assert.exists(transactionHash);
+    assert.strictEqual(transactionHash, expectedTransactionHash);
+  });
+
+  it("Send XRP Transaction - success with number", async function() {
+    // GIVEN a XpringClient, a wallet, and a number denominated amount.
+    const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
+    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
+      .wallet;
+    const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
+    const amount = 10;
+
+    // WHEN the account makes a transaction.
+    const transactionHash = await xpringClient.send(
+      amount,
+      destinationAddress,
+      wallet
+    );
+
+    // THEN the transaction hash exists and is the expected hash
+    const expectedTransactionBlob = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse().getTransactionBlob();
+    const expectedTransactionHash = Utils.transactionBlobToTransactionHash(
+      expectedTransactionBlob
+    );
+
+    assert.exists(transactionHash);
+    assert.strictEqual(transactionHash, expectedTransactionHash);
+  });
+
+  it("Send XRP Transaction - success with string", async function() {
+    // GIVEN a XpringClient, a wallet, and a numeric string denominated amount.
+    const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
+    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
+      .wallet;
+    const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
+    const amount = "10";
+
+    // WHEN the account makes a transaction.
+    const transactionHash = await xpringClient.send(
+      amount,
+      destinationAddress,
+      wallet
+    );
+
+    // THEN the transaction hash exists and is the expected hash
+    const expectedTransactionBlob = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse().getTransactionBlob();
+    const expectedTransactionHash = Utils.transactionBlobToTransactionHash(
+      expectedTransactionBlob
+    );
+
+    assert.exists(transactionHash);
+    assert.strictEqual(transactionHash, expectedTransactionHash);
+  });
+
+  it("Send XRP Transaction - failure with invalid string", function(done) {
+    // GIVEN a XpringClient, a wallet and an amount that is invalid.
+    const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
+    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
+      .wallet;
+    const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
+    const amount = "not_a_number";
+
+    // WHEN the account makes a transaction THEN an error is propagated.
+    xpringClient
+      .send(amount, destinationAddress, wallet)
+      .catch(error => {
+        assert.typeOf(error, "Error");
+        done();
+      });
   });
 
   it("Send XRP Transaction - get fee failure", function(done) {
@@ -96,8 +168,7 @@ describe("Xpring Client", function(): void {
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
-    const amount = new XRPAmount();
-    amount.setDrops("10");
+    const amount = BigInt("10");
 
     // WHEN a payment is attempted THEN an error is propagated.
     xpringClient.send(amount, destinationAddress, wallet).catch(error => {
@@ -122,8 +193,7 @@ describe("Xpring Client", function(): void {
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
-    const amount = new XRPAmount();
-    amount.setDrops("10");
+    const amount = BigInt("10");
 
     // WHEN a payment is attempted THEN an error is propagated.
     xpringClient.send(amount, destinationAddress, wallet).catch(error => {
@@ -148,8 +218,7 @@ describe("Xpring Client", function(): void {
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
-    const amount = new XRPAmount();
-    amount.setDrops("10");
+    const amount = BigInt("10");
 
     // WHEN a payment is attempted THEN an error is propagated.
     xpringClient.send(amount, destinationAddress, wallet).catch(error => {
@@ -168,8 +237,7 @@ describe("Xpring Client", function(): void {
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress = "invalid_xrp_address";
-    const amount = new XRPAmount();
-    amount.setDrops("10");
+    const amount = BigInt("10");
 
     // WHEN a payment is attempted THEN an error is propagated.
     xpringClient.send(amount, destinationAddress, wallet).catch(error => {

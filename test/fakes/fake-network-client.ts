@@ -93,6 +93,7 @@ export class FakeNetworkClientResponses {
     submitSignedTransactionResponse.setEngineResultMessage(
       "The transaction was applied. Only final in a validated ledger."
     );
+    submitSignedTransactionResponse.setTransactionBlob("DEADBEEF");
 
     return submitSignedTransactionResponse;
   }
