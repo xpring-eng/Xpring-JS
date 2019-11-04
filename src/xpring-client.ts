@@ -5,13 +5,15 @@ import {
   Payment,
   Signer,
   SubmitSignedTransactionRequest,
-  SubmitSignedTransactionResponse,
   Transaction,
+  Utils,
   Wallet,
   XRPAmount
 } from "xpring-common-js";
 import { NetworkClient } from "./network-client";
 import GRPCNetworkClient from "./grpc-network-client";
+
+/* global BigInt */
 
 /**
  * Error messages from XpringClient.
@@ -50,9 +52,9 @@ class XpringClient {
    * Retrieve the balance for the given address.
    *
    * @param address The address to retrieve a balance for.
-   * @returns A numeric string representing the number of drops of XRP in the account.
+   * @returns A `BigInt` representing the number of drops of XRP in the account.
    */
-  public async getBalance(address: string): Promise<string> {
+  public async getBalance(address: string): Promise<BigInt> {
     return this.getAccountInfo(address).then(async accountInfo => {
       const balance = accountInfo.getBalance();
       if (balance === undefined) {
@@ -61,22 +63,69 @@ class XpringClient {
         );
       }
 
-      return balance.getDrops();
+      return BigInt(balance.getDrops());
     });
   }
+
+  /* eslint-disable no-dupe-class-members */
 
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
-   * @param drops A numeric string indicating the number of drops to send.
+   * @param drops A `BigInt` representing the number of drops to send.
    * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    amount: XRPAmount,
+    amount: BigInt,
     destination: string,
     sender: Wallet
-  ): Promise<SubmitSignedTransactionResponse> {
+  ): Promise<string>;
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination address.
+   *
+   * @param drops A numeric string representing the number of drops to send.
+   * @param destination A destination address to send the drops to.
+   * @param sender The wallet that XRP will be sent from and which will sign the request.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  public async send(
+    amount: string,
+    destination: string,
+    sender: Wallet
+  ): Promise<string>;
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination address.
+   *
+   * @param drops A number representing the number of drops to send.
+   * @param destination A destination address to send the drops to.
+   * @param sender The wallet that XRP will be sent from and which will sign the request.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  public async send(
+    amount: number,
+    destination: string,
+    sender: Wallet
+  ): Promise<string>;
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination address.
+   *
+   * @param drops A `BigInt`, number or numeric string representing the number of drops to send.
+   * @param destination A destination address to send the drops to.
+   * @param sender The wallet that XRP will be sent from and which will sign the request.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  public async send(
+    amount: BigInt | number | string,
+    destination: string,
+    sender: Wallet
+  ): Promise<string> {
+    const normalizedAmount = this.toBigInt(amount);
+
     return this.getFee().then(async fee => {
       return this.getAccountInfo(sender.getAddress()).then(
         async accountInfo => {
@@ -86,8 +135,11 @@ class XpringClient {
             );
           }
 
+          const xrpAmount = new XRPAmount();
+          xrpAmount.setDrops(normalizedAmount.toString());
+
           const payment = new Payment();
-          payment.setXrpAmount(amount);
+          payment.setXrpAmount(xrpAmount);
           payment.setDestination(destination);
 
           const transaction = new Transaction();
@@ -118,13 +170,26 @@ class XpringClient {
             signedTransaction
           );
 
-          return this.networkClient.submitSignedTransaction(
-            submitSignedTransactionRequest
-          );
+          return this.networkClient
+            .submitSignedTransaction(submitSignedTransactionRequest)
+            .then(async response => {
+              const transactionBlob = response.getTransactionBlob();
+              const transactionHash = Utils.transactionBlobToTransactionHash(
+                transactionBlob
+              );
+              if (!transactionHash) {
+                return Promise.reject(
+                  new Error(XpringClientErrorMessages.malformedResponse)
+                );
+              }
+              return Promise.resolve(transactionHash);
+            });
         }
       );
     });
   }
+
+  /* eslint-enable no-dupe-class-members */
 
   private async getAccountInfo(address: string): Promise<AccountInfo> {
     const getAccountInfoRequest = new GetAccountInfoRequest();
@@ -144,6 +209,21 @@ class XpringClient {
       }
       return feeAmount;
     });
+  }
+
+  /**
+   * Convert a polymorphic numeric value into a BigInt.
+   *
+   * @param value The value to convert.
+   * @returns A BigInt representing the input value.
+   */
+  private toBigInt(value: string | number | BigInt): BigInt {
+    if (typeof value == "string" || typeof value == "number") {
+      return BigInt(value);
+    } else {
+      // Value is already a BigInt.
+      return value;
+    }
   }
 }
 
