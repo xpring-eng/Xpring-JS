@@ -66,7 +66,7 @@ class XpringClient {
       return BigInt(balance.getDrops());
     });
   }
-
+  
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
@@ -79,7 +79,51 @@ class XpringClient {
     amount: BigInt,
     destination: string,
     sender: Wallet
+  ): Promise<string>;
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination address.
+   *
+   * @param drops A numeric string representing the number of drops to send.
+   * @param destination A destination address to send the drops to.
+   * @param sender The wallet that XRP will be sent from and which will sign the request.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  public async send(
+    amount: string,
+    destination: string,
+    sender: Wallet
+  ): Promise<string>;
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination address.
+   *
+   * @param drops A number representing the number of drops to send.
+   * @param destination A destination address to send the drops to.
+   * @param sender The wallet that XRP will be sent from and which will sign the request.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  public async send(
+    amount: number,
+    destination: string,
+    sender: Wallet
+  ): Promise<string>;
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination address.
+   *
+   * @param drops A `BigInt`, number or numeric string representing the number of drops to send.
+   * @param destination A destination address to send the drops to.
+   * @param sender The wallet that XRP will be sent from and which will sign the request.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  public async send(
+    amount: BigInt | number | string,
+    destination: string,
+    sender: Wallet
   ): Promise<string> {
+    const normalizedAmount = this.toBigInt(amount);
+
     return this.getFee().then(async fee => {
       return this.getAccountInfo(sender.getAddress()).then(
         async accountInfo => {
@@ -90,7 +134,7 @@ class XpringClient {
           }
 
           const xrpAmount = new XRPAmount();
-          xrpAmount.setDrops(amount.toString());
+          xrpAmount.setDrops(normalizedAmount.toString());
 
           const payment = new Payment();
           payment.setXrpAmount(xrpAmount);
@@ -161,6 +205,21 @@ class XpringClient {
       }
       return feeAmount;
     });
+  }
+
+  /**
+   * Convert a polymorphic numeric value into a BigInt.
+   * 
+   * @param value The value to convert.
+   * @returns A BigInt representing the input value. 
+   */
+  private toBigInt(value: string | number | BigInt): BigInt {
+    if (typeof value == 'string' || typeof value == 'number') {
+      return BigInt(value);
+    } else {
+      // Value is already a BigInt.
+      return value;
+    }
   }
 }
 

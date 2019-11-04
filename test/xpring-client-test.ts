@@ -64,8 +64,8 @@ describe("Xpring Client", function(): void {
     });
   });
 
-  it("Send XRP Transaction - success", async function() {
-    // GIVEN a XpringClient and a wallet.
+  it("Send XRP Transaction - success with BigInt", async function() {
+    // GIVEN a XpringClient, a wallet, and a BigInt denomonated amount.
     const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
@@ -87,6 +87,73 @@ describe("Xpring Client", function(): void {
 
     assert.exists(transactionHash);
     assert.strictEqual(transactionHash, expectedTransactionHash);
+  });
+
+  it("Send XRP Transaction - success with number", async function() {
+    // GIVEN a XpringClient, a wallet, and a number denominated amount.
+    const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
+    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
+      .wallet;
+    const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
+    const amount = 10;
+
+    // WHEN the account makes a transaction.
+    const transactionHash = await xpringClient.send(
+      amount,
+      destinationAddress,
+      wallet
+    );
+
+    // THEN the transaction hash exists and is the expected hash
+    const expectedTransactionBlob = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse().getTransactionBlob();
+    const expectedTransactionHash = Utils.transactionBlobToTransactionHash(
+      expectedTransactionBlob
+    );
+
+    assert.exists(transactionHash);
+    assert.strictEqual(transactionHash, expectedTransactionHash);
+  });
+
+  it("Send XRP Transaction - success with string", async function() {
+    // GIVEN a XpringClient, a wallet, and a numeric string denominated amount.
+    const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
+    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
+      .wallet;
+    const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
+    const amount = "10";
+
+    // WHEN the account makes a transaction.
+    const transactionHash = await xpringClient.send(
+      amount,
+      destinationAddress,
+      wallet
+    );
+
+    // THEN the transaction hash exists and is the expected hash
+    const expectedTransactionBlob = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse().getTransactionBlob();
+    const expectedTransactionHash = Utils.transactionBlobToTransactionHash(
+      expectedTransactionBlob
+    );
+
+    assert.exists(transactionHash);
+    assert.strictEqual(transactionHash, expectedTransactionHash);
+  });
+
+  it("Send XRP Transaction - failure with invalid string", function(done) {
+    // GIVEN a XpringClient, a wallet and an amount that is invalid.
+    const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
+    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
+      .wallet;
+    const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
+    const amount = "not_a_number";
+
+    // WHEN the account makes a transaction THEN an error is propagated.
+    const transactionHash = xpringClient
+      .send(amount, destinationAddress, wallet)
+      .catch(error => {
+        assert.typeOf(error, "Error");
+        done();
+      });
   });
 
   it("Send XRP Transaction - get fee failure", function(done) {
