@@ -20,7 +20,7 @@ const fakeErroringNetworkClient = new FakeNetworkClient(
 
 chai.use(chaiString);
 
-const testAddress = "rnJfS9ozTiMXrQPTU53vxAgy9XWo9nGYNh";
+const testAddress = "X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH";
 
 describe("Xpring Client", function(): void {
   it("Get Account Balance - successful response", async function() {
@@ -32,6 +32,19 @@ describe("Xpring Client", function(): void {
 
     // THEN the balance is returned.
     assert.exists(balance);
+  });
+
+  it("Get Account Balance - classic address", function(done) {
+    // GIVEN a XpringClient and a classic address
+    const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
+    const classicAddress = "rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn";
+
+    // WHEN the balance for an account is requested THEN an error to use X-Addresses is thrown.
+    xpringClient.getBalance(classicAddress).catch(error => {
+      assert.typeOf(error, "Error");
+      assert.equal(error.message, XpringClientErrorMessages.xAddressRequired);
+      done();
+    });
   });
 
   it("Get Account Balance - error", function(done) {
@@ -69,7 +82,8 @@ describe("Xpring Client", function(): void {
     const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
-    const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
+    const destinationAddress =
+      "X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH";
     const amount = BigInt("10");
 
     // WHEN the account makes a transaction.
@@ -94,7 +108,8 @@ describe("Xpring Client", function(): void {
     const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
-    const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
+    const destinationAddress =
+      "X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH";
     const amount = 10;
 
     // WHEN the account makes a transaction.
@@ -119,7 +134,8 @@ describe("Xpring Client", function(): void {
     const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
-    const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
+    const destinationAddress =
+      "X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH";
     const amount = "10";
 
     // WHEN the account makes a transaction.
@@ -144,16 +160,15 @@ describe("Xpring Client", function(): void {
     const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
-    const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
+    const destinationAddress =
+      "X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH";
     const amount = "not_a_number";
 
     // WHEN the account makes a transaction THEN an error is propagated.
-    xpringClient
-      .send(amount, destinationAddress, wallet)
-      .catch(error => {
-        assert.typeOf(error, "Error");
-        done();
-      });
+    xpringClient.send(amount, destinationAddress, wallet).catch(error => {
+      assert.typeOf(error, "Error");
+      done();
+    });
   });
 
   it("Send XRP Transaction - get fee failure", function(done) {
@@ -167,7 +182,8 @@ describe("Xpring Client", function(): void {
     const xpringClient = new XpringClient(feeFailingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
-    const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
+    const destinationAddress =
+      "X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH";
     const amount = BigInt("10");
 
     // WHEN a payment is attempted THEN an error is propagated.
@@ -177,6 +193,22 @@ describe("Xpring Client", function(): void {
         error.message,
         FakeNetworkClientResponses.defaultError.message
       );
+      done();
+    });
+  });
+
+  it("Send XRP Transaction - failure with classic address", function(done) {
+    // GIVEN a XpringClient, a wallet, and a classic address as the destination.
+    const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
+    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
+      .wallet;
+    const destinationAddress = "rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn";
+    const amount = BigInt("10");
+
+    // WHEN the account makes a transaction THEN an error is thrown.
+    xpringClient.send(amount, destinationAddress, wallet).catch(error => {
+      assert.typeOf(error, "Error");
+      assert.equal(error.message, XpringClientErrorMessages.xAddressRequired);
       done();
     });
   });
@@ -192,7 +224,8 @@ describe("Xpring Client", function(): void {
     const xpringClient = new XpringClient(feeFailingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
-    const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
+    const destinationAddress =
+      "X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH";
     const amount = BigInt("10");
 
     // WHEN a payment is attempted THEN an error is propagated.
@@ -217,7 +250,8 @@ describe("Xpring Client", function(): void {
     const xpringClient = new XpringClient(feeFailingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
-    const destinationAddress = "rUi8dmUEg8JM5Kc92TWvCcuHdA3Ng3NCe8";
+    const destinationAddress =
+      "X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH";
     const amount = BigInt("10");
 
     // WHEN a payment is attempted THEN an error is propagated.
@@ -226,25 +260,6 @@ describe("Xpring Client", function(): void {
       assert.equal(
         error.message,
         FakeNetworkClientResponses.defaultError.message
-      );
-      done();
-    });
-  });
-
-  it("Send XRP Transaction - failed signing", function(done) {
-    // GIVEN a malformed transaction that cannot be signed.
-    const xpringClient = new XpringClient(fakeSucceedingNetworkClient);
-    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
-      .wallet;
-    const destinationAddress = "invalid_xrp_address";
-    const amount = BigInt("10");
-
-    // WHEN a payment is attempted THEN an error is propagated.
-    xpringClient.send(amount, destinationAddress, wallet).catch(error => {
-      assert.typeOf(error, "Error");
-      assert.startsWith(
-        error.message,
-        XpringClientErrorMessages.signingFailure
       );
       done();
     });
