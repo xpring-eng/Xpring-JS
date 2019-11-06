@@ -1,6 +1,6 @@
 import * as Networking from "./network-client";
 import {
-  XRPLedgerClient,
+  XRPLedgerAPIClient,
   AccountInfo,
   Fee,
   GetAccountInfoRequest,
@@ -14,10 +14,10 @@ import {
  * A GRPC Based network client.
  */
 class GRPCNetworkClient implements Networking.NetworkClient {
-  private readonly grpcClient: XRPLedgerClient;
+  private readonly grpcClient: XRPLedgerAPIClient;
 
   public constructor(grpcURL: string) {
-    this.grpcClient = new XRPLedgerClient(
+    this.grpcClient = new XRPLedgerAPIClient(
       grpcURL,
       grpcCredentials.createInsecure()
     );
