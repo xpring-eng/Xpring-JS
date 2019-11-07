@@ -12,6 +12,7 @@ import {
 } from "xpring-common-js";
 import { NetworkClient } from "./network-client";
 import GRPCNetworkClient from "./grpc-network-client";
+import { utils } from "mocha";
 
 /* global BigInt */
 
@@ -21,7 +22,6 @@ import GRPCNetworkClient from "./grpc-network-client";
 export class XpringClientErrorMessages {
   public static readonly malformedResponse = "Malformed Response.";
   public static readonly signingFailure = "Unable to sign the transaction";
-
   /* eslint-disable  @typescript-eslint/indent */
   public static readonly xAddressRequired =
     "Please use the X-Address format. See: https://xrpaddress.info/.";
