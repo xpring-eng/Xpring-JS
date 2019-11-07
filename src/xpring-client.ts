@@ -12,7 +12,6 @@ import {
 } from "xpring-common-js";
 import { NetworkClient } from "./network-client";
 import GRPCNetworkClient from "./grpc-network-client";
-import { utils } from "mocha";
 
 /* global BigInt */
 
