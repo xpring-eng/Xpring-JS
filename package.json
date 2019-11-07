@@ -32,7 +32,7 @@
     "eslint-config-prettier": "6.0.0",
     "eslint-plugin-import": "2.18.2",
     "eslint-plugin-mocha": "6.0.0",
-    "eslint-plugin-prettier": "3.1.0",
+    "eslint-plugin-prettier": "3.1.1",
     "grpc_tools_node_protoc_ts": "2.5.4",
     "husky": "3.0.2",
     "mocha": "6.2.0",
