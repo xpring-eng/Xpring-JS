@@ -51,9 +51,6 @@
     "typescript-eslint-parser": "22.0.0"
   },
   "dependencies": {
-    "google-protobuf": "3.9.1",
-    "grpc": "1.23.3",
-    "grpc-tools": "1.8.0",
     "xpring-common-js": "1.1.5"
   },
   "nyc": {
