@@ -12,6 +12,7 @@ import {
 } from "xpring-common-js";
 import { NetworkClient } from "./network-client";
 import GRPCNetworkClient from "./grpc-network-client";
+import { utils } from "mocha";
 
 /* global BigInt */
 
@@ -21,6 +22,8 @@ import GRPCNetworkClient from "./grpc-network-client";
 export class XpringClientErrorMessages {
   public static readonly malformedResponse = "Malformed Response.";
   public static readonly signingFailure = "Unable to sign the transaction";
+  public static readonly xAddressRequired =
+  "Please use the X-Address format. See: https://xrpaddress.info/.";
 }
 
 /**
@@ -51,10 +54,16 @@ class XpringClient {
   /**
    * Retrieve the balance for the given address.
    *
-   * @param address The address to retrieve a balance for.
+   * @param address The X-Address to retrieve a balance for.
    * @returns A `BigInt` representing the number of drops of XRP in the account.
    */
   public async getBalance(address: string): Promise<BigInt> {
+    if (!Utils.isValidXAddress(address)) {
+      return Promise.reject(
+        new Error(XpringClientErrorMessages.xAddressRequired)
+      );
+    }
+
     return this.getAccountInfo(address).then(async accountInfo => {
       const balance = accountInfo.getBalance();
       if (balance === undefined) {
@@ -124,6 +133,12 @@ class XpringClient {
     destination: string,
     sender: Wallet
   ): Promise<string> {
+    if (!Utils.isValidXAddress(destination)) {
+      return Promise.reject(
+        new Error(XpringClientErrorMessages.xAddressRequired)
+      );
+    }
+
     const normalizedAmount = this.toBigInt(amount);
 
     return this.getFee().then(async fee => {

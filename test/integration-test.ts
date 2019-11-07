@@ -10,7 +10,7 @@ import { assert } from "chai";
 const timeoutMs = 60 * 1000; // 1 minute
 
 // An address on TestNet that has a balance.
-const recipientAddress = "rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn";
+const recipientAddress = "X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4";
 
 // A wallet with some balance on TestNet.
 const wallet = Wallet.generateWalletFromSeed("snYP7oArxKepd3GPDcrjMsJYiJeJB")!;
