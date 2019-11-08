@@ -13,19 +13,22 @@
     "url": "https://github.com/xpring-eng/Xpring-JS/issues"
   },
   "scripts": {
-    "test": "nyc mocha",
-    "prepublishOnly": "npm test && tsc -d"
+    "clean": "rm -rf ./build",
+    "lint": "eslint **/*.ts",
+    "lint:fix": "eslint **/*.ts --fix",
+    "prepublishOnly": "npm run clean && npm test && tsc -d",
+    "test": "npm run lint && nyc mocha"
   },
-  "files": [
-    "build/**/*"
-  ],
   "homepage": "https://github.com/xpring-eng/Xpring-JS#readme",
   "devDependencies": {
     "@types/chai": "4.2.4",
+    "@types/chai-string": "1.4.2",
+    "@types/google-protobuf": "3.7.1",
     "@types/mocha": "5.2.7",
     "@typescript-eslint/eslint-plugin": "1.13.0",
     "@typescript-eslint/parser": "1.13.0",
     "chai": "4.2.0",
+    "chai-string": "1.5.0",
     "coveralls": "3.0.7",
     "eslint": "5.16.0",
     "eslint-config-airbnb-base": "14.0.0",
@@ -40,6 +43,7 @@
     "nyc": "14.1.1",
     "prettier": "1.18.2",
     "source-map-support": "0.5.16",
+    "typescript": "3.5.3",
     "ts-node": "8.4.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^9.0.0",
@@ -47,20 +51,7 @@
     "typescript-eslint-parser": "22.0.0"
   },
   "dependencies": {
-    "@types/chai-string": "1.4.2",
-    "@types/google-protobuf": "3.7.2",
-    "chai-string": "1.5.0",
-    "google-protobuf": "3.10.0",
-    "grpc": "1.24.2",
-    "grpc-tools": "1.8.0",
-    "mocha": "6.2.2",
-    "typescript": "3.7.2",
     "xpring-common-js": "1.1.5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "eslint **/*.ts --fix && prettier '**/*.ts' --write"
-    }
   },
   "nyc": {
     "extension": [

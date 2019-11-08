@@ -22,8 +22,10 @@ import { utils } from "mocha";
 export class XpringClientErrorMessages {
   public static readonly malformedResponse = "Malformed Response.";
   public static readonly signingFailure = "Unable to sign the transaction";
+  /* eslint-disable  @typescript-eslint/indent */
   public static readonly xAddressRequired =
-  "Please use the X-Address format. See: https://xrpaddress.info/.";
+    "Please use the X-Address format. See: https://xrpaddress.info/.";
+  /* eslint-enable  @typescript-eslint/indent */
 }
 
 /**
