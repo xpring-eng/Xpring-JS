@@ -51,7 +51,7 @@
     "typescript-eslint-parser": "22.0.0"
   },
   "dependencies": {
-    "xpring-common-js": "1.1.5"
+    "xpring-common-js": "1.1.7"
   },
   "nyc": {
     "extension": [
