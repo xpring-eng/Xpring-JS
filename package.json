@@ -50,7 +50,7 @@
     "@types/chai-string": "1.4.2",
     "@types/google-protobuf": "3.7.2",
     "chai-string": "1.5.0",
-    "google-protobuf": "3.9.1",
+    "google-protobuf": "3.10.0",
     "grpc": "1.23.3",
     "grpc-tools": "1.8.0",
     "mocha": "6.2.0",
