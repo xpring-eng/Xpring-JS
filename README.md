@@ -1,6 +1,4 @@
-[![CircleCI](https://img.shields.io/circleci/build/github/xpring-eng/Xpring-JS?style=flat-square)](https://circleci.com/gh/xpring-eng/xpring-js/tree/master) 
-[![CodeCov](https://img.shields.io/codecov/c/github/xpring-eng/xpring-js?style=flat-square)]((https://codecov.io/gh/xpring-eng/xpring-js))
-[![Dependabot Status](https://img.shields.io/static/v1?label=Dependabot&message=enabled&color=success&style=flat-square&logo=dependabot)](https://dependabot.com)
+[![CircleCI](https://img.shields.io/circleci/build/github/xpring-eng/xpring-js/master?style=flat-square)](https://circleci.com/gh/xpring-eng/xpring-js/tree/master) [![CodeCov](https://img.shields.io/codecov/c/github/xpring-eng/xpring-js?style=flat-square)]((https://codecov.io/gh/xpring-eng/xpring-js))
 
 # Xpring-JS
 
@@ -37,9 +35,6 @@ grpc.xpring.tech:80
 Xpring is working on building a zero-config way for XRP node users to deploy and use the adapter as an open-source component of [rippled](https://github.com/ripple/rippled). Watch this space!
 
 ## Usage
-
-*Note*: Xpring SDK only works with X-Addresses. You can learn more about working with X-Addresses in the `Utils` section below and at http://xrpaddress.info.
-
 ### Wallets
 A wallet is a fundamental model object in XpringKit which provides key management, address derivation, and signing functionality. Wallets can be derived from either a seed or a mnemonic and derivation path. You can also choose to generate a new random HD wallet.
 
@@ -138,10 +133,10 @@ const { XpringClient } = require("xpring-js");
 const remoteURL = "grpc.xpring.tech:80";
 const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
 
-const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
+const address = "r3v29rxf54cave7ooQE6eE7G5VFXofKZT7";
 
 const balance = await xpringClient.getBalance(address);
-console.log(balance); // Logs a balance in drops of XRP
+console.log(balance.getDrops()); // Logs a balance in drops of XRP
 ```
 
 #### Sending XRP
@@ -155,15 +150,16 @@ const remoteURL = "grpc.xpring.tech:80";
 const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
 
 // Amount of XRP to send
-const amount = BigInt("10")
+const amount = new XRPAmount();
+amount.setDrops("10");
 
 // Destination address.
-const destinationAddress = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
+const destinationAddress = "r3v29rxf54cave7ooQE6eE7G5VFXofKZT7";
 
 // Wallet which will send XRP
 const senderWallet = Wallet.generateRandomWallet();
 
-const transactionHash = await xpringClient.send(amount, destinationAddress, senderWallet);
+const result = await xpringClient.send(amount, destinationAddress, senderWallet);
 ```
 
 ### Utilities
@@ -174,50 +170,11 @@ The Utils object provides an easy way to validate addresses.
 ```javascript
 const { Utils } = require("xpring-js")
 
-const rippleClassicAddress = "rnysDDrRXxz9z66DmCmfWpq4Z5s4TyUP3G"
-const rippleXAddress = "X7jjQ4d6bz1qmjwxYUsw6gtxSyjYv5iWPqPEjGqqhn9Woti";
+const rippleAddress = "rnysDDrRXxz9z66DmCmfWpq4Z5s4TyUP3G";
 const bitcoinAddress = "1DiqLtKZZviDxccRpowkhVowsbLSNQWBE8";
 
-Utils.isValidAddress(rippleClassicAddress); // returns true
-Utils.isValidAddress(rippleXAddress); // returns true
+Utils.isValidAddress(rippleAddress); // returns true
 Utils.isValidAddress(bitcoinAddress); // returns false
-```
-
-You can also validate if an address is an X-Address or a classic address.
-```javascript
-const { Utils } = require("xpring-js")
-
-const rippleClassicAddress = "rnysDDrRXxz9z66DmCmfWpq4Z5s4TyUP3G"
-const rippleXAddress = "X7jjQ4d6bz1qmjwxYUsw6gtxSyjYv5iWPqPEjGqqhn9Woti";
-const bitcoinAddress = "1DiqLtKZZviDxccRpowkhVowsbLSNQWBE8";
-
-Utils.isValidXAddress(rippleClassicAddress); // returns false
-Utils.isValidXAddress(rippleXAddress); // returns true
-Utils.isValidXAddress(bitcoinAddress); // returns false
-
-Utils.isValidClassicAddress(rippleClassicAddress); // returns true
-Utils.isValidClassicAddress(rippleXAddress); // returns false
-Utils.isValidClassicAddress(bitcoinAddress); // returns false
-```
-
-### X-Address Encoding
-
-You can encode and decode X-Addresses with the SDK. 
-
-```javascript
-const { Utils } = require("xpring-js")
-
-const rippleClassicAddress = "rnysDDrRXxz9z66DmCmfWpq4Z5s4TyUP3G"
-const tag = 12345;
-
-// Encode an X-Address.
-const xAddress = Utils.encodeXAddress(rippleClassicAddress, tag); // X7jjQ4d6bz1qmjwxYUsw6gtxSyjYv5xRB7JM3ht8XC4P45P
-
-// Decode an X-Address.
-const decodedClassicAddress = Utils.decodeXAddress(xAddress);
-
-console.log(decodedClassicAddress.address); // rnysDDrRXxz9z66DmCmfWpq4Z5s4TyUP3G
-console.log(decodedClassicAddress.tag); // 12345
 ```
 
 ## Development
