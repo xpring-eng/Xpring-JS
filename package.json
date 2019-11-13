@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/xpring-eng/Xpring-JS#readme",
   "devDependencies": {
-    "@types/chai": "4.2.4",
+    "@types/chai": "4.2.5",
     "@types/chai-string": "1.4.2",
     "@types/google-protobuf": "3.7.2",
     "@types/mocha": "5.2.7",
