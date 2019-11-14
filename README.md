@@ -1,4 +1,4 @@
-[![CircleCI](https://img.shields.io/circleci/build/github/xpring-eng/Xpring-JS?style=flat-square)](https://circleci.com/gh/xpring-eng/xpring-js/tree/master) 
+[![CircleCI](https://img.shields.io/circleci/build/github/xpring-eng/Xpring-JS?style=flat-square)](https://circleci.com/gh/xpring-eng/xpring-js/tree/master)
 [![CodeCov](https://img.shields.io/codecov/c/github/xpring-eng/xpring-js?style=flat-square)]((https://codecov.io/gh/xpring-eng/xpring-js))
 [![Dependabot Status](https://img.shields.io/static/v1?label=Dependabot&message=enabled&color=success&style=flat-square&logo=dependabot)](https://dependabot.com)
 
@@ -38,7 +38,7 @@ Xpring is working on building a zero-config way for XRP node users to deploy and
 
 ## Usage
 
-*Note*: Xpring SDK only works with X-Addresses. You can learn more about working with X-Addresses in the `Utils` section below and at http://xrpaddress.info.
+**Note:** Xpring SDK only works with the X-Address format. For more information about this format, see the [Utilities section](#utilities) and <http://xrpaddress.info>.
 
 ### Wallets
 A wallet is a fundamental model object in XpringKit which provides key management, address derivation, and signing functionality. Wallets can be derived from either a seed or a mnemonic and derivation path. You can also choose to generate a new random HD wallet.
@@ -202,7 +202,7 @@ Utils.isValidClassicAddress(bitcoinAddress); // returns false
 
 ### X-Address Encoding
 
-You can encode and decode X-Addresses with the SDK. 
+You can encode and decode X-Addresses with the SDK.
 
 ```javascript
 const { Utils } = require("xpring-js")
