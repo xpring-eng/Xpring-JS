@@ -96,7 +96,7 @@ const mnemonic = "abandon abandon abandon abandon abandon abandon abandon abando
 
 const wallet = Wallet.generateWalletFromMnemonic(mnemonic);
 
-console.log(wallet.getAddress()); // rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3
+console.log(wallet.getAddress()); // XVMFQQBMhdouRqhPMuawgBMN1AVFTofPAdRsXG5RkPtUPNQ
 console.log(wallet.getPublicKey()); // 031D68BC1A142E6766B2BDFB006CCFE135EF2E0E2E94ABB5CF5C9AB6104776FBAE
 console.log(wallet.getPrivateKey()); // 0090802A50AA84EFB6CDB225F17C27616EA94048C179142FECF03F4712A07EA7A4
 ```
