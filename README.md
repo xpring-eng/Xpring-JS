@@ -220,31 +220,16 @@ console.log(decodedClassicAddress.address); // rnysDDrRXxz9z66DmCmfWpq4Z5s4TyUP3
 console.log(decodedClassicAddress.tag); // 12345
 ```
 
-## Development
-To get set up for development on Xpring-JS, use the following steps:
+# Contributing
 
-```shell
-# Clone repository
-$ git clone https://github.com/xpring-eng/xpring-js.git
-$ cd xpring-js
+Pull requests are welcome! To get started with building this library and opening pull requests, please see [contributing.md](CONTRIBUTING.md).
 
-# Pull submodules
-$ git submodule init
-$ git submodule update --remote
+Thank you to all the users who have contributed to this library!
 
-# Install Protocol Buffers
-# OSX
-$ brew install protobuf
-# Linux
-$ sudo apt install protobuf-compiler
+<a href="https://github.com/xpring-eng/xpring-js/graphs/contributors">
+  <img src="https://contributors-img.firebaseapp.com/image?repo=xpring-eng/xpring-js" />
+</a>
 
-# Install GRPC
-$ brew tap grpc/grpc
-$ brew install grpc
+# License
 
-# Install required modules.
-$ npm i
-
-# Run tests And generate intermediate code artifacts)
-$ npm test
-```
+Xpring SDK is available under the MIT license. See the [LICENSE](LICENSE) file for more info.
