@@ -7,7 +7,7 @@ import { assert } from "chai";
 /* global BigInt */
 
 // A timeout for these tests.
-const timeoutMs = 60 * 1000; // 1 minute
+const timeoutMs = 120 * 1000; // 1 minute
 
 // An address on TestNet that has a balance.
 const recipientAddress = "X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4";
