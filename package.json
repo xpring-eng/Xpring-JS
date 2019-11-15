@@ -17,7 +17,7 @@
     "lint": "eslint **/*.ts",
     "lint:fix": "eslint **/*.ts --fix",
     "prepublishOnly": "npm run clean && npm test && tsc -d",
-    "test": "nyc mocha"
+    "test": "npm run lint && nyc mocha"
   },
   "homepage": "https://github.com/xpring-eng/Xpring-JS#readme",
   "devDependencies": {

@@ -33,7 +33,7 @@ export class XpringClientErrorMessages {
  * XpringClient is a client which interacts with the Xpring platform.
  */
 class XpringClient {
-  private ledgerSequenceMargin = 10;
+  private ledgerSequenceMargin: number = 10;
 
   /**
    * Create a new XpringClient.
@@ -167,7 +167,7 @@ class XpringClient {
           transaction.setFee(fee);
           transaction.setSequence(accountInfo.getSequence());
           transaction.setPayment(payment);
-          transaction.setLastLedgerSequence(ledgerSequence + 100);
+          transaction.setLastLedgerSequence(ledgerSequence + this.ledgerSequenceMargin);
           transaction.setSigningPublicKeyHex(sender.getPublicKey());
 
           var signedTransaction;

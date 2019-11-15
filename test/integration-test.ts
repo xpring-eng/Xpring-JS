@@ -16,7 +16,7 @@ const recipientAddress = "X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4";
 const wallet = Wallet.generateWalletFromSeed("snYP7oArxKepd3GPDcrjMsJYiJeJB")!;
 
 // The XpringClient that makes requests
-const grpcURL = "127.0.0.1:3002";
+const grpcURL = "grpc.xpring.tech:80";
 const xrpClient = XpringClient.xpringClientWithEndpoint(grpcURL);
 
 // Some amount of XRP to send.
@@ -32,8 +32,6 @@ describe("Xpring JS Integration Tests", function(): void {
 
   it("Send XRP", async function() {
     this.timeout(timeoutMs);
-
-    console.log("hitting " + grpcURL);
 
     const result = await xrpClient.send(amount, recipientAddress, wallet);
     assert.exists(result);
