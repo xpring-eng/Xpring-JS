@@ -2,6 +2,7 @@ import {
   AccountInfo,
   GetAccountInfoRequest,
   GetFeeRequest,
+  GetLatestValidatedLedgerSequenceRequest,
   Payment,
   Signer,
   SubmitSignedTransactionRequest,
@@ -32,6 +33,8 @@ export class XpringClientErrorMessages {
  * XpringClient is a client which interacts with the Xpring platform.
  */
 class XpringClient {
+  private ledgerSequenceMargin = 10;
+
   /**
    * Create a new XpringClient.
    *
@@ -144,8 +147,8 @@ class XpringClient {
     const normalizedAmount = this.toBigInt(amount);
 
     return this.getFee().then(async fee => {
-      return this.getAccountInfo(sender.getAddress()).then(
-        async accountInfo => {
+      return this.getAccountInfo(sender.getAddress()).then(async accountInfo => {
+        return this.getLastValidatedLedgerSequence().then(async ledgerSequence => {
           if (accountInfo.getSequence() == undefined) {
             return Promise.reject(
               new Error(XpringClientErrorMessages.malformedResponse)
@@ -164,6 +167,7 @@ class XpringClient {
           transaction.setFee(fee);
           transaction.setSequence(accountInfo.getSequence());
           transaction.setPayment(payment);
+          transaction.setLastLedgerSequence(ledgerSequence + 100);
           transaction.setSigningPublicKeyHex(sender.getPublicKey());
 
           var signedTransaction;
@@ -201,12 +205,19 @@ class XpringClient {
               }
               return Promise.resolve(transactionHash);
             });
-        }
-      );
+        });
+      });
     });
   }
 
   /* eslint-enable no-dupe-class-members */
+
+  private async getLastValidatedLedgerSequence(): Promise<number> {
+    const getLatestValidatedLedgerSequenceRequest = new GetLatestValidatedLedgerSequenceRequest();
+    const ledgerSequence = await this.networkClient.getLatestValidatedLedgerSequence(getLatestValidatedLedgerSequenceRequest);
+    const index = ledgerSequence.getIndex();
+    return index;
+  }
 
   private async getAccountInfo(address: string): Promise<AccountInfo> {
     const getAccountInfoRequest = new GetAccountInfoRequest();

@@ -6,7 +6,9 @@ import {
   GetFeeRequest,
   SubmitSignedTransactionResponse,
   SubmitSignedTransactionRequest,
-  XRPAmount
+  XRPAmount,
+  GetLatestValidatedLedgerSequenceRequest,
+  LedgerSequence
 } from "xpring-common-js";
 
 /**
@@ -137,5 +139,11 @@ export class FakeNetworkClient implements NetworkClient {
     }
 
     return Promise.resolve(submitSignedTransactionResponse);
+  }
+
+  getLatestValidatedLedgerSequence(
+    _getLatestValidatedLedgerSequenceRequest: GetLatestValidatedLedgerSequenceRequest
+  ): Promise<LedgerSequence> {
+    return Promise.resolve(new LedgerSequence());
   }
 }
