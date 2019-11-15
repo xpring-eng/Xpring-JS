@@ -33,7 +33,8 @@ export class XpringClientErrorMessages {
  * XpringClient is a client which interacts with the Xpring platform.
  */
 class XpringClient {
-  private ledgerSequenceMargin: number = 10;
+  /** A margin to pad the current ledger sequence with when submitting transactions. */
+  private readonly ledgerSequenceMargin: number = 10;
 
   /**
    * Create a new XpringClient.
