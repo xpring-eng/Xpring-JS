@@ -223,8 +223,7 @@ class XpringClient {
     const ledgerSequence = await this.networkClient.getLatestValidatedLedgerSequence(
       getLatestValidatedLedgerSequenceRequest
     );
-    const index = ledgerSequence.getIndex();
-    return index;
+    return ledgerSequence.getIndex();
   }
 
   private async getAccountInfo(address: string): Promise<AccountInfo> {
