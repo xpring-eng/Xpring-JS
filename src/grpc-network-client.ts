@@ -61,7 +61,7 @@ class GRPCNetworkClient implements Networking.NetworkClient {
       this.grpcClient.submitSignedTransaction(
         submitSignedTransactionRequest,
         (error, response): void => {
-          if (error != null || response == null) {
+          if (error !== null || response === null) {
             reject(error);
             return;
           }
