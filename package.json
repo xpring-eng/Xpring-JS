@@ -13,6 +13,7 @@
     "url": "https://github.com/xpring-eng/Xpring-JS/issues"
   },
   "scripts": {
+    "build": "tsc -d",
     "clean": "rm -rf ./build",
     "lint": "eslint **/*.ts",
     "lint:fix": "eslint **/*.ts --fix",
