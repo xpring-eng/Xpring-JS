@@ -239,6 +239,33 @@ describe("Xpring Client", function(): void {
     });
   });
 
+  it("Send XRP Transaction - get latest ledger sequence failure", function(done) {
+    // GIVEN a XpringClient which will fail to retrieve account info.
+    const feeFailureResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
+      FakeNetworkClientResponses.defaultError
+    );
+    const feeFailingNetworkClient = new FakeNetworkClient(feeFailureResponses);
+    const xpringClient = new XpringClient(feeFailingNetworkClient);
+    const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
+      .wallet;
+    const destinationAddress =
+      "X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH";
+    const amount = BigInt("10");
+
+    // WHEN a payment is attempted THEN an error is propagated.
+    xpringClient.send(amount, destinationAddress, wallet).catch(error => {
+      assert.typeOf(error, "Error");
+      assert.equal(
+        error.message,
+        FakeNetworkClientResponses.defaultError.message
+      );
+      done();
+    });
+  });
+
   it("Send XRP Transaction - submission failure", function(done) {
     // GIVEN a XpringClient which will to submit a transaction.
     const feeFailureResponses = new FakeNetworkClientResponses(

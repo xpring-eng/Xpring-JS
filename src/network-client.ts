@@ -4,7 +4,9 @@ import {
   GetAccountInfoRequest,
   GetFeeRequest,
   SubmitSignedTransactionRequest,
-  SubmitSignedTransactionResponse
+  SubmitSignedTransactionResponse,
+  GetLatestValidatedLedgerSequenceRequest,
+  LedgerSequence
 } from "xpring-common-js";
 
 /**
@@ -27,4 +29,7 @@ export interface NetworkClient {
   submitSignedTransaction(
     submitSignedTransactionRequest: SubmitSignedTransactionRequest
   ): Promise<SubmitSignedTransactionResponse>;
+  getLatestValidatedLedgerSequence(
+    getLatestValidatedLedgerSequenceRequest: GetLatestValidatedLedgerSequenceRequest
+  ): Promise<LedgerSequence>;
 }
