@@ -151,7 +151,7 @@ class XpringClient {
         async accountInfo => {
           return this.getLastValidatedLedgerSequence().then(
             async ledgerSequence => {
-              if (accountInfo.getSequence() == undefined) {
+              if (accountInfo.getSequence() === undefined) {
                 return Promise.reject(
                   new Error(XpringClientErrorMessages.malformedResponse)
                 );
