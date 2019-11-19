@@ -2,6 +2,7 @@ import {
   AccountInfo,
   GetAccountInfoRequest,
   GetFeeRequest,
+  GetLatestValidatedLedgerSequenceRequest,
   Payment,
   Signer,
   SubmitSignedTransactionRequest,
@@ -12,7 +13,6 @@ import {
 } from "xpring-common-js";
 import { NetworkClient } from "./network-client";
 import GRPCNetworkClient from "./grpc-network-client";
-import { utils } from "mocha";
 
 /* global BigInt */
 
@@ -27,6 +27,9 @@ export class XpringClientErrorMessages {
     "Please use the X-Address format. See: https://xrpaddress.info/.";
   /* eslint-enable  @typescript-eslint/indent */
 }
+
+/** A margin to pad the current ledger sequence with when submitting transactions. */
+const ledgerSequenceMargin = 10;
 
 /**
  * XpringClient is a client which interacts with the Xpring platform.
@@ -146,67 +149,82 @@ class XpringClient {
     return this.getFee().then(async fee => {
       return this.getAccountInfo(sender.getAddress()).then(
         async accountInfo => {
-          if (accountInfo.getSequence() == undefined) {
-            return Promise.reject(
-              new Error(XpringClientErrorMessages.malformedResponse)
-            );
-          }
-
-          const xrpAmount = new XRPAmount();
-          xrpAmount.setDrops(normalizedAmount.toString());
-
-          const payment = new Payment();
-          payment.setXrpAmount(xrpAmount);
-          payment.setDestination(destination);
-
-          const transaction = new Transaction();
-          transaction.setAccount(sender.getAddress());
-          transaction.setFee(fee);
-          transaction.setSequence(accountInfo.getSequence());
-          transaction.setPayment(payment);
-          transaction.setSigningPublicKeyHex(sender.getPublicKey());
-
-          var signedTransaction;
-          try {
-            signedTransaction = Signer.signTransaction(transaction, sender);
-          } catch (signingError) {
-            const signingErrorMessage =
-              XpringClientErrorMessages.signingFailure +
-              ". " +
-              signingError.message;
-            return Promise.reject(new Error(signingErrorMessage));
-          }
-          if (signedTransaction == undefined) {
-            return Promise.reject(
-              new Error(XpringClientErrorMessages.signingFailure)
-            );
-          }
-
-          const submitSignedTransactionRequest = new SubmitSignedTransactionRequest();
-          submitSignedTransactionRequest.setSignedTransaction(
-            signedTransaction
-          );
-
-          return this.networkClient
-            .submitSignedTransaction(submitSignedTransactionRequest)
-            .then(async response => {
-              const transactionBlob = response.getTransactionBlob();
-              const transactionHash = Utils.transactionBlobToTransactionHash(
-                transactionBlob
-              );
-              if (!transactionHash) {
+          return this.getLastValidatedLedgerSequence().then(
+            async ledgerSequence => {
+              if (accountInfo.getSequence() === undefined) {
                 return Promise.reject(
                   new Error(XpringClientErrorMessages.malformedResponse)
                 );
               }
-              return Promise.resolve(transactionHash);
-            });
+
+              const xrpAmount = new XRPAmount();
+              xrpAmount.setDrops(normalizedAmount.toString());
+
+              const payment = new Payment();
+              payment.setXrpAmount(xrpAmount);
+              payment.setDestination(destination);
+
+              const transaction = new Transaction();
+              transaction.setAccount(sender.getAddress());
+              transaction.setFee(fee);
+              transaction.setSequence(accountInfo.getSequence());
+              transaction.setPayment(payment);
+              transaction.setLastLedgerSequence(
+                ledgerSequence + ledgerSequenceMargin
+              );
+              transaction.setSigningPublicKeyHex(sender.getPublicKey());
+
+              var signedTransaction;
+              try {
+                signedTransaction = Signer.signTransaction(transaction, sender);
+              } catch (signingError) {
+                const signingErrorMessage =
+                  XpringClientErrorMessages.signingFailure +
+                  ". " +
+                  signingError.message;
+                return Promise.reject(new Error(signingErrorMessage));
+              }
+              if (signedTransaction == undefined) {
+                return Promise.reject(
+                  new Error(XpringClientErrorMessages.signingFailure)
+                );
+              }
+
+              const submitSignedTransactionRequest = new SubmitSignedTransactionRequest();
+              submitSignedTransactionRequest.setSignedTransaction(
+                signedTransaction
+              );
+
+              return this.networkClient
+                .submitSignedTransaction(submitSignedTransactionRequest)
+                .then(async response => {
+                  const transactionBlob = response.getTransactionBlob();
+                  const transactionHash = Utils.transactionBlobToTransactionHash(
+                    transactionBlob
+                  );
+                  if (!transactionHash) {
+                    return Promise.reject(
+                      new Error(XpringClientErrorMessages.malformedResponse)
+                    );
+                  }
+                  return Promise.resolve(transactionHash);
+                });
+            }
+          );
         }
       );
     });
   }
 
   /* eslint-enable no-dupe-class-members */
+
+  private async getLastValidatedLedgerSequence(): Promise<number> {
+    const getLatestValidatedLedgerSequenceRequest = new GetLatestValidatedLedgerSequenceRequest();
+    const ledgerSequence = await this.networkClient.getLatestValidatedLedgerSequence(
+      getLatestValidatedLedgerSequenceRequest
+    );
+    return ledgerSequence.getIndex();
+  }
 
   private async getAccountInfo(address: string): Promise<AccountInfo> {
     const getAccountInfoRequest = new GetAccountInfoRequest();
