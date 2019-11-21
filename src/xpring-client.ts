@@ -7,12 +7,14 @@ import {
   Signer,
   SubmitSignedTransactionRequest,
   Transaction,
+  GetTransactionStatusRequest,
   Utils,
   Wallet,
   XRPAmount
 } from "xpring-common-js";
 import { NetworkClient } from "./network-client";
 import GRPCNetworkClient from "./grpc-network-client";
+import TransactionStatus from "./transaction-status";
 
 /* global BigInt */
 
@@ -28,7 +30,7 @@ export class XpringClientErrorMessages {
   /* eslint-enable  @typescript-eslint/indent */
 }
 
-/** A margin to pad the current ledger sequence with when submitting transactions. */
+/** A margin to pad the current ledger seqnuence with when submitting transactions. */
 const ledgerSequenceMargin = 10;
 
 /**
@@ -79,6 +81,32 @@ class XpringClient {
 
       return BigInt(balance.getDrops());
     });
+  }
+
+  /**
+   * Retrieve the transaction status for a given transaction hash.
+   *
+   * @param transactionHash The hash of the transaction.
+   * @returns The status of the given transaction.
+   */
+  public async getTransactionStatus(
+    transactionHash: string
+  ): Promise<TransactionStatus> {
+    const transactionStatusRequest = new GetTransactionStatusRequest();
+    transactionStatusRequest.setTransactionHash(transactionHash);
+
+    const transactionStatus = await this.networkClient.getTransactionStatus(
+      transactionStatusRequest
+    );
+
+    // Return pending if the transaction is not validated.
+    if (!transactionStatus.getValidated()) {
+      return TransactionStatus.Pending;
+    }
+
+    return transactionStatus.getTransactionStatusCode().startsWith("tes")
+      ? TransactionStatus.Succeeded
+      : TransactionStatus.Failed;
   }
 
   /* eslint-disable no-dupe-class-members */
