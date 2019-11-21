@@ -1,4 +1,4 @@
-import { Wallet, XRPAmount } from "xpring-common-js";
+import { Wallet } from "xpring-common-js";
 import XpringClient from "../src/xpring-client";
 import { assert } from "chai";
 
@@ -17,7 +17,7 @@ const wallet = Wallet.generateWalletFromSeed("snYP7oArxKepd3GPDcrjMsJYiJeJB")!;
 
 // The XpringClient that makes requests
 const grpcURL = "grpc.xpring.tech:80";
-const xrpClient = XpringClient.xpringClientWithEndpoint(grpcURL);
+const xrpClient = new XpringClient(grpcURL);
 
 // Some amount of XRP to send.
 const amount = BigInt("1");
