@@ -8,7 +8,9 @@ import {
   SubmitSignedTransactionRequest,
   XRPAmount,
   GetLatestValidatedLedgerSequenceRequest,
-  LedgerSequence
+  LedgerSequence,
+  GetTransactionStatusRequest,
+  TransactionStatus
 } from "xpring-common-js";
 
 /**
@@ -37,6 +39,7 @@ export class FakeNetworkClientResponses {
     FakeNetworkClientResponses.defaultError,
     FakeNetworkClientResponses.defaultError,
     FakeNetworkClientResponses.defaultError,
+    FakeNetworkClientResponses.defaultError,
     FakeNetworkClientResponses.defaultError
   );
 
@@ -46,7 +49,8 @@ export class FakeNetworkClientResponses {
    * @param getAccountInfoResponse The response or error that will be returned from the getAccountInfo request. Default is the default account info response.
    * @param getFeeResponse The response or error that will be returned from the getFee request. Defaults to the default fee response.
    * @param submitSignedTransactionResponse The response or error that will be returned from the submitSignedTransaction request. Defaults to the default submit signed transaction response.
-   * @param getLatestValidatedLedgerSequenceResponse The response or error that will be returned from the getLatestValidatedLedgerRequest. Defaults to the default ledger sequence response.
+   * @param getLatestValidatedLedgerSequenceResponse The response or error that will be returned from the getLatestValidatedLedger request. Defaults to the default ledger sequence response.
+   * @param getTransactionStatusResponse The response or error that will be returned from the getTransactionStatus request. Defaults to the default transaction status response.
    */
   public constructor(
     public readonly getAccountInfoResponse: Response<
@@ -58,7 +62,8 @@ export class FakeNetworkClientResponses {
     public readonly submitSignedTransactionResponse: Response<
       SubmitSignedTransactionResponse
     > = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
-    public readonly getLatestValidatedLedgerSequenceResponse: Response<LedgerSequence> = FakeNetworkClientResponses.defaultLedgerSequenceResponse()
+    public readonly getLatestValidatedLedgerSequenceResponse: Response<LedgerSequence> = FakeNetworkClientResponses.defaultLedgerSequenceResponse(),
+    public readonly getTransactionStatusResponse: Response<TransactionStatus> = FakeNetworkClientResponses.defaultTransactionStatusResponse()
   ) {}
 
   /**
@@ -111,6 +116,17 @@ export class FakeNetworkClientResponses {
 
     return ledgerSequence;
   }
+
+  /**
+   * Construct a default Transaction status response.
+   */
+  public static defaultTransactionStatusResponse(): TransactionStatus {
+    const transactionStatus = new TransactionStatus();
+    transactionStatus.setValidated(true);
+    transactionStatus.setTransactionStatusCode("tesSUCCESS");
+
+    return transactionStatus;
+  }
 }
 
 /**
@@ -161,5 +177,15 @@ export class FakeNetworkClient implements NetworkClient {
       return Promise.reject(ledgerSequenceResponse);
     }
 
-    return Promise.resolve(ledgerSequenceResponse);  }
+    return Promise.resolve(ledgerSequenceResponse);  
+  }
+
+  getTransactionStatus( _getTransactionStatusRequest: GetTransactionStatusRequest): Promise<TransactionStatus> {
+    const transactionStatusResponse = this.responses.getTransactionStatusResponse;
+    if (transactionStatusResponse instanceof Error) {
+      return Promise.reject(transactionStatusResponse);
+    }
+
+    return Promise.resolve(transactionStatusResponse);
+  }
 }

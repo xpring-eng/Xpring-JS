@@ -9,7 +9,9 @@ import {
   SubmitSignedTransactionResponse,
   grpcCredentials,
   GetLatestValidatedLedgerSequenceRequest,
-  LedgerSequence
+  LedgerSequence,
+  GetTransactionStatusRequest,
+  TransactionStatus
 } from "xpring-common-js";
 
 /**
@@ -77,6 +79,23 @@ class GRPCNetworkClient implements Networking.NetworkClient {
     return new Promise((resolve, reject): void => {
       this.grpcClient.getLatestValidatedLedgerSequence(
         getLatestValidatedLedgerSequenceRequest,
+        (error, response): void => {
+          if (error != null || response == null) {
+            reject(error);
+            return;
+          }
+          resolve(response);
+        }
+      );
+    });
+  }
+
+  public async getTransactionStatus(
+    getTransactionStatusRequest: GetTransactionStatusRequest
+  ): Promise<TransactionStatus> {
+    return new Promise((resolve, reject): void => {
+      this.grpcClient.getTransactionStatus(
+        getTransactionStatusRequest,
         (error, response): void => {
           if (error != null || response == null) {
             reject(error);
