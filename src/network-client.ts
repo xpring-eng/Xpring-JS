@@ -6,7 +6,9 @@ import {
   SubmitSignedTransactionRequest,
   SubmitSignedTransactionResponse,
   GetLatestValidatedLedgerSequenceRequest,
-  LedgerSequence
+  LedgerSequence,
+  GetTransactionStatusRequest,
+  TransactionStatus
 } from "xpring-common-js";
 
 /**
@@ -32,4 +34,7 @@ export interface NetworkClient {
   getLatestValidatedLedgerSequence(
     getLatestValidatedLedgerSequenceRequest: GetLatestValidatedLedgerSequenceRequest
   ): Promise<LedgerSequence>;
+  getTransactionStatus(
+    getTransactionStatusRequest: GetTransactionStatusRequest
+  ): Promise<TransactionStatus>;
 }

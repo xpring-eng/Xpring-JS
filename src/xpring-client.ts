@@ -1,6 +1,7 @@
 import { Wallet } from "xpring-common-js";
 import { XpringClientDecorator } from "./xpring-client-decorator";
 import DefaultXpringClient from "./default-xpring-client";
+import TransactionStatus from "./transaction-status";
 
 /* global BigInt */
 
@@ -31,6 +32,18 @@ class XpringClient implements XpringClientDecorator {
    */
   public async getBalance(address: string): Promise<BigInt> {
     return await this.decoratedClient.getBalance(address);
+  }
+
+  /**
+   * Retrieve the transaction status for a given transaction hash.
+   *
+   * @param transactionHash The hash of the transaction.
+   * @returns The status of the given transaction.
+   */
+  public async getTransactionStatus(
+    transactionHash: string
+  ): Promise<TransactionStatus> {
+    return await this.decoratedClient.getTransactionStatus(transactionHash);
   }
 
   /**

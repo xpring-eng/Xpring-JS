@@ -3,6 +3,7 @@ import {
   GetAccountInfoRequest,
   GetFeeRequest,
   GetLatestValidatedLedgerSequenceRequest,
+  GetTransactionStatusRequest,
   Payment,
   Signer,
   SubmitSignedTransactionRequest,
@@ -14,6 +15,7 @@ import {
 import { NetworkClient } from "./network-client";
 import GRPCNetworkClient from "./grpc-network-client";
 import { XpringClientDecorator } from "./xpring-client-decorator";
+import TransactionStatus from "./transaction-status";
 
 /* global BigInt */
 
@@ -82,6 +84,32 @@ class DefaultXpringClient implements XpringClientDecorator {
 
       return BigInt(balance.getDrops());
     });
+  }
+
+  /**
+   * Retrieve the transaction status for a given transaction hash.
+   *
+   * @param transactionHash The hash of the transaction.
+   * @returns The status of the given transaction.
+   */
+  public async getTransactionStatus(
+    transactionHash: string
+  ): Promise<TransactionStatus> {
+    const transactionStatusRequest = new GetTransactionStatusRequest();
+    transactionStatusRequest.setTransactionHash(transactionHash);
+
+    const transactionStatus = await this.networkClient.getTransactionStatus(
+      transactionStatusRequest
+    );
+
+    // Return pending if the transaction is not validated.
+    if (!transactionStatus.getValidated()) {
+      return TransactionStatus.Pending;
+    }
+
+    return transactionStatus.getTransactionStatusCode().startsWith("tes")
+      ? TransactionStatus.Succeeded
+      : TransactionStatus.Failed;
   }
 
   /* eslint-disable no-dupe-class-members */

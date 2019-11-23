@@ -1,3 +1,4 @@
+import TransactionStatus from "./transaction-status";
 import { Wallet } from "xpring-common-js";
 
 /** A decorator interface for XpringClients. */
@@ -10,6 +11,14 @@ export interface XpringClientDecorator {
    */
 
   getBalance(address: string): Promise<BigInt>;
+
+  /**
+   * Retrieve the transaction status for a given transaction hash.
+   *
+   * @param transactionHash The hash of the transaction.
+   * @returns The status of the given transaction.
+   */
+  getTransactionStatus(transactionHash: string): Promise<TransactionStatus>;
 
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
