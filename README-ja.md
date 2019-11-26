@@ -2,54 +2,52 @@
 [![CodeCov](https://img.shields.io/codecov/c/github/xpring-eng/xpring-js?style=flat-square)]((https://codecov.io/gh/xpring-eng/xpring-js))
 [![Dependabot Status](https://img.shields.io/static/v1?label=Dependabot&message=enabled&color=success&style=flat-square&logo=dependabot)](https://dependabot.com)
 
-*Read this in other languages: [日本語](README-ja.md).*
-
 # Xpring-JS
 
-Xpring-JS is the JavaScript client side library of the Xpring SDK.
+Xpring-JSは、Xpring SDKのJavaScriptクライアント側ライブラリです。
 
-## Features
-Xpring-JS provides the following features:
-- Wallet generation and derivation (Seed or HD Wallet based)
-- Address validation
-- Account balance retrieval
-- Sending XRP payments
+## 機能
+Xpring-JSは次の機能を提供します。
+- ウォレットの生成と派生（シードまたはHDウォレットベース）
+- アドレス検証
+- アカウントバランスの取得
+- XRP支払いの送信
 
-## Installation
+## インストレーション
 
-Xpring-JS utilizes two components to access the Xpring Platform:
-1) The Xpring-JS client side library (This library)
-2) A server side component that handles requests from this library and proxies them to an XRP node
+Xpring-JSは、2つのコンポーネントを使用してXpringプラットフォームにアクセスします。
+1) Xpring-JSクライアント側ライブラリ（このライブラリ）
+2) このライブラリからのリクエストを処理し、XRPノードにプロキシするサーバー側コンポーネント
 
-### Client Side Library
-Xpring-JS is available as an NPM package. Simply install with:
+### クライアント側ライブラリ
+Xpring-JSはNPMパッケージとして利用できます。次のようにインストールしてください：
 
 ```shell
 $ npm i xpring-js
 ```
 
-### Server Side Component
-The server side component sends client-side requests to an XRP Node.
+### サーバー側コンポーネント
+サーバー側コンポーネントは、クライアント側のリクエストをXRPノードに送信します。
 
-To get developers started right away, Xpring currently provides the server side component as a hosted service, which proxies requests from client side libraries to a a hosted XRP Node. Developers can reach the endpoint at:
+開発者がすぐに開発を開始できるように, Xpringは現在、サーバー側コンポーネントをホスト型サービスとして提供し、クライアント側ライブラリからのリクエストをXRPノードにプロキシします。開発者は次のエンドポイントに到達できます:
 ```
 grpc.xpring.tech:80
 ```
 
-Xpring is working on building a zero-config way for XRP node users to deploy and use the adapter as an open-source component of [rippled](https://github.com/ripple/rippled). Watch this space!
+Xpringは、XRPノードユーザーが[rippled]（https://github.com/ripple/rippled）のオープンソースコンポーネントとしてアダプターを展開および使用するためのゼロコンフィグの方法の構築に取り組んでいます。乞うご期待！
 
-## Usage
+## 使用方法
 
-**Note:** Xpring SDK only works with the X-Address format. For more information about this format, see the [Utilities section](#utilities) and <http://xrpaddress.info>.
+**注意:** Xpring SDKはX-Addressフォーマットでのみ動作します。このフォーマットの詳細については、[Utilities section]（＃utilities）および<http://xrpaddress.info>を参照してください。
 
-### Wallets
-A wallet is a fundamental model object in XpringKit which provides key management, address derivation, and signing functionality. Wallets can be derived from either a seed or a mnemonic and derivation path. You can also choose to generate a new random HD wallet.
+### ウォレット
+ウォレットは、鍵の管理、アドレスの導出、および署名機能を提供するXpringKitの基本的なモデルオブジェクトです。 ウォレットは、シードまたはニーモニック、および導出パスから導出できます。新しいランダムHDウォレットを生成することもできます。
 
-#### Wallet Derivation
-Xpring-JS can derive a wallet from a seed or it can derive a hierarchical deterministic wallet (HDWallet) from a mnemonic and derivation path.
+#### ウォレットの導出
+Xpring-JSは、シードからウォレットを導出させるか、ニーモニックおよび導出パスから階層的な決定性ウォレット（HDWallet）を導出させることができます。
 
-##### Hierarchical Deterministic Wallets
-A hierarchical deterministic wallet is created using a mnemonic and a derivation path. Simply pass the mnemonic and derivation path to the wallet generation function. Note that you can omit the derivation path and have a default path be used instead.
+##### 階層的決定性ウォレット
+ニーモニックと導出パスを使用して、階層的な決定性ウォレットが作成されます。ニーモニックと導出パスをウォレット生成関数に渡すだけです。導出パスを省略し、代わりにデフォルトのパスを使用できることにも注目です。
 
 ```javascript
 const { Wallet } = require("xpring-js");
@@ -62,20 +60,19 @@ const hdWallet2 = Wallet.generateWalletFromMnemonic(mnemonic, Wallet.getDefaultD
 const hdWallet = Wallet.generateWalletFromMnemonic(mnemonic, "m/44'/144'/0'/0/1"); // Wallet with custom derivation path.
 ```
 
-##### Seed Based Wallets
-You can construct a seed based wallet by passing a base58check encoded seed string.
-
+##### シードベースのウォレット
+base58checkでエンコードされたシード文字列を渡すことで、シードベースのウォレットを構築できます。
 ```javascript
 const { Wallet } = require("xpring-js");
 
 const seedWallet = Wallet.generateWalletFromSeed("snRiAJGeKCkPVddbjB3zRwiYDBm1M");
 ```
 
-#### Wallet Generation
-Xpring-JS can generate a new and random HD Wallet. The result of a wallet generation call is a tuple which contains the following:
-- A randomly generated mnemonic
-- The derivation path used, which is the default path
-- A reference to the new wallet
+#### ウォレットの生成
+Xpring-JSは、新しいランダムなHD Walletを生成できます。ウォレット生成の呼び出しの結果は、次を含むタプルです:
+- ランダムに生成されたニーモニック
+- 使用された導出パス、これはデフォルトのパスです
+- 新しいウォレットへの参照
 
 ```javascript
 const { Wallet } = require("xpring-js");
@@ -88,8 +85,8 @@ const newWallet = generationResult.wallet
 const copyOfNewWallet = Wallet.generateWalletFromMnemonic(generationResult.mnemonic, generationResult.derivationPath)
 ```
 
-#### Wallet Properties
-A generated wallet can provide its public key, private key, and address on the XRP ledger.
+#### ウォレットのプロパティ
+生成されたウォレットは、XRPレジャー上で公開鍵、秘密鍵、およびアドレスを提供できます。
 
 ```javascript
 const { Wallet } = require("xpring-js");
@@ -103,9 +100,9 @@ console.log(wallet.getPublicKey()); // 031D68BC1A142E6766B2BDFB006CCFE135EF2E0E2
 console.log(wallet.getPrivateKey()); // 0090802A50AA84EFB6CDB225F17C27616EA94048C179142FECF03F4712A07EA7A4
 ```
 
-#### Signing / Verifying
+#### 署名/検証
 
-A wallet can also sign and verify arbitrary hex messages. Generally, users should use the functions on `XpringClient` to perform cryptographic functions rather than using these low level APIs.
+ウォレットは、任意の16進数のメッセージに署名して検証することもできます。一般的に、ユーザーはこれらの低レベルAPIは使用せずに、 `XpringClient`上の暗号化機能を実行しなければなりません。
 
 ```javascript
 const { Wallet } = require("xpringkit-js");
@@ -121,7 +118,7 @@ wallet.verify(message, signature); // true
 
 ### XpringClient
 
-`XpringClient` is a gateway into the XRP Ledger. `XpringClient` is initialized with a single parameter, which is the URL of the remote adapter (see: ‘Server Side Component’ section above).
+「XpringClient」はXRPレジャーへのゲートウェイです。 「XpringClient」は、リモートアダプターのURLである単一のパラメーターで初期化されます（上記の「サーバー側コンポーネント」セクションを参照）。
 
 ```javascript
 const { XpringClient } = require("xpring-js");
@@ -130,9 +127,9 @@ const remoteURL = "grpc.xpring.tech:80";
 const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
 ```
 
-#### Retrieving a Balance
+#### 口座残高の取得
 
-A `XpringClient` can check the balance of an account on the ledger.
+「XpringClient」は、レジャーのアカウントの残高を確認できます。
 
 ```javascript
 const { XpringClient } = require("xpring-js");
@@ -146,9 +143,9 @@ const balance = await xpringClient.getBalance(address);
 console.log(balance); // Logs a balance in drops of XRP
 ```
 
-#### Sending XRP
+#### XRPの送信
 
-A `XpringClient` can send XRP to other accounts on the ledger.
+「XpringClient」は、レジャー上の他のアカウント宛にXRPを送信できます。
 
 ```javascript
 const { Wallet, XRPAmount, XpringClient } = require("xpring-js");
@@ -168,10 +165,10 @@ const senderWallet = Wallet.generateRandomWallet();
 const transactionHash = await xpringClient.send(amount, destinationAddress, senderWallet);
 ```
 
-### Utilities
-#### Address validation
+### ユーティリティー
+#### アドレスの検証
 
-The Utils object provides an easy way to validate addresses.
+Utils オブジェクトはアドレス検証のための簡単な方法を提供します。
 
 ```javascript
 const { Utils } = require("xpring-js")
@@ -185,7 +182,7 @@ Utils.isValidAddress(rippleXAddress); // returns true
 Utils.isValidAddress(bitcoinAddress); // returns false
 ```
 
-You can also validate if an address is an X-Address or a classic address.
+また、アドレスがX-Addressなのかクラシックアドレスなのかを検証することもできます。
 ```javascript
 const { Utils } = require("xpring-js")
 
@@ -202,9 +199,9 @@ Utils.isValidClassicAddress(rippleXAddress); // returns false
 Utils.isValidClassicAddress(bitcoinAddress); // returns false
 ```
 
-### X-Address Encoding
+### X-Address エンコーディング
 
-You can encode and decode X-Addresses with the SDK.
+SDKを使用してX-Addressをエンコードおよびデコードできます。
 
 ```javascript
 const { Utils } = require("xpring-js")
@@ -222,16 +219,16 @@ console.log(decodedClassicAddress.address); // rnysDDrRXxz9z66DmCmfWpq4Z5s4TyUP3
 console.log(decodedClassicAddress.tag); // 12345
 ```
 
-# Contributing
+# コントリビューティング
 
-Pull requests are welcome! To get started with building this library and opening pull requests, please see [contributing.md](CONTRIBUTING.md).
+プルリクエストは大歓迎です！このライブラリを構築し、プルリクエストをオープンにしていく際には、[contributing.md]（CONTRIBUTING.md）を参照してください。
 
-Thank you to all the users who have contributed to this library!
+このライブラリに貢献していただいているすべてのユーザーに感謝します！
 
 <a href="https://github.com/xpring-eng/xpring-js/graphs/contributors">
   <img src="https://contributors-img.firebaseapp.com/image?repo=xpring-eng/xpring-js" />
 </a>
 
-# License
+# ライセンス
 
-Xpring SDK is available under the MIT license. See the [LICENSE](LICENSE) file for more info.
+Xpring SDKはMITライセンスの下で利用可能です。詳細については、[LICENSE]（LICENSE）ファイルを参照してください。
