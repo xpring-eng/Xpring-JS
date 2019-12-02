@@ -1,5 +1,6 @@
 export {
   AccountInfo,
+  ClassicAddress,
   SubmitSignedTransactionResponse,
   XRPAmount,
   Wallet,
