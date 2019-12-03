@@ -1,19 +1,26 @@
 import FakeXpringClient from "./fakes/fake-xpring-client";
 import ReliableSubmissionXpringClient from "../src/reliable-submission-xpring-client";
 import { assert } from "chai";
-import { TransactionStatus as RawTransactionStatus } from "xpring-common-js";
+import {
+  TransactionStatus as RawTransactionStatus,
+  Wallet,
+  WalletGenerationResult
+} from "xpring-common-js";
 import TransactionStatus from "../src/transaction-status";
+import { doesNotReject } from "assert";
 
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable  no-console */
 
 /* global BigInt */
 
 const testAddress = "X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH";
 
 const transactionStatusCodeSuccess = "tesSUCCESS";
-const transactionStatusCodeFailure = "tecFAILURE";
 
 const transactionHash = "DEADBEEF";
+
+const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult).wallet;
 
 const fakedGetBalanceValue = BigInt(10);
 const fakedTransactionStatusValue = TransactionStatus.Succeeded;
@@ -50,7 +57,7 @@ describe("Reliable Submission Xpring Client", function(): void {
   });
 
   it("Get Account Balance - Response Not Modified", async function() {
-    // GIVEN a `ReliableSubmissionClient` decorating a FakeXpringClient WHEN a balance is retrieved.
+    // GIVEN a `ReliableSubmissionXpringClient` decorating a `FakeXpringClient` WHEN a balance is retrieved.
     const returnedValue = await this.reliableSubmissionClient.getBalance(
       testAddress
     );
@@ -60,7 +67,7 @@ describe("Reliable Submission Xpring Client", function(): void {
   });
 
   it("Get Transaction Status - Response Not Modified", async function() {
-    // GIVEN a `ReliableSubmissionClient` decorating a FakeXpringClient WHEN a transaction status is retrieved.
+    // GIVEN a `ReliableSubmissionXpringClient` decorating a `FakeXpringClient` WHEN a transaction status is retrieved.
     const returnedValue = await this.reliableSubmissionClient.getTransactionStatus(
       testAddress
     );
@@ -70,7 +77,7 @@ describe("Reliable Submission Xpring Client", function(): void {
   });
 
   it("Get Latest Ledger Sequence - Response Not Modified", async function() {
-    // GIVEN a `ReliableSubmissionClient` decorating a FakeXpringClient WHEN the latest ledger sequence is retrieved.
+    // GIVEN a `ReliableSubmissionXpringClient` decorating a `FakeXpringClient` WHEN the latest ledger sequence is retrieved.
     const returnedValue = await this.reliableSubmissionClient.getLastValidatedLedgerSequence();
 
     // THEN the result is returned unaltered.
@@ -78,13 +85,82 @@ describe("Reliable Submission Xpring Client", function(): void {
   });
 
   it("Get Raw Transaction Status - Response Not Modified", async function() {
-    // GIVEN a `ReliableSubmissionClient` decorating a FakeXpringClient WHEN a raw transaction status is retrieved.
+    // GIVEN a `ReliableSubmissionXpringClient` decorating a `FakeXpringClient` WHEN a raw transaction status is retrieved.
     const returnedValue = await this.reliableSubmissionClient.getRawTransactionStatus(
       testAddress
     );
 
     // THEN the result is returned unaltered.
     assert.deepEqual(returnedValue, fakedRawTransactionStatusValue);
+  });
+
+  it("Send - Returns when the latestLedgerSequence is too low", async function() {
+    // Increase timeout because `setTimeout` is only accurate to 1500ms.
+    this.timeout(5000);
+
+    // GIVEN A ledger sequence number that will increment in 200ms.
+    setTimeout(() => {
+      const latestLedgerSequence =
+        fakedRawTransactionStatusLastLedgerSequenceValue + 1;
+      this.fakeXpringClient.latestLedgerSequence = latestLedgerSequence;
+    }, 200);
+
+    // WHEN a reliable send is submitted
+    const transactionHash = await this.reliableSubmissionClient.send(
+      "1",
+      testAddress,
+      wallet
+    );
+
+    // THEN the function returns
+    assert.deepEqual(transactionHash, fakedSendValue);
+  });
+
+  it("Send - Returns when the transaction is validated", async function() {
+    // Increase timeout because `setTimeout` is only accurate to 1500ms.
+    this.timeout(5000);
+
+    // GIVEN A transaction that will validate itself in 200ms.
+    setTimeout(() => {
+      fakedRawTransactionStatusValue.setValidated(true);
+    }, 200);
+
+    // WHEN a reliable send is submitted
+    const transactionHash = await this.reliableSubmissionClient.send(
+      "1",
+      testAddress,
+      wallet
+    );
+
+    // THEN the function returns
+    assert.deepEqual(transactionHash, fakedSendValue);
+  });
+
+  it("Send - Throws when transaction doesn't have a last ledger sequence", function(done) {
+    this.timeout(5000);
+
+    // GIVEN a `ReliableSubmissionXpringClient` decorating a `FakeXpringClient` which will return a transaction that did not have a last ledger sequence attached.
+    const malformedRawTransactionStatus = new RawTransactionStatus();
+    malformedRawTransactionStatus.setLastLedgerSequence(0);
+    this.fakeXpringClient.getRawTransactionStatusValue = malformedRawTransactionStatus;
+
+    this.reliableSubmissionClient.send("1", testAddress, wallet).then(
+      function() {
+        console.log("WRONG");
+      },
+      function() {
+        console.log("called done");
+        done();
+      }
+    );
+
+    // // WHEN a reliable send is submitted THEN an error is thrown.
+    // const reliableSubmissionClient = this.reliableSubmissionClient;
+    // expect(
+    //   await
+    // ).to.throw();
+
+    // console.log("test ending");
   });
 });
 
