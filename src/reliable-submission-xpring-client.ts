@@ -4,6 +4,7 @@ import {
   Wallet
 } from "xpring-common-js";
 
+/* global BigInt */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 
 async function sleep(milliseconds: number): Promise<void> {
