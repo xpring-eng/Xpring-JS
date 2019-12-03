@@ -6,7 +6,6 @@ import {
 
 /* global BigInt */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable no-console */
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -33,7 +32,6 @@ class ReliableSubmissionXpringClient implements XpringClientDecorator {
     destination: string,
     sender: Wallet
   ): Promise<string> {
-    console.log("exectuing");
     const ledgerCloseTimeMs = 4 * 1000;
 
     // Submit a transaction hash and wait for a ledger to close.
@@ -49,9 +47,7 @@ class ReliableSubmissionXpringClient implements XpringClientDecorator {
       transactionHash
     );
     const lastLedgerSequence = rawTransactionStatus.getLastLedgerSequence();
-    console.log("got " + lastLedgerSequence);
     if (lastLedgerSequence == 0) {
-      console.log("throw");
       return Promise.reject(
         "The transaction did not have a lastLedgerSequence field so transaction status cannot be reliably determined."
       );
