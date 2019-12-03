@@ -8,6 +8,7 @@ import {
   Signer,
   SubmitSignedTransactionRequest,
   Transaction,
+  TransactionStatus as RawTransactionStatus,
   Utils,
   Wallet,
   XRPAmount
@@ -95,11 +96,8 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getTransactionStatus(
     transactionHash: string
   ): Promise<TransactionStatus> {
-    const transactionStatusRequest = new GetTransactionStatusRequest();
-    transactionStatusRequest.setTransactionHash(transactionHash);
-
-    const transactionStatus = await this.networkClient.getTransactionStatus(
-      transactionStatusRequest
+    const transactionStatus = await this.getRawTransactionStatus(
+      transactionHash
     );
 
     // Return pending if the transaction is not validated.
@@ -207,12 +205,23 @@ class DefaultXpringClient implements XpringClientDecorator {
 
   /* eslint-enable no-dupe-class-members */
 
-  private async getLastValidatedLedgerSequence(): Promise<number> {
+  public async getLastValidatedLedgerSequence(): Promise<number> {
     const getLatestValidatedLedgerSequenceRequest = new GetLatestValidatedLedgerSequenceRequest();
     const ledgerSequence = await this.networkClient.getLatestValidatedLedgerSequence(
       getLatestValidatedLedgerSequenceRequest
     );
     return ledgerSequence.getIndex();
+  }
+
+  public async getRawTransactionStatus(
+    transactionHash: string
+  ): Promise<RawTransactionStatus> {
+    const transactionStatusRequest = new GetTransactionStatusRequest();
+    transactionStatusRequest.setTransactionHash(transactionHash);
+
+    return await this.networkClient.getTransactionStatus(
+      transactionStatusRequest
+    );
   }
 
   private async getAccountInfo(address: string): Promise<AccountInfo> {
