@@ -21,7 +21,7 @@ const transactionHash =
   "2CBBD2523478848DA256F8EBFCBD490DD6048A4A5094BF8E3034F57EA6AA0522";
 
 // The XpringClient that makes requests
-const grpcURL = "127.0.0.1:3002"; //  "grpc.xpring.tech:80";
+const grpcURL = "grpc.xpring.tech:80";
 const xpringClient = new XpringClient(grpcURL);
 
 // Some amount of XRP to send.
