@@ -43,15 +43,17 @@
     "nyc": "14.1.1",
     "prettier": "1.19.1",
     "source-map-support": "0.5.16",
-    "typescript": "3.5.3",
     "ts-node": "8.5.4",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^9.0.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript-eslint-parser": "22.0.0"
+    "typescript": "3.5.3",
+    "typescript-eslint-parser": "22.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   },
   "dependencies": {
-    "grpc": "^1.24.2",
+    "grpc-web": "^1.0.7",
     "xpring-common-js": "1.1.12"
   },
   "nyc": {
