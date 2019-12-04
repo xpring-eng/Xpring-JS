@@ -7,12 +7,12 @@ import {
   GetFeeRequest,
   SubmitSignedTransactionRequest,
   SubmitSignedTransactionResponse,
-  grpcCredentials,
   GetLatestValidatedLedgerSequenceRequest,
   LedgerSequence,
   GetTransactionStatusRequest,
   TransactionStatus
 } from "xpring-common-js";
+import { credentials as grpcCredentials } from "grpc";
 
 /**
  * A GRPC Based network client.
