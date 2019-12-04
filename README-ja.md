@@ -34,7 +34,7 @@ $ npm i xpring-js
 grpc.xpring.tech:80
 ```
 
-Xpringは、XRPノードユーザーが[rippled]（https://github.com/ripple/rippled）のオープンソースコンポーネントとしてアダプターを展開および使用するためのゼロコンフィグの方法の構築に取り組んでいます。乞うご期待！
+Xpringは、XRPノードユーザーが[rippled](https://github.com/ripple/rippled)のオープンソースコンポーネントとしてアダプターを展開および使用するためのゼロコンフィグの方法の構築に取り組んでいます。乞うご期待！
 
 ## 使用方法
 
@@ -221,7 +221,7 @@ console.log(decodedClassicAddress.tag); // 12345
 
 # コントリビューティング
 
-プルリクエストは大歓迎です！このライブラリを構築し、プルリクエストをオープンにしていく際には、[contributing.md]（https://github.com/xpring-eng/Xpring-JS/blob/master/CONTRIBUTING.md）を参照してください。
+プルリクエストは大歓迎です！このライブラリを構築し、プルリクエストをオープンにしていく際には、[contributing.md](https://github.com/xpring-eng/Xpring-JS/blob/master/CONTRIBUTING.md)を参照してください。
 
 このライブラリに貢献していただいているすべてのユーザーに感謝します！
 
@@ -231,4 +231,4 @@ console.log(decodedClassicAddress.tag); // 12345
 
 # ライセンス
 
-Xpring SDKはMITライセンスの下で利用可能です。詳細については 、[LICENSE]（https://github.com/xpring-eng/Xpring-JS/blob/master/LICENSE）ファイルを参照してください。
+Xpring SDKはMITライセンスの下で利用可能です。詳細については 、[LICENSE](https://github.com/xpring-eng/Xpring-JS/blob/master/LICENSE)ファイルを参照してください。
