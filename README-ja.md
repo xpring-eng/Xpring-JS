@@ -7,7 +7,7 @@
 Xpring-JSは、Xpring SDKのJavaScriptクライアント側ライブラリです。
 
 ## 機能
-Xpring-JSは次の機能を提供します。
+Xpring-JSは次の機能を提供します:
 - ウォレットの生成と派生（シードまたはHDウォレットベース）
 - アドレス検証
 - アカウントバランスの取得
@@ -199,7 +199,7 @@ Utils.isValidClassicAddress(rippleXAddress); // returns false
 Utils.isValidClassicAddress(bitcoinAddress); // returns false
 ```
 
-### X-Address エンコーディング
+### X-Address エンコード
 
 SDKを使用してX-Addressをエンコードおよびデコードできます。
 
