@@ -2,13 +2,14 @@ import { Wallet } from "xpring-common-js";
 import { XpringClientDecorator } from "./xpring-client-decorator";
 import DefaultXpringClient from "./default-xpring-client";
 import TransactionStatus from "./transaction-status";
+import ReliableSubmissionXpringClient from "./reliable-submission-xpring-client";
 
 /* global BigInt */
 
 /**
  * XpringClient is a client which interacts with the Xpring platform.
  */
-class XpringClient implements XpringClientDecorator {
+class XpringClient {
   private readonly decoratedClient: XpringClientDecorator;
 
   /**
@@ -19,8 +20,12 @@ class XpringClient implements XpringClientDecorator {
    * @param grpcURL The URL of the gRPC instance to connect to.
    */
   public constructor(grpcURL: string) {
-    this.decoratedClient = DefaultXpringClient.defaultXpringClientWithEndpoint(
+    const defaultXpringClient = DefaultXpringClient.defaultXpringClientWithEndpoint(
       grpcURL
+    );
+
+    this.decoratedClient = new ReliableSubmissionXpringClient(
+      defaultXpringClient
     );
   }
 

@@ -1,5 +1,8 @@
 import TransactionStatus from "./transaction-status";
-import { Wallet } from "xpring-common-js";
+import {
+  TransactionStatus as RawTransactionStatus,
+  Wallet
+} from "xpring-common-js";
 
 /** A decorator interface for XpringClients. */
 export interface XpringClientDecorator {
@@ -33,4 +36,21 @@ export interface XpringClientDecorator {
     destination: string,
     sender: Wallet
   ): Promise<string>;
+
+  /**
+   * Retrieve the latest validated ledger sequence on the XRP Ledger.
+   *
+   * @returns The index of the latest validated ledger.
+   */
+  getLastValidatedLedgerSequence(): Promise<number>;
+
+  /**
+   * Retrieve the raw transaction status for the given transaction hash.
+   *
+   * @param transactionHash: The hash of the transaction.
+   * @Return The status of the given transaction.
+   */
+  getRawTransactionStatus(
+    transactionHash: string
+  ): Promise<RawTransactionStatus>;
 }
