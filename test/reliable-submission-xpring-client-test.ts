@@ -136,7 +136,7 @@ describe("Reliable Submission Xpring Client", function(): void {
   });
 
   it("Send - Throws when transaction doesn't have a last ledger sequence", function(done) {
-    // Increase timeout because the poll interview is 4s. 
+    // Increase timeout because the poll interview is 4s.
     this.timeout(5000);
 
     // GIVEN a `ReliableSubmissionXpringClient` decorating a `FakeXpringClient` which will return a transaction that did not have a last ledger sequence attached.
