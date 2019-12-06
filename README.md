@@ -130,7 +130,7 @@ const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
 
 #### Retrieving a Balance
 
-A `XpringClient` can check the balance of an account on the ledger.
+A `XpringClient` can check the balance of an account on the XRP Ledger.
 
 ```javascript
 const { XpringClient } = require("xpring-js");
@@ -144,9 +144,35 @@ const balance = await xpringClient.getBalance(address);
 console.log(balance); // Logs a balance in drops of XRP
 ```
 
+### Checking Transaction Status
+
+A `XpringClient` can check the status of an transaction on the XRP Ledger. 
+
+Xpring-JS returns the following transaction states:
+- `succeeded`: The transaction was successfully validated and applied to the XRP Ledger.
+- `failed:` The transaction was successfully validated but not applied to the XRP Ledger. Or the operation will never be validated.
+- `pending`: The transaction has not yet been validated, but may be validated in the future.
+- `unknown`: The transaction status could not be determined.
+
+**Note:** For more information, see [Reliable Transaction Submission](https://xrpl.org/reliable-transaction-submission.html) and [Transaction Results](https://xrpl.org/transaction-results.html).
+
+These states are determined by the `TransactionStatus` enum.
+
+```javascript
+const { XpringClient } = require("xpring-js");
+
+const remoteURL = "grpc.xpring.tech:80";
+const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
+
+const transactionHash = "2CBBD2523478848DA256F8EBFCBD490DD6048A4A5094BF8E3034F57EA6AA0522";
+const transactionStatus = xpringClient.getTransactionStatus(transactionHash); // TransactionStatus.Succeeded
+```
+
 #### Sending XRP
 
-A `XpringClient` can send XRP to other accounts on the ledger.
+A `XpringClient` can send XRP to other accounts on the XRP Ledger.
+
+**Note:** The payment operation will block the calling thread until the operation reaches a definitive and irreversible success or failure state.
 
 ```javascript
 const { Wallet, XRPAmount, XpringClient } = require("xpring-js");
