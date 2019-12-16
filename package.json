@@ -13,7 +13,7 @@
     "url": "https://github.com/xpring-eng/Xpring-JS/issues"
   },
   "scripts": {
-    "build": "tsc -d",
+    "build": "./scripts/regenerate_protos.sh && tsc -d",
     "clean": "rm -rf ./generated ./dist ./build",
     "pretest": "./scripts/regenerate_protos.sh && tsc",
     "lint": "eslint **/*.ts",
