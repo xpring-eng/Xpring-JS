@@ -45,7 +45,7 @@ class DefaultXpringClient implements XpringClientDecorator {
   public static defaultXpringClientWithEndpoint(
     grpcURL: string
   ): DefaultXpringClient {
-    const grpcClient = new GRPCNetworkClient(grpcURL);
+    const grpcClient = new GRPCNetworkClient(grpcURL, null);
     return new DefaultXpringClient(grpcClient);
   }
 
