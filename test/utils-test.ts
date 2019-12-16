@@ -160,11 +160,13 @@ describe("utils", function(): void {
     const classicAddress = Utils.decodeXAddress(address);
 
     // Then the decoded address and tag as are expected.
-    assert.strictEqual(classicAddress!.address, "rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1");
+    assert.strictEqual(
+      classicAddress!.address,
+      "rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1"
+    );
     assert.strictEqual(classicAddress!.tag, 12345);
     assert.strictEqual(classicAddress!.test, false);
   });
-
 
   it("decodeXAddress() - Valid Testnet Address with Tag", function(): void {
     // GIVEN an x-address that encodes an address and a tag.
@@ -174,7 +176,10 @@ describe("utils", function(): void {
     const classicAddress = Utils.decodeXAddress(address);
 
     // Then the decoded address and tag as are expected.
-    assert.strictEqual(classicAddress!.address, "rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1");
+    assert.strictEqual(
+      classicAddress!.address,
+      "rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1"
+    );
     assert.strictEqual(classicAddress!.tag, 12345);
     assert.strictEqual(classicAddress!.test, true);
   });
@@ -187,7 +192,10 @@ describe("utils", function(): void {
     const classicAddress = Utils.decodeXAddress(address);
 
     // Then the decoded address and tag as are expected.
-    assert.strictEqual(classicAddress!.address, "rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1");
+    assert.strictEqual(
+      classicAddress!.address,
+      "rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1"
+    );
     assert.isUndefined(classicAddress!.tag);
   });
 
