@@ -23,7 +23,7 @@ class GRPCNetworkClient implements Networking.NetworkClient {
   public constructor(grpcURL: string) {
     this.grpcClient = new XRPLedgerAPIClient(
       grpcURL,
-      grpcCredentials.createInsecure()
+      null
     );
   }
 
