@@ -1,4 +1,4 @@
-import Utils from "../src/utils";
+import Utils from "../src/index";
 import { assert } from "chai";
 import "mocha";
 
