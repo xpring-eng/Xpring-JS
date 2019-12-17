@@ -20,12 +20,18 @@ jobs:
             - v1-dependencies-
 
       - protobuf/install
+
+      - run:
+          name: "Pull submodules"
+          command: git submodule update --init --recursive
+
       - run:
           name: "Install dependencies"
           command: |
             sudo npm -g i nyc codecov
             npm i xpring-common-js@latest
             npm rebuild
+
       - save_cache:
           paths:
             - node_modules

@@ -1,18 +1,14 @@
-import {
-  AccountInfo,
-  GetAccountInfoRequest,
-  GetFeeRequest,
-  GetLatestValidatedLedgerSequenceRequest,
-  GetTransactionStatusRequest,
-  Payment,
-  Signer,
-  SubmitSignedTransactionRequest,
-  Transaction,
-  TransactionStatus as RawTransactionStatus,
-  Utils,
-  Wallet,
-  XRPAmount
-} from "xpring-common-js";
+import { Signer, Utils, Wallet } from "xpring-common-js";
+import { AccountInfo } from "../generated/account_info_pb";
+import { GetAccountInfoRequest } from "../generated/get_account_info_request_pb";
+import { GetFeeRequest } from "../generated/get_fee_request_pb";
+import { GetLatestValidatedLedgerSequenceRequest } from "../generated/get_latest_validated_ledger_sequence_request_pb";
+import { GetTransactionStatusRequest } from "../generated/get_transaction_status_request_pb";
+import { Payment } from "../generated/payment_pb";
+import { SubmitSignedTransactionRequest } from "../generated/submit_signed_transaction_request_pb";
+import { Transaction } from "../generated/transaction_pb";
+import { TransactionStatus as RawTransactionStatus } from "../generated/transaction_status_pb";
+import { XRPAmount } from "../generated/xrp_amount_pb";
 import { NetworkClient } from "./network-client";
 import GRPCNetworkClient from "./grpc-network-client";
 import { XpringClientDecorator } from "./xpring-client-decorator";
