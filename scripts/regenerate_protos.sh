@@ -21,7 +21,7 @@ $PWD/node_modules/grpc-tools/bin/protoc \
     --proto_path=$PWD/xpring-common-protocol-buffers/proto \
     $PWD/xpring-common-protocol-buffers/**/*.proto
 
-# Generate tyepscript declaration files.
+# Generate typescript declaration files.
 $PWD/node_modules/grpc-tools/bin/protoc \
     --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts \
     --ts_out=$TS_OUT_DIR \
