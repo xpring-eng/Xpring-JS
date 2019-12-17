@@ -13,12 +13,13 @@
     "url": "https://github.com/xpring-eng/Xpring-JS/issues"
   },
   "scripts": {
-    "build": "tsc -d",
-    "clean": "rm -rf ./build",
+    "build": "./scripts/regenerate_protos.sh && tsc -d",
+    "clean": "rm -rf ./generated ./dist ./build",
+    "pretest": "./scripts/regenerate_protos.sh && tsc",
     "lint": "eslint **/*.ts",
     "lint:fix": "eslint **/*.ts --fix",
-    "prepublishOnly": "npm run clean && npm test && tsc -d",
-    "test": "npm run lint && nyc mocha"
+    "test": "npm run lint && nyc mocha",
+    "prepublishOnly": "npm test && tsc -d"
   },
   "homepage": "https://github.com/xpring-eng/Xpring-JS#readme",
   "devDependencies": {
@@ -51,6 +52,8 @@
     "typescript-eslint-parser": "22.0.0"
   },
   "dependencies": {
+    "grpc": "^1.24.2",
+    "grpc-tools": "^1.8.0",
     "xpring-common-js": "1.1.14"
   },
   "nyc": {
