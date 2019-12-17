@@ -39,33 +39,33 @@ class XpringClient {
     return await this.decoratedClient.getBalance(address);
   }
 
-  /**
-   * Retrieve the transaction status for a given transaction hash.
-   *
-   * @param transactionHash The hash of the transaction.
-   * @returns The status of the given transaction.
-   */
-  public async getTransactionStatus(
-    transactionHash: string
-  ): Promise<TransactionStatus> {
-    return await this.decoratedClient.getTransactionStatus(transactionHash);
-  }
+  // /**
+  //  * Retrieve the transaction status for a given transaction hash.
+  //  *
+  //  * @param transactionHash The hash of the transaction.
+  //  * @returns The status of the given transaction.
+  //  */
+  // public async getTransactionStatus(
+  //   transactionHash: string
+  // ): Promise<TransactionStatus> {
+  //   return await this.decoratedClient.getTransactionStatus(transactionHash);
+  // }
 
-  /**
-   * Send the given amount of XRP from the source wallet to the destination address.
-   *
-   * @param drops A `BigInt`, number or numeric string representing the number of drops to send.
-   * @param destination A destination address to send the drops to.
-   * @param sender The wallet that XRP will be sent from and which will sign the request.
-   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
-   */
-  public async send(
-    amount: BigInt | number | string,
-    destination: string,
-    sender: Wallet
-  ): Promise<string> {
-    return await this.decoratedClient.send(amount, destination, sender);
-  }
+  // /**
+  //  * Send the given amount of XRP from the source wallet to the destination address.
+  //  *
+  //  * @param drops A `BigInt`, number or numeric string representing the number of drops to send.
+  //  * @param destination A destination address to send the drops to.
+  //  * @param sender The wallet that XRP will be sent from and which will sign the request.
+  //  * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+  //  */
+  // public async send(
+  //   amount: BigInt | number | string,
+  //   destination: string,
+  //   sender: Wallet
+  // ): Promise<string> {
+  //   return await this.decoratedClient.send(amount, destination, sender);
+  // }
 }
 
 export default XpringClient;

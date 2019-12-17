@@ -21,7 +21,7 @@ const transactionHash =
   "2CBBD2523478848DA256F8EBFCBD490DD6048A4A5094BF8E3034F57EA6AA0522";
 
 // The XpringClient that makes requests
-const grpcURL = "grpc.xpring.tech:80";
+const grpcURL = "127.0.0.1:50051"; // "grpc.xpring.tech:80";
 const xpringClient = new XpringClient(grpcURL);
 
 // Some amount of XRP to send.
@@ -35,19 +35,19 @@ describe("Xpring JS Integration Tests", function(): void {
     assert.exists(balance);
   });
 
-  it("Get Transaction Status", async function() {
-    this.timeout(timeoutMs);
+  // it("Get Transaction Status", async function() {
+  //   this.timeout(timeoutMs);
 
-    const transactionStatus = await xpringClient.getTransactionStatus(
-      transactionHash
-    );
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded);
-  });
+  //   const transactionStatus = await xpringClient.getTransactionStatus(
+  //     transactionHash
+  //   );
+  //   assert.deepEqual(transactionStatus, TransactionStatus.Succeeded);
+  // });
 
-  it("Send XRP", async function() {
-    this.timeout(timeoutMs);
+  // it("Send XRP", async function() {
+  //   this.timeout(timeoutMs);
 
-    const result = await xpringClient.send(amount, recipientAddress, wallet);
-    assert.exists(result);
-  });
+  //   const result = await xpringClient.send(amount, recipientAddress, wallet);
+  //   assert.exists(result);
+  // });
 });
