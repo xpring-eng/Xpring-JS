@@ -1,6 +1,6 @@
 {
   "name": "xpring-js",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "description": "XpringJS provides a Javascript based SDK for interacting with the Ripple Ledger.",
   "main": "build/src/index.js",
   "repository": {
@@ -36,9 +36,10 @@
     "eslint-config-airbnb-base": "14.0.0",
     "eslint-config-prettier": "6.7.0",
     "eslint-plugin-import": "2.19.1",
-    "eslint-plugin-mocha": "6.2.2",
+    "eslint-plugin-mocha": "^6.2.2",
     "eslint-plugin-prettier": "3.1.2",
     "grpc_tools_node_protoc_ts": "2.5.9",
+    "grpc-tools": "^1.8.0",
     "mocha": "6.2.2",
     "mocha-lcov-reporter": "1.3.0",
     "nyc": "14.1.1",
@@ -52,9 +53,8 @@
     "typescript-eslint-parser": "22.0.0"
   },
   "dependencies": {
-    "grpc": "^1.24.2",
-    "grpc-tools": "^1.8.0",
-    "xpring-common-js": "1.1.14"
+    "xpring-common-js": "1.1.15",
+    "grpc": "^1.24.2"
   },
   "nyc": {
     "extension": [
