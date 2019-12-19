@@ -18,7 +18,7 @@ const wallet = Wallet.generateWalletFromSeed("snYP7oArxKepd3GPDcrjMsJYiJeJB")!;
 
 // A hash of a successfully validated transaction.
 const transactionHash =
-  "2CBBD2523478848DA256F8EBFCBD490DD6048A4A5094BF8E3034F57EA6AA0522";
+  "9A88C8548E03958FD97AF44AE5A8668896D195A70CF3FF3CB8E57096AA717135";
 
 // The XpringClient that makes requests
 const grpcURL = "grpc.xpring.tech:80";
