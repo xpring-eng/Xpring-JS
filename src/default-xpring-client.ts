@@ -68,11 +68,11 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A `BigInt` representing the number of drops of XRP in the account.
    */
   public async getBalance(address: string): Promise<BigInt> {
-    if (!Utils.isValidXAddress(address)) {
-      return Promise.reject(
-        new Error(XpringClientErrorMessages.xAddressRequired)
-      );
-    }
+    // if (!Utils.isValidXAddress(address)) {
+    //   return Promise.reject(
+    //     new Error(XpringClientErrorMessages.xAddressRequired)
+    //   );
+    // }
 
     return this.getAccountInfo(address).then(async accountInfo => {
       const accountData = accountInfo.getAccountData();
