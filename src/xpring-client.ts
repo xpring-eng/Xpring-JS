@@ -1,7 +1,7 @@
-import { Wallet } from "xpring-common-js";
+// import { Wallet } from "xpring-common-js";
 import { XpringClientDecorator } from "./xpring-client-decorator";
 import DefaultXpringClient from "./default-xpring-client";
-import TransactionStatus from "./transaction-status";
+// import TransactionStatus from "./transaction-status";
 import ReliableSubmissionXpringClient from "./reliable-submission-xpring-client";
 
 /* global BigInt */

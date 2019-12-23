@@ -1,8 +1,8 @@
 import { XpringClientDecorator } from "./xpring-client-decorator";
-import {
-  TransactionStatus as RawTransactionStatus,
-  Wallet
-} from "xpring-common-js";
+// import {
+//   TransactionStatus as RawTransactionStatus,
+//   Wallet
+// } from "xpring-common-js";
 
 /* global BigInt */
 /* eslint-disable @typescript-eslint/no-magic-numbers */

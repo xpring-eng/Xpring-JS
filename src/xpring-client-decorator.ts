@@ -1,8 +1,8 @@
-import TransactionStatus from "./transaction-status";
-import {
-  TransactionStatus as RawTransactionStatus,
-  Wallet
-} from "xpring-common-js";
+// import TransactionStatus from "./transaction-status";
+// import {
+//   TransactionStatus as RawTransactionStatus,
+//   Wallet
+// } from "xpring-common-js";
 
 /** A decorator interface for XpringClients. */
 export interface XpringClientDecorator {
