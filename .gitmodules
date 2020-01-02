@@ -4,4 +4,4 @@
 	branch = master
 [submodule "rippled"]
 	path = rippled
-	url = http://github.com/ripple/rippled
+	url = http://github.com/cjcobb23/rippled
