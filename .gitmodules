@@ -5,4 +5,4 @@
 [submodule "rippled"]
 	path = rippled
 	url = http://github.com/cjcobb23/rippled
-        branch = grpcSupport
+    branch = grpcSupport
