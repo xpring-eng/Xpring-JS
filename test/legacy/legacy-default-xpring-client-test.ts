@@ -35,7 +35,7 @@ const transactionStatusCodeFailure = "tecFAILURE";
 
 const transactionHash = "DEADBEEF";
 
-describe("Default Xpring Client", function(): void {
+describe("Legacy Default Xpring Client", function(): void {
   it("Get Account Balance - successful response", async function() {
     // GIVEN a DefaultXpringClient.
     const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient);

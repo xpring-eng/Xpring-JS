@@ -14,7 +14,7 @@ import {
 /**
  * An error that can occur when making a request.
  */
-export interface NetworkServiceError {
+export interface LegacyNetworkServiceError {
   message: string;
   code: number;
   metadata: object;
@@ -23,7 +23,7 @@ export interface NetworkServiceError {
 /**
  * The network client interface provides a wrapper around network calls to the Xpring Platform.
  */
-export interface NetworkClient {
+export interface LegacyNetworkClient {
   getAccountInfo(
     getAccountInfoRequest: GetAccountInfoRequest
   ): Promise<AccountInfo>;

@@ -1,4 +1,4 @@
-import { NetworkClient } from "../../src/network-client";
+import { NetworkClient } from "../../src/legacy/legaacy-network-client";
 import {
   AccountInfo,
   Fee,
@@ -21,7 +21,7 @@ type Response<T> = T | Error;
 /**
  * A list of responses the fake network client will give.
  */
-export class FakeNetworkClientResponses {
+export class FakeLegacyNetworkClientResponses {
   /**
    * A default error.
    */
