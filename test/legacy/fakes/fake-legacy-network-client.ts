@@ -1,4 +1,4 @@
-import { NetworkClient } from "../../src/legacy/legaacy-network-client";
+import { LegacyNetworkClient } from "../../../src/legacy/legacy-network-client";
 import {
   AccountInfo,
   Fee,
@@ -30,17 +30,17 @@ export class FakeLegacyNetworkClientResponses {
   /**
    * A default set of responses that will always succeed.
    */
-  public static defaultSuccessfulResponses = new FakeNetworkClientResponses();
+  public static defaultSuccessfulResponses = new FakeLegacyNetworkClientResponses();
 
   /**
    * A default set of responses that will always fail.
    */
-  public static defaultErrorResponses = new FakeNetworkClientResponses(
-    FakeNetworkClientResponses.defaultError,
-    FakeNetworkClientResponses.defaultError,
-    FakeNetworkClientResponses.defaultError,
-    FakeNetworkClientResponses.defaultError,
-    FakeNetworkClientResponses.defaultError
+  public static defaultErrorResponses = new FakeLegacyNetworkClientResponses(
+    FakeLegacyNetworkClientResponses.defaultError,
+    FakeLegacyNetworkClientResponses.defaultError,
+    FakeLegacyNetworkClientResponses.defaultError,
+    FakeLegacyNetworkClientResponses.defaultError,
+    FakeLegacyNetworkClientResponses.defaultError
   );
 
   /**
@@ -55,15 +55,15 @@ export class FakeLegacyNetworkClientResponses {
   public constructor(
     public readonly getAccountInfoResponse: Response<
       AccountInfo
-    > = FakeNetworkClientResponses.defaultAccountInfoResponse(),
+    > = FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
     public readonly getFeeResponse: Response<
       Fee
-    > = FakeNetworkClientResponses.defaultFeeResponse(),
+    > = FakeLegacyNetworkClientResponses.defaultFeeResponse(),
     public readonly submitSignedTransactionResponse: Response<
       SubmitSignedTransactionResponse
-    > = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
-    public readonly getLatestValidatedLedgerSequenceResponse: Response<LedgerSequence> = FakeNetworkClientResponses.defaultLedgerSequenceResponse(),
-    public readonly getTransactionStatusResponse: Response<TransactionStatus> = FakeNetworkClientResponses.defaultTransactionStatusResponse()
+    > = FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
+    public readonly getLatestValidatedLedgerSequenceResponse: Response<LedgerSequence> = FakeLegacyNetworkClientResponses.defaultLedgerSequenceResponse(),
+    public readonly getTransactionStatusResponse: Response<TransactionStatus> = FakeLegacyNetworkClientResponses.defaultTransactionStatusResponse()
   ) {}
 
   /**
@@ -132,9 +132,9 @@ export class FakeLegacyNetworkClientResponses {
 /**
  * A fake network client which stubs network interaction.
  */
-export class FakeNetworkClient implements NetworkClient {
+export class FakeLegacyNetworkClient implements LegacyNetworkClient {
   public constructor(
-    private readonly responses: FakeNetworkClientResponses = FakeNetworkClientResponses.defaultSuccessfulResponses
+    private readonly responses: FakeLegacyNetworkClientResponses = FakeLegacyNetworkClientResponses.defaultSuccessfulResponses
   ) {}
 
   getAccountInfo(
