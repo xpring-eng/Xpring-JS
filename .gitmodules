@@ -2,3 +2,7 @@
 	path = xpring-common-protocol-buffers
 	url = http://github.com/xpring-eng/xpring-common-protocol-buffers
 	branch = master
+[submodule "rippled"]
+	path = rippled
+	url = http://github.com/cjcobb23/rippled
+	branch = grpcSupport
