@@ -1,25 +1,25 @@
 import { Signer, Utils, Wallet } from "xpring-common-js";
-import { AccountInfo } from "../generated/legacy/account_info_pb";
-import { GetAccountInfoRequest } from "../generated/legacy/get_account_info_request_pb";
-import { GetFeeRequest } from "../generated/legacy/get_fee_request_pb";
-import { GetLatestValidatedLedgerSequenceRequest } from "../generated/legacy/get_latest_validated_ledger_sequence_request_pb";
-import { GetTransactionStatusRequest } from "../generated/legacy/get_transaction_status_request_pb";
-import { Payment } from "../generated/legacy/payment_pb";
-import { SubmitSignedTransactionRequest } from "../generated/legacy/submit_signed_transaction_request_pb";
-import { Transaction } from "../generated/legacy/transaction_pb";
-import { TransactionStatus as RawTransactionStatus } from "../generated/legacy/transaction_status_pb";
-import { XRPAmount } from "../generated/legacy/xrp_amount_pb";
-import { NetworkClient } from "./network-client";
-import GRPCNetworkClient from "./grpc-network-client";
-import { XpringClientDecorator } from "./xpring-client-decorator";
-import TransactionStatus from "./transaction-status";
+import { AccountInfo } from "../../generated/legacy/account_info_pb";
+import { GetAccountInfoRequest } from "../../generated/legacy/get_account_info_request_pb";
+import { GetFeeRequest } from "../../generated/legacy/get_fee_request_pb";
+import { GetLatestValidatedLedgerSequenceRequest } from "../../generated/legacy/get_latest_validated_ledger_sequence_request_pb";
+import { GetTransactionStatusRequest } from "../../generated/legacy/get_transaction_status_request_pb";
+import { Payment } from "../../generated/legacy/payment_pb";
+import { SubmitSignedTransactionRequest } from "../../generated/legacy/submit_signed_transaction_request_pb";
+import { Transaction } from "../../generated/legacy/transaction_pb";
+import { TransactionStatus as RawTransactionStatus } from "../../generated/legacy/transaction_status_pb";
+import { XRPAmount } from "../../generated/legacy/xrp_amount_pb";
+import { LegacyNetworkClient } from "./legacy-network-client";
+import LegacyGRPCNetworkClient from "./legacy-grpc-network-client";
+import { XpringClientDecorator } from "../xpring-client-decorator";
+import TransactionStatus from "../transaction-status";
 
 /* global BigInt */
 
 /**
  * Error messages from XpringClient.
  */
-export class XpringClientErrorMessages {
+export class LegacyXpringClientErrorMessages {
   public static readonly malformedResponse = "Malformed Response.";
   public static readonly signingFailure = "Unable to sign the transaction";
   /* eslint-disable  @typescript-eslint/indent */
@@ -34,7 +34,7 @@ const ledgerSequenceMargin = 10;
 /**
  * DefaultXpringClient is a client which interacts with the Xpring platform.
  */
-class DefaultXpringClient implements XpringClientDecorator {
+class LegacyDefaultXpringClient implements XpringClientDecorator {
   /**
    * Create a new DefaultXpringClient.
    *
@@ -44,9 +44,9 @@ class DefaultXpringClient implements XpringClientDecorator {
    */
   public static defaultXpringClientWithEndpoint(
     grpcURL: string
-  ): DefaultXpringClient {
-    const grpcClient = new GRPCNetworkClient(grpcURL);
-    return new DefaultXpringClient(grpcClient);
+  ): LegacyDefaultXpringClient {
+    const grpcClient = new LegacyGRPCNetworkClient(grpcURL);
+    return new LegacyDefaultXpringClient(grpcClient);
   }
 
   /**
@@ -56,7 +56,7 @@ class DefaultXpringClient implements XpringClientDecorator {
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
    */
-  public constructor(private readonly networkClient: NetworkClient) {}
+  public constructor(private readonly networkClient: LegacyNetworkClient) {}
 
   /**
    * Retrieve the balance for the given address.
@@ -67,7 +67,7 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getBalance(address: string): Promise<BigInt> {
     if (!Utils.isValidXAddress(address)) {
       return Promise.reject(
-        new Error(XpringClientErrorMessages.xAddressRequired)
+        new Error(LegacyXpringClientErrorMessages.xAddressRequired)
       );
     }
 
@@ -75,7 +75,7 @@ class DefaultXpringClient implements XpringClientDecorator {
       const balance = accountInfo.getBalance();
       if (balance === undefined) {
         return Promise.reject(
-          new Error(XpringClientErrorMessages.malformedResponse)
+          new Error(LegacyXpringClientErrorMessages.malformedResponse)
         );
       }
 
@@ -123,7 +123,7 @@ class DefaultXpringClient implements XpringClientDecorator {
   ): Promise<string> {
     if (!Utils.isValidXAddress(destination)) {
       return Promise.reject(
-        new Error(XpringClientErrorMessages.xAddressRequired)
+        new Error(LegacyXpringClientErrorMessages.xAddressRequired)
       );
     }
 
@@ -136,7 +136,7 @@ class DefaultXpringClient implements XpringClientDecorator {
             async ledgerSequence => {
               if (accountInfo.getSequence() === undefined) {
                 return Promise.reject(
-                  new Error(XpringClientErrorMessages.malformedResponse)
+                  new Error(LegacyXpringClientErrorMessages.malformedResponse)
                 );
               }
 
@@ -162,14 +162,14 @@ class DefaultXpringClient implements XpringClientDecorator {
                 signedTransaction = Signer.signTransaction(transaction, sender);
               } catch (signingError) {
                 const signingErrorMessage =
-                  XpringClientErrorMessages.signingFailure +
+                  LegacyXpringClientErrorMessages.signingFailure +
                   ". " +
                   signingError.message;
                 return Promise.reject(new Error(signingErrorMessage));
               }
               if (signedTransaction == undefined) {
                 return Promise.reject(
-                  new Error(XpringClientErrorMessages.signingFailure)
+                  new Error(LegacyXpringClientErrorMessages.signingFailure)
                 );
               }
 
@@ -187,7 +187,7 @@ class DefaultXpringClient implements XpringClientDecorator {
                   );
                   if (!transactionHash) {
                     return Promise.reject(
-                      new Error(XpringClientErrorMessages.malformedResponse)
+                      new Error(LegacyXpringClientErrorMessages.malformedResponse)
                     );
                   }
                   return Promise.resolve(transactionHash);
@@ -233,7 +233,7 @@ class DefaultXpringClient implements XpringClientDecorator {
       const feeAmount = fee.getAmount();
       if (feeAmount == undefined) {
         return Promise.reject(
-          new Error(XpringClientErrorMessages.malformedResponse)
+          new Error(LegacyXpringClientErrorMessages.malformedResponse)
         );
       }
       return feeAmount;
@@ -256,4 +256,4 @@ class DefaultXpringClient implements XpringClientDecorator {
   }
 }
 
-export default DefaultXpringClient;
+export default LegacyDefaultXpringClient;

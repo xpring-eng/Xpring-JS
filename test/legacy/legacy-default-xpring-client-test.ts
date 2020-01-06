@@ -11,19 +11,19 @@ import {
 
 import chai from "chai";
 import chaiString from "chai-string";
-import DefaultXpringClient, {
-  XpringClientErrorMessages
-} from "../src/default-xpring-client";
+import LegacyDefaultXpringClient, {
+  LegacyXpringClientErrorMessages
+} from "../../src/legacy/legacy-default-xpring-client";
 import {
-  FakeNetworkClient,
-  FakeNetworkClientResponses
-} from "./fakes/fake-network-client";
+  FakeLegacyNetworkClient,
+  FakeLegacyNetworkClientResponses
+} from "./fakes/fake-legacy-network-client";
 import "mocha";
-import TransactionStatus from "../src/transaction-status";
+import TransactionStatus from "../../src/transaction-status";
 
-const fakeSucceedingNetworkClient = new FakeNetworkClient();
-const fakeErroringNetworkClient = new FakeNetworkClient(
-  FakeNetworkClientResponses.defaultErrorResponses
+const fakeSucceedingNetworkClient = new FakeLegacyNetworkClient();
+const fakeErroringNetworkClient = new FakeLegacyNetworkClient(
+  FakeLegacyNetworkClientResponses.defaultErrorResponses
 );
 
 chai.use(chaiString);
@@ -35,10 +35,10 @@ const transactionStatusCodeFailure = "tecFAILURE";
 
 const transactionHash = "DEADBEEF";
 
-describe("Default Xpring Client", function(): void {
+describe("Legacy Default Xpring Client", function(): void {
   it("Get Account Balance - successful response", async function() {
-    // GIVEN a DefaultXpringClient.
-    const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient);
+    // GIVEN a LegacyDefaultXpringClient.
+    const xpringClient = new LegacyDefaultXpringClient(fakeSucceedingNetworkClient);
 
     // WHEN the balance for an account is requested.
     const balance = await xpringClient.getBalance(testAddress);
@@ -49,50 +49,50 @@ describe("Default Xpring Client", function(): void {
 
   it("Get Account Balance - classic address", function(done) {
     // GIVEN a XpringClient and a classic address
-    const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient);
+    const xpringClient = new LegacyDefaultXpringClient(fakeSucceedingNetworkClient);
     const classicAddress = "rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn";
 
     // WHEN the balance for an account is requested THEN an error to use X-Addresses is thrown.
     xpringClient.getBalance(classicAddress).catch(error => {
       assert.typeOf(error, "Error");
-      assert.equal(error.message, XpringClientErrorMessages.xAddressRequired);
+      assert.equal(error.message, LegacyXpringClientErrorMessages.xAddressRequired);
       done();
     });
   });
 
   it("Get Account Balance - error", function(done) {
     // GIVEN a XpringClient which wraps an erroring network client.
-    const xpringClient = new DefaultXpringClient(fakeErroringNetworkClient);
+    const xpringClient = new LegacyDefaultXpringClient(fakeErroringNetworkClient);
 
     // WHEN a balance is requested THEN an error is propagated.
     xpringClient.getBalance(testAddress).catch(error => {
       assert.typeOf(error, "Error");
-      assert.equal(error, FakeNetworkClientResponses.defaultError);
+      assert.equal(error, FakeLegacyNetworkClientResponses.defaultError);
       done();
     });
   });
 
   it("Get Account Balance - malformed response, no balance", function(done) {
     // GIVEN a XpringClient which wraps a network client with a malformed response.
-    const accountInfoResponse = FakeNetworkClientResponses.defaultAccountInfoResponse();
+    const accountInfoResponse = FakeLegacyNetworkClientResponses.defaultAccountInfoResponse();
     accountInfoResponse.setBalance(undefined);
-    const fakeNetworkClientResponses = new FakeNetworkClientResponses(
+    const fakeNetworkClientResponses = new FakeLegacyNetworkClientResponses(
       accountInfoResponse
     );
-    const fakeNetworkClient = new FakeNetworkClient(fakeNetworkClientResponses);
-    const xpringClient = new DefaultXpringClient(fakeNetworkClient);
+    const fakeNetworkClient = new FakeLegacyNetworkClient(fakeNetworkClientResponses);
+    const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient);
 
     // WHEN a balance is requested THEN an error is propagated.
     xpringClient.getBalance(testAddress).catch(error => {
       assert.typeOf(error, "Error");
-      assert.equal(error.message, XpringClientErrorMessages.malformedResponse);
+      assert.equal(error.message, LegacyXpringClientErrorMessages.malformedResponse);
       done();
     });
   });
 
   it("Send XRP Transaction - success with BigInt", async function() {
     // GIVEN a XpringClient, a wallet, and a BigInt denomonated amount.
-    const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient);
+    const xpringClient = new LegacyDefaultXpringClient(fakeSucceedingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress =
@@ -107,7 +107,7 @@ describe("Default Xpring Client", function(): void {
     );
 
     // THEN the transaction hash exists and is the expected hash
-    const expectedTransactionBlob = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse().getTransactionBlob();
+    const expectedTransactionBlob = FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse().getTransactionBlob();
     const expectedTransactionHash = Utils.transactionBlobToTransactionHash(
       expectedTransactionBlob
     );
@@ -118,7 +118,7 @@ describe("Default Xpring Client", function(): void {
 
   it("Send XRP Transaction - success with number", async function() {
     // GIVEN a XpringClient, a wallet, and a number denominated amount.
-    const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient);
+    const xpringClient = new LegacyDefaultXpringClient(fakeSucceedingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress =
@@ -133,7 +133,7 @@ describe("Default Xpring Client", function(): void {
     );
 
     // THEN the transaction hash exists and is the expected hash
-    const expectedTransactionBlob = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse().getTransactionBlob();
+    const expectedTransactionBlob = FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse().getTransactionBlob();
     const expectedTransactionHash = Utils.transactionBlobToTransactionHash(
       expectedTransactionBlob
     );
@@ -144,7 +144,7 @@ describe("Default Xpring Client", function(): void {
 
   it("Send XRP Transaction - success with string", async function() {
     // GIVEN a XpringClient, a wallet, and a numeric string denominated amount.
-    const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient);
+    const xpringClient = new LegacyDefaultXpringClient(fakeSucceedingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress =
@@ -159,7 +159,7 @@ describe("Default Xpring Client", function(): void {
     );
 
     // THEN the transaction hash exists and is the expected hash
-    const expectedTransactionBlob = FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse().getTransactionBlob();
+    const expectedTransactionBlob = FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse().getTransactionBlob();
     const expectedTransactionHash = Utils.transactionBlobToTransactionHash(
       expectedTransactionBlob
     );
@@ -170,7 +170,7 @@ describe("Default Xpring Client", function(): void {
 
   it("Send XRP Transaction - failure with invalid string", function(done) {
     // GIVEN a XpringClient, a wallet and an amount that is invalid.
-    const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient);
+    const xpringClient = new LegacyDefaultXpringClient(fakeSucceedingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress =
@@ -186,13 +186,13 @@ describe("Default Xpring Client", function(): void {
 
   it("Send XRP Transaction - get fee failure", function(done) {
     // GIVEN a XpringClient which will fail to retrieve a fee.
-    const feeFailureResponses = new FakeNetworkClientResponses(
-      FakeNetworkClientResponses.defaultAccountInfoResponse(),
-      FakeNetworkClientResponses.defaultError,
-      FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse()
+    const feeFailureResponses = new FakeLegacyNetworkClientResponses(
+      FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeLegacyNetworkClientResponses.defaultError,
+      FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse()
     );
-    const feeFailingNetworkClient = new FakeNetworkClient(feeFailureResponses);
-    const xpringClient = new DefaultXpringClient(feeFailingNetworkClient);
+    const feeFailingNetworkClient = new FakeLegacyNetworkClient(feeFailureResponses);
+    const xpringClient = new LegacyDefaultXpringClient(feeFailingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress =
@@ -204,7 +204,7 @@ describe("Default Xpring Client", function(): void {
       assert.typeOf(error, "Error");
       assert.equal(
         error.message,
-        FakeNetworkClientResponses.defaultError.message
+        FakeLegacyNetworkClientResponses.defaultError.message
       );
       done();
     });
@@ -212,7 +212,7 @@ describe("Default Xpring Client", function(): void {
 
   it("Send XRP Transaction - failure with classic address", function(done) {
     // GIVEN a XpringClient, a wallet, and a classic address as the destination.
-    const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient);
+    const xpringClient = new LegacyDefaultXpringClient(fakeSucceedingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress = "rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn";
@@ -221,20 +221,20 @@ describe("Default Xpring Client", function(): void {
     // WHEN the account makes a transaction THEN an error is thrown.
     xpringClient.send(amount, destinationAddress, wallet).catch(error => {
       assert.typeOf(error, "Error");
-      assert.equal(error.message, XpringClientErrorMessages.xAddressRequired);
+      assert.equal(error.message, LegacyXpringClientErrorMessages.xAddressRequired);
       done();
     });
   });
 
   it("Send XRP Transaction - get account info failure", function(done) {
     // GIVEN a XpringClient which will fail to retrieve account info.
-    const feeFailureResponses = new FakeNetworkClientResponses(
-      FakeNetworkClientResponses.defaultError,
-      FakeNetworkClientResponses.defaultFeeResponse(),
-      FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse()
+    const feeFailureResponses = new FakeLegacyNetworkClientResponses(
+      FakeLegacyNetworkClientResponses.defaultError,
+      FakeLegacyNetworkClientResponses.defaultFeeResponse(),
+      FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse()
     );
-    const feeFailingNetworkClient = new FakeNetworkClient(feeFailureResponses);
-    const xpringClient = new DefaultXpringClient(feeFailingNetworkClient);
+    const feeFailingNetworkClient = new FakeLegacyNetworkClient(feeFailureResponses);
+    const xpringClient = new LegacyDefaultXpringClient(feeFailingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress =
@@ -246,7 +246,7 @@ describe("Default Xpring Client", function(): void {
       assert.typeOf(error, "Error");
       assert.equal(
         error.message,
-        FakeNetworkClientResponses.defaultError.message
+        FakeLegacyNetworkClientResponses.defaultError.message
       );
       done();
     });
@@ -254,14 +254,14 @@ describe("Default Xpring Client", function(): void {
 
   it("Send XRP Transaction - get latest ledger sequence failure", function(done) {
     // GIVEN a XpringClient which will fail to retrieve account info.
-    const feeFailureResponses = new FakeNetworkClientResponses(
-      FakeNetworkClientResponses.defaultAccountInfoResponse(),
-      FakeNetworkClientResponses.defaultFeeResponse(),
-      FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
-      FakeNetworkClientResponses.defaultError
+    const feeFailureResponses = new FakeLegacyNetworkClientResponses(
+      FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeLegacyNetworkClientResponses.defaultFeeResponse(),
+      FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
+      FakeLegacyNetworkClientResponses.defaultError
     );
-    const feeFailingNetworkClient = new FakeNetworkClient(feeFailureResponses);
-    const xpringClient = new DefaultXpringClient(feeFailingNetworkClient);
+    const feeFailingNetworkClient = new FakeLegacyNetworkClient(feeFailureResponses);
+    const xpringClient = new LegacyDefaultXpringClient(feeFailingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress =
@@ -273,7 +273,7 @@ describe("Default Xpring Client", function(): void {
       assert.typeOf(error, "Error");
       assert.equal(
         error.message,
-        FakeNetworkClientResponses.defaultError.message
+        FakeLegacyNetworkClientResponses.defaultError.message
       );
       done();
     });
@@ -281,13 +281,13 @@ describe("Default Xpring Client", function(): void {
 
   it("Send XRP Transaction - submission failure", function(done) {
     // GIVEN a XpringClient which will to submit a transaction.
-    const feeFailureResponses = new FakeNetworkClientResponses(
-      FakeNetworkClientResponses.defaultAccountInfoResponse(),
-      FakeNetworkClientResponses.defaultFeeResponse(),
-      FakeNetworkClientResponses.defaultError
+    const feeFailureResponses = new FakeLegacyNetworkClientResponses(
+      FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeLegacyNetworkClientResponses.defaultFeeResponse(),
+      FakeLegacyNetworkClientResponses.defaultError
     );
-    const feeFailingNetworkClient = new FakeNetworkClient(feeFailureResponses);
-    const xpringClient = new DefaultXpringClient(feeFailingNetworkClient);
+    const feeFailingNetworkClient = new FakeLegacyNetworkClient(feeFailureResponses);
+    const xpringClient = new LegacyDefaultXpringClient(feeFailingNetworkClient);
     const wallet = (Wallet.generateRandomWallet() as WalletGenerationResult)
       .wallet;
     const destinationAddress =
@@ -299,7 +299,7 @@ describe("Default Xpring Client", function(): void {
       assert.typeOf(error, "Error");
       assert.equal(
         error.message,
-        FakeNetworkClientResponses.defaultError.message
+        FakeLegacyNetworkClientResponses.defaultError.message
       );
       done();
     });
@@ -312,15 +312,15 @@ describe("Default Xpring Client", function(): void {
     transactionStatusResponse.setTransactionStatusCode(
       transactionStatusCodeFailure
     );
-    const transactionStatusResponses = new FakeNetworkClientResponses(
-      FakeNetworkClientResponses.defaultAccountInfoResponse(),
-      FakeNetworkClientResponses.defaultFeeResponse(),
-      FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
-      FakeNetworkClientResponses.defaultLedgerSequenceResponse(),
+    const transactionStatusResponses = new FakeLegacyNetworkClientResponses(
+      FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeLegacyNetworkClientResponses.defaultFeeResponse(),
+      FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
+      FakeLegacyNetworkClientResponses.defaultLedgerSequenceResponse(),
       transactionStatusResponse
     );
-    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses);
-    const xpringClient = new DefaultXpringClient(fakeNetworkClient);
+    const fakeNetworkClient = new FakeLegacyNetworkClient(transactionStatusResponses);
+    const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient);
 
     // WHEN the transaction status is retrieved.
     const transactionStatus = await xpringClient.getTransactionStatus(
@@ -338,15 +338,15 @@ describe("Default Xpring Client", function(): void {
     transactionStatusResponse.setTransactionStatusCode(
       transactionStatusCodeSuccess
     );
-    const transactionStatusResponses = new FakeNetworkClientResponses(
-      FakeNetworkClientResponses.defaultAccountInfoResponse(),
-      FakeNetworkClientResponses.defaultFeeResponse(),
-      FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
-      FakeNetworkClientResponses.defaultLedgerSequenceResponse(),
+    const transactionStatusResponses = new FakeLegacyNetworkClientResponses(
+      FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeLegacyNetworkClientResponses.defaultFeeResponse(),
+      FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
+      FakeLegacyNetworkClientResponses.defaultLedgerSequenceResponse(),
       transactionStatusResponse
     );
-    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses);
-    const xpringClient = new DefaultXpringClient(fakeNetworkClient);
+    const fakeNetworkClient = new FakeLegacyNetworkClient(transactionStatusResponses);
+    const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient);
 
     // WHEN the transaction status is retrieved.
     const transactionStatus = await xpringClient.getTransactionStatus(
@@ -364,15 +364,15 @@ describe("Default Xpring Client", function(): void {
     transactionStatusResponse.setTransactionStatusCode(
       transactionStatusCodeFailure
     );
-    const transactionStatusResponses = new FakeNetworkClientResponses(
-      FakeNetworkClientResponses.defaultAccountInfoResponse(),
-      FakeNetworkClientResponses.defaultFeeResponse(),
-      FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
-      FakeNetworkClientResponses.defaultLedgerSequenceResponse(),
+    const transactionStatusResponses = new FakeLegacyNetworkClientResponses(
+      FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeLegacyNetworkClientResponses.defaultFeeResponse(),
+      FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
+      FakeLegacyNetworkClientResponses.defaultLedgerSequenceResponse(),
       transactionStatusResponse
     );
-    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses);
-    const xpringClient = new DefaultXpringClient(fakeNetworkClient);
+    const fakeNetworkClient = new FakeLegacyNetworkClient(transactionStatusResponses);
+    const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient);
 
     // WHEN the transaction status is retrieved.
     const transactionStatus = await xpringClient.getTransactionStatus(
@@ -390,15 +390,15 @@ describe("Default Xpring Client", function(): void {
     transactionStatusResponse.setTransactionStatusCode(
       transactionStatusCodeSuccess
     );
-    const transactionStatusResponses = new FakeNetworkClientResponses(
-      FakeNetworkClientResponses.defaultAccountInfoResponse(),
-      FakeNetworkClientResponses.defaultFeeResponse(),
-      FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
-      FakeNetworkClientResponses.defaultLedgerSequenceResponse(),
+    const transactionStatusResponses = new FakeLegacyNetworkClientResponses(
+      FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeLegacyNetworkClientResponses.defaultFeeResponse(),
+      FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
+      FakeLegacyNetworkClientResponses.defaultLedgerSequenceResponse(),
       transactionStatusResponse
     );
-    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses);
-    const xpringClient = new DefaultXpringClient(fakeNetworkClient);
+    const fakeNetworkClient = new FakeLegacyNetworkClient(transactionStatusResponses);
+    const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient);
 
     // WHEN the transaction status is retrieved.
     const transactionStatus = await xpringClient.getTransactionStatus(
@@ -411,22 +411,22 @@ describe("Default Xpring Client", function(): void {
 
   it("Get Transaction Status - Node Error", function(done) {
     // GIVEN a XpringClient which will error when a transaction status is requested.
-    const transactionStatusResponses = new FakeNetworkClientResponses(
-      FakeNetworkClientResponses.defaultAccountInfoResponse(),
-      FakeNetworkClientResponses.defaultFeeResponse(),
-      FakeNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
-      FakeNetworkClientResponses.defaultLedgerSequenceResponse(),
-      FakeNetworkClientResponses.defaultError
+    const transactionStatusResponses = new FakeLegacyNetworkClientResponses(
+      FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeLegacyNetworkClientResponses.defaultFeeResponse(),
+      FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
+      FakeLegacyNetworkClientResponses.defaultLedgerSequenceResponse(),
+      FakeLegacyNetworkClientResponses.defaultError
     );
-    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses);
-    const xpringClient = new DefaultXpringClient(fakeNetworkClient);
+    const fakeNetworkClient = new FakeLegacyNetworkClient(transactionStatusResponses);
+    const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient);
 
     // WHEN the transaction status is retrieved THEN an error is thrown.
     xpringClient.getTransactionStatus(transactionHash).catch(error => {
       assert.typeOf(error, "Error");
       assert.equal(
         error.message,
-        FakeNetworkClientResponses.defaultError.message
+        FakeLegacyNetworkClientResponses.defaultError.message
       );
       done();
     });
