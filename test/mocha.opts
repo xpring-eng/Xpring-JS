@@ -2,3 +2,4 @@
 --require ./node_modules/source-map-support/register
 --recursive
 test/**/*.ts
+
