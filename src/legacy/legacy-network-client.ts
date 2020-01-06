@@ -12,15 +12,6 @@ import {
 } from "xpring-common-js";
 
 /**
- * An error that can occur when making a request.
- */
-export interface LegacyNetworkServiceError {
-  message: string;
-  code: number;
-  metadata: object;
-}
-
-/**
  * The network client interface provides a wrapper around network calls to the Xpring Platform.
  */
 export interface LegacyNetworkClient {
