@@ -7,7 +7,8 @@ import { GetTransactionStatusRequest } from "../../generated/legacy/get_transact
 import { Payment } from "../../generated/legacy/payment_pb";
 import { SubmitSignedTransactionRequest } from "../../generated/legacy/submit_signed_transaction_request_pb";
 import { Transaction } from "../../generated/legacy/transaction_pb";
-import { TransactionStatus as RawTransactionStatus } from "../../generated/legacy/transaction_status_pb";
+import { TransactionStatus as RawTransactionStatusResponse } from "../../generated/legacy/transaction_status_pb";
+import RawTransactionStatus from "../raw-transaction-status";
 import { XRPAmount } from "../../generated/legacy/xrp_amount_pb";
 import { LegacyNetworkClient } from "./legacy-network-client";
 import LegacyGRPCNetworkClient from "./legacy-grpc-network-client";
@@ -187,7 +188,9 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
                   );
                   if (!transactionHash) {
                     return Promise.reject(
-                      new Error(LegacyXpringClientErrorMessages.malformedResponse)
+                      new Error(
+                        LegacyXpringClientErrorMessages.malformedResponse
+                      )
                     );
                   }
                   return Promise.resolve(transactionHash);
