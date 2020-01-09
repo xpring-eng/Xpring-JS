@@ -2,6 +2,13 @@ import { XpringClientDecorator } from "./xpring-client-decorator";
 import TransactionStatus from "./transaction-status";
 import { Wallet } from "xpring-common-js";
 import { TransactionStatus as RawTransactionStatus } from "../generated/legacy/transaction_status_pb";
+import GRPCNetworkClient from "./grpc-network-client";
+import { NetworkClient } from "./network-client";
+import {
+  GetAccountInfoRequest,
+  GetAccountInfoResponse
+} from "../generated/rpc/v1/account_info_pb";
+import { AccountAddress } from "../generated/rpc/v1/amount_pb";
 
 /* global BigInt */
 
@@ -12,6 +19,7 @@ import { TransactionStatus as RawTransactionStatus } from "../generated/legacy/t
  * Error messages from XpringClient.
  */
 export class XpringClientErrorMessages {
+  public static readonly malformedResponse = "Malformed Response.";
   public static readonly unimplemented = "Unimplemented.";
 }
 
@@ -21,8 +29,26 @@ export class XpringClientErrorMessages {
 class DefaultXpringClient implements XpringClientDecorator {
   /**
    * Create a new DefaultXpringClient.
+   *
+   * The DefaultXpringClient will use gRPC to communicate with the given endpoint.
+   *
+   * @param grpcURL The URL of the gRPC instance to connect to.
    */
-  public constructor() {}
+  public static defaultXpringClientWithEndpoint(
+    grpcURL: string
+  ): DefaultXpringClient {
+    const grpcClient = new GRPCNetworkClient(grpcURL);
+    return new DefaultXpringClient(grpcClient);
+  }
+
+  /**
+   * Create a new DefaultXpringClient with a custom network client implementation.
+   *
+   * In general, clients should prefer to call `xpringClientWithEndpoint`. This constructor is provided to improve testability of this class.
+   *
+   * @param networkClient A network client which will manage remote RPCs to Rippled.
+   */
+  public constructor(private readonly networkClient: NetworkClient) {}
 
   /**
    * Retrieve the balance for the given address.
@@ -31,7 +57,18 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A `BigInt` representing the number of drops of XRP in the account.
    */
   public async getBalance(address: string): Promise<BigInt> {
-    throw new Error(XpringClientErrorMessages.unimplemented);
+    const account = new AccountAddress();
+    account.setAddress(address);
+
+    const request = new GetAccountInfoRequest();
+    request.setAccount(account);
+
+    const accountInfo = await this.networkClient.getAccountInfo(request);
+    const balance = accountInfo.getAccountData()?.getBalance();
+    if (balance) {
+      throw new Error(XpringClientErrorMessages.malformedResponse);
+    }
+    return BigInt(balance);
   }
 
   /**
