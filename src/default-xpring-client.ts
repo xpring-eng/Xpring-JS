@@ -46,8 +46,6 @@ class DefaultXpringClient implements XpringClientDecorator {
     throw new Error(XpringClientErrorMessages.unimplemented);
   }
 
-  /* eslint-disable no-dupe-class-members */
-
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
@@ -63,8 +61,6 @@ class DefaultXpringClient implements XpringClientDecorator {
   ): Promise<string> {
     throw new Error(XpringClientErrorMessages.unimplemented);
   }
-
-  /* eslint-enable no-dupe-class-members */
 
   public async getLastValidatedLedgerSequence(): Promise<number> {
     throw new Error(XpringClientErrorMessages.unimplemented);
