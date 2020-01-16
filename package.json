@@ -38,7 +38,7 @@
     "eslint": "5.16.0",
     "eslint-config-airbnb-base": "14.0.0",
     "eslint-config-prettier": "6.9.0",
-    "eslint-plugin-import": "2.19.1",
+    "eslint-plugin-import": "2.20.0",
     "eslint-plugin-mocha": "^6.2.2",
     "eslint-plugin-prettier": "3.1.2",
     "grpc_tools_node_protoc_ts": "2.5.9",
