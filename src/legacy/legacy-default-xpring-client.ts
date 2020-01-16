@@ -121,84 +121,77 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
     destination: string,
     sender: Wallet
   ): Promise<string> {
-    if (!Utils.isValidXAddress(destination)) {
-      return Promise.reject(
-        new Error(LegacyXpringClientErrorMessages.xAddressRequired)
-      );
-    }
-
-    const normalizedAmount = this.toBigInt(amount);
-
-    return this.getFee().then(async fee => {
-      return this.getAccountInfo(sender.getAddress()).then(
-        async accountInfo => {
-          return this.getLastValidatedLedgerSequence().then(
-            async ledgerSequence => {
-              if (accountInfo.getSequence() === undefined) {
-                return Promise.reject(
-                  new Error(LegacyXpringClientErrorMessages.malformedResponse)
-                );
-              }
-
-              const xrpAmount = new XRPAmount();
-              xrpAmount.setDrops(normalizedAmount.toString());
-
-              const payment = new Payment();
-              payment.setXrpAmount(xrpAmount);
-              payment.setDestination(destination);
-
-              const transaction = new Transaction();
-              transaction.setAccount(sender.getAddress());
-              transaction.setFee(fee);
-              transaction.setSequence(accountInfo.getSequence());
-              transaction.setPayment(payment);
-              transaction.setLastLedgerSequence(
-                ledgerSequence + ledgerSequenceMargin
-              );
-              transaction.setSigningPublicKeyHex(sender.getPublicKey());
-
-              var signedTransaction;
-              try {
-                signedTransaction = Signer.signTransaction(transaction, sender);
-              } catch (signingError) {
-                const signingErrorMessage =
-                  LegacyXpringClientErrorMessages.signingFailure +
-                  ". " +
-                  signingError.message;
-                return Promise.reject(new Error(signingErrorMessage));
-              }
-              if (signedTransaction == undefined) {
-                return Promise.reject(
-                  new Error(LegacyXpringClientErrorMessages.signingFailure)
-                );
-              }
-
-              const submitSignedTransactionRequest = new SubmitSignedTransactionRequest();
-              submitSignedTransactionRequest.setSignedTransaction(
-                signedTransaction
-              );
-
-              return this.networkClient
-                .submitSignedTransaction(submitSignedTransactionRequest)
-                .then(async response => {
-                  const transactionBlob = response.getTransactionBlob();
-                  const transactionHash = Utils.transactionBlobToTransactionHash(
-                    transactionBlob
-                  );
-                  if (!transactionHash) {
-                    return Promise.reject(
-                      new Error(
-                        LegacyXpringClientErrorMessages.malformedResponse
-                      )
-                    );
-                  }
-                  return Promise.resolve(transactionHash);
-                });
-            }
-          );
-        }
-      );
-    });
+    return "WRONG";
+    // if (!Utils.isValidXAddress(destination)) {
+    //   return Promise.reject(
+    //     new Error(LegacyXpringClientErrorMessages.xAddressRequired)
+    //   );
+    // }
+    // const normalizedAmount = this.toBigInt(amount);
+    // return this.getFee().then(async fee => {
+    //   return this.getAccountInfo(sender.getAddress()).then(
+    //     async accountInfo => {
+    //       return this.getLastValidatedLedgerSequence().then(
+    //         async ledgerSequence => {
+    //           if (accountInfo.getSequence() === undefined) {
+    //             return Promise.reject(
+    //               new Error(LegacyXpringClientErrorMessages.malformedResponse)
+    //             );
+    //           }
+    //           const xrpAmount = new XRPAmount();
+    //           xrpAmount.setDrops(normalizedAmount.toString());
+    //           const payment = new Payment();
+    //           payment.setXrpAmount(xrpAmount);
+    //           payment.setDestination(destination);
+    //           const transaction = new Transaction();
+    //           transaction.setAccount(sender.getAddress());
+    //           transaction.setFee(fee);
+    //           transaction.setSequence(accountInfo.getSequence());
+    //           transaction.setPayment(payment);
+    //           transaction.setLastLedgerSequence(
+    //             ledgerSequence + ledgerSequenceMargin
+    //           );
+    //           transaction.setSigningPublicKeyHex(sender.getPublicKey());
+    //           var signedTransaction;
+    //           try {
+    //             signedTransaction = Signer.signLegacyTransaction(transaction, sender);
+    //           } catch (signingError) {
+    //             const signingErrorMessage =
+    //               LegacyXpringClientErrorMessages.signingFailure +
+    //               ". " +
+    //               signingError.message;
+    //             return Promise.reject(new Error(signingErrorMessage));
+    //           }
+    //           if (signedTransaction == undefined) {
+    //             return Promise.reject(
+    //               new Error(LegacyXpringClientErrorMessages.signingFailure)
+    //             );
+    //           }
+    //           const submitSignedTransactionRequest = new SubmitSignedTransactionRequest();
+    //           submitSignedTransactionRequest.setSignedTransaction(
+    //             signedTransaction
+    //           );
+    //           return this.networkClient
+    //             .submitSignedTransaction(submitSignedTransactionRequest)
+    //             .then(async response => {
+    //               const transactionBlob = response.getTransactionBlob();
+    //               const transactionHash = Utils.transactionBlobToTransactionHash(
+    //                 transactionBlob
+    //               );
+    //               if (!transactionHash) {
+    //                 return Promise.reject(
+    //                   new Error(
+    //                     LegacyXpringClientErrorMessages.malformedResponse
+    //                   )
+    //                 );
+    //               }
+    //               return Promise.resolve(transactionHash);
+    //             });
+    //         }
+    //       );
+    //     }
+    //   );
+    // });
   }
 
   /* eslint-enable no-dupe-class-members */

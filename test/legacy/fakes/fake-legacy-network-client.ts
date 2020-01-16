@@ -1,17 +1,15 @@
 import { LegacyNetworkClient } from "../../../src/legacy/legacy-network-client";
-import {
-  AccountInfo,
-  Fee,
-  GetAccountInfoRequest,
-  GetFeeRequest,
-  SubmitSignedTransactionResponse,
-  SubmitSignedTransactionRequest,
-  XRPAmount,
-  GetLatestValidatedLedgerSequenceRequest,
-  LedgerSequence,
-  GetTransactionStatusRequest,
-  TransactionStatus
-} from "xpring-common-js";
+import { AccountInfo } from "../../../generated/legacy/account_info_pb";
+import { Fee } from "../../../generated/legacy/fee_pb";
+import { GetFeeRequest } from "../../../generated/legacy/get_fee_request_pb";
+import { GetAccountInfoRequest } from "../../../generated/legacy/get_account_info_request_pb";
+import { SubmitSignedTransactionRequest } from "../../../generated/legacy/submit_signed_transaction_request_pb";
+import { SubmitSignedTransactionResponse } from "../../../generated/legacy/submit_signed_transaction_response_pb";
+import { GetLatestValidatedLedgerSequenceRequest } from "../../../generated/legacy/get_latest_validated_ledger_sequence_request_pb";
+import { LedgerSequence } from "../../../generated/legacy/ledger_sequence_pb";
+import { GetTransactionStatusRequest } from "../../../generated/legacy/get_transaction_status_request_pb";
+import { TransactionStatus } from "../../../generated/legacy/transaction_status_pb";
+import { XRPAmount } from "../../../generated/legacy/xrp_amount_pb";
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -177,7 +175,7 @@ export class FakeLegacyNetworkClient implements LegacyNetworkClient {
       return Promise.reject(ledgerSequenceResponse);
     }
 
-    return Promise.resolve(ledgerSequenceResponse);  
+    return Promise.resolve(ledgerSequenceResponse);
   }
 
   getTransactionStatus( _getTransactionStatusRequest: GetTransactionStatusRequest): Promise<TransactionStatus> {
