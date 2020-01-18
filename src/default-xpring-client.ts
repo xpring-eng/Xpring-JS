@@ -10,6 +10,8 @@ import {
 } from "../generated/rpc/v1/account_info_pb";
 import { AccountAddress } from "../generated/rpc/v1/amount_pb";
 import { GetTxRequest, GetTxResponse } from "../generated/rpc/v1/tx_pb";
+import { XRPDropsAmount } from "xpring-common-js/build/generated/rpc/v1/amount_pb";
+import { GetFeeRequest } from "../generated/rpc/v1/fee_pb";
 
 /* global BigInt */
 
@@ -174,6 +176,23 @@ class DefaultXpringClient implements XpringClientDecorator {
     const getTxResponse = await this.networkClient.getTx(getTxRequest);
 
     return new GetTxResponseWrapper(getTxResponse);
+  }
+
+  private async getFee(): Promise<XRPDropsAmount> {
+    const getFeeRequest = new GetFeeRequest();
+
+    const getFeeResponse = await this.networkClient.getFee(getFeeRequest);
+    const fee = getFeeResponse.getDrops();
+    if (!fee) {
+      throw new Error(XpringClientErrorMessages.malformedResponse);
+    }
+
+    const minimumFee = fee.getMinimumFee();
+    if (!minimumFee) {
+      throw new Error(XpringClientErrorMessages.malformedResponse);
+    }
+
+    return minimumFee;
   }
 }
 
