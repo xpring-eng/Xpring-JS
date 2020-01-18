@@ -11,7 +11,7 @@ import {
 import { AccountAddress } from "../generated/rpc/v1/amount_pb";
 import { GetTxRequest, GetTxResponse } from "../generated/rpc/v1/tx_pb";
 import { XRPDropsAmount } from "xpring-common-js/build/generated/rpc/v1/amount_pb";
-import { GetFeeRequest } from "../generated/rpc/v1/fee_pb";
+import { GetFeeRequest, GetFeeResponse } from "../generated/rpc/v1/fee_pb";
 
 /* global BigInt */
 
@@ -164,7 +164,8 @@ class DefaultXpringClient implements XpringClientDecorator {
   }
 
   public async getLastValidatedLedgerSequence(): Promise<number> {
-    throw new Error(XpringClientErrorMessages.unimplemented);
+    const getFeeResponse = await this.getFee();
+    return getFeeResponse.getLedgerCurrentIndex();
   }
 
   public async getRawTransactionStatus(
@@ -178,10 +179,8 @@ class DefaultXpringClient implements XpringClientDecorator {
     return new GetTxResponseWrapper(getTxResponse);
   }
 
-  private async getFee(): Promise<XRPDropsAmount> {
-    const getFeeRequest = new GetFeeRequest();
-
-    const getFeeResponse = await this.networkClient.getFee(getFeeRequest);
+  private async getMinimumFee(): Promise<XRPDropsAmount> {
+    const getFeeResponse = await this.getFee();
     const fee = getFeeResponse.getDrops();
     if (!fee) {
       throw new Error(XpringClientErrorMessages.malformedResponse);
@@ -193,6 +192,11 @@ class DefaultXpringClient implements XpringClientDecorator {
     }
 
     return minimumFee;
+  }
+
+  private async getFee(): Promise<GetFeeResponse> {
+    const getFeeRequest = new GetFeeRequest();
+    return await this.networkClient.getFee(getFeeRequest);
   }
 }
 
