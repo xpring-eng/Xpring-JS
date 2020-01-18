@@ -1,6 +1,6 @@
 import { XpringClientDecorator } from "./xpring-client-decorator";
 import TransactionStatus from "./transaction-status";
-import { Utils, Wallet } from "xpring-common-js";
+import { Signer, Utils, Wallet } from "xpring-common-js";
 import RawTransactionStatus from "./raw-transaction-status";
 import GRPCNetworkClient from "./grpc-network-client";
 import { NetworkClient } from "./network-client";
@@ -8,15 +8,20 @@ import {
   GetAccountInfoRequest,
   GetAccountInfoResponse
 } from "../generated/rpc/v1/account_info_pb";
-import { AccountAddress } from "../generated/rpc/v1/amount_pb";
+import { AccountAddress, CurrencyAmount } from "../generated/rpc/v1/amount_pb";
 import { GetTxRequest, GetTxResponse } from "../generated/rpc/v1/tx_pb";
 import { XRPDropsAmount } from "xpring-common-js/build/generated/rpc/v1/amount_pb";
 import { GetFeeRequest, GetFeeResponse } from "../generated/rpc/v1/fee_pb";
+import { AccountRoot } from "../generated/rpc/v1/ledger_objects_pb";
+import { Transaction, Payment } from "../generated/rpc/v1/transaction_pb";
 
 /* global BigInt */
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
+
+/** A margin to pad the current ledger sequence with when submitting transactions. */
+const ledgerSequenceMargin = 10;
 
 /**
  * Error messages from XpringClient.
@@ -105,17 +110,7 @@ class DefaultXpringClient implements XpringClientDecorator {
       );
     }
 
-    const account = new AccountAddress();
-    account.setAddress(address);
-
-    const request = new GetAccountInfoRequest();
-    request.setAccount(account);
-
-    const accountInfo = await this.networkClient.getAccountInfo(request);
-    const accountData = accountInfo.getAccountData();
-    if (!accountData) {
-      throw new Error(XpringClientErrorMessages.malformedResponse);
-    }
+    const accountData = await this.getAccountData(address);
 
     const balance = accountData.getBalance();
     if (!balance) {
@@ -160,6 +155,51 @@ class DefaultXpringClient implements XpringClientDecorator {
     destination: string,
     sender: Wallet
   ): Promise<string> {
+    if (!Utils.isValidXAddress(destination)) {
+      return Promise.reject(
+        new Error(XpringClientErrorMessages.xAddressRequired)
+      );
+    }
+
+    const normalizedAmount = this.toBigInt(amount);
+    const fee = await this.getMinimumFee();
+    const accountData = await this.getAccountData(sender.getAddress());
+    const lastValidatedLedgerSequence = await this.getLastValidatedLedgerSequence();
+
+    const xrpDropsAmount = new XRPDropsAmount();
+    // TODO: Does this always work?
+    // xrpDropsAmount.setDrops(normalizedAmount.t
+
+    const currencyAmount = new CurrencyAmount();
+    currencyAmount.setXrpAmount(xrpDropsAmount);
+
+    const destinationAccount = new AccountAddress();
+    destinationAccount.setAddress(destination);
+
+    const payment = new Payment();
+    payment.setDestination(destinationAccount);
+    payment.setAmount(currencyAmount);
+
+    const account = new AccountAddress();
+    account.setAddress(sender.getAddress());
+
+    const transaction = new Transaction();
+    transaction.setAccount(account);
+    transaction.setFee(fee);
+    transaction.setSequence(accountData.getSequence());
+    transaction.setPayment(payment);
+    transaction.setLastLedgerSequence(
+      lastValidatedLedgerSequence + ledgerSequenceMargin
+    );
+
+    const signature = Signer.signTransaction(transaction, sender);
+    // transaction.setSignature(signature);
+
+    const submitTransactionRequest = new SubmitTransactionRequest();
+    submitTransactionRequest.set;
+
+    // transaction.setSigningPublicKey([0, 0, 0, 0]);
+
     throw new Error(XpringClientErrorMessages.unimplemented);
   }
 
@@ -197,6 +237,41 @@ class DefaultXpringClient implements XpringClientDecorator {
   private async getFee(): Promise<GetFeeResponse> {
     const getFeeRequest = new GetFeeRequest();
     return await this.networkClient.getFee(getFeeRequest);
+  }
+
+  private async getAccountData(address: string): Promise<AccountRoot> {
+    const account = new AccountAddress();
+    account.setAddress(address);
+
+    const request = new GetAccountInfoRequest();
+    request.setAccount(account);
+
+    const accountInfo = await this.networkClient.getAccountInfo(request);
+    if (!accountInfo) {
+      throw new Error(XpringClientErrorMessages.malformedResponse);
+    }
+
+    const accountData = accountInfo.getAccountData();
+    if (!accountData) {
+      throw new Error(XpringClientErrorMessages.malformedResponse);
+    }
+
+    return accountData;
+  }
+
+  /**
+   * Convert a polymorphic numeric value into a BigInt.
+   *
+   * @param value The value to convert.
+   * @returns A BigInt representing the input value.
+   */
+  private toBigInt(value: string | number | BigInt): BigInt {
+    if (typeof value == "string" || typeof value == "number") {
+      return BigInt(value);
+    } else {
+      // Value is already a BigInt.
+      return value;
+    }
   }
 }
 
