@@ -1,7 +1,7 @@
 import { XpringClientDecorator } from "./xpring-client-decorator";
 import TransactionStatus from "./transaction-status";
 import { Utils, Wallet } from "xpring-common-js";
-import { TransactionStatus as RawTransactionStatus } from "../generated/legacy/transaction_status_pb";
+import RawTransactionStatus from "./raw-transaction-status";
 import GRPCNetworkClient from "./grpc-network-client";
 import { NetworkClient } from "./network-client";
 import {
@@ -9,7 +9,7 @@ import {
   GetAccountInfoResponse
 } from "../generated/rpc/v1/account_info_pb";
 import { AccountAddress } from "../generated/rpc/v1/amount_pb";
-import { GetTxRequest } from "../generated/rpc/v1/tx_pb";
+import { GetTxRequest, GetTxResponse } from "../generated/rpc/v1/tx_pb";
 
 /* global BigInt */
 
@@ -27,6 +27,40 @@ export class XpringClientErrorMessages {
   public static readonly xAddressRequired =
     "Please use the X-Address format. See: https://xrpaddress.info/.";
   /* eslint-enable @typescript-eslint/indent */
+}
+
+/**
+ * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
+ */
+class GetTxResponseWrapper implements RawTransactionStatus {
+  public constructor(private readonly getTxResponse: GetTxResponse) {}
+
+  public getValidated(): boolean {
+    return this.getTxResponse.getValidated();
+  }
+
+  public getTransactionStatusCode(): string {
+    const meta = this.getTxResponse.getMeta();
+    if (!meta) {
+      throw new Error(XpringClientErrorMessages.malformedResponse);
+    }
+
+    const transactionResult = meta.getTransactionResult();
+    if (!transactionResult) {
+      throw new Error(XpringClientErrorMessages.malformedResponse);
+    }
+
+    return transactionResult.getResult();
+  }
+
+  public getLastLedgerSequence(): number {
+    const transaction = this.getTxResponse.getTransaction();
+    if (!transaction) {
+      throw new Error(XpringClientErrorMessages.malformedResponse);
+    }
+
+    return transaction.getLastLedgerSequence();
+  }
 }
 
 /**
