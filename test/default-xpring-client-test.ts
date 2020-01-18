@@ -136,4 +136,104 @@ describe("Default Xpring Client", function(): void {
     // THEN the status is pending.
     assert.deepEqual(transactionStatus, TransactionStatus.Pending);
   });
+
+  it("Get Transaction Status - Unvalidated Transaction and Success Code", async function(): Promise<
+    void
+  > {
+    // GIVEN a XpringClient which will return an unvalidated transaction with a success code.
+    const transactionStatusResponse = makeGetTxResponse(
+      false,
+      transactionStatusCodeSuccess
+    );
+    const transactionStatusResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      transactionStatusResponse
+    );
+    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses);
+    const xpringClient = new DefaultXpringClient(fakeNetworkClient);
+
+    // WHEN the transaction status is retrieved.
+    const transactionStatus = await xpringClient.getTransactionStatus(
+      transactionHash
+    );
+
+    // THEN the status is pending.
+    assert.deepEqual(transactionStatus, TransactionStatus.Pending);
+  });
+
+  it("Get Transaction Status - Validated Transaction and Failure Code", async function(): Promise<
+    void
+  > {
+    // GIVEN a XpringClient which will return an validated transaction with a failure code.
+    const transactionStatusResponse = makeGetTxResponse(
+      true,
+      transactionStatusCodeFailure
+    );
+    const transactionStatusResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      transactionStatusResponse
+    );
+    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses);
+    const xpringClient = new DefaultXpringClient(fakeNetworkClient);
+
+    // WHEN the transaction status is retrieved.
+    const transactionStatus = await xpringClient.getTransactionStatus(
+      transactionHash
+    );
+
+    // THEN the status is failed.
+    assert.deepEqual(transactionStatus, TransactionStatus.Failed);
+  });
+
+  it("Get Transaction Status - Validated Transaction and Success Code", async function(): Promise<
+    void
+  > {
+    // GIVEN a XpringClient which will return an validated transaction with a success code.
+    const transactionStatusResponse = makeGetTxResponse(
+      true,
+      transactionStatusCodeSuccess
+    );
+    const transactionStatusResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      transactionStatusResponse
+    );
+    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses);
+    const xpringClient = new DefaultXpringClient(fakeNetworkClient);
+
+    // WHEN the transaction status is retrieved.
+    const transactionStatus = await xpringClient.getTransactionStatus(
+      transactionHash
+    );
+
+    // THEN the status is succeeded.
+    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded);
+  });
+
+  it("Get Transaction Status - Node Error", function(done): void {
+    // GIVEN a XpringClient which will error when a transaction status is requested.
+    const transactionStatusResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      FakeNetworkClientResponses.defaultError
+    );
+    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses);
+    const xpringClient = new DefaultXpringClient(fakeNetworkClient);
+
+    // WHEN the transaction status is retrieved THEN an error is thrown.
+    xpringClient.getTransactionStatus(transactionHash).catch(error => {
+      assert.typeOf(error, "Error");
+      assert.equal(
+        error.message,
+        FakeNetworkClientResponses.defaultError.message
+      );
+      done();
+    });
+  });
 });

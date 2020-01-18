@@ -131,7 +131,18 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getTransactionStatus(
     transactionHash: string
   ): Promise<TransactionStatus> {
-    throw new Error(XpringClientErrorMessages.unimplemented);
+    const transactionStatus = await this.getRawTransactionStatus(
+      transactionHash
+    );
+
+    // Return pending if the transaction is not validated.
+    if (!transactionStatus.getValidated()) {
+      return TransactionStatus.Pending;
+    }
+
+    return transactionStatus.getTransactionStatusCode().startsWith("tes")
+      ? TransactionStatus.Succeeded
+      : TransactionStatus.Failed;
   }
 
   /**
@@ -154,7 +165,6 @@ class DefaultXpringClient implements XpringClientDecorator {
     throw new Error(XpringClientErrorMessages.unimplemented);
   }
 
-  // TODO(keefertaylor): Create bridge on raw transaction status.
   public async getRawTransactionStatus(
     transactionHash: string
   ): Promise<RawTransactionStatus> {
