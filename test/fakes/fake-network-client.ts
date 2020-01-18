@@ -12,6 +12,7 @@ import {
 import { AccountRoot } from "../../generated/rpc/v1/ledger_objects_pb";
 import { XRPDropsAmount } from "../../generated/rpc/v1/amount_pb";
 import { AccountInfo } from "xpring-common-js";
+import { Meta, TransactionResult } from "../../generated/rpc/v1/meta_pb";
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -99,7 +100,18 @@ export class FakeNetworkClientResponses {
    * Construct a default getTx response.
    */
   public static defaultGetTxResponse(): GetTxResponse {
-    return new GetTxResponse();
+    const transactionResult = new TransactionResult();
+    transactionResult.setResult("tesSUCCESS");
+
+    const meta = new Meta();
+    meta.setTransactionResult(transactionResult);
+
+
+    const response = new GetTxResponse();
+    response.setValidated(true);
+    response.setMeta(meta);
+
+    return response;
   }
 }
 

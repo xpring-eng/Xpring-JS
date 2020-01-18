@@ -161,9 +161,9 @@ class DefaultXpringClient implements XpringClientDecorator {
     const getTxRequest = new GetTxRequest();
     getTxRequest.setHash(transactionHash);
 
-    const transactionStatus = await this.networkClient.getTx(getTxRequest);
+    const getTxResponse = await this.networkClient.getTx(getTxRequest);
 
-    return transactionStatus;
+    return new GetTxResponseWrapper(getTxResponse);
   }
 }
 

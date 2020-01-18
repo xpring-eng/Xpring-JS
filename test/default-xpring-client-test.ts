@@ -10,24 +10,54 @@ import {
   FakeNetworkClientResponses
 } from "./fakes/fake-network-client";
 import "mocha";
+import { GetTxResponse } from "../generated/rpc/v1/tx_pb";
+import { TransactionResult, Meta } from "../generated/rpc/v1/meta_pb";
+import TransactionStatus from "../src/transaction-status";
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/indent */
 
 chai.use(chaiString);
 
 const testAddress = "X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH";
+
+const transactionStatusCodeSuccess = "tesSUCCESS";
+const transactionStatusCodeFailure = "tecFAILURE";
+
+const transactionHash = "DEADBEEF";
 
 const fakeSucceedingNetworkClient = new FakeNetworkClient();
 const fakeErroringNetworkClient = new FakeNetworkClient(
   FakeNetworkClientResponses.defaultErrorResponses
 );
 
+/**
+ * Convenience function which allows construction of `getTxResponse` objects.
+ *
+ * @param validated Whether the txResponse is validated.
+ * @param resultCode The result code.
+ */
+function makeGetTxResponse(
+  validated: boolean,
+  resultCode: string
+): GetTxResponse {
+  const transactionResult = new TransactionResult();
+  transactionResult.setResult(resultCode);
+
+  const meta = new Meta();
+  meta.setTransactionResult(transactionResult);
+
+  const getTxResponse = new GetTxResponse();
+  getTxResponse.setMeta(meta);
+  getTxResponse.setValidated(validated);
+
+  return getTxResponse;
+}
+
 describe("Default Xpring Client", function(): void {
-  /* eslint-disable @typescript-eslint/indent */
   it("Get Account Balance - successful response", async function(): Promise<
     void
   > {
-    /* eslint-enable @typescript-eslint/indent */
     // GIVEN a LegacyDefaultXpringClient.
     const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient);
 
@@ -79,5 +109,31 @@ describe("Default Xpring Client", function(): void {
       assert.equal(error.message, XpringClientErrorMessages.malformedResponse);
       done();
     });
+  });
+
+  it("Get Transaction Status - Unvalidated Transaction and Failure Code", async function(): Promise<
+    void
+  > {
+    // GIVEN a XpringClient which will return an unvalidated transaction with a failure code.
+    const transactionStatusResponse = makeGetTxResponse(
+      false,
+      transactionStatusCodeFailure
+    );
+    const transactionStatusResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      transactionStatusResponse
+    );
+    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses);
+    const xpringClient = new DefaultXpringClient(fakeNetworkClient);
+
+    // WHEN the transaction status is retrieved.
+    const transactionStatus = await xpringClient.getTransactionStatus(
+      transactionHash
+    );
+
+    // THEN the status is pending.
+    assert.deepEqual(transactionStatus, TransactionStatus.Pending);
   });
 });
