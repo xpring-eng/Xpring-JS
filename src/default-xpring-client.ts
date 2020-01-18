@@ -1,6 +1,6 @@
 import { XpringClientDecorator } from "./xpring-client-decorator";
 import TransactionStatus from "./transaction-status";
-import { Wallet } from "xpring-common-js";
+import { Utils, Wallet } from "xpring-common-js";
 import { TransactionStatus as RawTransactionStatus } from "../generated/legacy/transaction_status_pb";
 import GRPCNetworkClient from "./grpc-network-client";
 import { NetworkClient } from "./network-client";
@@ -21,6 +21,8 @@ import { AccountAddress } from "../generated/rpc/v1/amount_pb";
 export class XpringClientErrorMessages {
   public static readonly malformedResponse = "Malformed Response.";
   public static readonly unimplemented = "Unimplemented.";
+  public static readonly xAddressRequired =
+    "Please use the X-Address format. See: https://xrpaddress.info/.";
 }
 
 /**
@@ -57,6 +59,12 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A `BigInt` representing the number of drops of XRP in the account.
    */
   public async getBalance(address: string): Promise<BigInt> {
+    if (!Utils.isValidXAddress(address)) {
+      return Promise.reject(
+        new Error(XpringClientErrorMessages.xAddressRequired)
+      );
+    }
+
     const account = new AccountAddress();
     account.setAddress(address);
 
@@ -64,8 +72,13 @@ class DefaultXpringClient implements XpringClientDecorator {
     request.setAccount(account);
 
     const accountInfo = await this.networkClient.getAccountInfo(request);
-    const balance = accountInfo.getAccountData()?.getBalance();
-    if (balance) {
+    const accountData = accountInfo.getAccountData();
+    if (!accountData) {
+      throw new Error(XpringClientErrorMessages.malformedResponse);
+    }
+
+    const balance = accountData.getBalance();
+    if (!balance) {
       throw new Error(XpringClientErrorMessages.malformedResponse);
     }
     return BigInt(balance);
