@@ -3,7 +3,7 @@ import { XpringClientDecorator } from "./xpring-client-decorator";
 import LegacyDefaultXpringClient from "./legacy/legacy-default-xpring-client";
 import TransactionStatus from "./transaction-status";
 import ReliableSubmissionXpringClient from "./reliable-submission-xpring-client";
-import DefaultXpringClient from "default-xpring-client";
+import DefaultXpringClient from "./default-xpring-client";
 
 /* global BigInt */
 
