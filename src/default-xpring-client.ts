@@ -9,6 +9,7 @@ import {
   GetAccountInfoResponse
 } from "../generated/rpc/v1/account_info_pb";
 import { AccountAddress } from "../generated/rpc/v1/amount_pb";
+import { GetTxRequest } from "../generated/rpc/v1/tx_pb";
 
 /* global BigInt */
 
@@ -123,7 +124,12 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getRawTransactionStatus(
     transactionHash: string
   ): Promise<RawTransactionStatus> {
-    throw new Error(XpringClientErrorMessages.unimplemented);
+    const getTxRequest = new GetTxRequest();
+    getTxRequest.setHash(transactionHash);
+
+    const transactionStatus = await this.networkClient.getTx(getTxRequest);
+
+    return transactionStatus;
   }
 }
 
