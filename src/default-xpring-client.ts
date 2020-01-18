@@ -21,8 +21,11 @@ import { AccountAddress } from "../generated/rpc/v1/amount_pb";
 export class XpringClientErrorMessages {
   public static readonly malformedResponse = "Malformed Response.";
   public static readonly unimplemented = "Unimplemented.";
+
+  /* eslint-disable @typescript-eslint/indent */
   public static readonly xAddressRequired =
     "Please use the X-Address format. See: https://xrpaddress.info/.";
+  /* eslint-enable @typescript-eslint/indent */
 }
 
 /**

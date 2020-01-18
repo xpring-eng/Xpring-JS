@@ -11,6 +11,8 @@ import {
 } from "./fakes/fake-network-client";
 import "mocha";
 
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 chai.use(chaiString);
 
 const testAddress = "X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH";
@@ -21,9 +23,11 @@ const fakeErroringNetworkClient = new FakeNetworkClient(
 );
 
 describe("Default Xpring Client", function(): void {
+  /* eslint-disable @typescript-eslint/indent */
   it("Get Account Balance - successful response", async function(): Promise<
     void
   > {
+    /* eslint-enable @typescript-eslint/indent */
     // GIVEN a LegacyDefaultXpringClient.
     const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient);
 
