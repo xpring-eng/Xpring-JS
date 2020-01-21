@@ -1,18 +1,26 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
-    "rootDir": "./",
     "outDir": "build",
-    "target": "esnext",
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "sourceMap": true,
-    "removeComments": true,
-    "strict": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "isolatedModules": true,
+    "sourceMap": true
   },
   "include": [
-    "src/**/*",
+    "src/**/*"
   ]
 }

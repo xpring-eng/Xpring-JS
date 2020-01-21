@@ -2,13 +2,16 @@ import { NetworkClient } from '../../src/network-client'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
-} from '../../generated/rpc/v1/account_info_pb'
-import { GetFeeRequest, GetFeeResponse } from '../../generated/rpc/v1/fee_pb'
-import { GetTxRequest, GetTxResponse } from '../../generated/rpc/v1/tx_pb'
+} from '../../src/generated/rpc/v1/account_info_pb'
+import {
+  GetFeeRequest,
+  GetFeeResponse,
+} from '../../src/generated/rpc/v1/fee_pb'
+import { GetTxRequest, GetTxResponse } from '../../src/generated/rpc/v1/tx_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from '../../generated/rpc/v1/submit_pb'
+} from '../../src/generated/rpc/v1/submit_pb'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -39,6 +42,7 @@ export class FakeNetworkClientResponses {
     FakeNetworkClientResponses.defaultError,
   )
 
+  /* eslint-disable @typescript-eslint/indent */
   /**
    * Construct a new set of responses.
    *
@@ -61,6 +65,7 @@ export class FakeNetworkClientResponses {
       GetTxResponse
     > = FakeNetworkClientResponses.defaultGetTxResponse(),
   ) {}
+  /* eslint-enable @typescript-eslint/indent */
 
   /**
    * Construct a default AccountInfoResponse.

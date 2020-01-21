@@ -2,7 +2,6 @@ import { assert } from 'chai'
 import {
   TransactionStatus as RawTransactionStatus,
   Wallet,
-  WalletGenerationResult,
 } from 'xpring-common-js'
 import FakeXpringClient from './fakes/fake-xpring-client'
 import ReliableSubmissionXpringClient from '../src/reliable-submission-xpring-client'
@@ -14,7 +13,7 @@ const transactionStatusCodeSuccess = 'tesSUCCESS'
 
 const transactionHash = 'DEADBEEF'
 
-const { wallet } = Wallet.generateRandomWallet() as WalletGenerationResult
+const { wallet } = Wallet.generateRandomWallet()
 
 const fakedGetBalanceValue = BigInt(10)
 const fakedTransactionStatusValue = TransactionStatus.Succeeded
@@ -140,11 +139,9 @@ describe('Reliable Submission Xpring Client', function(): void {
     this.fakeXpringClient.getRawTransactionStatusValue = malformedRawTransactionStatus
 
     // WHEN `send` is called THEN the promise is rejected.
-    this.reliableSubmissionClient.send('1', testAddress, wallet).then(
-      function() {},
-      function() {
-        done()
-      },
-    )
+    this.reliableSubmissionClient
+      .send('1', testAddress, wallet)
+      .then(() => {})
+      .catch(() => done())
   })
 })

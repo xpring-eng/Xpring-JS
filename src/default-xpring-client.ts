@@ -1,7 +1,9 @@
 import { Wallet } from 'xpring-common-js'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
-import { TransactionStatus as RawTransactionStatus } from '../generated/legacy/transaction_status_pb'
+import { TransactionStatus as RawTransactionStatus } from './generated/legacy/transaction_status_pb'
+
+/* global BigInt */
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
@@ -20,7 +22,7 @@ class DefaultXpringClient implements XpringClientDecorator {
   /**
    * Create a new DefaultXpringClient.
    */
-  public constructor() {}
+  public constructor() {} // eslint-disable-line @typescript-eslint/no-empty-function
 
   /**
    * Retrieve the balance for the given address.

@@ -43,6 +43,8 @@ export class FakeLegacyNetworkClientResponses {
     FakeLegacyNetworkClientResponses.defaultError,
   )
 
+  /* eslint-disable @typescript-eslint/indent */
+
   /**
    * Construct a new set of responses.
    *
@@ -69,6 +71,8 @@ export class FakeLegacyNetworkClientResponses {
       TransactionStatus
     > = FakeLegacyNetworkClientResponses.defaultTransactionStatusResponse(),
   ) {}
+
+  /* eslint-enable @typescript-eslint/indent */
 
   /**
    * Construct a default AccountInfoResponse.
