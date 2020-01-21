@@ -10,7 +10,7 @@ enum TransactionStatus {
   Succeeded,
 
   /** The transaction was included in a finalized ledger and succeeded. */
-  Unknown
+  Unknown,
 }
 
-export default TransactionStatus;
+export default TransactionStatus
