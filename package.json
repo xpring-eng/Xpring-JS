@@ -76,7 +76,7 @@
   },
   "mocha": {
     "require": [
-      "ts-node/register/transpile-only",
+      "ts-node/register",
       "source-map-support/register"
     ],
     "extension": [
