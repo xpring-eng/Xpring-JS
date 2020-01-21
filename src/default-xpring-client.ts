@@ -1,9 +1,7 @@
-import { XpringClientDecorator } from "./xpring-client-decorator";
-import TransactionStatus from "./transaction-status";
-import { Wallet } from "xpring-common-js";
-import { TransactionStatus as RawTransactionStatus } from "../generated/legacy/transaction_status_pb";
-
-/* global BigInt */
+import { Wallet } from 'xpring-common-js'
+import { XpringClientDecorator } from './xpring-client-decorator'
+import TransactionStatus from './transaction-status'
+import { TransactionStatus as RawTransactionStatus } from '../generated/legacy/transaction_status_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
@@ -12,7 +10,7 @@ import { TransactionStatus as RawTransactionStatus } from "../generated/legacy/t
  * Error messages from XpringClient.
  */
 export class XpringClientErrorMessages {
-  public static readonly unimplemented = "Unimplemented.";
+  public static readonly unimplemented = 'Unimplemented.'
 }
 
 /**
@@ -31,7 +29,7 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A `BigInt` representing the number of drops of XRP in the account.
    */
   public async getBalance(address: string): Promise<BigInt> {
-    throw new Error(XpringClientErrorMessages.unimplemented);
+    throw new Error(XpringClientErrorMessages.unimplemented)
   }
 
   /**
@@ -41,9 +39,9 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns The status of the given transaction.
    */
   public async getTransactionStatus(
-    transactionHash: string
+    transactionHash: string,
   ): Promise<TransactionStatus> {
-    throw new Error(XpringClientErrorMessages.unimplemented);
+    throw new Error(XpringClientErrorMessages.unimplemented)
   }
 
   /**
@@ -57,21 +55,21 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async send(
     amount: BigInt | number | string,
     destination: string,
-    sender: Wallet
+    sender: Wallet,
   ): Promise<string> {
-    throw new Error(XpringClientErrorMessages.unimplemented);
+    throw new Error(XpringClientErrorMessages.unimplemented)
   }
 
   public async getLastValidatedLedgerSequence(): Promise<number> {
-    throw new Error(XpringClientErrorMessages.unimplemented);
+    throw new Error(XpringClientErrorMessages.unimplemented)
   }
 
   // TODO(keefertaylor): Create bridge on raw transaction status.
   public async getRawTransactionStatus(
-    transactionHash: string
+    transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    throw new Error(XpringClientErrorMessages.unimplemented);
+    throw new Error(XpringClientErrorMessages.unimplemented)
   }
 }
 
-export default DefaultXpringClient;
+export default DefaultXpringClient
