@@ -1,10 +1,15 @@
+/* eslint-disable max-classes-per-file */
 import { Wallet } from 'xpring-common-js'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
 import { TransactionStatus as RawTransactionStatus } from './generated/legacy/transaction_status_pb'
 
-// TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
+// TODO(keefertaylor): Re-enable these rules when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-useless-constructor */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable class-methods-use-this */
 
 /**
  * Error messages from XpringClient.
