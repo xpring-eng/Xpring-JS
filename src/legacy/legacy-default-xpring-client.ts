@@ -123,7 +123,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
       )
     }
 
-    const normalizedAmount = this.toBigInt(amount)
+    const normalizedAmount = LegacyDefaultXpringClient.toBigInt(amount)
 
     return this.getFee().then(async (fee) => {
       return this.getAccountInfo(sender.getAddress()).then(
@@ -240,7 +240,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
    * @param value The value to convert.
    * @returns A BigInt representing the input value.
    */
-  private toBigInt(value: string | number | BigInt): BigInt {
+  private static toBigInt(value: string | number | BigInt): BigInt {
     if (typeof value === 'string' || typeof value === 'number') {
       return BigInt(value)
     }

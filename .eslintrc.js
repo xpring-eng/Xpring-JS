@@ -79,6 +79,15 @@ module.exports = {
         ],
         // For some test files, we shadow testing constants with function parameter names
         'no-shadow': 'off',
+        // Some of our test files declare helper classes with errors
+        'max-classes-per-file': 'off',
+      },
+    },
+    {
+      files: 'src/legacy/legacy-default-xpring-client.ts',
+      rules: {
+        // This is actually a good rule to have enabled, but legacy stuff is deprecated anyways, so it's fine
+        'max-classes-per-file': 'off',
       },
     },
   ],
