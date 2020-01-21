@@ -42,7 +42,6 @@ export class FakeNetworkClientResponses {
     FakeNetworkClientResponses.defaultError,
   )
 
-  /* eslint-disable @typescript-eslint/indent */
   /**
    * Construct a new set of responses.
    *
@@ -65,7 +64,6 @@ export class FakeNetworkClientResponses {
       GetTxResponse
     > = FakeNetworkClientResponses.defaultGetTxResponse(),
   ) {}
-  /* eslint-enable @typescript-eslint/indent */
 
   /**
    * Construct a default AccountInfoResponse.
