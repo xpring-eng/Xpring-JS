@@ -7,5 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
 - Implement `XpringClient`'s `getBalance` method using rippled's protocol buffers. 
 
