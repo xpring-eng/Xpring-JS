@@ -1,68 +1,71 @@
 import { Wallet } from "xpring-common-js";
-import XpringClient from "../src/xpring-client";
-import { assert } from "chai";
-import TransactionStatus from "../src/transaction-status";
+import { XpringClientDecorator } from "./xpring-client-decorator";
+import LegacyDefaultXpringClient from "./legacy/legacy-default-xpring-client";
+import TransactionStatus from "./transaction-status";
+import ReliableSubmissionXpringClient from "./reliable-submission-xpring-client";
 
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* global BigInt */
 
-// A timeout for these tests.
-const timeoutMs = 60 * 1000; // 1 minute
+/**
+ * XpringClient is a client which interacts with the Xpring platform.
+ */
+class XpringClient {
+  private readonly decoratedClient: XpringClientDecorator;
 
-// An address on TestNet that has a balance.
-const recipientAddress = "X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4";
-
-// A wallet with some balance on TestNet.
-const wallet = Wallet.generateWalletFromSeed("snYP7oArxKepd3GPDcrjMsJYiJeJB")!;
-
-// A hash of a successfully validated transaction.
-const transactionHash =
-  "9A88C8548E03958FD97AF44AE5A8668896D195A70CF3FF3CB8E57096AA717135";
-
-// A XpringClient that makes requests. Uses the legacy protocol buffer implementation.
-const legacyGRPCURL = "grpc.xpring.tech:80";
-const legacyXpringClient = new XpringClient(legacyGRPCURL);
-
-// A XpringClient that makes requests. Uses rippled's gRPC implementation.
-const rippledURL = "10.30.97.98:50051";
-const xpringClient = new XpringClient(rippledURL);
-
-// Some amount of XRP to send.
-const amount = BigInt("1");
-
-describe("Xpring JS Integration Tests", function(): void {
-  it("Get Account Balance - Legacy Shim", async function(): Promise<void> {
-    this.timeout(timeoutMs);
-
-    const balance = await legacyXpringClient.getBalance(recipientAddress);
-    assert.exists(balance);
-  });
-
-  it("Get Account Balance - Rippled", async function(): Promise<void> {
-    this.timeout(timeoutMs);
-
-    const balance = await xpringClient.getBalance(recipientAddress);
-    assert.exists(balance);
-  });
-
-  it("Get Transaction Status - Legacy Shim", async function(): Promise<void> {
-    this.timeout(timeoutMs);
-
-    const transactionStatus = await legacyXpringClient.getTransactionStatus(
-      transactionHash
+  /**
+   * Create a new XpringClient.
+   *
+   * The XpringClient will use gRPC to communicate with the given endpoint.
+   *
+   * @param grpcURL The URL of the gRPC instance to connect to.
+   */
+  public constructor(grpcURL: string) {
+    const defaultXpringClient = LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(
+      grpcURL
     );
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded);
-  });
 
-  it("Send XRP - Legacy Shim", async function(): Promise<void> {
-    this.timeout(timeoutMs);
-
-    const result = await legacyXpringClient.send(
-      amount,
-      recipientAddress,
-      wallet
+    this.decoratedClient = new ReliableSubmissionXpringClient(
+      defaultXpringClient
     );
-    assert.exists(result);
-  });
-});
+  }
+
+  /**
+   * Retrieve the balance for the given address.
+   *
+   * @param address The X-Address to retrieve a balance for.
+   * @returns A `BigInt` representing the number of drops of XRP in the account.
+   */
+  public async getBalance(address: string): Promise<BigInt> {
+    return await this.decoratedClient.getBalance(address);
+  }
+
+  /**
+   * Retrieve the transaction status for a given transaction hash.
+   *
+   * @param transactionHash The hash of the transaction.
+   * @returns The status of the given transaction.
+   */
+  public async getTransactionStatus(
+    transactionHash: string
+  ): Promise<TransactionStatus> {
+    return await this.decoratedClient.getTransactionStatus(transactionHash);
+  }
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination address.
+   *
+   * @param drops A `BigInt`, number or numeric string representing the number of drops to send.
+   * @param destination A destination address to send the drops to.
+   * @param sender The wallet that XRP will be sent from and which will sign the request.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  public async send(
+    amount: BigInt | number | string,
+    destination: string,
+    sender: Wallet
+  ): Promise<string> {
+    return await this.decoratedClient.send(amount, destination, sender);
+  }
+}
+
+export default XpringClient;
