@@ -94,7 +94,7 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns The status of the given transaction.
    */
   public async getTransactionStatus(
-    transactionHash: string,
+    _transactionHash: string,
   ): Promise<TransactionStatus> {
     throw new Error(XpringClientErrorMessages.unimplemented)
   }
@@ -108,9 +108,9 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    amount: BigInt | number | string,
-    destination: string,
-    sender: Wallet,
+    _amount: BigInt | number | string,
+    _destination: string,
+    _sender: Wallet,
   ): Promise<string> {
     throw new Error(XpringClientErrorMessages.unimplemented)
   }
@@ -121,7 +121,7 @@ class DefaultXpringClient implements XpringClientDecorator {
 
   // TODO(keefertaylor): Create bridge on raw transaction status.
   public async getRawTransactionStatus(
-    transactionHash: string,
+    _transactionHash: string,
   ): Promise<RawTransactionStatus> {
     throw new Error(XpringClientErrorMessages.unimplemented)
   }

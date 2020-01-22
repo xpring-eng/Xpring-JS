@@ -1,22 +1,38 @@
 {
   "compilerOptions": {
-    "outDir": "build",
-    "target": "es5",
+    // Basic Options
+    "target": "ES2017",
+    "module": "commonjs",
+    "declaration": true,
+    "sourceMap": true,
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
+
+    // Directories
+    "outDir": "build",
+
+    // Strict Type-Checking Options
+    "strict": true,
+    "noImplicitAny": false,
+
+    // Additional Checks
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // Module Resolution Options
+    "moduleResolution": "node",
+
+    // Advanced Options
     "allowJs": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "sourceMap": true
+    "isolatedModules": true,
+    "esModuleInterop": true
   },
   "include": [
     "src/**/*"
