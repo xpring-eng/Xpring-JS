@@ -4,10 +4,7 @@ import TransactionStatus from './transaction-status'
 import { TransactionStatus as RawTransactionStatus } from '../generated/legacy/transaction_status_pb'
 import GRPCNetworkClient from './grpc-network-client'
 import { NetworkClient } from './network-client'
-import {
-  GetAccountInfoRequest,
-  GetAccountInfoResponse,
-} from '../generated/rpc/v1/account_info_pb'
+import { GetAccountInfoRequest } from '../generated/rpc/v1/account_info_pb'
 import { AccountAddress } from '../generated/rpc/v1/amount_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
