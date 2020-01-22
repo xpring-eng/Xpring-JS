@@ -14,7 +14,6 @@ import { TransactionResult, Meta } from '../generated/rpc/v1/meta_pb'
 import TransactionStatus from '../src/transaction-status'
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/indent */
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -57,6 +56,7 @@ describe('Default Xpring Client', function(): void {
   it('Get Account Balance - successful response', async function(): Promise<
     void
   > {
+    /* eslint-enable @typescript-eslint/indent */
     // GIVEN a LegacyDefaultXpringClient.
     const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient)
 

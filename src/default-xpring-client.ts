@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
 import { Utils, Wallet } from 'xpring-common-js'
@@ -12,6 +13,21 @@ import { AccountAddress } from '../generated/rpc/v1/amount_pb'
 import { GetTxRequest, GetTxResponse } from '../generated/rpc/v1/tx_pb'
 import { XRPDropsAmount } from 'xpring-common-js/build/generated/rpc/v1/amount_pb'
 import { GetFeeRequest } from '../generated/rpc/v1/fee_pb'
+=======
+import { XpringClientDecorator } from "./xpring-client-decorator";
+import TransactionStatus from "./transaction-status";
+import { Utils, Wallet } from "xpring-common-js";
+import { TransactionStatus as RawTransactionStatus } from "../generated/legacy/transaction_status_pb"
+import GRPCNetworkClient from "./grpc-network-client";
+import { NetworkClient } from "./network-client";
+import {
+  GetAccountInfoRequest,
+  GetAccountInfoResponse
+} from "../generated/rpc/v1/account_info_pb";
+import { AccountAddress } from "../generated/rpc/v1/amount_pb";
+import { XRPDropsAmount } from "xpring-common-js/build/generated/rpc/v1/amount_pb";
+import { GetFeeRequest, GetFeeResponse } from "../generated/rpc/v1/fee_pb";
+>>>>>>> 39daa37ae97d597b217795c6ad07cb8d84b3f46f
 
 /* global BigInt */
 
@@ -36,6 +52,7 @@ export class XpringClientErrorMessages {
 }
 
 /**
+<<<<<<< HEAD
  * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
  */
 class GetTxResponseWrapper implements RawTransactionStatus {
@@ -70,6 +87,8 @@ class GetTxResponseWrapper implements RawTransactionStatus {
 }
 
 /**
+=======
+>>>>>>> 39daa37ae97d597b217795c6ad07cb8d84b3f46f
  * DefaultXpringClient is a client which interacts with the Xpring platform.
  */
 class DefaultXpringClient implements XpringClientDecorator {
@@ -137,6 +156,7 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getTransactionStatus(
     transactionHash: string,
   ): Promise<TransactionStatus> {
+<<<<<<< HEAD
     const transactionStatus = await this.getRawTransactionStatus(
       transactionHash,
     )
@@ -149,6 +169,9 @@ class DefaultXpringClient implements XpringClientDecorator {
     return transactionStatus.getTransactionStatusCode().startsWith('tes')
       ? TransactionStatus.Succeeded
       : TransactionStatus.Failed
+=======
+    throw new Error(XpringClientErrorMessages.unimplemented);
+>>>>>>> 39daa37ae97d597b217795c6ad07cb8d84b3f46f
   }
 
   /**
@@ -171,15 +194,20 @@ class DefaultXpringClient implements XpringClientDecorator {
     throw new Error(XpringClientErrorMessages.unimplemented)
   }
 
+  // TODO(keefertaylor): Create bridge on raw transaction status.
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
+<<<<<<< HEAD
     const getTxRequest = new GetTxRequest()
     getTxRequest.setHash(transactionHash)
 
     const getTxResponse = await this.networkClient.getTx(getTxRequest)
 
     return new GetTxResponseWrapper(getTxResponse)
+=======
+    throw new Error(XpringClientErrorMessages.unimplemented);
+>>>>>>> 39daa37ae97d597b217795c6ad07cb8d84b3f46f
   }
 
   private async getFee(): Promise<XRPDropsAmount> {
