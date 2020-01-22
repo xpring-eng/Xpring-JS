@@ -31,40 +31,6 @@ export class XpringClientErrorMessages {
 }
 
 /**
- * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
- */
-class GetTxResponseWrapper implements RawTransactionStatus {
-  public constructor(private readonly getTxResponse: GetTxResponse) {}
-
-  public getValidated(): boolean {
-    return this.getTxResponse.getValidated()
-  }
-
-  public getTransactionStatusCode(): string {
-    const meta = this.getTxResponse.getMeta()
-    if (!meta) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    const transactionResult = meta.getTransactionResult()
-    if (!transactionResult) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    return transactionResult.getResult()
-  }
-
-  public getLastLedgerSequence(): number {
-    const transaction = this.getTxResponse.getTransaction()
-    if (!transaction) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    return transaction.getLastLedgerSequence()
-  }
-}
-
-/**
  * DefaultXpringClient is a client which interacts with the Xpring platform.
  */
 class DefaultXpringClient implements XpringClientDecorator {
@@ -132,18 +98,7 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getTransactionStatus(
     transactionHash: string,
   ): Promise<TransactionStatus> {
-    const transactionStatus = await this.getRawTransactionStatus(
-      transactionHash,
-    )
-
-    // Return pending if the transaction is not validated.
-    if (!transactionStatus.getValidated()) {
-      return TransactionStatus.Pending
-    }
-
-    return transactionStatus.getTransactionStatusCode().startsWith('tes')
-      ? TransactionStatus.Succeeded
-      : TransactionStatus.Failed
+    throw new Error(XpringClientErrorMessages.unimplemented)
   }
 
   /**
@@ -170,12 +125,7 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    const getTxRequest = new GetTxRequest()
-    getTxRequest.setHash(transactionHash)
-
-    const getTxResponse = await this.networkClient.getTx(getTxRequest)
-
-    return new GetTxResponseWrapper(getTxResponse)
+    throw new Error(XpringClientErrorMessages.unimplemented)
   }
 
   private async getFee(): Promise<XRPDropsAmount> {
