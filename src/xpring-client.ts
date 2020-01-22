@@ -20,8 +20,8 @@ class XpringClient {
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
    */
-  public constructor(grpcURL: string, useNewProtocolBuffers: boolean = false) {
-    var defaultXpringClient: XpringClientDecorator = LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(
+  public constructor(grpcURL: string, useNewProtocolBuffers = false) {
+    let defaultXpringClient: XpringClientDecorator = LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(
       grpcURL,
     )
     if (useNewProtocolBuffers) {

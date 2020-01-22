@@ -1,3 +1,4 @@
+import { AccountInfo } from 'xpring-common-js'
 import { NetworkClient } from '../../src/network-client'
 import {
   GetAccountInfoRequest,
@@ -11,7 +12,6 @@ import {
 } from '../../generated/rpc/v1/submit_pb'
 import { AccountRoot } from '../../generated/rpc/v1/ledger_objects_pb'
 import { XRPDropsAmount } from '../../generated/rpc/v1/amount_pb'
-import { AccountInfo } from 'xpring-common-js'
 import { Meta, TransactionResult } from '../../generated/rpc/v1/meta_pb'
 
 /**
