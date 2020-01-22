@@ -42,13 +42,13 @@
     "eslint-plugin-mocha": "^6.2.2",
     "eslint-plugin-prettier": "3.1.2",
     "grpc_tools_node_protoc_ts": "2.5.9",
-    "grpc-tools": "^1.8.0",
-    "mocha": "6.2.2",
+    "grpc-tools": "1.8.0",
+    "mocha": "7.0.0",
     "mocha-lcov-reporter": "1.3.0",
-    "nyc": "14.1.1",
+    "nyc": "15.0.0",
     "prettier": "1.19.1",
     "source-map-support": "0.5.16",
-    "ts-node": "8.5.4",
+    "ts-node": "8.6.2",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^9.0.0",
     "tslint-eslint-rules": "^5.4.0",
@@ -56,8 +56,8 @@
     "typescript-eslint-parser": "22.0.0"
   },
   "dependencies": {
-    "xpring-common-js": "1.1.15",
-    "grpc": "^1.24.2"
+    "xpring-common-js": "2.0.1",
+    "grpc": "1.24.2"
   },
   "nyc": {
     "extension": [
