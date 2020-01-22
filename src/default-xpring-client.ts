@@ -1,31 +1,35 @@
-import { XpringClientDecorator } from "./xpring-client-decorator";
-import TransactionStatus from "./transaction-status";
-import { Utils, Wallet } from "xpring-common-js";
-import RawTransactionStatus from "./raw-transaction-status";
-import GRPCNetworkClient from "./grpc-network-client";
-import { NetworkClient } from "./network-client";
+import { XpringClientDecorator } from './xpring-client-decorator'
+import TransactionStatus from './transaction-status'
+import { Utils, Wallet } from 'xpring-common-js'
+import RawTransactionStatus from './raw-transaction-status'
+import GRPCNetworkClient from './grpc-network-client'
+import { NetworkClient } from './network-client'
 import {
   GetAccountInfoRequest,
-  GetAccountInfoResponse
-} from "../generated/rpc/v1/account_info_pb";
-import { AccountAddress } from "../generated/rpc/v1/amount_pb";
-import { GetTxResponse } from "../generated/rpc/v1/tx_pb";
+  GetAccountInfoResponse,
+} from '../generated/rpc/v1/account_info_pb'
+import { AccountAddress } from '../generated/rpc/v1/amount_pb'
+import { GetTxResponse } from '../generated/rpc/v1/tx_pb'
 
 /* global BigInt */
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
-
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-useless-constructor */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable class-methods-use-this */
 /**
  * Error messages from XpringClient.
  */
 export class XpringClientErrorMessages {
-  public static readonly malformedResponse = "Malformed Response.";
-  public static readonly unimplemented = "Unimplemented.";
+  public static readonly malformedResponse = 'Malformed Response.'
+
+  public static readonly unimplemented = 'Unimplemented.'
 
   /* eslint-disable @typescript-eslint/indent */
   public static readonly xAddressRequired =
-    "Please use the X-Address format. See: https://xrpaddress.info/.";
+    'Please use the X-Address format. See: https://xrpaddress.info/.'
   /* eslint-enable @typescript-eslint/indent */
 }
 
@@ -36,30 +40,30 @@ class GetTxResponseWrapper implements RawTransactionStatus {
   public constructor(private readonly getTxResponse: GetTxResponse) {}
 
   public getValidated(): boolean {
-    return this.getTxResponse.getValidated();
+    return this.getTxResponse.getValidated()
   }
 
   public getTransactionStatusCode(): string {
-    const meta = this.getTxResponse.getMeta();
+    const meta = this.getTxResponse.getMeta()
     if (!meta) {
-      throw new Error(XpringClientErrorMessages.malformedResponse);
+      throw new Error(XpringClientErrorMessages.malformedResponse)
     }
 
-    const transactionResult = meta.getTransactionResult();
+    const transactionResult = meta.getTransactionResult()
     if (!transactionResult) {
-      throw new Error(XpringClientErrorMessages.malformedResponse);
+      throw new Error(XpringClientErrorMessages.malformedResponse)
     }
 
-    return transactionResult.getResult();
+    return transactionResult.getResult()
   }
 
   public getLastLedgerSequence(): number {
-    const transaction = this.getTxResponse.getTransaction();
+    const transaction = this.getTxResponse.getTransaction()
     if (!transaction) {
-      throw new Error(XpringClientErrorMessages.malformedResponse);
+      throw new Error(XpringClientErrorMessages.malformedResponse)
     }
 
-    return transaction.getLastLedgerSequence();
+    return transaction.getLastLedgerSequence()
   }
 }
 
@@ -75,10 +79,10 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @param grpcURL The URL of the gRPC instance to connect to.
    */
   public static defaultXpringClientWithEndpoint(
-    grpcURL: string
+    grpcURL: string,
   ): DefaultXpringClient {
-    const grpcClient = new GRPCNetworkClient(grpcURL);
-    return new DefaultXpringClient(grpcClient);
+    const grpcClient = new GRPCNetworkClient(grpcURL)
+    return new DefaultXpringClient(grpcClient)
   }
 
   /**
@@ -99,27 +103,27 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getBalance(address: string): Promise<BigInt> {
     if (!Utils.isValidXAddress(address)) {
       return Promise.reject(
-        new Error(XpringClientErrorMessages.xAddressRequired)
-      );
+        new Error(XpringClientErrorMessages.xAddressRequired),
+      )
     }
 
-    const account = new AccountAddress();
-    account.setAddress(address);
+    const account = new AccountAddress()
+    account.setAddress(address)
 
-    const request = new GetAccountInfoRequest();
-    request.setAccount(account);
+    const request = new GetAccountInfoRequest()
+    request.setAccount(account)
 
-    const accountInfo = await this.networkClient.getAccountInfo(request);
-    const accountData = accountInfo.getAccountData();
+    const accountInfo = await this.networkClient.getAccountInfo(request)
+    const accountData = accountInfo.getAccountData()
     if (!accountData) {
-      throw new Error(XpringClientErrorMessages.malformedResponse);
+      throw new Error(XpringClientErrorMessages.malformedResponse)
     }
 
-    const balance = accountData.getBalance();
+    const balance = accountData.getBalance()
     if (!balance) {
-      throw new Error(XpringClientErrorMessages.malformedResponse);
+      throw new Error(XpringClientErrorMessages.malformedResponse)
     }
-    return BigInt(balance);
+    return BigInt(balance)
   }
 
   /**
@@ -129,9 +133,9 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns The status of the given transaction.
    */
   public async getTransactionStatus(
-    transactionHash: string
+    transactionHash: string,
   ): Promise<TransactionStatus> {
-    throw new Error(XpringClientErrorMessages.unimplemented);
+    throw new Error(XpringClientErrorMessages.unimplemented)
   }
 
   /**
@@ -145,21 +149,21 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async send(
     amount: BigInt | number | string,
     destination: string,
-    sender: Wallet
+    sender: Wallet,
   ): Promise<string> {
-    throw new Error(XpringClientErrorMessages.unimplemented);
+    throw new Error(XpringClientErrorMessages.unimplemented)
   }
 
   public async getLastValidatedLedgerSequence(): Promise<number> {
-    throw new Error(XpringClientErrorMessages.unimplemented);
+    throw new Error(XpringClientErrorMessages.unimplemented)
   }
 
   // TODO(keefertaylor): Create bridge on raw transaction status.
   public async getRawTransactionStatus(
-    transactionHash: string
+    transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    throw new Error(XpringClientErrorMessages.unimplemented);
+    throw new Error(XpringClientErrorMessages.unimplemented)
   }
 }
 
-export default DefaultXpringClient;
+export default DefaultXpringClient
