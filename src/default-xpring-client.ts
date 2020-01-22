@@ -1,10 +1,13 @@
-/* eslint-disable max-classes-per-file */
-import { Wallet } from 'xpring-common-js'
+import { Wallet, Utils } from 'xpring-common-js'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
 import { TransactionStatus as RawTransactionStatus } from './generated/legacy/transaction_status_pb'
+import GRPCNetworkClient from './grpc-network-client'
+import { NetworkClient } from './network-client'
+import { GetAccountInfoRequest } from './generated/rpc/v1/account_info_pb'
+import { AccountAddress } from './generated/rpc/v1/amount_pb'
 
-// TODO(keefertaylor): Re-enable these rules when this class is fully implemented.
+// TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-useless-constructor */
@@ -15,7 +18,14 @@ import { TransactionStatus as RawTransactionStatus } from './generated/legacy/tr
  * Error messages from XpringClient.
  */
 export class XpringClientErrorMessages {
+  public static readonly malformedResponse = 'Malformed Response.'
+
   public static readonly unimplemented = 'Unimplemented.'
+
+  /* eslint-disable @typescript-eslint/indent */
+  public static readonly xAddressRequired =
+    'Please use the X-Address format. See: https://xrpaddress.info/.'
+  /* eslint-enable @typescript-eslint/indent */
 }
 
 /**
@@ -24,8 +34,26 @@ export class XpringClientErrorMessages {
 class DefaultXpringClient implements XpringClientDecorator {
   /**
    * Create a new DefaultXpringClient.
+   *
+   * The DefaultXpringClient will use gRPC to communicate with the given endpoint.
+   *
+   * @param grpcURL The URL of the gRPC instance to connect to.
    */
-  public constructor() {}
+  public static defaultXpringClientWithEndpoint(
+    grpcURL: string,
+  ): DefaultXpringClient {
+    const grpcClient = new GRPCNetworkClient(grpcURL)
+    return new DefaultXpringClient(grpcClient)
+  }
+
+  /**
+   * Create a new DefaultXpringClient with a custom network client implementation.
+   *
+   * In general, clients should prefer to call `xpringClientWithEndpoint`. This constructor is provided to improve testability of this class.
+   *
+   * @param networkClient A network client which will manage remote RPCs to Rippled.
+   */
+  public constructor(private readonly networkClient: NetworkClient) {}
 
   /**
    * Retrieve the balance for the given address.
@@ -34,7 +62,29 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A `BigInt` representing the number of drops of XRP in the account.
    */
   public async getBalance(address: string): Promise<BigInt> {
-    throw new Error(XpringClientErrorMessages.unimplemented)
+    if (!Utils.isValidXAddress(address)) {
+      return Promise.reject(
+        new Error(XpringClientErrorMessages.xAddressRequired),
+      )
+    }
+
+    const account = new AccountAddress()
+    account.setAddress(address)
+
+    const request = new GetAccountInfoRequest()
+    request.setAccount(account)
+
+    const accountInfo = await this.networkClient.getAccountInfo(request)
+    const accountData = accountInfo.getAccountData()
+    if (!accountData) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+
+    const balance = accountData.getBalance()
+    if (!balance) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+    return BigInt(balance)
   }
 
   /**

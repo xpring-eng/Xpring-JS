@@ -12,6 +12,8 @@ import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
 } from '../../src/generated/rpc/v1/submit_pb'
+import { AccountRoot } from '../../src/generated/rpc/v1/ledger_objects_pb'
+import { XRPDropsAmount } from '../../src/generated/rpc/v1/amount_pb'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -69,7 +71,16 @@ export class FakeNetworkClientResponses {
    * Construct a default AccountInfoResponse.
    */
   public static defaultAccountInfoResponse(): GetAccountInfoResponse {
-    return new GetAccountInfoResponse()
+    const balance = new XRPDropsAmount()
+    balance.setDrops(10)
+
+    const accountRoot = new AccountRoot()
+    accountRoot.setBalance(balance)
+
+    const accountInfo = new GetAccountInfoResponse()
+    accountInfo.setAccountData(accountRoot)
+
+    return accountInfo
   }
 
   /**
