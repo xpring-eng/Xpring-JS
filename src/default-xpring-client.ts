@@ -9,6 +9,8 @@ import {
   GetAccountInfoResponse
 } from "../generated/rpc/v1/account_info_pb";
 import { AccountAddress } from "../generated/rpc/v1/amount_pb";
+import { XRPDropsAmount } from "xpring-common-js/build/generated/rpc/v1/amount_pb";
+import { GetFeeRequest, GetFeeResponse } from "../generated/rpc/v1/fee_pb";
 
 /* global BigInt */
 
