@@ -9,6 +9,9 @@ import {
   SubmitTransactionRequest,
   SubmitTransactionResponse
 } from "../../generated/rpc/v1/submit_pb";
+import { AccountRoot } from "../../generated/rpc/v1/ledger_objects_pb";
+import { XRPDropsAmount } from "../../generated/rpc/v1/amount_pb";
+import { AccountInfo } from "xpring-common-js";
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -49,16 +52,16 @@ export class FakeNetworkClientResponses {
    */
   public constructor(
     public readonly getAccountInfoResponse: Response<
-    GetAccountInfoResponse
+      GetAccountInfoResponse
     > = FakeNetworkClientResponses.defaultAccountInfoResponse(),
     public readonly getFeeResponse: Response<
-    GetFeeResponse
+      GetFeeResponse
     > = FakeNetworkClientResponses.defaultFeeResponse(),
     public readonly submitransactionResponse: Response<
-    SubmitTransactionResponse
+      SubmitTransactionResponse
     > = FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
     public readonly getTransactionStatusResponse: Response<
-    GetTxResponse
+      GetTxResponse
     > = FakeNetworkClientResponses.defaultGetTxResponse()
   ) {}
 
@@ -66,7 +69,16 @@ export class FakeNetworkClientResponses {
    * Construct a default AccountInfoResponse.
    */
   public static defaultAccountInfoResponse(): GetAccountInfoResponse {
-    return new GetAccountInfoResponse();
+    const balance = new XRPDropsAmount();
+    balance.setDrops(10);
+
+    const accountRoot = new AccountRoot();
+    accountRoot.setBalance(balance);
+
+    const accountInfo = new GetAccountInfoResponse();
+    accountInfo.setAccountData(accountRoot);
+
+    return accountInfo;
   }
 
   /**
@@ -122,8 +134,7 @@ export class FakeNetworkClient implements NetworkClient {
   submitTransaction(
     _submitSignedTransactionRequest: SubmitTransactionRequest
   ): Promise<SubmitTransactionResponse> {
-    const submitTransactionResponse = this.responses
-      .submitransactionResponse;
+    const submitTransactionResponse = this.responses.submitransactionResponse;
     if (submitTransactionResponse instanceof Error) {
       return Promise.reject(submitTransactionResponse);
     }
@@ -131,9 +142,7 @@ export class FakeNetworkClient implements NetworkClient {
     return Promise.resolve(submitTransactionResponse);
   }
 
-  getTx(
-    _getTransactionStatusRequest: GetTxRequest
-  ): Promise<GetTxResponse> {
+  getTx(_getTransactionStatusRequest: GetTxRequest): Promise<GetTxResponse> {
     const transactionStatusResponse = this.responses
       .getTransactionStatusResponse;
     if (transactionStatusResponse instanceof Error) {
