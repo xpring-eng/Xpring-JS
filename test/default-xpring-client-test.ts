@@ -1,6 +1,5 @@
-import chai, { assert } from 'chai'
+import { assert } from 'chai'
 
-import chaiString from 'chai-string'
 import DefaultXpringClient, {
   XpringClientErrorMessages,
 } from '../src/default-xpring-client'
@@ -14,8 +13,6 @@ import { TransactionResult, Meta } from '../generated/rpc/v1/meta_pb'
 import TransactionStatus from '../src/transaction-status'
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-
-const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 

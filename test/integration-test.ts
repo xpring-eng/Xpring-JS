@@ -20,10 +20,6 @@ const transactionHash =
 const legacyGRPCURL = 'grpc.xpring.tech:80'
 const legacyXpringClient = new XpringClient(legacyGRPCURL)
 
-// A XpringClient that makes requests. Uses rippled's gRPC implementation.
-const rippledURL = '10.30.97.98:50051'
-const xpringClient = new XpringClient(rippledURL)
-
 // Some amount of XRP to send.
 const amount = BigInt('1')
 
@@ -35,13 +31,6 @@ describe('Xpring JS Integration Tests', function(): void {
     assert.exists(balance)
   })
 
-  // it("Get Account Balance - rippled", async function(): Promise<void> {
-  //   this.timeout(timeoutMs);
-
-  //   const balance = await xpringClient.getBalance(recipientAddress);
-  //   assert.exists(balance);
-  // });
-
   it('Get Transaction Status - Legacy Shim', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
@@ -50,15 +39,6 @@ describe('Xpring JS Integration Tests', function(): void {
     )
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
-
-  // it("Get Transaction Status - rippled", async function(): Promise<void> {
-  //   this.timeout(timeoutMs);
-
-  //   const transactionStatus = await xpringClient.getTransactionStatus(
-  //     transactionHash
-  //   );
-  //   assert.deepEqual(transactionStatus, TransactionStatus.Succeeded);
-  // });
 
   it('Send XRP - Legacy Shim', async function(): Promise<void> {
     this.timeout(timeoutMs)

@@ -1,4 +1,3 @@
-import { AccountInfo } from 'xpring-common-js'
 import { NetworkClient } from '../../src/network-client'
 import {
   GetAccountInfoRequest,

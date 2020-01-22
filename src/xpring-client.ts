@@ -5,8 +5,6 @@ import TransactionStatus from './transaction-status'
 import ReliableSubmissionXpringClient from './reliable-submission-xpring-client'
 import DefaultXpringClient from './default-xpring-client'
 
-/* global BigInt */
-
 /**
  * XpringClient is a client which interacts with the Xpring platform.
  */
