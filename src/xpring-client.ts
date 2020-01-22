@@ -5,8 +5,6 @@ import TransactionStatus from './transaction-status'
 import ReliableSubmissionXpringClient from './reliable-submission-xpring-client'
 import DefaultXpringClient from './default-xpring-client'
 
-/* global BigInt */
-
 /**
  * XpringClient is a client which interacts with the Xpring platform.
  */
@@ -21,8 +19,8 @@ class XpringClient {
    * @param grpcURL The URL of the gRPC instance to connect to.
    * @param useNewProtocolBuffers If `true`, then the new protocol buffer implementation from rippled will be used. Defaults to false.
    */
-  public constructor(grpcURL: string, useNewProtocolBuffers: boolean = false) {
-    var defaultXpringClient: XpringClientDecorator = LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(
+  public constructor(grpcURL: string, useNewProtocolBuffers = false) {
+    let defaultXpringClient: XpringClientDecorator = LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(
       grpcURL,
     )
     if (useNewProtocolBuffers) {
