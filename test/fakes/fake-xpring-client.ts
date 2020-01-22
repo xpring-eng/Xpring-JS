@@ -23,7 +23,7 @@ class FakeXpringClient implements XpringClientDecorator {
   }
 
   public async send(
-    _amount: any,
+    _amount: BigInt | number | string,
     _destination: string,
     _sender: Wallet,
   ): Promise<string> {

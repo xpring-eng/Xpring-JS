@@ -12,7 +12,10 @@ import { AccountAddress } from '../generated/rpc/v1/amount_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
-
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-useless-constructor */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable class-methods-use-this */
 /**
  * Error messages from XpringClient.
  */
