@@ -1,6 +1,6 @@
-import TransactionStatus from "./transaction-status";
-import { Wallet } from "xpring-common-js";
-import RawTransactionStatus from "./raw-transaction-status";
+import { Wallet } from 'xpring-common-js'
+import TransactionStatus from './transaction-status'
+import RawTransactionStatus from './raw-transaction-status'
 
 /** A decorator interface for XpringClients. */
 export interface XpringClientDecorator {
@@ -11,7 +11,7 @@ export interface XpringClientDecorator {
    * @returns A `BigInt` representing the number of drops of XRP in the account.
    */
 
-  getBalance(address: string): Promise<BigInt>;
+  getBalance(address: string): Promise<BigInt>
 
   /**
    * Retrieve the transaction status for a given transaction hash.
@@ -19,7 +19,7 @@ export interface XpringClientDecorator {
    * @param transactionHash The hash of the transaction.
    * @returns The status of the given transaction.
    */
-  getTransactionStatus(transactionHash: string): Promise<TransactionStatus>;
+  getTransactionStatus(transactionHash: string): Promise<TransactionStatus>
 
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
@@ -32,15 +32,15 @@ export interface XpringClientDecorator {
   send(
     amount: BigInt | number | string,
     destination: string,
-    sender: Wallet
-  ): Promise<string>;
+    sender: Wallet,
+  ): Promise<string>
 
   /**
    * Retrieve the latest validated ledger sequence on the XRP Ledger.
    *
    * @returns The index of the latest validated ledger.
    */
-  getLastValidatedLedgerSequence(): Promise<number>;
+  getLastValidatedLedgerSequence(): Promise<number>
 
   /**
    * Retrieve the raw transaction status for the given transaction hash.
@@ -49,6 +49,6 @@ export interface XpringClientDecorator {
    * @Return The status of the given transaction.
    */
   getRawTransactionStatus(
-    transactionHash: string
-  ): Promise<RawTransactionStatus>;
+    transactionHash: string,
+  ): Promise<RawTransactionStatus>
 }

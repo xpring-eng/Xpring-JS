@@ -5,6 +5,6 @@ export {
   XRPAmount,
   Wallet,
   WalletGenerationResult,
-  Utils
-} from "xpring-common-js";
-export { default as XpringClient } from "./xpring-client";
+  Utils,
+} from 'xpring-common-js'
+export { default as XpringClient } from './xpring-client'
