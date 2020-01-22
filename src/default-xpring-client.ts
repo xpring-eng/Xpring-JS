@@ -1,7 +1,7 @@
 import { XpringClientDecorator } from "./xpring-client-decorator";
 import TransactionStatus from "./transaction-status";
 import { Utils, Wallet } from "xpring-common-js";
-import RawTransactionStatus from "./raw-transaction-status";
+import { TransactionStatus as RawTransactionStatus } from "../generated/legacy/transaction_status_pb"
 import GRPCNetworkClient from "./grpc-network-client";
 import { NetworkClient } from "./network-client";
 import {
