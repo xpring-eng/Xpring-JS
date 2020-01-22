@@ -9,9 +9,6 @@ import {
   GetAccountInfoResponse
 } from "../generated/rpc/v1/account_info_pb";
 import { AccountAddress } from "../generated/rpc/v1/amount_pb";
-import { GetTxRequest, GetTxResponse } from "../generated/rpc/v1/tx_pb";
-import { XRPDropsAmount } from "xpring-common-js/build/generated/rpc/v1/amount_pb";
-import { GetFeeRequest } from "../generated/rpc/v1/fee_pb";
 
 /* global BigInt */
 
@@ -29,40 +26,6 @@ export class XpringClientErrorMessages {
   public static readonly xAddressRequired =
     "Please use the X-Address format. See: https://xrpaddress.info/.";
   /* eslint-enable @typescript-eslint/indent */
-}
-
-/**
- * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
- */
-class GetTxResponseWrapper implements RawTransactionStatus {
-  public constructor(private readonly getTxResponse: GetTxResponse) {}
-
-  public getValidated(): boolean {
-    return this.getTxResponse.getValidated();
-  }
-
-  public getTransactionStatusCode(): string {
-    const meta = this.getTxResponse.getMeta();
-    if (!meta) {
-      throw new Error(XpringClientErrorMessages.malformedResponse);
-    }
-
-    const transactionResult = meta.getTransactionResult();
-    if (!transactionResult) {
-      throw new Error(XpringClientErrorMessages.malformedResponse);
-    }
-
-    return transactionResult.getResult();
-  }
-
-  public getLastLedgerSequence(): number {
-    const transaction = this.getTxResponse.getTransaction();
-    if (!transaction) {
-      throw new Error(XpringClientErrorMessages.malformedResponse);
-    }
-
-    return transaction.getLastLedgerSequence();
-  }
 }
 
 /**
@@ -133,18 +96,7 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getTransactionStatus(
     transactionHash: string
   ): Promise<TransactionStatus> {
-    const transactionStatus = await this.getRawTransactionStatus(
-      transactionHash
-    );
-
-    // Return pending if the transaction is not validated.
-    if (!transactionStatus.getValidated()) {
-      return TransactionStatus.Pending;
-    }
-
-    return transactionStatus.getTransactionStatusCode().startsWith("tes")
-      ? TransactionStatus.Succeeded
-      : TransactionStatus.Failed;
+    throw new Error(XpringClientErrorMessages.unimplemented);
   }
 
   /**
@@ -167,15 +119,11 @@ class DefaultXpringClient implements XpringClientDecorator {
     throw new Error(XpringClientErrorMessages.unimplemented);
   }
 
+  // TODO(keefertaylor): Create bridge on raw transaction status.
   public async getRawTransactionStatus(
     transactionHash: string
   ): Promise<RawTransactionStatus> {
-    const getTxRequest = new GetTxRequest();
-    getTxRequest.setHash(transactionHash);
-
-    const getTxResponse = await this.networkClient.getTx(getTxRequest);
-
-    return new GetTxResponseWrapper(getTxResponse);
+    throw new Error(XpringClientErrorMessages.unimplemented);
   }
 
   private async getFee(): Promise<XRPDropsAmount> {
