@@ -180,6 +180,7 @@ class DefaultXpringClient implements XpringClientDecorator {
 
   private async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
+
     const fee = getFeeResponse.getDrops()
     if (!fee) {
       throw new Error(XpringClientErrorMessages.malformedResponse)
@@ -193,6 +194,7 @@ class DefaultXpringClient implements XpringClientDecorator {
     return minimumFee
   }
 
+  // TODO(keefertaylor): Add tests for this method once send is hooked up.
   private async getFee(): Promise<GetFeeResponse> {
     const getFeeRequest = new GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)
