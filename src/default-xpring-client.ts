@@ -177,6 +177,7 @@ class DefaultXpringClient implements XpringClientDecorator {
     return new GetTxResponseWrapper(getTxResponse)
   }
 
+  // TODO(keefertaylor): Add tests for this method once send is hooked up. 
   private async getFee(): Promise<XRPDropsAmount> {
     const getFeeRequest = new GetFeeRequest()
 
