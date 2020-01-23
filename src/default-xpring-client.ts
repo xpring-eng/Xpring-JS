@@ -30,7 +30,7 @@ export class XpringClientErrorMessages {
   /* eslint-enable @typescript-eslint/indent */
 }
 
-/*
+/**
  * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
  */
 class GetTxResponseWrapper implements RawTransactionStatus {
@@ -173,6 +173,7 @@ class DefaultXpringClient implements XpringClientDecorator {
     getTxRequest.setHash(transactionHash)
 
     const getTxResponse = await this.networkClient.getTx(getTxRequest)
+
     return new GetTxResponseWrapper(getTxResponse)
   }
 
