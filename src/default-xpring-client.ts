@@ -7,7 +7,6 @@ import GRPCNetworkClient from './grpc-network-client'
 import { NetworkClient } from './network-client'
 import { GetAccountInfoRequest } from '../generated/rpc/v1/account_info_pb'
 import { AccountAddress } from '../generated/rpc/v1/amount_pb'
-import { GetTxRequest, GetTxResponse } from '../generated/rpc/v1/tx_pb'
 import { GetFeeRequest } from '../generated/rpc/v1/fee_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
@@ -121,7 +120,6 @@ class DefaultXpringClient implements XpringClientDecorator {
     throw new Error(XpringClientErrorMessages.unimplemented)
   }
 
-  // TODO(keefertaylor): Create bridge on raw transaction status.
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {

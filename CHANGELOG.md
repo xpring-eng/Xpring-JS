@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add an additional boolean parameter to `XpringClient`'s constructor which allows toggling between protocol buffer implementations.
+
 ### Fixed
 - Implement `XpringClient`'s `getBalance` method using rippled's protocol buffers. 
-
+- Implement `XpringClientDecorator`'s `getRawTransactionStatusMethod` using rippled's protocol buffers. 
