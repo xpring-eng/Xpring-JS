@@ -17,16 +17,12 @@ class XpringClient {
    * The XpringClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
+   * @param useNewProtocolBuffers If `true`, then the new protocol buffer implementation from rippled will be used. Defaults to false.
    */
   public constructor(grpcURL: string, useNewProtocolBuffers = false) {
-    let defaultXpringClient: XpringClientDecorator = LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(
-      grpcURL,
-    )
-    if (useNewProtocolBuffers) {
-      defaultXpringClient = DefaultXpringClient.defaultXpringClientWithEndpoint(
-        grpcURL,
-      )
-    }
+    const defaultXpringClient: XpringClientDecorator = useNewProtocolBuffers
+      ? DefaultXpringClient.defaultXpringClientWithEndpoint(grpcURL)
+      : LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(grpcURL)
 
     this.decoratedClient = new ReliableSubmissionXpringClient(
       defaultXpringClient,

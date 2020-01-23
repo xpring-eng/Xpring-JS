@@ -7,6 +7,7 @@ import GRPCNetworkClient from './grpc-network-client'
 import { NetworkClient } from './network-client'
 import { GetAccountInfoRequest } from '../generated/rpc/v1/account_info_pb'
 import { AccountAddress } from '../generated/rpc/v1/amount_pb'
+import { GetTxRequest, GetTxResponse } from '../generated/rpc/v1/tx_pb'
 import { GetFeeRequest } from '../generated/rpc/v1/fee_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
@@ -27,6 +28,40 @@ export class XpringClientErrorMessages {
   public static readonly xAddressRequired =
     'Please use the X-Address format. See: https://xrpaddress.info/.'
   /* eslint-enable @typescript-eslint/indent */
+}
+
+/*
+ * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
+ */
+class GetTxResponseWrapper implements RawTransactionStatus {
+  public constructor(private readonly getTxResponse: GetTxResponse) {}
+
+  public getValidated(): boolean {
+    return this.getTxResponse.getValidated()
+  }
+
+  public getTransactionStatusCode(): string {
+    const meta = this.getTxResponse.getMeta()
+    if (!meta) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+
+    const transactionResult = meta.getTransactionResult()
+    if (!transactionResult) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+
+    return transactionResult.getResult()
+  }
+
+  public getLastLedgerSequence(): number {
+    const transaction = this.getTxResponse.getTransaction()
+    if (!transaction) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+
+    return transaction.getLastLedgerSequence()
+  }
 }
 
 /**
@@ -134,7 +169,11 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    throw new Error(XpringClientErrorMessages.unimplemented)
+    const getTxRequest = new GetTxRequest()
+    getTxRequest.setHash(transactionHash)
+
+    const getTxResponse = await this.networkClient.getTx(getTxRequest)
+    return new GetTxResponseWrapper(getTxResponse)
   }
 
   private async getFee(): Promise<XRPDropsAmount> {

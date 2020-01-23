@@ -51,7 +51,6 @@ describe('Default Xpring Client', function(): void {
   it('Get Account Balance - successful response', async function(): Promise<
     void
   > {
-    /* eslint-enable @typescript-eslint/indent */
     // GIVEN a LegacyDefaultXpringClient.
     const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient)
 
