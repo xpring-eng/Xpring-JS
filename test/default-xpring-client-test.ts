@@ -9,9 +9,6 @@ import {
 } from './fakes/fake-network-client'
 import 'mocha'
 
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/indent */
-
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
 const fakeSucceedingNetworkClient = new FakeNetworkClient()
