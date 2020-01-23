@@ -1,12 +1,9 @@
-import { XpringClientDecorator } from "./xpring-client-decorator";
-import { Wallet } from "xpring-common-js";
-import RawTransactionStatus from "./raw-transaction-status";
-
-/* global BigInt */
-/* eslint-disable @typescript-eslint/no-magic-numbers */
+import { Wallet } from 'xpring-common-js'
+import { XpringClientDecorator } from './xpring-client-decorator'
+import RawTransactionStatus from './raw-transaction-status'
 
 async function sleep(milliseconds: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
+  return new Promise((resolve) => setTimeout(resolve, milliseconds))
 }
 
 /**
@@ -16,70 +13,78 @@ class ReliableSubmissionXpringClient implements XpringClientDecorator {
   public constructor(private readonly decoratedClient: XpringClientDecorator) {}
 
   public async getBalance(address: string): Promise<BigInt> {
-    return await this.decoratedClient.getBalance(address);
+    return this.decoratedClient.getBalance(address)
   }
 
   public async getTransactionStatus(
-    transactionHash: string
-  ): Promise<import("./transaction-status").default> {
-    return await this.decoratedClient.getTransactionStatus(transactionHash);
+    transactionHash: string,
+  ): Promise<import('./transaction-status').default> {
+    return this.decoratedClient.getTransactionStatus(transactionHash)
   }
 
   public async send(
     amount: string | number | BigInt,
     destination: string,
-    sender: Wallet
+    sender: Wallet,
   ): Promise<string> {
-    const ledgerCloseTimeMs = 4 * 1000;
+    const ledgerCloseTimeMs = 4 * 1000
 
     // Submit a transaction hash and wait for a ledger to close.
     const transactionHash = await this.decoratedClient.send(
       amount,
       destination,
-      sender
-    );
-    await sleep(ledgerCloseTimeMs);
+      sender,
+    )
+    await sleep(ledgerCloseTimeMs)
 
     // Get transaction status.
-    var rawTransactionStatus = await this.getRawTransactionStatus(
-      transactionHash
-    );
-    const lastLedgerSequence = rawTransactionStatus.getLastLedgerSequence();
-    if (lastLedgerSequence == 0) {
+    let rawTransactionStatus = await this.getRawTransactionStatus(
+      transactionHash,
+    )
+    const lastLedgerSequence = rawTransactionStatus.getLastLedgerSequence()
+    if (lastLedgerSequence === 0) {
       return Promise.reject(
-        "The transaction did not have a lastLedgerSequence field so transaction status cannot be reliably determined."
-      );
+        new Error(
+          'The transaction did not have a lastLedgerSequence field so transaction status cannot be reliably determined.',
+        ),
+      )
     }
 
     // Retrieve the latest ledger index.
-    var latestLedgerSequence = await this.getLastValidatedLedgerSequence();
+    let latestLedgerSequence = await this.getLastValidatedLedgerSequence()
 
     // Poll until the transaction is validated, or until the lastLedgerSequence has been passed.
+    /*
+     * In general, performing an await as part of each operation is an indication that the program is not taking full advantage of the parallelization benefits of async/await.
+     * Usually, the code should be refactored to create all the promises at once, then get access to the results using Promise.all(). Otherwise, each successive operation will not start until the previous one has completed.
+     * But here specifically, it is reasonable to await in a loop, because we need to wait for the ledger, and there is no good way to refactor this.
+     * https://eslint.org/docs/rules/no-await-in-loop
+     */
+    /* eslint-disable no-await-in-loop */
     while (
       latestLedgerSequence <= lastLedgerSequence &&
       !rawTransactionStatus.getValidated()
     ) {
-      await sleep(ledgerCloseTimeMs);
+      await sleep(ledgerCloseTimeMs)
 
       // Update latestLedgerSequence and rawTransactionStatus
-      latestLedgerSequence = await this.getLastValidatedLedgerSequence();
-      rawTransactionStatus = await this.getRawTransactionStatus(
-        transactionHash
-      );
+      latestLedgerSequence = await this.getLastValidatedLedgerSequence()
+      rawTransactionStatus = await this.getRawTransactionStatus(transactionHash)
     }
+    /* eslint-enable no-await-in-loop */
 
-    return transactionHash;
+    return transactionHash
   }
 
   public async getLastValidatedLedgerSequence(): Promise<number> {
-    return await this.decoratedClient.getLastValidatedLedgerSequence();
+    return this.decoratedClient.getLastValidatedLedgerSequence()
   }
 
   public async getRawTransactionStatus(
-    transactionHash: string
+    transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    return await this.decoratedClient.getRawTransactionStatus(transactionHash);
+    return this.decoratedClient.getRawTransactionStatus(transactionHash)
   }
 }
 
-export default ReliableSubmissionXpringClient;
+export default ReliableSubmissionXpringClient
