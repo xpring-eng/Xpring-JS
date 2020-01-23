@@ -1,4 +1,4 @@
-# Changelog
+i# Changelog
 
 All notable changes to this project will be documented in this file.
 
@@ -12,4 +12,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Implement `XpringClient`'s `getBalance` method using rippled's protocol buffers. 
-- Implement `XpringClientDecorator`'s `getRawTransactionStatusMethod` using rippled's protocol buffers. 
+- Implement `XpringClient`'s `getRawTransactionStatus` method using rippled's protocol buffers. 
+- Implement `XpringClient`'s `getTransactionStatus` method using rippled's protocol buffers.
