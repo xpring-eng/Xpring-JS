@@ -1,4 +1,5 @@
 import { Utils, Wallet } from 'xpring-common-js'
+import { XRPDropsAmount } from 'xpring-common-js/build/generated/rpc/v1/amount_pb'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
@@ -7,6 +8,7 @@ import { NetworkClient } from './network-client'
 import { GetAccountInfoRequest } from '../generated/rpc/v1/account_info_pb'
 import { AccountAddress } from '../generated/rpc/v1/amount_pb'
 import { GetTxRequest, GetTxResponse } from '../generated/rpc/v1/tx_pb'
+import { GetFeeRequest } from '../generated/rpc/v1/fee_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
@@ -173,6 +175,24 @@ class DefaultXpringClient implements XpringClientDecorator {
     const getTxResponse = await this.networkClient.getTx(getTxRequest)
 
     return new GetTxResponseWrapper(getTxResponse)
+  }
+
+  // TODO(keefertaylor): Add tests for this method once send is hooked up. 
+  private async getFee(): Promise<XRPDropsAmount> {
+    const getFeeRequest = new GetFeeRequest()
+
+    const getFeeResponse = await this.networkClient.getFee(getFeeRequest)
+    const fee = getFeeResponse.getDrops()
+    if (!fee) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+
+    const minimumFee = fee.getMinimumFee()
+    if (!minimumFee) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+
+    return minimumFee
   }
 }
 
