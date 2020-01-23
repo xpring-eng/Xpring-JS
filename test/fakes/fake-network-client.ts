@@ -1,23 +1,22 @@
-import { NetworkClient } from "../../src/network-client";
+import { NetworkClient } from '../../src/network-client'
 import {
   GetAccountInfoRequest,
-  GetAccountInfoResponse
-} from "../../generated/rpc/v1/account_info_pb";
-import { GetFeeRequest, GetFeeResponse } from "../../generated/rpc/v1/fee_pb";
-import { GetTxRequest, GetTxResponse } from "../..//generated/rpc/v1/tx_pb";
+  GetAccountInfoResponse,
+} from '../../generated/rpc/v1/account_info_pb'
+import { GetFeeRequest, GetFeeResponse } from '../../generated/rpc/v1/fee_pb'
+import { GetTxRequest, GetTxResponse } from '../../generated/rpc/v1/tx_pb'
 import {
   SubmitTransactionRequest,
-  SubmitTransactionResponse
-} from "../../generated/rpc/v1/submit_pb";
-import { AccountRoot } from "../../generated/rpc/v1/ledger_objects_pb";
-import { XRPDropsAmount } from "../../generated/rpc/v1/amount_pb";
-import { AccountInfo } from "xpring-common-js";
-import { Meta, TransactionResult } from "../../generated/rpc/v1/meta_pb";
+  SubmitTransactionResponse,
+} from '../../generated/rpc/v1/submit_pb'
+import { AccountRoot } from '../../generated/rpc/v1/ledger_objects_pb'
+import { XRPDropsAmount } from '../../generated/rpc/v1/amount_pb'
+import { Meta, TransactionResult } from '../../generated/rpc/v1/meta_pb'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
  */
-type Response<T> = T | Error;
+type Response<T> = T | Error
 
 /**
  * A list of responses the fake network client will give.
@@ -26,12 +25,12 @@ export class FakeNetworkClientResponses {
   /**
    * A default error.
    */
-  public static defaultError = new Error("fake network client failure");
+  public static defaultError = new Error('fake network client failure')
 
   /**
    * A default set of responses that will always succeed.
    */
-  public static defaultSuccessfulResponses = new FakeNetworkClientResponses();
+  public static defaultSuccessfulResponses = new FakeNetworkClientResponses()
 
   /**
    * A default set of responses that will always fail.
@@ -40,8 +39,8 @@ export class FakeNetworkClientResponses {
     FakeNetworkClientResponses.defaultError,
     FakeNetworkClientResponses.defaultError,
     FakeNetworkClientResponses.defaultError,
-    FakeNetworkClientResponses.defaultError
-  );
+    FakeNetworkClientResponses.defaultError,
+  )
 
   /**
    * Construct a new set of responses.
@@ -63,55 +62,54 @@ export class FakeNetworkClientResponses {
     > = FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
     public readonly getTransactionStatusResponse: Response<
       GetTxResponse
-    > = FakeNetworkClientResponses.defaultGetTxResponse()
+    > = FakeNetworkClientResponses.defaultGetTxResponse(),
   ) {}
 
   /**
    * Construct a default AccountInfoResponse.
    */
   public static defaultAccountInfoResponse(): GetAccountInfoResponse {
-    const balance = new XRPDropsAmount();
-    balance.setDrops(10);
+    const balance = new XRPDropsAmount()
+    balance.setDrops(10)
 
-    const accountRoot = new AccountRoot();
-    accountRoot.setBalance(balance);
+    const accountRoot = new AccountRoot()
+    accountRoot.setBalance(balance)
 
-    const accountInfo = new GetAccountInfoResponse();
-    accountInfo.setAccountData(accountRoot);
+    const accountInfo = new GetAccountInfoResponse()
+    accountInfo.setAccountData(accountRoot)
 
-    return accountInfo;
+    return accountInfo
   }
 
   /**
    * Construct a default FeeResponse.
    */
   public static defaultFeeResponse(): GetFeeResponse {
-    return new GetFeeResponse();
+    return new GetFeeResponse()
   }
 
   /**
    * Construct a default SubmitTransactionResponse.
    */
   public static defaultSubmitTransactionResponse(): SubmitTransactionResponse {
-    return new SubmitTransactionResponse();
+    return new SubmitTransactionResponse()
   }
 
   /**
    * Construct a default getTx response.
    */
   public static defaultGetTxResponse(): GetTxResponse {
-    const transactionResult = new TransactionResult();
-    transactionResult.setResult("tesSUCCESS");
+    const transactionResult = new TransactionResult()
+    transactionResult.setResult('tesSUCCESS')
 
-    const meta = new Meta();
-    meta.setTransactionResult(transactionResult);
+    const meta = new Meta()
+    meta.setTransactionResult(transactionResult)
 
+    const response = new GetTxResponse()
+    response.setValidated(true)
+    response.setMeta(meta)
 
-    const response = new GetTxResponse();
-    response.setValidated(true);
-    response.setMeta(meta);
-
-    return response;
+    return response
   }
 }
 
@@ -120,47 +118,47 @@ export class FakeNetworkClientResponses {
  */
 export class FakeNetworkClient implements NetworkClient {
   public constructor(
-    private readonly responses: FakeNetworkClientResponses = FakeNetworkClientResponses.defaultSuccessfulResponses
+    private readonly responses: FakeNetworkClientResponses = FakeNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
 
   getAccountInfo(
-    _accountInfoRequest: GetAccountInfoRequest
+    _accountInfoRequest: GetAccountInfoRequest,
   ): Promise<GetAccountInfoResponse> {
-    const accountInfoResponse = this.responses.getAccountInfoResponse;
+    const accountInfoResponse = this.responses.getAccountInfoResponse
     if (accountInfoResponse instanceof Error) {
-      return Promise.reject(accountInfoResponse);
+      return Promise.reject(accountInfoResponse)
     }
 
-    return Promise.resolve(accountInfoResponse);
+    return Promise.resolve(accountInfoResponse)
   }
 
   getFee(_feeRequest: GetFeeRequest): Promise<GetFeeResponse> {
-    const feeResponse = this.responses.getFeeResponse;
+    const feeResponse = this.responses.getFeeResponse
     if (feeResponse instanceof Error) {
-      return Promise.reject(feeResponse);
+      return Promise.reject(feeResponse)
     }
 
-    return Promise.resolve(feeResponse);
+    return Promise.resolve(feeResponse)
   }
 
   submitTransaction(
-    _submitSignedTransactionRequest: SubmitTransactionRequest
+    _submitSignedTransactionRequest: SubmitTransactionRequest,
   ): Promise<SubmitTransactionResponse> {
-    const submitTransactionResponse = this.responses.submitransactionResponse;
+    const submitTransactionResponse = this.responses.submitransactionResponse
     if (submitTransactionResponse instanceof Error) {
-      return Promise.reject(submitTransactionResponse);
+      return Promise.reject(submitTransactionResponse)
     }
 
-    return Promise.resolve(submitTransactionResponse);
+    return Promise.resolve(submitTransactionResponse)
   }
 
   getTx(_getTransactionStatusRequest: GetTxRequest): Promise<GetTxResponse> {
     const transactionStatusResponse = this.responses
-      .getTransactionStatusResponse;
+      .getTransactionStatusResponse
     if (transactionStatusResponse instanceof Error) {
-      return Promise.reject(transactionStatusResponse);
+      return Promise.reject(transactionStatusResponse)
     }
 
-    return Promise.resolve(transactionStatusResponse);
+    return Promise.resolve(transactionStatusResponse)
   }
 }
