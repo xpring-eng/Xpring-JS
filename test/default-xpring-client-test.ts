@@ -1,6 +1,5 @@
-import chai, { assert } from 'chai'
+import { assert } from 'chai'
 
-import chaiString from 'chai-string'
 import DefaultXpringClient, {
   XpringClientErrorMessages,
 } from '../src/default-xpring-client'
@@ -9,8 +8,6 @@ import {
   FakeNetworkClientResponses,
 } from './fakes/fake-network-client'
 import 'mocha'
-
-chai.use(chaiString)
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 

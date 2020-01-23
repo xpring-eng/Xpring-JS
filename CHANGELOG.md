@@ -12,4 +12,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Implement `XpringClient`'s `getBalance` method using rippled's protocol buffers. 
-
+- Implement `XpringClientDecorator`'s `getRawTransactionStatusMethod` using rippled's protocol buffers. 

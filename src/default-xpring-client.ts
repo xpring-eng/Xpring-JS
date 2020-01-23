@@ -6,7 +6,7 @@ import GRPCNetworkClient from './grpc-network-client'
 import { NetworkClient } from './network-client'
 import { GetAccountInfoRequest } from '../generated/rpc/v1/account_info_pb'
 import { AccountAddress } from '../generated/rpc/v1/amount_pb'
-import { GetTxResponse } from '../generated/rpc/v1/tx_pb'
+import { GetTxRequest, GetTxResponse } from '../generated/rpc/v1/tx_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
@@ -153,11 +153,15 @@ class DefaultXpringClient implements XpringClientDecorator {
     throw new Error(XpringClientErrorMessages.unimplemented)
   }
 
-  // TODO(keefertaylor): Create bridge on raw transaction status.
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    throw new Error(XpringClientErrorMessages.unimplemented)
+    const getTxRequest = new GetTxRequest()
+    getTxRequest.setHash(transactionHash)
+
+    const getTxResponse = await this.networkClient.getTx(getTxRequest)
+
+    return new GetTxResponseWrapper(getTxResponse)
   }
 }
 
