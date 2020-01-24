@@ -8,7 +8,7 @@ import { NetworkClient } from './network-client'
 import { GetAccountInfoRequest } from '../generated/rpc/v1/account_info_pb'
 import { AccountAddress } from '../generated/rpc/v1/amount_pb'
 import { GetTxRequest, GetTxResponse } from '../generated/rpc/v1/tx_pb'
-import { GetFeeRequest } from '../generated/rpc/v1/fee_pb'
+import { GetFeeRequest, GetFeeResponse } from '../generated/rpc/v1/fee_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
@@ -163,7 +163,8 @@ class DefaultXpringClient implements XpringClientDecorator {
   }
 
   public async getLastValidatedLedgerSequence(): Promise<number> {
-    throw new Error(XpringClientErrorMessages.unimplemented)
+    const getFeeResponse = await this.getFee()
+    return getFeeResponse.getLedgerCurrentIndex()
   }
 
   public async getRawTransactionStatus(
@@ -177,11 +178,9 @@ class DefaultXpringClient implements XpringClientDecorator {
     return new GetTxResponseWrapper(getTxResponse)
   }
 
-  // TODO(keefertaylor): Add tests for this method once send is hooked up. 
-  private async getFee(): Promise<XRPDropsAmount> {
-    const getFeeRequest = new GetFeeRequest()
+  private async getMinimumFee(): Promise<XRPDropsAmount> {
+    const getFeeResponse = await this.getFee()
 
-    const getFeeResponse = await this.networkClient.getFee(getFeeRequest)
     const fee = getFeeResponse.getDrops()
     if (!fee) {
       throw new Error(XpringClientErrorMessages.malformedResponse)
@@ -193,6 +192,12 @@ class DefaultXpringClient implements XpringClientDecorator {
     }
 
     return minimumFee
+  }
+
+  // TODO(keefertaylor): Add tests for this method once send is hooked up.
+  private async getFee(): Promise<GetFeeResponse> {
+    const getFeeRequest = new GetFeeRequest()
+    return this.networkClient.getFee(getFeeRequest)
   }
 }
 
