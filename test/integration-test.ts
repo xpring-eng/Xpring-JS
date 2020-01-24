@@ -20,6 +20,10 @@ const transactionHash =
 const legacyGRPCURL = 'grpc.xpring.tech:80'
 const legacyXpringClient = new XpringClient(legacyGRPCURL)
 
+// A XpringClient that makes requests. Uses rippled's gRPC implementation.
+const rippledURL = '127.0.0.1:50051' // 10.60.0.29:50051' // '34.83.125.234:50051'
+const xpringClient = new XpringClient(rippledURL, true)
+
 // Some amount of XRP to send.
 const amount = BigInt('1')
 
@@ -28,6 +32,13 @@ describe('Xpring JS Integration Tests', function(): void {
     this.timeout(timeoutMs)
 
     const balance = await legacyXpringClient.getBalance(recipientAddress)
+    assert.exists(balance)
+  })
+
+  it('Get Account Balance - rippled', async function(): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const balance = await xpringClient.getBalance(recipientAddress)
     assert.exists(balance)
   })
 
