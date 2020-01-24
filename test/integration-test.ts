@@ -6,30 +6,21 @@ import TransactionStatus from '../src/transaction-status'
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
 
-// Addresses on DevNet and TestNets that have a balance.
-const recipientAddressTestNet =
-  'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
-const recipientAddressDevNet = 'XVMyXArJxgtJYLaWSXhyBft185CZwK8vrqXT2p6nkByha9G'
+// An address on TestNet that has a balance.	
+const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'	
 
 // A wallet with some balance on TestNet.
-const walletTestNet = Wallet.generateWalletFromSeed(
-  'snYP7oArxKepd3GPDcrjMsJYiJeJB',
-)!
+const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!	
 
-// Hashes on DevNet and TestNet that are validated.
-const transactionHashTestNet =
-  '9A88C8548E03958FD97AF44AE5A8668896D195A70CF3FF3CB8E57096AA717135'
-const transactionHashDevNet =
-  '9A88C8548E03958FD97AF44AE5A8668896D195A70CF3FF3CB8E57096AA717135'
+// A hash of a successfully validated transaction.	const transactionHashTestNet =
+const transactionHash =	 '9A88C8548E03958FD97AF44AE5A8668896D195A70CF3FF3CB8E57096AA717135'
 
 // A XpringClient that makes requests. Uses the legacy protocol buffer implementation.
-// Connects to TestNet.
 const legacyGRPCURL = 'grpc.xpring.tech:80'
 const legacyXpringClient = new XpringClient(legacyGRPCURL)
 
 // A XpringClient that makes requests. Uses rippled's gRPC implementation.
-// Connects to DevNet.
-const rippledURL = '3.14.64.116:50051' // '34.83.125.234:50051'
+const rippledURL = '3.14.64.116:50051'
 const xpringClient = new XpringClient(rippledURL, true)
 
 // Some amount of XRP to send.
@@ -39,7 +30,7 @@ describe('Xpring JS Integration Tests', function(): void {
   it('Get Account Balance - Legacy Shim', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
-    const balance = await legacyXpringClient.getBalance(recipientAddressTestNet)
+    const balance = await legacyXpringClient.getBalance(recipientAddress)
     assert.exists(balance)
   })
 
@@ -54,7 +45,7 @@ describe('Xpring JS Integration Tests', function(): void {
     this.timeout(timeoutMs)
 
     const transactionStatus = await legacyXpringClient.getTransactionStatus(
-      transactionHashTestNet,
+      transactionHash,
     )
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
@@ -63,7 +54,7 @@ describe('Xpring JS Integration Tests', function(): void {
     this.timeout(timeoutMs)
 
     const transactionStatus = await xpringClient.getTransactionStatus(
-      transactionHashDevNet,
+      transactionHash,
     )
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
@@ -73,8 +64,8 @@ describe('Xpring JS Integration Tests', function(): void {
 
     const result = await legacyXpringClient.send(
       amount,
-      recipientAddressTestNet,
-      walletTestNet,
+      recipientAddress,
+      wallet,
     )
     assert.exists(result)
   })
