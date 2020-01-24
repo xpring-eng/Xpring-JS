@@ -6,14 +6,15 @@ import TransactionStatus from '../src/transaction-status'
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
 
-// An address on TestNet that has a balance.	
-const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'	
+// An address on TestNet that has a balance.
+const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
 
 // A wallet with some balance on TestNet.
-const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!	
+const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 
 // A hash of a successfully validated transaction.	const transactionHashTestNet =
-const transactionHash =	 '9A88C8548E03958FD97AF44AE5A8668896D195A70CF3FF3CB8E57096AA717135'
+const transactionHash =
+  '9A88C8548E03958FD97AF44AE5A8668896D195A70CF3FF3CB8E57096AA717135'
 
 // A XpringClient that makes requests. Uses the legacy protocol buffer implementation.
 const legacyGRPCURL = 'grpc.xpring.tech:80'
@@ -37,7 +38,7 @@ describe('Xpring JS Integration Tests', function(): void {
   it('Get Account Balance - rippled', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
-    const balance = await xpringClient.getBalance(recipientAddressTestNet)
+    const balance = await xpringClient.getBalance(recipientAddress)
     assert.exists(balance)
   })
 
