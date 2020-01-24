@@ -1,5 +1,5 @@
 import { Utils, Wallet } from 'xpring-common-js'
-import { XRPDropsAmount, AccountAddress } from './generated/rpc/v1/amount_pb'
+import { AccountAddress } from './generated/rpc/v1/amount_pb'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
@@ -179,21 +179,21 @@ class DefaultXpringClient implements XpringClientDecorator {
     return new GetTxResponseWrapper(getTxResponse)
   }
 
-  private async getMinimumFee(): Promise<XRPDropsAmount> {
-    const getFeeResponse = await this.getFee()
+  // private async getMinimumFee(): Promise<XRPDropsAmount> {
+  //   const getFeeResponse = await this.getFee()
 
-    const fee = getFeeResponse.getDrops()
-    if (!fee) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
+  //   const fee = getFeeResponse.getDrops()
+  //   if (!fee) {
+  //     throw new Error(XpringClientErrorMessages.malformedResponse)
+  //   }
 
-    const minimumFee = fee.getMinimumFee()
-    if (!minimumFee) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
+  //   const minimumFee = fee.getMinimumFee()
+  //   if (!minimumFee) {
+  //     throw new Error(XpringClientErrorMessages.malformedResponse)
+  //   }
 
-    return minimumFee
-  }
+  //   return minimumFee
+  // }
 
   // TODO(keefertaylor): Add tests for this method once send is hooked up.
   private async getFee(): Promise<GetFeeResponse> {
