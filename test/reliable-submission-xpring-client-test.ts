@@ -1,8 +1,6 @@
 import { assert } from 'chai'
-import {
-  TransactionStatus as RawTransactionStatus,
-  Wallet,
-} from 'xpring-common-js'
+import { Wallet } from 'xpring-common-js'
+import { TransactionStatus as RawTransactionStatus } from '../src/generated/legacy/transaction_status_pb'
 import FakeXpringClient from './fakes/fake-xpring-client'
 import ReliableSubmissionXpringClient from '../src/reliable-submission-xpring-client'
 import TransactionStatus from '../src/transaction-status'

@@ -1,4 +1,4 @@
-import { TransactionStatus as RawTransactionStatus } from 'xpring-common-js'
+import { TransactionStatus as RawTransactionStatus } from '../../src/generated/legacy/transaction_status_pb'
 import { XpringClientDecorator } from '../../src/xpring-client-decorator'
 import TransactionStatus from '../../src/transaction-status'
 import { Wallet } from '../../src/index'

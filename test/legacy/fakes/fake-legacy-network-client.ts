@@ -1,16 +1,14 @@
-import {
-  AccountInfo,
-  Fee,
-  GetAccountInfoRequest,
-  GetFeeRequest,
-  SubmitSignedTransactionResponse,
-  SubmitSignedTransactionRequest,
-  XRPAmount,
-  GetLatestValidatedLedgerSequenceRequest,
-  LedgerSequence,
-  GetTransactionStatusRequest,
-  TransactionStatus,
-} from 'xpring-common-js'
+import { AccountInfo } from '../../../src/generated/legacy/account_info_pb'
+import { Fee } from '../../../src/generated/legacy/fee_pb'
+import { GetAccountInfoRequest } from '../../../src/generated/legacy/get_account_info_request_pb'
+import { GetFeeRequest } from '../../../src/generated/legacy/get_fee_request_pb'
+import { SubmitSignedTransactionRequest } from '../../../src/generated/legacy/submit_signed_transaction_request_pb'
+import { SubmitSignedTransactionResponse } from '../../../src/generated/legacy/submit_signed_transaction_response_pb'
+import { GetLatestValidatedLedgerSequenceRequest } from '../../../src/generated/legacy/get_latest_validated_ledger_sequence_request_pb'
+import { LedgerSequence } from '../../../src/generated/legacy/ledger_sequence_pb'
+import { GetTransactionStatusRequest } from '../../../src/generated/legacy/get_transaction_status_request_pb'
+import { TransactionStatus } from '../../../src/generated/legacy/transaction_status_pb'
+import { XRPAmount } from '../../../src/generated/legacy/xrp_amount_pb'
 import { LegacyNetworkClient } from '../../../src/legacy/legacy-network-client'
 
 /**
