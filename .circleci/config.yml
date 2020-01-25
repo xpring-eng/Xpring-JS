@@ -4,7 +4,6 @@ version: 2.1
 orbs:
   protobuf: izumin5210/protobuf@0.1.0
   codecov: codecov/codecov@1.0.4
-  rsync: aplazame/rsync@0.0.15
 jobs:
   build:
     docker:
@@ -21,6 +20,10 @@ jobs:
             - v1-dependencies-
 
       - protobuf/install
+
+      - run:
+          name: "Install RSync"
+          command: sudo apt-get install rsync
 
       - run:
           name: "Install protoc plugin"
