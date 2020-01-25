@@ -17,7 +17,7 @@ const transactionHash =
   '9A88C8548E03958FD97AF44AE5A8668896D195A70CF3FF3CB8E57096AA717135'
 
 // A XpringClient that makes requests. Uses the legacy protocol buffer implementation.
-const legacyGRPCURL = 'grpc.xpring.tech:80'
+const legacyGRPCURL = 'https://grpchttp.xpring.io'
 const legacyXpringClient = new XpringClient(legacyGRPCURL)
 
 // Some amount of XRP to send.

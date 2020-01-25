@@ -1,11 +1,14 @@
 import { Utils, Wallet } from 'xpring-common-js'
+import { AccountAddress } from './generated/rpc/v1/amount_pb'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
-import { TransactionStatus as RawTransactionStatus } from '../generated/legacy/transaction_status_pb'
+import RawTransactionStatus from './raw-transaction-status'
 import GRPCNetworkClient from './grpc-network-client'
 import { NetworkClient } from './network-client'
-import { GetAccountInfoRequest } from '../generated/rpc/v1/account_info_pb'
-import { AccountAddress } from '../generated/rpc/v1/amount_pb'
+import { GetAccountInfoRequest } from './generated/rpc/v1/account_info_pb'
+
+import { GetTxRequest, GetTxResponse } from './generated/rpc/v1/tx_pb'
+import { GetFeeRequest, GetFeeResponse } from './generated/rpc/v1/fee_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
@@ -13,6 +16,7 @@ import { AccountAddress } from '../generated/rpc/v1/amount_pb'
 /* eslint-disable @typescript-eslint/no-useless-constructor */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
+
 /**
  * Error messages from XpringClient.
  */
@@ -25,6 +29,40 @@ export class XpringClientErrorMessages {
   public static readonly xAddressRequired =
     'Please use the X-Address format. See: https://xrpaddress.info/.'
   /* eslint-enable @typescript-eslint/indent */
+}
+
+/**
+ * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
+ */
+class GetTxResponseWrapper implements RawTransactionStatus {
+  public constructor(private readonly getTxResponse: GetTxResponse) {}
+
+  public getValidated(): boolean {
+    return this.getTxResponse.getValidated()
+  }
+
+  public getTransactionStatusCode(): string {
+    const meta = this.getTxResponse.getMeta()
+    if (!meta) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+
+    const transactionResult = meta.getTransactionResult()
+    if (!transactionResult) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+
+    return transactionResult.getResult()
+  }
+
+  public getLastLedgerSequence(): number {
+    const transaction = this.getTxResponse.getTransaction()
+    if (!transaction) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+
+    return transaction.getLastLedgerSequence()
+  }
 }
 
 /**
@@ -95,7 +133,18 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getTransactionStatus(
     transactionHash: string,
   ): Promise<TransactionStatus> {
-    throw new Error(XpringClientErrorMessages.unimplemented)
+    const transactionStatus = await this.getRawTransactionStatus(
+      transactionHash,
+    )
+
+    // Return pending if the transaction is not validated.
+    if (!transactionStatus.getValidated()) {
+      return TransactionStatus.Pending
+    }
+
+    return transactionStatus.getTransactionStatusCode().startsWith('tes')
+      ? TransactionStatus.Succeeded
+      : TransactionStatus.Failed
   }
 
   /**
@@ -107,22 +156,49 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    amount: BigInt | number | string,
-    destination: string,
-    sender: Wallet,
+    _amount: BigInt | number | string,
+    _destination: string,
+    _sender: Wallet,
   ): Promise<string> {
     throw new Error(XpringClientErrorMessages.unimplemented)
   }
 
   public async getLastValidatedLedgerSequence(): Promise<number> {
-    throw new Error(XpringClientErrorMessages.unimplemented)
+    const getFeeResponse = await this.getFee()
+    return getFeeResponse.getLedgerCurrentIndex()
   }
 
-  // TODO(keefertaylor): Create bridge on raw transaction status.
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    throw new Error(XpringClientErrorMessages.unimplemented)
+    const getTxRequest = new GetTxRequest()
+    getTxRequest.setHash(transactionHash)
+
+    const getTxResponse = await this.networkClient.getTx(getTxRequest)
+
+    return new GetTxResponseWrapper(getTxResponse)
+  }
+
+  // private async getMinimumFee(): Promise<XRPDropsAmount> {
+  //   const getFeeResponse = await this.getFee()
+
+  //   const fee = getFeeResponse.getDrops()
+  //   if (!fee) {
+  //     throw new Error(XpringClientErrorMessages.malformedResponse)
+  //   }
+
+  //   const minimumFee = fee.getMinimumFee()
+  //   if (!minimumFee) {
+  //     throw new Error(XpringClientErrorMessages.malformedResponse)
+  //   }
+
+  //   return minimumFee
+  // }
+
+  // TODO(keefertaylor): Add tests for this method once send is hooked up.
+  private async getFee(): Promise<GetFeeResponse> {
+    const getFeeRequest = new GetFeeRequest()
+    return this.networkClient.getFee(getFeeRequest)
   }
 }
 

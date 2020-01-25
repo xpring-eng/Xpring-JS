@@ -1,6 +1,5 @@
-import chai, { assert } from 'chai'
+import { assert } from 'chai'
 
-import chaiString from 'chai-string'
 import DefaultXpringClient, {
   XpringClientErrorMessages,
 } from '../src/default-xpring-client'
@@ -9,15 +8,44 @@ import {
   FakeNetworkClientResponses,
 } from './fakes/fake-network-client'
 import 'mocha'
-
-chai.use(chaiString)
+import { GetTxResponse } from '../src/generated/rpc/v1/tx_pb'
+import { Meta, TransactionResult } from '../src/generated/rpc/v1/meta_pb'
+import TransactionStatus from '../src/transaction-status'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
+
+const transactionStatusCodeSuccess = 'tesSUCCESS'
+const transactionStatusCodeFailure = 'tecFAILURE'
+
+const transactionHash = 'DEADBEEF'
 
 const fakeSucceedingNetworkClient = new FakeNetworkClient()
 const fakeErroringNetworkClient = new FakeNetworkClient(
   FakeNetworkClientResponses.defaultErrorResponses,
 )
+
+/**
+ * Convenience function which allows construction of `getTxResponse` objects.
+ *
+ * @param validated Whether the txResponse is validated.
+ * @param resultCode The result code.
+ */
+function makeGetTxResponse(
+  validated: boolean,
+  resultCode: string,
+): GetTxResponse {
+  const transactionResult = new TransactionResult()
+  transactionResult.setResult(resultCode)
+
+  const meta = new Meta()
+  meta.setTransactionResult(transactionResult)
+
+  const getTxResponse = new GetTxResponse()
+  getTxResponse.setMeta(meta)
+  getTxResponse.setValidated(validated)
+
+  return getTxResponse
+}
 
 describe('Default Xpring Client', function(): void {
   it('Get Account Balance - successful response', async function(): Promise<
@@ -72,6 +100,132 @@ describe('Default Xpring Client', function(): void {
     xpringClient.getBalance(testAddress).catch((error) => {
       assert.typeOf(error, 'Error')
       assert.equal(error.message, XpringClientErrorMessages.malformedResponse)
+      done()
+    })
+  })
+
+  it('Get Transaction Status - Unvalidated Transaction and Failure Code', async function(): Promise<
+    void
+  > {
+    // GIVEN a XpringClient which will return an unvalidated transaction with a failure code.
+    const transactionStatusResponse = makeGetTxResponse(
+      false,
+      transactionStatusCodeFailure,
+    )
+    const transactionStatusResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      transactionStatusResponse,
+    )
+    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses)
+    const xpringClient = new DefaultXpringClient(fakeNetworkClient)
+
+    // WHEN the transaction status is retrieved.
+    const transactionStatus = await xpringClient.getTransactionStatus(
+      transactionHash,
+    )
+
+    // THEN the status is pending.
+    assert.deepEqual(transactionStatus, TransactionStatus.Pending)
+  })
+
+  it('Get Transaction Status - Unvalidated Transaction and Success Code', async function(): Promise<
+    void
+  > {
+    // GIVEN a XpringClient which will return an unvalidated transaction with a success code.
+    const transactionStatusResponse = makeGetTxResponse(
+      false,
+      transactionStatusCodeSuccess,
+    )
+    const transactionStatusResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      transactionStatusResponse,
+    )
+    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses)
+    const xpringClient = new DefaultXpringClient(fakeNetworkClient)
+
+    // WHEN the transaction status is retrieved.
+    const transactionStatus = await xpringClient.getTransactionStatus(
+      transactionHash,
+    )
+
+    // THEN the status is pending.
+    assert.deepEqual(transactionStatus, TransactionStatus.Pending)
+  })
+
+  it('Get Transaction Status - Validated Transaction and Failure Code', async function(): Promise<
+    void
+  > {
+    // GIVEN a XpringClient which will return an validated transaction with a failure code.
+    const transactionStatusResponse = makeGetTxResponse(
+      true,
+      transactionStatusCodeFailure,
+    )
+    const transactionStatusResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      transactionStatusResponse,
+    )
+    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses)
+    const xpringClient = new DefaultXpringClient(fakeNetworkClient)
+
+    // WHEN the transaction status is retrieved.
+    const transactionStatus = await xpringClient.getTransactionStatus(
+      transactionHash,
+    )
+
+    // THEN the status is failed.
+    assert.deepEqual(transactionStatus, TransactionStatus.Failed)
+  })
+
+  it('Get Transaction Status - Validated Transaction and Success Code', async function(): Promise<
+    void
+  > {
+    // GIVEN a XpringClient which will return an validated transaction with a success code.
+    const transactionStatusResponse = makeGetTxResponse(
+      true,
+      transactionStatusCodeSuccess,
+    )
+    const transactionStatusResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      transactionStatusResponse,
+    )
+    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses)
+    const xpringClient = new DefaultXpringClient(fakeNetworkClient)
+
+    // WHEN the transaction status is retrieved.
+    const transactionStatus = await xpringClient.getTransactionStatus(
+      transactionHash,
+    )
+
+    // THEN the status is succeeded.
+    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
+  })
+
+  it('Get Transaction Status - Node Error', function(done): void {
+    // GIVEN a XpringClient which will error when a transaction status is requested.
+    const transactionStatusResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      FakeNetworkClientResponses.defaultError,
+    )
+    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses)
+    const xpringClient = new DefaultXpringClient(fakeNetworkClient)
+
+    // WHEN the transaction status is retrieved THEN an error is thrown.
+    xpringClient.getTransactionStatus(transactionHash).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(
+        error.message,
+        FakeNetworkClientResponses.defaultError.message,
+      )
       done()
     })
   })

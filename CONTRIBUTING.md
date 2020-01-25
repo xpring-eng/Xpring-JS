@@ -35,6 +35,16 @@ $ cd xpring-js
 # Install dependencies
 npm i
 
+# Install gRPC Web
+## OSX
+$ curl -L https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-darwin-x86_64 --output protoc-gen-grpc-web
+$ sudo mv protoc-gen-grpc-web /usr/local/bin/
+$ chmod +x /usr/local/bin/protoc-gen-grpc-web
+## Linux
+$ curl -L https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64 --output protoc-gen-grpc-web
+$ sudo mv protoc-gen-grpc-web /usr/local/bin/
+$ chmod +x /usr/local/bin/protoc-gen-grpc-web
+
 # Run tests.
 $ npm test
 ```

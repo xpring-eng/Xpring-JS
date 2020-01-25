@@ -2,15 +2,19 @@ import { NetworkClient } from '../../src/network-client'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
-} from '../../generated/rpc/v1/account_info_pb'
-import { GetFeeRequest, GetFeeResponse } from '../../generated/rpc/v1/fee_pb'
-import { GetTxRequest, GetTxResponse } from '../../generated/rpc/v1/tx_pb'
+} from '../../src/generated/rpc/v1/account_info_pb'
+import {
+  GetFeeRequest,
+  GetFeeResponse,
+} from '../../src/generated/rpc/v1/fee_pb'
+import { GetTxRequest, GetTxResponse } from '../../src/generated/rpc/v1/tx_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from '../../generated/rpc/v1/submit_pb'
-import { AccountRoot } from '../../generated/rpc/v1/ledger_objects_pb'
-import { XRPDropsAmount } from '../../generated/rpc/v1/amount_pb'
+} from '../../src/generated/rpc/v1/submit_pb'
+import { AccountRoot } from '../../src/generated/rpc/v1/ledger_objects_pb'
+import { XRPDropsAmount } from '../../src/generated/rpc/v1/amount_pb'
+import { Meta, TransactionResult } from '../../src/generated/rpc/v1/meta_pb'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -98,7 +102,17 @@ export class FakeNetworkClientResponses {
    * Construct a default getTx response.
    */
   public static defaultGetTxResponse(): GetTxResponse {
-    return new GetTxResponse()
+    const transactionResult = new TransactionResult()
+    transactionResult.setResult('tesSUCCESS')
+
+    const meta = new Meta()
+    meta.setTransactionResult(transactionResult)
+
+    const response = new GetTxResponse()
+    response.setValidated(true)
+    response.setMeta(meta)
+
+    return response
   }
 }
 

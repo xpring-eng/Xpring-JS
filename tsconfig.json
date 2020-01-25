@@ -1,18 +1,42 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
-    "rootDir": "./",
-    "outDir": "build",
-    "target": "esnext",
+    // Basic Options
+    "target": "ES2017",
     "module": "commonjs",
-    "moduleResolution": "node",
+    "declaration": true,
     "sourceMap": true,
-    "removeComments": true,
+
+    // TODO remove lib once BigInt is polyfilled
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+
+    // Directories
+    "outDir": "build",
+
+    // Strict Type-Checking Options
     "strict": true,
-    "resolveJsonModule": true,
+    "noImplicitAny": false,
+
+    // Additional Checks
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // Module Resolution Options
+    "moduleResolution": "node",
+
+    // Advanced Options
+    "allowJs": true,
+    // TODO remove skipLibCheck when xpring-common-js lands the type exports fix
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true
   },
   "include": [
-    "src/**/*",
+    "src/**/*"
   ]
 }
