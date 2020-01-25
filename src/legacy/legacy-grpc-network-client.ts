@@ -19,9 +19,12 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
 
   public constructor(grpcURL: string) {
     try {
-      ;(global as any).XMLHttpRequest = require('xhr2') // eslint-disable-line global-require, @typescript-eslint/no-explicit-any
+      // This polyfill hack enables XMLHttpRequest on the global node.js state
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore eslint-disable-line
+      global.XMLHttpRequest = require('xhr2') // eslint-disable-line
     } catch {
-      // Node.js hack if error is caught we are on a browser
+      // Swallow the error here for browsers
     }
     this.grpcClient = new XRPLedgerAPIClient(grpcURL)
   }

@@ -6,6 +6,13 @@
     "declaration": true,
     "sourceMap": true,
 
+    // TODO remove lib once BigInt is polyfilled
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+
     // Directories
     "outDir": "build",
 

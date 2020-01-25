@@ -1,2 +1,2 @@
 build/**/*
-src/generated/*.js
+src/generated/**/*
