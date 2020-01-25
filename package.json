@@ -16,7 +16,7 @@
     "build/**/*"
   ],
   "scripts": {
-    "build": "npm run clean && ./scripts/regenerate_protos.sh && npm run lint && tsc -d && rsync -r ./src/generated ./build",
+    "build": "npm run clean && ./scripts/regenerate_protos.sh && npm run lint && tsc -d && copyfiles -u 2 './src/generated/**/*' ./build/generated",
     "clean": "rm -rf ./src/generated ./dist ./build",
     "pretest": "npm run clean && ./scripts/regenerate_protos.sh && npm run lint && tsc --noEmit",
     "lint": "eslint . --ext .ts --fix",
@@ -33,6 +33,7 @@
     "@typescript-eslint/parser": "^2.17.0",
     "chai": "4.2.0",
     "chai-string": "1.5.0",
+    "copyfiles": "^2.2.0",
     "coveralls": "3.0.9",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",

@@ -43,7 +43,6 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - run: sudo apt install rsync
       - run: npm run build
       - run: nyc npm test
 
