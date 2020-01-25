@@ -1,4 +1,5 @@
 import chai, { assert } from 'chai'
+import bigInt from 'big-integer'
 
 import {
   Utils,
@@ -100,14 +101,14 @@ describe('Legacy Default Xpring Client', function(): void {
     })
   })
 
-  it('Send XRP Transaction - success with BigInt', async function() {
-    // GIVEN a XpringClient, a wallet, and a BigInt denomonated amount.
+  it('Send XRP Transaction - success with BigInteger', async function() {
+    // GIVEN a XpringClient, a wallet, and a BigInteger denomonated amount.
     const xpringClient = new LegacyDefaultXpringClient(
       fakeSucceedingNetworkClient,
     )
     const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
-    const amount = BigInt('10')
+    const amount = bigInt('10')
 
     // WHEN the account makes a transaction.
     const transactionHash = await xpringClient.send(
@@ -207,7 +208,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(feeFailingNetworkClient)
     const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
-    const amount = BigInt('10')
+    const amount = bigInt('10')
 
     // WHEN a payment is attempted THEN an error is propagated.
     xpringClient.send(amount, destinationAddress, wallet).catch((error) => {
@@ -227,7 +228,7 @@ describe('Legacy Default Xpring Client', function(): void {
     )
     const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
-    const amount = BigInt('10')
+    const amount = bigInt('10')
 
     // WHEN the account makes a transaction THEN an error is thrown.
     xpringClient.send(amount, destinationAddress, wallet).catch((error) => {
@@ -253,7 +254,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(feeFailingNetworkClient)
     const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
-    const amount = BigInt('10')
+    const amount = bigInt('10')
 
     // WHEN a payment is attempted THEN an error is propagated.
     xpringClient.send(amount, destinationAddress, wallet).catch((error) => {
@@ -280,7 +281,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(feeFailingNetworkClient)
     const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
-    const amount = BigInt('10')
+    const amount = bigInt('10')
 
     // WHEN a payment is attempted THEN an error is propagated.
     xpringClient.send(amount, destinationAddress, wallet).catch((error) => {
@@ -306,7 +307,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(feeFailingNetworkClient)
     const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
-    const amount = BigInt('10')
+    const amount = bigInt('10')
 
     // WHEN a payment is attempted THEN an error is propagated.
     xpringClient.send(amount, destinationAddress, wallet).catch((error) => {

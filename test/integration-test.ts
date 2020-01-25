@@ -1,5 +1,6 @@
 import { Wallet } from 'xpring-common-js'
 import { assert } from 'chai'
+import bigInt from 'big-integer'
 import XpringClient from '../src/xpring-client'
 import TransactionStatus from '../src/transaction-status'
 
@@ -21,7 +22,7 @@ const legacyGRPCURL = 'https://grpchttp.xpring.io'
 const legacyXpringClient = new XpringClient(legacyGRPCURL)
 
 // Some amount of XRP to send.
-const amount = BigInt('1')
+const amount = bigInt('1')
 
 describe('Xpring JS Integration Tests', function(): void {
   it('Get Account Balance - Legacy Shim', async function(): Promise<void> {

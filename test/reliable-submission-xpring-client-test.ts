@@ -3,6 +3,7 @@ import {
   TransactionStatus as RawTransactionStatus,
   Wallet,
 } from 'xpring-common-js'
+import bigInt from 'big-integer'
 import FakeXpringClient from './fakes/fake-xpring-client'
 import ReliableSubmissionXpringClient from '../src/reliable-submission-xpring-client'
 import TransactionStatus from '../src/transaction-status'
@@ -13,7 +14,7 @@ const transactionStatusCodeSuccess = 'tesSUCCESS'
 
 const transactionHash = 'DEADBEEF'
 
-const fakedGetBalanceValue = BigInt(10)
+const fakedGetBalanceValue = bigInt(10)
 const fakedTransactionStatusValue = TransactionStatus.Succeeded
 const fakedSendValue = transactionHash
 const fakedLastLedgerSequenceValue = 10
