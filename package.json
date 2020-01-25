@@ -16,7 +16,7 @@
     "build/**/*"
   ],
   "scripts": {
-    "build": "npm run clean && ./scripts/regenerate_protos.sh && npm run lint && tsc -d && rsync -r ./src/generated ./build/generated",
+    "build": "npm run clean && ./scripts/regenerate_protos.sh && npm run lint && tsc -d && rsync -r ./src/generated ./build",
     "clean": "rm -rf ./src/generated ./dist ./build",
     "pretest": "npm run clean && ./scripts/regenerate_protos.sh && npm run lint && tsc --noEmit",
     "lint": "eslint . --ext .ts --fix",
