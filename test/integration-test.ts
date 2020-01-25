@@ -12,7 +12,7 @@ const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
 // A wallet with some balance on TestNet.
 const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 
-// A hash of a successfully validated transaction.	const transactionHashTestNet =
+// A hash of a successfully validated transaction.
 const transactionHash =
   '95D30FED388C1B4BC1CC73BE3B8D79875995A26F7FB46061CF1A77972AEB9A7A'
 
