@@ -24,8 +24,6 @@
 
     // Advanced Options
     "allowJs": true,
-    // TODO remove skipLibCheck when xpring-common-js lands the type exports fix
-    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true
   },
