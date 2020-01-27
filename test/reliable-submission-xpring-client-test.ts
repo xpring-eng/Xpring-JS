@@ -1,5 +1,6 @@
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
+import bigInt from 'big-integer'
 import { TransactionStatus as RawTransactionStatus } from '../src/generated/legacy/transaction_status_pb'
 import FakeXpringClient from './fakes/fake-xpring-client'
 import ReliableSubmissionXpringClient from '../src/reliable-submission-xpring-client'
@@ -11,7 +12,7 @@ const transactionStatusCodeSuccess = 'tesSUCCESS'
 
 const transactionHash = 'DEADBEEF'
 
-const fakedGetBalanceValue = BigInt(10)
+const fakedGetBalanceValue = bigInt(10)
 const fakedTransactionStatusValue = TransactionStatus.Succeeded
 const fakedSendValue = transactionHash
 const fakedLastLedgerSequenceValue = 10
@@ -95,7 +96,7 @@ describe('Reliable Submission Xpring Client', function(): void {
     }, 200)
     const walletGenerationResult = Wallet.generateRandomWallet()
     if (walletGenerationResult === undefined) {
-      assert.fail('Wallet is undefined', 'Wallet to  be defined')
+      assert.fail('Wallet is undefined', 'Wallet to be defined')
       return
     }
 
@@ -120,7 +121,7 @@ describe('Reliable Submission Xpring Client', function(): void {
     }, 200)
     const walletGenerationResult = Wallet.generateRandomWallet()
     if (walletGenerationResult === undefined) {
-      assert.fail('Wallet is undefined', 'Wallet to  be defined')
+      assert.fail('Wallet is undefined', 'Wallet to be defined')
       return
     }
 
@@ -145,7 +146,7 @@ describe('Reliable Submission Xpring Client', function(): void {
     this.fakeXpringClient.getRawTransactionStatusValue = malformedRawTransactionStatus
     const walletGenerationResult = Wallet.generateRandomWallet()
     if (walletGenerationResult === undefined) {
-      assert.fail('Wallet is undefined', 'Wallet to  be defined')
+      assert.fail('Wallet is undefined', 'Wallet to be defined')
       return
     }
 

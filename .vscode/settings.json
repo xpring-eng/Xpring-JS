@@ -10,12 +10,5 @@
     },
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
-    "files.trimTrailingWhitespace": true,
-    "eslint.workingDirectories": [
-        {
-            "directory": "./",
-            "changeProcessCWD": true
-        }
-    ],
-    "typescript.tsdk": "node_modules/typescript/lib"
+    "files.trimTrailingWhitespace": true
 }

@@ -19,7 +19,6 @@ mkdir -p $OUT_DIR
 $PWD/node_modules/grpc-tools/bin/protoc \
     --js_out=import_style=commonjs,binary:$OUT_DIR \
     --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:$OUT_DIR \
-    --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` \
     --proto_path $PROTO_PATH \
     ./rippled/src/ripple/proto/rpc/v1/*.proto
 
@@ -39,7 +38,6 @@ mkdir -p $LEGACY_OUT_DIR
 $PWD/node_modules/grpc-tools/bin/protoc \
     --js_out=import_style=commonjs,binary:$LEGACY_OUT_DIR \
     --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:$LEGACY_OUT_DIR \
-    --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` \
     --proto_path=$PWD/xpring-common-protocol-buffers/proto \
     $PWD/xpring-common-protocol-buffers/**/*.proto
 
