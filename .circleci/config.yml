@@ -29,6 +29,7 @@ jobs:
           name: "Install dependencies"
           command: |
             sudo npm -g i nyc codecov
+            npm i
             npm rebuild
 
       - save_cache:
