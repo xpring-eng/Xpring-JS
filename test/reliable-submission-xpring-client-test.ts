@@ -98,7 +98,7 @@ describe('Reliable Submission Xpring Client', function(): void {
     }, 200)
     const walletGenerationResult = Wallet.generateRandomWallet()
     if (walletGenerationResult === undefined) {
-      assert.fail('Wallet is undefined', 'Wallet to  be defined')
+      assert.fail('Wallet is undefined', 'Wallet to be defined')
       return
     }
 
@@ -123,7 +123,7 @@ describe('Reliable Submission Xpring Client', function(): void {
     }, 200)
     const walletGenerationResult = Wallet.generateRandomWallet()
     if (walletGenerationResult === undefined) {
-      assert.fail('Wallet is undefined', 'Wallet to  be defined')
+      assert.fail('Wallet is undefined', 'Wallet to be defined')
       return
     }
 
@@ -148,7 +148,7 @@ describe('Reliable Submission Xpring Client', function(): void {
     this.fakeXpringClient.getRawTransactionStatusValue = malformedRawTransactionStatus
     const walletGenerationResult = Wallet.generateRandomWallet()
     if (walletGenerationResult === undefined) {
-      assert.fail('Wallet is undefined', 'Wallet to  be defined')
+      assert.fail('Wallet is undefined', 'Wallet to be defined')
       return
     }
 
