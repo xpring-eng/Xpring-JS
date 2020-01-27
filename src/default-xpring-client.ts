@@ -179,7 +179,6 @@ class DefaultXpringClient implements XpringClientDecorator {
     )
 
     const getTxResponse = await this.networkClient.getTx(getTxRequest)
-    console.log('response!')
 
     return new GetTxResponseWrapper(getTxResponse)
   }
