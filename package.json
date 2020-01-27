@@ -29,6 +29,7 @@
     "@types/chai-string": "1.4.2",
     "@types/google-protobuf": "3.7.2",
     "@types/mocha": "5.2.7",
+    "@types/node": "^13.5.0",
     "@typescript-eslint/eslint-plugin": "^2.17.0",
     "@typescript-eslint/parser": "^2.17.0",
     "chai": "4.2.0",
@@ -59,7 +60,7 @@
     "big-integer": "^1.6.48",
     "grpc-web": "1.0.7",
     "xhr2": "0.2.0",
-    "xpring-common-js": "^3.0.0"
+    "xpring-common-js": "^3.0.1"
   },
   "nyc": {
     "extension": [
