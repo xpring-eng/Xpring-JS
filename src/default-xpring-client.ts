@@ -99,14 +99,15 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A `BigInt` representing the number of drops of XRP in the account.
    */
   public async getBalance(address: string): Promise<BigInt> {
-    if (!Utils.isValidXAddress(address)) {
+    const classicAddress = Utils.decodeXAddress(address)
+    if (!classicAddress) {
       return Promise.reject(
         new Error(XpringClientErrorMessages.xAddressRequired),
       )
     }
 
     const account = new AccountAddress()
-    account.setAddress(address)
+    account.setAddress(classicAddress.address)
 
     const request = new GetAccountInfoRequest()
     request.setAccount(account)
@@ -172,7 +173,11 @@ class DefaultXpringClient implements XpringClientDecorator {
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
     const getTxRequest = new GetTxRequest()
-    getTxRequest.setHash(transactionHash)
+    getTxRequest.setHash(
+      Utils.toBytes(
+        'AB5BB249FC614539CEF6CCE29B5C25DA3C278EF3933BE0583FEFF089067208C9',
+      ),
+    )
 
     const getTxResponse = await this.networkClient.getTx(getTxRequest)
 
