@@ -17,3 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implement `XpringClient`'s `getBalance` method using rippled's protocol buffers.
 - Implement `XpringClient`'s `getRawTransactionStatus` method using rippled's protocol buffers.
 - Implement `XpringClient`'s `getTransactionStatus` method using rippled's protocol buffers.
+
+### Refactor
+- Switch Xpring-JS to use it's own generated types instead of XpringCommonJS's Types
