@@ -56,8 +56,8 @@
     "typescript-eslint-parser": "22.0.0"
   },
   "dependencies": {
-    "xpring-common-js": "2.0.1",
-    "grpc": "1.24.2"
+    "grpc": "1.24.2",
+    "xpring-common-js": "2.0.1"
   },
   "nyc": {
     "extension": [
