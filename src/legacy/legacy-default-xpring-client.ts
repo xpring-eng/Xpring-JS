@@ -1,20 +1,15 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
-import { AccountInfo } from '../generated/node/legacy/account_info_pb'
-import { GetAccountInfoRequest } from '../generated/node/legacy/get_account_info_request_pb'
-import { GetFeeRequest } from '../generated/node/legacy/get_fee_request_pb'
-import { GetLatestValidatedLedgerSequenceRequest } from '../generated/node/legacy/get_latest_validated_ledger_sequence_request_pb'
-import { GetTransactionStatusRequest } from '../generated/node/legacy/get_transaction_status_request_pb'
-import { Payment } from '../generated/node/legacy/payment_pb'
-import { SubmitSignedTransactionRequest } from '../generated/node/legacy/submit_signed_transaction_request_pb'
-import { Transaction } from '../generated/node/legacy/transaction_pb'
-import { XRPAmount } from '../generated/node/legacy/xrp_amount_pb'
+
+import { AccountInfo as AccountInfoNode } from '../generated/node/legacy/account_info_pb'
+import { AccountInfo as AccountInfoWeb } from '../generated/web/legacy/account_info_pb'
 
 import RawTransactionStatus from '../raw-transaction-status'
-import { LegacyNetworkClient } from './legacy-network-client'
 import LegacyGRPCNetworkClient from './legacy-grpc-network-client'
-
+import LegacyGRPCNetworkClientWeb from './legacy-grpc-network-client.web'
+import { LegacyNetworkClient } from './legacy-network-client'
 import { XpringClientDecorator } from '../xpring-client-decorator'
 import TransactionStatus from '../transaction-status'
+import isNode from '../utils'
 
 /**
  * Error messages from XpringClient.
@@ -44,8 +39,14 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
    */
   public static defaultXpringClientWithEndpoint(
     grpcURL: string,
+    forceHttp = false,
   ): LegacyDefaultXpringClient {
-    return new LegacyDefaultXpringClient(new LegacyGRPCNetworkClient(grpcURL))
+    if (isNode() && !forceHttp) {
+      return new LegacyDefaultXpringClient(new LegacyGRPCNetworkClient(grpcURL))
+    }
+    return new LegacyDefaultXpringClient(
+      new LegacyGRPCNetworkClientWeb(grpcURL),
+    )
   }
 
   /**
@@ -137,16 +138,18 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
                 )
               }
 
-              const xrpAmount = new XRPAmount()
+              const xrpAmount = this.networkClient.XRPAmount()
               xrpAmount.setDrops(normalizedAmount.toString())
 
-              const payment = new Payment()
+              const payment = this.networkClient.Payment()
               payment.setXrpAmount(xrpAmount)
               payment.setDestination(destination)
 
-              const transaction = new Transaction()
+              const transaction = this.networkClient.Transaction()
               transaction.setAccount(sender.getAddress())
-              transaction.setFee(fee)
+              const xrpFeeAmount = this.networkClient.XRPAmount()
+              xrpFeeAmount.setDrops(fee)
+              transaction.setFee(xrpFeeAmount)
               transaction.setSequence(accountInfo.getSequence())
               transaction.setPayment(payment)
               transaction.setLastLedgerSequence(
@@ -170,7 +173,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
                 )
               }
 
-              const submitSignedTransactionRequest = new SubmitSignedTransactionRequest()
+              const submitSignedTransactionRequest = this.networkClient.SubmitSignedTransactionRequest()
               submitSignedTransactionRequest.setSignedTransaction(
                 signedTransaction,
               )
@@ -199,7 +202,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
   }
 
   public async getLastValidatedLedgerSequence(): Promise<number> {
-    const getLatestValidatedLedgerSequenceRequest = new GetLatestValidatedLedgerSequenceRequest()
+    const getLatestValidatedLedgerSequenceRequest = this.networkClient.GetLatestValidatedLedgerSequenceRequest()
     const ledgerSequence = await this.networkClient.getLatestValidatedLedgerSequence(
       getLatestValidatedLedgerSequenceRequest,
     )
@@ -209,20 +212,22 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    const transactionStatusRequest = new GetTransactionStatusRequest()
+    const transactionStatusRequest = this.networkClient.GetTransactionStatusRequest()
     transactionStatusRequest.setTransactionHash(transactionHash)
 
     return this.networkClient.getTransactionStatus(transactionStatusRequest)
   }
 
-  private async getAccountInfo(address: string): Promise<AccountInfo> {
-    const getAccountInfoRequest = new GetAccountInfoRequest()
+  private async getAccountInfo(
+    address: string,
+  ): Promise<AccountInfoNode | AccountInfoWeb> {
+    const getAccountInfoRequest = this.networkClient.GetAccountInfoRequest()
     getAccountInfoRequest.setAddress(address)
     return this.networkClient.getAccountInfo(getAccountInfoRequest)
   }
 
-  private async getFee(): Promise<XRPAmount> {
-    const getFeeRequest = new GetFeeRequest()
+  private async getFee(): Promise<string> {
+    const getFeeRequest = this.networkClient.GetFeeRequest()
 
     return this.networkClient.getFee(getFeeRequest).then(async (fee) => {
       const feeAmount = fee.getAmount()
@@ -231,7 +236,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
           new Error(LegacyXpringClientErrorMessages.malformedResponse),
         )
       }
-      return feeAmount
+      return feeAmount.getDrops()
     })
   }
 

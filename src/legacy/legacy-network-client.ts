@@ -9,6 +9,9 @@ import { GetLatestValidatedLedgerSequenceRequest as GetLatestValidatedLedgerSequ
 import { LedgerSequence as LedgerSequenceWeb } from '../generated/web/legacy/ledger_sequence_pb'
 import { GetTransactionStatusRequest as GetTransactionStatusRequestWeb } from '../generated/web/legacy/get_transaction_status_request_pb'
 import { TransactionStatus as TransactionStatusWeb } from '../generated/web/legacy/transaction_status_pb'
+import { XRPAmount as XRPAmountWeb } from '../generated/web/legacy/xrp_amount_pb'
+import { Payment as PaymentWeb } from '../generated/web/legacy/payment_pb'
+import { Transaction as TransactionWeb } from '../generated/web/legacy/transaction_pb'
 
 // Node Imports
 import { AccountInfo as AccountInfoNode } from '../generated/node/legacy/account_info_pb'
@@ -21,6 +24,9 @@ import { GetLatestValidatedLedgerSequenceRequest as GetLatestValidatedLedgerSequ
 import { LedgerSequence as LedgerSequenceNode } from '../generated/node/legacy/ledger_sequence_pb'
 import { GetTransactionStatusRequest as GetTransactionStatusRequestNode } from '../generated/node/legacy/get_transaction_status_request_pb'
 import { TransactionStatus as TransactionStatusNode } from '../generated/node/legacy/transaction_status_pb'
+import { XRPAmount as XRPAmountNode } from '../generated/node/legacy/xrp_amount_pb'
+import { Payment as PaymentNode } from '../generated/node/legacy/payment_pb'
+import { Transaction as TransactionNode } from '../generated/node/legacy/transaction_pb'
 
 /**
  * The network client interface provides a wrapper around network calls to the Xpring Platform.
@@ -52,4 +58,20 @@ export interface LegacyNetworkClient {
   getTransactionStatus(
     getTransactionStatusRequest: GetTransactionStatusRequestNode,
   ): Promise<TransactionStatusNode>
+  XRPAmount(): XRPAmountWeb
+  XRPAmount(): XRPAmountNode
+  Payment(): PaymentWeb
+  Payment(): PaymentNode
+  Transaction(): TransactionWeb
+  Transaction(): TransactionNode
+  SubmitSignedTransactionRequest(): SubmitSignedTransactionRequestWeb
+  SubmitSignedTransactionRequest(): SubmitSignedTransactionRequestNode
+  GetLatestValidatedLedgerSequenceRequest(): GetLatestValidatedLedgerSequenceRequestWeb
+  GetLatestValidatedLedgerSequenceRequest(): GetLatestValidatedLedgerSequenceRequestNode
+  GetTransactionStatusRequest(): GetTransactionStatusRequestWeb
+  GetTransactionStatusRequest(): GetTransactionStatusRequestNode
+  GetAccountInfoRequest(): GetAccountInfoRequestWeb
+  GetAccountInfoRequest(): GetAccountInfoRequestNode
+  GetFeeRequest(): GetFeeRequestWeb
+  GetFeeRequest(): GetFeeRequestNode
 }

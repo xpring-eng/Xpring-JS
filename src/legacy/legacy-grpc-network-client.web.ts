@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import { XRPLedgerAPIClient } from '../generated/web/legacy/xrp_ledger_grpc_web_pb'
 import { AccountInfo } from '../generated/web/legacy/account_info_pb'
 import { Fee } from '../generated/web/legacy/fee_pb'
@@ -10,6 +11,9 @@ import { LedgerSequence } from '../generated/web/legacy/ledger_sequence_pb'
 import { GetTransactionStatusRequest } from '../generated/web/legacy/get_transaction_status_request_pb'
 import { TransactionStatus } from '../generated/web/legacy/transaction_status_pb'
 import { LegacyNetworkClient } from './legacy-network-client'
+import { XRPAmount } from '../generated/node/legacy/xrp_amount_pb'
+import { Payment } from '../generated/node/legacy/payment_pb'
+import { Transaction } from '../generated/node/legacy/transaction_pb'
 import isNode from '../utils'
 
 /**
@@ -114,6 +118,38 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
         },
       )
     })
+  }
+
+  public XRPAmount(): XRPAmount {
+    return new XRPAmount()
+  }
+
+  public Payment(): Payment {
+    return new Payment()
+  }
+
+  public Transaction(): Transaction {
+    return new Transaction()
+  }
+
+  public SubmitSignedTransactionRequest(): SubmitSignedTransactionRequest {
+    return new SubmitSignedTransactionRequest()
+  }
+
+  public GetLatestValidatedLedgerSequenceRequest(): GetLatestValidatedLedgerSequenceRequest {
+    return new GetLatestValidatedLedgerSequenceRequest()
+  }
+
+  public GetTransactionStatusRequest(): GetTransactionStatusRequest {
+    return new GetTransactionStatusRequest()
+  }
+
+  public GetAccountInfoRequest(): GetAccountInfoRequest {
+    return new GetAccountInfoRequest()
+  }
+
+  public GetFeeRequest(): GetFeeRequest {
+    return new GetFeeRequest()
   }
 }
 

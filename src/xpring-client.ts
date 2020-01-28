@@ -1,7 +1,6 @@
 import { Wallet } from 'xpring-common-js'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import LegacyDefaultXpringClient from './legacy/legacy-default-xpring-client'
-import LegacyDefaultXpringClientWeb from './legacy/legacy-default-xpring-client.web'
 import TransactionStatus from './transaction-status'
 import ReliableSubmissionXpringClient from './reliable-submission-xpring-client'
 import DefaultXpringClient from './default-xpring-client'
@@ -37,13 +36,10 @@ class XpringClient {
           grpcURL,
         )
       }
-    } else if (isNode() && !forceHttp) {
+    } else {
       defaultXpringClient = LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(
         grpcURL,
-      )
-    } else {
-      defaultXpringClient = LegacyDefaultXpringClientWeb.defaultXpringClientWithEndpoint(
-        grpcURL,
+        forceHttp,
       )
     }
 
