@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
@@ -90,6 +89,7 @@ class GRPCNetworkClient implements NetworkClient {
     })
   }
 
+  /* eslint-disable class-methods-use-this */
   public AccountAddress(): AccountAddress {
     return new AccountAddress()
   }
@@ -105,6 +105,7 @@ class GRPCNetworkClient implements NetworkClient {
   public GetFeeRequest(): GetFeeRequest {
     return new GetFeeRequest()
   }
+  /* eslint-enable class-methods-use-this */
 }
 
 export default GRPCNetworkClient
