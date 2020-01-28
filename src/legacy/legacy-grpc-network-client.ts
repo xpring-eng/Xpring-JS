@@ -109,6 +109,7 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
     })
   }
 
+  /* eslint-disable class-methods-use-this */
   public XRPAmount(): XRPAmount {
     return new XRPAmount()
   }
@@ -140,6 +141,7 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
   public GetFeeRequest(): GetFeeRequest {
     return new GetFeeRequest()
   }
+  /* eslint-enable class-methods-use-this */
 }
 
 export default LegacyGRPCNetworkClient

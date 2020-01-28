@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 import { XRPLedgerAPIClient } from '../generated/web/legacy/xrp_ledger_grpc_web_pb'
 import { AccountInfo } from '../generated/web/legacy/account_info_pb'
 import { Fee } from '../generated/web/legacy/fee_pb'
@@ -120,6 +119,7 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
     })
   }
 
+  /* eslint-disable class-methods-use-this */
   public XRPAmount(): XRPAmount {
     return new XRPAmount()
   }
@@ -151,6 +151,7 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
   public GetFeeRequest(): GetFeeRequest {
     return new GetFeeRequest()
   }
+  /* eslint-enable class-methods-use-this */
 }
 
 export default LegacyGRPCNetworkClient
