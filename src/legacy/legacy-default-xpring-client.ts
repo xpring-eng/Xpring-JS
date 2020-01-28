@@ -2,6 +2,8 @@ import { Signer, Utils, Wallet } from 'xpring-common-js'
 
 import { AccountInfo as AccountInfoNode } from '../generated/node/legacy/account_info_pb'
 import { AccountInfo as AccountInfoWeb } from '../generated/web/legacy/account_info_pb'
+import { XRPAmount as XRPAmountNode } from '../generated/node/legacy/xrp_amount_pb'
+import { XRPAmount as XRPAmountWeb } from '../generated/web/legacy/xrp_amount_pb'
 
 import RawTransactionStatus from '../raw-transaction-status'
 import LegacyGRPCNetworkClient from './legacy-grpc-network-client'
@@ -150,9 +152,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
 
               const transaction = this.networkClient.Transaction()
               transaction.setAccount(sender.getAddress())
-              const xrpFeeAmount = this.networkClient.XRPAmount()
-              xrpFeeAmount.setDrops(fee)
-              transaction.setFee(xrpFeeAmount)
+              transaction.setFee(fee)
               transaction.setSequence(accountInfo.getSequence())
               transaction.setPayment(payment)
               transaction.setLastLedgerSequence(
@@ -229,7 +229,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
     return this.networkClient.getAccountInfo(getAccountInfoRequest)
   }
 
-  private async getFee(): Promise<string> {
+  private async getFee(): Promise<XRPAmountWeb | XRPAmountNode> {
     const getFeeRequest = this.networkClient.GetFeeRequest()
 
     return this.networkClient.getFee(getFeeRequest).then(async (fee) => {
@@ -239,7 +239,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
           new Error(LegacyXpringClientErrorMessages.malformedResponse),
         )
       }
-      return feeAmount.getDrops()
+      return feeAmount
     })
   }
 
