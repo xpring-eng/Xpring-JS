@@ -177,12 +177,10 @@ class DefaultXpringClient implements XpringClientDecorator {
   }
 
   public async getRawTransactionStatus(
-    _transactionHash: string,
+    transactionHash: string,
   ): Promise<RawTransactionStatus> {
     const getTxRequest = this.networkClient.GetTxRequest()
-    getTxRequest.setHash(
-      Utils.toBytes(transactionHash),
-    )
+    getTxRequest.setHash(Utils.toBytes(transactionHash))
 
     const getTxResponse = await this.networkClient.getTx(getTxRequest)
 
