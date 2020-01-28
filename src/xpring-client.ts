@@ -4,8 +4,6 @@ import LegacyDefaultXpringClient from './legacy/legacy-default-xpring-client'
 import TransactionStatus from './transaction-status'
 import ReliableSubmissionXpringClient from './reliable-submission-xpring-client'
 import DefaultXpringClient from './default-xpring-client'
-import DefaultXpringClientWeb from './default-xpring-client.web'
-import isNode from './utils'
 /**
  * XpringClient is a client which interacts with the Xpring platform.
  */
@@ -27,15 +25,10 @@ class XpringClient {
   ) {
     let defaultXpringClient: XpringClientDecorator
     if (useNewProtocolBuffers) {
-      if (isNode() && !forceHttp) {
-        defaultXpringClient = DefaultXpringClient.defaultXpringClientWithEndpoint(
-          grpcURL,
-        )
-      } else {
-        defaultXpringClient = DefaultXpringClientWeb.defaultXpringClientWithEndpoint(
-          grpcURL,
-        )
-      }
+      defaultXpringClient = DefaultXpringClient.defaultXpringClientWithEndpoint(
+        grpcURL,
+        forceHttp,
+      )
     } else {
       defaultXpringClient = LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(
         grpcURL,

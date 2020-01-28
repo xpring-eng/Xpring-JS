@@ -1,19 +1,15 @@
 import { Utils, Wallet } from 'xpring-common-js'
-import { AccountAddress } from './generated/node/rpc/v1/amount_pb'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import GRPCNetworkClient from './grpc-network-client'
+import GRPCNetworkClientWeb from './grpc-network-client.web'
 import { NetworkClient } from './network-client'
-import { GetAccountInfoRequest } from './generated/node/rpc/v1/account_info_pb'
-
-import { GetTxRequest, GetTxResponse } from './generated/node/rpc/v1/tx_pb'
-import { GetFeeRequest, GetFeeResponse } from './generated/node/rpc/v1/fee_pb'
+import { GetTxResponse } from './generated/web/rpc/v1/tx_pb'
+import { GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @typescript-eslint/no-useless-constructor */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
 
@@ -78,9 +74,16 @@ class DefaultXpringClient implements XpringClientDecorator {
    */
   public static defaultXpringClientWithEndpoint(
     grpcURL: string,
+    forceHttp = false,
   ): DefaultXpringClient {
-    const grpcClient = new GRPCNetworkClient(grpcURL)
-    return new DefaultXpringClient(grpcClient)
+    if (
+      typeof process !== 'undefined' &&
+      process.release.name === 'node' &&
+      !forceHttp
+    ) {
+      return new DefaultXpringClient(new GRPCNetworkClient(grpcURL))
+    }
+    return new DefaultXpringClient(new GRPCNetworkClientWeb(grpcURL))
   }
 
   /**
@@ -106,10 +109,10 @@ class DefaultXpringClient implements XpringClientDecorator {
       )
     }
 
-    const account = new AccountAddress()
+    const account = this.networkClient.AccountAddress()
     account.setAddress(classicAddress.address)
 
-    const request = new GetAccountInfoRequest()
+    const request = this.networkClient.GetAccountInfoRequest()
     request.setAccount(account)
 
     const accountInfo = await this.networkClient.getAccountInfo(request)
@@ -172,16 +175,14 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getRawTransactionStatus(
     _transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    const getTxRequest = new GetTxRequest()
+    const getTxRequest = this.networkClient.GetTxRequest()
     getTxRequest.setHash(
       Utils.toBytes(
         'AB5BB249FC614539CEF6CCE29B5C25DA3C278EF3933BE0583FEFF089067208C9',
       ),
     )
 
-    const getTxResponse = (await this.networkClient.getTx(
-      getTxRequest,
-    )) as GetTxResponse
+    const getTxResponse = await this.networkClient.getTx(getTxRequest)
 
     return new GetTxResponseWrapper(getTxResponse)
   }
@@ -204,7 +205,7 @@ class DefaultXpringClient implements XpringClientDecorator {
 
   // TODO(keefertaylor): Add tests for this method once send is hooked up.
   private async getFee(): Promise<GetFeeResponse> {
-    const getFeeRequest = new GetFeeRequest()
+    const getFeeRequest = this.networkClient.GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)
   }
 }

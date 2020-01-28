@@ -14,7 +14,7 @@ const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 
 // A hash of a successfully validated transaction.
 const transactionHash =
-  '56BD8B772AE153C17CF988F66750081603CE37C2645002BCF3D2B97624D11785'
+  '4E732C5748DE722C7598CEB76350FCD6269ACBE5D641A5BCF0721150EF6E2C9F'
 
 // A XpringClient that makes requests. Uses the legacy protocol buffer implementation.
 const legacyGRPCURLNode = 'grpc.xpring.tech:80'

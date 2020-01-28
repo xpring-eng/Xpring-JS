@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import { credentials } from 'grpc'
 import {
   GetAccountInfoRequest,
@@ -12,6 +13,7 @@ import {
 import { XRPLedgerAPIServiceClient } from './generated/node/rpc/v1/xrp_ledger_grpc_pb'
 
 import { NetworkClient } from './network-client'
+import { AccountAddress } from './generated/node/rpc/v1/amount_pb'
 
 /**
  * A GRPC Based network client.
@@ -80,6 +82,22 @@ class GRPCNetworkClient implements NetworkClient {
         resolve(response)
       })
     })
+  }
+
+  public AccountAddress(): AccountAddress {
+    return new AccountAddress()
+  }
+
+  public GetAccountInfoRequest(): GetAccountInfoRequest {
+    return new GetAccountInfoRequest()
+  }
+
+  public GetTxRequest(): GetTxRequest {
+    return new GetTxRequest()
+  }
+
+  public GetFeeRequest(): GetFeeRequest {
+    return new GetFeeRequest()
   }
 }
 

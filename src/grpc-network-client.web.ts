@@ -1,4 +1,4 @@
-/* eslint-disable no-dupe-class-members */
+/* eslint-disable class-methods-use-this */
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
@@ -12,7 +12,7 @@ import {
 import { XRPLedgerAPIServiceClient } from './generated/web/rpc/v1/xrp_ledger_grpc_web_pb'
 
 import { NetworkClient } from './network-client'
-import isNode from './utils'
+import { AccountAddress } from './generated/web/rpc/v1/amount_pb'
 
 /**
  * A GRPC Based network client.
@@ -21,7 +21,7 @@ class GRPCNetworkClient implements NetworkClient {
   private readonly grpcClient: XRPLedgerAPIServiceClient
 
   public constructor(grpcURL: string) {
-    if (isNode()) {
+    if (typeof process !== 'undefined' && process.release.name === 'node') {
       try {
         // This polyfill hack enables XMLHttpRequest on the global node.js state
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
@@ -60,10 +60,6 @@ class GRPCNetworkClient implements NetworkClient {
     })
   }
 
-  public async getTx(
-    request: import('./generated/node/rpc/v1/tx_pb').GetTxRequest,
-  ): Promise<import('./generated/node/rpc/v1/tx_pb').GetTxResponse>
-
   public async getTx(request: GetTxRequest): Promise<GetTxResponse> {
     return new Promise((resolve, reject): void => {
       this.grpcClient.getTx(request, {}, (error, response): void => {
@@ -92,6 +88,22 @@ class GRPCNetworkClient implements NetworkClient {
         },
       )
     })
+  }
+
+  public AccountAddress(): AccountAddress {
+    return new AccountAddress()
+  }
+
+  public GetAccountInfoRequest(): GetAccountInfoRequest {
+    return new GetAccountInfoRequest()
+  }
+
+  public GetTxRequest(): GetTxRequest {
+    return new GetTxRequest()
+  }
+
+  public GetFeeRequest(): GetFeeRequest {
+    return new GetFeeRequest()
   }
 }
 
