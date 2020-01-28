@@ -4,7 +4,6 @@ import LegacyDefaultXpringClient from './legacy/legacy-default-xpring-client'
 import TransactionStatus from './transaction-status'
 import ReliableSubmissionXpringClient from './reliable-submission-xpring-client'
 import DefaultXpringClient from './default-xpring-client'
-
 /**
  * XpringClient is a client which interacts with the Xpring platform.
  */
@@ -19,10 +18,23 @@ class XpringClient {
    * @param grpcURL The URL of the gRPC instance to connect to.
    * @param useNewProtocolBuffers If `true`, then the new protocol buffer implementation from rippled will be used. Defaults to false.
    */
-  public constructor(grpcURL: string, useNewProtocolBuffers = false) {
-    const defaultXpringClient: XpringClientDecorator = useNewProtocolBuffers
-      ? DefaultXpringClient.defaultXpringClientWithEndpoint(grpcURL)
-      : LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(grpcURL)
+  public constructor(
+    grpcURL: string,
+    useNewProtocolBuffers = false,
+    forceHttp = false,
+  ) {
+    let defaultXpringClient: XpringClientDecorator
+    if (useNewProtocolBuffers) {
+      defaultXpringClient = DefaultXpringClient.defaultXpringClientWithEndpoint(
+        grpcURL,
+        forceHttp,
+      )
+    } else {
+      defaultXpringClient = LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(
+        grpcURL,
+        forceHttp,
+      )
+    }
 
     this.decoratedClient = new ReliableSubmissionXpringClient(
       defaultXpringClient,

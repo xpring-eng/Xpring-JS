@@ -1,17 +1,17 @@
-import {
-  AccountInfo,
-  Fee,
-  GetAccountInfoRequest,
-  GetFeeRequest,
-  SubmitSignedTransactionResponse,
-  SubmitSignedTransactionRequest,
-  XRPAmount,
-  GetLatestValidatedLedgerSequenceRequest,
-  LedgerSequence,
-  GetTransactionStatusRequest,
-  TransactionStatus,
-} from 'xpring-common-js'
 import { LegacyNetworkClient } from '../../../src/legacy/legacy-network-client'
+import { AccountInfo } from '../../../src/generated/node/legacy/account_info_pb'
+import { Fee } from '../../../src/generated/node/legacy/fee_pb'
+import { SubmitSignedTransactionResponse } from '../../../src/generated/node/legacy/submit_signed_transaction_response_pb'
+import { LedgerSequence } from '../../../src/generated/node/legacy/ledger_sequence_pb'
+import { TransactionStatus } from '../../../src/generated/node/legacy/transaction_status_pb'
+import { XRPAmount } from '../../../src/generated/node/legacy/xrp_amount_pb'
+import { GetAccountInfoRequest } from '../../../src/generated/node/legacy/get_account_info_request_pb'
+import { GetFeeRequest } from '../../../src/generated/node/legacy/get_fee_request_pb'
+import { SubmitSignedTransactionRequest } from '../../../src/generated/node/legacy/submit_signed_transaction_request_pb'
+import { GetLatestValidatedLedgerSequenceRequest } from '../../../src/generated/node/legacy/get_latest_validated_ledger_sequence_request_pb'
+import { GetTransactionStatusRequest } from '../../../src/generated/node/legacy/get_transaction_status_request_pb'
+import { Payment } from '../../../src/generated/node/legacy/payment_pb'
+import { Transaction } from '../../../src/generated/node/legacy/transaction_pb'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -195,4 +195,38 @@ export class FakeLegacyNetworkClient implements LegacyNetworkClient {
 
     return Promise.resolve(transactionStatusResponse)
   }
+
+  /* eslint-disable class-methods-use-this */
+  public XRPAmount(): XRPAmount {
+    return new XRPAmount()
+  }
+
+  public Payment(): Payment {
+    return new Payment()
+  }
+
+  public Transaction(): Transaction {
+    return new Transaction()
+  }
+
+  public SubmitSignedTransactionRequest(): SubmitSignedTransactionRequest {
+    return new SubmitSignedTransactionRequest()
+  }
+
+  public GetLatestValidatedLedgerSequenceRequest(): GetLatestValidatedLedgerSequenceRequest {
+    return new GetLatestValidatedLedgerSequenceRequest()
+  }
+
+  public GetTransactionStatusRequest(): GetTransactionStatusRequest {
+    return new GetTransactionStatusRequest()
+  }
+
+  public GetAccountInfoRequest(): GetAccountInfoRequest {
+    return new GetAccountInfoRequest()
+  }
+
+  public GetFeeRequest(): GetFeeRequest {
+    return new GetFeeRequest()
+  }
+  /* eslint-enable class-methods-use-this */
 }
