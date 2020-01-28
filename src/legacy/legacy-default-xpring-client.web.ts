@@ -1,17 +1,16 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
-import { AccountInfo } from '../generated/node/legacy/account_info_pb'
-import { GetAccountInfoRequest } from '../generated/node/legacy/get_account_info_request_pb'
-import { GetFeeRequest } from '../generated/node/legacy/get_fee_request_pb'
-import { GetLatestValidatedLedgerSequenceRequest } from '../generated/node/legacy/get_latest_validated_ledger_sequence_request_pb'
-import { GetTransactionStatusRequest } from '../generated/node/legacy/get_transaction_status_request_pb'
-import { Payment } from '../generated/node/legacy/payment_pb'
-import { SubmitSignedTransactionRequest } from '../generated/node/legacy/submit_signed_transaction_request_pb'
-import { Transaction } from '../generated/node/legacy/transaction_pb'
-import { XRPAmount } from '../generated/node/legacy/xrp_amount_pb'
-
+import { AccountInfo } from '../generated/web/legacy/account_info_pb'
+import { GetAccountInfoRequest } from '../generated/web/legacy/get_account_info_request_pb'
+import { GetFeeRequest } from '../generated/web/legacy/get_fee_request_pb'
+import { GetLatestValidatedLedgerSequenceRequest } from '../generated/web/legacy/get_latest_validated_ledger_sequence_request_pb'
+import { GetTransactionStatusRequest } from '../generated/web/legacy/get_transaction_status_request_pb'
+import { Payment } from '../generated/web/legacy/payment_pb'
+import { SubmitSignedTransactionRequest } from '../generated/web/legacy/submit_signed_transaction_request_pb'
+import { Transaction } from '../generated/web/legacy/transaction_pb'
+import { XRPAmount } from '../generated/web/legacy/xrp_amount_pb'
 import RawTransactionStatus from '../raw-transaction-status'
 import { LegacyNetworkClient } from './legacy-network-client'
-import LegacyGRPCNetworkClient from './legacy-grpc-network-client'
+import LegacyGRPCNetworkClientWeb from './legacy-grpc-network-client.web'
 
 import { XpringClientDecorator } from '../xpring-client-decorator'
 import TransactionStatus from '../transaction-status'
@@ -45,7 +44,9 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
   public static defaultXpringClientWithEndpoint(
     grpcURL: string,
   ): LegacyDefaultXpringClient {
-    return new LegacyDefaultXpringClient(new LegacyGRPCNetworkClient(grpcURL))
+    return new LegacyDefaultXpringClient(
+      new LegacyGRPCNetworkClientWeb(grpcURL),
+    )
   }
 
   /**

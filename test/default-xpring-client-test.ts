@@ -8,8 +8,8 @@ import {
   FakeNetworkClientResponses,
 } from './fakes/fake-network-client'
 import 'mocha'
-import { GetTxResponse } from '../src/generated/web/rpc/v1/tx_pb'
-import { Meta, TransactionResult } from '../src/generated/web/rpc/v1/meta_pb'
+import { GetTxResponse } from '../src/generated/node/rpc/v1/tx_pb'
+import { Meta, TransactionResult } from '../src/generated/node/rpc/v1/meta_pb'
 import TransactionStatus from '../src/transaction-status'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'

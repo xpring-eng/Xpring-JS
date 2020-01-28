@@ -1,26 +1,55 @@
 import {
-  GetAccountInfoRequest,
-  GetAccountInfoResponse,
+  GetAccountInfoRequest as GetAccountInfoRequestWeb,
+  GetAccountInfoResponse as GetAccountInfoResponseWeb,
 } from './generated/web/rpc/v1/account_info_pb'
-import { GetFeeRequest, GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
-import { GetTxRequest, GetTxResponse } from './generated/web/rpc/v1/tx_pb'
 import {
-  SubmitTransactionRequest,
-  SubmitTransactionResponse,
+  GetAccountInfoRequest as GetAccountInfoRequestNode,
+  GetAccountInfoResponse as GetAccountInfoResponseNode,
+} from './generated/node/rpc/v1/account_info_pb'
+import {
+  GetFeeRequest as GetFeeRequestWeb,
+  GetFeeResponse as GetFeeResponseWeb,
+} from './generated/web/rpc/v1/fee_pb'
+import {
+  GetFeeRequest as GetFeeRequestNode,
+  GetFeeResponse as GetFeeResponseNode,
+} from './generated/node/rpc/v1/fee_pb'
+import {
+  GetTxRequest as GetTxRequestWeb,
+  GetTxResponse as GetTxResponseWeb,
+} from './generated/web/rpc/v1/tx_pb'
+import {
+  GetTxRequest as GetTxRequestNode,
+  GetTxResponse as GetTxResponseNode,
+} from './generated/node/rpc/v1/tx_pb'
+import {
+  SubmitTransactionRequest as SubmitTransactionRequestWeb,
+  SubmitTransactionResponse as SubmitTransactionResponseWeb,
 } from './generated/web/rpc/v1/submit_pb'
+import {
+  SubmitTransactionRequest as SubmitTransactionRequestNode,
+  SubmitTransactionResponse as SubmitTransactionResponseNode,
+} from './generated/node/rpc/v1/submit_pb'
 
 /**
  * The network client interface provides a wrapper around network calls to the Xpring Platform.
  */
 export interface NetworkClient {
   getAccountInfo(
-    request: GetAccountInfoRequest,
-  ): Promise<GetAccountInfoResponse>
-  getFee(request: GetFeeRequest): Promise<GetFeeResponse>
-  getTx(request: GetTxRequest): Promise<GetTxResponse>
+    request: GetAccountInfoRequestWeb,
+  ): Promise<GetAccountInfoResponseWeb>
+  getAccountInfo(
+    request: GetAccountInfoRequestNode,
+  ): Promise<GetAccountInfoResponseNode>
+  getFee(request: GetFeeRequestWeb): Promise<GetFeeResponseWeb>
+  getFee(request: GetFeeRequestNode): Promise<GetFeeResponseNode>
+  getTx(request: GetTxRequestWeb): Promise<GetTxResponseWeb>
+  getTx(request: GetTxRequestNode): Promise<GetTxResponseNode>
   submitTransaction(
-    request: SubmitTransactionRequest,
-  ): Promise<SubmitTransactionResponse>
-
+    request: SubmitTransactionRequestWeb,
+  ): Promise<SubmitTransactionResponseWeb>
+  submitTransaction(
+    request: SubmitTransactionRequestNode,
+  ): Promise<SubmitTransactionResponseNode>
   // TODO(keefertaylor): Add last ledger validated sequence.
 }

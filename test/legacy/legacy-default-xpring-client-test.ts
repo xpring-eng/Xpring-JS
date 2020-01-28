@@ -1,12 +1,9 @@
 import chai, { assert } from 'chai'
 
-import {
-  Utils,
-  Wallet,
-  TransactionStatus as TransactionStatusResponse,
-} from 'xpring-common-js'
-
+import { Utils, Wallet } from 'xpring-common-js'
 import chaiString from 'chai-string'
+import { TransactionStatus as TransactionStatusResponse } from '../../src/generated/node/legacy/transaction_status_pb'
+
 import LegacyDefaultXpringClient, {
   LegacyXpringClientErrorMessages,
 } from '../../src/legacy/legacy-default-xpring-client'

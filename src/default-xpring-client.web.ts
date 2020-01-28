@@ -1,14 +1,14 @@
 import { Utils, Wallet } from 'xpring-common-js'
-import { AccountAddress } from './generated/node/rpc/v1/amount_pb'
+import { AccountAddress } from './generated/web/rpc/v1/amount_pb'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
-import GRPCNetworkClient from './grpc-network-client'
+import GRPCNetworkClient from './grpc-network-client.web'
 import { NetworkClient } from './network-client'
-import { GetAccountInfoRequest } from './generated/node/rpc/v1/account_info_pb'
+import { GetAccountInfoRequest } from './generated/web/rpc/v1/account_info_pb'
 
-import { GetTxRequest, GetTxResponse } from './generated/node/rpc/v1/tx_pb'
-import { GetFeeRequest, GetFeeResponse } from './generated/node/rpc/v1/fee_pb'
+import { GetTxRequest, GetTxResponse } from './generated/web/rpc/v1/tx_pb'
+import { GetFeeRequest, GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
@@ -179,9 +179,7 @@ class DefaultXpringClient implements XpringClientDecorator {
       ),
     )
 
-    const getTxResponse = (await this.networkClient.getTx(
-      getTxRequest,
-    )) as GetTxResponse
+    const getTxResponse = await this.networkClient.getTx(getTxRequest)
 
     return new GetTxResponseWrapper(getTxResponse)
   }

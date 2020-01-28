@@ -1,10 +1,12 @@
 import { Wallet } from 'xpring-common-js'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import LegacyDefaultXpringClient from './legacy/legacy-default-xpring-client'
+import LegacyDefaultXpringClientWeb from './legacy/legacy-default-xpring-client.web'
 import TransactionStatus from './transaction-status'
 import ReliableSubmissionXpringClient from './reliable-submission-xpring-client'
 import DefaultXpringClient from './default-xpring-client'
-
+import DefaultXpringClientWeb from './default-xpring-client.web'
+import isNode from './utils'
 /**
  * XpringClient is a client which interacts with the Xpring platform.
  */
@@ -19,10 +21,31 @@ class XpringClient {
    * @param grpcURL The URL of the gRPC instance to connect to.
    * @param useNewProtocolBuffers If `true`, then the new protocol buffer implementation from rippled will be used. Defaults to false.
    */
-  public constructor(grpcURL: string, useNewProtocolBuffers = false) {
-    const defaultXpringClient: XpringClientDecorator = useNewProtocolBuffers
-      ? DefaultXpringClient.defaultXpringClientWithEndpoint(grpcURL)
-      : LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(grpcURL)
+  public constructor(
+    grpcURL: string,
+    useNewProtocolBuffers = false,
+    forceHttp = false,
+  ) {
+    let defaultXpringClient: XpringClientDecorator
+    if (useNewProtocolBuffers) {
+      if (isNode() && !forceHttp) {
+        defaultXpringClient = DefaultXpringClient.defaultXpringClientWithEndpoint(
+          grpcURL,
+        )
+      } else {
+        defaultXpringClient = DefaultXpringClientWeb.defaultXpringClientWithEndpoint(
+          grpcURL,
+        )
+      }
+    } else if (isNode() && !forceHttp) {
+      defaultXpringClient = LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(
+        grpcURL,
+      )
+    } else {
+      defaultXpringClient = LegacyDefaultXpringClientWeb.defaultXpringClientWithEndpoint(
+        grpcURL,
+      )
+    }
 
     this.decoratedClient = new ReliableSubmissionXpringClient(
       defaultXpringClient,
