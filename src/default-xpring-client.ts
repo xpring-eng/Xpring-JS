@@ -5,8 +5,10 @@ import RawTransactionStatus from './raw-transaction-status'
 import GRPCNetworkClient from './grpc-network-client'
 import GRPCNetworkClientWeb from './grpc-network-client.web'
 import { NetworkClient } from './network-client'
-import { GetTxResponse } from './generated/web/rpc/v1/tx_pb'
-import { GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
+import { GetTxResponse as GetTxResponseNode } from './generated/node/rpc/v1/tx_pb'
+import { GetTxResponse as GetTxResponseWeb } from './generated/web/rpc/v1/tx_pb'
+import { GetFeeResponse as GetFeeResponseNode } from './generated/node/rpc/v1/fee_pb'
+import { GetFeeResponse as GetFeeResponseWeb } from './generated/web/rpc/v1/fee_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
@@ -31,7 +33,9 @@ export class XpringClientErrorMessages {
  * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
  */
 class GetTxResponseWrapper implements RawTransactionStatus {
-  public constructor(private readonly getTxResponse: GetTxResponse) {}
+  public constructor(
+    private readonly getTxResponse: GetTxResponseNode | GetTxResponseWeb,
+  ) {}
 
   public getValidated(): boolean {
     return this.getTxResponse.getValidated()
@@ -204,7 +208,7 @@ class DefaultXpringClient implements XpringClientDecorator {
   // }
 
   // TODO(keefertaylor): Add tests for this method once send is hooked up.
-  private async getFee(): Promise<GetFeeResponse> {
+  private async getFee(): Promise<GetFeeResponseNode | GetFeeResponseWeb> {
     const getFeeRequest = this.networkClient.GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)
   }
