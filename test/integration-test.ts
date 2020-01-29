@@ -20,6 +20,7 @@ const transactionHash =
 const legacyGRPCURLNode = 'grpc.xpring.tech:80'
 const legacyXpringClientNode = new XpringClient(legacyGRPCURLNode)
 
+// A XpringClient that makes requests. Uses the legacy protocol buffer implementation and sends the requests to an HTTP envoy emulating how the browser would behave
 const legacyGRPCURLWeb = 'https://grpchttp.xpring.io'
 const legacyXpringClientWeb = new XpringClient(legacyGRPCURLWeb, false, true)
 

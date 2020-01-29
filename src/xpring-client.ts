@@ -17,24 +17,19 @@ class XpringClient {
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
    * @param useNewProtocolBuffers If `true`, then the new protocol buffer implementation from rippled will be used. Defaults to false.
+   * @param forceHttp If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public constructor(
     grpcURL: string,
     useNewProtocolBuffers = false,
     forceHttp = false,
   ) {
-    let defaultXpringClient: XpringClientDecorator
-    if (useNewProtocolBuffers) {
-      defaultXpringClient = DefaultXpringClient.defaultXpringClientWithEndpoint(
-        grpcURL,
-        forceHttp,
-      )
-    } else {
-      defaultXpringClient = LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(
-        grpcURL,
-        forceHttp,
-      )
-    }
+    const defaultXpringClient = useNewProtocolBuffers
+      ? DefaultXpringClient.defaultXpringClientWithEndpoint(grpcURL, forceHttp)
+      : LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(
+          grpcURL,
+          forceHttp,
+        )
 
     this.decoratedClient = new ReliableSubmissionXpringClient(
       defaultXpringClient,

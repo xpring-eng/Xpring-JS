@@ -9,6 +9,8 @@ import { GetTxResponse as GetTxResponseNode } from './generated/node/rpc/v1/tx_p
 import { GetTxResponse as GetTxResponseWeb } from './generated/web/rpc/v1/tx_pb'
 import { GetFeeResponse as GetFeeResponseNode } from './generated/node/rpc/v1/fee_pb'
 import { GetFeeResponse as GetFeeResponseWeb } from './generated/web/rpc/v1/fee_pb'
+import { XRPDropsAmount as XRPDropsAmountNode } from './generated/node/rpc/v1/amount_pb'
+import { XRPDropsAmount as XRPDropsAmountWeb } from './generated/web/rpc/v1/amount_pb'
 import isNode from './utils'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
@@ -76,15 +78,15 @@ class DefaultXpringClient implements XpringClientDecorator {
    * The DefaultXpringClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
+   * @param forceHttp If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public static defaultXpringClientWithEndpoint(
     grpcURL: string,
     forceHttp = false,
   ): DefaultXpringClient {
-    if (isNode() && !forceHttp) {
-      return new DefaultXpringClient(new GRPCNetworkClient(grpcURL))
-    }
-    return new DefaultXpringClient(new GRPCNetworkClientWeb(grpcURL))
+    return isNode() && !forceHttp
+      ? new DefaultXpringClient(new GRPCNetworkClient(grpcURL))
+      : new DefaultXpringClient(new GRPCNetworkClientWeb(grpcURL))
   }
 
   /**
@@ -184,21 +186,25 @@ class DefaultXpringClient implements XpringClientDecorator {
     return new GetTxResponseWrapper(getTxResponse)
   }
 
-  // private async getMinimumFee(): Promise<XRPDropsAmount> {
-  //   const getFeeResponse = await this.getFee()
+  // TODO Keefer implement method and remove tslint ignore
+  // tslint:disable-next-line
+  private async getMinimumFee(): Promise<
+    XRPDropsAmountNode | XRPDropsAmountWeb
+  > {
+    const getFeeResponse = await this.getFee()
 
-  //   const fee = getFeeResponse.getDrops()
-  //   if (!fee) {
-  //     throw new Error(XpringClientErrorMessages.malformedResponse)
-  //   }
+    const fee = getFeeResponse.getDrops()
+    if (!fee) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
 
-  //   const minimumFee = fee.getMinimumFee()
-  //   if (!minimumFee) {
-  //     throw new Error(XpringClientErrorMessages.malformedResponse)
-  //   }
+    const minimumFee = fee.getMinimumFee()
+    if (!minimumFee) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
 
-  //   return minimumFee
-  // }
+    return minimumFee
+  }
 
   // TODO(keefertaylor): Add tests for this method once send is hooked up.
   private async getFee(): Promise<GetFeeResponseNode | GetFeeResponseWeb> {
