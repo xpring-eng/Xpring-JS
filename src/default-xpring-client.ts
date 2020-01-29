@@ -74,13 +74,13 @@ class DefaultXpringClient implements XpringClientDecorator {
    * The DefaultXpringClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
-   * @param forceHttp If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
+   * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public static defaultXpringClientWithEndpoint(
     grpcURL: string,
-    forceHttp = false,
+    forceWeb = false,
   ): DefaultXpringClient {
-    return isNode() && !forceHttp
+    return isNode() && !forceWeb
       ? new DefaultXpringClient(new GRPCNetworkClient(grpcURL))
       : new DefaultXpringClient(new GRPCNetworkClientWeb(grpcURL))
   }
@@ -182,7 +182,7 @@ class DefaultXpringClient implements XpringClientDecorator {
     return new GetTxResponseWrapper(getTxResponse)
   }
 
-  // TODO Keefer implement method and remove tslint ignore
+  // TODO Keefer implement method and remove tslint ignore and fix tsconfig nounusedlocals
   // tslint:disable-next-line
   private async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
