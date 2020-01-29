@@ -52,7 +52,7 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^9.0.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "3.5.3",
+    "typescript": "3.7.5",
     "typescript-eslint-parser": "22.0.0"
   },
   "dependencies": {
