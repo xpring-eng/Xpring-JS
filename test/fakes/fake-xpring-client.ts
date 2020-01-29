@@ -1,18 +1,19 @@
 import { TransactionStatus as RawTransactionStatus } from 'xpring-common-js'
+import { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from '../../src/xpring-client-decorator'
 import TransactionStatus from '../../src/transaction-status'
 import { Wallet } from '../../src/index'
 
 class FakeXpringClient implements XpringClientDecorator {
   public constructor(
-    public getBalanceValue: BigInt,
+    public getBalanceValue: BigInteger,
     public getTransactionStatusValue: TransactionStatus,
     public sendValue: string,
     public getLastValidatedLedgerSequenceValue: number,
     public getRawTransactionStatusValue: RawTransactionStatus,
   ) {}
 
-  public async getBalance(_address: string): Promise<BigInt> {
+  public async getBalance(_address: string): Promise<BigInteger> {
     return Promise.resolve(this.getBalanceValue)
   }
 
@@ -23,7 +24,7 @@ class FakeXpringClient implements XpringClientDecorator {
   }
 
   public async send(
-    _amount: BigInt | number | string,
+    _amount: BigInteger | number | string,
     _destination: string,
     _sender: Wallet,
   ): Promise<string> {
