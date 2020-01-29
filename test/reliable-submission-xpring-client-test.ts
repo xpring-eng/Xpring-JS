@@ -1,5 +1,6 @@
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
+import bigInt from 'big-integer'
 import { TransactionStatus as RawTransactionStatus } from '../src/generated/node/legacy/transaction_status_pb'
 import FakeXpringClient from './fakes/fake-xpring-client'
 import ReliableSubmissionXpringClient from '../src/reliable-submission-xpring-client'
@@ -11,7 +12,7 @@ const transactionStatusCodeSuccess = 'tesSUCCESS'
 
 const transactionHash = 'DEADBEEF'
 
-const fakedGetBalanceValue = BigInt(10)
+const fakedGetBalanceValue = bigInt(10)
 const fakedTransactionStatusValue = TransactionStatus.Succeeded
 const fakedSendValue = transactionHash
 const fakedLastLedgerSequenceValue = 10

@@ -1,5 +1,6 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 
+import bigInt, { BigInteger } from 'big-integer'
 import { AccountInfo as AccountInfoNode } from '../generated/node/legacy/account_info_pb'
 import { AccountInfo as AccountInfoWeb } from '../generated/web/legacy/account_info_pb'
 import { XRPAmount as XRPAmountNode } from '../generated/node/legacy/xrp_amount_pb'
@@ -62,9 +63,9 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
    * Retrieve the balance for the given address.
    *
    * @param address The X-Address to retrieve a balance for.
-   * @returns A `BigInt` representing the number of drops of XRP in the account.
+   * @returns A `BigInteger` representing the number of drops of XRP in the account.
    */
-  public async getBalance(address: string): Promise<BigInt> {
+  public async getBalance(address: string): Promise<BigInteger> {
     if (!Utils.isValidXAddress(address)) {
       return Promise.reject(
         new Error(LegacyXpringClientErrorMessages.xAddressRequired),
@@ -79,7 +80,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
         )
       }
 
-      return BigInt(balance.getDrops())
+      return bigInt(balance.getDrops())
     })
   }
 
@@ -109,13 +110,13 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
-   * @param drops A `BigInt`, number or numeric string representing the number of drops to send.
+   * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    amount: BigInt | number | string,
+    amount: BigInteger | number | string,
     destination: string,
     sender: Wallet,
   ): Promise<string> {
@@ -239,16 +240,19 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
   }
 
   /**
-   * Convert a polymorphic numeric value into a BigInt.
+   * Convert a polymorphic numeric value into a BigInteger.
    *
    * @param value The value to convert.
-   * @returns A BigInt representing the input value.
+   * @returns A BigInteger representing the input value.
    */
-  private static toBigInt(value: string | number | BigInt): BigInt {
-    if (typeof value === 'string' || typeof value === 'number') {
-      return BigInt(value)
+  private static toBigInt(value: string | number | BigInteger): BigInteger {
+    if (typeof value === 'string') {
+      return bigInt(value)
     }
-    // Value is already a BigInt.
+    if (typeof value === 'number') {
+      return bigInt(value)
+    }
+    // Value is already a BigInteger.
     return value
   }
 }

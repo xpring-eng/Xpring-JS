@@ -1,4 +1,5 @@
 import { Wallet } from 'xpring-common-js'
+import { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import LegacyDefaultXpringClient from './legacy/legacy-default-xpring-client'
 import TransactionStatus from './transaction-status'
@@ -40,9 +41,9 @@ class XpringClient {
    * Retrieve the balance for the given address.
    *
    * @param address The X-Address to retrieve a balance for.
-   * @returns A `BigInt` representing the number of drops of XRP in the account.
+   * @returns A `BigInteger` representing the number of drops of XRP in the account.
    */
-  public async getBalance(address: string): Promise<BigInt> {
+  public async getBalance(address: string): Promise<BigInteger> {
     return this.decoratedClient.getBalance(address)
   }
 
@@ -61,13 +62,13 @@ class XpringClient {
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
-   * @param drops A `BigInt`, number or numeric string representing the number of drops to send.
+   * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    amount: BigInt | number | string,
+    amount: BigInteger | number | string,
     destination: string,
     sender: Wallet,
   ): Promise<string> {

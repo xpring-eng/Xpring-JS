@@ -1,5 +1,6 @@
 import { Wallet } from 'xpring-common-js'
 import { assert } from 'chai'
+import bigInt from 'big-integer'
 import XpringClient from '../src/xpring-client'
 import TransactionStatus from '../src/transaction-status'
 
@@ -29,7 +30,7 @@ const rippledURL = '3.14.64.116:50051'
 const xpringClient = new XpringClient(rippledURL, true)
 
 // Some amount of XRP to send.
-const amount = BigInt('1')
+const amount = bigInt('1')
 
 describe('Xpring JS Integration Tests', function(): void {
   it('Get Account Balance - Legacy Node Shim', async function(): Promise<void> {

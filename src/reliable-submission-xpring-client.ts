@@ -1,4 +1,5 @@
 import { Wallet } from 'xpring-common-js'
+import { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
@@ -13,7 +14,7 @@ async function sleep(milliseconds: number): Promise<void> {
 class ReliableSubmissionXpringClient implements XpringClientDecorator {
   public constructor(private readonly decoratedClient: XpringClientDecorator) {}
 
-  public async getBalance(address: string): Promise<BigInt> {
+  public async getBalance(address: string): Promise<BigInteger> {
     return this.decoratedClient.getBalance(address)
   }
 
@@ -24,7 +25,7 @@ class ReliableSubmissionXpringClient implements XpringClientDecorator {
   }
 
   public async send(
-    amount: string | number | BigInt,
+    amount: string | number | BigInteger,
     destination: string,
     sender: Wallet,
   ): Promise<string> {
