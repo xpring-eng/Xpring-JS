@@ -1,10 +1,8 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 
 import bigInt, { BigInteger } from 'big-integer'
-import { AccountInfo as AccountInfoNode } from '../generated/node/legacy/account_info_pb'
-import { AccountInfo as AccountInfoWeb } from '../generated/web/legacy/account_info_pb'
-import { XRPAmount as XRPAmountNode } from '../generated/node/legacy/xrp_amount_pb'
-import { XRPAmount as XRPAmountWeb } from '../generated/web/legacy/xrp_amount_pb'
+import { AccountInfo } from '../generated/web/legacy/account_info_pb'
+import { XRPAmount } from '../generated/web/legacy/xrp_amount_pb'
 
 import RawTransactionStatus from '../raw-transaction-status'
 import LegacyGRPCNetworkClient from './legacy-grpc-network-client'
@@ -217,15 +215,13 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
     return this.networkClient.getTransactionStatus(transactionStatusRequest)
   }
 
-  private async getAccountInfo(
-    address: string,
-  ): Promise<AccountInfoNode | AccountInfoWeb> {
+  private async getAccountInfo(address: string): Promise<AccountInfo> {
     const getAccountInfoRequest = this.networkClient.GetAccountInfoRequest()
     getAccountInfoRequest.setAddress(address)
     return this.networkClient.getAccountInfo(getAccountInfoRequest)
   }
 
-  private async getFee(): Promise<XRPAmountWeb | XRPAmountNode> {
+  private async getFee(): Promise<XRPAmount> {
     const getFeeRequest = this.networkClient.GetFeeRequest()
 
     return this.networkClient.getFee(getFeeRequest).then(async (fee) => {

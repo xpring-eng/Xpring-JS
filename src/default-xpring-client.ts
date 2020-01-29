@@ -6,12 +6,9 @@ import RawTransactionStatus from './raw-transaction-status'
 import GRPCNetworkClient from './grpc-network-client'
 import GRPCNetworkClientWeb from './grpc-network-client.web'
 import { NetworkClient } from './network-client'
-import { GetTxResponse as GetTxResponseNode } from './generated/node/rpc/v1/tx_pb'
-import { GetTxResponse as GetTxResponseWeb } from './generated/web/rpc/v1/tx_pb'
-import { GetFeeResponse as GetFeeResponseNode } from './generated/node/rpc/v1/fee_pb'
-import { GetFeeResponse as GetFeeResponseWeb } from './generated/web/rpc/v1/fee_pb'
-import { XRPDropsAmount as XRPDropsAmountNode } from './generated/node/rpc/v1/amount_pb'
-import { XRPDropsAmount as XRPDropsAmountWeb } from './generated/web/rpc/v1/amount_pb'
+import { GetTxResponse } from './generated/web/rpc/v1/tx_pb'
+import { GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
+import { XRPDropsAmount } from './generated/web/rpc/v1/amount_pb'
 import isNode from './utils'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
@@ -37,9 +34,7 @@ export class XpringClientErrorMessages {
  * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
  */
 class GetTxResponseWrapper implements RawTransactionStatus {
-  public constructor(
-    private readonly getTxResponse: GetTxResponseNode | GetTxResponseWeb,
-  ) {}
+  public constructor(private readonly getTxResponse: GetTxResponse) {}
 
   public getValidated(): boolean {
     return this.getTxResponse.getValidated()
@@ -189,9 +184,7 @@ class DefaultXpringClient implements XpringClientDecorator {
 
   // TODO Keefer implement method and remove tslint ignore
   // tslint:disable-next-line
-  private async getMinimumFee(): Promise<
-    XRPDropsAmountNode | XRPDropsAmountWeb
-  > {
+  private async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
 
     const fee = getFeeResponse.getDrops()
@@ -208,7 +201,7 @@ class DefaultXpringClient implements XpringClientDecorator {
   }
 
   // TODO(keefertaylor): Add tests for this method once send is hooked up.
-  private async getFee(): Promise<GetFeeResponseNode | GetFeeResponseWeb> {
+  private async getFee(): Promise<GetFeeResponse> {
     const getFeeRequest = this.networkClient.GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)
   }
