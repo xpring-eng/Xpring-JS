@@ -57,7 +57,7 @@
   },
   "dependencies": {
     "grpc": "1.24.2",
-    "xpring-common-js": "2.0.1",
+    "xpring-common-js": "3.0.2",
     "big-integer": "^1.6.48"
   },
   "nyc": {
