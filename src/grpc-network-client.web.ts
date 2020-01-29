@@ -39,7 +39,7 @@ class GRPCNetworkClient implements NetworkClient {
   ): Promise<GetAccountInfoResponse> {
     return new Promise((resolve, reject): void => {
       this.grpcClient.getAccountInfo(request, {}, (error, response): void => {
-        if (error != null || response == null) {
+        if (error !== null || response === null) {
           reject(error)
           return
         }
@@ -51,7 +51,7 @@ class GRPCNetworkClient implements NetworkClient {
   public async getFee(request: GetFeeRequest): Promise<GetFeeResponse> {
     return new Promise((resolve, reject): void => {
       this.grpcClient.getFee(request, {}, (error, response): void => {
-        if (error != null || response == null) {
+        if (error !== null || response === null) {
           reject(error)
           return
         }
@@ -63,7 +63,7 @@ class GRPCNetworkClient implements NetworkClient {
   public async getTx(request: GetTxRequest): Promise<GetTxResponse> {
     return new Promise((resolve, reject): void => {
       this.grpcClient.getTx(request, {}, (error, response): void => {
-        if (error != null || response == null) {
+        if (error !== null || response === null) {
           reject(error)
           return
         }
@@ -80,7 +80,7 @@ class GRPCNetworkClient implements NetworkClient {
         request,
         {},
         (error, response): void => {
-          if (error != null || response == null) {
+          if (error !== null || response === null) {
             reject(error)
             return
           }

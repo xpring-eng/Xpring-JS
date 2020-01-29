@@ -43,7 +43,7 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
         getAccountInfoRequest,
         {},
         (error, response): void => {
-          if (error != null || response == null) {
+          if (error !== null || response === null) {
             reject(error)
             return
           }
@@ -56,7 +56,7 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
   public async getFee(getFeeRequest: GetFeeRequest): Promise<Fee> {
     return new Promise((resolve, reject): void => {
       this.grpcClient.getFee(getFeeRequest, {}, (error, response): void => {
-        if (error != null || response == null) {
+        if (error !== null || response === null) {
           reject(error)
           return
         }
@@ -91,7 +91,7 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
         getLatestValidatedLedgerSequenceRequest,
         {},
         (error, response): void => {
-          if (error != null || response == null) {
+          if (error !== null || response === null) {
             reject(error)
             return
           }
@@ -109,7 +109,7 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
         getTransactionStatusRequest,
         {},
         (error, response): void => {
-          if (error != null || response == null) {
+          if (error !== null || response === null) {
             reject(error)
             return
           }
