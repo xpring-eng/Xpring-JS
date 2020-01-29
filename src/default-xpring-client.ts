@@ -9,6 +9,7 @@ import { GetTxResponse as GetTxResponseNode } from './generated/node/rpc/v1/tx_p
 import { GetTxResponse as GetTxResponseWeb } from './generated/web/rpc/v1/tx_pb'
 import { GetFeeResponse as GetFeeResponseNode } from './generated/node/rpc/v1/fee_pb'
 import { GetFeeResponse as GetFeeResponseWeb } from './generated/web/rpc/v1/fee_pb'
+import isNode from './utils'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
@@ -80,11 +81,7 @@ class DefaultXpringClient implements XpringClientDecorator {
     grpcURL: string,
     forceHttp = false,
   ): DefaultXpringClient {
-    if (
-      typeof process !== 'undefined' &&
-      process.release.name === 'node' &&
-      !forceHttp
-    ) {
+    if (isNode() && !forceHttp) {
       return new DefaultXpringClient(new GRPCNetworkClient(grpcURL))
     }
     return new DefaultXpringClient(new GRPCNetworkClientWeb(grpcURL))

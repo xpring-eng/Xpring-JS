@@ -12,6 +12,7 @@ import { XRPLedgerAPIServiceClient } from './generated/web/rpc/v1/xrp_ledger_grp
 
 import { NetworkClient } from './network-client'
 import { AccountAddress } from './generated/web/rpc/v1/amount_pb'
+import isNode from './utils'
 
 /**
  * A GRPC Based network client.
@@ -20,7 +21,7 @@ class GRPCNetworkClient implements NetworkClient {
   private readonly grpcClient: XRPLedgerAPIServiceClient
 
   public constructor(grpcURL: string) {
-    if (typeof process !== 'undefined' && process.release.name === 'node') {
+    if (isNode()) {
       try {
         // This polyfill hack enables XMLHttpRequest on the global node.js state
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore

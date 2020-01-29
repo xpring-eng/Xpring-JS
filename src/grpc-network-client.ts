@@ -13,6 +13,7 @@ import { XRPLedgerAPIServiceClient } from './generated/node/rpc/v1/xrp_ledger_gr
 
 import { NetworkClient } from './network-client'
 import { AccountAddress } from './generated/node/rpc/v1/amount_pb'
+import isNode from './utils'
 
 /**
  * A GRPC Based network client.
@@ -21,7 +22,7 @@ class GRPCNetworkClient implements NetworkClient {
   private readonly grpcClient: XRPLedgerAPIServiceClient
 
   public constructor(grpcURL: string) {
-    if (typeof process !== 'undefined' && process.release.name === 'node') {
+    if (isNode()) {
       this.grpcClient = new XRPLedgerAPIServiceClient(
         grpcURL,
         credentials.createInsecure(),

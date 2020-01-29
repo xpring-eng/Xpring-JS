@@ -13,6 +13,7 @@ import { LegacyNetworkClient } from './legacy-network-client'
 import { XRPAmount } from '../generated/node/legacy/xrp_amount_pb'
 import { Payment } from '../generated/node/legacy/payment_pb'
 import { Transaction } from '../generated/node/legacy/transaction_pb'
+import isNode from '../utils'
 
 /**
  * A GRPC Based network client.
@@ -21,7 +22,7 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
   private readonly grpcClient: XRPLedgerAPIClient
 
   public constructor(grpcURL: string) {
-    if (typeof process !== 'undefined' && process.release.name === 'node') {
+    if (isNode()) {
       try {
         // This polyfill hack enables XMLHttpRequest on the global node.js state
         // eslint-disable-next-line @typescript-eslint/ban-ts-ignore

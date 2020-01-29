@@ -11,6 +11,7 @@ import LegacyGRPCNetworkClientWeb from './legacy-grpc-network-client.web'
 import { LegacyNetworkClient } from './legacy-network-client'
 import { XpringClientDecorator } from '../xpring-client-decorator'
 import TransactionStatus from '../transaction-status'
+import isNode from '../utils'
 
 /**
  * Error messages from XpringClient.
@@ -42,11 +43,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
     grpcURL: string,
     forceHttp = false,
   ): LegacyDefaultXpringClient {
-    if (
-      typeof process !== 'undefined' &&
-      process.release.name === 'node' &&
-      !forceHttp
-    ) {
+    if (isNode() && !forceHttp) {
       return new LegacyDefaultXpringClient(new LegacyGRPCNetworkClient(grpcURL))
     }
     return new LegacyDefaultXpringClient(
