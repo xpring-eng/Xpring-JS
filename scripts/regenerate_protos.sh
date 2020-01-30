@@ -9,8 +9,8 @@ set -e -o pipefail
 echo "Regenerating Protocol Buffers from Rippled"
 
 # Directory to write generated code to (.js and .d.ts files)
-OUT_DIR_WEB="./src/generated/web"
-OUT_DIR_NODE="./src/generated/node"
+OUT_DIR_WEB="./src/grpc/generated/web"
+OUT_DIR_NODE="./src/grpc/generated/node"
 
 PROTO_PATH="./rippled/src/ripple/proto/"
 
@@ -47,8 +47,8 @@ $PWD/node_modules/grpc-tools/bin/protoc \
 echo "Regenerating Protocol Buffers from xpring-common-protocol-buffers"
 
 # Directory to write generated code to (.js and .d.ts files)
-LEGACY_OUT_DIR_WEB="$OUT_DIR_WEB/legacy"
-LEGACY_OUT_DIR_NODE="$OUT_DIR_NODE/legacy"
+LEGACY_OUT_DIR_WEB="./src/legacy/grpc/generated/web"
+LEGACY_OUT_DIR_NODE="./src/legacy/grpc/generated/node"
 
 mkdir -p $LEGACY_OUT_DIR_WEB
 mkdir -p $LEGACY_OUT_DIR_NODE

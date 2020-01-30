@@ -1,2 +1,3 @@
 build/**/*
-src/generated/**/*
+src/grpc/generated/**/*
+src/legacy/grpc/generated/**/*

@@ -5,7 +5,7 @@ import TransactionStatus from '../utils/transaction-status'
 import RawTransaction from '../utils/raw-transaction'
 import GRPCNetworkClientNode from '../grpc/node'
 import GRPCNetworkClientWeb from '../grpc/web'
-import { XRPDropsAmount } from '../generated/web/rpc/v1/amount_pb' // TODO would be nice to have 0 references to generated files here
+import { XRPDropsAmount } from '../grpc/generated/web/rpc/v1/amount_pb' // TODO would be nice to have 0 references to generated files here
 import isNode from '../utils'
 import { NetworkClientDecorator } from '../utils/network-client-decorator'
 import XpringClientErrorMessages from '../utils/xpring-client-error-messages'

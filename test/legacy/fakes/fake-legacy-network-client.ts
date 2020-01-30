@@ -1,12 +1,12 @@
 import { Wallet } from 'xpring-common-js'
 import { LegacyNetworkClient } from '../../../src/legacy/grpc/network-client'
-import { AccountInfo } from '../../../src/generated/node/legacy/account_info_pb'
-import { Fee } from '../../../src/generated/node/legacy/fee_pb'
-import { SubmitSignedTransactionResponse } from '../../../src/generated/node/legacy/submit_signed_transaction_response_pb'
-import { LedgerSequence } from '../../../src/generated/node/legacy/ledger_sequence_pb'
-import { TransactionStatus } from '../../../src/generated/node/legacy/transaction_status_pb'
-import { XRPAmount } from '../../../src/generated/node/legacy/xrp_amount_pb'
-import { SignedTransaction } from '../../../src/generated/node/legacy/signed_transaction_pb'
+import { AccountInfo } from '../../../src/legacy/grpc/generated/node/account_info_pb'
+import { Fee } from '../../../src/legacy/grpc/generated/node/fee_pb'
+import { SubmitSignedTransactionResponse } from '../../../src/legacy/grpc/generated/node/submit_signed_transaction_response_pb'
+import { LedgerSequence } from '../../../src/legacy/grpc/generated/node/ledger_sequence_pb'
+import { TransactionStatus } from '../../../src/legacy/grpc/generated/node/transaction_status_pb'
+import { XRPAmount } from '../../../src/legacy/grpc/generated/node/xrp_amount_pb'
+import { SignedTransaction } from '../../../src/legacy/grpc/generated/node/signed_transaction_pb'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.

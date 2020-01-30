@@ -1,10 +1,10 @@
 import { Wallet } from 'xpring-common-js'
-import { AccountInfo } from '../../generated/web/legacy/account_info_pb'
-import { Fee } from '../../generated/web/legacy/fee_pb'
-import { SubmitSignedTransactionResponse } from '../../generated/web/legacy/submit_signed_transaction_response_pb'
-import { LedgerSequence } from '../../generated/web/legacy/ledger_sequence_pb'
-import { TransactionStatus } from '../../generated/web/legacy/transaction_status_pb'
-import { SignedTransaction } from '../../generated/web/legacy/signed_transaction_pb'
+import { AccountInfo } from './generated/web/account_info_pb'
+import { Fee } from './generated/web/fee_pb'
+import { SubmitSignedTransactionResponse } from './generated/web/submit_signed_transaction_response_pb'
+import { LedgerSequence } from './generated/web/ledger_sequence_pb'
+import { TransactionStatus } from './generated/web/transaction_status_pb'
+import { SignedTransaction } from './generated/web/signed_transaction_pb'
 
 /**
  * The network client interface provides a wrapper around network calls to the Xpring Platform.

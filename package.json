@@ -16,8 +16,9 @@
     "build/**/*"
   ],
   "scripts": {
-    "build": "npm run clean && ./scripts/regenerate_protos.sh && npm run lint && tsc -d && copyfiles -u 2 './src/generated/**/*' ./build/generated",
-    "clean": "rm -rf ./src/generated ./dist ./build",
+    "build": "npm run clean && ./scripts/regenerate_protos.sh && npm run lint && tsc -d && npm run copyTypes",
+    "copyTypes": "copyfiles -u 4 './src/legacy/grpc/generated/**/*' ./build/legacy/grpc/generated && copyfiles -u 3 './src/grpc/generated/**/*' ./build/grpc/generated",
+    "clean": "rm -rf ./src/legacy/grpc/generated ./src/grpc/generated ./dist ./build",
     "pretest": "npm run clean && ./scripts/regenerate_protos.sh && npm run lint && tsc --noEmit",
     "lint": "eslint . --ext .ts --fix",
     "test": "nyc mocha",

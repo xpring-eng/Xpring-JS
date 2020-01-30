@@ -5,8 +5,11 @@ import {
   FakeNetworkClientResponses,
 } from './fakes/fake-network-client'
 import 'mocha'
-import { GetTxResponse } from '../src/generated/node/rpc/v1/tx_pb'
-import { Meta, TransactionResult } from '../src/generated/node/rpc/v1/meta_pb'
+import { GetTxResponse } from '../src/grpc/generated/node/rpc/v1/tx_pb'
+import {
+  Meta,
+  TransactionResult,
+} from '../src/grpc/generated/node/rpc/v1/meta_pb'
 import TransactionStatus from '../src/utils/transaction-status'
 import DefaultXpringClient from '../src/clients/default'
 import XpringClientErrorMessages from '../src/utils/xpring-client-error-messages'

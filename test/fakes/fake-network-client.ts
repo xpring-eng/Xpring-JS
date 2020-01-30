@@ -1,16 +1,19 @@
 /* eslint-disable class-methods-use-this */
 import { NetworkClientDecorator } from '../../src/utils/network-client-decorator'
-import { GetAccountInfoResponse } from '../../src/generated/web/rpc/v1/account_info_pb'
-import { GetFeeResponse } from '../../src/generated/web/rpc/v1/fee_pb'
-import { GetTxResponse } from '../../src/generated/web/rpc/v1/tx_pb'
+import { GetAccountInfoResponse } from '../../src/grpc/generated/web/rpc/v1/account_info_pb'
+import { GetFeeResponse } from '../../src/grpc/generated/web/rpc/v1/fee_pb'
+import { GetTxResponse } from '../../src/grpc/generated/web/rpc/v1/tx_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from '../../src/generated/web/rpc/v1/submit_pb'
-import { AccountRoot } from '../../src/generated/web/rpc/v1/ledger_objects_pb'
-import { XRPDropsAmount } from '../../src/generated/web/rpc/v1/amount_pb'
+} from '../../src/grpc/generated/web/rpc/v1/submit_pb'
+import { AccountRoot } from '../../src/grpc/generated/web/rpc/v1/ledger_objects_pb'
+import { XRPDropsAmount } from '../../src/grpc/generated/web/rpc/v1/amount_pb'
 
-import { Meta, TransactionResult } from '../../src/generated/web/rpc/v1/meta_pb'
+import {
+  Meta,
+  TransactionResult,
+} from '../../src/grpc/generated/web/rpc/v1/meta_pb'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.

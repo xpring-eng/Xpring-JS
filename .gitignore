@@ -1,5 +1,6 @@
 # Ignore generated files.
-src/generated/*
+src/grpc/generated/*
+src/legacy/grpc/generated/*
 
 # Ignore files compiled from typescript.
 build/*

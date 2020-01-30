@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 import bigInt from 'big-integer'
-import { TransactionStatus as RawTransactionStatus } from '../src/generated/node/legacy/transaction_status_pb'
+import { TransactionStatus as RawTransactionStatus } from '../src/legacy/grpc/generated/node/transaction_status_pb'
 import FakeXpringClient from './fakes/fake-xpring-client'
 import ReliableSubmissionXpringClient from '../src/clients/reliable-submission'
 import TransactionStatus from '../src/utils/transaction-status'

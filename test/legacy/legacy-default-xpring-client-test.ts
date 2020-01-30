@@ -3,7 +3,7 @@ import bigInt from 'big-integer'
 
 import { Utils, Wallet } from 'xpring-common-js'
 import chaiString from 'chai-string'
-import { TransactionStatus as TransactionStatusResponse } from '../../src/generated/node/legacy/transaction_status_pb'
+import { TransactionStatus as TransactionStatusResponse } from '../../src/legacy/grpc/generated/node/transaction_status_pb'
 
 import LegacyDefaultXpringClient from '../../src/legacy'
 import {

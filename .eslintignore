@@ -1,5 +1,6 @@
 # Do not lint generated files.
-src/generated
+src/grpc/generated
+src/legacy/grpc/generated
 build
 
 # Don't lint node_modules

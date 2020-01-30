@@ -2,16 +2,16 @@ import { Utils } from 'xpring-common-js'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
-} from '../generated/web/rpc/v1/account_info_pb'
-import { GetFeeRequest, GetFeeResponse } from '../generated/web/rpc/v1/fee_pb'
-import { GetTxRequest, GetTxResponse } from '../generated/web/rpc/v1/tx_pb'
+} from './generated/web/rpc/v1/account_info_pb'
+import { GetFeeRequest, GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
+import { GetTxRequest, GetTxResponse } from './generated/web/rpc/v1/tx_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from '../generated/web/rpc/v1/submit_pb'
-import { XRPLedgerAPIServiceClient } from '../generated/web/rpc/v1/xrp_ledger_grpc_web_pb'
+} from './generated/web/rpc/v1/submit_pb'
+import { XRPLedgerAPIServiceClient } from './generated/web/rpc/v1/xrp_ledger_grpc_web_pb'
 
-import { AccountAddress } from '../generated/web/rpc/v1/amount_pb'
+import { AccountAddress } from './generated/web/rpc/v1/amount_pb'
 import isNode from '../utils'
 import { NetworkClientDecorator } from '../utils/network-client-decorator'
 
