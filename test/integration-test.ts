@@ -106,4 +106,11 @@ describe('Xpring JS Integration Tests', function(): void {
     )
     assert.exists(result)
   })
+
+  it('Send XRP - rippled', async function(): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const result = await xpringClient.send(amount, recipientAddress, wallet)
+    assert.exists(result)
+  })
 })
