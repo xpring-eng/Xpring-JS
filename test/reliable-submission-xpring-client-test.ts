@@ -1,10 +1,7 @@
 import { assert } from 'chai'
-import {
-  TransactionStatus as RawTransactionStatus,
-  Wallet,
-  WalletGenerationResult,
-} from 'xpring-common-js'
+import { Wallet } from 'xpring-common-js'
 import bigInt from 'big-integer'
+import { TransactionStatus as RawTransactionStatus } from '../src/generated/node/legacy/transaction_status_pb'
 import FakeXpringClient from './fakes/fake-xpring-client'
 import ReliableSubmissionXpringClient from '../src/reliable-submission-xpring-client'
 import TransactionStatus from '../src/transaction-status'
@@ -14,8 +11,6 @@ const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 const transactionStatusCodeSuccess = 'tesSUCCESS'
 
 const transactionHash = 'DEADBEEF'
-
-const { wallet } = Wallet.generateRandomWallet() as WalletGenerationResult
 
 const fakedGetBalanceValue = bigInt(10)
 const fakedTransactionStatusValue = TransactionStatus.Succeeded
@@ -99,12 +94,17 @@ describe('Reliable Submission Xpring Client', function(): void {
         fakedRawTransactionStatusLastLedgerSequenceValue + 1
       this.fakeXpringClient.latestLedgerSequence = latestLedgerSequence
     }, 200)
+    const walletGenerationResult = Wallet.generateRandomWallet()
+    if (walletGenerationResult === undefined) {
+      assert.fail('Wallet is undefined', 'Wallet to be defined')
+      return
+    }
 
     // WHEN a reliable send is submitted
     const transactionHash = await this.reliableSubmissionClient.send(
       '1',
       testAddress,
-      wallet,
+      walletGenerationResult.wallet,
     )
 
     // THEN the function returns
@@ -119,12 +119,17 @@ describe('Reliable Submission Xpring Client', function(): void {
     setTimeout(() => {
       fakedRawTransactionStatusValue.setValidated(true)
     }, 200)
+    const walletGenerationResult = Wallet.generateRandomWallet()
+    if (walletGenerationResult === undefined) {
+      assert.fail('Wallet is undefined', 'Wallet to be defined')
+      return
+    }
 
     // WHEN a reliable send is submitted
     const transactionHash = await this.reliableSubmissionClient.send(
       '1',
       testAddress,
-      wallet,
+      walletGenerationResult.wallet,
     )
 
     // THEN the function returns
@@ -139,13 +144,16 @@ describe('Reliable Submission Xpring Client', function(): void {
     const malformedRawTransactionStatus = new RawTransactionStatus()
     malformedRawTransactionStatus.setLastLedgerSequence(0)
     this.fakeXpringClient.getRawTransactionStatusValue = malformedRawTransactionStatus
+    const walletGenerationResult = Wallet.generateRandomWallet()
+    if (walletGenerationResult === undefined) {
+      assert.fail('Wallet is undefined', 'Wallet to be defined')
+      return
+    }
 
     // WHEN `send` is called THEN the promise is rejected.
-    this.reliableSubmissionClient.send('1', testAddress, wallet).then(
-      function() {},
-      function() {
-        done()
-      },
-    )
+    this.reliableSubmissionClient
+      .send('1', testAddress, walletGenerationResult.wallet)
+      .then(() => {})
+      .catch(() => done())
   })
 })

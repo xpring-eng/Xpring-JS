@@ -2,6 +2,7 @@ import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
+import TransactionStatus from './transaction-status'
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
@@ -19,7 +20,7 @@ class ReliableSubmissionXpringClient implements XpringClientDecorator {
 
   public async getTransactionStatus(
     transactionHash: string,
-  ): Promise<import('./transaction-status').default> {
+  ): Promise<TransactionStatus> {
     return this.decoratedClient.getTransactionStatus(transactionHash)
   }
 

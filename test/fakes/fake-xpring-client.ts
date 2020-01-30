@@ -1,8 +1,8 @@
-import { TransactionStatus as RawTransactionStatus } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from '../../src/xpring-client-decorator'
 import TransactionStatus from '../../src/transaction-status'
 import { Wallet } from '../../src/index'
+import RawTransactionStatus from '../../src/raw-transaction-status'
 
 class FakeXpringClient implements XpringClientDecorator {
   public constructor(

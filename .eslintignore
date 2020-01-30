@@ -1,6 +1,6 @@
 # Do not lint generated files.
-generated
+src/generated
 build
 
-# Do not lint generated files.
-generated/*.ts
+# Don't lint node_modules
+node_modules
