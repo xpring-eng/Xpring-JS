@@ -124,7 +124,7 @@ class LegacyGRPCNetworkClientNode implements LegacyNetworkClient {
     const fee = await this.getFee()
     const accountInfo = await this.getAccountInfo(sender.getAddress())
     const ledgerSequence = await this.getLatestValidatedLedgerSequence()
-    const lastLedger = ledgerSequence.toObject().index + ledgerSequenceMargin
+    const lastLedger = ledgerSequence.getIndex() + ledgerSequenceMargin
     const xrpAmount = new XRPAmount()
     xrpAmount.setDrops(normalizedAmount.toString())
 
