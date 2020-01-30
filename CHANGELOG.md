@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## 2.0.0 - Jan 30, 2020
+## 1.3.0 - Jan 30, 2020
 
 This release adds support for the new rippled protocol buffers and adds browser compatibility support. 
 
