@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 2.0.0 - Jan 30, 2020
 
-This release adds support for the new rippled protocol buffers and support for webpacking this library for use in the browser.
+This release adds support for the new rippled protocol buffers and adds browser compatibility support. 
 
 ### New Protocol Buffers from rippled
 
@@ -18,9 +18,9 @@ rippled implemented protocol buffer support natively, which uses a new and incom
 To switch to these protocol buffers, pass `true` to the `useNewProtocolBuffer` parameter in `XpringClient`'s constructor. The default for this field is false. 
 
 
-### Webpack functionality
+### Browser Compatibility
 
-This library is now compatible with webpack. Internally, the library makes different network requests when in the browser. Users can force these request types in the node environment by passing `true` for the `forceWeb` parameter in `XpringClient`'s constructor. This boolean parameter is intended for compatibility testing only. This change is opt-in and non-breaking.
+This library is now compatible with web browsers. Internally, the library makes different network requests when in the browser. Users can force these request types in the node environment by passing `true` for the `forceWeb` parameter in `XpringClient`'s constructor. This boolean parameter is intended for compatibility testing only. This change is opt-in and non-breaking.
 
 This change also adds a BigInteger polyfill to maximize browser compatibility.
  
