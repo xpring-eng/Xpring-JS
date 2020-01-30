@@ -1,8 +1,5 @@
 import { assert } from 'chai'
 
-import DefaultXpringClient, {
-  XpringClientErrorMessages,
-} from '../src/default-xpring-client'
 import {
   FakeNetworkClient,
   FakeNetworkClientResponses,
@@ -11,6 +8,8 @@ import 'mocha'
 import { GetTxResponse } from '../src/generated/node/rpc/v1/tx_pb'
 import { Meta, TransactionResult } from '../src/generated/node/rpc/v1/meta_pb'
 import TransactionStatus from '../src/transaction-status'
+import DefaultXpringClient from '../src/default-xpring-client'
+import XpringClientErrorMessages from '../src/xpring-client-error-messages'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 

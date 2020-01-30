@@ -1,26 +1,14 @@
 /* eslint-disable class-methods-use-this */
 import { NetworkClient } from '../../src/network-client'
-import {
-  GetAccountInfoRequest,
-  GetAccountInfoResponse,
-} from '../../src/generated/web/rpc/v1/account_info_pb'
-import {
-  GetFeeRequest,
-  GetFeeResponse,
-} from '../../src/generated/web/rpc/v1/fee_pb'
-import {
-  GetTxRequest,
-  GetTxResponse,
-} from '../../src/generated/web/rpc/v1/tx_pb'
+import { GetAccountInfoResponse } from '../../src/generated/web/rpc/v1/account_info_pb'
+import { GetFeeResponse } from '../../src/generated/web/rpc/v1/fee_pb'
+import { GetTxResponse } from '../../src/generated/web/rpc/v1/tx_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
 } from '../../src/generated/web/rpc/v1/submit_pb'
 import { AccountRoot } from '../../src/generated/web/rpc/v1/ledger_objects_pb'
-import {
-  XRPDropsAmount,
-  AccountAddress,
-} from '../../src/generated/web/rpc/v1/amount_pb'
+import { XRPDropsAmount } from '../../src/generated/web/rpc/v1/amount_pb'
 
 import { Meta, TransactionResult } from '../../src/generated/web/rpc/v1/meta_pb'
 
@@ -132,9 +120,7 @@ export class FakeNetworkClient implements NetworkClient {
     private readonly responses: FakeNetworkClientResponses = FakeNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
 
-  getAccountInfo(
-    _accountInfoRequest: GetAccountInfoRequest,
-  ): Promise<GetAccountInfoResponse> {
+  getAccountInfo(_address: string): Promise<GetAccountInfoResponse> {
     const accountInfoResponse = this.responses.getAccountInfoResponse
     if (accountInfoResponse instanceof Error) {
       return Promise.reject(accountInfoResponse)
@@ -143,7 +129,7 @@ export class FakeNetworkClient implements NetworkClient {
     return Promise.resolve(accountInfoResponse)
   }
 
-  getFee(_feeRequest: GetFeeRequest): Promise<GetFeeResponse> {
+  getFee(): Promise<GetFeeResponse> {
     const feeResponse = this.responses.getFeeResponse
     if (feeResponse instanceof Error) {
       return Promise.reject(feeResponse)
@@ -163,7 +149,7 @@ export class FakeNetworkClient implements NetworkClient {
     return Promise.resolve(submitTransactionResponse)
   }
 
-  getTx(_getTransactionStatusRequest: GetTxRequest): Promise<GetTxResponse> {
+  getTx(_hash: string): Promise<GetTxResponse> {
     const transactionStatusResponse = this.responses
       .getTransactionStatusResponse
     if (transactionStatusResponse instanceof Error) {
@@ -171,21 +157,5 @@ export class FakeNetworkClient implements NetworkClient {
     }
 
     return Promise.resolve(transactionStatusResponse)
-  }
-
-  public AccountAddress(): AccountAddress {
-    return new AccountAddress()
-  }
-
-  public GetAccountInfoRequest(): GetAccountInfoRequest {
-    return new GetAccountInfoRequest()
-  }
-
-  public GetTxRequest(): GetTxRequest {
-    return new GetTxRequest()
-  }
-
-  public GetFeeRequest(): GetFeeRequest {
-    return new GetFeeRequest()
   }
 }

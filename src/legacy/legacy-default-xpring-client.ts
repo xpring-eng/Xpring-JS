@@ -1,28 +1,15 @@
-import { Signer, Utils, Wallet } from 'xpring-common-js'
+import { Utils, Wallet } from 'xpring-common-js'
 
 import bigInt, { BigInteger } from 'big-integer'
-import { AccountInfo } from '../generated/web/legacy/account_info_pb'
-import { XRPAmount } from '../generated/web/legacy/xrp_amount_pb'
 
-import RawTransactionStatus from '../raw-transaction-status'
-import LegacyGRPCNetworkClient from './legacy-grpc-network-client'
+import { RawTransactionStatus } from '../raw-transaction'
+import LegacyGRPCNetworkClientNode from './legacy-grpc-network-client'
 import LegacyGRPCNetworkClientWeb from './legacy-grpc-network-client.web'
-import { LegacyNetworkClient } from './legacy-network-client'
 import { XpringClientDecorator } from '../xpring-client-decorator'
 import TransactionStatus from '../transaction-status'
 import isNode from '../utils'
-
-/**
- * Error messages from XpringClient.
- */
-export class LegacyXpringClientErrorMessages {
-  public static readonly malformedResponse = 'Malformed Response.'
-
-  public static readonly signingFailure = 'Unable to sign the transaction'
-
-  public static readonly xAddressRequired =
-    'Please use the X-Address format. See: https://xrpaddress.info/.'
-}
+import { LegacyNetworkClient } from './legacy-network-client'
+import XpringClientErrorMessages from '../xpring-client-error-messages'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const ledgerSequenceMargin = 10
@@ -44,7 +31,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
     forceWeb = false,
   ): LegacyDefaultXpringClient {
     return isNode() && !forceWeb
-      ? new LegacyDefaultXpringClient(new LegacyGRPCNetworkClient(grpcURL))
+      ? new LegacyDefaultXpringClient(new LegacyGRPCNetworkClientNode(grpcURL))
       : new LegacyDefaultXpringClient(new LegacyGRPCNetworkClientWeb(grpcURL))
   }
 
@@ -66,20 +53,22 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
   public async getBalance(address: string): Promise<BigInteger> {
     if (!Utils.isValidXAddress(address)) {
       return Promise.reject(
-        new Error(LegacyXpringClientErrorMessages.xAddressRequired),
+        new Error(XpringClientErrorMessages.xAddressRequired),
       )
     }
 
-    return this.getAccountInfo(address).then(async (accountInfo) => {
-      const balance = accountInfo.getBalance()
-      if (balance === undefined) {
-        return Promise.reject(
-          new Error(LegacyXpringClientErrorMessages.malformedResponse),
-        )
-      }
+    return this.networkClient
+      .getAccountInfo(address)
+      .then(async (accountInfo) => {
+        const balance = accountInfo.getBalance()
+        if (balance === undefined) {
+          return Promise.reject(
+            new Error(XpringClientErrorMessages.malformedResponse),
+          )
+        }
 
-      return bigInt(balance.getDrops())
-    })
+        return bigInt(balance.getDrops())
+      })
   }
 
   /**
@@ -119,137 +108,37 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
     sender: Wallet,
   ): Promise<string> {
     if (!Utils.isValidXAddress(destination)) {
-      return Promise.reject(
-        new Error(LegacyXpringClientErrorMessages.xAddressRequired),
-      )
+      throw new Error(XpringClientErrorMessages.xAddressRequired)
     }
+    const signedTransaction = await this.networkClient.createSignedTransaction(
+      amount.toString(),
+      destination,
+      sender,
+      ledgerSequenceMargin,
+    )
+    const response = await this.networkClient.submitSignedTransaction(
+      signedTransaction,
+    )
 
-    const normalizedAmount = LegacyDefaultXpringClient.toBigInt(amount)
-
-    return this.getFee().then(async (fee) => {
-      return this.getAccountInfo(sender.getAddress()).then(
-        async (accountInfo) => {
-          return this.getLastValidatedLedgerSequence().then(
-            async (ledgerSequence) => {
-              if (accountInfo.getSequence() === undefined) {
-                return Promise.reject(
-                  new Error(LegacyXpringClientErrorMessages.malformedResponse),
-                )
-              }
-
-              const xrpAmount = this.networkClient.XRPAmount()
-              xrpAmount.setDrops(normalizedAmount.toString())
-
-              const payment = this.networkClient.Payment()
-              payment.setXrpAmount(xrpAmount)
-              payment.setDestination(destination)
-
-              const transaction = this.networkClient.Transaction()
-              transaction.setAccount(sender.getAddress())
-              transaction.setFee(fee)
-              transaction.setSequence(accountInfo.getSequence())
-              transaction.setPayment(payment)
-              transaction.setLastLedgerSequence(
-                ledgerSequence + ledgerSequenceMargin,
-              )
-              transaction.setSigningPublicKeyHex(sender.getPublicKey())
-
-              let signedTransaction
-              try {
-                signedTransaction = Signer.signLegacyTransaction(
-                  transaction,
-                  sender,
-                )
-              } catch (signingError) {
-                const signingErrorMessage = `${LegacyXpringClientErrorMessages.signingFailure}. ${signingError.message}`
-                return Promise.reject(new Error(signingErrorMessage))
-              }
-              if (signedTransaction === undefined) {
-                return Promise.reject(
-                  new Error(LegacyXpringClientErrorMessages.signingFailure),
-                )
-              }
-
-              const submitSignedTransactionRequest = this.networkClient.SubmitSignedTransactionRequest()
-              submitSignedTransactionRequest.setSignedTransaction(
-                signedTransaction,
-              )
-
-              return this.networkClient
-                .submitSignedTransaction(submitSignedTransactionRequest)
-                .then(async (response) => {
-                  const transactionBlob = response.getTransactionBlob()
-                  const transactionHash = Utils.transactionBlobToTransactionHash(
-                    transactionBlob,
-                  )
-                  if (!transactionHash) {
-                    return Promise.reject(
-                      new Error(
-                        LegacyXpringClientErrorMessages.malformedResponse,
-                      ),
-                    )
-                  }
-                  return Promise.resolve(transactionHash)
-                })
-            },
-          )
-        },
-      )
-    })
+    const transactionBlob = response.getTransactionBlob()
+    const transactionHash = Utils.transactionBlobToTransactionHash(
+      transactionBlob,
+    )
+    if (!transactionHash) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+    return transactionHash
   }
 
   public async getLastValidatedLedgerSequence(): Promise<number> {
-    const getLatestValidatedLedgerSequenceRequest = this.networkClient.GetLatestValidatedLedgerSequenceRequest()
-    const ledgerSequence = await this.networkClient.getLatestValidatedLedgerSequence(
-      getLatestValidatedLedgerSequenceRequest,
-    )
+    const ledgerSequence = await this.networkClient.getLatestValidatedLedgerSequence()
     return ledgerSequence.getIndex()
   }
 
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    const transactionStatusRequest = this.networkClient.GetTransactionStatusRequest()
-    transactionStatusRequest.setTransactionHash(transactionHash)
-
-    return this.networkClient.getTransactionStatus(transactionStatusRequest)
-  }
-
-  private async getAccountInfo(address: string): Promise<AccountInfo> {
-    const getAccountInfoRequest = this.networkClient.GetAccountInfoRequest()
-    getAccountInfoRequest.setAddress(address)
-    return this.networkClient.getAccountInfo(getAccountInfoRequest)
-  }
-
-  private async getFee(): Promise<XRPAmount> {
-    const getFeeRequest = this.networkClient.GetFeeRequest()
-
-    return this.networkClient.getFee(getFeeRequest).then(async (fee) => {
-      const feeAmount = fee.getAmount()
-      if (feeAmount === undefined) {
-        return Promise.reject(
-          new Error(LegacyXpringClientErrorMessages.malformedResponse),
-        )
-      }
-      return feeAmount
-    })
-  }
-
-  /**
-   * Convert a polymorphic numeric value into a BigInteger.
-   *
-   * @param value The value to convert.
-   * @returns A BigInteger representing the input value.
-   */
-  private static toBigInt(value: string | number | BigInteger): BigInteger {
-    if (typeof value === 'string') {
-      return bigInt(value)
-    }
-    if (typeof value === 'number') {
-      return bigInt(value)
-    }
-    // Value is already a BigInteger.
-    return value
+    return this.networkClient.getTransactionStatus(transactionHash)
   }
 }
 

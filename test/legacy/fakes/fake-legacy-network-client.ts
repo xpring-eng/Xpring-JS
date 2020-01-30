@@ -1,3 +1,4 @@
+import { Wallet } from 'xpring-common-js'
 import { LegacyNetworkClient } from '../../../src/legacy/legacy-network-client'
 import { AccountInfo } from '../../../src/generated/node/legacy/account_info_pb'
 import { Fee } from '../../../src/generated/node/legacy/fee_pb'
@@ -5,13 +6,7 @@ import { SubmitSignedTransactionResponse } from '../../../src/generated/node/leg
 import { LedgerSequence } from '../../../src/generated/node/legacy/ledger_sequence_pb'
 import { TransactionStatus } from '../../../src/generated/node/legacy/transaction_status_pb'
 import { XRPAmount } from '../../../src/generated/node/legacy/xrp_amount_pb'
-import { GetAccountInfoRequest } from '../../../src/generated/node/legacy/get_account_info_request_pb'
-import { GetFeeRequest } from '../../../src/generated/node/legacy/get_fee_request_pb'
-import { SubmitSignedTransactionRequest } from '../../../src/generated/node/legacy/submit_signed_transaction_request_pb'
-import { GetLatestValidatedLedgerSequenceRequest } from '../../../src/generated/node/legacy/get_latest_validated_ledger_sequence_request_pb'
-import { GetTransactionStatusRequest } from '../../../src/generated/node/legacy/get_transaction_status_request_pb'
-import { Payment } from '../../../src/generated/node/legacy/payment_pb'
-import { Transaction } from '../../../src/generated/node/legacy/transaction_pb'
+import { SignedTransaction } from '../../../src/generated/node/legacy/signed_transaction_pb'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -51,6 +46,7 @@ export class FakeLegacyNetworkClientResponses {
    * @param submitSignedTransactionResponse The response or error that will be returned from the submitSignedTransaction request. Defaults to the default submit signed transaction response.
    * @param getLatestValidatedLedgerSequenceResponse The response or error that will be returned from the getLatestValidatedLedger request. Defaults to the default ledger sequence response.
    * @param getTransactionStatusResponse The response or error that will be returned from the getTransactionStatus request. Defaults to the default transaction status response.
+   * @param createSignedTransactionResponse The response or error that will be returned from the createSignedTransaction request. Defaults to the default SignedTransaction.
    */
   public constructor(
     public readonly getAccountInfoResponse: Response<
@@ -68,6 +64,9 @@ export class FakeLegacyNetworkClientResponses {
     public readonly getTransactionStatusResponse: Response<
       TransactionStatus
     > = FakeLegacyNetworkClientResponses.defaultTransactionStatusResponse(),
+    public readonly createSignedTransactionResponse: Response<
+      SignedTransaction
+    > = FakeLegacyNetworkClientResponses.defaultCreateSignedTransactionResponse(),
   ) {}
 
   /**
@@ -131,6 +130,18 @@ export class FakeLegacyNetworkClientResponses {
 
     return transactionStatus
   }
+
+  /**
+   * Construct a default SignedTransaction.
+   */
+  public static defaultCreateSignedTransactionResponse(): SignedTransaction {
+    const signedTransaction = new SignedTransaction()
+    signedTransaction.setTransactionSignatureHex(
+      '304402205B7E213927BBC79E48F736B56456BF7574D50BD56B10C025C8C82C13BA017F8802201BFDB979368C581D905DC96CDDC209A3ECE0401F7935C3868877D12907DAC856',
+    )
+
+    return signedTransaction
+  }
 }
 
 /**
@@ -141,9 +152,7 @@ export class FakeLegacyNetworkClient implements LegacyNetworkClient {
     private readonly responses: FakeLegacyNetworkClientResponses = FakeLegacyNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
 
-  getAccountInfo(
-    _accountInfoRequest: GetAccountInfoRequest,
-  ): Promise<AccountInfo> {
+  getAccountInfo(_address: string): Promise<AccountInfo> {
     const accountInfoResponse = this.responses.getAccountInfoResponse
     if (accountInfoResponse instanceof Error) {
       return Promise.reject(accountInfoResponse)
@@ -152,7 +161,7 @@ export class FakeLegacyNetworkClient implements LegacyNetworkClient {
     return Promise.resolve(accountInfoResponse)
   }
 
-  getFee(_feeRequest: GetFeeRequest): Promise<Fee> {
+  getFee(): Promise<Fee> {
     const feeResponse = this.responses.getFeeResponse
     if (feeResponse instanceof Error) {
       return Promise.reject(feeResponse)
@@ -162,7 +171,7 @@ export class FakeLegacyNetworkClient implements LegacyNetworkClient {
   }
 
   submitSignedTransaction(
-    _submitSignedTransactionRequest: SubmitSignedTransactionRequest,
+    _signedTransaction: SignedTransaction,
   ): Promise<SubmitSignedTransactionResponse> {
     const { submitSignedTransactionResponse } = this.responses
     if (submitSignedTransactionResponse instanceof Error) {
@@ -172,9 +181,7 @@ export class FakeLegacyNetworkClient implements LegacyNetworkClient {
     return Promise.resolve(submitSignedTransactionResponse)
   }
 
-  getLatestValidatedLedgerSequence(
-    _getLatestValidatedLedgerSequenceRequest: GetLatestValidatedLedgerSequenceRequest,
-  ): Promise<LedgerSequence> {
+  getLatestValidatedLedgerSequence(): Promise<LedgerSequence> {
     const ledgerSequenceResponse = this.responses
       .getLatestValidatedLedgerSequenceResponse
     if (ledgerSequenceResponse instanceof Error) {
@@ -184,9 +191,7 @@ export class FakeLegacyNetworkClient implements LegacyNetworkClient {
     return Promise.resolve(ledgerSequenceResponse)
   }
 
-  getTransactionStatus(
-    _getTransactionStatusRequest: GetTransactionStatusRequest,
-  ): Promise<TransactionStatus> {
+  getTransactionStatus(_hash: string): Promise<TransactionStatus> {
     const transactionStatusResponse = this.responses
       .getTransactionStatusResponse
     if (transactionStatusResponse instanceof Error) {
@@ -196,37 +201,17 @@ export class FakeLegacyNetworkClient implements LegacyNetworkClient {
     return Promise.resolve(transactionStatusResponse)
   }
 
-  /* eslint-disable class-methods-use-this */
-  public XRPAmount(): XRPAmount {
-    return new XRPAmount()
-  }
+  createSignedTransaction(
+    _normalizedAmount: string,
+    _destination: string,
+    _sender: Wallet,
+    _ledgerSequenceMargin: number,
+  ): Promise<SignedTransaction> {
+    const { createSignedTransactionResponse } = this.responses
+    if (createSignedTransactionResponse instanceof Error) {
+      return Promise.reject(createSignedTransactionResponse)
+    }
 
-  public Payment(): Payment {
-    return new Payment()
+    return Promise.resolve(createSignedTransactionResponse)
   }
-
-  public Transaction(): Transaction {
-    return new Transaction()
-  }
-
-  public SubmitSignedTransactionRequest(): SubmitSignedTransactionRequest {
-    return new SubmitSignedTransactionRequest()
-  }
-
-  public GetLatestValidatedLedgerSequenceRequest(): GetLatestValidatedLedgerSequenceRequest {
-    return new GetLatestValidatedLedgerSequenceRequest()
-  }
-
-  public GetTransactionStatusRequest(): GetTransactionStatusRequest {
-    return new GetTransactionStatusRequest()
-  }
-
-  public GetAccountInfoRequest(): GetAccountInfoRequest {
-    return new GetAccountInfoRequest()
-  }
-
-  public GetFeeRequest(): GetFeeRequest {
-    return new GetFeeRequest()
-  }
-  /* eslint-enable class-methods-use-this */
 }

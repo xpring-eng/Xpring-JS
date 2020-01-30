@@ -5,15 +5,14 @@ import { Utils, Wallet } from 'xpring-common-js'
 import chaiString from 'chai-string'
 import { TransactionStatus as TransactionStatusResponse } from '../../src/generated/node/legacy/transaction_status_pb'
 
-import LegacyDefaultXpringClient, {
-  LegacyXpringClientErrorMessages,
-} from '../../src/legacy/legacy-default-xpring-client'
+import LegacyDefaultXpringClient from '../../src/legacy/legacy-default-xpring-client'
 import {
   FakeLegacyNetworkClient,
   FakeLegacyNetworkClientResponses,
 } from './fakes/fake-legacy-network-client'
 import 'mocha'
 import TransactionStatus from '../../src/transaction-status'
+import XpringClientErrorMessages from '../../src/xpring-client-error-messages'
 
 const fakeSucceedingNetworkClient = new FakeLegacyNetworkClient()
 const fakeErroringNetworkClient = new FakeLegacyNetworkClient(
@@ -53,10 +52,7 @@ describe('Legacy Default Xpring Client', function(): void {
     // WHEN the balance for an account is requested THEN an error to use X-Addresses is thrown.
     xpringClient.getBalance(classicAddress).catch((error) => {
       assert.typeOf(error, 'Error')
-      assert.equal(
-        error.message,
-        LegacyXpringClientErrorMessages.xAddressRequired,
-      )
+      assert.equal(error.message, XpringClientErrorMessages.xAddressRequired)
       done()
     })
   })
@@ -90,10 +86,7 @@ describe('Legacy Default Xpring Client', function(): void {
     // WHEN a balance is requested THEN an error is propagated.
     xpringClient.getBalance(testAddress).catch((error) => {
       assert.typeOf(error, 'Error')
-      assert.equal(
-        error.message,
-        LegacyXpringClientErrorMessages.malformedResponse,
-      )
+      assert.equal(error.message, XpringClientErrorMessages.malformedResponse)
       done()
     })
   })
@@ -230,10 +223,7 @@ describe('Legacy Default Xpring Client', function(): void {
     // WHEN the account makes a transaction THEN an error is thrown.
     xpringClient.send(amount, destinationAddress, wallet).catch((error) => {
       assert.typeOf(error, 'Error')
-      assert.equal(
-        error.message,
-        LegacyXpringClientErrorMessages.xAddressRequired,
-      )
+      assert.equal(error.message, XpringClientErrorMessages.xAddressRequired)
       done()
     })
   })

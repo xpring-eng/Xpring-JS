@@ -1,7 +1,7 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import TransactionStatus from './transaction-status'
-import RawTransactionStatus from './raw-transaction-status'
+import { RawTransactionStatus } from './raw-transaction'
 
 /** A decorator interface for XpringClients. */
 export interface XpringClientDecorator {

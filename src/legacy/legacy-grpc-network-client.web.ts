@@ -1,3 +1,4 @@
+import { Signer, Wallet } from 'xpring-common-js'
 import { XRPLedgerAPIClient } from '../generated/web/legacy/xrp_ledger_grpc_web_pb'
 import { AccountInfo } from '../generated/web/legacy/account_info_pb'
 import { Fee } from '../generated/web/legacy/fee_pb'
@@ -9,16 +10,18 @@ import { GetLatestValidatedLedgerSequenceRequest } from '../generated/web/legacy
 import { LedgerSequence } from '../generated/web/legacy/ledger_sequence_pb'
 import { GetTransactionStatusRequest } from '../generated/web/legacy/get_transaction_status_request_pb'
 import { TransactionStatus } from '../generated/web/legacy/transaction_status_pb'
-import { LegacyNetworkClient } from './legacy-network-client'
 import { XRPAmount } from '../generated/node/legacy/xrp_amount_pb'
 import { Payment } from '../generated/node/legacy/payment_pb'
 import { Transaction } from '../generated/node/legacy/transaction_pb'
 import isNode from '../utils'
+import { SignedTransaction } from '../generated/web/legacy/signed_transaction_pb'
+import { LegacyNetworkClient } from './legacy-network-client'
+import XpringClientErrorMessages from '../xpring-client-error-messages'
 
 /**
  * A GRPC Based network client.
  */
-class LegacyGRPCNetworkClient implements LegacyNetworkClient {
+class LegacyGRPCNetworkClientWeb implements LegacyNetworkClient {
   private readonly grpcClient: XRPLedgerAPIClient
 
   public constructor(grpcURL: string) {
@@ -35,10 +38,10 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
     this.grpcClient = new XRPLedgerAPIClient(grpcURL)
   }
 
-  public async getAccountInfo(
-    getAccountInfoRequest: GetAccountInfoRequest,
-  ): Promise<AccountInfo> {
+  public async getAccountInfo(address: string): Promise<AccountInfo> {
     return new Promise((resolve, reject): void => {
+      const getAccountInfoRequest = new GetAccountInfoRequest()
+      getAccountInfoRequest.setAddress(address)
       this.grpcClient.getAccountInfo(
         getAccountInfoRequest,
         {},
@@ -53,8 +56,9 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
     })
   }
 
-  public async getFee(getFeeRequest: GetFeeRequest): Promise<Fee> {
+  public async getFee(): Promise<Fee> {
     return new Promise((resolve, reject): void => {
+      const getFeeRequest = new GetFeeRequest()
       this.grpcClient.getFee(getFeeRequest, {}, (error, response): void => {
         if (error !== null || response === null) {
           reject(error)
@@ -66,9 +70,11 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
   }
 
   public async submitSignedTransaction(
-    submitSignedTransactionRequest: SubmitSignedTransactionRequest,
+    signedTransaction: SignedTransaction,
   ): Promise<SubmitSignedTransactionResponse> {
     return new Promise((resolve, reject): void => {
+      const submitSignedTransactionRequest = new SubmitSignedTransactionRequest()
+      submitSignedTransactionRequest.setSignedTransaction(signedTransaction)
       this.grpcClient.submitSignedTransaction(
         submitSignedTransactionRequest,
         {},
@@ -83,10 +89,9 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
     })
   }
 
-  public async getLatestValidatedLedgerSequence(
-    getLatestValidatedLedgerSequenceRequest: GetLatestValidatedLedgerSequenceRequest,
-  ): Promise<LedgerSequence> {
+  public async getLatestValidatedLedgerSequence(): Promise<LedgerSequence> {
     return new Promise((resolve, reject): void => {
+      const getLatestValidatedLedgerSequenceRequest = new GetLatestValidatedLedgerSequenceRequest()
       this.grpcClient.getLatestValidatedLedgerSequence(
         getLatestValidatedLedgerSequenceRequest,
         {},
@@ -102,9 +107,11 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
   }
 
   public async getTransactionStatus(
-    getTransactionStatusRequest: GetTransactionStatusRequest,
+    transactionHash: string,
   ): Promise<TransactionStatus> {
     return new Promise((resolve, reject): void => {
+      const getTransactionStatusRequest = new GetTransactionStatusRequest()
+      getTransactionStatusRequest.setTransactionHash(transactionHash)
       this.grpcClient.getTransactionStatus(
         getTransactionStatusRequest,
         {},
@@ -119,39 +126,45 @@ class LegacyGRPCNetworkClient implements LegacyNetworkClient {
     })
   }
 
-  /* eslint-disable class-methods-use-this */
-  public XRPAmount(): XRPAmount {
-    return new XRPAmount()
-  }
+  public async createSignedTransaction(
+    normalizedAmount: string,
+    destination: string,
+    sender: Wallet,
+    ledgerSequenceMargin: number,
+  ): Promise<SignedTransaction> {
+    const fee = await this.getFee()
+    const accountInfo = await this.getAccountInfo(sender.getAddress())
+    const ledgerSequence = await this.getLatestValidatedLedgerSequence()
+    const lastLedger = ledgerSequence.toObject().index + ledgerSequenceMargin
+    const xrpAmount = new XRPAmount()
+    xrpAmount.setDrops(normalizedAmount.toString())
 
-  public Payment(): Payment {
-    return new Payment()
-  }
+    const payment = new Payment()
+    payment.setXrpAmount(xrpAmount)
+    payment.setDestination(destination)
 
-  public Transaction(): Transaction {
-    return new Transaction()
-  }
+    const transaction = new Transaction()
+    transaction.setAccount(sender.getAddress())
+    transaction.setFee(fee.getAmount())
+    transaction.setSequence(accountInfo.getSequence())
+    transaction.setPayment(payment)
+    transaction.setLastLedgerSequence(lastLedger)
+    transaction.setSigningPublicKeyHex(sender.getPublicKey())
 
-  public SubmitSignedTransactionRequest(): SubmitSignedTransactionRequest {
-    return new SubmitSignedTransactionRequest()
+    try {
+      const signedTransaction = Signer.signLegacyTransaction(
+        transaction,
+        sender,
+      )
+      if (signedTransaction === undefined) {
+        throw new Error(XpringClientErrorMessages.signingFailure)
+      }
+      return signedTransaction
+    } catch (signingError) {
+      const signingErrorMessage = `${XpringClientErrorMessages.signingFailure}. ${signingError.message}`
+      throw new Error(signingErrorMessage)
+    }
   }
-
-  public GetLatestValidatedLedgerSequenceRequest(): GetLatestValidatedLedgerSequenceRequest {
-    return new GetLatestValidatedLedgerSequenceRequest()
-  }
-
-  public GetTransactionStatusRequest(): GetTransactionStatusRequest {
-    return new GetTransactionStatusRequest()
-  }
-
-  public GetAccountInfoRequest(): GetAccountInfoRequest {
-    return new GetAccountInfoRequest()
-  }
-
-  public GetFeeRequest(): GetFeeRequest {
-    return new GetFeeRequest()
-  }
-  /* eslint-enable class-methods-use-this */
 }
 
-export default LegacyGRPCNetworkClient
+export default LegacyGRPCNetworkClientWeb

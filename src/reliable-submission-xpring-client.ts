@@ -1,7 +1,7 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from './xpring-client-decorator'
-import RawTransactionStatus from './raw-transaction-status'
+import { RawTransactionStatus } from './raw-transaction'
 import TransactionStatus from './transaction-status'
 
 async function sleep(milliseconds: number): Promise<void> {

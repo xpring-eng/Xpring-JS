@@ -2,67 +2,18 @@ import { Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
-import RawTransactionStatus from './raw-transaction-status'
-import GRPCNetworkClient from './grpc-network-client'
+import RawTransaction from './raw-transaction'
+import GRPCNetworkClientNode from './grpc-network-client'
 import GRPCNetworkClientWeb from './grpc-network-client.web'
-import { NetworkClient } from './network-client'
-import { GetTxResponse } from './generated/web/rpc/v1/tx_pb'
-import { GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
-import { XRPDropsAmount } from './generated/web/rpc/v1/amount_pb'
+import { XRPDropsAmount } from './generated/web/rpc/v1/amount_pb' // TODO would be nice to have 0 references to generated files here
 import isNode from './utils'
+import { NetworkClient } from './network-client'
+import XpringClientErrorMessages from './xpring-client-error-messages'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
-
-/**
- * Error messages from XpringClient.
- */
-export class XpringClientErrorMessages {
-  public static readonly malformedResponse = 'Malformed Response.'
-
-  public static readonly unimplemented = 'Unimplemented.'
-
-  /* eslint-disable @typescript-eslint/indent */
-  public static readonly xAddressRequired =
-    'Please use the X-Address format. See: https://xrpaddress.info/.'
-  /* eslint-enable @typescript-eslint/indent */
-}
-
-/**
- * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
- */
-class GetTxResponseWrapper implements RawTransactionStatus {
-  public constructor(private readonly getTxResponse: GetTxResponse) {}
-
-  public getValidated(): boolean {
-    return this.getTxResponse.getValidated()
-  }
-
-  public getTransactionStatusCode(): string {
-    const meta = this.getTxResponse.getMeta()
-    if (!meta) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    const transactionResult = meta.getTransactionResult()
-    if (!transactionResult) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    return transactionResult.getResult()
-  }
-
-  public getLastLedgerSequence(): number {
-    const transaction = this.getTxResponse.getTransaction()
-    if (!transaction) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    return transaction.getLastLedgerSequence()
-  }
-}
 
 /**
  * DefaultXpringClient is a client which interacts with the Xpring platform.
@@ -81,7 +32,7 @@ class DefaultXpringClient implements XpringClientDecorator {
     forceWeb = false,
   ): DefaultXpringClient {
     return isNode() && !forceWeb
-      ? new DefaultXpringClient(new GRPCNetworkClient(grpcURL))
+      ? new DefaultXpringClient(new GRPCNetworkClientNode(grpcURL))
       : new DefaultXpringClient(new GRPCNetworkClientWeb(grpcURL))
   }
 
@@ -108,13 +59,9 @@ class DefaultXpringClient implements XpringClientDecorator {
       )
     }
 
-    const account = this.networkClient.AccountAddress()
-    account.setAddress(classicAddress.address)
-
-    const request = this.networkClient.GetAccountInfoRequest()
-    request.setAccount(account)
-
-    const accountInfo = await this.networkClient.getAccountInfo(request)
+    const accountInfo = await this.networkClient.getAccountInfo(
+      classicAddress.address,
+    )
     const accountData = accountInfo.getAccountData()
     if (!accountData) {
       throw new Error(XpringClientErrorMessages.malformedResponse)
@@ -167,25 +114,21 @@ class DefaultXpringClient implements XpringClientDecorator {
   }
 
   public async getLastValidatedLedgerSequence(): Promise<number> {
-    const getFeeResponse = await this.getFee()
+    const getFeeResponse = await this.networkClient.getFee()
     return getFeeResponse.getLedgerCurrentIndex()
   }
 
   public async getRawTransactionStatus(
     transactionHash: string,
-  ): Promise<RawTransactionStatus> {
-    const getTxRequest = this.networkClient.GetTxRequest()
-    getTxRequest.setHash(Utils.toBytes(transactionHash))
-
-    const getTxResponse = await this.networkClient.getTx(getTxRequest)
-
-    return new GetTxResponseWrapper(getTxResponse)
+  ): Promise<RawTransaction> {
+    const getTxResponse = await this.networkClient.getTx(transactionHash)
+    return new RawTransaction(getTxResponse)
   }
 
   // TODO Keefer implement method and remove tslint ignore and fix tsconfig nounusedlocals
   // tslint:disable-next-line
   private async getMinimumFee(): Promise<XRPDropsAmount> {
-    const getFeeResponse = await this.getFee()
+    const getFeeResponse = await this.networkClient.getFee()
 
     const fee = getFeeResponse.getDrops()
     if (!fee) {
@@ -198,12 +141,6 @@ class DefaultXpringClient implements XpringClientDecorator {
     }
 
     return minimumFee
-  }
-
-  // TODO(keefertaylor): Add tests for this method once send is hooked up.
-  private async getFee(): Promise<GetFeeResponse> {
-    const getFeeRequest = this.networkClient.GetFeeRequest()
-    return this.networkClient.getFee(getFeeRequest)
   }
 }
 

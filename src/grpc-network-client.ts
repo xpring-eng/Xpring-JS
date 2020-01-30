@@ -1,4 +1,5 @@
 import { credentials } from 'grpc'
+import { Utils } from 'xpring-common-js'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
@@ -11,14 +12,14 @@ import {
 } from './generated/node/rpc/v1/submit_pb'
 import { XRPLedgerAPIServiceClient } from './generated/node/rpc/v1/xrp_ledger_grpc_pb'
 
-import { NetworkClient } from './network-client'
 import { AccountAddress } from './generated/node/rpc/v1/amount_pb'
 import isNode from './utils'
+import { NetworkClient } from './network-client'
 
 /**
  * A GRPC Based network client.
  */
-class GRPCNetworkClient implements NetworkClient {
+class GRPCNetworkClientNode implements NetworkClient {
   private readonly grpcClient: XRPLedgerAPIServiceClient
 
   public constructor(grpcURL: string) {
@@ -33,9 +34,13 @@ class GRPCNetworkClient implements NetworkClient {
   }
 
   public async getAccountInfo(
-    request: GetAccountInfoRequest,
+    address: string,
   ): Promise<GetAccountInfoResponse> {
     return new Promise((resolve, reject): void => {
+      const request = new GetAccountInfoRequest()
+      const account = new AccountAddress()
+      account.setAddress(address)
+      request.setAccount(account)
       this.grpcClient.getAccountInfo(request, (error, response): void => {
         if (error !== null || response === null) {
           reject(error)
@@ -46,8 +51,9 @@ class GRPCNetworkClient implements NetworkClient {
     })
   }
 
-  public async getFee(request: GetFeeRequest): Promise<GetFeeResponse> {
+  public async getFee(): Promise<GetFeeResponse> {
     return new Promise((resolve, reject): void => {
+      const request = new GetFeeRequest()
       this.grpcClient.getFee(request, (error, response): void => {
         if (error !== null || response === null) {
           reject(error)
@@ -58,8 +64,10 @@ class GRPCNetworkClient implements NetworkClient {
     })
   }
 
-  public async getTx(request: GetTxRequest): Promise<GetTxResponse> {
+  public async getTx(hash: string): Promise<GetTxResponse> {
     return new Promise((resolve, reject): void => {
+      const request = new GetTxRequest()
+      request.setHash(Utils.toBytes(hash))
       this.grpcClient.getTx(request, (error, response): void => {
         if (error !== null || response === null) {
           reject(error)
@@ -83,24 +91,6 @@ class GRPCNetworkClient implements NetworkClient {
       })
     })
   }
-
-  /* eslint-disable class-methods-use-this */
-  public AccountAddress(): AccountAddress {
-    return new AccountAddress()
-  }
-
-  public GetAccountInfoRequest(): GetAccountInfoRequest {
-    return new GetAccountInfoRequest()
-  }
-
-  public GetTxRequest(): GetTxRequest {
-    return new GetTxRequest()
-  }
-
-  public GetFeeRequest(): GetFeeRequest {
-    return new GetFeeRequest()
-  }
-  /* eslint-enable class-methods-use-this */
 }
 
-export default GRPCNetworkClient
+export default GRPCNetworkClientNode
