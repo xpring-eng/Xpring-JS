@@ -7,6 +7,7 @@ import {
 import {
   GetFeeRequest,
   GetFeeResponse,
+  Fee,
 } from '../../src/generated/web/rpc/v1/fee_pb'
 import {
   GetTxRequest,
@@ -96,14 +97,27 @@ export class FakeNetworkClientResponses {
    * Construct a default FeeResponse.
    */
   public static defaultFeeResponse(): GetFeeResponse {
-    return new GetFeeResponse()
+    const minimumFee = new XRPDropsAmount()
+    minimumFee.setDrops(1)
+
+    const fee = new Fee()
+    fee.setMinimumFee(minimumFee)
+
+    const getFeeResponse = new GetFeeResponse()
+    getFeeResponse.setDrops(fee)
+    getFeeResponse.setLedgerCurrentIndex(1)
+
+    return getFeeResponse
   }
 
   /**
    * Construct a default SubmitTransactionResponse.
    */
   public static defaultSubmitTransactionResponse(): SubmitTransactionResponse {
-    return new SubmitTransactionResponse()
+    const submitTransactionResponse = new SubmitTransactionResponse()
+    submitTransactionResponse.setHash('123456')
+
+    return submitTransactionResponse
   }
 
   /**
@@ -187,5 +201,9 @@ export class FakeNetworkClient implements NetworkClient {
 
   public GetFeeRequest(): GetFeeRequest {
     return new GetFeeRequest()
+  }
+
+  public SubmitTransactionRequest(): SubmitTransactionRequest {
+    return new SubmitTransactionRequest()
   }
 }
