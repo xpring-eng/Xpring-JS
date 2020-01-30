@@ -1,4 +1,4 @@
-import { Utils, Wallet } from 'xpring-common-js'
+import { Signer, Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
@@ -8,19 +8,30 @@ import GRPCNetworkClientWeb from './grpc-network-client.web'
 import { NetworkClient } from './network-client'
 import { GetTxResponse } from './generated/web/rpc/v1/tx_pb'
 import { GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
-import { XRPDropsAmount } from './generated/web/rpc/v1/amount_pb'
+import {
+  AccountAddress,
+  CurrencyAmount,
+  XRPDropsAmount,
+} from './generated/web/rpc/v1/amount_pb'
 import isNode from './utils'
+import { Payment, Transaction } from './generated/web/rpc/v1/transaction_pb'
+import { AccountRoot } from './generated/web/rpc/v1/ledger_objects_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
 
+/** A margin to pad the current ledger sequence with when submitting transactions. */
+const maxLedgerVersionOffset = 10
+
 /**
  * Error messages from XpringClient.
  */
 export class XpringClientErrorMessages {
   public static readonly malformedResponse = 'Malformed Response.'
+
+  public static readonly signingFailure = 'Unable to sign the transaction'
 
   public static readonly unimplemented = 'Unimplemented.'
 
@@ -159,11 +170,66 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    _amount: BigInteger | number | string,
-    _destination: string,
-    _sender: Wallet,
+    amount: BigInteger | number | string,
+    destination: string,
+    sender: Wallet,
   ): Promise<string> {
-    throw new Error(XpringClientErrorMessages.unimplemented)
+    if (!Utils.isValidXAddress(destination)) {
+      throw new Error(XpringClientErrorMessages.xAddressRequired)
+    }
+
+    const classicAddress = Utils.decodeXAddress(sender.getAddress())
+    if (!classicAddress) {
+      throw new Error(XpringClientErrorMessages.xAddressRequired)
+    }
+
+    const normalizedAmount = bigInt(amount.toString())
+
+    const fee = await this.getMinimumFee()
+    const accountData = await this.getAccountData(classicAddress.address)
+    const lastValidatedLedgerSequence = await this.getLastValidatedLedgerSequence()
+
+    const xrpDropsAmount = new XRPDropsAmount()
+    xrpDropsAmount.setDrops(normalizedAmount.toJSNumber())
+
+    const currencyAmount = new CurrencyAmount()
+    currencyAmount.setXrpAmount(xrpDropsAmount)
+
+    const destinationAccount = new AccountAddress()
+    destinationAccount.setAddress(destination)
+
+    const payment = new Payment()
+    payment.setDestination(destinationAccount)
+    payment.setAmount(currencyAmount)
+
+    const account = new AccountAddress()
+    account.setAddress(sender.getAddress())
+
+    const transaction = new Transaction()
+    transaction.setAccount(account)
+    transaction.setFee(fee)
+    transaction.setSequence(accountData.getSequence())
+    transaction.setPayment(payment)
+    transaction.setLastLedgerSequence(
+      lastValidatedLedgerSequence + maxLedgerVersionOffset,
+    )
+
+    const signingPublicKeyBytes = Utils.toBytes(sender.getPublicKey())
+    transaction.setSigningPublicKey(signingPublicKeyBytes)
+
+    const signedTransaction = Signer.signTransaction(transaction, sender)
+    if (!signedTransaction) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+
+    const submitTransactionRequest = this.networkClient.SubmitTransactionRequest()
+    submitTransactionRequest.setSignedTransaction(signedTransaction)
+
+    const response = await this.networkClient.submitTransaction(
+      submitTransactionRequest,
+    )
+
+    return Utils.toHex(response.getHash_asU8())
   }
 
   public async getLastValidatedLedgerSequence(): Promise<number> {
@@ -204,6 +270,26 @@ class DefaultXpringClient implements XpringClientDecorator {
   private async getFee(): Promise<GetFeeResponse> {
     const getFeeRequest = this.networkClient.GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)
+  }
+
+  private async getAccountData(address: string): Promise<AccountRoot> {
+    const account = this.networkClient.AccountAddress()
+    account.setAddress(address)
+
+    const request = this.networkClient.GetAccountInfoRequest()
+    request.setAccount(account)
+
+    const accountInfo = await this.networkClient.getAccountInfo(request)
+    if (!accountInfo) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+
+    const accountData = accountInfo.getAccountData()
+    if (!accountData) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+
+    return accountData
   }
 }
 
