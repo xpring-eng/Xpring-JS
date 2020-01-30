@@ -23,7 +23,7 @@ import { AccountRoot } from './generated/web/rpc/v1/ledger_objects_pb'
 /* eslint-disable class-methods-use-this */
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
-const ledgerSequenceMargin = 10
+const maxLedgerVersionOffset = 10
 
 /**
  * Error messages from XpringClient.
@@ -211,7 +211,7 @@ class DefaultXpringClient implements XpringClientDecorator {
     transaction.setSequence(accountData.getSequence())
     transaction.setPayment(payment)
     transaction.setLastLedgerSequence(
-      lastValidatedLedgerSequence + ledgerSequenceMargin,
+      lastValidatedLedgerSequence + maxLedgerVersionOffset,
     )
 
     const signingPublicKeyBytes = Utils.toBytes(sender.getPublicKey())
@@ -306,7 +306,7 @@ class DefaultXpringClient implements XpringClientDecorator {
       return bigInt(value)
     }
     // Value is already a BigInteger.
-    return value
+    return bigInt(value)
   }
 }
 
