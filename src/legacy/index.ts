@@ -1,24 +1,23 @@
 import { Utils, Wallet } from 'xpring-common-js'
-import bigInt, { BigInteger } from 'big-integer'
-import { XpringClientDecorator } from './xpring-client-decorator'
-import TransactionStatus from './transaction-status'
-import RawTransaction from './raw-transaction'
-import GRPCNetworkClientNode from './grpc-network-client'
-import GRPCNetworkClientWeb from './grpc-network-client.web'
-import { XRPDropsAmount } from './generated/web/rpc/v1/amount_pb' // TODO would be nice to have 0 references to generated files here
-import isNode from './utils'
-import { NetworkClient } from './network-client'
-import XpringClientErrorMessages from './xpring-client-error-messages'
 
-// TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable class-methods-use-this */
+import bigInt, { BigInteger } from 'big-integer'
+
+import { RawTransactionStatus } from '../utils/raw-transaction'
+import LegacyGRPCNetworkClientNode from './grpc/node'
+import LegacyGRPCNetworkClientWeb from './grpc/web'
+import { XpringClientDecorator } from '../utils/xpring-client-decorator'
+import TransactionStatus from '../utils/transaction-status'
+import isNode from '../utils'
+import { LegacyNetworkClient } from './grpc/network-client'
+import XpringClientErrorMessages from '../utils/xpring-client-error-messages'
+
+/** A margin to pad the current ledger sequence with when submitting transactions. */
+const ledgerSequenceMargin = 10
 
 /**
  * DefaultXpringClient is a client which interacts with the Xpring platform.
  */
-class DefaultXpringClient implements XpringClientDecorator {
+class LegacyDefaultXpringClient implements XpringClientDecorator {
   /**
    * Create a new DefaultXpringClient.
    *
@@ -30,10 +29,10 @@ class DefaultXpringClient implements XpringClientDecorator {
   public static defaultXpringClientWithEndpoint(
     grpcURL: string,
     forceWeb = false,
-  ): DefaultXpringClient {
+  ): LegacyDefaultXpringClient {
     return isNode() && !forceWeb
-      ? new DefaultXpringClient(new GRPCNetworkClientNode(grpcURL))
-      : new DefaultXpringClient(new GRPCNetworkClientWeb(grpcURL))
+      ? new LegacyDefaultXpringClient(new LegacyGRPCNetworkClientNode(grpcURL))
+      : new LegacyDefaultXpringClient(new LegacyGRPCNetworkClientWeb(grpcURL))
   }
 
   /**
@@ -43,7 +42,7 @@ class DefaultXpringClient implements XpringClientDecorator {
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
    */
-  public constructor(private readonly networkClient: NetworkClient) {}
+  public constructor(private readonly networkClient: LegacyNetworkClient) {}
 
   /**
    * Retrieve the balance for the given address.
@@ -52,26 +51,24 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A `BigInteger` representing the number of drops of XRP in the account.
    */
   public async getBalance(address: string): Promise<BigInteger> {
-    const classicAddress = Utils.decodeXAddress(address)
-    if (!classicAddress) {
+    if (!Utils.isValidXAddress(address)) {
       return Promise.reject(
         new Error(XpringClientErrorMessages.xAddressRequired),
       )
     }
 
-    const accountInfo = await this.networkClient.getAccountInfo(
-      classicAddress.address,
-    )
-    const accountData = accountInfo.getAccountData()
-    if (!accountData) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
+    return this.networkClient
+      .getAccountInfo(address)
+      .then(async (accountInfo) => {
+        const balance = accountInfo.getBalance()
+        if (balance === undefined) {
+          return Promise.reject(
+            new Error(XpringClientErrorMessages.malformedResponse),
+          )
+        }
 
-    const balance = accountData.getBalance()
-    if (!balance) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-    return bigInt(balance.getDrops())
+        return bigInt(balance.getDrops())
+      })
   }
 
   /**
@@ -106,42 +103,43 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    _amount: BigInteger | number | string,
-    _destination: string,
-    _sender: Wallet,
+    amount: BigInteger | number | string,
+    destination: string,
+    sender: Wallet,
   ): Promise<string> {
-    throw new Error(XpringClientErrorMessages.unimplemented)
+    if (!Utils.isValidXAddress(destination)) {
+      throw new Error(XpringClientErrorMessages.xAddressRequired)
+    }
+    const signedTransaction = await this.networkClient.createSignedTransaction(
+      amount.toString(),
+      destination,
+      sender,
+      ledgerSequenceMargin,
+    )
+    const response = await this.networkClient.submitSignedTransaction(
+      signedTransaction,
+    )
+
+    const transactionBlob = response.getTransactionBlob()
+    const transactionHash = Utils.transactionBlobToTransactionHash(
+      transactionBlob,
+    )
+    if (!transactionHash) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+    return transactionHash
   }
 
   public async getLastValidatedLedgerSequence(): Promise<number> {
-    const getFeeResponse = await this.networkClient.getFee()
-    return getFeeResponse.getLedgerCurrentIndex()
+    const ledgerSequence = await this.networkClient.getLatestValidatedLedgerSequence()
+    return ledgerSequence.getIndex()
   }
 
   public async getRawTransactionStatus(
     transactionHash: string,
-  ): Promise<RawTransaction> {
-    const getTxResponse = await this.networkClient.getTx(transactionHash)
-    return new RawTransaction(getTxResponse)
-  }
-
-  // TODO Keefer implement method and remove tslint ignore and fix tsconfig nounusedlocals
-  // tslint:disable-next-line
-  private async getMinimumFee(): Promise<XRPDropsAmount> {
-    const getFeeResponse = await this.networkClient.getFee()
-
-    const fee = getFeeResponse.getDrops()
-    if (!fee) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    const minimumFee = fee.getMinimumFee()
-    if (!minimumFee) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    return minimumFee
+  ): Promise<RawTransactionStatus> {
+    return this.networkClient.getTransactionStatus(transactionHash)
   }
 }
 
-export default DefaultXpringClient
+export default LegacyDefaultXpringClient

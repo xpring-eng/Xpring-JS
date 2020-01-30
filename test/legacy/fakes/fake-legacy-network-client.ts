@@ -1,5 +1,5 @@
 import { Wallet } from 'xpring-common-js'
-import { LegacyNetworkClient } from '../../../src/legacy/legacy-network-client'
+import { LegacyNetworkClient } from '../../../src/legacy/grpc/network-client'
 import { AccountInfo } from '../../../src/generated/node/legacy/account_info_pb'
 import { Fee } from '../../../src/generated/node/legacy/fee_pb'
 import { SubmitSignedTransactionResponse } from '../../../src/generated/node/legacy/submit_signed_transaction_response_pb'

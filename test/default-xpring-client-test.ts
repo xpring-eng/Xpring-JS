@@ -7,9 +7,9 @@ import {
 import 'mocha'
 import { GetTxResponse } from '../src/generated/node/rpc/v1/tx_pb'
 import { Meta, TransactionResult } from '../src/generated/node/rpc/v1/meta_pb'
-import TransactionStatus from '../src/transaction-status'
-import DefaultXpringClient from '../src/default-xpring-client'
-import XpringClientErrorMessages from '../src/xpring-client-error-messages'
+import TransactionStatus from '../src/utils/transaction-status'
+import DefaultXpringClient from '../src/clients/default'
+import XpringClientErrorMessages from '../src/utils/xpring-client-error-messages'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 

@@ -1,8 +1,8 @@
 import { BigInteger } from 'big-integer'
-import { XpringClientDecorator } from '../../src/xpring-client-decorator'
-import TransactionStatus from '../../src/transaction-status'
-import { Wallet } from '../../src/index'
-import { RawTransactionStatus } from '../../src/raw-transaction'
+import { Wallet } from 'xpring-common-js'
+import { XpringClientDecorator } from '../../src/utils/xpring-client-decorator'
+import TransactionStatus from '../../src/utils/transaction-status'
+import { RawTransactionStatus } from '../../src/utils/raw-transaction'
 
 class FakeXpringClient implements XpringClientDecorator {
   public constructor(

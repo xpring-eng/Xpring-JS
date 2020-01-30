@@ -5,14 +5,14 @@ import { Utils, Wallet } from 'xpring-common-js'
 import chaiString from 'chai-string'
 import { TransactionStatus as TransactionStatusResponse } from '../../src/generated/node/legacy/transaction_status_pb'
 
-import LegacyDefaultXpringClient from '../../src/legacy/legacy-default-xpring-client'
+import LegacyDefaultXpringClient from '../../src/legacy'
 import {
   FakeLegacyNetworkClient,
   FakeLegacyNetworkClientResponses,
 } from './fakes/fake-legacy-network-client'
 import 'mocha'
-import TransactionStatus from '../../src/transaction-status'
-import XpringClientErrorMessages from '../../src/xpring-client-error-messages'
+import TransactionStatus from '../../src/utils/transaction-status'
+import XpringClientErrorMessages from '../../src/utils/xpring-client-error-messages'
 
 const fakeSucceedingNetworkClient = new FakeLegacyNetworkClient()
 const fakeErroringNetworkClient = new FakeLegacyNetworkClient(

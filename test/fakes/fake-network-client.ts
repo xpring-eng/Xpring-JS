@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { NetworkClient } from '../../src/network-client'
+import { NetworkClientDecorator } from '../../src/utils/network-client-decorator'
 import { GetAccountInfoResponse } from '../../src/generated/web/rpc/v1/account_info_pb'
 import { GetFeeResponse } from '../../src/generated/web/rpc/v1/fee_pb'
 import { GetTxResponse } from '../../src/generated/web/rpc/v1/tx_pb'
@@ -115,7 +115,7 @@ export class FakeNetworkClientResponses {
 /**
  * A fake network client which stubs network interaction.
  */
-export class FakeNetworkClient implements NetworkClient {
+export class FakeNetworkClient implements NetworkClientDecorator {
   public constructor(
     private readonly responses: FakeNetworkClientResponses = FakeNetworkClientResponses.defaultSuccessfulResponses,
   ) {}

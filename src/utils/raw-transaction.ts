@@ -1,5 +1,5 @@
 import XpringClientErrorMessages from './xpring-client-error-messages'
-import { GetTxResponse } from './generated/web/rpc/v1/tx_pb'
+import { GetTxResponse } from '../generated/web/rpc/v1/tx_pb'
 
 /** Abstraction around raw Transaction Status for compatibility. */
 export interface RawTransactionStatus {

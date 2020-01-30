@@ -1,8 +1,8 @@
 import { Wallet } from 'xpring-common-js'
 import { assert } from 'chai'
 import bigInt from 'big-integer'
-import XpringClient from '../src/xpring-client'
-import TransactionStatus from '../src/transaction-status'
+import XpringClient from '../src'
+import TransactionStatus from '../src/utils/transaction-status'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute

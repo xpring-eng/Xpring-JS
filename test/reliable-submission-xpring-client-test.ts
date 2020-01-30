@@ -3,8 +3,8 @@ import { Wallet } from 'xpring-common-js'
 import bigInt from 'big-integer'
 import { TransactionStatus as RawTransactionStatus } from '../src/generated/node/legacy/transaction_status_pb'
 import FakeXpringClient from './fakes/fake-xpring-client'
-import ReliableSubmissionXpringClient from '../src/reliable-submission-xpring-client'
-import TransactionStatus from '../src/transaction-status'
+import ReliableSubmissionXpringClient from '../src/clients/reliable-submission'
+import TransactionStatus from '../src/utils/transaction-status'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
