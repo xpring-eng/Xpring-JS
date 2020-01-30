@@ -1,35 +1,31 @@
-import { Signer, Utils, Wallet } from "xpring-common-js";
-import { AccountInfo } from "../../generated/legacy/account_info_pb";
-import { GetAccountInfoRequest } from "../../generated/legacy/get_account_info_request_pb";
-import { GetFeeRequest } from "../../generated/legacy/get_fee_request_pb";
-import { GetLatestValidatedLedgerSequenceRequest } from "../../generated/legacy/get_latest_validated_ledger_sequence_request_pb";
-import { GetTransactionStatusRequest } from "../../generated/legacy/get_transaction_status_request_pb";
-import { Payment } from "../../generated/legacy/payment_pb";
-import { SubmitSignedTransactionRequest } from "../../generated/legacy/submit_signed_transaction_request_pb";
-import { Transaction } from "../../generated/legacy/transaction_pb";
-import RawTransactionStatus from "../raw-transaction-status";
-import { XRPAmount } from "../../generated/legacy/xrp_amount_pb";
-import { LegacyNetworkClient } from "./legacy-network-client";
-import LegacyGRPCNetworkClient from "./legacy-grpc-network-client";
-import { XpringClientDecorator } from "../xpring-client-decorator";
-import TransactionStatus from "../transaction-status";
+import { Signer, Utils, Wallet } from 'xpring-common-js'
 
-/* global BigInt */
+import bigInt, { BigInteger } from 'big-integer'
+import { AccountInfo } from '../generated/web/legacy/account_info_pb'
+import { XRPAmount } from '../generated/web/legacy/xrp_amount_pb'
+
+import RawTransactionStatus from '../raw-transaction-status'
+import LegacyGRPCNetworkClient from './legacy-grpc-network-client'
+import LegacyGRPCNetworkClientWeb from './legacy-grpc-network-client.web'
+import { LegacyNetworkClient } from './legacy-network-client'
+import { XpringClientDecorator } from '../xpring-client-decorator'
+import TransactionStatus from '../transaction-status'
+import isNode from '../utils'
 
 /**
  * Error messages from XpringClient.
  */
 export class LegacyXpringClientErrorMessages {
-  public static readonly malformedResponse = "Malformed Response.";
-  public static readonly signingFailure = "Unable to sign the transaction";
-  /* eslint-disable  @typescript-eslint/indent */
+  public static readonly malformedResponse = 'Malformed Response.'
+
+  public static readonly signingFailure = 'Unable to sign the transaction'
+
   public static readonly xAddressRequired =
-    "Please use the X-Address format. See: https://xrpaddress.info/.";
-  /* eslint-enable  @typescript-eslint/indent */
+    'Please use the X-Address format. See: https://xrpaddress.info/.'
 }
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
-const ledgerSequenceMargin = 10;
+const ledgerSequenceMargin = 10
 
 /**
  * DefaultXpringClient is a client which interacts with the Xpring platform.
@@ -41,12 +37,15 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
    * The DefaultXpringClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
+   * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public static defaultXpringClientWithEndpoint(
-    grpcURL: string
+    grpcURL: string,
+    forceWeb = false,
   ): LegacyDefaultXpringClient {
-    const grpcClient = new LegacyGRPCNetworkClient(grpcURL);
-    return new LegacyDefaultXpringClient(grpcClient);
+    return isNode() && !forceWeb
+      ? new LegacyDefaultXpringClient(new LegacyGRPCNetworkClient(grpcURL))
+      : new LegacyDefaultXpringClient(new LegacyGRPCNetworkClientWeb(grpcURL))
   }
 
   /**
@@ -62,25 +61,25 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
    * Retrieve the balance for the given address.
    *
    * @param address The X-Address to retrieve a balance for.
-   * @returns A `BigInt` representing the number of drops of XRP in the account.
+   * @returns A `BigInteger` representing the number of drops of XRP in the account.
    */
-  public async getBalance(address: string): Promise<BigInt> {
+  public async getBalance(address: string): Promise<BigInteger> {
     if (!Utils.isValidXAddress(address)) {
       return Promise.reject(
-        new Error(LegacyXpringClientErrorMessages.xAddressRequired)
-      );
+        new Error(LegacyXpringClientErrorMessages.xAddressRequired),
+      )
     }
 
-    return this.getAccountInfo(address).then(async accountInfo => {
-      const balance = accountInfo.getBalance();
+    return this.getAccountInfo(address).then(async (accountInfo) => {
+      const balance = accountInfo.getBalance()
       if (balance === undefined) {
         return Promise.reject(
-          new Error(LegacyXpringClientErrorMessages.malformedResponse)
-        );
+          new Error(LegacyXpringClientErrorMessages.malformedResponse),
+        )
       }
 
-      return BigInt(balance.getDrops());
-    });
+      return bigInt(balance.getDrops())
+    })
   }
 
   /**
@@ -90,172 +89,168 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
    * @returns The status of the given transaction.
    */
   public async getTransactionStatus(
-    transactionHash: string
+    transactionHash: string,
   ): Promise<TransactionStatus> {
     const transactionStatus = await this.getRawTransactionStatus(
-      transactionHash
-    );
+      transactionHash,
+    )
 
     // Return pending if the transaction is not validated.
     if (!transactionStatus.getValidated()) {
-      return TransactionStatus.Pending;
+      return TransactionStatus.Pending
     }
 
-    return transactionStatus.getTransactionStatusCode().startsWith("tes")
+    return transactionStatus.getTransactionStatusCode().startsWith('tes')
       ? TransactionStatus.Succeeded
-      : TransactionStatus.Failed;
+      : TransactionStatus.Failed
   }
-
-  /* eslint-disable no-dupe-class-members */
 
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
-   * @param drops A `BigInt`, number or numeric string representing the number of drops to send.
+   * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    amount: BigInt | number | string,
+    amount: BigInteger | number | string,
     destination: string,
-    sender: Wallet
+    sender: Wallet,
   ): Promise<string> {
     if (!Utils.isValidXAddress(destination)) {
       return Promise.reject(
-        new Error(LegacyXpringClientErrorMessages.xAddressRequired)
-      );
+        new Error(LegacyXpringClientErrorMessages.xAddressRequired),
+      )
     }
 
-    const normalizedAmount = this.toBigInt(amount);
+    const normalizedAmount = LegacyDefaultXpringClient.toBigInt(amount)
 
-    return this.getFee().then(async fee => {
+    return this.getFee().then(async (fee) => {
       return this.getAccountInfo(sender.getAddress()).then(
-        async accountInfo => {
+        async (accountInfo) => {
           return this.getLastValidatedLedgerSequence().then(
-            async ledgerSequence => {
+            async (ledgerSequence) => {
               if (accountInfo.getSequence() === undefined) {
                 return Promise.reject(
-                  new Error(LegacyXpringClientErrorMessages.malformedResponse)
-                );
+                  new Error(LegacyXpringClientErrorMessages.malformedResponse),
+                )
               }
 
-              const xrpAmount = new XRPAmount();
-              xrpAmount.setDrops(normalizedAmount.toString());
+              const xrpAmount = this.networkClient.XRPAmount()
+              xrpAmount.setDrops(normalizedAmount.toString())
 
-              const payment = new Payment();
-              payment.setXrpAmount(xrpAmount);
-              payment.setDestination(destination);
+              const payment = this.networkClient.Payment()
+              payment.setXrpAmount(xrpAmount)
+              payment.setDestination(destination)
 
-              const transaction = new Transaction();
-              transaction.setAccount(sender.getAddress());
-              transaction.setFee(fee);
-              transaction.setSequence(accountInfo.getSequence());
-              transaction.setPayment(payment);
+              const transaction = this.networkClient.Transaction()
+              transaction.setAccount(sender.getAddress())
+              transaction.setFee(fee)
+              transaction.setSequence(accountInfo.getSequence())
+              transaction.setPayment(payment)
               transaction.setLastLedgerSequence(
-                ledgerSequence + ledgerSequenceMargin
-              );
-              transaction.setSigningPublicKeyHex(sender.getPublicKey());
+                ledgerSequence + ledgerSequenceMargin,
+              )
+              transaction.setSigningPublicKeyHex(sender.getPublicKey())
 
-              var signedTransaction;
+              let signedTransaction
               try {
-                signedTransaction = Signer.signLegacyTransaction(transaction, sender);
+                signedTransaction = Signer.signLegacyTransaction(
+                  transaction,
+                  sender,
+                )
               } catch (signingError) {
-                const signingErrorMessage =
-                  LegacyXpringClientErrorMessages.signingFailure +
-                  ". " +
-                  signingError.message;
-                return Promise.reject(new Error(signingErrorMessage));
+                const signingErrorMessage = `${LegacyXpringClientErrorMessages.signingFailure}. ${signingError.message}`
+                return Promise.reject(new Error(signingErrorMessage))
               }
-              if (signedTransaction == undefined) {
+              if (signedTransaction === undefined) {
                 return Promise.reject(
-                  new Error(LegacyXpringClientErrorMessages.signingFailure)
-                );
+                  new Error(LegacyXpringClientErrorMessages.signingFailure),
+                )
               }
 
-              const submitSignedTransactionRequest = new SubmitSignedTransactionRequest();
+              const submitSignedTransactionRequest = this.networkClient.SubmitSignedTransactionRequest()
               submitSignedTransactionRequest.setSignedTransaction(
-                signedTransaction
-              );
+                signedTransaction,
+              )
 
               return this.networkClient
                 .submitSignedTransaction(submitSignedTransactionRequest)
-                .then(async response => {
-                  const transactionBlob = response.getTransactionBlob();
+                .then(async (response) => {
+                  const transactionBlob = response.getTransactionBlob()
                   const transactionHash = Utils.transactionBlobToTransactionHash(
-                    transactionBlob
-                  );
+                    transactionBlob,
+                  )
                   if (!transactionHash) {
                     return Promise.reject(
                       new Error(
-                        LegacyXpringClientErrorMessages.malformedResponse
-                      )
-                    );
+                        LegacyXpringClientErrorMessages.malformedResponse,
+                      ),
+                    )
                   }
-                  return Promise.resolve(transactionHash);
-                });
-            }
-          );
-        }
-      );
-    });
+                  return Promise.resolve(transactionHash)
+                })
+            },
+          )
+        },
+      )
+    })
   }
 
-  /* eslint-enable no-dupe-class-members */
-
   public async getLastValidatedLedgerSequence(): Promise<number> {
-    const getLatestValidatedLedgerSequenceRequest = new GetLatestValidatedLedgerSequenceRequest();
+    const getLatestValidatedLedgerSequenceRequest = this.networkClient.GetLatestValidatedLedgerSequenceRequest()
     const ledgerSequence = await this.networkClient.getLatestValidatedLedgerSequence(
-      getLatestValidatedLedgerSequenceRequest
-    );
-    return ledgerSequence.getIndex();
+      getLatestValidatedLedgerSequenceRequest,
+    )
+    return ledgerSequence.getIndex()
   }
 
   public async getRawTransactionStatus(
-    transactionHash: string
+    transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    const transactionStatusRequest = new GetTransactionStatusRequest();
-    transactionStatusRequest.setTransactionHash(transactionHash);
+    const transactionStatusRequest = this.networkClient.GetTransactionStatusRequest()
+    transactionStatusRequest.setTransactionHash(transactionHash)
 
-    return await this.networkClient.getTransactionStatus(
-      transactionStatusRequest
-    );
+    return this.networkClient.getTransactionStatus(transactionStatusRequest)
   }
 
   private async getAccountInfo(address: string): Promise<AccountInfo> {
-    const getAccountInfoRequest = new GetAccountInfoRequest();
-    getAccountInfoRequest.setAddress(address);
-    return this.networkClient.getAccountInfo(getAccountInfoRequest);
+    const getAccountInfoRequest = this.networkClient.GetAccountInfoRequest()
+    getAccountInfoRequest.setAddress(address)
+    return this.networkClient.getAccountInfo(getAccountInfoRequest)
   }
 
   private async getFee(): Promise<XRPAmount> {
-    const getFeeRequest = new GetFeeRequest();
+    const getFeeRequest = this.networkClient.GetFeeRequest()
 
-    return this.networkClient.getFee(getFeeRequest).then(async fee => {
-      const feeAmount = fee.getAmount();
-      if (feeAmount == undefined) {
+    return this.networkClient.getFee(getFeeRequest).then(async (fee) => {
+      const feeAmount = fee.getAmount()
+      if (feeAmount === undefined) {
         return Promise.reject(
-          new Error(LegacyXpringClientErrorMessages.malformedResponse)
-        );
+          new Error(LegacyXpringClientErrorMessages.malformedResponse),
+        )
       }
-      return feeAmount;
-    });
+      return feeAmount
+    })
   }
 
   /**
-   * Convert a polymorphic numeric value into a BigInt.
+   * Convert a polymorphic numeric value into a BigInteger.
    *
    * @param value The value to convert.
-   * @returns A BigInt representing the input value.
+   * @returns A BigInteger representing the input value.
    */
-  private toBigInt(value: string | number | BigInt): BigInt {
-    if (typeof value == "string" || typeof value == "number") {
-      return BigInt(value);
-    } else {
-      // Value is already a BigInt.
-      return value;
+  private static toBigInt(value: string | number | BigInteger): BigInteger {
+    if (typeof value === 'string') {
+      return bigInt(value)
     }
+    if (typeof value === 'number') {
+      return bigInt(value)
+    }
+    // Value is already a BigInteger.
+    return value
   }
 }
 
-export default LegacyDefaultXpringClient;
+export default LegacyDefaultXpringClient
