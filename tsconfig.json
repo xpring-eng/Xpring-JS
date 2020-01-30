@@ -1,18 +1,33 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
-    "rootDir": "./",
-    "outDir": "build",
-    "target": "esnext",
+    // Basic Options
+    "target": "ES2017",
     "module": "commonjs",
-    "moduleResolution": "node",
+    "declaration": true,
     "sourceMap": true,
-    "removeComments": true,
+
+    // Directories
+    "outDir": "build",
+
+    // Strict Type-Checking Options
     "strict": true,
-    "resolveJsonModule": true,
+    "noImplicitAny": false,
+
+    // Additional Checks
+    "noUnusedLocals": false, // TODO KEEFER make this TRUE after implementing getMinimumFee in Xpring-Client
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // Module Resolution Options
+    "moduleResolution": "node",
+
+    // Advanced Options
+    "allowJs": true,
+    "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true
   },
   "include": [
-    "src/**/*",
+    "src/**/*"
   ]
 }

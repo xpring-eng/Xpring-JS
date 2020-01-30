@@ -1,6 +1,5 @@
 {
     "editor.tabSize": 2,
-
     "[javascript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true
@@ -9,20 +8,11 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true
     },
-
     "eslint.alwaysShowStatus": true,
-    "eslint.autoFixOnSave": true,
     "eslint.lintTask.enable": true,
     "eslint.codeAction.showDocumentation": {
         "enable": true
     },
-    "eslint.validate": [
-        "javascript",
-        {
-            "autoFix": true,
-            "language": "typescript"
-        },
-    ],
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true
     },

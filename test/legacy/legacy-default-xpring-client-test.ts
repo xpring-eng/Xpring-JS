@@ -1,14 +1,10 @@
 import chai, { assert } from 'chai'
 import bigInt from 'big-integer'
 
-import {
-  Utils,
-  Wallet,
-  WalletGenerationResult,
-  TransactionStatus as TransactionStatusResponse,
-} from 'xpring-common-js'
-
+import { Utils, Wallet } from 'xpring-common-js'
 import chaiString from 'chai-string'
+import { TransactionStatus as TransactionStatusResponse } from '../../src/generated/node/legacy/transaction_status_pb'
+
 import LegacyDefaultXpringClient, {
   LegacyXpringClientErrorMessages,
 } from '../../src/legacy/legacy-default-xpring-client'
@@ -107,7 +103,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(
       fakeSucceedingNetworkClient,
     )
-    const { wallet } = Wallet.generateRandomWallet() as WalletGenerationResult
+    const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
 
@@ -133,7 +129,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(
       fakeSucceedingNetworkClient,
     )
-    const { wallet } = Wallet.generateRandomWallet() as WalletGenerationResult
+    const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = 10
 
@@ -159,7 +155,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(
       fakeSucceedingNetworkClient,
     )
-    const { wallet } = Wallet.generateRandomWallet() as WalletGenerationResult
+    const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = '10'
 
@@ -185,7 +181,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(
       fakeSucceedingNetworkClient,
     )
-    const { wallet } = Wallet.generateRandomWallet() as WalletGenerationResult
+    const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = 'not_a_number'
 
@@ -207,7 +203,7 @@ describe('Legacy Default Xpring Client', function(): void {
       feeFailureResponses,
     )
     const xpringClient = new LegacyDefaultXpringClient(feeFailingNetworkClient)
-    const { wallet } = Wallet.generateRandomWallet() as WalletGenerationResult
+    const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
 
@@ -227,7 +223,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(
       fakeSucceedingNetworkClient,
     )
-    const { wallet } = Wallet.generateRandomWallet() as WalletGenerationResult
+    const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
     const amount = bigInt('10')
 
@@ -253,7 +249,7 @@ describe('Legacy Default Xpring Client', function(): void {
       feeFailureResponses,
     )
     const xpringClient = new LegacyDefaultXpringClient(feeFailingNetworkClient)
-    const { wallet } = Wallet.generateRandomWallet() as WalletGenerationResult
+    const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
 
@@ -280,7 +276,7 @@ describe('Legacy Default Xpring Client', function(): void {
       feeFailureResponses,
     )
     const xpringClient = new LegacyDefaultXpringClient(feeFailingNetworkClient)
-    const { wallet } = Wallet.generateRandomWallet() as WalletGenerationResult
+    const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
 
@@ -306,7 +302,7 @@ describe('Legacy Default Xpring Client', function(): void {
       feeFailureResponses,
     )
     const xpringClient = new LegacyDefaultXpringClient(feeFailingNetworkClient)
-    const { wallet } = Wallet.generateRandomWallet() as WalletGenerationResult
+    const { wallet } = Wallet.generateRandomWallet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
 

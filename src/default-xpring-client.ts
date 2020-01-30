@@ -1,22 +1,21 @@
 import { Utils, Wallet } from 'xpring-common-js'
-import { XRPDropsAmount } from 'xpring-common-js/build/generated/rpc/v1/amount_pb'
 import bigInt, { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import GRPCNetworkClient from './grpc-network-client'
+import GRPCNetworkClientWeb from './grpc-network-client.web'
 import { NetworkClient } from './network-client'
-import { GetAccountInfoRequest } from '../generated/rpc/v1/account_info_pb'
-import { AccountAddress } from '../generated/rpc/v1/amount_pb'
-import { GetTxRequest, GetTxResponse } from '../generated/rpc/v1/tx_pb'
-import { GetFeeRequest, GetFeeResponse } from '../generated/rpc/v1/fee_pb'
+import { GetTxResponse } from './generated/web/rpc/v1/tx_pb'
+import { GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
+import { XRPDropsAmount } from './generated/web/rpc/v1/amount_pb'
+import isNode from './utils'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @typescript-eslint/no-useless-constructor */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
+
 /**
  * Error messages from XpringClient.
  */
@@ -75,12 +74,15 @@ class DefaultXpringClient implements XpringClientDecorator {
    * The DefaultXpringClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
+   * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public static defaultXpringClientWithEndpoint(
     grpcURL: string,
+    forceWeb = false,
   ): DefaultXpringClient {
-    const grpcClient = new GRPCNetworkClient(grpcURL)
-    return new DefaultXpringClient(grpcClient)
+    return isNode() && !forceWeb
+      ? new DefaultXpringClient(new GRPCNetworkClient(grpcURL))
+      : new DefaultXpringClient(new GRPCNetworkClientWeb(grpcURL))
   }
 
   /**
@@ -106,10 +108,10 @@ class DefaultXpringClient implements XpringClientDecorator {
       )
     }
 
-    const account = new AccountAddress()
+    const account = this.networkClient.AccountAddress()
     account.setAddress(classicAddress.address)
 
-    const request = new GetAccountInfoRequest()
+    const request = this.networkClient.GetAccountInfoRequest()
     request.setAccount(account)
 
     const accountInfo = await this.networkClient.getAccountInfo(request)
@@ -157,9 +159,9 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    amount: BigInteger | number | string,
-    destination: string,
-    sender: Wallet,
+    _amount: BigInteger | number | string,
+    _destination: string,
+    _sender: Wallet,
   ): Promise<string> {
     throw new Error(XpringClientErrorMessages.unimplemented)
   }
@@ -172,16 +174,16 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    const getTxRequest = new GetTxRequest()
-    getTxRequest.setHash(
-      Utils.toBytes(transactionHash),
-    )
+    const getTxRequest = this.networkClient.GetTxRequest()
+    getTxRequest.setHash(Utils.toBytes(transactionHash))
 
     const getTxResponse = await this.networkClient.getTx(getTxRequest)
 
     return new GetTxResponseWrapper(getTxResponse)
   }
 
+  // TODO Keefer implement method and remove tslint ignore and fix tsconfig nounusedlocals
+  // tslint:disable-next-line
   private async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
 
@@ -200,7 +202,7 @@ class DefaultXpringClient implements XpringClientDecorator {
 
   // TODO(keefertaylor): Add tests for this method once send is hooked up.
   private async getFee(): Promise<GetFeeResponse> {
-    const getFeeRequest = new GetFeeRequest()
+    const getFeeRequest = this.networkClient.GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)
   }
 }
