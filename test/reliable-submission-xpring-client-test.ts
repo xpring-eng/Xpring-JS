@@ -94,17 +94,13 @@ describe('Reliable Submission Xpring Client', function(): void {
         fakedRawTransactionStatusLastLedgerSequenceValue + 1
       this.fakeXpringClient.latestLedgerSequence = latestLedgerSequence
     }, 200)
-    const walletGenerationResult = Wallet.generateRandomWallet()
-    if (walletGenerationResult === undefined) {
-      assert.fail('Wallet is undefined', 'Wallet to be defined')
-      return
-    }
+    const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN a reliable send is submitted
     const transactionHash = await this.reliableSubmissionClient.send(
       '1',
       testAddress,
-      walletGenerationResult.wallet,
+      wallet,
     )
 
     // THEN the function returns
@@ -119,17 +115,13 @@ describe('Reliable Submission Xpring Client', function(): void {
     setTimeout(() => {
       fakedRawTransactionStatusValue.setValidated(true)
     }, 200)
-    const walletGenerationResult = Wallet.generateRandomWallet()
-    if (walletGenerationResult === undefined) {
-      assert.fail('Wallet is undefined', 'Wallet to be defined')
-      return
-    }
+    const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN a reliable send is submitted
     const transactionHash = await this.reliableSubmissionClient.send(
       '1',
       testAddress,
-      walletGenerationResult.wallet,
+      wallet,
     )
 
     // THEN the function returns
@@ -144,15 +136,11 @@ describe('Reliable Submission Xpring Client', function(): void {
     const malformedRawTransactionStatus = new RawTransactionStatus()
     malformedRawTransactionStatus.setLastLedgerSequence(0)
     this.fakeXpringClient.getRawTransactionStatusValue = malformedRawTransactionStatus
-    const walletGenerationResult = Wallet.generateRandomWallet()
-    if (walletGenerationResult === undefined) {
-      assert.fail('Wallet is undefined', 'Wallet to be defined')
-      return
-    }
+    const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN `send` is called THEN the promise is rejected.
     this.reliableSubmissionClient
-      .send('1', testAddress, walletGenerationResult.wallet)
+      .send('1', testAddress, wallet)
       .then(() => {})
       .catch(() => done())
   })
