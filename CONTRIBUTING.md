@@ -32,8 +32,11 @@ The library should build and pass all tests.
 $ git clone https://github.com/xpring-eng/xpring-js.git
 $ cd xpring-js
 
+# Pull Submdoules 
+$ git submodule update --init --recursive
+
 # Install dependencies
-npm i
+$ npm i
 
 # Install gRPC Web
 ## OSX
