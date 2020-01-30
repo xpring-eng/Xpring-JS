@@ -5,7 +5,7 @@ import TransactionStatus from './transaction-status'
 import RawTransaction from './raw-transaction'
 import GRPCNetworkClientNode from './grpc-network-client'
 import GRPCNetworkClientWeb from './grpc-network-client.web'
-import { XRPDropsAmount } from './generated/web/rpc/v1/amount_pb' // TODO would be nice to have 0 references to generated files here
+import { XRPDropsAmount } from './generated/web/rpc/v1/amount_pb' // TODO(keefertaylor@): Implement getMinimumFee which removes XRPDropsAmount dependency.
 import isNode from './utils'
 import { NetworkClient } from './network-client'
 import XpringClientErrorMessages from './xpring-client-error-messages'
