@@ -11,10 +11,9 @@ import {
   SubmitTransactionResponse,
 } from './generated/node/rpc/v1/submit_pb'
 import { XRPLedgerAPIServiceClient } from './generated/node/rpc/v1/xrp_ledger_grpc_pb'
-
+import { NetworkClient } from './network-client'
 import { AccountAddress } from './generated/node/rpc/v1/amount_pb'
 import isNode from './utils'
-import { NetworkClient } from './network-client'
 
 /**
  * A GRPC Based network client.
@@ -91,6 +90,24 @@ class GRPCNetworkClientNode implements NetworkClient {
       })
     })
   }
+
+  /* eslint-disable class-methods-use-this */
+  public AccountAddress(): AccountAddress {
+    return new AccountAddress()
+  }
+
+  public GetAccountInfoRequest(): GetAccountInfoRequest {
+    return new GetAccountInfoRequest()
+  }
+
+  public GetTxRequest(): GetTxRequest {
+    return new GetTxRequest()
+  }
+
+  public GetFeeRequest(): GetFeeRequest {
+    return new GetFeeRequest()
+  }
+  /* eslint-enable class-methods-use-this */
 }
 
 export default GRPCNetworkClientNode
