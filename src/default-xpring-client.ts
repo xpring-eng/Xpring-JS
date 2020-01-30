@@ -183,7 +183,7 @@ class DefaultXpringClient implements XpringClientDecorator {
       throw new Error(XpringClientErrorMessages.xAddressRequired)
     }
 
-    const normalizedAmount = DefaultXpringClient.toBigInt(amount)
+    const normalizedAmount = bigInt(amount.toString())
 
     const fee = await this.getMinimumFee()
     const accountData = await this.getAccountData(classicAddress.address)
@@ -290,23 +290,6 @@ class DefaultXpringClient implements XpringClientDecorator {
     }
 
     return accountData
-  }
-
-  /**
-   * Convert a polymorphic numeric value into a BigInteger.
-   *
-   * @param value The value to convert.
-   * @returns A BigInteger representing the input value.
-   */
-  private static toBigInt(value: string | number | BigInteger): BigInteger {
-    if (typeof value === 'string') {
-      return bigInt(value)
-    }
-    if (typeof value === 'number') {
-      return bigInt(value)
-    }
-    // Value is already a BigInteger.
-    return bigInt(value)
   }
 }
 
