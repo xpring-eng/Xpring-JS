@@ -1,23 +1,23 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
-import { XRPDropsAmount } from 'xpring-common-js/build/generated/rpc/v1/amount_pb'
-import { normalize } from 'path'
+import bigInt, { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import GRPCNetworkClient from './grpc-network-client'
+import GRPCNetworkClientWeb from './grpc-network-client.web'
 import { NetworkClient } from './network-client'
+import { GetTxResponse } from './generated/web/rpc/v1/tx_pb'
+import { GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
 import {
-  GetAccountInfoRequest,
-  GetAccountInfoResponse,
-} from '../generated/rpc/v1/account_info_pb'
-import { AccountAddress, CurrencyAmount } from '../generated/rpc/v1/amount_pb'
-import { GetTxRequest, GetTxResponse } from '../generated/rpc/v1/tx_pb'
-import { GetFeeRequest, GetFeeResponse } from '../generated/rpc/v1/fee_pb'
-import { AccountRoot } from '../generated/rpc/v1/ledger_objects_pb'
-import { Transaction, Payment } from '../generated/rpc/v1/transaction_pb'
-import { SubmitTransactionRequest } from '../generated/rpc/v1/submit_pb'
-
-/* global BigInt */
+  AccountAddress,
+  CurrencyAmount,
+  XRPDropsAmount,
+} from './generated/web/rpc/v1/amount_pb'
+import isNode from './utils'
+import { Payment, Transaction } from './generated/web/rpc/v1/transaction_pb'
+import { AccountRoot } from './generated/web/rpc/v1/ledger_objects_pb'
+import { GetAccountInfoRequest } from './generated/web/rpc/v1/account_info_pb'
+import { SubmitTransactionRequest } from './generated/web/rpc/v1/submit_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
@@ -182,13 +182,13 @@ class DefaultXpringClient implements XpringClientDecorator {
       )
     }
 
-    const normalizedAmount = this.toBigInt(amount)
+    const normalizedAmount = DefaultXpringClient.toBigInt(amount)
     const fee = await this.getMinimumFee()
     const accountData = await this.getAccountData(sender.getAddress())
     const lastValidatedLedgerSequence = await this.getLastValidatedLedgerSequence()
 
     const xrpDropsAmount = new XRPDropsAmount()
-    xrpDropsAmount.setDrops(normalizedAmount.toString())
+    xrpDropsAmount.setDrops(normalizedAmount.toJSNumber())
 
     const currencyAmount = new CurrencyAmount()
     currencyAmount.setXrpAmount(xrpDropsAmount)
@@ -227,7 +227,7 @@ class DefaultXpringClient implements XpringClientDecorator {
       submitTransactionRequest,
     )
 
-    return Utils.toHex(response.getHash())
+    return Utils.toHex(response.getHash_asU8())
   }
 
   public async getLastValidatedLedgerSequence(): Promise<number> {
@@ -291,16 +291,19 @@ class DefaultXpringClient implements XpringClientDecorator {
   }
 
   /**
-   * Convert a polymorphic numeric value into a BigInt.
+   * Convert a polymorphic numeric value into a BigInteger.
    *
    * @param value The value to convert.
-   * @returns A BigInt representing the input value.
+   * @returns A BigInteger representing the input value.
    */
-  private toBigInt(value: string | number | BigInt): BigInt {
-    if (typeof value === 'string' || typeof value === 'number') {
-      return BigInt(value)
+  private static toBigInt(value: string | number | BigInteger): BigInteger {
+    if (typeof value === 'string') {
+      return bigInt(value)
     }
-    // Value is already a BigInt.
+    if (typeof value === 'number') {
+      return bigInt(value)
+    }
+    // Value is already a BigInteger.
     return value
   }
 }
