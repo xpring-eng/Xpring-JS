@@ -100,6 +100,10 @@ class GRPCNetworkClient implements NetworkClient {
   public GetFeeRequest(): GetFeeRequest {
     return new GetFeeRequest()
   }
+
+  public SubmitTransactionRequest(): SubmitTransactionRequest {
+    return new SubmitTransactionRequest()
+  }
   /* eslint-enable class-methods-use-this */
 }
 

@@ -16,8 +16,6 @@ import {
 import isNode from './utils'
 import { Payment, Transaction } from './generated/web/rpc/v1/transaction_pb'
 import { AccountRoot } from './generated/web/rpc/v1/ledger_objects_pb'
-import { GetAccountInfoRequest } from './generated/web/rpc/v1/account_info_pb'
-import { SubmitTransactionRequest } from './generated/web/rpc/v1/submit_pb'
 
 // TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
 /* eslint-disable @typescript-eslint/require-await */
@@ -182,9 +180,17 @@ class DefaultXpringClient implements XpringClientDecorator {
       )
     }
 
+    const classicAddress = Utils.decodeXAddress(sender.getAddress())
+    if (!classicAddress) {
+      return Promise.reject(
+        new Error(XpringClientErrorMessages.xAddressRequired),
+      )
+    }
+
     const normalizedAmount = DefaultXpringClient.toBigInt(amount)
+
     const fee = await this.getMinimumFee()
-    const accountData = await this.getAccountData(sender.getAddress())
+    const accountData = await this.getAccountData(classicAddress.address)
     const lastValidatedLedgerSequence = await this.getLastValidatedLedgerSequence()
 
     const xrpDropsAmount = new XRPDropsAmount()
@@ -220,7 +226,7 @@ class DefaultXpringClient implements XpringClientDecorator {
       throw new Error(XpringClientErrorMessages.malformedResponse)
     }
 
-    const submitTransactionRequest = new SubmitTransactionRequest()
+    const submitTransactionRequest = this.networkClient.SubmitTransactionRequest()
     submitTransactionRequest.setSignedTransaction(signedTransaction)
 
     const response = await this.networkClient.submitTransaction(
@@ -271,10 +277,10 @@ class DefaultXpringClient implements XpringClientDecorator {
   }
 
   private async getAccountData(address: string): Promise<AccountRoot> {
-    const account = new AccountAddress()
+    const account = this.networkClient.AccountAddress()
     account.setAddress(address)
 
-    const request = new GetAccountInfoRequest()
+    const request = this.networkClient.GetAccountInfoRequest()
     request.setAccount(account)
 
     const accountInfo = await this.networkClient.getAccountInfo(request)
