@@ -175,16 +175,12 @@ class DefaultXpringClient implements XpringClientDecorator {
     sender: Wallet,
   ): Promise<string> {
     if (!Utils.isValidXAddress(destination)) {
-      return Promise.reject(
-        new Error(XpringClientErrorMessages.xAddressRequired),
-      )
+      throw new Error(XpringClientErrorMessages.xAddressRequired)
     }
 
     const classicAddress = Utils.decodeXAddress(sender.getAddress())
     if (!classicAddress) {
-      return Promise.reject(
-        new Error(XpringClientErrorMessages.xAddressRequired),
-      )
+      throw new Error(XpringClientErrorMessages.xAddressRequired)
     }
 
     const normalizedAmount = DefaultXpringClient.toBigInt(amount)
