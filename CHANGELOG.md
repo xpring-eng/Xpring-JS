@@ -13,7 +13,7 @@ This release adds support for the new rippled protocol buffers and adds browser 
 
 ### New Protocol Buffers from rippled
 
-rippled implemented protocol buffer support natively, which uses a new and incompatible set of protocol buffers. The implementation in rippled was completed in: ripple/rippled#3159. Xpring-JS is now capable of using these protocol buffers.  This change is opt-in and non-breaking. 
+rippled implemented protocol buffer support natively, which uses a new and incompatible set of protocol buffers. The implementation in rippled was completed in: ripple/rippled#3159. Xpring-JS is now capable of using these protocol buffers. This change is opt-in and non-breaking. 
 
 To switch to these protocol buffers, pass `true` to the `useNewProtocolBuffer` parameter in `XpringClient`'s constructor. The default for this field is false. 
 
