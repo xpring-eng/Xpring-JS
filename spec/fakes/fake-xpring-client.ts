@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from '../../src/xpring-client-decorator'
 import TransactionStatus from '../../src/transaction-status'

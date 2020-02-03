@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable max-classes-per-file */
 /* eslint-disable class-methods-use-this */
 import { NetworkClient } from '../../src/network-client'
 import {

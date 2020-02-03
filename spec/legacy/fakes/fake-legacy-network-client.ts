@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable max-classes-per-file */
 import { LegacyNetworkClient } from '../../../src/legacy/legacy-network-client'
 import { AccountInfo } from '../../../src/generated/node/legacy/account_info_pb'
 import { Fee } from '../../../src/generated/node/legacy/fee_pb'

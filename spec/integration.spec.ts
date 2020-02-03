@@ -1,11 +1,8 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Wallet } from 'xpring-common-js'
-import { assert } from 'chai'
 import bigInt from 'big-integer'
 import XpringClient from '../src/xpring-client'
 import TransactionStatus from '../src/transaction-status'
-
-// A timeout for these tests.
-const timeoutMs = 60 * 1000 // 1 minute
 
 // An address on TestNet that has a balance.
 const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
@@ -32,85 +29,79 @@ const xpringClient = new XpringClient(rippledURL, true)
 // Some amount of XRP to send.
 const amount = bigInt('1')
 
-describe('Xpring JS Integration Tests', function(): void {
-  it('Get Account Balance - Legacy Node Shim', async function(): Promise<void> {
-    this.timeout(timeoutMs)
+describe('Xpring JS Integration Tests', (): void => {
+  let originalTimeout: number
+  beforeEach(() => {
+    originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000
+  })
 
+  it('Get Account Balance - Legacy Node Shim', async (): Promise<void> => {
     const balance = await legacyXpringClientNode.getBalance(recipientAddress)
-    assert.exists(balance)
+    expect(balance).toBeDefined()
+    expect(balance).not.toBeNull()
   })
 
-  it('Get Account Balance - Legacy Web Shim', async function(): Promise<void> {
-    this.timeout(timeoutMs)
-
+  it('Get Account Balance - Legacy Web Shim', async (): Promise<void> => {
     const balance = await legacyXpringClientWeb.getBalance(recipientAddress)
-    assert.exists(balance)
+    expect(balance).toBeDefined()
+    expect(balance).not.toBeNull()
   })
 
-  it('Get Account Balance - rippled', async function(): Promise<void> {
-    this.timeout(timeoutMs)
-
+  it('Get Account Balance - rippled', async (): Promise<void> => {
     const balance = await xpringClient.getBalance(recipientAddress)
-    assert.exists(balance)
+    expect(balance).toBeDefined()
+    expect(balance).not.toBeNull()
   })
 
-  it('Get Transaction Status - Legacy Node Shim', async function(): Promise<
-    void
-  > {
-    this.timeout(timeoutMs)
-
+  it('Get Transaction Status - Legacy Node Shim', async (): Promise<void> => {
     const transactionStatus = await legacyXpringClientNode.getTransactionStatus(
       transactionHash,
     )
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
+    expect(transactionStatus).toEqual(TransactionStatus.Succeeded)
   })
 
-  it('Get Transaction Status - Legacy Web Shim', async function(): Promise<
-    void
-  > {
-    this.timeout(timeoutMs)
-
+  it('Get Transaction Status - Legacy Web Shim', async (): Promise<void> => {
     const transactionStatus = await legacyXpringClientWeb.getTransactionStatus(
       transactionHash,
     )
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
+    expect(transactionStatus).toEqual(TransactionStatus.Succeeded)
   })
 
-  it('Get Transaction Status - rippled', async function(): Promise<void> {
-    this.timeout(timeoutMs)
-
+  it('Get Transaction Status - rippled', async (): Promise<void> => {
     const transactionStatus = await xpringClient.getTransactionStatus(
       transactionHash,
     )
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
+    expect(transactionStatus).toEqual(TransactionStatus.Succeeded)
   })
 
-  it('Send XRP - Legacy Node Shim', async function(): Promise<void> {
-    this.timeout(timeoutMs)
-
+  it('Send XRP - Legacy Node Shim', async (): Promise<void> => {
     const result = await legacyXpringClientNode.send(
       amount,
       recipientAddress,
       wallet,
     )
-    assert.exists(result)
+    expect(result).toBeDefined()
+    expect(result).not.toBeNull()
   })
 
-  it('Send XRP - Legacy Web Shim', async function(): Promise<void> {
-    this.timeout(timeoutMs)
-
+  it('Send XRP - Legacy Web Shim', async (): Promise<void> => {
     const result = await legacyXpringClientWeb.send(
       amount,
       recipientAddress,
       wallet,
     )
-    assert.exists(result)
+    expect(result).toBeDefined()
+    expect(result).not.toBeNull()
   })
 
-  it('Send XRP - rippled', async function(): Promise<void> {
-    this.timeout(timeoutMs)
-
+  it('Send XRP - rippled', async (): Promise<void> => {
     const result = await xpringClient.send(amount, recipientAddress, wallet)
-    assert.exists(result)
+    expect(result).toBeDefined()
+    expect(result).not.toBeNull()
+  })
+
+  afterEach(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout
   })
 })
