@@ -10,7 +10,7 @@ describe('utils', (): void => {
     const validAddress = Utils.isValidAddress(address)
 
     // THEN the address is deemed valid.
-    expect(validAddress).toBeTrue()
+    expect(validAddress).toEqual(true)
   })
 
   it('isValidAddress() - Valid X-Address', (): void => {
@@ -21,7 +21,7 @@ describe('utils', (): void => {
     const validAddress = Utils.isValidAddress(address)
 
     // THEN the address is deemed valid.
-    expect(validAddress).toBeTrue()
+    expect(validAddress).toEqual(true)
   })
 
   it('isValidAddress() - Wrong Alphabet', (): void => {
@@ -32,7 +32,7 @@ describe('utils', (): void => {
     const validAddress = Utils.isValidAddress(address)
 
     // THEN the address is deemed invalid.
-    expect(validAddress).toBeFalse()
+    expect(validAddress).toEqual(false)
   })
 
   it('isValidAddress() - Invalid Classic Address Checksum', (): void => {
@@ -43,7 +43,7 @@ describe('utils', (): void => {
     const validAddress = Utils.isValidAddress(address)
 
     // THEN the address is deemed invalid.
-    expect(validAddress).toBeFalse()
+    expect(validAddress).toEqual(false)
   })
 
   it('isValidAddress() - Invalid X-Address Checksum', (): void => {
@@ -54,7 +54,7 @@ describe('utils', (): void => {
     const validAddress = Utils.isValidAddress(address)
 
     // THEN the address is deemed invalid.
-    expect(validAddress).toBeFalse()
+    expect(validAddress).toEqual(false)
   })
 
   it('isValidAddress() - Invalid Characters', (): void => {
@@ -65,7 +65,7 @@ describe('utils', (): void => {
     const validAddress = Utils.isValidAddress(address)
 
     // THEN the address is deemed invalid.
-    expect(validAddress).toBeFalse()
+    expect(validAddress).toEqual(false)
   })
 
   it('isValidAddress() - Too Long', (): void => {
@@ -77,7 +77,7 @@ describe('utils', (): void => {
     const validAddress = Utils.isValidAddress(address)
 
     // THEN the address is deemed invalid.
-    expect(validAddress).toBeFalse()
+    expect(validAddress).toEqual(false)
   })
 
   it('isValidAddress() - Too Short', (): void => {
@@ -88,7 +88,7 @@ describe('utils', (): void => {
     const validAddress = Utils.isValidAddress(address)
 
     // THEN the address is deemed invalid.
-    expect(validAddress).toBeFalse()
+    expect(validAddress).toEqual(false)
   })
 
   it('encodeXAddress() - Mainnet Address and Tag', (): void => {
@@ -151,7 +151,7 @@ describe('utils', (): void => {
       'rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1',
     )
     expect(classicAddress!.tag).toEqual(12345)
-    expect(classicAddress!.test).toBeFalse()
+    expect(classicAddress!.test).toEqual(false)
   })
 
   it('decodeXAddress() - Valid Testnet Address with Tag', (): void => {
@@ -166,7 +166,7 @@ describe('utils', (): void => {
       'rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1',
     )
     expect(classicAddress!.tag).toEqual(12345)
-    expect(classicAddress!.test).toBeTrue()
+    expect(classicAddress!.test).toEqual(true)
   })
 
   it('decodeXAddress() - Valid Address without Tag', (): void => {
@@ -202,7 +202,7 @@ describe('utils', (): void => {
     const isValid = Utils.isValidXAddress(address)
 
     // THEN the address is reported as valid.
-    expect(isValid).toBeTrue()
+    expect(isValid).toEqual(true)
   })
 
   it('isValidXAddress() - Classic Address', (): void => {
@@ -213,7 +213,7 @@ describe('utils', (): void => {
     const isValid = Utils.isValidXAddress(address)
 
     // THEN the address is reported as invalid.
-    expect(isValid).toBeFalse()
+    expect(isValid).toEqual(false)
   })
 
   it('isValidXAddress() - Invalid Address', (): void => {
@@ -224,7 +224,7 @@ describe('utils', (): void => {
     const isValid = Utils.isValidXAddress(address)
 
     // THEN the address is reported as invalid.
-    expect(isValid).toBeFalse()
+    expect(isValid).toEqual(false)
   })
 
   it('isValidClassicAddress() - Valid X-Address', (): void => {
@@ -235,7 +235,7 @@ describe('utils', (): void => {
     const isValid = Utils.isValidClassicAddress(address)
 
     // THEN the address is reported as invalid.
-    expect(isValid).toBeFalse()
+    expect(isValid).toEqual(false)
   })
 
   it('isValidClassicAddress() - Classic Address', (): void => {
@@ -246,7 +246,7 @@ describe('utils', (): void => {
     const isValid = Utils.isValidClassicAddress(address)
 
     // THEN the address is reported as valid.
-    expect(isValid).toBeTrue()
+    expect(isValid).toEqual(true)
   })
 
   it('isValidClassicAddress() - Invalid Address', (): void => {
@@ -257,7 +257,7 @@ describe('utils', (): void => {
     const isValid = Utils.isValidClassicAddress(address)
 
     // THEN the address is reported as invalid.
-    expect(isValid).toBeFalse()
+    expect(isValid).toEqual(false)
   })
 
   it('transactionBlobHex() - Valid transaction blob', (): void => {

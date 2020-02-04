@@ -60,32 +60,30 @@ describe('Default Xpring Client', (): void => {
     expect(balance).not.toBeNull()
   })
 
-  it('Get Account Balance - classic address', (done): void => {
+  it('Get Account Balance - classic address', async (): Promise<void> => {
     // GIVEN a XpringClient and a classic address
     const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient)
     const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
 
     // WHEN the balance for an account is requested THEN an error to use X-Addresses is thrown.
-    xpringClient.getBalance(classicAddress).catch((error) => {
-      expect(error).toBeInstanceOf(Error)
-      expect(error.message).toEqual(XpringClientErrorMessages.xAddressRequired)
-      done()
-    })
+    await expectAsync(xpringClient.getBalance(classicAddress)).toBeRejectedWith(
+      new Error(XpringClientErrorMessages.xAddressRequired),
+    )
   })
 
-  it('Get Account Balance - error', (done): void => {
+  it('Get Account Balance - error', async (): Promise<void> => {
     // GIVEN a XpringClient which wraps an erroring network client.
     const xpringClient = new DefaultXpringClient(fakeErroringNetworkClient)
 
     // WHEN a balance is requested THEN an error is propagated.
-    xpringClient.getBalance(testAddress).catch((error) => {
-      expect(error).toBeInstanceOf(Error)
-      expect(error).toEqual(FakeNetworkClientResponses.defaultError)
-      done()
-    })
+    await expectAsync(xpringClient.getBalance(testAddress)).toBeRejectedWith(
+      FakeNetworkClientResponses.defaultError,
+    )
   })
 
-  it('Get Account Balance - malformed response, no balance', (done): void => {
+  it('Get Account Balance - malformed response, no balance', async (): Promise<
+    void
+  > => {
     // GIVEN a XpringClient which wraps a network client with a malformed response.
     const accountInfoResponse = FakeNetworkClientResponses.defaultAccountInfoResponse()
     accountInfoResponse.getAccountData()!.setBalance(undefined)
@@ -96,11 +94,9 @@ describe('Default Xpring Client', (): void => {
     const xpringClient = new DefaultXpringClient(fakeNetworkClient)
 
     // WHEN a balance is requested THEN an error is propagated.
-    xpringClient.getBalance(testAddress).catch((error) => {
-      expect(error).toBeInstanceOf(Error)
-      expect(error.message).toEqual(XpringClientErrorMessages.malformedResponse)
-      done()
-    })
+    await expectAsync(xpringClient.getBalance(testAddress)).toBeRejectedWith(
+      new Error(XpringClientErrorMessages.malformedResponse),
+    )
   })
 
   it('Get Transaction Status - Unvalidated Transaction and Failure Code', async (): Promise<
@@ -207,7 +203,7 @@ describe('Default Xpring Client', (): void => {
     expect(transactionStatus).toEqual(TransactionStatus.Succeeded)
   })
 
-  it('Get Transaction Status - Node Error', (done): void => {
+  it('Get Transaction Status - Node Error', async (): Promise<void> => {
     // GIVEN a XpringClient which will error when a transaction status is requested.
     const transactionStatusResponses = new FakeNetworkClientResponses(
       FakeNetworkClientResponses.defaultAccountInfoResponse(),
@@ -219,13 +215,9 @@ describe('Default Xpring Client', (): void => {
     const xpringClient = new DefaultXpringClient(fakeNetworkClient)
 
     // WHEN the transaction status is retrieved THEN an error is thrown.
-    xpringClient.getTransactionStatus(fakeTransactionHash).catch((error) => {
-      expect(error).toBeInstanceOf(Error)
-      expect(error.message).toEqual(
-        FakeNetworkClientResponses.defaultError.message,
-      )
-      done()
-    })
+    await expectAsync(
+      xpringClient.getTransactionStatus(fakeTransactionHash),
+    ).toBeRejectedWith(FakeNetworkClientResponses.defaultError)
   })
 
   it('Send XRP Transaction - success with BigInteger', async () => {
@@ -299,7 +291,7 @@ describe('Default Xpring Client', (): void => {
     expect(transactionHash).toEqual(expectedTransactionHash)
   })
 
-  it('Send XRP Transaction - failure with invalid string', (done) => {
+  it('Send XRP Transaction - failure with invalid string', async () => {
     // GIVEN a XpringClient, a wallet and an amount that is invalid.
     const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient)
     const { wallet } = Wallet.generateRandomWallet()!
@@ -307,13 +299,12 @@ describe('Default Xpring Client', (): void => {
     const amount = 'not_a_number'
 
     // WHEN the account makes a transaction THEN an error is propagated.
-    xpringClient.send(amount, destinationAddress, wallet).catch((error) => {
-      expect(error).toBeInstanceOf(Error)
-      done()
-    })
+    await expectAsync(
+      xpringClient.send(amount, destinationAddress, wallet),
+    ).toBeRejected()
   })
 
-  it('Send XRP Transaction - get fee failure', (done) => {
+  it('Send XRP Transaction - get fee failure', async () => {
     // GIVEN a XpringClient which will fail to retrieve a fee.
     const feeFailureResponses = new FakeNetworkClientResponses(
       FakeNetworkClientResponses.defaultAccountInfoResponse(),
@@ -327,16 +318,12 @@ describe('Default Xpring Client', (): void => {
     const amount = bigInt('10')
 
     // WHEN a payment is attempted THEN an error is propagated.
-    xpringClient.send(amount, destinationAddress, wallet).catch((error) => {
-      expect(error).toBeInstanceOf(Error)
-      expect(error.message).toEqual(
-        FakeNetworkClientResponses.defaultError.message,
-      )
-      done()
-    })
+    await expectAsync(
+      xpringClient.send(amount, destinationAddress, wallet),
+    ).toBeRejectedWith(FakeNetworkClientResponses.defaultError)
   })
 
-  it('Send XRP Transaction - failure with classic address', (done) => {
+  it('Send XRP Transaction - failure with classic address', async () => {
     // GIVEN a XpringClient, a wallet, and a classic address as the destination.
     const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient)
     const { wallet } = Wallet.generateRandomWallet()!
@@ -344,14 +331,12 @@ describe('Default Xpring Client', (): void => {
     const amount = bigInt('10')
 
     // WHEN the account makes a transaction THEN an error is thrown.
-    xpringClient.send(amount, destinationAddress, wallet).catch((error) => {
-      expect(error).toBeInstanceOf(Error)
-      expect(error.message).toEqual(XpringClientErrorMessages.xAddressRequired)
-      done()
-    })
+    await expectAsync(
+      xpringClient.send(amount, destinationAddress, wallet),
+    ).toBeRejectedWith(new Error(XpringClientErrorMessages.xAddressRequired))
   })
 
-  it('Send XRP Transaction - get account info failure', (done) => {
+  it('Send XRP Transaction - get account info failure', async () => {
     // GIVEN a XpringClient which will fail to retrieve account info.
     const feeFailureResponses = new FakeNetworkClientResponses(
       FakeNetworkClientResponses.defaultError,
@@ -365,16 +350,12 @@ describe('Default Xpring Client', (): void => {
     const amount = bigInt('10')
 
     // WHEN a payment is attempted THEN an error is propagated.
-    xpringClient.send(amount, destinationAddress, wallet).catch((error) => {
-      expect(error).toBeInstanceOf(Error)
-      expect(error.message).toEqual(
-        FakeNetworkClientResponses.defaultError.message,
-      )
-      done()
-    })
+    await expectAsync(
+      xpringClient.send(amount, destinationAddress, wallet),
+    ).toBeRejectedWith(FakeNetworkClientResponses.defaultError)
   })
 
-  it('Send XRP Transaction - submission failure', (done) => {
+  it('Send XRP Transaction - submission failure', async () => {
     // GIVEN a XpringClient which will to submit a transaction.
     const feeFailureResponses = new FakeNetworkClientResponses(
       FakeNetworkClientResponses.defaultAccountInfoResponse(),
@@ -388,12 +369,8 @@ describe('Default Xpring Client', (): void => {
     const amount = bigInt('10')
 
     // WHEN a payment is attempted THEN an error is propagated.
-    xpringClient.send(amount, destinationAddress, wallet).catch((error) => {
-      expect(error).toBeInstanceOf(Error)
-      expect(error.message).toEqual(
-        FakeNetworkClientResponses.defaultError.message,
-      )
-      done()
-    })
+    await expectAsync(
+      xpringClient.send(amount, destinationAddress, wallet),
+    ).toBeRejectedWith(FakeNetworkClientResponses.defaultError)
   })
 })

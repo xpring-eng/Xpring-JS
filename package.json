@@ -42,7 +42,7 @@
     "grpc_tools_node_protoc_ts": "^2.5.10",
     "jasmine": "^3.5.0",
     "jasmine-ts": "^0.3.0",
-    "nyc": "15.0.0",
+    "nyc": "^15.0.0",
     "prettier": "^1.19.1",
     "source-map-support": "0.5.16",
     "ts-node": "^8.6.2",
