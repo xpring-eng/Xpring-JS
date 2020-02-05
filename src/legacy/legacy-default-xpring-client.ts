@@ -234,6 +234,17 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
       return feeAmount
     })
   }
+
+  public async accountExists(address: string): Promise<boolean> {
+    // TODO(keefertaylor): Xpring SDK should provide a way to check this functionality without using exception handling as a control flow mechanism.
+    try {
+      await this.getBalance(address)
+      return true
+    } catch (e) {
+      await this.getBalance(address)
+      return false
+    }
+  }
 }
 
 export default LegacyDefaultXpringClient

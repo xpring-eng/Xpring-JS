@@ -304,6 +304,7 @@ class DefaultXpringClient implements XpringClientDecorator {
       await this.getBalance(address)
       return true
     } catch (e) {
+      await this.getBalance(address)
       return false
     }
   }
