@@ -21,7 +21,7 @@
     "pretest": "npm run clean && ./scripts/regenerate_protos.sh && npm run lint && tsc --noEmit",
     "lint": "eslint . --ext .ts --fix",
     "test": "nyc -r lcov -e .ts -x *-test.ts jasmine-ts --config=jasmine.json test/**/*-test.ts",
-    "test:browser": "karma start karma.conf.js",
+    "test:browser": "karma start karma.conf.js --logLevel debug",
     "prepublishOnly": "npm run test && npm run build"
   },
   "homepage": "https://github.com/xpring-eng/Xpring-JS#readme",
@@ -63,7 +63,6 @@
     "big-integer": "^1.6.48",
     "grpc": "^1.24.2",
     "grpc-web": "1.0.7",
-    "xhr2": "0.2.0",
     "xpring-common-js": "^3.0.2"
   },
   "nyc": {
