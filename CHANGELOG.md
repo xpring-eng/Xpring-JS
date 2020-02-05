@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Export the `TransactionStatus` enum so client libraries can consume it. 
+
 ## 1.3.1 - Jan 30, 2020
 
 This release fixes an incorrectly formatted package-lock.json that was published in the 1.3.0 release.
