@@ -20,7 +20,7 @@
     "clean": "rm -rf ./src/generated ./dist ./build",
     "pretest": "npm run clean && ./scripts/regenerate_protos.sh && npm run lint && tsc --noEmit",
     "lint": "eslint . --ext .ts --fix",
-    "test": "nyc -r lcov -e .ts -x *.spec.ts jasmine-ts --config=jasmine.json test/**/*.spec.ts",
+    "test": "nyc -r lcov -e .ts -x *-test.ts jasmine-ts --config=jasmine.json test/**/*-test.ts",
     "test:browser": "karma start karma.conf.js",
     "prepublishOnly": "npm run test && npm run build"
   },
