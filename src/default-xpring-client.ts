@@ -85,13 +85,11 @@ class DefaultXpringClient implements XpringClientDecorator {
    * The DefaultXpringClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
-   * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public static defaultXpringClientWithEndpoint(
     grpcURL: string,
-    forceWeb = false,
   ): DefaultXpringClient {
-    return isNode() && !forceWeb
+    return isNode()
       ? new DefaultXpringClient(new GRPCNetworkClient(grpcURL))
       : new DefaultXpringClient(new GRPCNetworkClientWeb(grpcURL))
   }
