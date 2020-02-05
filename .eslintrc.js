@@ -59,7 +59,6 @@ module.exports = {
   // },
 
   overrides: [
-    // Overrides for all spec files
     {
       files: [
         'src/legacy/legacy-default-xpring-client.ts',

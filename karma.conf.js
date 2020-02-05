@@ -12,13 +12,13 @@ export default (config) => {
         pattern:
           'src/**/!(xrp_ledger_grpc_pb|grpc-network-client|legacy-grpc-network-client).+(js|ts)',
       },
-      { pattern: 'spec/**/*.ts' },
+      { pattern: 'test/**/*.ts' },
     ],
 
     preprocessors: {
       'src/**/*.+(js|ts)': ['karma-typescript'],
       'src/**/!(*.d).ts': ['coverage'],
-      'spec/**/*.ts': ['karma-typescript'],
+      'test/**/*.ts': ['karma-typescript'],
     },
 
     reporters: ['progress', 'coverage', 'karma-typescript'],
