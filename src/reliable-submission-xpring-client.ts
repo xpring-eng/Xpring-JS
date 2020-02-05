@@ -87,6 +87,10 @@ class ReliableSubmissionXpringClient implements XpringClientDecorator {
   ): Promise<RawTransactionStatus> {
     return this.decoratedClient.getRawTransactionStatus(transactionHash)
   }
+
+  public async accountExists(address: string): Promise<boolean> {
+    return this.decoratedClient.accountExists(address)
+  }
 }
 
 export default ReliableSubmissionXpringClient

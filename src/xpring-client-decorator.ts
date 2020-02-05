@@ -52,4 +52,12 @@ export interface XpringClientDecorator {
   getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus>
+
+  /**
+   * Check if an address exists on the XRP Ledger.
+   *
+   * @param address The address to check the existence of.
+   * @returns A boolean if the account is on the blockchain.
+   */
+  accountExists(address: string): Promise<boolean>
 }
