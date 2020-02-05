@@ -138,7 +138,7 @@ A `XpringClient` can check the balance of an account on the XRP Ledger.
 const { XpringClient } = require("xpring-js");
 
 const remoteURL = "grpc.xpring.tech:80";
-const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
+const xpringClient = new XpringClient(remoteURL);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
 
@@ -148,7 +148,7 @@ console.log(balance); // Logs a balance in drops of XRP
 
 ### Checking Transaction Status
 
-A `XpringClient` can check the status of an transaction on the XRP Ledger. 
+A `XpringClient` can check the status of an transaction on the XRP Ledger.
 
 Xpring-JS returns the following transaction states:
 - `succeeded`: The transaction was successfully validated and applied to the XRP Ledger.
@@ -164,11 +164,13 @@ These states are determined by the `TransactionStatus` enum.
 const { XpringClient } = require("xpring-js");
 
 const remoteURL = "grpc.xpring.tech:80";
-const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
+const xpringClient = new XpringClient(remoteURL);
 
-const transactionHash = "2CBBD2523478848DA256F8EBFCBD490DD6048A4A5094BF8E3034F57EA6AA0522";
+const transactionHash = "9FC7D277C1C8ED9CE133CC17AEA9978E71FC644CE6F5F0C8E26F1C635D97AF4A";
 const transactionStatus = xpringClient.getTransactionStatus(transactionHash); // TransactionStatus.Succeeded
 ```
+**Note:** The example transactionHash may lead to a "Transaction not found." error because the TestNet is regularly reset, or the accessed node may only maintain one
+month of history.  Recent transaction hashes can be found in the XRP Ledger Explorer: https://livenet.xrpl.org/
 
 #### Sending XRP
 
@@ -180,19 +182,22 @@ A `XpringClient` can send XRP to other accounts on the XRP Ledger.
 const { Wallet, XRPAmount, XpringClient } = require("xpring-js");
 
 const remoteURL = "grpc.xpring.tech:80";
-const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
+const xpringClient = new XpringClient(remoteURL);
 
 // Amount of XRP to send
-const amount = BigInt("10")
+const amount = BigInt("10");
 
 // Destination address.
 const destinationAddress = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
 
 // Wallet which will send XRP
-const senderWallet = Wallet.generateRandomWallet();
+const generationResult = Wallet.generateRandomWallet();
+const senderWallet = generationResult.wallet;
 
 const transactionHash = await xpringClient.send(amount, destinationAddress, senderWallet);
 ```
+**Note:** The above example will yield an "Account not found." error because
+the randomly generated wallet contains no XRP.
 
 ### Utilities
 #### Address validation
