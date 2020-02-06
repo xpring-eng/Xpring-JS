@@ -296,7 +296,7 @@ class DefaultXpringClient implements XpringClientDecorator {
    * Check if an address exists on the XRP Ledger.
    *
    * @param address The address to check the existence of.
-   * @returns A boolean if the account is on the blockchain.
+   * @returns A boolean if the account is on the ledger.
    */
   public async accountExists(address: string): Promise<boolean> {
     // Checking for xAddress format also happens in getBalance itself... is there a cleaner way to use that result here instead of repeating this code?
