@@ -299,7 +299,6 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A boolean if the account is on the blockchain.
    */
   public async accountExists(address: string): Promise<boolean> {
-    // TODO(keefertaylor): Xpring SDK should provide a way to check this functionality without using exception handling as a control flow mechanism.
     // Checking for xAddress format also happens in getBalance itself... is there a cleaner way to use that result here instead of repeating this code?
     const classicAddress = Utils.decodeXAddress(address)
     if (!classicAddress) {
