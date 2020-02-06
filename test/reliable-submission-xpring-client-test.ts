@@ -21,6 +21,7 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus()
 const fakedRawTransactionStatusLastLedgerSequenceValue = 20
 const fakedRawTransactionStatusValidatedValue = true
 const fakedRawTransactionStatusTransactionStatusCode = transactionStatusCodeSuccess
+const fakedAccountExistsValue = true
 
 describe('Reliable Submission Xpring Client', function(): void {
   beforeEach(function() {
@@ -40,6 +41,7 @@ describe('Reliable Submission Xpring Client', function(): void {
       fakedSendValue,
       fakedLastLedgerSequenceValue,
       fakedRawTransactionStatusValue,
+      fakedAccountExistsValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXpringClient(
       this.fakeXpringClient,
