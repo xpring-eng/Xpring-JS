@@ -401,4 +401,16 @@ describe('Default Xpring Client', function(): void {
       done()
     })
   })
+
+  it('accountExists - valid address with balance, true', async function() {
+    // stub
+  })
+
+  it('accountExists - valid address without balance, false', async function() {
+    // stub
+  })
+
+  it('accountExists - failure with classic address', async function() {
+    // stub
+  })
 })
