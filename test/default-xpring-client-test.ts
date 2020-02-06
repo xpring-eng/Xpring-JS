@@ -402,7 +402,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('accountExists - valid address with balance, true', async function() {
+  it('Check if account exists - exists with valid address and positive balance', async function() {
     // GIVEN a DefaultXpringClient.
     const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient)
     // WHEN the account does exist
@@ -411,7 +411,7 @@ describe('Default Xpring Client', function(): void {
     assert.equal(exists, true)
   })
 
-  it('accountExists - valid address without balance, false', async function() {
+  it("Check if account exists - doesn't exist with valid address and zero balance", async function() {
     // GIVEN a XpringClient which wraps an erroring network client.
     const xpringClient = new DefaultXpringClient(fakeErroringNetworkClient)
     // WHEN accountExists throws an exception while calling getBalance
@@ -420,7 +420,7 @@ describe('Default Xpring Client', function(): void {
     assert.equal(exists, false)
   })
 
-  it('accountExists - failure with classic address', function() {
+  it('Check if account exists - error with classic address', function(done) {
     // GIVEN a XpringClient and a classic address
     const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient)
     const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
@@ -428,6 +428,7 @@ describe('Default Xpring Client', function(): void {
     xpringClient.accountExists(classicAddress).catch((error) => {
       assert.typeOf(error, 'Error')
       assert.equal(error.message, XpringClientErrorMessages.xAddressRequired)
+      done()
     })
   })
 })
