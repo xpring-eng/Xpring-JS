@@ -402,7 +402,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Check if account exists - exists with valid address and positive balance', async function() {
+  it('Check if account exists - successful network request', async function() {
     // GIVEN a DefaultXpringClient.
     const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient)
     // WHEN the account does exist
@@ -411,7 +411,7 @@ describe('Default Xpring Client', function(): void {
     assert.equal(exists, true)
   })
 
-  it("Check if account exists - doesn't exist with valid address and zero balance", async function() {
+  it('Check if account exists - failing network request', async function() {
     // GIVEN a XpringClient which wraps an erroring network client.
     const xpringClient = new DefaultXpringClient(fakeErroringNetworkClient)
     // WHEN accountExists throws an exception while calling getBalance
