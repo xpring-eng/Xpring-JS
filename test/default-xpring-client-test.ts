@@ -143,6 +143,7 @@ describe('Default Xpring Client', function(): void {
       // THEN the status is pending.
       assert.deepEqual(transactionStatus, TransactionStatus.Pending)
     }
+    /* eslint-enable no-await-in-loop */
   })
 
   it('Get Transaction Status - Unvalidated Transaction and Success Code', async function(): Promise<
@@ -203,6 +204,7 @@ describe('Default Xpring Client', function(): void {
       // THEN the status is failed.
       assert.deepEqual(transactionStatus, TransactionStatus.Failed)
     }
+    /* eslint-enable no-await-in-loop */
   })
 
   it('Get Transaction Status - Validated Transaction and Success Code', async function(): Promise<
