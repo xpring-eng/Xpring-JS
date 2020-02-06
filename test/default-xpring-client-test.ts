@@ -402,15 +402,18 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('accountExists - valid address with balance, true', async function() {
+  it('accountExists - valid address with balance, true', function() {
     // stub
+    assert.equal(1, 1)
   })
 
-  it('accountExists - valid address without balance, false', async function() {
+  it('accountExists - valid address without balance, false', function() {
     // stub
+    assert.equal(1, 1)
   })
 
-  it('accountExists - failure with classic address', async function() {
+  it('accountExists - failure with classic address', function() {
     // stub
+    assert.equal(1, 1)
   })
 })
