@@ -17,7 +17,13 @@ import TransactionStatus from '../src/transaction-status'
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
 const transactionStatusCodeSuccess = 'tesSUCCESS'
-const transactionStatusCodeFailure = 'tecFAILURE'
+const transactionStatusFailureCodes = [
+  'tefFAILURE',
+  'tecCLAIM',
+  'telBAD_PUBLIC_KEY',
+  'temBAD_FEE',
+  'terRETRY',
+]
 
 const transactionHash = 'DEADBEEF'
 
@@ -109,27 +115,35 @@ describe('Default Xpring Client', function(): void {
   it('Get Transaction Status - Unvalidated Transaction and Failure Code', async function(): Promise<
     void
   > {
-    // GIVEN a XpringClient which will return an unvalidated transaction with a failure code.
-    const transactionStatusResponse = makeGetTxResponse(
-      false,
-      transactionStatusCodeFailure,
-    )
-    const transactionStatusResponses = new FakeNetworkClientResponses(
-      FakeNetworkClientResponses.defaultAccountInfoResponse(),
-      FakeNetworkClientResponses.defaultFeeResponse(),
-      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
-      transactionStatusResponse,
-    )
-    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses)
-    const xpringClient = new DefaultXpringClient(fakeNetworkClient)
+    // Iterate over different types of transaction status codes which represent failures.
+    /* eslint-disable no-await-in-loop */
+    for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
+      // GIVEN a XpringClient which will return an unvalidated transaction with a failure code.
+      const transactionStatusCodeFailure = transactionStatusFailureCodes[i]
+      const transactionStatusResponse = makeGetTxResponse(
+        false,
+        transactionStatusCodeFailure,
+      )
+      const transactionStatusResponses = new FakeNetworkClientResponses(
+        FakeNetworkClientResponses.defaultAccountInfoResponse(),
+        FakeNetworkClientResponses.defaultFeeResponse(),
+        FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+        transactionStatusResponse,
+      )
+      const fakeNetworkClient = new FakeNetworkClient(
+        transactionStatusResponses,
+      )
+      const xpringClient = new DefaultXpringClient(fakeNetworkClient)
 
-    // WHEN the transaction status is retrieved.
-    const transactionStatus = await xpringClient.getTransactionStatus(
-      transactionHash,
-    )
+      // WHEN the transaction status is retrieved.
+      const transactionStatus = await xpringClient.getTransactionStatus(
+        transactionHash,
+      )
 
-    // THEN the status is pending.
-    assert.deepEqual(transactionStatus, TransactionStatus.Pending)
+      // THEN the status is pending.
+      assert.deepEqual(transactionStatus, TransactionStatus.Pending)
+    }
+    /* eslint-enable no-await-in-loop */
   })
 
   it('Get Transaction Status - Unvalidated Transaction and Success Code', async function(): Promise<
@@ -161,27 +175,36 @@ describe('Default Xpring Client', function(): void {
   it('Get Transaction Status - Validated Transaction and Failure Code', async function(): Promise<
     void
   > {
-    // GIVEN a XpringClient which will return an validated transaction with a failure code.
-    const transactionStatusResponse = makeGetTxResponse(
-      true,
-      transactionStatusCodeFailure,
-    )
-    const transactionStatusResponses = new FakeNetworkClientResponses(
-      FakeNetworkClientResponses.defaultAccountInfoResponse(),
-      FakeNetworkClientResponses.defaultFeeResponse(),
-      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
-      transactionStatusResponse,
-    )
-    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses)
-    const xpringClient = new DefaultXpringClient(fakeNetworkClient)
+    // Iterate over different types of transaction status codes which represent failures.
+    /* eslint-disable no-await-in-loop */
+    for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
+      // GIVEN a XpringClient which will return an unvalidated transaction with a failure code.
+      const transactionStatusCodeFailure = transactionStatusFailureCodes[i]
+      // GIVEN a XpringClient which will return an validated transaction with a failure code.
+      const transactionStatusResponse = makeGetTxResponse(
+        true,
+        transactionStatusCodeFailure,
+      )
+      const transactionStatusResponses = new FakeNetworkClientResponses(
+        FakeNetworkClientResponses.defaultAccountInfoResponse(),
+        FakeNetworkClientResponses.defaultFeeResponse(),
+        FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+        transactionStatusResponse,
+      )
+      const fakeNetworkClient = new FakeNetworkClient(
+        transactionStatusResponses,
+      )
+      const xpringClient = new DefaultXpringClient(fakeNetworkClient)
 
-    // WHEN the transaction status is retrieved.
-    const transactionStatus = await xpringClient.getTransactionStatus(
-      transactionHash,
-    )
+      // WHEN the transaction status is retrieved.
+      const transactionStatus = await xpringClient.getTransactionStatus(
+        transactionHash,
+      )
 
-    // THEN the status is failed.
-    assert.deepEqual(transactionStatus, TransactionStatus.Failed)
+      // THEN the status is failed.
+      assert.deepEqual(transactionStatus, TransactionStatus.Failed)
+    }
+    /* eslint-enable no-await-in-loop */
   })
 
   it('Get Transaction Status - Validated Transaction and Success Code', async function(): Promise<
