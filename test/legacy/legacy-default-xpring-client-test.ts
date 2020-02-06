@@ -459,6 +459,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(
       fakeSucceedingNetworkClient,
     )
+
     // WHEN the account does exist
     const exists = await xpringClient.accountExists(testAddress)
 
@@ -471,6 +472,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(
       fakeErroringNetworkClient,
     )
+
     // WHEN accountExists throws an exception while calling getBalance
     const exists = await xpringClient.accountExists(testAddress)
 
