@@ -11,6 +11,7 @@ class FakeXpringClient implements XpringClientDecorator {
     public sendValue: string,
     public getLastValidatedLedgerSequenceValue: number,
     public getRawTransactionStatusValue: RawTransactionStatus,
+    public accountExistsValue: boolean,
   ) {}
 
   public async getBalance(_address: string): Promise<BigInteger> {
@@ -39,6 +40,10 @@ class FakeXpringClient implements XpringClientDecorator {
     _transactionHash: string,
   ): Promise<RawTransactionStatus> {
     return Promise.resolve(this.getRawTransactionStatusValue)
+  }
+
+  public async accountExists(_address: string): Promise<boolean> {
+    return Promise.resolve(this.accountExistsValue)
   }
 }
 
