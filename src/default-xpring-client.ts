@@ -17,11 +17,6 @@ import isNode from './utils'
 import { Payment, Transaction } from './generated/web/rpc/v1/transaction_pb'
 import { AccountRoot } from './generated/web/rpc/v1/ledger_objects_pb'
 
-// TODO(keefertaylor): Re-enable this rule when this class is fully implemented.
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable class-methods-use-this */
-
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
 
@@ -248,8 +243,6 @@ class DefaultXpringClient implements XpringClientDecorator {
     return new GetTxResponseWrapper(getTxResponse)
   }
 
-  // TODO Keefer implement method and remove tslint ignore and fix tsconfig nounusedlocals
-  // tslint:disable-next-line
   private async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
 
@@ -266,7 +259,6 @@ class DefaultXpringClient implements XpringClientDecorator {
     return minimumFee
   }
 
-  // TODO(keefertaylor): Add tests for this method once send is hooked up.
   private async getFee(): Promise<GetFeeResponse> {
     const getFeeRequest = this.networkClient.GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)

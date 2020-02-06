@@ -27,5 +27,4 @@ export interface NetworkClient {
   GetTxRequest(): GetTxRequest
   GetFeeRequest(): GetFeeRequest
   SubmitTransactionRequest(): SubmitTransactionRequest
-  // TODO(keefertaylor): Add last ledger validated sequence.
 }
