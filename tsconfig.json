@@ -14,7 +14,7 @@
     "noImplicitAny": false,
 
     // Additional Checks
-    "noUnusedLocals": false, // TODO KEEFER make this TRUE after implementing getMinimumFee in Xpring-Client
+    "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,

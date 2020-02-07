@@ -25,7 +25,13 @@ chai.use(chaiString)
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
 const transactionStatusCodeSuccess = 'tesSUCCESS'
-const transactionStatusCodeFailure = 'tecFAILURE'
+const transactionStatusFailureCodes = [
+  'tefFAILURE',
+  'tecCLAIM',
+  'telBAD_PUBLIC_KEY',
+  'temBAD_FEE',
+  'terRETRY',
+]
 
 const transactionHash = 'DEADBEEF'
 
@@ -318,31 +324,37 @@ describe('Legacy Default Xpring Client', function(): void {
   })
 
   it('Get Transaction Status - Unvalidated Transaction and Failure Code', async function() {
-    // GIVEN a XpringClient which will return an unvalidated transaction with a failure code.
-    const transactionStatusResponse = new TransactionStatusResponse()
-    transactionStatusResponse.setValidated(false)
-    transactionStatusResponse.setTransactionStatusCode(
-      transactionStatusCodeFailure,
-    )
-    const transactionStatusResponses = new FakeLegacyNetworkClientResponses(
-      FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
-      FakeLegacyNetworkClientResponses.defaultFeeResponse(),
-      FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
-      FakeLegacyNetworkClientResponses.defaultLedgerSequenceResponse(),
-      transactionStatusResponse,
-    )
-    const fakeNetworkClient = new FakeLegacyNetworkClient(
-      transactionStatusResponses,
-    )
-    const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient)
+    // Iterate over different types of transaction status codes which represent failures.
+    /* eslint-disable no-await-in-loop */
+    for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
+      // GIVEN a XpringClient which will return an unvalidated transaction with a failure code.
+      const transactionStatusCodeFailure = transactionStatusFailureCodes[i]
+      const transactionStatusResponse = new TransactionStatusResponse()
+      transactionStatusResponse.setValidated(false)
+      transactionStatusResponse.setTransactionStatusCode(
+        transactionStatusCodeFailure,
+      )
+      const transactionStatusResponses = new FakeLegacyNetworkClientResponses(
+        FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
+        FakeLegacyNetworkClientResponses.defaultFeeResponse(),
+        FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
+        FakeLegacyNetworkClientResponses.defaultLedgerSequenceResponse(),
+        transactionStatusResponse,
+      )
+      const fakeNetworkClient = new FakeLegacyNetworkClient(
+        transactionStatusResponses,
+      )
+      const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient)
 
-    // WHEN the transaction status is retrieved.
-    const transactionStatus = await xpringClient.getTransactionStatus(
-      transactionHash,
-    )
+      // WHEN the transaction status is retrieved.
+      const transactionStatus = await xpringClient.getTransactionStatus(
+        transactionHash,
+      )
 
-    // THEN the status is pending.
-    assert.deepEqual(transactionStatus, TransactionStatus.Pending)
+      // THEN the status is pending.
+      assert.deepEqual(transactionStatus, TransactionStatus.Pending)
+    }
+    /* eslint-enable no-await-in-loop */
   })
 
   it('Get Transaction Status - Unvalidated Transaction and Success Code', async function() {
@@ -374,31 +386,37 @@ describe('Legacy Default Xpring Client', function(): void {
   })
 
   it('Get Transaction Status - Validated Transaction and Failure Code', async function() {
-    // GIVEN a XpringClient which will return an validated transaction with a failure code.
-    const transactionStatusResponse = new TransactionStatusResponse()
-    transactionStatusResponse.setValidated(true)
-    transactionStatusResponse.setTransactionStatusCode(
-      transactionStatusCodeFailure,
-    )
-    const transactionStatusResponses = new FakeLegacyNetworkClientResponses(
-      FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
-      FakeLegacyNetworkClientResponses.defaultFeeResponse(),
-      FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
-      FakeLegacyNetworkClientResponses.defaultLedgerSequenceResponse(),
-      transactionStatusResponse,
-    )
-    const fakeNetworkClient = new FakeLegacyNetworkClient(
-      transactionStatusResponses,
-    )
-    const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient)
+    // Iterate over different types of transaction status codes which represent failures.
+    /* eslint-disable no-await-in-loop */
+    for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
+      // GIVEN a XpringClient which will return an unvalidated transaction with a failure code.
+      const transactionStatusCodeFailure = transactionStatusFailureCodes[i]
+      const transactionStatusResponse = new TransactionStatusResponse()
+      transactionStatusResponse.setValidated(true)
+      transactionStatusResponse.setTransactionStatusCode(
+        transactionStatusCodeFailure,
+      )
+      const transactionStatusResponses = new FakeLegacyNetworkClientResponses(
+        FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
+        FakeLegacyNetworkClientResponses.defaultFeeResponse(),
+        FakeLegacyNetworkClientResponses.defaultSubmitSignedTransactionResponse(),
+        FakeLegacyNetworkClientResponses.defaultLedgerSequenceResponse(),
+        transactionStatusResponse,
+      )
+      const fakeNetworkClient = new FakeLegacyNetworkClient(
+        transactionStatusResponses,
+      )
+      const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient)
 
-    // WHEN the transaction status is retrieved.
-    const transactionStatus = await xpringClient.getTransactionStatus(
-      transactionHash,
-    )
+      // WHEN the transaction status is retrieved.
+      const transactionStatus = await xpringClient.getTransactionStatus(
+        transactionHash,
+      )
 
-    // THEN the status is failed.
-    assert.deepEqual(transactionStatus, TransactionStatus.Failed)
+      // THEN the status is failed.
+      assert.deepEqual(transactionStatus, TransactionStatus.Failed)
+    }
+    /* eslint-enable no-await-in-loop */
   })
 
   it('Get Transaction Status - Validated Transaction and Success Code', async function() {
