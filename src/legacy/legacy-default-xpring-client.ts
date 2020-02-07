@@ -236,7 +236,6 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
   }
 
   public async accountExists(address: string): Promise<boolean> {
-    // TODO: replace with refactored checkNotXAddress() when complete
     const classicAddress = Utils.decodeXAddress(address)
     if (!classicAddress) {
       throw new Error(LegacyXpringClientErrorMessages.xAddressRequired)

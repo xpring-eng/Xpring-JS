@@ -299,8 +299,6 @@ class DefaultXpringClient implements XpringClientDecorator {
    * @returns A boolean if the account is on the ledger.
    */
   public async accountExists(address: string): Promise<boolean> {
-    // Checking for xAddress format also happens in getBalance itself... is there a cleaner way to use that result here instead of repeating this code?
-    // TODO: Checking for Xaddress format happens multiple times. Should refactor that logic into separate method such as checkNotXAddress()
     const classicAddress = Utils.decodeXAddress(address)
     if (!classicAddress) {
       throw new Error(XpringClientErrorMessages.xAddressRequired)
