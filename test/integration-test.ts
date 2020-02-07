@@ -113,4 +113,33 @@ describe('Xpring JS Integration Tests', function(): void {
     const result = await xpringClient.send(amount, recipientAddress, wallet)
     assert.exists(result)
   })
+
+  it('Check if Account Exists - Legacy Node Shim', async function(): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    const doesExist = await legacyXpringClientNode.accountExists(
+      recipientAddress,
+    )
+    assert.equal(doesExist, true)
+  })
+
+  it('Check if Account Exists - Legacy Web Shim', async function(): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    const doesExist = await legacyXpringClientWeb.accountExists(
+      recipientAddress,
+    )
+    assert.equal(doesExist, true)
+  })
+
+  it('Check if Account Exists - rippled', async function(): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const doesExist = await xpringClient.accountExists(recipientAddress)
+    assert.equal(doesExist, true)
+  })
 })
