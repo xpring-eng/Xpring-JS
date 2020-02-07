@@ -283,6 +283,25 @@ class DefaultXpringClient implements XpringClientDecorator {
 
     return accountData
   }
+
+  /**
+   * Check if an address exists on the XRP Ledger.
+   *
+   * @param address The address to check the existence of.
+   * @returns A boolean if the account is on the ledger.
+   */
+  public async accountExists(address: string): Promise<boolean> {
+    const classicAddress = Utils.decodeXAddress(address)
+    if (!classicAddress) {
+      throw new Error(XpringClientErrorMessages.xAddressRequired)
+    }
+    try {
+      await this.getBalance(address)
+      return true
+    } catch (e) {
+      return false
+    }
+  }
 }
 
 export default DefaultXpringClient

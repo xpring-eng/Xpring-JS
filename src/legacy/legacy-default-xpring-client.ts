@@ -234,6 +234,19 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
       return feeAmount
     })
   }
+
+  public async accountExists(address: string): Promise<boolean> {
+    const classicAddress = Utils.decodeXAddress(address)
+    if (!classicAddress) {
+      throw new Error(LegacyXpringClientErrorMessages.xAddressRequired)
+    }
+    try {
+      await this.getBalance(address)
+      return true
+    } catch (e) {
+      return false
+    }
+  }
 }
 
 export default LegacyDefaultXpringClient

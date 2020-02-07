@@ -424,4 +424,39 @@ describe('Default Xpring Client', function(): void {
       done()
     })
   })
+
+  it('Check if account exists - successful network request', async function() {
+    // GIVEN a DefaultXpringClient.
+    const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient)
+
+    // WHEN the account does exist
+    const exists = await xpringClient.accountExists(testAddress)
+
+    // THEN accountExists returns true
+    assert.equal(exists, true)
+  })
+
+  it('Check if account exists - failing network request', async function() {
+    // GIVEN a XpringClient which wraps an erroring network client.
+    const xpringClient = new DefaultXpringClient(fakeErroringNetworkClient)
+
+    // WHEN accountExists throws an exception while calling getBalance
+    const exists = await xpringClient.accountExists(testAddress)
+
+    // THEN accountExists returns false
+    assert.equal(exists, false)
+  })
+
+  it('Check if account exists - error with classic address', function(done) {
+    // GIVEN a XpringClient and a classic address
+    const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient)
+    const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
+
+    // WHEN accountExists is called using a classic address THEN an error to use X-Addresses is thrown.
+    xpringClient.accountExists(classicAddress).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(error.message, XpringClientErrorMessages.xAddressRequired)
+      done()
+    })
+  })
 })
