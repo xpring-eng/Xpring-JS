@@ -10,8 +10,11 @@ import {
   FakeNetworkClientResponses,
 } from './fakes/fake-network-client'
 import 'mocha'
-import { GetTxResponse } from '../src/generated/node/rpc/v1/tx_pb'
-import { Meta, TransactionResult } from '../src/generated/node/rpc/v1/meta_pb'
+import { GetTransactionResponse } from '../src/generated/node/org/xrpl/rpc/v1/get_transaction_pb'
+import {
+  Meta,
+  TransactionResult,
+} from '../src/generated/node/org/xrpl/rpc/v1/meta_pb'
 import TransactionStatus from '../src/transaction-status'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -41,14 +44,14 @@ const fakeErroringNetworkClient = new FakeNetworkClient(
 function makeGetTxResponse(
   validated: boolean,
   resultCode: string,
-): GetTxResponse {
+): GetTransactionResponse {
   const transactionResult = new TransactionResult()
   transactionResult.setResult(resultCode)
 
   const meta = new Meta()
   meta.setTransactionResult(transactionResult)
 
-  const getTxResponse = new GetTxResponse()
+  const getTxResponse = new GetTransactionResponse()
   getTxResponse.setMeta(meta)
   getTxResponse.setValidated(validated)
 

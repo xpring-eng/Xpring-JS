@@ -1,4 +1,4 @@
-import { Signer, Utils, Wallet } from 'xpring-common-js'
+import { Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
@@ -6,16 +6,30 @@ import RawTransactionStatus from './raw-transaction-status'
 import GRPCNetworkClient from './grpc-network-client'
 import GRPCNetworkClientWeb from './grpc-network-client.web'
 import { NetworkClient } from './network-client'
-import { GetTxResponse } from './generated/web/rpc/v1/tx_pb'
-import { GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
+import {
+  Payment,
+  Transaction,
+} from './generated/web/org/xrpl/rpc/v1/transaction_pb'
+import {
+  // GetTransactionRequest,
+  GetTransactionResponse,
+} from './generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+import { GetFeeResponse } from './generated/web/org/xrpl/rpc/v1/get_fee_pb'
 import {
   AccountAddress,
   CurrencyAmount,
   XRPDropsAmount,
-} from './generated/web/rpc/v1/amount_pb'
+} from './generated/web/org/xrpl/rpc/v1/amount_pb'
 import isNode from './utils'
-import { Payment, Transaction } from './generated/web/rpc/v1/transaction_pb'
-import { AccountRoot } from './generated/web/rpc/v1/ledger_objects_pb'
+
+import { AccountRoot } from './generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
+import {
+  Destination,
+  Amount,
+  Account,
+  LastLedgerSequence,
+  SigningPublicKey,
+} from './generated/node/org/xrpl/rpc/v1/common_pb'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -39,15 +53,17 @@ export class XpringClientErrorMessages {
 /**
  * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
  */
-class GetTxResponseWrapper implements RawTransactionStatus {
-  public constructor(private readonly getTxResponse: GetTxResponse) {}
+class GetTransactionResponseWrapper implements RawTransactionStatus {
+  public constructor(
+    private readonly getTransactionResponse: GetTransactionResponse,
+  ) {}
 
   public getValidated(): boolean {
-    return this.getTxResponse.getValidated()
+    return this.getTransactionResponse.getValidated()
   }
 
   public getTransactionStatusCode(): string {
-    const meta = this.getTxResponse.getMeta()
+    const meta = this.getTransactionResponse.getMeta()
     if (!meta) {
       throw new Error(XpringClientErrorMessages.malformedResponse)
     }
@@ -61,12 +77,14 @@ class GetTxResponseWrapper implements RawTransactionStatus {
   }
 
   public getLastLedgerSequence(): number {
-    const transaction = this.getTxResponse.getTransaction()
-    if (!transaction) {
+    const value = this.getTransactionResponse
+      .getTransaction()
+      ?.getLastLedgerSequence()
+      ?.getValue()
+    if (!value) {
       throw new Error(XpringClientErrorMessages.malformedResponse)
     }
-
-    return transaction.getLastLedgerSequence()
+    return value
   }
 }
 
@@ -126,11 +144,16 @@ class DefaultXpringClient implements XpringClientDecorator {
       throw new Error(XpringClientErrorMessages.malformedResponse)
     }
 
-    const balance = accountData.getBalance()
+    const balance = accountData
+      .getBalance()
+      ?.getValue()
+      ?.getXrpAmount()
+      ?.getDrops()
     if (!balance) {
       throw new Error(XpringClientErrorMessages.malformedResponse)
     }
-    return bigInt(balance.getDrops())
+
+    return bigInt(balance)
   }
 
   /**
@@ -178,44 +201,60 @@ class DefaultXpringClient implements XpringClientDecorator {
       throw new Error(XpringClientErrorMessages.xAddressRequired)
     }
 
-    const normalizedAmount = bigInt(amount.toString())
+    const normalizedAmount = amount.toString()
 
     const fee = await this.getMinimumFee()
     const accountData = await this.getAccountData(classicAddress.address)
     const lastValidatedLedgerSequence = await this.getLastValidatedLedgerSequence()
 
     const xrpDropsAmount = new XRPDropsAmount()
-    xrpDropsAmount.setDrops(normalizedAmount.toJSNumber())
+    xrpDropsAmount.setDrops(normalizedAmount)
 
     const currencyAmount = new CurrencyAmount()
     currencyAmount.setXrpAmount(xrpDropsAmount)
 
+    const amount2 = new Amount()
+    amount2.setValue(currencyAmount)
+
     const destinationAccount = new AccountAddress()
     destinationAccount.setAddress(destination)
 
-    const payment = new Payment()
-    payment.setDestination(destinationAccount)
-    payment.setAmount(currencyAmount)
+    const destination2 = new Destination()
+    destination2.setValue(destinationAccount)
 
     const account = new AccountAddress()
     account.setAddress(sender.getAddress())
 
-    const transaction = new Transaction()
-    transaction.setAccount(account)
-    transaction.setFee(fee)
-    transaction.setSequence(accountData.getSequence())
-    transaction.setPayment(payment)
-    transaction.setLastLedgerSequence(
+    const account2 = new Account()
+    account2.setValue(account)
+
+    const payment = new Payment()
+    payment.setDestination(destination2)
+    payment.setAmount(amount2)
+
+    const lastLedgerSequence = new LastLedgerSequence()
+    lastLedgerSequence.setValue(
       lastValidatedLedgerSequence + maxLedgerVersionOffset,
     )
 
     const signingPublicKeyBytes = Utils.toBytes(sender.getPublicKey())
-    transaction.setSigningPublicKey(signingPublicKeyBytes)
+    const signingPublicKey = new SigningPublicKey()
+    signingPublicKey.setValue(signingPublicKeyBytes)
 
-    const signedTransaction = Signer.signTransaction(transaction, sender)
-    if (!signedTransaction) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
+    const transaction = new Transaction()
+    transaction.setAccount(account2)
+    transaction.setFee(fee)
+    transaction.setSequence(accountData.getSequence())
+    transaction.setPayment(payment)
+    transaction.setLastLedgerSequence(lastLedgerSequence)
+
+    transaction.setSigningPublicKey(signingPublicKey)
+
+    const signedTransaction = new Uint8Array([1, 2, 3, 4])
+    // Signer.signTransaction(transaction, sender)
+    // if (!signedTransaction) {
+    //   throw new Error(XpringClientErrorMessages.malformedResponse)
+    // }
 
     const submitTransactionRequest = this.networkClient.SubmitTransactionRequest()
     submitTransactionRequest.setSignedTransaction(signedTransaction)
@@ -235,28 +274,23 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    const getTxRequest = this.networkClient.GetTxRequest()
+    const getTxRequest = this.networkClient.GetTransactionRequest()
     getTxRequest.setHash(Utils.toBytes(transactionHash))
 
-    const getTxResponse = await this.networkClient.getTx(getTxRequest)
+    const getTxResponse = await this.networkClient.getTransaction(getTxRequest)
 
-    return new GetTxResponseWrapper(getTxResponse)
+    return new GetTransactionResponseWrapper(getTxResponse)
   }
 
   private async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
 
-    const fee = getFeeResponse.getDrops()
+    const fee = getFeeResponse.getFee()?.getMinimumFee()
     if (!fee) {
       throw new Error(XpringClientErrorMessages.malformedResponse)
     }
 
-    const minimumFee = fee.getMinimumFee()
-    if (!minimumFee) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    return minimumFee
+    return fee
   }
 
   private async getFee(): Promise<GetFeeResponse> {
