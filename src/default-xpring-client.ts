@@ -1,5 +1,6 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
+import grpc from 'grpc'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
@@ -68,6 +69,16 @@ class GetTxResponseWrapper implements RawTransactionStatus {
 
     return transaction.getLastLedgerSequence()
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  public isFullPaymentTransaction(): boolean {
+    const transaction = this.getTxResponse.getTransaction()
+    if (!transaction) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
+
+    return transaction.hasPayment()
+  }
 }
 
 /**
@@ -135,6 +146,8 @@ class DefaultXpringClient implements XpringClientDecorator {
 
   /**
    * Retrieve the transaction status for a given transaction hash.
+   *
+   * @note This method will return UNKNOWN for any non-payment transactions, or any partial payment transactions.
    *
    * @param transactionHash The hash of the transaction.
    * @returns The status of the given transaction.
@@ -299,6 +312,15 @@ class DefaultXpringClient implements XpringClientDecorator {
       await this.getBalance(address)
       return true
     } catch (e) {
+      // e is ServiceError
+      if (e.code === grpc.status.NOT_FOUND) {
+        console.log('wow')
+      }
+
+      console.log(e.keefer)
+
+      console.log(JSON.stringify(e))
+
       return false
     }
   }
