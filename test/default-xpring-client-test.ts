@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 
 import bigInt from 'big-integer'
+import grpc from 'grpc'
 import { Utils, Wallet } from 'xpring-common-js'
 import DefaultXpringClient, {
   XpringClientErrorMessages,
@@ -31,6 +32,23 @@ const fakeSucceedingNetworkClient = new FakeNetworkClient()
 const fakeErroringNetworkClient = new FakeNetworkClient(
   FakeNetworkClientResponses.defaultErrorResponses,
 )
+
+/**
+ * Convenience class for creating more specific Error objects to mimick grpc error responses.
+ */
+class FakeServiceError extends Error {
+  /**
+   * Construct a new FakeServiceError.
+   *
+   * @param message The text details of the error.
+   * @param code The grpc.status code.
+   */
+  constructor(public message: string, public code: grpc.status) {
+    super(message)
+    this.message = message
+    this.code = code
+  }
+}
 
 /**
  * Convenience function which allows construction of `getTxResponse` objects.
@@ -436,15 +454,50 @@ describe('Default Xpring Client', function(): void {
     assert.equal(exists, true)
   })
 
-  it('Check if account exists - failing network request', async function() {
-    // GIVEN a XpringClient which wraps an erroring network client.
+  it('Check if account exists - failing network request w/ NOT_FOUND error', async function() {
+    // GIVEN a XpringClient which wraps an erroring network client that returns an Error containing
+    // a property 'code' with value grpc.status.NOT_FOUND.
+    const errorWithCode5 = new FakeServiceError(
+      'FakeServiceError: account not found',
+      grpc.status.NOT_FOUND,
+    )
+    const fakeNetworkClientResponses = new FakeNetworkClientResponses(
+      errorWithCode5, // getAccountInfoResponse
+    )
+    const fakeErroringNetworkClient = new FakeNetworkClient(
+      fakeNetworkClientResponses,
+    )
     const xpringClient = new DefaultXpringClient(fakeErroringNetworkClient)
 
-    // WHEN accountExists throws an exception while calling getBalance
+    // WHEN accountExists encounters this Error while calling getBalance
     const exists = await xpringClient.accountExists(testAddress)
 
     // THEN accountExists returns false
     assert.equal(exists, false)
+  })
+
+  it('Check if account exists - failing network request w/ CANCELLED error', function(done) {
+    // GIVEN a XpringClient which wraps an erroring network client that returns an Error containing
+    // a property 'code' with value grpc.status.CANCELLED.
+    const errorWithCode1 = new FakeServiceError(
+      'FakeServiceError: operation was cancelled',
+      grpc.status.CANCELLED,
+    )
+    const fakeNetworkClientResponses = new FakeNetworkClientResponses(
+      errorWithCode1, // getAccountInfoResponse
+    )
+    const fakeErroringNetworkClient = new FakeNetworkClient(
+      fakeNetworkClientResponses,
+    )
+    const xpringClient = new DefaultXpringClient(fakeErroringNetworkClient)
+
+    // WHEN accountExists encounters this Error while calling getBalance
+    // THEN accountExists should re-throw the error (cannot conclude account doesn't exist)
+    xpringClient.accountExists(testAddress).catch((error) => {
+      assert.typeOf(error, 'FakeServiceError')
+      assert.equal(error.code, grpc.status.CANCELLED)
+      done()
+    })
   })
 
   it('Check if account exists - error with classic address', function(done) {
