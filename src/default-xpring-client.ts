@@ -300,7 +300,10 @@ class DefaultXpringClient implements XpringClientDecorator {
       await this.getBalance(address)
       return true
     } catch (e) {
-      if ('code' in e && e.code === grpc.status.NOT_FOUND) {
+      if (
+        Object.prototype.hasOwnProperty.call(e, 'code') &&
+        e.code === grpc.status.NOT_FOUND
+      ) {
         return false
       }
       throw e // error code other than NOT_FOUND should re-throw error
