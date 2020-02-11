@@ -138,13 +138,9 @@ describe('Xpring JS Integration Tests', function(): void {
 
   it('Check if Account Exists - rippled', async function(): Promise<void> {
     this.timeout(timeoutMs)
-    const coinbase = 'XVYUQ3SdUcVnaTNVanDYo1NamrUukPUPeoGMnmvkEExbtrj'
-    try {
-      const doesExist = await xpringClient.accountExists(coinbase)
-      console.log(doesExist)
-    } catch (e) {
-      assert.equal(e.name, 'ServiceError')
-      assert.equal(true, false)
-    }
+
+    const doesExist = await xpringClient.accountExists(recipientAddress)
+
+    assert.equal(doesExist, true)
   })
 })
