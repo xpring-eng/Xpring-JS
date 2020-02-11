@@ -1,6 +1,7 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 
 import bigInt, { BigInteger } from 'big-integer'
+import grpc from 'grpc'
 import { AccountInfo } from '../generated/web/legacy/account_info_pb'
 import { XRPAmount } from '../generated/web/legacy/xrp_amount_pb'
 
@@ -244,7 +245,10 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
       await this.getBalance(address)
       return true
     } catch (e) {
-      return false
+      if ('code' in e && e.code === grpc.status.NOT_FOUND) {
+        return false
+      }
+      throw e // error code other than NOT_FOUND should re-throw error
     }
   }
 }
