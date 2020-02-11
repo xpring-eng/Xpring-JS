@@ -114,7 +114,7 @@ describe('Xpring JS Integration Tests', function(): void {
     assert.exists(result)
   })
 
-  it('Check if Account Exists - Legacy Node Shim', async function(): Promise<
+  it('Check if Account Exists - true - Legacy Node Shim', async function(): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -125,7 +125,7 @@ describe('Xpring JS Integration Tests', function(): void {
     assert.equal(doesExist, true)
   })
 
-  it('Check if Account Exists - Legacy Web Shim', async function(): Promise<
+  it('Check if Account Exists - true - Legacy Web Shim', async function(): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -136,11 +136,45 @@ describe('Xpring JS Integration Tests', function(): void {
     assert.equal(doesExist, true)
   })
 
-  it('Check if Account Exists - rippled', async function(): Promise<void> {
+  it('Check if Account Exists - true - rippled', async function(): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
 
     const doesExist = await xpringClient.accountExists(recipientAddress)
 
     assert.equal(doesExist, true)
+  })
+
+  it('Check if Account Exists - false - Legacy Node Shim', async function(): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    const coinbaseMainnet = 'XVYUQ3SdUcVnaTNVanDYo1NamrUukPUPeoGMnmvkEExbtrj' // valid address but should NOT show up on testnet
+    const doesExist = await legacyXpringClientNode.accountExists(
+      coinbaseMainnet,
+    )
+    assert.equal(doesExist, false)
+  })
+
+  it('Check if Account Exists - false - Legacy Web Shim', async function(): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    const coinbaseMainnet = 'XVYUQ3SdUcVnaTNVanDYo1NamrUukPUPeoGMnmvkEExbtrj' // valid address but should NOT show up on testnet
+    const doesExist = await legacyXpringClientWeb.accountExists(coinbaseMainnet)
+    assert.equal(doesExist, false)
+  })
+
+  it('Check if Account Exists - false - rippled', async function(): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    const coinbaseMainnet = 'XVYUQ3SdUcVnaTNVanDYo1NamrUukPUPeoGMnmvkEExbtrj' // valid address but should NOT show up on testnet
+    const doesExist = await xpringClient.accountExists(coinbaseMainnet)
+    assert.equal(doesExist, false)
   })
 })
