@@ -1,5 +1,6 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
+import grpc from 'grpc'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
@@ -299,7 +300,10 @@ class DefaultXpringClient implements XpringClientDecorator {
       await this.getBalance(address)
       return true
     } catch (e) {
-      return false
+      if ('code' in e && e.code === grpc.status.NOT_FOUND) {
+        return false
+      }
+      throw e // error code other than NOT_FOUND should re-throw error
     }
   }
 }
