@@ -5,7 +5,7 @@ import DefaultIlpClient from './default-ilp-client'
 class IlpClient {
   private readonly decoratedClient: IlpClientDecorator
 
-  public constructor(grpcURL: string, forceWeb: false) {
+  public constructor(grpcURL: string, forceWeb = false) {
     this.decoratedClient = DefaultIlpClient.defaultIlpClientWithEndpoint(
       grpcURL,
       forceWeb,

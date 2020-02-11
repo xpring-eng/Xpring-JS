@@ -7,4 +7,8 @@ export interface IlpNetworkClient {
   getBalance(request: GetBalanceRequest): Promise<GetBalanceResponse>
 
   send(request: SendPaymentRequest): Promise<SendPaymentResponse>
+
+  SendPaymentRequest(): SendPaymentRequest
+
+  GetBalanceRequest(): GetBalanceRequest
 }
