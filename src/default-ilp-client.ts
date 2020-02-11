@@ -1,4 +1,4 @@
-import { BigInteger } from 'big-integer'
+import bigInt, { BigInteger } from 'big-integer'
 import { IlpClientDecorator } from './ilp-client-decorator'
 import isNode from './utils'
 import { IlpNetworkClient } from './ilp-network-client'
@@ -8,8 +8,6 @@ import { GetBalanceRequest } from './generated/web/ilp/get_balance_request_pb'
 import { GetBalanceResponse } from './generated/web/ilp/get_balance_response_pb'
 import { SendPaymentRequest } from './generated/web/ilp/send_payment_request_pb'
 import { SendPaymentResponse } from './generated/web/ilp/send_payment_response_pb'
-
-import bigInt = require('big-integer')
 
 class DefaultIlpClient implements IlpClientDecorator {
   public static defaultIlpClientWithEndpoint(
