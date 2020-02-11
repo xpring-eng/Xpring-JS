@@ -494,7 +494,7 @@ describe('Default Xpring Client', function(): void {
     // WHEN accountExists encounters this Error while calling getBalance
     // THEN accountExists should re-throw the error (cannot conclude account doesn't exist)
     xpringClient.accountExists(testAddress).catch((error) => {
-      assert.typeOf(error, 'FakeServiceError')
+      assert.typeOf(error, 'Error')
       assert.equal(error.code, grpc.status.CANCELLED)
       done()
     })
