@@ -1,14 +1,13 @@
-import { IlpNetworkClient } from "./ilp-network-client";
-import { GetBalanceRequest } from "./generated/web/ilp/get_balance_request_pb";
-import { GetBalanceResponse } from "./generated/web/ilp/get_balance_response_pb";
-import { SendPaymentRequest } from "./generated/web/ilp/send_payment_request_pb";
-import { SendPaymentResponse } from "./generated/web/ilp/send_payment_response_pb";
-import isNode from "./utils";
-import { BalanceServiceClient } from "./generated/web/ilp/balance_service_grpc_web_pb";
-import { IlpOverHttpServiceClient } from "./generated/web/ilp/ilp_over_http_service_grpc_web_pb";
+import { IlpNetworkClient } from './ilp-network-client'
+import { GetBalanceRequest } from './generated/web/ilp/get_balance_request_pb'
+import { GetBalanceResponse } from './generated/web/ilp/get_balance_response_pb'
+import { SendPaymentRequest } from './generated/web/ilp/send_payment_request_pb'
+import { SendPaymentResponse } from './generated/web/ilp/send_payment_response_pb'
+import isNode from './utils'
+import { BalanceServiceClient } from './generated/web/ilp/balance_service_grpc_web_pb'
+import { IlpOverHttpServiceClient } from './generated/web/ilp/ilp_over_http_service_grpc_web_pb'
 
 class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
-
   private readonly balanceClient: BalanceServiceClient
 
   private readonly paymentClient: IlpOverHttpServiceClient
@@ -32,29 +31,28 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
   getBalance(request: GetBalanceRequest): Promise<GetBalanceResponse> {
     return new Promise((resolve, reject): void => {
       // FIXME should metadata be undefined?
-      this.balanceClient.getBalance(request, undefined,(error, response) => {
+      this.balanceClient.getBalance(request, undefined, (error, response) => {
         if (error != null || response === null) {
           reject(error)
           return
         }
         resolve(response)
       })
-    });
+    })
   }
 
   send(request: SendPaymentRequest): Promise<SendPaymentResponse> {
     return new Promise((resolve, reject): void => {
       // FIXME should metadata be undefined?
-      this.paymentClient.sendMoney(request, undefined,(error, response) => {
+      this.paymentClient.sendMoney(request, undefined, (error, response) => {
         if (error != null || response === null) {
           reject(error)
           return
         }
         resolve(response)
       })
-    });
+    })
   }
-
 }
 
 export default GrpcIlpNetworkClientWeb

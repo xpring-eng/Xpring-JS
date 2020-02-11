@@ -1,7 +1,6 @@
-import { BigInteger } from "big-integer";
+import { BigInteger } from 'big-integer'
 
 export interface IlpClientDecorator {
-
   /**
    * Retrieve the balance for the given address.
    *

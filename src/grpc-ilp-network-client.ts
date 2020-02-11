@@ -1,15 +1,14 @@
-import { IlpNetworkClient } from "./ilp-network-client";
-import { GetBalanceResponse } from "./generated/node/ilp/get_balance_response_pb";
-import { GetBalanceRequest } from "./generated/node/ilp/get_balance_request_pb";
-import { SendPaymentRequest } from "./generated/node/ilp/send_payment_request_pb";
-import { SendPaymentResponse } from "./generated/node/ilp/send_payment_response_pb";
-import isNode from "./utils";
-import { credentials } from "grpc";
-import { BalanceServiceClient } from "./generated/node/ilp/balance_service_grpc_pb";
-import { IlpOverHttpServiceClient } from "./generated/node/ilp/ilp_over_http_service_grpc_pb";
+import { credentials } from 'grpc'
+import { IlpNetworkClient } from './ilp-network-client'
+import { GetBalanceResponse } from './generated/node/ilp/get_balance_response_pb'
+import { GetBalanceRequest } from './generated/node/ilp/get_balance_request_pb'
+import { SendPaymentRequest } from './generated/node/ilp/send_payment_request_pb'
+import { SendPaymentResponse } from './generated/node/ilp/send_payment_response_pb'
+import isNode from './utils'
+import { BalanceServiceClient } from './generated/node/ilp/balance_service_grpc_pb'
+import { IlpOverHttpServiceClient } from './generated/node/ilp/ilp_over_http_service_grpc_pb'
 
 class GrpcIlpNetworkClient implements IlpNetworkClient {
-
   private readonly balanceClient: BalanceServiceClient
 
   private readonly paymentClient: IlpOverHttpServiceClient
@@ -17,8 +16,14 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
   public constructor(grpcURL: string) {
     if (isNode()) {
       // FIXME wrong credentials
-      this.balanceClient = new BalanceServiceClient(grpcURL, credentials.createInsecure())
-      this.paymentClient = new IlpOverHttpServiceClient(grpcURL, credentials.createInsecure())
+      this.balanceClient = new BalanceServiceClient(
+        grpcURL,
+        credentials.createInsecure(),
+      )
+      this.paymentClient = new IlpOverHttpServiceClient(
+        grpcURL,
+        credentials.createInsecure(),
+      )
     } else {
       throw new Error('Use ILP-gRPC-Web Network Client on the browser!')
     }
@@ -33,7 +38,7 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
         }
         resolve(response)
       })
-    });
+    })
   }
 
   send(request: SendPaymentRequest): Promise<SendPaymentResponse> {
@@ -45,9 +50,8 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
         }
         resolve(response)
       })
-    });
+    })
   }
-
 }
 
 export default GrpcIlpNetworkClient

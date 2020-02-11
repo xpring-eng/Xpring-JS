@@ -76,6 +76,10 @@ $PWD/node_modules/grpc-tools/bin/protoc \
     --proto_path=$PWD/xpring-common-protocol-buffers/proto \
     $PWD/xpring-common-protocol-buffers/**/*.proto
 
+##########################################################################
+# Generate Protocol Buffers from hermes-ilp.
+##########################################################################
+
 echo "Regenerating Protocol Buffers from hermes-ilp"
 
 # Directory to write generated code to (.js and .d.ts files)
