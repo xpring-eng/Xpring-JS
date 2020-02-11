@@ -146,27 +146,7 @@ describe('Xpring JS Integration Tests', function(): void {
     assert.equal(doesExist, true)
   })
 
-  it('Check if Account Exists - false - Legacy Node Shim', async function(): Promise<
-    void
-  > {
-    this.timeout(timeoutMs)
-
-    const coinbaseMainnet = 'XVYUQ3SdUcVnaTNVanDYo1NamrUukPUPeoGMnmvkEExbtrj' // valid address but should NOT show up on testnet
-    const doesExist = await legacyXpringClientNode.accountExists(
-      coinbaseMainnet,
-    )
-    assert.equal(doesExist, false)
-  })
-
-  it('Check if Account Exists - false - Legacy Web Shim', async function(): Promise<
-    void
-  > {
-    this.timeout(timeoutMs)
-
-    const coinbaseMainnet = 'XVYUQ3SdUcVnaTNVanDYo1NamrUukPUPeoGMnmvkEExbtrj' // valid address but should NOT show up on testnet
-    const doesExist = await legacyXpringClientWeb.accountExists(coinbaseMainnet)
-    assert.equal(doesExist, false)
-  })
+  // Omitting false-case tests for LegacyNode and LegacyWeb
 
   it('Check if Account Exists - false - rippled', async function(): Promise<
     void
