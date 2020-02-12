@@ -3,6 +3,7 @@ import { assert } from 'chai'
 import bigInt from 'big-integer'
 import grpc from 'grpc'
 import { Utils, Wallet } from 'xpring-common-js'
+import FakeGRPCError from './fakes/fake-grpc-error'
 import DefaultXpringClient, {
   XpringClientErrorMessages,
 } from '../src/default-xpring-client'
@@ -32,23 +33,6 @@ const fakeSucceedingNetworkClient = new FakeNetworkClient()
 const fakeErroringNetworkClient = new FakeNetworkClient(
   FakeNetworkClientResponses.defaultErrorResponses,
 )
-
-/**
- * Convenience class for creating more specific Error objects to mimick grpc error responses.
- */
-class FakeServiceError extends Error {
-  /**
-   * Construct a new FakeServiceError.
-   *
-   * @param message The text details of the error.
-   * @param code The grpc.status code.
-   */
-  constructor(public message: string, public code: grpc.status) {
-    super(message)
-    this.message = message
-    this.code = code
-  }
-}
 
 /**
  * Convenience function which allows construction of `getTxResponse` objects.
@@ -457,8 +441,8 @@ describe('Default Xpring Client', function(): void {
   it('Check if account exists - failing network request w/ NOT_FOUND error', async function() {
     // GIVEN a XpringClient which wraps an erroring network client that returns an Error containing
     // a property 'code' with value grpc.status.NOT_FOUND.
-    const errorWithCode5 = new FakeServiceError(
-      'FakeServiceError: account not found',
+    const errorWithCode5 = new FakeGRPCError(
+      'FakeGRPCError: account not found',
       grpc.status.NOT_FOUND,
     )
     const fakeNetworkClientResponses = new FakeNetworkClientResponses(
@@ -479,8 +463,8 @@ describe('Default Xpring Client', function(): void {
   it('Check if account exists - failing network request w/ CANCELLED error', function(done) {
     // GIVEN a XpringClient which wraps an erroring network client that returns an Error containing
     // a property 'code' with value grpc.status.CANCELLED.
-    const errorWithCode1 = new FakeServiceError(
-      'FakeServiceError: operation was cancelled',
+    const errorWithCode1 = new FakeGRPCError(
+      'FakeGRPCError: operation was cancelled',
       grpc.status.CANCELLED,
     )
     const fakeNetworkClientResponses = new FakeNetworkClientResponses(
