@@ -487,8 +487,7 @@ describe('Legacy Default Xpring Client', function(): void {
   })
 
   it('Check if account exists - failing network request w/ NOT_FOUND error', async function() {
-    // GIVEN a XpringClient which wraps an erroring network client that returns an Error containing
-    // a property 'code' with value grpc.status.NOT_FOUND.
+    // GIVEN a XpringClient with a network client that will report accounts as not found
     const notFoundError = new FakeGRPCError(
       'FakeGRPCError: account not found',
       grpc.status.NOT_FOUND,
@@ -503,16 +502,15 @@ describe('Legacy Default Xpring Client', function(): void {
       fakeErroringNetworkClient,
     )
 
-    // WHEN accountExists encounters this Error while calling getBalance
+    // WHEN Account existence is checked
     const exists = await xpringClient.accountExists(testAddress)
 
-    // THEN accountExists returns false
+    // THEN the account is reported not to exist
     assert.equal(exists, false)
   })
 
   it('Check if account exists - failing network request w/ CANCELLED error', function(done) {
-    // GIVEN a XpringClient which wraps an erroring network client that returns an Error containing
-    // a property 'code' with value grpc.status.CANCELLED.
+    // GIVEN a XpringClient with a network client that reports grpc operation as cancelled
     const cancelledError = new FakeGRPCError(
       'FakeGRPCError: operation was cancelled',
       grpc.status.CANCELLED,
@@ -527,8 +525,8 @@ describe('Legacy Default Xpring Client', function(): void {
       fakeErroringNetworkClient,
     )
 
-    // WHEN accountExists encounters this Error while calling getBalance
-    // THEN accountExists should re-throw the error (cannot conclude account doesn't exist)
+    // WHEN Account existence is checked
+    // THEN an error is re-thrown (cannot conclude account doesn't exist)
     xpringClient.accountExists(testAddress).catch((error) => {
       assert.typeOf(error, 'Error')
       assert.equal(error.code, grpc.status.CANCELLED)

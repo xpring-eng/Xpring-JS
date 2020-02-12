@@ -146,7 +146,8 @@ describe('Xpring JS Integration Tests', function(): void {
     assert.equal(doesExist, true)
   })
 
-  // Omitting false-case tests for LegacyNode and LegacyWeb
+  // Tests for account existence on the legacy shim are intentionally omitted as the legacy shim does have the
+  // required granularity of information.
 
   it('Check if Account Exists - false - rippled', async function(): Promise<
     void
