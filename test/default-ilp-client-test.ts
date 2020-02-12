@@ -1,12 +1,16 @@
-import { FakeIlpNetworkClient, FakeIlpNetworkClientResponses } from "./fakes/fake-ilp-network-client"
-import DefaultIlpClient from "../src/default-ilp-client"
-import { assert } from "chai"
+import { assert } from 'chai'
+import { FakeIlpNetworkClient, FakeIlpNetworkClientResponses, } from './fakes/fake-ilp-network-client'
+import DefaultIlpClient from '../src/default-ilp-client'
 
-const fakeSuceedingNetworkClient = () => {
+const fakeSuceedingNetworkClient = (): DefaultIlpClient => {
   return new DefaultIlpClient(new FakeIlpNetworkClient())
 }
-const fakeErroringNetworkClient = () => {
-  return new DefaultIlpClient(new FakeIlpNetworkClient(FakeIlpNetworkClientResponses.defaultErrorResponses))
+const fakeErroringNetworkClient = (): DefaultIlpClient => {
+  return new DefaultIlpClient(
+    new FakeIlpNetworkClient(
+      FakeIlpNetworkClientResponses.defaultErrorResponses,
+    ),
+  )
 }
 
 describe('Default ILP Client', function(): void {
@@ -15,7 +19,7 @@ describe('Default ILP Client', function(): void {
     const client = fakeSuceedingNetworkClient()
 
     // WHEN the balance for an account is requested
-    const amount = await client.getBalance("test.foo.bar")
+    const amount = await client.getBalance('test.foo.bar')
 
     // THEN the balance is returned
     assert.equal(Number(amount), 100)
@@ -26,10 +30,13 @@ describe('Default ILP Client', function(): void {
     const client = fakeErroringNetworkClient()
 
     // WHEN the balance for an account is requested
-    client.getBalance("test.foo.bar").catch((error) => {
+    client.getBalance('test.foo.bar').catch((error) => {
       // THEN an error is thrown
       assert.typeOf(error, 'Error')
-      assert.equal(error.message, FakeIlpNetworkClientResponses.defaultError.message)
+      assert.equal(
+        error.message,
+        FakeIlpNetworkClientResponses.defaultError.message,
+      )
       done()
     })
   })
@@ -53,7 +60,10 @@ describe('Default ILP Client', function(): void {
     client.send(100, '$money/baz', 'test.foo.bar').catch((error) => {
       // THEN an error is thrown
       assert.typeOf(error, 'Error')
-      assert.equal(error.message, FakeIlpNetworkClientResponses.defaultError.message)
+      assert.equal(
+        error.message,
+        FakeIlpNetworkClientResponses.defaultError.message,
+      )
       done()
     })
   })

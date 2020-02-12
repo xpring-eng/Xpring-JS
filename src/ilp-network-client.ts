@@ -4,7 +4,6 @@ import { SendPaymentRequest } from './generated/web/ilp/send_payment_request_pb'
 import { SendPaymentResponse } from './generated/web/ilp/send_payment_response_pb'
 
 export interface IlpNetworkClient {
-
   /**
    * Retrieve the balance for the given address.
    *

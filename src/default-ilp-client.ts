@@ -8,7 +8,6 @@ import { GetBalanceResponse } from './generated/web/ilp/get_balance_response_pb'
 import { SendPaymentResponse } from './generated/web/ilp/send_payment_response_pb'
 
 class DefaultIlpClient implements IlpClientDecorator {
-
   /**
    * Create a new DefaultIlpClient.
    *
