@@ -441,12 +441,12 @@ describe('Default Xpring Client', function(): void {
   it('Check if account exists - failing network request w/ NOT_FOUND error', async function() {
     // GIVEN a XpringClient which wraps an erroring network client that returns an Error containing
     // a property 'code' with value grpc.status.NOT_FOUND.
-    const errorWithCode5 = new FakeGRPCError(
+    const notFoundError = new FakeGRPCError(
       'FakeGRPCError: account not found',
       grpc.status.NOT_FOUND,
     )
     const fakeNetworkClientResponses = new FakeNetworkClientResponses(
-      errorWithCode5, // getAccountInfoResponse
+      notFoundError, // getAccountInfoResponse
     )
     const fakeErroringNetworkClient = new FakeNetworkClient(
       fakeNetworkClientResponses,
@@ -463,12 +463,12 @@ describe('Default Xpring Client', function(): void {
   it('Check if account exists - failing network request w/ CANCELLED error', function(done) {
     // GIVEN a XpringClient which wraps an erroring network client that returns an Error containing
     // a property 'code' with value grpc.status.CANCELLED.
-    const errorWithCode1 = new FakeGRPCError(
+    const cancelledError = new FakeGRPCError(
       'FakeGRPCError: operation was cancelled',
       grpc.status.CANCELLED,
     )
     const fakeNetworkClientResponses = new FakeNetworkClientResponses(
-      errorWithCode1, // getAccountInfoResponse
+      cancelledError, // getAccountInfoResponse
     )
     const fakeErroringNetworkClient = new FakeNetworkClient(
       fakeNetworkClientResponses,
