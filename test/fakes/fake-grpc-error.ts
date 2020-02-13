@@ -1,6 +1,7 @@
 import grpc from 'grpc'
+
 /**
- * Convenience class for creating more specific Error objects to mimick grpc error responses.
+ * Convenience class for creating more specific Error objects to mimick gRPC error responses.
  */
 export default class FakeGRPCError extends Error {
   /**
