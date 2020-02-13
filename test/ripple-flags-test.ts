@@ -1,15 +1,17 @@
 /* eslint-disable no-bitwise */
 import { assert } from 'chai'
-import RippledFlags, { checkFlag } from '../src/rippled-flags'
+import RippledFlags from '../src/rippled-flags'
 import 'mocha'
 
 describe('rippled flags', function(): void {
   it('check - flag present', function(): void {
     // GIVEN a set of flags that contains the tfPartialPayment flag.
-    const flags = RippledFlags.tfPartialPayment | 1 | 4 // 1 and 4 are arbitrarily chosen numbers.
+    const flags = RippledFlags.TF_PARTIAL_PAYMENT | 1 | 4 // 1 and 4 are arbitrarily chosen numbers.
 
     // WHEN the presence of tfPartialPayment is checked THEN the flag is reported as present.
-    assert.isTrue(checkFlag(RippledFlags.tfPartialPayment, flags))
+    assert.isTrue(
+      RippledFlags.checkFlag(RippledFlags.TF_PARTIAL_PAYMENT, flags),
+    )
   })
 
   it('check - flag notpresent', function(): void {
@@ -17,6 +19,8 @@ describe('rippled flags', function(): void {
     const flags = 1 | 4 // 1 and 4 are arbitrarily chosen numbers.
 
     // WHEN the presence of tfPartialPayment is checked THEN the flag is reported as not present.
-    assert.isFalse(checkFlag(RippledFlags.tfPartialPayment, flags))
+    assert.isFalse(
+      RippledFlags.checkFlag(RippledFlags.TF_PARTIAL_PAYMENT, flags),
+    )
   })
 })
