@@ -36,6 +36,7 @@ describe('Reliable Submission Xpring Client', function(): void {
       fakedLastLedgerSequenceValue,
       fakedRawTransactionStatusValue,
       fakedAccountExistsValue,
+      [],
     )
     this.reliableSubmissionClient = new ReliableSubmissionXpringClient(
       this.fakeXpringClient,

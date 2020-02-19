@@ -11,6 +11,7 @@ import { LegacyNetworkClient } from './legacy-network-client'
 import { XpringClientDecorator } from '../xpring-client-decorator'
 import TransactionStatus from '../transaction-status'
 import isNode from '../utils'
+import XRPTransaction from '../xrp-transaction'
 
 /**
  * Error messages from XpringClient.
@@ -19,6 +20,8 @@ export class LegacyXpringClientErrorMessages {
   public static readonly malformedResponse = 'Malformed Response.'
 
   public static readonly signingFailure = 'Unable to sign the transaction'
+
+  public static readonly unimplemented = 'Unimplemented.'
 
   public static readonly xAddressRequired =
     'Please use the X-Address format. See: https://xrpaddress.info/.'
@@ -251,6 +254,17 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
       return false
     }
   }
+
+  // TODO(keefertaylor): Re-enable
+  /* eslint-disable class-methods-use-this */
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  public getTransactionHistory(
+    _address: string,
+  ): Promise<Array<XRPTransaction>> {
+    throw new Error(LegacyXpringClientErrorMessages.unimplemented)
+  }
+  /* eslint-enable class-methods-use-this */
+  /* eslint-enable no-unused-vars */
 }
 
 export default LegacyDefaultXpringClient

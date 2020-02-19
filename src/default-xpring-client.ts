@@ -15,6 +15,7 @@ import {
 import isNode from './utils'
 import { Payment, Transaction } from './generated/web/rpc/v1/transaction_pb'
 import { AccountRoot } from './generated/web/rpc/v1/ledger_objects_pb'
+import XRPTransaction from './xrp-transaction'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -267,6 +268,17 @@ class DefaultXpringClient implements XpringClientDecorator {
       return false
     }
   }
+
+  // TODO(keefertaylor): Re-enable
+  /* eslint-disable class-methods-use-this */
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  public getTransactionHistory(
+    _address: string,
+  ): Promise<Array<XRPTransaction>> {
+    throw new Error(XpringClientErrorMessages.unimplemented)
+  }
+  /* eslint-enable class-methods-use-this */
+  /* eslint-enable no-unused-vars */
 }
 
 export default DefaultXpringClient
