@@ -1,9 +1,9 @@
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 import bigInt from 'big-integer'
-import { TransactionStatus as RawTransactionStatus } from '../src/generated/node/legacy/transaction_status_pb'
 import FakeXpringClient from './fakes/fake-xpring-client'
 import ReliableSubmissionXpringClient from '../src/reliable-submission-xpring-client'
+import RawTransactionStatus from '../src/raw-transaction-status'
 import TransactionStatus from '../src/transaction-status'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -17,24 +17,18 @@ const fakedTransactionStatusValue = TransactionStatus.Succeeded
 const fakedSendValue = transactionHash
 const fakedLastLedgerSequenceValue = 10
 
-const fakedRawTransactionStatusValue = new RawTransactionStatus()
 const fakedRawTransactionStatusLastLedgerSequenceValue = 20
 const fakedRawTransactionStatusValidatedValue = true
 const fakedRawTransactionStatusTransactionStatusCode = transactionStatusCodeSuccess
 const fakedAccountExistsValue = true
+const fakedRawTransactionStatusValue = new RawTransactionStatus(
+  fakedRawTransactionStatusValidatedValue,
+  fakedRawTransactionStatusTransactionStatusCode,
+  fakedRawTransactionStatusLastLedgerSequenceValue,
+)
 
 describe('Reliable Submission Xpring Client', function(): void {
   beforeEach(function() {
-    fakedRawTransactionStatusValue.setLastLedgerSequence(
-      fakedRawTransactionStatusLastLedgerSequenceValue,
-    )
-    fakedRawTransactionStatusValue.setValidated(
-      fakedRawTransactionStatusValidatedValue,
-    )
-    fakedRawTransactionStatusValue.setTransactionStatusCode(
-      fakedRawTransactionStatusTransactionStatusCode,
-    )
-
     this.fakeXpringClient = new FakeXpringClient(
       fakedGetBalanceValue,
       fakedTransactionStatusValue,
@@ -115,7 +109,7 @@ describe('Reliable Submission Xpring Client', function(): void {
 
     // GIVEN A transaction that will validate itself in 200ms.
     setTimeout(() => {
-      fakedRawTransactionStatusValue.setValidated(true)
+      fakedRawTransactionStatusValue.isValidated = true
     }, 200)
     const { wallet } = Wallet.generateRandomWallet()!
 
@@ -135,8 +129,11 @@ describe('Reliable Submission Xpring Client', function(): void {
     this.timeout(5000)
 
     // GIVEN a `ReliableSubmissionXpringClient` decorating a `FakeXpringClient` which will return a transaction that did not have a last ledger sequence attached.
-    const malformedRawTransactionStatus = new RawTransactionStatus()
-    malformedRawTransactionStatus.setLastLedgerSequence(0)
+    const malformedRawTransactionStatus = new RawTransactionStatus(
+      fakedRawTransactionStatusValidatedValue,
+      fakedRawTransactionStatusTransactionStatusCode,
+      0,
+    )
     this.fakeXpringClient.getRawTransactionStatusValue = malformedRawTransactionStatus
     const { wallet } = Wallet.generateRandomWallet()!
 
