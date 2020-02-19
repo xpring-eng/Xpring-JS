@@ -13,6 +13,7 @@ import 'mocha'
 import { GetTxResponse } from '../src/generated/node/rpc/v1/tx_pb'
 import { Meta, TransactionResult } from '../src/generated/node/rpc/v1/meta_pb'
 import TransactionStatus from '../src/transaction-status'
+import { Transaction } from '../src/generated/web/rpc/v1/transaction_pb'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -48,9 +49,12 @@ function makeGetTxResponse(
   const meta = new Meta()
   meta.setTransactionResult(transactionResult)
 
+  const transaction = new Transaction()
+
   const getTxResponse = new GetTxResponse()
   getTxResponse.setMeta(meta)
   getTxResponse.setValidated(validated)
+  getTxResponse.setTransaction(transaction)
 
   return getTxResponse
 }
