@@ -6,7 +6,7 @@ export default class RawTransactionStatus {
   /**
    * Create a RawTransactionStatus from a TransactionStatus legacy protocol buffer.
    */
-  public static fromTransactionStatus(
+  static fromTransactionStatus(
     transactionStatus: TransactionStatus,
   ): RawTransactionStatus {
     return new RawTransactionStatus(
@@ -19,9 +19,7 @@ export default class RawTransactionStatus {
   /**
    * Create a RawTransactionStatus from a GetTxResponse protocol buffer.
    */
-  public static fromGetTxResponse(
-    getTxResponse: GetTxResponse,
-  ): RawTransactionStatus {
+  static fromGetTxResponse(getTxResponse: GetTxResponse): RawTransactionStatus {
     return new RawTransactionStatus(
       getTxResponse.getValidated(),
       getTxResponse
@@ -35,7 +33,7 @@ export default class RawTransactionStatus {
   /**
    * Note: This constructor is exposed for testing purposes. Clients of this code should favor using a static factory method.
    */
-  public constructor(
+  constructor(
     public isValidated,
     public transactionStatusCode,
     public lastLedgerSequence,
