@@ -6,7 +6,6 @@ import RawTransactionStatus from './raw-transaction-status'
 import GRPCNetworkClient from './grpc-network-client'
 import GRPCNetworkClientWeb from './grpc-network-client.web'
 import { NetworkClient } from './network-client'
-import { GetTxResponse } from './generated/web/rpc/v1/tx_pb'
 import { GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
 import {
   AccountAddress,
@@ -34,40 +33,6 @@ export class XpringClientErrorMessages {
   public static readonly xAddressRequired =
     'Please use the X-Address format. See: https://xrpaddress.info/.'
   /* eslint-enable @typescript-eslint/indent */
-}
-
-/**
- * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
- */
-class GetTxResponseWrapper implements RawTransactionStatus {
-  public constructor(private readonly getTxResponse: GetTxResponse) {}
-
-  public getValidated(): boolean {
-    return this.getTxResponse.getValidated()
-  }
-
-  public getTransactionStatusCode(): string {
-    const meta = this.getTxResponse.getMeta()
-    if (!meta) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    const transactionResult = meta.getTransactionResult()
-    if (!transactionResult) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    return transactionResult.getResult()
-  }
-
-  public getLastLedgerSequence(): number {
-    const transaction = this.getTxResponse.getTransaction()
-    if (!transaction) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    return transaction.getLastLedgerSequence()
-  }
 }
 
 /**
@@ -147,11 +112,11 @@ class DefaultXpringClient implements XpringClientDecorator {
     )
 
     // Return pending if the transaction is not validated.
-    if (!transactionStatus.getValidated()) {
+    if (!transactionStatus.isValidated) {
       return TransactionStatus.Pending
     }
 
-    return transactionStatus.getTransactionStatusCode().startsWith('tes')
+    return transactionStatus.transactionStatusCode.startsWith('tes')
       ? TransactionStatus.Succeeded
       : TransactionStatus.Failed
   }
@@ -240,7 +205,7 @@ class DefaultXpringClient implements XpringClientDecorator {
 
     const getTxResponse = await this.networkClient.getTx(getTxRequest)
 
-    return new GetTxResponseWrapper(getTxResponse)
+    return RawTransactionStatus.fromGetTxResponse(getTxResponse)
   }
 
   private async getMinimumFee(): Promise<XRPDropsAmount> {

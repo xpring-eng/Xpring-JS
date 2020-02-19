@@ -43,7 +43,7 @@ class ReliableSubmissionXpringClient implements XpringClientDecorator {
     let rawTransactionStatus = await this.getRawTransactionStatus(
       transactionHash,
     )
-    const lastLedgerSequence = rawTransactionStatus.getLastLedgerSequence()
+    const { lastLedgerSequence } = rawTransactionStatus
     if (lastLedgerSequence === 0) {
       return Promise.reject(
         new Error(
@@ -65,7 +65,7 @@ class ReliableSubmissionXpringClient implements XpringClientDecorator {
     /* eslint-disable no-await-in-loop */
     while (
       latestLedgerSequence <= lastLedgerSequence &&
-      !rawTransactionStatus.getValidated()
+      !rawTransactionStatus.isValidated
     ) {
       await sleep(ledgerCloseTimeMs)
 
