@@ -111,6 +111,10 @@ class DefaultXpringClient implements XpringClientDecorator {
       transactionHash,
     )
 
+    if (!transactionStatus.isBucketable) {
+      return TransactionStatus.Unknown
+    }
+
     // Return pending if the transaction is not validated.
     if (!transactionStatus.isValidated) {
       return TransactionStatus.Pending
