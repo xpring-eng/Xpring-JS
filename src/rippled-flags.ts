@@ -1,3 +1,5 @@
+/* eslint-disable no-bitwise */
+
 /**
  * Flags used in rippled transactions.
  *
@@ -13,7 +15,6 @@ class RippledFlags {
    * @param flags: The flags to check
    */
   static checkFlag(flag: number, flags: number): boolean {
-    /* eslint-disable no-bitwise */
     return (flag & flags) === flag
   }
 }
