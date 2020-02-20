@@ -2,5 +2,10 @@
 src/generated
 build
 
+# Do not lint submodules
+hermes-ilp
+xpring-common-protocol-buffers
+rippled
+
 # Don't lint node_modules
 node_modules
