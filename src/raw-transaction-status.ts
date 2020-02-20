@@ -26,7 +26,9 @@ export default class RawTransactionStatus {
   ): RawTransactionStatus {
     const transaction = getTxResponse.getTransaction()
     if (!transaction) {
-      throw new Error('wrong!!')
+      throw new Error(
+        'Malformed input, `getTxResponse` did not contain a transaction.',
+      )
     }
 
     const isPayment = transaction.hasPayment()
