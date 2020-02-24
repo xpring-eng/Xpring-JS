@@ -10,7 +10,7 @@ import 'mocha'
 import RawTransactionStatus from '../src/raw-transaction-status'
 
 describe('raw transaction status', function(): void {
-  it('isBucketable - legacy proto', function(): void {
+  it('isFullPayment - legacy proto', function(): void {
     // GIVEN a legacy transaction status protocol buffer.
     const transactionStatus = new LegacyTransactionStatus()
 
@@ -19,11 +19,11 @@ describe('raw transaction status', function(): void {
       transactionStatus,
     )
 
-    // THEN the raw transaction status reports it is bucketable.
-    assert.isTrue(rawTransactionStatus.isBucketable)
+    // THEN the raw transaction status reports it is a full payment.
+    assert.isTrue(rawTransactionStatus.isFullPayment)
   })
 
-  it('isBucketable - non payment', function(): void {
+  it('isFullPayment - non payment', function(): void {
     // GIVEN a getTxResponse which is not a payment.
     const transaction = new Transaction()
     transaction.clearPayment()
@@ -36,11 +36,11 @@ describe('raw transaction status', function(): void {
       getTxResponse,
     )
 
-    // THEN the raw transaction status reports it is not bucketable.
-    assert.isFalse(rawTransactionStatus.isBucketable)
+    // THEN the raw transaction status reports it is not a full payment.
+    assert.isFalse(rawTransactionStatus.isFullPayment)
   })
 
-  it('isBucketable - partial payment', function(): void {
+  it('isFullPayment - partial payment', function(): void {
     // GIVEN a getTxResponse which is a payment with the partial payment flags set.
     const payment = new Payment()
 
@@ -56,11 +56,11 @@ describe('raw transaction status', function(): void {
       getTxResponse,
     )
 
-    // THEN the raw transaction status reports it is not bucketable.
-    assert.isFalse(rawTransactionStatus.isBucketable)
+    // THEN the raw transaction status reports it is not a full payment.
+    assert.isFalse(rawTransactionStatus.isFullPayment)
   })
 
-  it('isBucketable - payment', function(): void {
+  it('isFullPayment - payment', function(): void {
     // GIVEN a getTxResponse which is a payment.
     const payment = new Payment()
 
@@ -75,7 +75,7 @@ describe('raw transaction status', function(): void {
       getTxResponse,
     )
 
-    // THEN the raw transaction status reports it is bucketable.
-    assert.isTrue(rawTransactionStatus.isBucketable)
+    // THEN the raw transaction status reports it is a full payment.
+    assert.isTrue(rawTransactionStatus.isFullPayment)
   })
 })
