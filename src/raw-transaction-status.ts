@@ -21,13 +21,7 @@ export default class RawTransactionStatus {
   /**
    * Create a RawTransactionStatus from a GetTxResponse protocol buffer.
    */
-<<<<<<< HEAD
   static fromGetTxResponse(getTxResponse: GetTxResponse): RawTransactionStatus {
-=======
-  static fromGetTxResponse(
-    getTxResponse: GetTxResponse,
-  ): RawTransactionStatus {
->>>>>>> origin/master
     const transaction = getTxResponse.getTransaction()
     if (!transaction) {
       throw new Error(
@@ -43,11 +37,7 @@ export default class RawTransactionStatus {
       flags,
     )
 
-<<<<<<< HEAD
     const isFullPayment = isPayment && !isPartialPayment
-=======
-    const bucketable = isPayment && !isPartialPayment
->>>>>>> origin/master
 
     return new RawTransactionStatus(
       getTxResponse.getValidated(),
@@ -56,11 +46,7 @@ export default class RawTransactionStatus {
         ?.getTransactionResult()
         ?.getResult(),
       getTxResponse.getTransaction()?.getLastLedgerSequence(),
-<<<<<<< HEAD
       isFullPayment,
-=======
-      bucketable,
->>>>>>> origin/master
     )
   }
 
@@ -71,10 +57,6 @@ export default class RawTransactionStatus {
     public isValidated,
     public transactionStatusCode,
     public lastLedgerSequence,
-<<<<<<< HEAD
     public isFullPayment,
-=======
-    public isBucketable,
->>>>>>> origin/master
   ) {}
 }
