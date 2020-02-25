@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+import { Transaction } from '../../src/generated/web/rpc/v1/transaction_pb'
 import { NetworkClient } from '../../src/network-client'
 import {
   GetAccountInfoRequest,
@@ -130,9 +131,12 @@ export class FakeNetworkClientResponses {
     const meta = new Meta()
     meta.setTransactionResult(transactionResult)
 
+    const transaction = new Transaction()
+
     const response = new GetTxResponse()
     response.setValidated(true)
     response.setMeta(meta)
+    response.setTransaction(transaction)
 
     return response
   }
