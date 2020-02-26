@@ -17,6 +17,7 @@ import {
   Transaction,
   Payment,
 } from '../src/generated/web/rpc/v1/transaction_pb'
+import { RippledFlags } from '../src'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -254,6 +255,7 @@ describe('Default Xpring Client', function(): void {
     meta.setTransactionResult(transactionResult)
 
     const transaction = new Transaction()
+    transaction.clearPayment()
 
     const getTxResponse = new GetTxResponse()
     getTxResponse.setMeta(meta)
@@ -269,7 +271,7 @@ describe('Default Xpring Client', function(): void {
     const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses)
     const xpringClient = new DefaultXpringClient(fakeNetworkClient)
 
-    // WHEN the transaction status is retrieved THEN an error is thrown.
+    // WHEN the transaction status is retrieved
     const transactionStatus = await xpringClient.getTransactionStatus(
       transactionHash,
     )
@@ -288,7 +290,11 @@ describe('Default Xpring Client', function(): void {
     const meta = new Meta()
     meta.setTransactionResult(transactionResult)
 
+    const payment = new Payment()
+
     const transaction = new Transaction()
+    transaction.setFlags(RippledFlags.TF_PARTIAL_PAYMENT)
+    transaction.setPayment(payment)
 
     const getTxResponse = new GetTxResponse()
     getTxResponse.setMeta(meta)
