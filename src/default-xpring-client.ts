@@ -111,7 +111,7 @@ class DefaultXpringClient implements XpringClientDecorator {
       transactionHash,
     )
 
-    if (!transactionStatus.isBucketable) {
+    if (!transactionStatus.isFullPayment) {
       return TransactionStatus.Unknown
     }
 
