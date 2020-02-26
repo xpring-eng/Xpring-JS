@@ -1,5 +1,8 @@
 import { assert } from 'chai'
-import { FakeIlpNetworkClient, FakeIlpNetworkClientResponses, } from './fakes/fake-ilp-network-client'
+import {
+  FakeIlpNetworkClient,
+  FakeIlpNetworkClientResponses,
+} from './fakes/fake-ilp-network-client'
 import DefaultIlpClient from '../src/default-ilp-client'
 
 const fakeSuceedingNetworkClient = (): DefaultIlpClient => {

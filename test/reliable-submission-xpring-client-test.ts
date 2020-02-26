@@ -21,12 +21,12 @@ const fakedRawTransactionStatusLastLedgerSequenceValue = 20
 const fakedRawTransactionStatusValidatedValue = true
 const fakedRawTransactionStatusTransactionStatusCode = transactionStatusCodeSuccess
 const fakedAccountExistsValue = true
-const fakedBucketableValue = true
+const fakedFullPaymentValue = true
 const fakedRawTransactionStatusValue = new RawTransactionStatus(
   fakedRawTransactionStatusValidatedValue,
   fakedRawTransactionStatusTransactionStatusCode,
   fakedRawTransactionStatusLastLedgerSequenceValue,
-  fakedBucketableValue,
+  fakedFullPaymentValue,
 )
 
 describe('Reliable Submission Xpring Client', function(): void {
@@ -135,7 +135,7 @@ describe('Reliable Submission Xpring Client', function(): void {
       fakedRawTransactionStatusValidatedValue,
       fakedRawTransactionStatusTransactionStatusCode,
       0,
-      fakedBucketableValue,
+      fakedFullPaymentValue,
     )
     this.fakeXpringClient.getRawTransactionStatusValue = malformedRawTransactionStatus
     const { wallet } = Wallet.generateRandomWallet()!
