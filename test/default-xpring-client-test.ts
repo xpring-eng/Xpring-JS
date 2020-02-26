@@ -13,7 +13,11 @@ import 'mocha'
 import { GetTxResponse } from '../src/generated/node/rpc/v1/tx_pb'
 import { Meta, TransactionResult } from '../src/generated/node/rpc/v1/meta_pb'
 import TransactionStatus from '../src/transaction-status'
-import { Transaction } from '../src/generated/web/rpc/v1/transaction_pb'
+import {
+  Transaction,
+  Payment,
+} from '../src/generated/web/rpc/v1/transaction_pb'
+import { RippledFlags } from '../src'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -49,7 +53,10 @@ function makeGetTxResponse(
   const meta = new Meta()
   meta.setTransactionResult(transactionResult)
 
+  const payment = new Payment()
+
   const transaction = new Transaction()
+  transaction.setPayment(payment)
 
   const getTxResponse = new GetTxResponse()
   getTxResponse.setMeta(meta)
@@ -235,6 +242,81 @@ describe('Default Xpring Client', function(): void {
 
     // THEN the status is succeeded.
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
+  })
+
+  it('Get Transaction Status - Unsupported transaction type', async function(): Promise<
+    void
+  > {
+    // GIVEN a XpringClient which will return a non-payment type transaction.
+    const transactionResult = new TransactionResult()
+    transactionResult.setResult(transactionStatusCodeSuccess)
+
+    const meta = new Meta()
+    meta.setTransactionResult(transactionResult)
+
+    const transaction = new Transaction()
+    transaction.clearPayment()
+
+    const getTxResponse = new GetTxResponse()
+    getTxResponse.setMeta(meta)
+    getTxResponse.setValidated(true)
+    getTxResponse.setTransaction(transaction)
+
+    const transactionStatusResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      getTxResponse,
+    )
+    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses)
+    const xpringClient = new DefaultXpringClient(fakeNetworkClient)
+
+    // WHEN the transaction status is retrieved
+    const transactionStatus = await xpringClient.getTransactionStatus(
+      transactionHash,
+    )
+
+    // THEN the status is unknown.
+    assert.deepEqual(transactionStatus, TransactionStatus.Unknown)
+  })
+
+  it('Get Transaction Status - Partial payment', async function(): Promise<
+    void
+  > {
+    // GIVEN a XpringClient which will return a payment type transaction with the partial payment flag set.
+    const transactionResult = new TransactionResult()
+    transactionResult.setResult(transactionStatusCodeSuccess)
+
+    const meta = new Meta()
+    meta.setTransactionResult(transactionResult)
+
+    const payment = new Payment()
+
+    const transaction = new Transaction()
+    transaction.setFlags(RippledFlags.TF_PARTIAL_PAYMENT)
+    transaction.setPayment(payment)
+
+    const getTxResponse = new GetTxResponse()
+    getTxResponse.setMeta(meta)
+    getTxResponse.setValidated(true)
+    getTxResponse.setTransaction(transaction)
+
+    const transactionStatusResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      getTxResponse,
+    )
+    const fakeNetworkClient = new FakeNetworkClient(transactionStatusResponses)
+    const xpringClient = new DefaultXpringClient(fakeNetworkClient)
+
+    // WHEN the transaction status is retrieved THEN an error is thrown.
+    const transactionStatus = await xpringClient.getTransactionStatus(
+      transactionHash,
+    )
+
+    // THEN the status is unknown.
+    assert.deepEqual(transactionStatus, TransactionStatus.Unknown)
   })
 
   it('Get Transaction Status - Node Error', function(done): void {
