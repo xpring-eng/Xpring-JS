@@ -141,16 +141,16 @@ class DefaultXpringClient implements XpringClientDecorator {
    * Send the given amount of XRP from the source wallet to the destination address.
    *
    * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
-   * @param destination A destination address to send the drops to.
+   * @param destinationAddress A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    amount: BigInteger | number | string,
-    destination: string,
+    drops: BigInteger | number | string,
+    destinationAddress: string,
     sender: Wallet,
   ): Promise<string> {
-    if (!Utils.isValidXAddress(destination)) {
+    if (!Utils.isValidXAddress(destinationAddress)) {
       throw new Error(XpringClientErrorMessages.xAddressRequired)
     }
 
@@ -159,26 +159,26 @@ class DefaultXpringClient implements XpringClientDecorator {
       throw new Error(XpringClientErrorMessages.xAddressRequired)
     }
 
-    const normalizedAmount = amount.toString()
+    const normalizedDrops = drops.toString()
 
     const fee = await this.getMinimumFee()
     const accountData = await this.getAccountData(classicAddress.address)
     const lastValidatedLedgerSequence = await this.getLastValidatedLedgerSequence()
 
     const xrpDropsAmount = new XRPDropsAmount()
-    xrpDropsAmount.setDrops(normalizedAmount)
+    xrpDropsAmount.setDrops(normalizedDrops)
 
     const currencyAmount = new CurrencyAmount()
     currencyAmount.setXrpAmount(xrpDropsAmount)
 
-    const amount2 = new Amount()
-    amount2.setValue(currencyAmount)
+    const amount = new Amount()
+    amount.setValue(currencyAmount)
 
-    const destinationAccount = new AccountAddress()
-    destinationAccount.setAddress(destination)
+    const destinationAccountAddress = new AccountAddress()
+    destinationAccountAddress.setAddress(destinationAddress)
 
-    const destination2 = new Destination()
-    destination2.setValue(destinationAccount)
+    const destination = new Destination()
+    destination.setValue(destinationAccountAddress)
 
     const account = new AccountAddress()
     account.setAddress(sender.getAddress())
@@ -187,8 +187,8 @@ class DefaultXpringClient implements XpringClientDecorator {
     account2.setValue(account)
 
     const payment = new Payment()
-    payment.setDestination(destination2)
-    payment.setAmount(amount2)
+    payment.setDestination(destination)
+    payment.setAmount(amount)
 
     const lastLedgerSequence = new LastLedgerSequence()
     lastLedgerSequence.setValue(
