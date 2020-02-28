@@ -16,6 +16,7 @@ import {
   TransactionResult,
 } from '../src/generated/node/org/xrpl/rpc/v1/meta_pb'
 import TransactionStatus from '../src/transaction-status'
+import { Transaction } from '../src/generated/web/rpc/v1/transaction_pb'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -51,9 +52,16 @@ function makeGetTxResponse(
   const meta = new Meta()
   meta.setTransactionResult(transactionResult)
 
+<<<<<<< HEAD
   const getTxResponse = new GetTransactionResponse()
+=======
+  const transaction = new Transaction()
+
+  const getTxResponse = new GetTxResponse()
+>>>>>>> origin/master
   getTxResponse.setMeta(meta)
   getTxResponse.setValidated(validated)
+  getTxResponse.setTransaction(transaction)
 
   return getTxResponse
 }

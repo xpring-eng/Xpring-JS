@@ -6,6 +6,7 @@ import RawTransactionStatus from './raw-transaction-status'
 import GRPCNetworkClient from './grpc-network-client'
 import GRPCNetworkClientWeb from './grpc-network-client.web'
 import { NetworkClient } from './network-client'
+<<<<<<< HEAD
 import {
   Payment,
   Transaction,
@@ -15,6 +16,9 @@ import {
   GetTransactionResponse,
 } from './generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import { GetFeeResponse } from './generated/web/org/xrpl/rpc/v1/get_fee_pb'
+=======
+import { GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
+>>>>>>> origin/master
 import {
   AccountAddress,
   CurrencyAmount,
@@ -51,6 +55,7 @@ export class XpringClientErrorMessages {
 }
 
 /**
+<<<<<<< HEAD
  * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
  */
 class GetTransactionResponseWrapper implements RawTransactionStatus {
@@ -89,6 +94,8 @@ class GetTransactionResponseWrapper implements RawTransactionStatus {
 }
 
 /**
+=======
+>>>>>>> origin/master
  * DefaultXpringClient is a client which interacts with the Xpring platform.
  */
 class DefaultXpringClient implements XpringClientDecorator {
@@ -170,11 +177,11 @@ class DefaultXpringClient implements XpringClientDecorator {
     )
 
     // Return pending if the transaction is not validated.
-    if (!transactionStatus.getValidated()) {
+    if (!transactionStatus.isValidated) {
       return TransactionStatus.Pending
     }
 
-    return transactionStatus.getTransactionStatusCode().startsWith('tes')
+    return transactionStatus.transactionStatusCode.startsWith('tes')
       ? TransactionStatus.Succeeded
       : TransactionStatus.Failed
   }
@@ -279,7 +286,11 @@ class DefaultXpringClient implements XpringClientDecorator {
 
     const getTxResponse = await this.networkClient.getTransaction(getTxRequest)
 
+<<<<<<< HEAD
     return new GetTransactionResponseWrapper(getTxResponse)
+=======
+    return RawTransactionStatus.fromGetTxResponse(getTxResponse)
+>>>>>>> origin/master
   }
 
   private async getMinimumFee(): Promise<XRPDropsAmount> {

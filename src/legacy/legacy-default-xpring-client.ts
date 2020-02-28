@@ -96,11 +96,11 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
     )
 
     // Return pending if the transaction is not validated.
-    if (!transactionStatus.getValidated()) {
+    if (!transactionStatus.isValidated) {
       return TransactionStatus.Pending
     }
 
-    return transactionStatus.getTransactionStatusCode().startsWith('tes')
+    return transactionStatus.transactionStatusCode.startsWith('tes')
       ? TransactionStatus.Succeeded
       : TransactionStatus.Failed
   }
@@ -212,7 +212,11 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
     const transactionStatusRequest = this.networkClient.GetTransactionStatusRequest()
     transactionStatusRequest.setTransactionHash(transactionHash)
 
-    return this.networkClient.getTransactionStatus(transactionStatusRequest)
+    const transactionStatus = await this.networkClient.getTransactionStatus(
+      transactionStatusRequest,
+    )
+
+    return RawTransactionStatus.fromTransactionStatus(transactionStatus)
   }
 
   private async getAccountInfo(address: string): Promise<AccountInfo> {
