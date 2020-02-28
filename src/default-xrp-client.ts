@@ -1,6 +1,6 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
-import { XpringClientDecorator } from './xpring-client-decorator'
+import { XRPClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import GRPCNetworkClient from './grpc-network-client'
@@ -20,9 +20,9 @@ import { AccountRoot } from './generated/web/rpc/v1/ledger_objects_pb'
 const maxLedgerVersionOffset = 10
 
 /**
- * Error messages from XpringClient.
+ * Error messages from XRPClient.
  */
-export class XpringClientErrorMessages {
+export class XRPClientErrorMessages {
   public static readonly malformedResponse = 'Malformed Response.'
 
   public static readonly signingFailure = 'Unable to sign the transaction'
@@ -36,30 +36,30 @@ export class XpringClientErrorMessages {
 }
 
 /**
- * DefaultXpringClient is a client which interacts with the Xpring platform.
+ * DefaultXRPClient is a client which interacts with the Xpring platform.
  */
-class DefaultXpringClient implements XpringClientDecorator {
+class DefaultXRPClient implements XRPClientDecorator {
   /**
-   * Create a new DefaultXpringClient.
+   * Create a new DefaultXRPClient.
    *
-   * The DefaultXpringClient will use gRPC to communicate with the given endpoint.
+   * The DefaultXRPClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
-  public static defaultXpringClientWithEndpoint(
+  public static defaultXRPClientWithEndpoint(
     grpcURL: string,
     forceWeb = false,
-  ): DefaultXpringClient {
+  ): DefaultXRPClient {
     return isNode() && !forceWeb
-      ? new DefaultXpringClient(new GRPCNetworkClient(grpcURL))
-      : new DefaultXpringClient(new GRPCNetworkClientWeb(grpcURL))
+      ? new DefaultXRPClient(new GRPCNetworkClient(grpcURL))
+      : new DefaultXRPClient(new GRPCNetworkClientWeb(grpcURL))
   }
 
   /**
-   * Create a new DefaultXpringClient with a custom network client implementation.
+   * Create a new DefaultXRPClient with a custom network client implementation.
    *
-   * In general, clients should prefer to call `xpringClientWithEndpoint`. This constructor is provided to improve testability of this class.
+   * In general, clients should prefer to call `XRPClientWithEndpoint`. This constructor is provided to improve testability of this class.
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
    */
@@ -74,9 +74,7 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async getBalance(address: string): Promise<BigInteger> {
     const classicAddress = Utils.decodeXAddress(address)
     if (!classicAddress) {
-      return Promise.reject(
-        new Error(XpringClientErrorMessages.xAddressRequired),
-      )
+      return Promise.reject(new Error(XRPClientErrorMessages.xAddressRequired))
     }
 
     const account = this.networkClient.AccountAddress()
@@ -88,12 +86,12 @@ class DefaultXpringClient implements XpringClientDecorator {
     const accountInfo = await this.networkClient.getAccountInfo(request)
     const accountData = accountInfo.getAccountData()
     if (!accountData) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
+      throw new Error(XRPClientErrorMessages.malformedResponse)
     }
 
     const balance = accountData.getBalance()
     if (!balance) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
+      throw new Error(XRPClientErrorMessages.malformedResponse)
     }
     return bigInt(balance.getDrops())
   }
@@ -135,12 +133,12 @@ class DefaultXpringClient implements XpringClientDecorator {
     sender: Wallet,
   ): Promise<string> {
     if (!Utils.isValidXAddress(destination)) {
-      throw new Error(XpringClientErrorMessages.xAddressRequired)
+      throw new Error(XRPClientErrorMessages.xAddressRequired)
     }
 
     const classicAddress = Utils.decodeXAddress(sender.getAddress())
     if (!classicAddress) {
-      throw new Error(XpringClientErrorMessages.xAddressRequired)
+      throw new Error(XRPClientErrorMessages.xAddressRequired)
     }
 
     const normalizedAmount = bigInt(amount.toString())
@@ -179,7 +177,7 @@ class DefaultXpringClient implements XpringClientDecorator {
 
     const signedTransaction = Signer.signTransaction(transaction, sender)
     if (!signedTransaction) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
+      throw new Error(XRPClientErrorMessages.malformedResponse)
     }
 
     const submitTransactionRequest = this.networkClient.SubmitTransactionRequest()
@@ -213,12 +211,12 @@ class DefaultXpringClient implements XpringClientDecorator {
 
     const fee = getFeeResponse.getDrops()
     if (!fee) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
+      throw new Error(XRPClientErrorMessages.malformedResponse)
     }
 
     const minimumFee = fee.getMinimumFee()
     if (!minimumFee) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
+      throw new Error(XRPClientErrorMessages.malformedResponse)
     }
 
     return minimumFee
@@ -238,12 +236,12 @@ class DefaultXpringClient implements XpringClientDecorator {
 
     const accountInfo = await this.networkClient.getAccountInfo(request)
     if (!accountInfo) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
+      throw new Error(XRPClientErrorMessages.malformedResponse)
     }
 
     const accountData = accountInfo.getAccountData()
     if (!accountData) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
+      throw new Error(XRPClientErrorMessages.malformedResponse)
     }
 
     return accountData
@@ -258,7 +256,7 @@ class DefaultXpringClient implements XpringClientDecorator {
   public async accountExists(address: string): Promise<boolean> {
     const classicAddress = Utils.decodeXAddress(address)
     if (!classicAddress) {
-      throw new Error(XpringClientErrorMessages.xAddressRequired)
+      throw new Error(XRPClientErrorMessages.xAddressRequired)
     }
     try {
       await this.getBalance(address)
@@ -269,4 +267,4 @@ class DefaultXpringClient implements XpringClientDecorator {
   }
 }
 
-export default DefaultXpringClient
+export default DefaultXRPClient
