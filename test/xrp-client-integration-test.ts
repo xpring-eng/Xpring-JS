@@ -32,7 +32,7 @@ const xrpClient = new XRPClient(rippledURL, true)
 // Some amount of XRP to send.
 const amount = bigInt('1')
 
-describe('Xpring JS Integration Tests', function(): void {
+describe('Xpring JS XRPClient Integration Tests', function(): void {
   it('Get Account Balance - Legacy Node Shim', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
