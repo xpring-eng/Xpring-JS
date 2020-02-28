@@ -1,15 +1,15 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
-import { XpringClientDecorator } from './xrp-client-decorator'
-import LegacyDefaultXpringClient from './legacy/legacy-default-xpring-client'
+import { XRPClientDecorator } from './xrp-client-decorator'
+import LegacyDefaultXRPClient from './legacy/legacy-default-xpring-client'
 import TransactionStatus from './transaction-status'
-import ReliableSubmissionXpringClient from './reliable-submission-xpring-client'
-import DefaultXpringClient from './default-xpring-client'
+import ReliableSubmissionXRPClient from './reliable-submission-xpring-client'
+import DefaultXRPClient from './default-xrp-client'
 /**
  * XpringClient is a client which interacts with the Xpring platform.
  */
 class XpringClient {
-  private readonly decoratedClient: XpringClientDecorator
+  private readonly decoratedClient: XRPClientDecorator
 
   /**
    * Create a new XpringClient.
@@ -25,16 +25,11 @@ class XpringClient {
     useNewProtocolBuffers = false,
     forceWeb = false,
   ) {
-    const defaultXpringClient = useNewProtocolBuffers
-      ? DefaultXpringClient.defaultXpringClientWithEndpoint(grpcURL, forceWeb)
-      : LegacyDefaultXpringClient.defaultXpringClientWithEndpoint(
-          grpcURL,
-          forceWeb,
-        )
+    const defaultXRPClient = useNewProtocolBuffers
+      ? DefaultXRPClient.defaultXRPClientWithEndpoint(grpcURL, forceWeb)
+      : LegacyDefaultXRPClient.defaultXRPClientWithEndpoint(grpcURL, forceWeb)
 
-    this.decoratedClient = new ReliableSubmissionXpringClient(
-      defaultXpringClient,
-    )
+    this.decoratedClient = new ReliableSubmissionXRPClient(defaultXRPClient)
   }
 
   /**
