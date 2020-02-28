@@ -102,7 +102,7 @@ console.log(wallet.getPrivateKey()); // 0090802A50AA84EFB6CDB225F17C27616EA94048
 
 #### 署名/検証
 
-ウォレットは、任意の16進数のメッセージに署名して検証することもできます。一般的に、ユーザーはこれらの低レベルAPIは使用せずに、 `XpringClient`上の暗号化機能を実行しなければなりません。
+ウォレットは、任意の16進数のメッセージに署名して検証することもできます。一般的に、ユーザーはこれらの低レベルAPIは使用せずに、 `XRPClient`上の暗号化機能を実行しなければなりません。
 
 ```javascript
 const { Wallet } = require("xpringkit-js");
@@ -116,42 +116,42 @@ const signature = wallet.sign(message);
 wallet.verify(message, signature); // true
 ```
 
-### XpringClient
+### XRPClient
 
-「XpringClient」はXRPレジャーへのゲートウェイです。 「XpringClient」は、リモートアダプターのURLである単一のパラメーターで初期化されます（上記の「サーバー側コンポーネント」セクションを参照）。
+「XRPClient」はXRPレジャーへのゲートウェイです。 「XRPClient」は、リモートアダプターのURLである単一のパラメーターで初期化されます（上記の「サーバー側コンポーネント」セクションを参照）。
 
 ```javascript
-const { XpringClient } = require("xpring-js");
+const { XRPClient } = require("xpring-js");
 
 const remoteURL = "grpc.xpring.tech:80";
-const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
+const xrpClient = XRPClient.xrpClientWithEndpoint(remoteURL);
 ```
 
 #### 口座残高の取得
 
-「XpringClient」は、レジャーのアカウントの残高を確認できます。
+「XRPClient」は、レジャーのアカウントの残高を確認できます。
 
 ```javascript
-const { XpringClient } = require("xpring-js");
+const { XRPClient } = require("xpring-js");
 
 const remoteURL = "grpc.xpring.tech:80";
-const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
+const xrpClient = XRPClient.xrpClientWithEndpoint(remoteURL);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
 
-const balance = await xpringClient.getBalance(address);
+const balance = await xrpClient.getBalance(address);
 console.log(balance); // Logs a balance in drops of XRP
 ```
 
 #### XRPの送信
 
-「XpringClient」は、レジャー上の他のアカウント宛にXRPを送信できます。
+「XRPClient」は、レジャー上の他のアカウント宛にXRPを送信できます。
 
 ```javascript
-const { Wallet, XRPAmount, XpringClient } = require("xpring-js");
+const { Wallet, XRPAmount, XRPClient } = require("xpring-js");
 
 const remoteURL = "grpc.xpring.tech:80";
-const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
+const xrpClient = XRPClient.xrpClientWithEndpoint(remoteURL);
 
 // Amount of XRP to send
 const amount = BigInt("10")
@@ -162,7 +162,7 @@ const destinationAddress = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
 // Wallet which will send XRP
 const senderWallet = Wallet.generateRandomWallet();
 
-const transactionHash = await xpringClient.send(amount, destinationAddress, senderWallet);
+const transactionHash = await xrpClient.send(amount, destinationAddress, senderWallet);
 ```
 
 ### ユーティリティー
