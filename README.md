@@ -17,10 +17,6 @@ Xpring-JS provides the following features:
 
 ## Installation
 
-Xpring-JS utilizes two components to access the Xpring Platform:
-1) The Xpring-JS client side library (This library)
-2) A server side component that handles requests from this library and proxies them to an XRP node
-
 ### Client Side Library
 Xpring-JS is available as an NPM package. Simply install with:
 
@@ -28,15 +24,19 @@ Xpring-JS is available as an NPM package. Simply install with:
 $ npm i xpring-js
 ```
 
-### Server Side Component
-The server side component sends client-side requests to an XRP Node.
+### rippled Node
 
-To get developers started right away, Xpring currently provides the server side component as a hosted service, which proxies requests from client side libraries to a a hosted XRP Node. Developers can reach the endpoint at:
-```
-grpc.xpring.tech:80
-```
+Xpring SDK needs to communicate with a rippled node which has gRPC enabled. Consult the [rippled documentation](https://github.com/ripple/rippled#build-from-source) for details on how to build your own node.
 
-Xpring is working on building a zero-config way for XRP node users to deploy and use the adapter as an open-source component of [rippled](https://github.com/ripple/rippled). Watch this space!
+To get developers started right away, Xpring currently hosts nodes. These nodes are provided on a best effort basis, and may be subject to downtime. 
+
+```
+# TestNet
+3.14.64.116:50051
+
+# MainNet
+18.222.225.81:50051
+```
 
 ## Usage
 
@@ -126,8 +126,8 @@ wallet.verify(message, signature); // true
 ```javascript
 const { XpringClient } = require("xpring-js");
 
-const remoteURL = "grpc.xpring.tech:80";
-const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL);
+const remoteURL = "3.14.64.116:50051"; // TestNet URL, use 18.222.225.81:50051 for MainNet
+const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL, true);
 ```
 
 #### Retrieving a Balance
@@ -137,8 +137,8 @@ A `XpringClient` can check the balance of an account on the XRP Ledger.
 ```javascript
 const { XpringClient } = require("xpring-js");
 
-const remoteURL = "grpc.xpring.tech:80";
-const xpringClient = new XpringClient(remoteURL);
+const remoteURL = "3.14.64.116:50051"; // TestNet URL, use 18.222.225.81:50051 for MainNet
+const xpringClient = new XpringClient(remoteURL, true);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
 
@@ -163,8 +163,8 @@ These states are determined by the `TransactionStatus` enum.
 ```javascript
 const { XpringClient } = require("xpring-js");
 
-const remoteURL = "grpc.xpring.tech:80";
-const xpringClient = new XpringClient(remoteURL);
+const remoteURL = "3.14.64.116:50051"; // TestNet URL, use 18.222.225.81:50051 for MainNet
+const xpringClient = new XpringClient(remoteURL, true);
 
 const transactionHash = "9FC7D277C1C8ED9CE133CC17AEA9978E71FC644CE6F5F0C8E26F1C635D97AF4A";
 const transactionStatus = xpringClient.getTransactionStatus(transactionHash); // TransactionStatus.Succeeded
@@ -181,8 +181,8 @@ A `XpringClient` can send XRP to other accounts on the XRP Ledger.
 ```javascript
 const { Wallet, XRPAmount, XpringClient } = require("xpring-js");
 
-const remoteURL = "grpc.xpring.tech:80";
-const xpringClient = new XpringClient(remoteURL);
+const remoteURL = "3.14.64.116:50051"; // TestNet URL, use 18.222.225.81:50051 for MainNet
+const xpringClient = new XpringClient(remoteURL, true);
 
 // Amount of XRP to send
 const amount = BigInt("10");
