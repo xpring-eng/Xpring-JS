@@ -1,9 +1,9 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import { XRPClientDecorator } from './xrp-client-decorator'
-import LegacyDefaultXRPClient from './legacy/legacy-default-xpring-client'
+import LegacyDefaultXRPClient from './legacy/legacy-default-xrp-client'
 import TransactionStatus from './transaction-status'
-import ReliableSubmissionXRPClient from './reliable-submission-xpring-client'
+import ReliableSubmissionXRPClient from './reliable-submission-xrp-client'
 import DefaultXRPClient from './default-xrp-client'
 /**
  * XRPClient is a client which interacts with the Xpring platform.
