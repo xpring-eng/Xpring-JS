@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 import bigInt from 'big-integer'
-import FakeXRPClient from './fakes/fake-xpring-client'
+import FakeXRPClient from './fakes/fake-xrp-client'
 import ReliableSubmissionXRPClient from '../src/reliable-submission-xrp-client'
 import RawTransactionStatus from '../src/raw-transaction-status'
 import TransactionStatus from '../src/transaction-status'
