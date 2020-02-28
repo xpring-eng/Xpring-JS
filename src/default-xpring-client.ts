@@ -180,11 +180,11 @@ class DefaultXpringClient implements XpringClientDecorator {
     const destination = new Destination()
     destination.setValue(destinationAccountAddress)
 
-    const account = new AccountAddress()
-    account.setAddress(sender.getAddress())
+    const senderAccountAddress = new AccountAddress()
+    senderAccountAddress.setAddress(sender.getAddress())
 
-    const account2 = new Account()
-    account2.setValue(account)
+    const account = new Account()
+    account.setValue(senderAccountAddress)
 
     const payment = new Payment()
     payment.setDestination(destination)
@@ -200,7 +200,7 @@ class DefaultXpringClient implements XpringClientDecorator {
     signingPublicKey.setValue(signingPublicKeyBytes)
 
     const transaction = new Transaction()
-    transaction.setAccount(account2)
+    transaction.setAccount(account)
     transaction.setFee(fee)
     transaction.setSequence(accountData.getSequence())
     transaction.setPayment(payment)
