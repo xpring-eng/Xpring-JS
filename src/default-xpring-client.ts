@@ -1,4 +1,4 @@
-import { Utils, Wallet } from 'xpring-common-js'
+import { Signer, Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import TransactionStatus from './transaction-status'
@@ -6,21 +6,9 @@ import RawTransactionStatus from './raw-transaction-status'
 import GRPCNetworkClient from './grpc-network-client'
 import GRPCNetworkClientWeb from './grpc-network-client.web'
 import { NetworkClient } from './network-client'
-<<<<<<< HEAD
-import {
-  Payment,
-  Transaction,
-} from './generated/web/org/xrpl/rpc/v1/transaction_pb'
-import {
-  // GetTransactionRequest,
-  GetTransactionResponse,
-} from './generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import { GetFeeResponse } from './generated/web/org/xrpl/rpc/v1/get_fee_pb'
-=======
-import { GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
->>>>>>> origin/master
+import { AccountAddress } from './generated/web/org/xrpl/rpc/v1/account_pb'
 import {
-  AccountAddress,
   CurrencyAmount,
   XRPDropsAmount,
 } from './generated/web/org/xrpl/rpc/v1/amount_pb'
@@ -34,6 +22,10 @@ import {
   LastLedgerSequence,
   SigningPublicKey,
 } from './generated/node/org/xrpl/rpc/v1/common_pb'
+import {
+  Payment,
+  Transaction,
+} from './generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -55,47 +47,6 @@ export class XpringClientErrorMessages {
 }
 
 /**
-<<<<<<< HEAD
- * A private wrapper class which conforms `GetTxResponse` to the `RawTransaction` interface.
- */
-class GetTransactionResponseWrapper implements RawTransactionStatus {
-  public constructor(
-    private readonly getTransactionResponse: GetTransactionResponse,
-  ) {}
-
-  public getValidated(): boolean {
-    return this.getTransactionResponse.getValidated()
-  }
-
-  public getTransactionStatusCode(): string {
-    const meta = this.getTransactionResponse.getMeta()
-    if (!meta) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    const transactionResult = meta.getTransactionResult()
-    if (!transactionResult) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-
-    return transactionResult.getResult()
-  }
-
-  public getLastLedgerSequence(): number {
-    const value = this.getTransactionResponse
-      .getTransaction()
-      ?.getLastLedgerSequence()
-      ?.getValue()
-    if (!value) {
-      throw new Error(XpringClientErrorMessages.malformedResponse)
-    }
-    return value
-  }
-}
-
-/**
-=======
->>>>>>> origin/master
  * DefaultXpringClient is a client which interacts with the Xpring platform.
  */
 class DefaultXpringClient implements XpringClientDecorator {
@@ -257,11 +208,10 @@ class DefaultXpringClient implements XpringClientDecorator {
 
     transaction.setSigningPublicKey(signingPublicKey)
 
-    const signedTransaction = new Uint8Array([1, 2, 3, 4])
-    // Signer.signTransaction(transaction, sender)
-    // if (!signedTransaction) {
-    //   throw new Error(XpringClientErrorMessages.malformedResponse)
-    // }
+    const signedTransaction = Signer.signTransaction(transaction, sender)
+    if (!signedTransaction) {
+      throw new Error(XpringClientErrorMessages.malformedResponse)
+    }
 
     const submitTransactionRequest = this.networkClient.SubmitTransactionRequest()
     submitTransactionRequest.setSignedTransaction(signedTransaction)
@@ -286,11 +236,7 @@ class DefaultXpringClient implements XpringClientDecorator {
 
     const getTxResponse = await this.networkClient.getTransaction(getTxRequest)
 
-<<<<<<< HEAD
-    return new GetTransactionResponseWrapper(getTxResponse)
-=======
-    return RawTransactionStatus.fromGetTxResponse(getTxResponse)
->>>>>>> origin/master
+    return RawTransactionStatus.fromGetTransactionResponse(getTxResponse)
   }
 
   private async getMinimumFee(): Promise<XRPDropsAmount> {

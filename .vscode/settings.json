@@ -18,5 +18,7 @@
     },
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
-    "files.trimTrailingWhitespace": true
+    "files.trimTrailingWhitespace": true,
+
+    "mochaExplorer.files": "test/*.ts"
 }

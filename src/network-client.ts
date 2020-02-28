@@ -14,7 +14,7 @@ import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
 } from './generated/web/org/xrpl/rpc/v1/submit_pb'
-import { AccountAddress } from './generated/web/org/xrpl/rpc/v1/amount_pb'
+import { AccountAddress } from './generated/web/org/xrpl/rpc/v1/account_pb'
 
 /**
  * The network client interface provides a wrapper around network calls to the Xpring Platform.

@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { Transaction } from '../../src/generated/web/rpc/v1/transaction_pb'
+import { Transaction } from '../../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { NetworkClient } from '../../src/network-client'
 import {
   GetAccountInfoRequest,
@@ -21,10 +21,9 @@ import {
 import { AccountRoot } from '../../src/generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
 import {
   XRPDropsAmount,
-  AccountAddress,
   CurrencyAmount,
 } from '../../src/generated/web/org/xrpl/rpc/v1/amount_pb'
-
+import { AccountAddress } from '../../src/generated/web/org/xrpl/rpc/v1/account_pb'
 import {
   Meta,
   TransactionResult,
@@ -144,7 +143,7 @@ export class FakeNetworkClientResponses {
 
     const transaction = new Transaction()
 
-    const response = new GetTxResponse()
+    const response = new GetTransactionResponse()
     response.setValidated(true)
     response.setMeta(meta)
     response.setTransaction(transaction)

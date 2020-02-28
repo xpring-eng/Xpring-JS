@@ -1,13 +1,14 @@
 import { assert } from 'chai'
 import RippledFlags from '../src/rippled-flags'
-import { GetTxResponse } from '../src/generated/web/rpc/v1/tx_pb'
+import { GetTransactionResponse } from '../src/generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import {
   Transaction,
   Payment,
-} from '../src/generated/web/rpc/v1/transaction_pb'
+} from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { TransactionStatus as LegacyTransactionStatus } from '../src/generated/web/legacy/transaction_status_pb'
 import 'mocha'
 import RawTransactionStatus from '../src/raw-transaction-status'
+import { Flags } from '../src/generated/web/org/xrpl/rpc/v1/common_pb'
 
 describe('raw transaction status', function(): void {
   it('isFullPayment - legacy proto', function(): void {
@@ -28,11 +29,11 @@ describe('raw transaction status', function(): void {
     const transaction = new Transaction()
     transaction.clearPayment()
 
-    const getTxResponse = new GetTxResponse()
+    const getTxResponse = new GetTransactionResponse()
     getTxResponse.setTransaction(transaction)
 
     // WHEN the raw transaction status is wrapped into a RawTransactionStatus object.
-    const rawTransactionStatus = RawTransactionStatus.fromGetTxResponse(
+    const rawTransactionStatus = RawTransactionStatus.fromGetTransactionResponse(
       getTxResponse,
     )
 
@@ -44,15 +45,18 @@ describe('raw transaction status', function(): void {
     // GIVEN a getTxResponse which is a payment with the partial payment flags set.
     const payment = new Payment()
 
+    const flags = new Flags()
+    flags.setValue(RippledFlags.TF_PARTIAL_PAYMENT)
+
     const transaction = new Transaction()
     transaction.setPayment(payment)
-    transaction.setFlags(RippledFlags.TF_PARTIAL_PAYMENT)
+    transaction.setFlags(flags)
 
-    const getTxResponse = new GetTxResponse()
+    const getTxResponse = new GetTransactionResponse()
     getTxResponse.setTransaction(transaction)
 
     // WHEN the raw transaction status is wrapped into a RawTransactionStatus object.
-    const rawTransactionStatus = RawTransactionStatus.fromGetTxResponse(
+    const rawTransactionStatus = RawTransactionStatus.fromGetTransactionResponse(
       getTxResponse,
     )
 
@@ -67,11 +71,11 @@ describe('raw transaction status', function(): void {
     const transaction = new Transaction()
     transaction.setPayment(payment)
 
-    const getTxResponse = new GetTxResponse()
+    const getTxResponse = new GetTransactionResponse()
     getTxResponse.setTransaction(transaction)
 
     // WHEN the raw transaction status is wrapped into a RawTransactionStatus object.
-    const rawTransactionStatus = RawTransactionStatus.fromGetTxResponse(
+    const rawTransactionStatus = RawTransactionStatus.fromGetTransactionResponse(
       getTxResponse,
     )
 

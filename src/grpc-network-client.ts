@@ -18,7 +18,7 @@ import {
 import { XRPLedgerAPIServiceClient } from './generated/node/org/xrpl/rpc/v1/xrp_ledger_grpc_pb'
 
 import { NetworkClient } from './network-client'
-import { AccountAddress } from './generated/node/org/xrpl/rpc/v1/amount_pb'
+import { AccountAddress } from './generated/node/org/xrpl/rpc/v1/account_pb'
 import isNode from './utils'
 
 /**

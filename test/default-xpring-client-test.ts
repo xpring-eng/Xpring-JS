@@ -16,7 +16,7 @@ import {
   TransactionResult,
 } from '../src/generated/node/org/xrpl/rpc/v1/meta_pb'
 import TransactionStatus from '../src/transaction-status'
-import { Transaction } from '../src/generated/web/rpc/v1/transaction_pb'
+import { Transaction } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -37,12 +37,12 @@ const fakeErroringNetworkClient = new FakeNetworkClient(
 )
 
 /**
- * Convenience function which allows construction of `getTxResponse` objects.
+ * Convenience function which allows construction of `getTransactionResponse` objects.
  *
  * @param validated Whether the txResponse is validated.
  * @param resultCode The result code.
  */
-function makeGetTxResponse(
+function makeGetTransactionResponse(
   validated: boolean,
   resultCode: string,
 ): GetTransactionResponse {
@@ -52,18 +52,14 @@ function makeGetTxResponse(
   const meta = new Meta()
   meta.setTransactionResult(transactionResult)
 
-<<<<<<< HEAD
-  const getTxResponse = new GetTransactionResponse()
-=======
   const transaction = new Transaction()
 
-  const getTxResponse = new GetTxResponse()
->>>>>>> origin/master
-  getTxResponse.setMeta(meta)
-  getTxResponse.setValidated(validated)
-  getTxResponse.setTransaction(transaction)
+  const getTransactionResponse = new GetTransactionResponse()
+  getTransactionResponse.setMeta(meta)
+  getTransactionResponse.setValidated(validated)
+  getTransactionResponse.setTransaction(transaction)
 
-  return getTxResponse
+  return getTransactionResponse
 }
 
 describe('Default Xpring Client', function(): void {
@@ -131,7 +127,7 @@ describe('Default Xpring Client', function(): void {
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
       // GIVEN a XpringClient which will return an unvalidated transaction with a failure code.
       const transactionStatusCodeFailure = transactionStatusFailureCodes[i]
-      const transactionStatusResponse = makeGetTxResponse(
+      const transactionStatusResponse = makeGetTransactionResponse(
         false,
         transactionStatusCodeFailure,
       )
@@ -161,7 +157,7 @@ describe('Default Xpring Client', function(): void {
     void
   > {
     // GIVEN a XpringClient which will return an unvalidated transaction with a success code.
-    const transactionStatusResponse = makeGetTxResponse(
+    const transactionStatusResponse = makeGetTransactionResponse(
       false,
       transactionStatusCodeSuccess,
     )
@@ -192,7 +188,7 @@ describe('Default Xpring Client', function(): void {
       // GIVEN a XpringClient which will return an unvalidated transaction with a failure code.
       const transactionStatusCodeFailure = transactionStatusFailureCodes[i]
       // GIVEN a XpringClient which will return an validated transaction with a failure code.
-      const transactionStatusResponse = makeGetTxResponse(
+      const transactionStatusResponse = makeGetTransactionResponse(
         true,
         transactionStatusCodeFailure,
       )
@@ -222,7 +218,7 @@ describe('Default Xpring Client', function(): void {
     void
   > {
     // GIVEN a XpringClient which will return an validated transaction with a success code.
-    const transactionStatusResponse = makeGetTxResponse(
+    const transactionStatusResponse = makeGetTransactionResponse(
       true,
       transactionStatusCodeSuccess,
     )

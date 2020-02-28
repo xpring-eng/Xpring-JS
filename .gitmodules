@@ -5,3 +5,7 @@
 [submodule "hermes-ilp"]
 	path = hermes-ilp
 	url = https://github.com/xpring-eng/hermes-ilp
+[submodule "rippled"]
+	path = rippled
+	url = http://github.com/ripple/rippled
+	branch = develop
