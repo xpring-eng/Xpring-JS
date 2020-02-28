@@ -127,7 +127,7 @@ wallet.verify(message, signature); // true
 const { XpringClient } = require("xpring-js");
 
 const remoteURL = alpha.test.xrp.xpring.io:50051; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
-const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL, true);
+const xpringClient = new XpringClient(remoteURL, true);
 ```
 
 #### Retrieving a Balance
