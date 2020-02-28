@@ -17,15 +17,15 @@ const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 const transactionHash =
   '4E732C5748DE722C7598CEB76350FCD6269ACBE5D641A5BCF0721150EF6E2C9F'
 
-// A XRPClient that makes requests. Uses the legacy protocol buffer implementation.
+// An XRPClient that makes requests. Uses the legacy protocol buffer implementation.
 const legacyGRPCURLNode = 'grpc.xpring.tech:80'
 const legacyXRPClientNode = new XRPClient(legacyGRPCURLNode)
 
-// A XRPClient that makes requests. Uses the legacy protocol buffer implementation and sends the requests to an HTTP envoy emulating how the browser would behave
+// An XRPClient that makes requests. Uses the legacy protocol buffer implementation and sends the requests to an HTTP envoy emulating how the browser would behave
 const legacyGRPCURLWeb = 'https://grpchttp.xpring.io'
 const legacyXRPClientWeb = new XRPClient(legacyGRPCURLWeb, false, true)
 
-// A XRPClient that makes requests. Uses rippled's gRPC implementation.
+// An XRPClient that makes requests. Uses rippled's gRPC implementation.
 const rippledURL = '3.14.64.116:50051'
 const xrpClient = new XRPClient(rippledURL, true)
 

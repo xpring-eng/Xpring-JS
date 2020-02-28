@@ -9,7 +9,7 @@ async function sleep(milliseconds: number): Promise<void> {
 }
 
 /**
- * A XRPClient which blocks on `send` calls until the transaction has reached a deterministic state.
+ * An XRPClient which blocks on `send` calls until the transaction has reached a deterministic state.
  */
 class ReliableSubmissionXRPClient implements XRPClientDecorator {
   public constructor(private readonly decoratedClient: XRPClientDecorator) {}
