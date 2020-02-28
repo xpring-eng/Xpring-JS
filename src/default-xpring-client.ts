@@ -199,24 +199,8 @@ class DefaultXpringClient implements XpringClientDecorator {
     const signingPublicKey = new SigningPublicKey()
     signingPublicKey.setValue(signingPublicKeyBytes)
 
-    const account2 = new Account()
-    account2.setValue(account)
-
-    const payment = new Payment()
-    payment.setDestination(destination)
-    payment.setAmount(amount)
-
-    const lastLedgerSequence = new LastLedgerSequence()
-    lastLedgerSequence.setValue(
-      lastValidatedLedgerSequence + maxLedgerVersionOffset,
-    )
-
-    const signingPublicKeyBytes = Utils.toBytes(sender.getPublicKey())
-    const signingPublicKey = new SigningPublicKey()
-    signingPublicKey.setValue(signingPublicKeyBytes)
-
     const transaction = new Transaction()
-    transaction.setAccount(account2)
+    transaction.setAccount(account)
     transaction.setFee(fee)
     transaction.setSequence(accountData.getSequence())
     transaction.setPayment(payment)
