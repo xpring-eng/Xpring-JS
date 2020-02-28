@@ -1,6 +1,6 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
-import { XRPClientDecorator } from './xpring-client-decorator'
+import { XRPClientDecorator } from './xrp-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import GRPCNetworkClient from './grpc-network-client'

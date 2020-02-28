@@ -1,6 +1,6 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
-import { XpringClientDecorator } from './xpring-client-decorator'
+import { XpringClientDecorator } from './xrp-client-decorator'
 import LegacyDefaultXpringClient from './legacy/legacy-default-xpring-client'
 import TransactionStatus from './transaction-status'
 import ReliableSubmissionXpringClient from './reliable-submission-xpring-client'
