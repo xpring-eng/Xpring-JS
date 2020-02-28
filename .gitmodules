@@ -2,10 +2,6 @@
 	path = xpring-common-protocol-buffers
 	url = http://github.com/xpring-eng/xpring-common-protocol-buffers
 	branch = master
-[submodule "rippled"]
-	path = rippled
-	url = http://github.com/ripple/rippled
-	branch = develop
 [submodule "hermes-ilp"]
 	path = hermes-ilp
 	url = https://github.com/xpring-eng/hermes-ilp
