@@ -32,10 +32,10 @@ To get developers started right away, Xpring currently hosts nodes. These nodes 
 
 ```
 # TestNet
-3.14.64.116:50051
+alpha.test.xrp.xpring.io:50051
 
 # MainNet
-18.222.225.81:50051
+alpha.xrp.xpring.io:50051
 ```
 
 ## Usage
@@ -126,7 +126,7 @@ wallet.verify(message, signature); // true
 ```javascript
 const { XpringClient } = require("xpring-js");
 
-const remoteURL = "3.14.64.116:50051"; // TestNet URL, use 18.222.225.81:50051 for MainNet
+const remoteURL = alpha.test.xrp.xpring.io:50051; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
 const xpringClient = XpringClient.xpringClientWithEndpoint(remoteURL, true);
 ```
 
@@ -137,7 +137,7 @@ A `XpringClient` can check the balance of an account on the XRP Ledger.
 ```javascript
 const { XpringClient } = require("xpring-js");
 
-const remoteURL = "3.14.64.116:50051"; // TestNet URL, use 18.222.225.81:50051 for MainNet
+const remoteURL = alpha.test.xrp.xpring.io:50051; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
 const xpringClient = new XpringClient(remoteURL, true);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
@@ -163,7 +163,7 @@ These states are determined by the `TransactionStatus` enum.
 ```javascript
 const { XpringClient } = require("xpring-js");
 
-const remoteURL = "3.14.64.116:50051"; // TestNet URL, use 18.222.225.81:50051 for MainNet
+const remoteURL = alpha.test.xrp.xpring.io:50051; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
 const xpringClient = new XpringClient(remoteURL, true);
 
 const transactionHash = "9FC7D277C1C8ED9CE133CC17AEA9978E71FC644CE6F5F0C8E26F1C635D97AF4A";
@@ -181,7 +181,7 @@ A `XpringClient` can send XRP to other accounts on the XRP Ledger.
 ```javascript
 const { Wallet, XRPAmount, XpringClient } = require("xpring-js");
 
-const remoteURL = "3.14.64.116:50051"; // TestNet URL, use 18.222.225.81:50051 for MainNet
+const remoteURL = alpha.test.xrp.xpring.io:50051; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
 const xpringClient = new XpringClient(remoteURL, true);
 
 // Amount of XRP to send
