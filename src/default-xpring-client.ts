@@ -180,8 +180,24 @@ class DefaultXpringClient implements XpringClientDecorator {
     const destination = new Destination()
     destination.setValue(destinationAccountAddress)
 
-    const account = new AccountAddress()
-    account.setAddress(sender.getAddress())
+    const senderAccountAddress = new AccountAddress()
+    senderAccountAddress.setAddress(sender.getAddress())
+
+    const account = new Account()
+    account.setValue(senderAccountAddress)
+
+    const payment = new Payment()
+    payment.setDestination(destination)
+    payment.setAmount(amount)
+
+    const lastLedgerSequence = new LastLedgerSequence()
+    lastLedgerSequence.setValue(
+      lastValidatedLedgerSequence + maxLedgerVersionOffset,
+    )
+
+    const signingPublicKeyBytes = Utils.toBytes(sender.getPublicKey())
+    const signingPublicKey = new SigningPublicKey()
+    signingPublicKey.setValue(signingPublicKeyBytes)
 
     const account2 = new Account()
     account2.setValue(account)
