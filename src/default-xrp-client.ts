@@ -149,7 +149,7 @@ class DefaultXRPClient implements XRPClientDecorator {
     sender: Wallet,
   ): Promise<string> {
     if (!Utils.isValidXAddress(destinationAddress)) {
-      throw new Error(XpringClientErrorMessages.xAddressRequired)
+      throw new Error(XRPClientErrorMessages.xAddressRequired)
     }
 
     const classicAddress = Utils.decodeXAddress(sender.getAddress())
