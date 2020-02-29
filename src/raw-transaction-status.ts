@@ -1,5 +1,5 @@
 import { TransactionStatus } from './generated/web/legacy/transaction_status_pb'
-import { GetTxResponse } from './generated/web/rpc/v1/tx_pb'
+import { GetTransactionResponse } from './generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import RippledFlags from './rippled-flags'
 
 /** Abstraction around raw Transaction Status for compatibility. */
@@ -19,10 +19,12 @@ export default class RawTransactionStatus {
   }
 
   /**
-   * Create a RawTransactionStatus from a GetTxResponse protocol buffer.
+   * Create a RawTransactionStatus from a GetTransactionResponse protocol buffer.
    */
-  static fromGetTxResponse(getTxResponse: GetTxResponse): RawTransactionStatus {
-    const transaction = getTxResponse.getTransaction()
+  static fromGetTransactionResponse(
+    getTransactionResponse: GetTransactionResponse,
+  ): RawTransactionStatus {
+    const transaction = getTransactionResponse.getTransaction()
     if (!transaction) {
       throw new Error(
         'Malformed input, `getTxResponse` did not contain a transaction.',
@@ -30,7 +32,7 @@ export default class RawTransactionStatus {
     }
 
     const isPayment = transaction.hasPayment()
-    const flags = transaction.getFlags()
+    const flags = transaction.getFlags()?.getValue() ?? 0
 
     const isPartialPayment = RippledFlags.checkFlag(
       RippledFlags.TF_PARTIAL_PAYMENT,
@@ -40,12 +42,12 @@ export default class RawTransactionStatus {
     const isFullPayment = isPayment && !isPartialPayment
 
     return new RawTransactionStatus(
-      getTxResponse.getValidated(),
-      getTxResponse
+      getTransactionResponse.getValidated(),
+      getTransactionResponse
         .getMeta()
         ?.getTransactionResult()
         ?.getResult(),
-      getTxResponse.getTransaction()?.getLastLedgerSequence(),
+      getTransactionResponse.getTransaction()?.getLastLedgerSequence(),
       isFullPayment,
     )
   }

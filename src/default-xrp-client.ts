@@ -6,15 +6,26 @@ import RawTransactionStatus from './raw-transaction-status'
 import GRPCNetworkClient from './grpc-network-client'
 import GRPCNetworkClientWeb from './grpc-network-client.web'
 import { NetworkClient } from './network-client'
-import { GetFeeResponse } from './generated/web/rpc/v1/fee_pb'
+import { GetFeeResponse } from './generated/web/org/xrpl/rpc/v1/get_fee_pb'
+import { AccountAddress } from './generated/web/org/xrpl/rpc/v1/account_pb'
 import {
-  AccountAddress,
   CurrencyAmount,
   XRPDropsAmount,
-} from './generated/web/rpc/v1/amount_pb'
+} from './generated/web/org/xrpl/rpc/v1/amount_pb'
 import isNode from './utils'
-import { Payment, Transaction } from './generated/web/rpc/v1/transaction_pb'
-import { AccountRoot } from './generated/web/rpc/v1/ledger_objects_pb'
+
+import { AccountRoot } from './generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
+import {
+  Destination,
+  Amount,
+  Account,
+  LastLedgerSequence,
+  SigningPublicKey,
+} from './generated/node/org/xrpl/rpc/v1/common_pb'
+import {
+  Payment,
+  Transaction,
+} from './generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -89,11 +100,16 @@ class DefaultXRPClient implements XRPClientDecorator {
       throw new Error(XRPClientErrorMessages.malformedResponse)
     }
 
-    const balance = accountData.getBalance()
+    const balance = accountData
+      .getBalance()
+      ?.getValue()
+      ?.getXrpAmount()
+      ?.getDrops()
     if (!balance) {
       throw new Error(XRPClientErrorMessages.malformedResponse)
     }
-    return bigInt(balance.getDrops())
+
+    return bigInt(balance)
   }
 
   /**
@@ -123,17 +139,17 @@ class DefaultXRPClient implements XRPClientDecorator {
    * Send the given amount of XRP from the source wallet to the destination address.
    *
    * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
-   * @param destination A destination address to send the drops to.
+   * @param destinationAddress A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    amount: BigInteger | number | string,
-    destination: string,
+    drops: BigInteger | number | string,
+    destinationAddress: string,
     sender: Wallet,
   ): Promise<string> {
-    if (!Utils.isValidXAddress(destination)) {
-      throw new Error(XRPClientErrorMessages.xAddressRequired)
+    if (!Utils.isValidXAddress(destinationAddress)) {
+      throw new Error(XpringClientErrorMessages.xAddressRequired)
     }
 
     const classicAddress = Utils.decodeXAddress(sender.getAddress())
@@ -141,39 +157,54 @@ class DefaultXRPClient implements XRPClientDecorator {
       throw new Error(XRPClientErrorMessages.xAddressRequired)
     }
 
-    const normalizedAmount = bigInt(amount.toString())
+    const normalizedDrops = drops.toString()
 
     const fee = await this.getMinimumFee()
     const accountData = await this.getAccountData(classicAddress.address)
     const lastValidatedLedgerSequence = await this.getLastValidatedLedgerSequence()
 
     const xrpDropsAmount = new XRPDropsAmount()
-    xrpDropsAmount.setDrops(normalizedAmount.toJSNumber())
+    xrpDropsAmount.setDrops(normalizedDrops)
 
     const currencyAmount = new CurrencyAmount()
     currencyAmount.setXrpAmount(xrpDropsAmount)
 
-    const destinationAccount = new AccountAddress()
-    destinationAccount.setAddress(destination)
+    const amount = new Amount()
+    amount.setValue(currencyAmount)
+
+    const destinationAccountAddress = new AccountAddress()
+    destinationAccountAddress.setAddress(destinationAddress)
+
+    const destination = new Destination()
+    destination.setValue(destinationAccountAddress)
+
+    const senderAccountAddress = new AccountAddress()
+    senderAccountAddress.setAddress(sender.getAddress())
+
+    const account = new Account()
+    account.setValue(senderAccountAddress)
 
     const payment = new Payment()
-    payment.setDestination(destinationAccount)
-    payment.setAmount(currencyAmount)
+    payment.setDestination(destination)
+    payment.setAmount(amount)
 
-    const account = new AccountAddress()
-    account.setAddress(sender.getAddress())
+    const lastLedgerSequence = new LastLedgerSequence()
+    lastLedgerSequence.setValue(
+      lastValidatedLedgerSequence + maxLedgerVersionOffset,
+    )
+
+    const signingPublicKeyBytes = Utils.toBytes(sender.getPublicKey())
+    const signingPublicKey = new SigningPublicKey()
+    signingPublicKey.setValue(signingPublicKeyBytes)
 
     const transaction = new Transaction()
     transaction.setAccount(account)
     transaction.setFee(fee)
     transaction.setSequence(accountData.getSequence())
     transaction.setPayment(payment)
-    transaction.setLastLedgerSequence(
-      lastValidatedLedgerSequence + maxLedgerVersionOffset,
-    )
+    transaction.setLastLedgerSequence(lastLedgerSequence)
 
-    const signingPublicKeyBytes = Utils.toBytes(sender.getPublicKey())
-    transaction.setSigningPublicKey(signingPublicKeyBytes)
+    transaction.setSigningPublicKey(signingPublicKey)
 
     const signedTransaction = Signer.signTransaction(transaction, sender)
     if (!signedTransaction) {
@@ -198,28 +229,23 @@ class DefaultXRPClient implements XRPClientDecorator {
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    const getTxRequest = this.networkClient.GetTxRequest()
+    const getTxRequest = this.networkClient.GetTransactionRequest()
     getTxRequest.setHash(Utils.toBytes(transactionHash))
 
-    const getTxResponse = await this.networkClient.getTx(getTxRequest)
+    const getTxResponse = await this.networkClient.getTransaction(getTxRequest)
 
-    return RawTransactionStatus.fromGetTxResponse(getTxResponse)
+    return RawTransactionStatus.fromGetTransactionResponse(getTxResponse)
   }
 
   private async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
 
-    const fee = getFeeResponse.getDrops()
+    const fee = getFeeResponse.getFee()?.getMinimumFee()
     if (!fee) {
       throw new Error(XRPClientErrorMessages.malformedResponse)
     }
 
-    const minimumFee = fee.getMinimumFee()
-    if (!minimumFee) {
-      throw new Error(XRPClientErrorMessages.malformedResponse)
-    }
-
-    return minimumFee
+    return fee
   }
 
   private async getFee(): Promise<GetFeeResponse> {

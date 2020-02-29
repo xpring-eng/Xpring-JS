@@ -10,10 +10,13 @@ import {
   FakeNetworkClientResponses,
 } from './fakes/fake-network-client'
 import 'mocha'
-import { GetTxResponse } from '../src/generated/node/rpc/v1/tx_pb'
-import { Meta, TransactionResult } from '../src/generated/node/rpc/v1/meta_pb'
+import { GetTransactionResponse } from '../src/generated/node/org/xrpl/rpc/v1/get_transaction_pb'
+import {
+  Meta,
+  TransactionResult,
+} from '../src/generated/node/org/xrpl/rpc/v1/meta_pb'
 import TransactionStatus from '../src/transaction-status'
-import { Transaction } from '../src/generated/web/rpc/v1/transaction_pb'
+import { Transaction } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -34,15 +37,15 @@ const fakeErroringNetworkClient = new FakeNetworkClient(
 )
 
 /**
- * Convenience function which allows construction of `getTxResponse` objects.
+ * Convenience function which allows construction of `getTransactionResponse` objects.
  *
  * @param validated Whether the txResponse is validated.
  * @param resultCode The result code.
  */
-function makeGetTxResponse(
+function makeGetTransactionResponse(
   validated: boolean,
   resultCode: string,
-): GetTxResponse {
+): GetTransactionResponse {
   const transactionResult = new TransactionResult()
   transactionResult.setResult(resultCode)
 
@@ -51,12 +54,12 @@ function makeGetTxResponse(
 
   const transaction = new Transaction()
 
-  const getTxResponse = new GetTxResponse()
-  getTxResponse.setMeta(meta)
-  getTxResponse.setValidated(validated)
-  getTxResponse.setTransaction(transaction)
+  const getTransactionResponse = new GetTransactionResponse()
+  getTransactionResponse.setMeta(meta)
+  getTransactionResponse.setValidated(validated)
+  getTransactionResponse.setTransaction(transaction)
 
-  return getTxResponse
+  return getTransactionResponse
 }
 
 describe('Default Xpring Client', function(): void {
@@ -124,7 +127,7 @@ describe('Default Xpring Client', function(): void {
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
       // GIVEN an XRPClient which will return an unvalidated transaction with a failure code.
       const transactionStatusCodeFailure = transactionStatusFailureCodes[i]
-      const transactionStatusResponse = makeGetTxResponse(
+      const transactionStatusResponse = makeGetTransactionResponse(
         false,
         transactionStatusCodeFailure,
       )
@@ -153,8 +156,8 @@ describe('Default Xpring Client', function(): void {
   it('Get Transaction Status - Unvalidated Transaction and Success Code', async function(): Promise<
     void
   > {
-    // GIVEN an XRPClient which will return an unvalidated transaction with a success code.
-    const transactionStatusResponse = makeGetTxResponse(
+    // GIVEN a XpringClient which will return an unvalidated transaction with a success code.
+    const transactionStatusResponse = makeGetTransactionResponse(
       false,
       transactionStatusCodeSuccess,
     )
@@ -184,8 +187,8 @@ describe('Default Xpring Client', function(): void {
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
       // GIVEN an XRPClient which will return an unvalidated transaction with a failure code.
       const transactionStatusCodeFailure = transactionStatusFailureCodes[i]
-      // GIVEN an XRPClient which will return an validated transaction with a failure code.
-      const transactionStatusResponse = makeGetTxResponse(
+      // GIVEN a XpringClient which will return an validated transaction with a failure code.
+      const transactionStatusResponse = makeGetTransactionResponse(
         true,
         transactionStatusCodeFailure,
       )
@@ -214,8 +217,8 @@ describe('Default Xpring Client', function(): void {
   it('Get Transaction Status - Validated Transaction and Success Code', async function(): Promise<
     void
   > {
-    // GIVEN an XRPClient which will return an validated transaction with a success code.
-    const transactionStatusResponse = makeGetTxResponse(
+    // GIVEN a XpringClient which will return an validated transaction with a success code.
+    const transactionStatusResponse = makeGetTransactionResponse(
       true,
       transactionStatusCodeSuccess,
     )

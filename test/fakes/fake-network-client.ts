@@ -1,30 +1,34 @@
 /* eslint-disable class-methods-use-this */
-import { Transaction } from '../../src/generated/web/rpc/v1/transaction_pb'
+import { Transaction } from '../../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { NetworkClient } from '../../src/network-client'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
-} from '../../src/generated/web/rpc/v1/account_info_pb'
+} from '../../src/generated/web/org/xrpl/rpc/v1/get_account_info_pb'
 import {
   GetFeeRequest,
   GetFeeResponse,
   Fee,
-} from '../../src/generated/web/rpc/v1/fee_pb'
+} from '../../src/generated/web/org/xrpl/rpc/v1/get_fee_pb'
 import {
-  GetTxRequest,
-  GetTxResponse,
-} from '../../src/generated/web/rpc/v1/tx_pb'
+  GetTransactionRequest,
+  GetTransactionResponse,
+} from '../../src/generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from '../../src/generated/web/rpc/v1/submit_pb'
-import { AccountRoot } from '../../src/generated/web/rpc/v1/ledger_objects_pb'
+} from '../../src/generated/web/org/xrpl/rpc/v1/submit_pb'
+import { AccountRoot } from '../../src/generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
 import {
   XRPDropsAmount,
-  AccountAddress,
-} from '../../src/generated/web/rpc/v1/amount_pb'
-
-import { Meta, TransactionResult } from '../../src/generated/web/rpc/v1/meta_pb'
+  CurrencyAmount,
+} from '../../src/generated/web/org/xrpl/rpc/v1/amount_pb'
+import { AccountAddress } from '../../src/generated/web/org/xrpl/rpc/v1/account_pb'
+import {
+  Meta,
+  TransactionResult,
+} from '../../src/generated/web/org/xrpl/rpc/v1/meta_pb'
+import { Balance } from '../../src/generated/node/org/xrpl/rpc/v1/common_pb'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -74,7 +78,7 @@ export class FakeNetworkClientResponses {
       SubmitTransactionResponse
     > = FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
     public readonly getTransactionStatusResponse: Response<
-      GetTxResponse
+      GetTransactionResponse
     > = FakeNetworkClientResponses.defaultGetTxResponse(),
   ) {}
 
@@ -82,8 +86,14 @@ export class FakeNetworkClientResponses {
    * Construct a default AccountInfoResponse.
    */
   public static defaultAccountInfoResponse(): GetAccountInfoResponse {
-    const balance = new XRPDropsAmount()
-    balance.setDrops(10)
+    const xrpAmount = new XRPDropsAmount()
+    xrpAmount.setDrops('10')
+
+    const currencyAmount = new CurrencyAmount()
+    currencyAmount.setXrpAmount(xrpAmount)
+
+    const balance = new Balance()
+    balance.setValue(currencyAmount)
 
     const accountRoot = new AccountRoot()
     accountRoot.setBalance(balance)
@@ -99,13 +109,13 @@ export class FakeNetworkClientResponses {
    */
   public static defaultFeeResponse(): GetFeeResponse {
     const minimumFee = new XRPDropsAmount()
-    minimumFee.setDrops(1)
+    minimumFee.setDrops('1')
 
     const fee = new Fee()
     fee.setMinimumFee(minimumFee)
 
     const getFeeResponse = new GetFeeResponse()
-    getFeeResponse.setDrops(fee)
+    getFeeResponse.setFee(fee)
     getFeeResponse.setLedgerCurrentIndex(1)
 
     return getFeeResponse
@@ -124,7 +134,7 @@ export class FakeNetworkClientResponses {
   /**
    * Construct a default getTx response.
    */
-  public static defaultGetTxResponse(): GetTxResponse {
+  public static defaultGetTxResponse(): GetTransactionResponse {
     const transactionResult = new TransactionResult()
     transactionResult.setResult('tesSUCCESS')
 
@@ -133,7 +143,7 @@ export class FakeNetworkClientResponses {
 
     const transaction = new Transaction()
 
-    const response = new GetTxResponse()
+    const response = new GetTransactionResponse()
     response.setValidated(true)
     response.setMeta(meta)
     response.setTransaction(transaction)
@@ -181,7 +191,9 @@ export class FakeNetworkClient implements NetworkClient {
     return Promise.resolve(submitTransactionResponse)
   }
 
-  getTx(_getTransactionStatusRequest: GetTxRequest): Promise<GetTxResponse> {
+  getTransaction(
+    _getTransactionStatusRequest: GetTransactionRequest,
+  ): Promise<GetTransactionResponse> {
     const transactionStatusResponse = this.responses
       .getTransactionStatusResponse
     if (transactionStatusResponse instanceof Error) {
@@ -199,8 +211,8 @@ export class FakeNetworkClient implements NetworkClient {
     return new GetAccountInfoRequest()
   }
 
-  public GetTxRequest(): GetTxRequest {
-    return new GetTxRequest()
+  public GetTransactionRequest(): GetTransactionRequest {
+    return new GetTransactionRequest()
   }
 
   public GetFeeRequest(): GetFeeRequest {
