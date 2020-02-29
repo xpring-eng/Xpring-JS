@@ -70,7 +70,7 @@ class DefaultXRPClient implements XRPClientDecorator {
   /**
    * Create a new DefaultXRPClient with a custom network client implementation.
    *
-   * In general, clients should prefer to call `XRPClientWithEndpoint`. This constructor is provided to improve testability of this class.
+   * In general, clients should prefer to call `xrpClientWithEndpoint`. This constructor is provided to improve testability of this class.
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
    */
