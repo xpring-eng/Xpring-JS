@@ -26,7 +26,7 @@ const legacyGRPCURLWeb = 'https://grpchttp.xpring.io'
 const legacyXpringClientWeb = new XpringClient(legacyGRPCURLWeb, false, true)
 
 // A XpringClient that makes requests. Uses rippled's gRPC implementation.
-const rippledURL = '3.14.64.116:50051'
+const rippledURL = 'alpha.test.xrp.xpring.io:50051' //  '3.14.64.116:50051'
 const xpringClient = new XpringClient(rippledURL, true)
 
 // Some amount of XRP to send.
