@@ -16,7 +16,7 @@ export class PayIDClientErrorMessages {
  * A client for Xpring's PayID service.
  *
  * Inputs to this class are always in X-Addresses.
- * @see TODO(keefertaylor): Link proper website here.
+ * @see https://xrpaddress.info/
  *
  * @warning This class is experimental and should not be used in production applications.
  * TODO(keefertaylor): Export this class in index.ts when it's ready for external consumption.
@@ -25,11 +25,11 @@ export default class PayIDClient {
   /**
    * Initialize a new PayID client.
    *
-   * @param remoteURL The remote URL of the service this class will communicate with.
-   * @param authorizationToken An optional token to authorize write requests.
+   * TODO(keefertaylor): Add a remoteURL configuration property when it is used, otherwise the linter is upset about an unused property.
+   *
+   * @param authorizationToken An optional token to authorize write requests. Defaults to undefined.
    */
   public constructor(
-    private readonly _remoteURL: string,
     private readonly authorizationToken: string | undefined = undefined,
   ) {}
 
@@ -37,7 +37,7 @@ export default class PayIDClient {
    * Returns whether this client is able to perform updates on a user's ID to address mapping
    */
   public isAuthorizedForUpdates(): boolean {
-    return this.authorizationToken === undefined
+    return this.authorizationToken !== undefined
   }
 
   /**
@@ -66,7 +66,7 @@ export default class PayIDClient {
     _payID: string,
     _xrpAddress: string,
   ): Promise<boolean> {
-    // TODO(keefertaylor): Implement reads from backend service.
+    // TODO(keefertaylor): Implement writes from backend service.
     return false
   }
 }
