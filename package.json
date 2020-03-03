@@ -55,8 +55,7 @@
     "tslint-config-standard": "^9.0.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.7.5",
-    "typescript-eslint-parser": "22.0.0",
-    "axios": "0.19.2"
+    "typescript-eslint-parser": "22.0.0"
   },
   "dependencies": {
     "big-integer": "^1.6.48",
