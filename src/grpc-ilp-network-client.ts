@@ -1,4 +1,4 @@
-import { credentials } from 'grpc'
+import { credentials, Metadata } from 'grpc'
 import { IlpNetworkClient } from './ilp-network-client'
 import { GetBalanceResponse } from './generated/node/ilp/get_balance_response_pb'
 import { GetBalanceRequest } from './generated/node/ilp/get_balance_request_pb'
@@ -29,9 +29,15 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
     }
   }
 
-  getBalance(request: GetBalanceRequest): Promise<GetBalanceResponse> {
+  getBalance(
+    request: GetBalanceRequest,
+    bearerToken?: string,
+  ): Promise<GetBalanceResponse> {
+    const metaData: Metadata = new Metadata()
+    metaData.add('Authorization', bearerToken || '')
+
     return new Promise((resolve, reject): void => {
-      this.balanceClient.getBalance(request, (error, response) => {
+      this.balanceClient.getBalance(request, metaData, (error, response) => {
         if (error != null || response === null) {
           reject(error)
           return

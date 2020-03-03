@@ -1,6 +1,7 @@
 import { BigInteger } from 'big-integer'
 import { IlpClientDecorator } from './ilp-client-decorator'
 import DefaultIlpClient from './default-ilp-client'
+import { GetBalanceResponse } from './generated/web/ilp/get_balance_response_pb'
 
 class IlpClient {
   private readonly decoratedClient: IlpClientDecorator
@@ -13,13 +14,17 @@ class IlpClient {
   }
 
   /**
-   * Retrieve the balance for the given address.
+   * Get the balance of the specified account on the connector.
    *
-   * @param address The ILP address to retrieve a balance for.
-   * @returns A `BigInteger` representing the number of drops of XRP in the account.
+   * @param accountId The account ID to get the balance for.
+   * @param bearerToken Authentication bearer token.
+   * @return A {@link GetBalanceResponse} with balance information of the specified account
    */
-  public async getBalance(address: string): Promise<BigInteger> {
-    return this.decoratedClient.getBalance(address)
+  public async getBalance(
+    address: string,
+    bearerToken: string,
+  ): Promise<GetBalanceResponse> {
+    return this.decoratedClient.getBalance(address, bearerToken)
   }
 
   /**

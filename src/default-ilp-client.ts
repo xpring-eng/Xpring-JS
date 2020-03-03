@@ -42,13 +42,13 @@ class DefaultIlpClient implements IlpClientDecorator {
    * @param address The ILP address to retrieve a balance for.
    * @returns A `BigInteger` representing the number of drops of XRP in the account.
    */
-  public async getBalance(address: string): Promise<BigInteger> {
+  public async getBalance(
+    address: string,
+    bearerToken?: string,
+  ): Promise<GetBalanceResponse> {
     const request = this.networkClient.GetBalanceRequest()
     request.setAccountId(address)
-    const response: GetBalanceResponse = await this.networkClient.getBalance(
-      request,
-    )
-    return bigInt(response.getNetBalance())
+    return this.networkClient.getBalance(request, bearerToken)
   }
 
   /**

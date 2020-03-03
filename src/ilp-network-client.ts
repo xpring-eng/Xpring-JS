@@ -8,9 +8,13 @@ export interface IlpNetworkClient {
    * Retrieve the balance for the given address.
    *
    * @param request the details required for fetching the balance
+   * @param bearerToken
    * @returns a response with details about the balance including the type of currency and amount
    */
-  getBalance(request: GetBalanceRequest): Promise<GetBalanceResponse>
+  getBalance(
+    request: GetBalanceRequest,
+    bearerToken?: string,
+  ): Promise<GetBalanceResponse>
 
   /**
    * Send the given amount of XRP from the source wallet to the destination address.

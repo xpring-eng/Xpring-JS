@@ -11,7 +11,7 @@ describe('ILP Integration Tests', function(): void {
   it('Get Account Balance - Legacy Node Shim', async function(): Promise<void> {
     this.timeout(timeoutMs)
     try {
-      console.log(await ILPClient.getBalance('__ping__'))
+      console.log(await ILPClient.getBalance('user_Gq3NQGBp', '5Ds5Idm3JLzof'))
     } catch (e) {
       console.log(e)
     }
