@@ -1,7 +1,6 @@
 import * as assert from 'assert'
 import { fail } from 'assert'
 import IlpClient from '../src/ilp-client'
-// import axios from 'axios'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
