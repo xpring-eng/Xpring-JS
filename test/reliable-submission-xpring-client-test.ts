@@ -5,6 +5,7 @@ import FakeXpringClient from './fakes/fake-xpring-client'
 import ReliableSubmissionXpringClient from '../src/reliable-submission-xpring-client'
 import RawTransactionStatus from '../src/raw-transaction-status'
 import TransactionStatus from '../src/transaction-status'
+import Transaction from '../src/transaction'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -28,6 +29,7 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
   fakedRawTransactionStatusLastLedgerSequenceValue,
   fakedFullPaymentValue,
 )
+const fakedTransactionHistoryValue = [new Transaction()]
 
 describe('Reliable Submission Xpring Client', function(): void {
   beforeEach(function() {
@@ -38,6 +40,7 @@ describe('Reliable Submission Xpring Client', function(): void {
       fakedLastLedgerSequenceValue,
       fakedRawTransactionStatusValue,
       fakedAccountExistsValue,
+      fakedTransactionHistoryValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXpringClient(
       this.fakeXpringClient,
@@ -80,6 +83,16 @@ describe('Reliable Submission Xpring Client', function(): void {
 
     // THEN the result is returned unaltered.
     assert.deepEqual(returnedValue, fakedRawTransactionStatusValue)
+  })
+
+  it('Get Transaction History - Response Not Modified', async function() {
+    // GIVEN a `ReliableSubmissionXpringClient` decorating a `FakeXpringClient` WHEN transaction history is retrieved.
+    const returnedValue = await this.reliableSubmissionClient.getTransactionHistory(
+      testAddress,
+    )
+
+    // THEN the result is returned unaltered.
+    assert.deepEqual(returnedValue, fakedTransactionHistoryValue)
   })
 
   it('Send - Returns when the latestLedgerSequence is too low', async function() {

@@ -3,6 +3,7 @@ import { BigInteger } from 'big-integer'
 import { XpringClientDecorator } from './xpring-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
+import Transaction from './transaction'
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
@@ -90,6 +91,12 @@ class ReliableSubmissionXpringClient implements XpringClientDecorator {
 
   public async accountExists(address: string): Promise<boolean> {
     return this.decoratedClient.accountExists(address)
+  }
+
+  public async getTransactionHistory(
+    address: string,
+  ): Promise<Array<Transaction>> {
+    return this.decoratedClient.getTransactionHistory(address)
   }
 }
 

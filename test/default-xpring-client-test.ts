@@ -466,4 +466,44 @@ describe('Default Xpring Client', function(): void {
       done()
     })
   })
+
+  it('Get Transaction History - successful response', async function(): Promise<
+    void
+  > {
+    // GIVEN a DefaultXpringClient.
+    const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient)
+
+    // WHEN the transaction history for an address is requested.
+    const transactionHistory = await xpringClient.getTransactionHistory(
+      testAddress,
+    )
+
+    // THEN the transaction hisotry is returned.
+    assert.exists(transactionHistory)
+  })
+
+  it('Get Transaction History - classic address', function(done): void {
+    // GIVEN a XpringClient and a classic address
+    const xpringClient = new DefaultXpringClient(fakeSucceedingNetworkClient)
+    const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
+
+    // WHEN the transaction history for an account is requested THEN an error to use X-Addresses is thrown.
+    xpringClient.getTransactionHistory(classicAddress).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(error.message, XpringClientErrorMessages.xAddressRequired)
+      done()
+    })
+  })
+
+  it('Get Transaction History - network failure', function(done): void {
+    // GIVEN a XpringClient which wraps an erroring network client.
+    const xpringClient = new DefaultXpringClient(fakeErroringNetworkClient)
+
+    // WHEN the transaction history is requested THEN an error is propagated.
+    xpringClient.getTransactionHistory(testAddress).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, FakeNetworkClientResponses.defaultError)
+      done()
+    })
+  })
 })

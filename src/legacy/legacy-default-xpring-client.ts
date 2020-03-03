@@ -1,6 +1,7 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 
 import bigInt, { BigInteger } from 'big-integer'
+import { Transaction } from 'xpring-common-js/build/generated/legacy/transaction_pb'
 import { AccountInfo } from '../generated/web/legacy/account_info_pb'
 import { XRPAmount } from '../generated/web/legacy/xrp_amount_pb'
 
@@ -22,6 +23,8 @@ export class LegacyXpringClientErrorMessages {
 
   public static readonly xAddressRequired =
     'Please use the X-Address format. See: https://xrpaddress.info/.'
+
+  public static readonly unimplemented = 'Unimplemented.'
 }
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
@@ -251,6 +254,14 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
       return false
     }
   }
+
+  /* eslint-disable class-methods-use-this */
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  public getTransactionHistory(_address: string): Promise<Array<Transaction>> {
+    throw new Error(LegacyXpringClientErrorMessages.unimplemented)
+  }
+  /* eslint-enable class-methods-use-this */
+  /* eslint-enable no-unused-vars */
 }
 
 export default LegacyDefaultXpringClient

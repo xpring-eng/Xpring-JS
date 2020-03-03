@@ -293,6 +293,38 @@ class DefaultXpringClient implements XpringClientDecorator {
       return false
     }
   }
+
+  /**
+   * Retrieve the transaction history for an address.
+   *
+   * @param address The address to retrieve transaction history for.
+   * @return An array of Transactions for the account.
+   */
+  public async getTransactionHistory(
+    address: string,
+  ): Promise<Array<Transaction>> {
+    const classicAddress = Utils.decodeXAddress(address)
+    if (!classicAddress) {
+      throw new Error(XpringClientErrorMessages.xAddressRequired)
+    }
+
+    const account = this.networkClient.AccountAddress()
+    account.setAddress(address)
+
+    const request = this.networkClient.GetAccountTransactionHistoryRequest()
+    request.setAccount(account)
+
+    const transactionHistory = await this.networkClient.getTransactionHistory(
+      request,
+    )
+
+    const getTransactionResponses = transactionHistory.getTransactionsList()
+    return getTransactionResponses.map(
+      // TODO(keefertaylor): Properly convert these objects.
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      (_getTransactionResponse) => new Transaction(),
+    )
+  }
 }
 
 export default DefaultXpringClient

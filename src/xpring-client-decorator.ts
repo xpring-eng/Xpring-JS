@@ -1,5 +1,6 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
+import Transaction from './transaction'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 
@@ -60,4 +61,12 @@ export interface XpringClientDecorator {
    * @returns A boolean if the account is on the blockchain.
    */
   accountExists(address: string): Promise<boolean>
+
+  /**
+   * Retrieve the transaction history for an address.
+   *
+   * @param address The address to retrieve transaction history for.
+   * @return An array of Transactions for the account.
+   */
+  getTransactionHistory(address: string): Promise<Array<Transaction>>
 }

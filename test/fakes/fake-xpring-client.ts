@@ -1,4 +1,5 @@
 import { BigInteger } from 'big-integer'
+import Transaction from '../../src/transaction'
 import { XpringClientDecorator } from '../../src/xpring-client-decorator'
 import TransactionStatus from '../../src/transaction-status'
 import { Wallet } from '../../src/index'
@@ -12,6 +13,7 @@ class FakeXpringClient implements XpringClientDecorator {
     public getLastValidatedLedgerSequenceValue: number,
     public getRawTransactionStatusValue: RawTransactionStatus,
     public accountExistsValue: boolean,
+    public transactionHistoryValue: Array<Transaction>,
   ) {}
 
   public async getBalance(_address: string): Promise<BigInteger> {
@@ -44,6 +46,12 @@ class FakeXpringClient implements XpringClientDecorator {
 
   public async accountExists(_address: string): Promise<boolean> {
     return Promise.resolve(this.accountExistsValue)
+  }
+
+  public async getTransactionHistory(
+    _address: string,
+  ): Promise<Array<Transaction>> {
+    return Promise.resolve(this.transactionHistoryValue)
   }
 }
 
