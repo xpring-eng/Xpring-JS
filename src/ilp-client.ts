@@ -18,14 +18,15 @@ class IlpClient {
    * Get the balance of the specified account on the connector.
    *
    * @param accountId The account ID to get the balance for.
-   * @param bearerToken Authentication bearer token.
+   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   *        it will be picked up from a cookie.
    * @return A {@link GetBalanceResponse} with balance information of the specified account
    */
   public async getBalance(
-    address: string,
+    accountId: string,
     bearerToken?: string,
   ): Promise<GetBalanceResponse> {
-    return this.decoratedClient.getBalance(address, bearerToken)
+    return this.decoratedClient.getBalance(accountId, bearerToken)
   }
 
   /**
@@ -34,7 +35,11 @@ class IlpClient {
    * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param paymentPointer the payment pointer to receive funds
    * @param sender the ILP account sending the funds
-   * @returns A promise which resolves to a `BigInteger` of the amount that was delivered to the recipient
+   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   *        it will be picked up from a cookie.
+   * @returns A promise which resolves to a `SendPaymentResponse` of the original amount, the amount sent
+   *        in the senders denomination, and the amount that was delivered to the recipient in their denomination, as
+   *        well as if the payment was successful
    */
   public async send(
     amount: BigInteger | number | string,

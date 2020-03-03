@@ -9,7 +9,7 @@ export interface IlpNetworkClient {
    *
    * @param request the details required for fetching the balance
    * @param bearerToken
-   * @returns a response with details about the balance including the type of currency and amount
+   * @returns A {@link GetBalanceResponse} with balance information of the specified account
    */
   getBalance(
     request: GetBalanceRequest,
@@ -21,8 +21,9 @@ export interface IlpNetworkClient {
    *
    * @param request the details of which account to send from, which payment pointer to receive to, and the amount to
    * send
-   * @returns a response with details about the payment including whether or not it was successful and the amount
-   * delivered to the recipient
+   * @returns A promise which resolves to a `SendPaymentResponse` of the original amount, the amount sent
+   *        in the senders denomination, and the amount that was delivered to the recipient in their denomination, as
+   *        well as if the payment was successful
    */
   send(
     request: SendPaymentRequest,
