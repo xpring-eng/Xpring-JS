@@ -1,5 +1,6 @@
 import { BigInteger } from 'big-integer'
 import { GetBalanceResponse } from './generated/web/ilp/get_balance_response_pb'
+import { SendPaymentResponse } from "./generated/web/ilp/send_payment_response_pb";
 
 export interface IlpClientDecorator {
   /**
@@ -8,7 +9,7 @@ export interface IlpClientDecorator {
    * @param address The ILP address to retrieve a balance for.
    * @returns A `BigInteger` representing the number of drops of XRP in the account.
    */
-  getBalance(address: string, bearerToken: string): Promise<GetBalanceResponse>
+  getBalance(address: string, bearerToken?: string): Promise<GetBalanceResponse>
 
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
@@ -22,5 +23,6 @@ export interface IlpClientDecorator {
     amount: BigInteger | number | string,
     paymentPointer: string,
     sender: string,
-  ): Promise<BigInteger>
+    bearerToken?: string,
+  ): Promise<SendPaymentResponse>
 }

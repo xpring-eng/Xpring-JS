@@ -1,4 +1,4 @@
-import bigInt, { BigInteger } from 'big-integer'
+import { BigInteger } from 'big-integer'
 import { IlpClientDecorator } from './ilp-client-decorator'
 import isNode from './utils'
 import { IlpNetworkClient } from './ilp-network-client'
@@ -63,13 +63,13 @@ class DefaultIlpClient implements IlpClientDecorator {
     amount: BigInteger | number | string,
     paymentPointer: string,
     sender: string,
-  ): Promise<BigInteger> {
+    bearerToken?: string,
+  ): Promise<SendPaymentResponse> {
     const request = this.networkClient.SendPaymentRequest()
     request.setDestinationPaymentPointer(paymentPointer)
     request.setAmount(Number(amount))
     request.setAccountId(sender)
-    const response: SendPaymentResponse = await this.networkClient.send(request)
-    return bigInt(response.getAmountDelivered())
+    return this.networkClient.send(request, bearerToken)
   }
 }
 

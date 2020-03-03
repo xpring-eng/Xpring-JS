@@ -47,9 +47,15 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
     })
   }
 
-  send(request: SendPaymentRequest): Promise<SendPaymentResponse> {
+  send(
+    request: SendPaymentRequest,
+    bearerToken?: string,
+  ): Promise<SendPaymentResponse> {
+    const metaData: Metadata = new Metadata()
+    metaData.add('Authorization', bearerToken || '')
+
     return new Promise((resolve, reject): void => {
-      this.paymentClient.sendMoney(request, (error, response) => {
+      this.paymentClient.sendMoney(request, metaData, (error, response) => {
         if (error != null || response === null) {
           reject(error)
           return

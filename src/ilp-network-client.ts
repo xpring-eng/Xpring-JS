@@ -24,7 +24,10 @@ export interface IlpNetworkClient {
    * @returns a response with details about the payment including whether or not it was successful and the amount
    * delivered to the recipient
    */
-  send(request: SendPaymentRequest): Promise<SendPaymentResponse>
+  send(
+    request: SendPaymentRequest,
+    bearerToken?: string,
+  ): Promise<SendPaymentResponse>
 
   SendPaymentRequest(): SendPaymentRequest
 
