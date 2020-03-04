@@ -15,7 +15,6 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
 
   public constructor(grpcURL: string) {
     if (isNode()) {
-      // FIXME wrong credentials
       this.balanceClient = new BalanceServiceClient(
         grpcURL,
         credentials.createSsl(),
