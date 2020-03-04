@@ -8,19 +8,30 @@ export interface IlpNetworkClient {
    * Retrieve the balance for the given address.
    *
    * @param request the details required for fetching the balance
-   * @returns a response with details about the balance including the type of currency and amount
+   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   *        it will be picked up from a cookie.
+   * @returns A {@link GetBalanceResponse} with balance information of the specified account
    */
-  getBalance(request: GetBalanceRequest): Promise<GetBalanceResponse>
+  getBalance(
+    request: GetBalanceRequest,
+    bearerToken?: string,
+  ): Promise<GetBalanceResponse>
 
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
    * @param request the details of which account to send from, which payment pointer to receive to, and the amount to
    * send
-   * @returns a response with details about the payment including whether or not it was successful and the amount
-   * delivered to the recipient
+   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   *        it will be picked up from a cookie.
+   * @returns A promise which resolves to a `SendPaymentResponse` of the original amount, the amount sent
+   *        in the senders denomination, and the amount that was delivered to the recipient in their denomination, as
+   *        well as if the payment was successful
    */
-  send(request: SendPaymentRequest): Promise<SendPaymentResponse>
+  send(
+    request: SendPaymentRequest,
+    bearerToken?: string,
+  ): Promise<SendPaymentResponse>
 
   SendPaymentRequest(): SendPaymentRequest
 

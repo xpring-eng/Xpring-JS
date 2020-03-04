@@ -77,7 +77,10 @@ export class FakeIlpNetworkClient implements IlpNetworkClient {
     private readonly responses: FakeIlpNetworkClientResponses = FakeIlpNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
 
-  getBalance(_request: GetBalanceRequest): Promise<GetBalanceResponse> {
+  getBalance(
+    _request: GetBalanceRequest,
+    _bearerToken: string,
+  ): Promise<GetBalanceResponse> {
     const response = this.responses.getBalanceResponse
     if (response instanceof Error) {
       return Promise.reject(response)
