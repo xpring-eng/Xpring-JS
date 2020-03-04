@@ -1,4 +1,4 @@
-import bigInt, { BigInteger } from 'big-integer'
+import { BigInteger } from 'big-integer'
 import { IlpClientDecorator } from './ilp-client-decorator'
 import isNode from './utils'
 import { IlpNetworkClient } from './ilp-network-client'
@@ -40,15 +40,17 @@ class DefaultIlpClient implements IlpClientDecorator {
    * Retrieve the balance for the given address.
    *
    * @param address The ILP address to retrieve a balance for.
-   * @returns A `BigInteger` representing the number of drops of XRP in the account.
+   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   *        it will be picked up from a cookie.
+   * @returns A {@link GetBalanceResponse} with balance information of the specified account
    */
-  public async getBalance(address: string): Promise<BigInteger> {
+  public async getBalance(
+    address: string,
+    bearerToken?: string,
+  ): Promise<GetBalanceResponse> {
     const request = this.networkClient.GetBalanceRequest()
     request.setAccountId(address)
-    const response: GetBalanceResponse = await this.networkClient.getBalance(
-      request,
-    )
-    return bigInt(response.getNetBalance())
+    return this.networkClient.getBalance(request, bearerToken)
   }
 
   /**
@@ -57,19 +59,23 @@ class DefaultIlpClient implements IlpClientDecorator {
    * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param paymentPointer the payment pointer to receive funds
    * @param sender the ILP account sending the funds
-   * @returns A promise which resolves to a `BigInteger` of the amount that was delivered to the recipient
+   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   *        it will be picked up from a cookie.
+   * @returns A promise which resolves to a `SendPaymentResponse` of the original amount, the amount sent
+   *        in the senders denomination, and the amount that was delivered to the recipient in their denomination, as
+   *        well as if the payment was successful
    */
   public async send(
     amount: BigInteger | number | string,
     paymentPointer: string,
     sender: string,
-  ): Promise<BigInteger> {
+    bearerToken?: string,
+  ): Promise<SendPaymentResponse> {
     const request = this.networkClient.SendPaymentRequest()
     request.setDestinationPaymentPointer(paymentPointer)
     request.setAmount(Number(amount))
     request.setAccountId(sender)
-    const response: SendPaymentResponse = await this.networkClient.send(request)
-    return bigInt(response.getAmountDelivered())
+    return this.networkClient.send(request, bearerToken)
   }
 }
 
