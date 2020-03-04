@@ -19,7 +19,7 @@ import PayIDError from './pay-id-error'
  * TODO(keefertaylor): Export this class in index.ts when it's ready for external consumption.
  */
 export default class PayIDAdminClient {
-  private static putEndpoint = '/put'
+  private static putEndpoint = '/v1/users'
 
   /**
    * Initialize a new PayIDAdminClient.
@@ -35,7 +35,9 @@ export default class PayIDAdminClient {
   ) {}
 
   /**
-   * Update a PayID to XRP address mapping.
+   * Create or update a PayID to XRP address mapping.
+   *
+   * If the given PayID has no XRP address mapping then a new mapping is created. If the given PayID has an existing mapping, then the mapping us updated and the previous value is removed.
    *
    * @note The input address to this method must be in X-Address format.
    *
@@ -43,7 +45,7 @@ export default class PayIDAdminClient {
    * @param xrpAddress The new XRP address to associate with the payID.
    * @returns A boolean indicating success of the operation.
    */
-  public async updateXRPAddressMapping(
+  public async addOrUpdateXRPAddressMapping(
     _payID: string,
     _xrpAddress: string,
   ): Promise<boolean> {
@@ -53,6 +55,23 @@ export default class PayIDAdminClient {
     console.log(`Hitting: ${serviceEndpoint}`)
     console.log(`Using Token: ${this.authorizationToken}`)
 
+    // TODO(keefertaylor): Implement writes from backend service.
+    throw PayIDError.unimplemented
+  }
+
+  /**
+   * Remove a PayID to XRP address mapping.
+   *
+   * @note The input address to this method must be in X-Address format.
+   *
+   * @param payID The payID to update.
+   * @param xrpAddress The XRP address to remove.
+   * @returns A boolean indicating success of the operation.
+   */
+  public async removeXRPAddressMapping(
+    _payID: string,
+    _xrpAddress: string,
+  ): Promise<boolean> {
     // TODO(keefertaylor): Implement writes from backend service.
     throw PayIDError.unimplemented
   }

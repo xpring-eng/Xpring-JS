@@ -8,7 +8,7 @@ const serviceURL = 'https://xpring.money'
 const authorizationToken = 'fake-bearer-token'
 
 describe('Pay ID Admin Client', function(): void {
-  it('xrpAddressForPayID - throws unimplemented', function(done): void {
+  it('addOrUpdateXRPAddressMapping - throws unimplemented', function(done): void {
     // GIVEN a PayIDAdminClient.
     const payIDAdminClient = new PayIDAdminClient(
       authorizationToken,
@@ -17,7 +17,27 @@ describe('Pay ID Admin Client', function(): void {
 
     // WHEN an update is requested THEN an unimplemented error is thrown.
     payIDAdminClient
-      .updateXRPAddressMapping(payID, xrpAddress)
+      .addOrUpdateXRPAddressMapping(payID, xrpAddress)
+      .catch((error) => {
+        assert.typeOf(error, PayIDError.name)
+        assert.equal(
+          (error as PayIDError).errorType,
+          PayIDErrorType.Unimplemented,
+        )
+        done()
+      })
+  })
+
+  it('removeAddressMapping - throws unimplemented', function(done): void {
+    // GIVEN a PayIDAdminClient.
+    const payIDAdminClient = new PayIDAdminClient(
+      authorizationToken,
+      serviceURL,
+    )
+
+    // WHEN an update is requested THEN an unimplemented error is thrown.
+    payIDAdminClient
+      .addOrUpdateXRPAddressMapping(payID, xrpAddress)
       .catch((error) => {
         assert.typeOf(error, PayIDError.name)
         assert.equal(

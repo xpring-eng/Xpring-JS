@@ -10,9 +10,6 @@ import PayIDError from './pay-id-error'
 /**
  * A client for PayID.
  *
- * Inputs to this class are always in X-Addresses.
- * @see https://xrpaddress.info/
- *
  * @warning This class is experimental and should not be used in production applications.
  * TODO(keefertaylor): Export this class in index.ts when it's ready for external consumption.
  */
