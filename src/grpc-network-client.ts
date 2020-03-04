@@ -2,18 +2,27 @@ import { credentials } from 'grpc'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
-} from './generated/node/rpc/v1/account_info_pb'
-import { GetFeeRequest, GetFeeResponse } from './generated/node/rpc/v1/fee_pb'
-import { GetTxRequest, GetTxResponse } from './generated/node/rpc/v1/tx_pb'
+} from './generated/node/org/xrpl/rpc/v1/get_account_info_pb'
+import {
+  GetFeeRequest,
+  GetFeeResponse,
+} from './generated/node/org/xrpl/rpc/v1/get_fee_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from './generated/node/rpc/v1/submit_pb'
-import { XRPLedgerAPIServiceClient } from './generated/node/rpc/v1/xrp_ledger_grpc_pb'
-
+} from './generated/node/org/xrpl/rpc/v1/submit_pb'
+import { XRPLedgerAPIServiceClient } from './generated/node/org/xrpl/rpc/v1/xrp_ledger_grpc_pb'
 import { NetworkClient } from './network-client'
-import { AccountAddress } from './generated/node/rpc/v1/amount_pb'
+import { AccountAddress } from './generated/node/org/xrpl/rpc/v1/account_pb'
 import isNode from './utils'
+import {
+  GetAccountTransactionHistoryRequest,
+  GetAccountTransactionHistoryResponse,
+} from './generated/node/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+import {
+  GetTransactionRequest,
+  GetTransactionResponse,
+} from './generated/node/org/xrpl/rpc/v1/get_transaction_pb'
 
 /**
  * A GRPC Based network client.
@@ -58,9 +67,11 @@ class GRPCNetworkClient implements NetworkClient {
     })
   }
 
-  public async getTx(request: GetTxRequest): Promise<GetTxResponse> {
+  public async getTransaction(
+    request: GetTransactionRequest,
+  ): Promise<GetTransactionResponse> {
     return new Promise((resolve, reject): void => {
-      this.grpcClient.getTx(request, (error, response): void => {
+      this.grpcClient.getTransaction(request, (error, response): void => {
         if (error != null || response == null) {
           reject(error)
           return
@@ -84,6 +95,23 @@ class GRPCNetworkClient implements NetworkClient {
     })
   }
 
+  public async getTransactionHistory(
+    request: GetAccountTransactionHistoryRequest,
+  ): Promise<GetAccountTransactionHistoryResponse> {
+    return new Promise((resolve, reject): void => {
+      this.grpcClient.getAccountTransactionHistory(
+        request,
+        (error, response): void => {
+          if (error != null || response == null) {
+            reject(error)
+            return
+          }
+          resolve(response)
+        },
+      )
+    })
+  }
+
   /* eslint-disable class-methods-use-this */
   public AccountAddress(): AccountAddress {
     return new AccountAddress()
@@ -93,8 +121,8 @@ class GRPCNetworkClient implements NetworkClient {
     return new GetAccountInfoRequest()
   }
 
-  public GetTxRequest(): GetTxRequest {
-    return new GetTxRequest()
+  public GetTransactionRequest(): GetTransactionRequest {
+    return new GetTransactionRequest()
   }
 
   public GetFeeRequest(): GetFeeRequest {
@@ -103,6 +131,10 @@ class GRPCNetworkClient implements NetworkClient {
 
   public SubmitTransactionRequest(): SubmitTransactionRequest {
     return new SubmitTransactionRequest()
+  }
+
+  public GetAccountTransactionHistoryRequest(): GetAccountTransactionHistoryRequest {
+    return new GetAccountTransactionHistoryRequest()
   }
   /* eslint-enable class-methods-use-this */
 }

@@ -13,6 +13,7 @@ OUT_DIR_WEB="./src/generated/web"
 OUT_DIR_NODE="./src/generated/node"
 
 PROTO_PATH="./rippled/src/ripple/proto/"
+PROTO_SRC_FILES=$PROTO_PATH/org/xrpl/rpc/v1/*.proto
 
 mkdir -p $OUT_DIR_WEB
 mkdir -p $OUT_DIR_NODE
@@ -22,7 +23,7 @@ $PWD/node_modules/grpc-tools/bin/protoc \
     --js_out=import_style=commonjs,binary:$OUT_DIR_WEB \
     --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:$OUT_DIR_WEB \
     --proto_path $PROTO_PATH \
-    ./rippled/src/ripple/proto/rpc/v1/*.proto
+    $PROTO_SRC_FILES
 
 # Generate node code.
 $PWD/node_modules/grpc-tools/bin/protoc \
@@ -30,14 +31,14 @@ $PWD/node_modules/grpc-tools/bin/protoc \
     --grpc_out=$OUT_DIR_NODE \
     --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` \
     --proto_path $PROTO_PATH \
-    ./rippled/src/ripple/proto/rpc/v1/*.proto
+    $PROTO_SRC_FILES
 
 # Generate node typescript declaration files.
 $PWD/node_modules/grpc-tools/bin/protoc \
     --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts \
     --ts_out=$OUT_DIR_NODE \
     --proto_path=$PROTO_PATH \
-    ./rippled/src/ripple/proto/rpc/v1/*.proto
+    $PROTO_SRC_FILES
 
 ##########################################################################
 # Regenerate legacy protocol buffers.
