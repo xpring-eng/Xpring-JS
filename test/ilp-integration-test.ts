@@ -1,6 +1,7 @@
-import * as assert from 'assert'
-import { fail } from 'assert'
+// import { fail } from 'assert'
 import IlpClient from '../src/ilp-client'
+
+import assert = require('assert')
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -17,12 +18,12 @@ describe('ILP Integration Tests', function(): void {
       assert.equal(message.getAccountId(), 'sdk_account1')
       assert.equal(message.getAssetCode(), 'XRP')
       assert.equal(message.getAssetScale(), 9)
-      assert.equal(message.getNetBalance(), 0)
-      assert.equal(message.getClearingBalance(), 0)
-      assert.equal(message.getPrepaidAmount(), 0)
+      assert(message.getNetBalance() <= 0)
+      assert(message.getClearingBalance() <= 0)
+      assert(message.getPrepaidAmount() >= 0)
     } catch (e) {
       console.log(e)
-      fail()
+      assert.fail()
     }
   })
 
@@ -41,7 +42,7 @@ describe('ILP Integration Tests', function(): void {
       assert.equal(message.getSuccessfulPayment(), true)
     } catch (e) {
       console.log(e)
-      fail()
+      assert.fail()
     }
   })
 })
