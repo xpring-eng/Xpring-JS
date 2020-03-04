@@ -1,5 +1,6 @@
-// import * as assert from 'assert'
-// import { fail } from 'assert'
+/*
+import * as assert from 'assert'
+import { fail } from 'assert'
 import IlpClient from '../src/ilp-client'
 
 // A timeout for these tests.
@@ -14,15 +15,15 @@ describe('ILP Integration Tests', function(): void {
     this.timeout(timeoutMs)
     try {
       const message = await ILPClientNode.getBalance('mustafa', 'password')
-      /*assert.equal(message.getAccountId(), 'mustafa')
+      assert.equal(message.getAccountId(), 'mustafa')
       assert.equal(message.getAssetCode(), 'XRP')
       assert.equal(message.getAssetScale(), 9)
       assert.equal(message.getNetBalance(), 0)
       assert.equal(message.getClearingBalance(), 0)
-      assert.equal(message.getPrepaidAmount(), 0)*/
+      assert.equal(message.getPrepaidAmount(), 0)
     } catch (e) {
       console.log(e)
-      // fail()
+      fail()
     }
   })
 
@@ -35,13 +36,14 @@ describe('ILP Integration Tests', function(): void {
         'mustafa',
         'password',
       )
-      /*assert.equal(message.getOriginalAmount(), 10)
+      assert.equal(message.getOriginalAmount(), 10)
       assert.equal(message.getAmountSent(), 10)
       assert.equal(message.getAmountDelivered(), 10)
-      assert.equal(message.getSuccessfulPayment(), true)*/
+      assert.equal(message.getSuccessfulPayment(), true)
     } catch (e) {
       console.log(e)
-      // fail()
+      fail()
     }
   })
 })
+*/
