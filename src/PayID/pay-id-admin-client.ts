@@ -10,7 +10,7 @@ import PayIDError from './pay-id-error'
 /**
  * An admin for Xpring's PayID service.
  *
- * Admin clients can update address mappings. To resolve PayIDs to addresses, please use `PayIDClient`.
+ * Admin clients can create, update, and delete address mappings. To resolve PayIDs to addresses, please use `PayIDClient`.
  *
  * Inputs to this class are always in X-Addresses.
  * @see https://xrpaddress.info/
