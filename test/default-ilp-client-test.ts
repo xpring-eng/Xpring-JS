@@ -33,7 +33,7 @@ describe('Default ILP Client', function(): void {
     const client = fakeErroringNetworkClient()
 
     // WHEN the balance for an account is requested
-    client.getBalance('test.foo.bar', 'Bearer blah').catch((error) => {
+    client.getBalance('test.foo.bar').catch((error) => {
       // THEN an error is thrown
       assert.typeOf(error, 'Error')
       assert.equal(
