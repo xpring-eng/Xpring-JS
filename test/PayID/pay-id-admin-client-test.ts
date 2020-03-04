@@ -28,7 +28,7 @@ describe('Pay ID Admin Client', function(): void {
       })
   })
 
-  it('removeAddressMapping - throws unimplemented', function(done): void {
+  it('removeXRPAddressMapping - throws unimplemented', function(done): void {
     // GIVEN a PayIDAdminClient.
     const payIDAdminClient = new PayIDAdminClient(
       authorizationToken,
@@ -37,7 +37,7 @@ describe('Pay ID Admin Client', function(): void {
 
     // WHEN an update is requested THEN an unimplemented error is thrown.
     payIDAdminClient
-      .addOrUpdateXRPAddressMapping(payID, xrpAddress)
+      .removeXRPAddressMapping(payID, xrpAddress)
       .catch((error) => {
         assert.typeOf(error, PayIDError.name)
         assert.equal(
