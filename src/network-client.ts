@@ -15,6 +15,10 @@ import {
   SubmitTransactionResponse,
 } from './generated/web/org/xrpl/rpc/v1/submit_pb'
 import { AccountAddress } from './generated/web/org/xrpl/rpc/v1/account_pb'
+import {
+  GetAccountTransactionHistoryRequest,
+  GetAccountTransactionHistoryResponse,
+} from './generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 
 /**
  * The network client interface provides a wrapper around network calls to the Xpring Platform.
@@ -30,9 +34,14 @@ export interface NetworkClient {
   submitTransaction(
     request: SubmitTransactionRequest,
   ): Promise<SubmitTransactionResponse>
+  getTransactionHistory(
+    request: GetAccountTransactionHistoryRequest,
+  ): Promise<GetAccountTransactionHistoryResponse>
+
   AccountAddress(): AccountAddress
   GetAccountInfoRequest(): GetAccountInfoRequest
   GetTransactionRequest(): GetTransactionRequest
   GetFeeRequest(): GetFeeRequest
   SubmitTransactionRequest(): SubmitTransactionRequest
+  GetAccountTransactionHistoryRequest(): GetAccountTransactionHistoryRequest
 }

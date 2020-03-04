@@ -25,7 +25,7 @@ describe('Default ILP Client', function(): void {
     const amount = await client.getBalance('test.foo.bar')
 
     // THEN the balance is returned
-    assert.equal(Number(amount), 100)
+    assert.equal(Number(amount.getNetBalance()), 100)
   })
 
   it('Get balance - error', function(done): void {
@@ -52,7 +52,7 @@ describe('Default ILP Client', function(): void {
     const amount = await client.send(100, '$money/baz', 'test.foo.bar')
 
     // THEN the balance is returned
-    assert.equal(Number(amount), 50)
+    assert.equal(Number(amount.getAmountDelivered()), 50)
   })
 
   it('Send - error', function(done): void {
