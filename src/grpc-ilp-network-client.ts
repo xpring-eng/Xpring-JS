@@ -18,11 +18,11 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
       // FIXME wrong credentials
       this.balanceClient = new BalanceServiceClient(
         grpcURL,
-        credentials.createInsecure(),
+        credentials.createSsl(),
       )
       this.paymentClient = new IlpOverHttpServiceClient(
         grpcURL,
-        credentials.createInsecure(),
+        credentials.createSsl(),
       )
     } else {
       throw new Error('Use ILP-gRPC-Web Network Client on the browser!')
