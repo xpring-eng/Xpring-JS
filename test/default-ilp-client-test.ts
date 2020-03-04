@@ -22,7 +22,7 @@ describe('Default ILP Client', function(): void {
     const client = fakeSuceedingNetworkClient()
 
     // WHEN the balance for an account is requested
-    const amount = await client.getBalance('test.foo.bar', 'Bearer blah')
+    const amount = await client.getBalance('test.foo.bar')
 
     // THEN the balance is returned
     assert.equal(Number(amount.getNetBalance()), 100)
