@@ -29,6 +29,10 @@ import {
   TransactionResult,
 } from '../../src/generated/web/org/xrpl/rpc/v1/meta_pb'
 import { Balance } from '../../src/generated/node/org/xrpl/rpc/v1/common_pb'
+import {
+  GetAccountTransactionHistoryRequest,
+  GetAccountTransactionHistoryResponse,
+} from '../../src/generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -57,6 +61,7 @@ export class FakeNetworkClientResponses {
     FakeNetworkClientResponses.defaultError,
     FakeNetworkClientResponses.defaultError,
     FakeNetworkClientResponses.defaultError,
+    FakeNetworkClientResponses.defaultError,
   )
 
   /**
@@ -65,7 +70,8 @@ export class FakeNetworkClientResponses {
    * @param getAccountInfoResponse The response or error that will be returned from the getAccountInfo request. Default is the default account info response.
    * @param getFeeResponse The response or error that will be returned from the getFee request. Defaults to the default fee response.
    * @param submitTransactionResponse The response or error that will be returned from the submitTransaction request. Defaults to the default submit transaction response.
-   * @param getTxResponse The response or error that will be returned from the getTransactionStatus request. Defaults to the default transaction status response.
+   * @param getTransactionStatusResponse The response or error that will be returned from the getTransactionStatus request. Defaults to the default transaction status response.
+   * @param getTransactionHistoryResponse The response or error that will be returned from teh getTransactionHistory request. Default to the default transaction history response.
    */
   public constructor(
     public readonly getAccountInfoResponse: Response<
@@ -79,7 +85,10 @@ export class FakeNetworkClientResponses {
     > = FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
     public readonly getTransactionStatusResponse: Response<
       GetTransactionResponse
-    > = FakeNetworkClientResponses.defaultGetTxResponse(),
+    > = FakeNetworkClientResponses.defaultGetTransactionResponse(),
+    public readonly getTransactionHistoryResponse: Response<
+      GetAccountTransactionHistoryResponse
+    > = FakeNetworkClientResponses.defaultGetTransactionHistoryResponse(),
   ) {}
 
   /**
@@ -132,9 +141,9 @@ export class FakeNetworkClientResponses {
   }
 
   /**
-   * Construct a default getTx response.
+   * Construct a default getTransactionResponse.
    */
-  public static defaultGetTxResponse(): GetTransactionResponse {
+  public static defaultGetTransactionResponse(): GetTransactionResponse {
     const transactionResult = new TransactionResult()
     transactionResult.setResult('tesSUCCESS')
 
@@ -148,6 +157,14 @@ export class FakeNetworkClientResponses {
     response.setMeta(meta)
     response.setTransaction(transaction)
 
+    return response
+  }
+
+  /**
+   * Construct a default getTransactionHistoryResponse.
+   */
+  public static defaultGetTransactionHistoryResponse(): GetAccountTransactionHistoryResponse {
+    const response = new GetAccountTransactionHistoryResponse()
     return response
   }
 }
@@ -203,6 +220,18 @@ export class FakeNetworkClient implements NetworkClient {
     return Promise.resolve(transactionStatusResponse)
   }
 
+  getTransactionHistory(
+    _GetAccountTransactionHistoryRequestetAccountTransactionHistoryRequest: GetAccountTransactionHistoryRequest,
+  ): Promise<GetAccountTransactionHistoryResponse> {
+    const transactionHistoryResponse = this.responses
+      .getTransactionHistoryResponse
+    if (transactionHistoryResponse instanceof Error) {
+      return Promise.reject(transactionHistoryResponse)
+    }
+
+    return Promise.resolve(transactionHistoryResponse)
+  }
+
   public AccountAddress(): AccountAddress {
     return new AccountAddress()
   }
@@ -221,5 +250,9 @@ export class FakeNetworkClient implements NetworkClient {
 
   public SubmitTransactionRequest(): SubmitTransactionRequest {
     return new SubmitTransactionRequest()
+  }
+
+  public GetAccountTransactionHistoryRequest(): GetAccountTransactionHistoryRequest {
+    return new GetAccountTransactionHistoryRequest()
   }
 }
