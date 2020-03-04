@@ -19,6 +19,10 @@ import { XRPLedgerAPIServiceClient } from './generated/web/org/xrpl/rpc/v1/xrp_l
 import { NetworkClient } from './network-client'
 import { AccountAddress } from './generated/web/org/xrpl/rpc/v1/account_pb'
 import isNode from './utils'
+import {
+  GetAccountTransactionHistoryRequest,
+  GetAccountTransactionHistoryResponse,
+} from './generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 
 /**
  * A GRPC Based network client.
@@ -98,6 +102,24 @@ class GRPCNetworkClient implements NetworkClient {
     })
   }
 
+  public async getTransactionHistory(
+    request: GetAccountTransactionHistoryRequest,
+  ): Promise<GetAccountTransactionHistoryResponse> {
+    return new Promise((resolve, reject): void => {
+      this.grpcClient.getAccountTransactionHistory(
+        request,
+        {},
+        (error, response): void => {
+          if (error != null || response == null) {
+            reject(error)
+            return
+          }
+          resolve(response)
+        },
+      )
+    })
+  }
+
   /* eslint-disable class-methods-use-this */
   public AccountAddress(): AccountAddress {
     return new AccountAddress()
@@ -117,6 +139,10 @@ class GRPCNetworkClient implements NetworkClient {
 
   public SubmitTransactionRequest(): SubmitTransactionRequest {
     return new SubmitTransactionRequest()
+  }
+
+  public GetAccountTransactionHistoryRequest(): GetAccountTransactionHistoryRequest {
+    return new GetAccountTransactionHistoryRequest()
   }
   /* eslint-enable class-methods-use-this */
 }
