@@ -123,8 +123,8 @@ wallet.verify(message, signature); // true
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = "grpc.xpring.tech:80";
-const xrpClient = XRPClient.xrpClientWithEndpoint(remoteURL);
+const remoteURL = alpha.test.xrp.xpring.io:50051; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
+const xpringClient = new XpringClient(remoteURL, true)
 ```
 
 #### 口座残高の取得
@@ -134,8 +134,8 @@ const xrpClient = XRPClient.xrpClientWithEndpoint(remoteURL);
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = "grpc.xpring.tech:80";
-const xrpClient = XRPClient.xrpClientWithEndpoint(remoteURL);
+const remoteURL = alpha.test.xrp.xpring.io:50051; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
+const xpringClient = new XpringClient(remoteURL, true);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
 
@@ -150,8 +150,8 @@ console.log(balance); // Logs a balance in drops of XRP
 ```javascript
 const { Wallet, XRPAmount, XRPClient } = require("xpring-js");
 
-const remoteURL = "grpc.xpring.tech:80";
-const xrpClient = XRPClient.xrpClientWithEndpoint(remoteURL);
+const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
+const xpringClient = new XpringClient(remoteURL, true)
 
 // Amount of XRP to send
 const amount = BigInt("10")
@@ -160,7 +160,8 @@ const amount = BigInt("10")
 const destinationAddress = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
 
 // Wallet which will send XRP
-const senderWallet = Wallet.generateRandomWallet();
+const generationResult = Wallet.generateRandomWallet();
+const senderWallet = generationResult.wallet;
 
 const transactionHash = await xrpClient.send(amount, destinationAddress, senderWallet);
 ```
