@@ -44,7 +44,14 @@ export default class PayIDClient {
       .then((result: AxiosResponse) => {
         // TODO(keefertaylor): properly extract xrp address and tag, format as X-Address.
         // TODO(keefertaylor): convert to X-Address on the fly if needed.
-        return JSON.stringify(result.data)
+        const { address } = result.data
+        if (!address) {
+          throw new PayIDError(
+            PayIDErrorType.UnexpectedResponse,
+            'Sucessful response was in an unknown format',
+          )
+        }
+        return address
       })
       .catch((error) => {
         // Handle erroneous responses from the server.

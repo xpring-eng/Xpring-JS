@@ -17,8 +17,8 @@ describe('PayID Integration Tests', function(): void {
     // WHEN it is resolved to an XRP address
     const xrpAddress = await payIDClient.xrpAddressForPayID(payID)
 
-    // THEN the address exists.
-    assert.exists(xrpAddress)
+    // THEN the address is the expected value.
+    assert.equal(xrpAddress, 'r9wmZ8Ctfdcr9gctT7LresUve7vs14ADcz')
   })
 
   // TODO(keefertaylor): Add a test for a PayID mapping which doesn't exist. https://doug.purdy.im returns 403 errors for paths which

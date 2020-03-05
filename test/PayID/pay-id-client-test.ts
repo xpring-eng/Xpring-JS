@@ -10,9 +10,9 @@ describe('Pay ID Client', function(): void {
     nock.cleanAll()
   })
 
-  it('xrpAddressForPayID - invalid pay id', function(done): void {
+  it('xrpAddressForPayID - invalid Pay ID', function(done): void {
     // GIVEN a PayIDClient and an invalid PayID.
-    const invalidPayID = 'xpring.money/georgewashington' // Does not start with '$'
+    const invalidPayID = '$xpring.money/georgewashington' // Does not start with '$'
     const payIDClient = new PayIDClient()
 
     // WHEN an XRPAddress is requested for an invalid pay ID THEN an invalid payment pointer error is thrown.
@@ -83,9 +83,9 @@ describe('Pay ID Client', function(): void {
       .get('/georgewashington')
       .reply(serverErrorCode, serverErrorMessage)
 
-    // WHEN an XRPAddress is requested for an invalid pay ID.
+    // WHEN an XRPAddress is requested for a Pay ID.
     payIDClient.xrpAddressForPayID(payID).catch((error) => {
-      // THEN an unimplemented error is thrown with the details of the error.
+      // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
         (error as PayIDError).errorType,
         PayIDErrorType.UnexpectedResponse,
@@ -95,6 +95,35 @@ describe('Pay ID Client', function(): void {
       assert.include(message, `${serverErrorCode}`)
       assert.include(message, serverErrorMessage)
 
+      done()
+    })
+  })
+
+  it('xrpAddressForPayID - successful response - unexpected response format', function(done) {
+    // GIVEN a PayID client, valid PayID and mocked networking to return a match for the PayID.
+    const payID = '$xpring.money/georgewashington'
+    const payIDClient = new PayIDClient()
+
+    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
+    if (!paymentPointer) {
+      throw new Error(
+        'Test precondition failed: Could not generate payment pointer',
+      )
+    }
+    // Field isn't named `address` in response.
+    nock('https://xpring.money')
+      .get('/georgewashington')
+      .reply(200, {
+        incorrectFieldName: 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4',
+      })
+
+    // WHEN an XRPAddress is requested for a Pay ID.
+    payIDClient.xrpAddressForPayID(payID).catch((error) => {
+      // THEN an unexpected response is thrown.
+      assert.equal(
+        (error as PayIDError).errorType,
+        PayIDErrorType.UnexpectedResponse,
+      )
       done()
     })
   })
