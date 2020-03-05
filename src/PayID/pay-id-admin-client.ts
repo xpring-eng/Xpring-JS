@@ -23,9 +23,11 @@ export default class PayIDAdminClient {
 
   /**
    * Initialize a new PayIDAdminClient.
-   *   *
+   *
+   * TODO(keefertaylor): Add a remoteURL configuration property when it is used, otherwise the linter is upset about an unused property.
+   *
    * @param authorizationToken An authorization token.
-   * @param serviceURL The remote URL for the PayID Service.
+   * @param remoteURL The remote URL for the PayID Service.
    */
   public constructor(
     private readonly authorizationToken: string,
