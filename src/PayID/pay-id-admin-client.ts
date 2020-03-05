@@ -23,7 +23,7 @@ export default class PayIDAdminClient {
 
   /**
    * Initialize a new PayIDAdminClient.
-   *   *
+   *
    * @param authorizationToken An authorization token.
    * @param serviceURL The remote URL for the PayID Service.
    */

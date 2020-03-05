@@ -1,11 +1,8 @@
 import { assert } from 'chai'
 import nock from 'nock'
 import { PayIDUtils } from 'xpring-common-js'
-// import chaiString from 'chai-string'
 import PayIDClient from '../../src/PayID/pay-id-client'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
-
-// chai.use(chaiString)
 
 describe('Pay ID Client', function(): void {
   afterEach(function() {
@@ -18,7 +15,7 @@ describe('Pay ID Client', function(): void {
     const invalidPayID = 'xpring.money/georgewashington' // Does not start with '$'
     const payIDClient = new PayIDClient()
 
-    // WHEN an XRPAddress is requested for an invalid pay ID THEN an unimplemented error is thrown.
+    // WHEN an XRPAddress is requested for an invalid pay ID THEN an invalid payment pointer error is thrown.
     payIDClient.xrpAddressForPayID(invalidPayID).catch((error) => {
       assert.equal(
         (error as PayIDError).errorType,
