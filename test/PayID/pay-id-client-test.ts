@@ -49,6 +49,7 @@ describe('Pay ID Client', function(): void {
     const xrpAddress = await payIDClient.xrpAddressForPayID(payID)
 
     // THEN the address exists.
+    // TODO(keefertaylor): Tighten up this condition when proper response parsing is implemented.
     assert.exists(xrpAddress)
   })
 
@@ -70,7 +71,7 @@ describe('Pay ID Client', function(): void {
     // WHEN an XRP address is requested.
     const xrpAddress = await payIDClient.xrpAddressForPayID(payID)
 
-    // THEN the address exists.
+    // THEN the address is undefined.
     assert.isUndefined(xrpAddress)
   })
 
