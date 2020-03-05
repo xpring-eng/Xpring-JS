@@ -2,8 +2,10 @@
  * Types of errors that originate from PayID.
  */
 export enum PayIDErrorType {
-  Unimplemented,
   InvalidPaymentPointer,
+  UnexpectedResponse,
+  Unimplemented,
+  Unknown,
 }
 
 /**

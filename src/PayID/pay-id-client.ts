@@ -1,13 +1,6 @@
-import axios, { AxiosInstance } from 'axios'
+import axios, { AxiosInstance, AxiosResponse } from 'axios'
 import { PayIDUtils } from 'xpring-common-js'
-import PayIDError from './pay-id-error'
-
-/* eslint-disable @typescript-eslint/require-await */
-// TODO(keefertaylor): Enable lint rules when method is implemented.
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable max-classes-per-file */
+import PayIDError, { PayIDErrorType } from './pay-id-error'
 
 /**
  * A client for PayID.
@@ -31,26 +24,45 @@ export default class PayIDClient {
    * @param payID The payID to resolve for an address.
    * @returns An XRP address representing the given PayID if one exists, otherwise undefined.
    */
-  public async xrpAddressForPayID(_payID: string): Promise<string | undefined> {
-    const paymentPointer = PayIDUtils.parsePaymentPointer(paymentPointer)
+  public async xrpAddressForPayID(payID: string): Promise<string | undefined> {
+    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
     if (!paymentPointer) {
       throw PayIDError.invalidPaymentPointer
     }
 
-    // TODO(keefertaylor): make this a function on PaymentPointer?
-    const url = `https://${paymentPointer.host}/${paymentPointer.path}`
-    // TODO(keefertaylor): consider types
+    const url = `https://${paymentPointer.host}${paymentPointer.path}`
+    // TODO(keefertaylor): Attach network parameter.
     // TODO(keefertaylor): Generalize the below to allow requesting in other types.
     const requestConfig = {
       headers: {
         Accept: 'application/xrp+json',
       },
     }
-    const result = await this.axiosInstance.get(url, requestConfig)
 
-    // TODO(keefertaylor): Handle errors.
+    return this.axiosInstance
+      .get(url, requestConfig)
+      .then((result: AxiosResponse) => {
+        // TODO(keefertaylor): properly extract xrp address and tag, format as X-Address.
+        // TODO(keefertaylor): convert to X-Address on the fly if needed.
+        return JSON.stringify(result.data)
+      })
+      .catch((error) => {
+        // Handle erroneous responses from the server.
+        if (error.response) {
+          // 404 means no mapping was found.
+          if (error.response.status === 404) {
+            return undefined
+          }
 
-    // TODO(keefertaylor): properly extract xrp address and tag, format as X-Address.
-    return JSON.stringify(result.data)
+          // Otherwise re-throw the error as an unexepected response.
+          throw new PayIDError(
+            PayIDErrorType.UnexpectedResponse,
+            `${error.response.status} ${error.response.statusText}: ${error.response.data}`,
+          )
+        } else {
+          // Generically errors from the server which contained no response (timeouts, etc).
+          throw new PayIDError(PayIDErrorType.Unknown, error.message)
+        }
+      })
   }
 }
