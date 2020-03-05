@@ -1,8 +1,13 @@
 'use strict'
 
 module.exports = {
-  require: ['ts-node/register', 'source-map-support/register'],
-  extension: ['ts'],
+  require: [
+    'ts-node/register',
+    'source-map-support/register',
+  ],
+  extension: [
+    'ts'
+  ],
   spec: 'test/**/*-test.ts',
 
   // Do not look for mocha opts file
