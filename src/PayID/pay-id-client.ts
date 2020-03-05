@@ -1,3 +1,5 @@
+import axios, { AxiosInstance } from 'axios'
+import { PayIDUtils } from 'xpring-common-js'
 import PayIDError from './pay-id-error'
 
 /* eslint-disable @typescript-eslint/require-await */
@@ -14,6 +16,13 @@ import PayIDError from './pay-id-error'
  * TODO(keefertaylor): Export this class in index.ts when it's ready for external consumption.
  */
 export default class PayIDClient {
+  /** An HTTP client. */
+  private readonly axiosInstance: AxiosInstance
+
+  public constructor() {
+    this.axiosInstance = axios.create({})
+  }
+
   /**
    * Retrieve the XRP Address authorized with a PayID.
    *
@@ -23,6 +32,25 @@ export default class PayIDClient {
    * @returns An XRP address representing the given PayID if one exists, otherwise undefined.
    */
   public async xrpAddressForPayID(_payID: string): Promise<string | undefined> {
-    throw PayIDError.unimplemented
+    const paymentPointer = PayIDUtils.parsePaymentPointer(paymentPointer)
+    if (!paymentPointer) {
+      throw PayIDError.invalidPaymentPointer
+    }
+
+    // TODO(keefertaylor): make this a function on PaymentPointer?
+    const url = `https://${paymentPointer.host}/${paymentPointer.path}`
+    // TODO(keefertaylor): consider types
+    // TODO(keefertaylor): Generalize the below to allow requesting in other types.
+    const requestConfig = {
+      headers: {
+        Accept: 'application/xrp+json',
+      },
+    }
+    const result = await this.axiosInstance.get(url, requestConfig)
+
+    // TODO(keefertaylor): Handle errors.
+
+    // TODO(keefertaylor): properly extract xrp address and tag, format as X-Address.
+    return JSON.stringify(result.data)
   }
 }

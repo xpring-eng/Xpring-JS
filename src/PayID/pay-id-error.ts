@@ -3,6 +3,7 @@
  */
 export enum PayIDErrorType {
   Unimplemented,
+  InvalidPaymentPointer,
 }
 
 /**
@@ -17,8 +18,12 @@ export default class PayIDError extends Error {
     'Unimplemented',
   )
 
+  public static invalidPaymentPointer = new PayIDError(
+    PayIDErrorType.InvalidPaymentPointer,
+    'Invalid payment pointer',
+  )
+
   /**
-   *
    * @param errorType The type of error.
    * @param message The error message.
    */
