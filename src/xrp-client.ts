@@ -6,15 +6,15 @@ import TransactionStatus from './transaction-status'
 import ReliableSubmissionXRPClient from './reliable-submission-xrp-client'
 import DefaultXRPClient from './default-xrp-client'
 /**
- * XpringClient is a client which interacts with the Xpring platform.
+ * XRPClient is a client which interacts with the Xpring platform.
  */
-class XpringClient {
+class XRPClient {
   private readonly decoratedClient: XRPClientDecorator
 
   /**
-   * Create a new XpringClient.
+   * Create a new XRPClient.
    *
-   * The XpringClient will use gRPC to communicate with the given endpoint.
+   * The XRPClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
    * @param useNewProtocolBuffers If `true`, then the new protocol buffer implementation from rippled will be used. Defaults to false.
@@ -81,4 +81,4 @@ class XpringClient {
   }
 }
 
-export default XpringClient
+export default XRPClient

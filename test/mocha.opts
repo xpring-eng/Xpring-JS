@@ -1,0 +1,3 @@
+--require ./node_modules/ts-node/register
+--recursive
+test/**/*.ts
