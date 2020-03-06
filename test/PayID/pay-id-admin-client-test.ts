@@ -19,7 +19,6 @@ describe('Pay ID Admin Client', function(): void {
     payIDAdminClient
       .addOrUpdateXRPAddressMapping(payID, xrpAddress)
       .catch((error) => {
-        assert.typeOf(error, PayIDError.name)
         assert.equal(
           (error as PayIDError).errorType,
           PayIDErrorType.Unimplemented,
@@ -39,7 +38,6 @@ describe('Pay ID Admin Client', function(): void {
     payIDAdminClient
       .removeXRPAddressMapping(payID, xrpAddress)
       .catch((error) => {
-        assert.typeOf(error, PayIDError.name)
         assert.equal(
           (error as PayIDError).errorType,
           PayIDErrorType.Unimplemented,
