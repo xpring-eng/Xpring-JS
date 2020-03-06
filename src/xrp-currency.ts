@@ -1,6 +1,6 @@
-import { Currency as pbCurrency } from './generated/web/org/xrpl/rpc/v1/amount_pb'
+import { Currency } from './generated/web/org/xrpl/rpc/v1/amount_pb'
 
-type Currency = pbCurrency.AsObject // TODO(amiecorso) decide how we want to typealias this and ideally maintain some sort of consistency when wrapping protos
+type CurrencyProto = Currency.AsObject // TODO(amiecorso) decide how we want to typealias this and ideally maintain some sort of consistency when wrapping protos
 
 /**
  * An issued currency on the XRP LEdger
@@ -11,7 +11,7 @@ export default class XRPCurrency {
 
   public code: string | Uint8Array
 
-  public constructor(currency: Currency) {
+  public constructor(currency: CurrencyProto) {
     this.name = currency.name
     this.code = currency.code
   }
