@@ -12,7 +12,7 @@ describe('Pay ID Client', function(): void {
 
   it('xrpAddressForPayID - invalid Pay ID', function(done): void {
     // GIVEN a PayIDClient and an invalid PayID.
-    const invalidPayID = '$xpring.money/georgewashington' // Does not start with '$'
+    const invalidPayID = 'xpring.money/georgewashington' // Does not start with '$'
     const payIDClient = new PayIDClient()
 
     // WHEN an XRPAddress is requested for an invalid pay ID THEN an invalid payment pointer error is thrown.
@@ -119,6 +119,9 @@ describe('Pay ID Client', function(): void {
 
     // WHEN an XRPAddress is requested for a Pay ID.
     payIDClient.xrpAddressForPayID(payID).catch((error) => {
+      console.log(`I caught ${(error as PayIDError).errorType}`)
+      console.log(`exepcted ${PayIDErrorType.UnexpectedResponse}`)
+
       // THEN an unexpected response is thrown.
       assert.equal(
         (error as PayIDError).errorType,

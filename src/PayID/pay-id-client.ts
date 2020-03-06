@@ -26,11 +26,16 @@ export default class PayIDClient {
    */
   public async xrpAddressForPayID(payID: string): Promise<string | undefined> {
     const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
+    console.log('HI')
     if (!paymentPointer) {
+      console.log('Thrwoing invalid pointer')
       throw PayIDError.invalidPaymentPointer
     }
 
+    console.log('Continuing')
+
     const url = `https://${paymentPointer.host}${paymentPointer.path}`
+    console.log(`hitting ${url}`)
     // TODO(keefertaylor): Attach network parameter.
     // TODO(keefertaylor): Generalize the below to allow requesting in other types.
     const requestConfig = {
@@ -46,14 +51,19 @@ export default class PayIDClient {
         // TODO(keefertaylor): convert to X-Address on the fly if needed.
         const { address } = result.data
         if (!address) {
+          console.log(`throwing${PayIDErrorType.UnexpectedResponse}`)
+
           throw new PayIDError(
             PayIDErrorType.UnexpectedResponse,
             'Sucessful response was in an unknown format',
           )
         }
+        console.log('returning')
         return address
       })
       .catch((error) => {
+        console.log('caught error')
+
         // Handle erroneous responses from the server.
         if (error.response) {
           // 404 means no mapping was found.
