@@ -26,16 +26,11 @@ export default class PayIDClient {
    */
   public async xrpAddressForPayID(payID: string): Promise<string | undefined> {
     const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    console.log('HI')
     if (!paymentPointer) {
-      console.log('Thrwoing invalid pointer')
       throw PayIDError.invalidPaymentPointer
     }
 
-    console.log('Continuing')
-
     const url = `https://${paymentPointer.host}${paymentPointer.path}`
-    console.log(`hitting ${url}`)
     // TODO(keefertaylor): Attach network parameter.
     // TODO(keefertaylor): Generalize the below to allow requesting in other types.
     const requestConfig = {
@@ -44,42 +39,44 @@ export default class PayIDClient {
       },
     }
 
-    return this.axiosInstance
-      .get(url, requestConfig)
-      .then((result: AxiosResponse) => {
-        // TODO(keefertaylor): properly extract xrp address and tag, format as X-Address.
-        // TODO(keefertaylor): convert to X-Address on the fly if needed.
-        const { address } = result.data
-        if (!address) {
-          console.log(`throwing${PayIDErrorType.UnexpectedResponse}`)
-
-          throw new PayIDError(
-            PayIDErrorType.UnexpectedResponse,
-            'Sucessful response was in an unknown format',
-          )
-        }
-        console.log('returning')
-        return address
-      })
-      .catch((error) => {
-        console.log('caught error')
-
-        // Handle erroneous responses from the server.
-        if (error.response) {
-          // 404 means no mapping was found.
-          if (error.response.status === 404) {
-            return undefined
+    return new Promise((resolve, reject): void => {
+      this.axiosInstance
+        // TODO(keefertaylor): Properly type this generic when format from remote service is finalized.
+        .get<{ address: string }>(url, requestConfig)
+        .then((result: AxiosResponse) => {
+          // TODO(keefertaylor): properly extract xrp address and tag, format as X-Address.
+          // TODO(keefertaylor): convert to X-Address on the fly if needed.
+          const { address } = result.data
+          if (!address) {
+            reject(
+              new PayIDError(
+                PayIDErrorType.UnexpectedResponse,
+                'Sucessful response was in an unknown format',
+              ),
+            )
           }
+          resolve(address)
+        })
+        .catch((error) => {
+          // Handle erroneous responses from the server.
+          if (error.response) {
+            // 404 means no mapping was found.
+            if (error.response.status === 404) {
+              resolve(undefined)
+            }
 
-          // Otherwise re-throw the error as an unexepected response.
-          throw new PayIDError(
-            PayIDErrorType.UnexpectedResponse,
-            `${error.response.status} ${error.response.statusText}: ${error.response.data}`,
-          )
-        } else {
-          // Generically errors from the server which contained no response (timeouts, etc).
-          throw new PayIDError(PayIDErrorType.Unknown, error.message)
-        }
-      })
+            // Otherwise re-throw the error as an unexepected response.
+            reject(
+              new PayIDError(
+                PayIDErrorType.UnexpectedResponse,
+                `${error.response.status} ${error.response.statusText}: ${error.response.data}`,
+              ),
+            )
+          } else {
+            // Generically errors from the server which contained no response (timeouts, etc).
+            reject(new PayIDError(PayIDErrorType.Unknown, error.message))
+          }
+        })
+    })
   }
 }

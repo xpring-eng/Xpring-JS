@@ -119,9 +119,6 @@ describe('Pay ID Client', function(): void {
 
     // WHEN an XRPAddress is requested for a Pay ID.
     payIDClient.xrpAddressForPayID(payID).catch((error) => {
-      console.log(`I caught ${(error as PayIDError).errorType}`)
-      console.log(`exepcted ${PayIDErrorType.UnexpectedResponse}`)
-
       // THEN an unexpected response is thrown.
       assert.equal(
         (error as PayIDError).errorType,
