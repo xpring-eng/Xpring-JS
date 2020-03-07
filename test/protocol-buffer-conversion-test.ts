@@ -14,7 +14,7 @@ describe('Protocol Buffer Conversion', function(): void {
     const currency = new XRPCurrency(currencyProto)
 
     // THEN the currency converted as expected.
-    assert.deepEqual(currency.code, currencyCode)
-    assert.deepEqual(currency.name, currencyName)
+    assert.deepEqual(currency.code, currencyProto.getCode())
+    assert.deepEqual(currency.name, currencyProto.getName())
   })
 })
