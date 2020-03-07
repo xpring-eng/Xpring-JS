@@ -4,8 +4,8 @@ import Transaction from './transaction'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 
-/** A decorator interface for XpringClients. */
-export interface XpringClientDecorator {
+/** A decorator interface for XRPClients. */
+export interface XRPClientDecorator {
   /**
    * Retrieve the balance for the given address.
    *

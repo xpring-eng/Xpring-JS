@@ -1,3 +1,4 @@
+import { Metadata } from 'grpc-web'
 import { IlpNetworkClient } from './ilp-network-client'
 import { GetBalanceRequest } from './generated/web/ilp/get_balance_request_pb'
 import { GetBalanceResponse } from './generated/web/ilp/get_balance_response_pb'
@@ -28,10 +29,14 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
     this.paymentClient = new IlpOverHttpServiceClient(grpcURL, null, null)
   }
 
-  getBalance(request: GetBalanceRequest): Promise<GetBalanceResponse> {
+  getBalance(
+    request: GetBalanceRequest,
+    bearerToken?: string,
+  ): Promise<GetBalanceResponse> {
     return new Promise((resolve, reject): void => {
-      // FIXME should metadata be undefined?
-      this.balanceClient.getBalance(request, undefined, (error, response) => {
+      const metaData: Metadata = { Authorization: bearerToken || '' }
+
+      this.balanceClient.getBalance(request, metaData, (error, response) => {
         if (error != null || response === null) {
           reject(error)
           return
@@ -41,10 +46,14 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
     })
   }
 
-  send(request: SendPaymentRequest): Promise<SendPaymentResponse> {
+  send(
+    request: SendPaymentRequest,
+    bearerToken?: string,
+  ): Promise<SendPaymentResponse> {
     return new Promise((resolve, reject): void => {
-      // FIXME should metadata be undefined?
-      this.paymentClient.sendMoney(request, undefined, (error, response) => {
+      const metaData: Metadata = { Authorization: bearerToken || '' }
+
+      this.paymentClient.sendMoney(request, metaData, (error, response) => {
         if (error != null || response === null) {
           reject(error)
           return

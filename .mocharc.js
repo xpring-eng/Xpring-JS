@@ -8,6 +8,7 @@ module.exports = {
   extension: [
     'ts'
   ],
+  spec: 'test/**/*-test.ts',
 
   // Do not look for mocha opts file
   opts: false,

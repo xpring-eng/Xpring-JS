@@ -1,6 +1,7 @@
 # Ignore generated files.
 src/generated/*
 
+.idea/*
 # Ignore files compiled from typescript.
 build/*
 

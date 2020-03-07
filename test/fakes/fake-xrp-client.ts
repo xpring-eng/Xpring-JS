@@ -1,11 +1,11 @@
 import { BigInteger } from 'big-integer'
 import Transaction from '../../src/transaction'
-import { XpringClientDecorator } from '../../src/xpring-client-decorator'
+import { XRPClientDecorator } from '../../src/xrp-client-decorator'
 import TransactionStatus from '../../src/transaction-status'
 import { Wallet } from '../../src/index'
 import RawTransactionStatus from '../../src/raw-transaction-status'
 
-class FakeXpringClient implements XpringClientDecorator {
+class FakeXRPClient implements XRPClientDecorator {
   public constructor(
     public getBalanceValue: BigInteger,
     public getTransactionStatusValue: TransactionStatus,
@@ -55,4 +55,4 @@ class FakeXpringClient implements XpringClientDecorator {
   }
 }
 
-export default FakeXpringClient
+export default FakeXRPClient

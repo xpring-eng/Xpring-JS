@@ -1,6 +1,6 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
-import { XpringClientDecorator } from './xpring-client-decorator'
+import { XRPClientDecorator } from './xrp-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
 import Transaction from './transaction'
@@ -10,10 +10,10 @@ async function sleep(milliseconds: number): Promise<void> {
 }
 
 /**
- * A XpringClient which blocks on `send` calls until the transaction has reached a deterministic state.
+ * An XRPClient which blocks on `send` calls until the transaction has reached a deterministic state.
  */
-class ReliableSubmissionXpringClient implements XpringClientDecorator {
-  public constructor(private readonly decoratedClient: XpringClientDecorator) {}
+class ReliableSubmissionXRPClient implements XRPClientDecorator {
+  public constructor(private readonly decoratedClient: XRPClientDecorator) {}
 
   public async getBalance(address: string): Promise<BigInteger> {
     return this.decoratedClient.getBalance(address)
@@ -100,4 +100,4 @@ class ReliableSubmissionXpringClient implements XpringClientDecorator {
   }
 }
 
-export default ReliableSubmissionXpringClient
+export default ReliableSubmissionXRPClient
