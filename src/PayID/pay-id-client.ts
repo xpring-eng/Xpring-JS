@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios'
+import axios, { AxiosInstance } from 'axios'
 import { PayIDUtils } from 'xpring-common-js'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
 
@@ -39,44 +39,36 @@ export default class PayIDClient {
       },
     }
 
-    return new Promise((resolve, reject): void => {
-      this.axiosInstance
-        // TODO(keefertaylor): Properly type this generic when format from remote service is finalized.
-        .get<{ address: string }>(url, requestConfig)
-        .then((result: AxiosResponse) => {
-          // TODO(keefertaylor): properly extract xrp address and tag, format as X-Address.
-          // TODO(keefertaylor): convert to X-Address on the fly if needed.
-          const { address } = result.data
-          if (!address) {
-            reject(
-              new PayIDError(
-                PayIDErrorType.UnexpectedResponse,
-                'Sucessful response was in an unknown format',
-              ),
-            )
-          }
-          resolve(address)
-        })
-        .catch((error) => {
-          // Handle erroneous responses from the server.
-          if (error.response) {
-            // 404 means no mapping was found.
-            if (error.response.status === 404) {
-              resolve(undefined)
-            }
+    try {
+      const response = await this.axiosInstance.get<{ address: string }>(
+        url,
+        requestConfig,
+      )
+    } catch (error) {
+      // Handle erroneous responses from the server.
+      if (error.response) {
+        // 404 means no mapping was found.
+        if (error.response.status === 404) {
+          return undefined
+        }
 
-            // Otherwise re-throw the error as an unexepected response.
-            reject(
-              new PayIDError(
-                PayIDErrorType.UnexpectedResponse,
-                `${error.response.status} ${error.response.statusText}: ${error.response.data}`,
-              ),
-            )
-          } else {
-            // Generically errors from the server which contained no response (timeouts, etc).
-            reject(new PayIDError(PayIDErrorType.Unknown, error.message))
-          }
-        })
-    })
+        // Otherwise re-throw the error as an unexepected response.
+        throw new PayIDError(
+          PayIDErrorType.UnexpectedResponse,
+          `${error.response.status} ${error.response.statusText}: ${error.response.data}`,
+        )
+      } else {
+        // Generically errors from the server which contained no response (timeouts, etc).
+        throw new PayIDError(PayIDErrorType.Unknown, error.message)
+      }
+    }
   }
+  const address = response?.data?.address
+  if (!address) {
+    throw new PayIDError(
+      PayIDErrorType.UnexpectedResponse,
+      'Sucessful response was in an unknown format',
+    )
+  }
+  return address
 }
