@@ -55,7 +55,7 @@ describe('Reliable Submission XRP Client', function(): void {
   })
 
   it('Get Transaction Status - Response Not Modified', async function() {
-    // GIVEN a `ReliableSubmissionXpringClient` decorating a `FakeXpringClient` WHEN a transaction status is retrieved.
+    // GIVEN a `ReliableSubmissionXRPClient` decorating a `FakeXRPClient` WHEN a transaction status is retrieved.
     const returnedValue = await this.reliableSubmissionClient.getPaymentStatus(
       testAddress,
     )

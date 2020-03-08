@@ -336,7 +336,7 @@ describe('Legacy Default Xpring Client', function(): void {
   })
 
   it('Get Payment Status - Unvalidated Transaction and Success Code', async function() {
-    // GIVEN a XRPClient which will return an unvalidated transaction with a success code.
+    // GIVEN an XRPClient which will return an unvalidated transaction with a success code.
     const transactionStatusResponse = new TransactionStatusResponse()
     transactionStatusResponse.setValidated(false)
     transactionStatusResponse.setTransactionStatusCode(
