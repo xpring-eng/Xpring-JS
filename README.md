@@ -28,7 +28,7 @@ $ npm i xpring-js
 
 Xpring SDK needs to communicate with a rippled node which has gRPC enabled. Consult the [rippled documentation](https://github.com/ripple/rippled#build-from-source) for details on how to build your own node.
 
-To get developers started right away, Xpring currently hosts nodes. These nodes are provided on a best effort basis, and may be subject to downtime. 
+To get developers started right away, Xpring currently hosts nodes. These nodes are provided on a best effort basis, and may be subject to downtime.
 
 ```
 # TestNet
@@ -148,13 +148,13 @@ console.log(balance); // Logs a balance in drops of XRP
 
 ### Checking Transaction Status
 
-A `XpringClient` can check the status of an transaction on the XRP Ledger.
+A `XpringClient` can check the status of an payment on the XRP Ledger. Cu
 
 Xpring-JS returns the following transaction states:
 - `succeeded`: The transaction was successfully validated and applied to the XRP Ledger.
 - `failed:` The transaction was successfully validated but not applied to the XRP Ledger. Or the operation will never be validated.
 - `pending`: The transaction has not yet been validated, but may be validated in the future.
-- `unknown`: The transaction status could not be determined.
+- `unknown`: The transaction status could not be determined, the hash represented a non-payment type transaction, or the hash represented a transaction with the [tfPartialPayment](https://xrpl.org/payment.html#payment-flags) flag set.
 
 **Note:** For more information, see [Reliable Transaction Submission](https://xrpl.org/reliable-transaction-submission.html) and [Transaction Results](https://xrpl.org/transaction-results.html).
 
@@ -167,7 +167,7 @@ const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xr
 const xpringClient = new XpringClient(remoteURL, true);
 
 const transactionHash = "9FC7D277C1C8ED9CE133CC17AEA9978E71FC644CE6F5F0C8E26F1C635D97AF4A";
-const transactionStatus = xpringClient.getTransactionStatus(transactionHash); // TransactionStatus.Succeeded
+const transactionStatus = xpringClient.getPaymentStatus(transactionHash); // TransactionStatus.Succeeded
 ```
 **Note:** The example transactionHash may lead to a "Transaction not found." error because the TestNet is regularly reset, or the accessed node may only maintain one
 month of history.  Recent transaction hashes can be found in the XRP Ledger Explorer: https://livenet.xrpl.org/

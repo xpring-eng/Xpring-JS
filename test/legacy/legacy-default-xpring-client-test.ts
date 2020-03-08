@@ -323,7 +323,7 @@ describe('Legacy Default Xpring Client', function(): void {
     })
   })
 
-  it('Get Transaction Status - Unvalidated Transaction and Failure Code', async function() {
+  it('Get Payment Status - Unvalidated Transaction and Failure Code', async function() {
     // Iterate over different types of transaction status codes which represent failures.
     /* eslint-disable no-await-in-loop */
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
@@ -347,7 +347,7 @@ describe('Legacy Default Xpring Client', function(): void {
       const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient)
 
       // WHEN the transaction status is retrieved.
-      const transactionStatus = await xpringClient.getTransactionStatus(
+      const transactionStatus = await xpringClient.getPaymentStatus(
         transactionHash,
       )
 
@@ -357,7 +357,7 @@ describe('Legacy Default Xpring Client', function(): void {
     /* eslint-enable no-await-in-loop */
   })
 
-  it('Get Transaction Status - Unvalidated Transaction and Success Code', async function() {
+  it('Get Payment Status - Unvalidated Transaction and Success Code', async function() {
     // GIVEN a XpringClient which will return an unvalidated transaction with a success code.
     const transactionStatusResponse = new TransactionStatusResponse()
     transactionStatusResponse.setValidated(false)
@@ -377,7 +377,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient)
 
     // WHEN the transaction status is retrieved.
-    const transactionStatus = await xpringClient.getTransactionStatus(
+    const transactionStatus = await xpringClient.getPaymentStatus(
       transactionHash,
     )
 
@@ -385,7 +385,7 @@ describe('Legacy Default Xpring Client', function(): void {
     assert.deepEqual(transactionStatus, TransactionStatus.Pending)
   })
 
-  it('Get Transaction Status - Validated Transaction and Failure Code', async function() {
+  it('Get Payment Status - Validated Transaction and Failure Code', async function() {
     // Iterate over different types of transaction status codes which represent failures.
     /* eslint-disable no-await-in-loop */
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
@@ -409,7 +409,7 @@ describe('Legacy Default Xpring Client', function(): void {
       const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient)
 
       // WHEN the transaction status is retrieved.
-      const transactionStatus = await xpringClient.getTransactionStatus(
+      const transactionStatus = await xpringClient.getPaymentStatus(
         transactionHash,
       )
 
@@ -419,7 +419,7 @@ describe('Legacy Default Xpring Client', function(): void {
     /* eslint-enable no-await-in-loop */
   })
 
-  it('Get Transaction Status - Validated Transaction and Success Code', async function() {
+  it('Get Payment Status - Validated Transaction and Success Code', async function() {
     // GIVEN a XpringClient which will return an validated transaction with a success code.
     const transactionStatusResponse = new TransactionStatusResponse()
     transactionStatusResponse.setValidated(true)
@@ -439,7 +439,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient)
 
     // WHEN the transaction status is retrieved.
-    const transactionStatus = await xpringClient.getTransactionStatus(
+    const transactionStatus = await xpringClient.getPaymentStatus(
       transactionHash,
     )
 
@@ -447,7 +447,7 @@ describe('Legacy Default Xpring Client', function(): void {
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
 
-  it('Get Transaction Status - Node Error', function(done) {
+  it('Get Payment Status - Node Error', function(done) {
     // GIVEN a XpringClient which will error when a transaction status is requested.
     const transactionStatusResponses = new FakeLegacyNetworkClientResponses(
       FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
@@ -462,7 +462,7 @@ describe('Legacy Default Xpring Client', function(): void {
     const xpringClient = new LegacyDefaultXpringClient(fakeNetworkClient)
 
     // WHEN the transaction status is retrieved THEN an error is thrown.
-    xpringClient.getTransactionStatus(transactionHash).catch((error) => {
+    xpringClient.getPaymentStatus(transactionHash).catch((error) => {
       assert.typeOf(error, 'Error')
       assert.equal(
         error.message,

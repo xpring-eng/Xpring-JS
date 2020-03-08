@@ -18,10 +18,10 @@ class FakeXpringClient implements XpringClientDecorator {
     return Promise.resolve(this.getBalanceValue)
   }
 
-  public async getTransactionStatus(
+  public async getPaymentStatus(
     _transactionHash: string,
   ): Promise<TransactionStatus> {
-    return Promise.resolve(this.getTransactionStatusValue)
+    return Promise.resolve(this.getPaymentStatusValue)
   }
 
   public async send(

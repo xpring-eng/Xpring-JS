@@ -119,7 +119,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Get Transaction Status - Unvalidated Transaction and Failure Code', async function(): Promise<
+  it('Get Payment Status - Unvalidated Transaction and Failure Code', async function(): Promise<
     void
   > {
     // Iterate over different types of transaction status codes which represent failures.
@@ -143,7 +143,7 @@ describe('Default Xpring Client', function(): void {
       const xpringClient = new DefaultXpringClient(fakeNetworkClient)
 
       // WHEN the transaction status is retrieved.
-      const transactionStatus = await xpringClient.getTransactionStatus(
+      const transactionStatus = await xpringClient.getPaymentStatus(
         transactionHash,
       )
 
@@ -153,7 +153,7 @@ describe('Default Xpring Client', function(): void {
     /* eslint-enable no-await-in-loop */
   })
 
-  it('Get Transaction Status - Unvalidated Transaction and Success Code', async function(): Promise<
+  it('Get Payment Status - Unvalidated Transaction and Success Code', async function(): Promise<
     void
   > {
     // GIVEN a XpringClient which will return an unvalidated transaction with a success code.
@@ -171,7 +171,7 @@ describe('Default Xpring Client', function(): void {
     const xpringClient = new DefaultXpringClient(fakeNetworkClient)
 
     // WHEN the transaction status is retrieved.
-    const transactionStatus = await xpringClient.getTransactionStatus(
+    const transactionStatus = await xpringClient.getPaymentStatus(
       transactionHash,
     )
 
@@ -179,7 +179,7 @@ describe('Default Xpring Client', function(): void {
     assert.deepEqual(transactionStatus, TransactionStatus.Pending)
   })
 
-  it('Get Transaction Status - Validated Transaction and Failure Code', async function(): Promise<
+  it('Get Payment Status - Validated Transaction and Failure Code', async function(): Promise<
     void
   > {
     // Iterate over different types of transaction status codes which represent failures.
@@ -204,7 +204,7 @@ describe('Default Xpring Client', function(): void {
       const xpringClient = new DefaultXpringClient(fakeNetworkClient)
 
       // WHEN the transaction status is retrieved.
-      const transactionStatus = await xpringClient.getTransactionStatus(
+      const transactionStatus = await xpringClient.getPaymentStatus(
         transactionHash,
       )
 
@@ -214,7 +214,7 @@ describe('Default Xpring Client', function(): void {
     /* eslint-enable no-await-in-loop */
   })
 
-  it('Get Transaction Status - Validated Transaction and Success Code', async function(): Promise<
+  it('Get Payment Status - Validated Transaction and Success Code', async function(): Promise<
     void
   > {
     // GIVEN a XpringClient which will return an validated transaction with a success code.
@@ -232,7 +232,7 @@ describe('Default Xpring Client', function(): void {
     const xpringClient = new DefaultXpringClient(fakeNetworkClient)
 
     // WHEN the transaction status is retrieved.
-    const transactionStatus = await xpringClient.getTransactionStatus(
+    const transactionStatus = await xpringClient.getPaymentStatus(
       transactionHash,
     )
 
@@ -240,7 +240,7 @@ describe('Default Xpring Client', function(): void {
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
 
-  it('Get Transaction Status - Node Error', function(done): void {
+  it('Get Payment Status - Node Error', function(done): void {
     // GIVEN a XpringClient which will error when a transaction status is requested.
     const transactionStatusResponses = new FakeNetworkClientResponses(
       FakeNetworkClientResponses.defaultAccountInfoResponse(),
@@ -252,7 +252,7 @@ describe('Default Xpring Client', function(): void {
     const xpringClient = new DefaultXpringClient(fakeNetworkClient)
 
     // WHEN the transaction status is retrieved THEN an error is thrown.
-    xpringClient.getTransactionStatus(transactionHash).catch((error) => {
+    xpringClient.getPaymentStatus(transactionHash).catch((error) => {
       assert.typeOf(error, 'Error')
       assert.equal(
         error.message,

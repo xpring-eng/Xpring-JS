@@ -88,7 +88,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
    * @param transactionHash The hash of the transaction.
    * @returns The status of the given transaction.
    */
-  public async getTransactionStatus(
+  public async getPaymentStatus(
     transactionHash: string,
   ): Promise<TransactionStatus> {
     const transactionStatus = await this.getRawTransactionStatus(
