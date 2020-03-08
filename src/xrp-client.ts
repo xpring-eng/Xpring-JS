@@ -6,15 +6,15 @@ import TransactionStatus from './transaction-status'
 import ReliableSubmissionXRPClient from './reliable-submission-xrp-client'
 import DefaultXRPClient from './default-xrp-client'
 /**
- * XpringClient is a client which interacts with the Xpring platform.
+ * XRPClient is a client which interacts with the Xpring platform.
  */
-class XpringClient {
+class XRPClient {
   private readonly decoratedClient: XRPClientDecorator
 
   /**
-   * Create a new XpringClient.
+   * Create a new XRPClient.
    *
-   * The XpringClient will use gRPC to communicate with the given endpoint.
+   * The XRPClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
    * @param useNewProtocolBuffers If `true`, then the new protocol buffer implementation from rippled will be used. Defaults to false.
@@ -43,12 +43,7 @@ class XpringClient {
   }
 
   /**
-   * Retrieve the transaction status for a Payment given transaction hash.
-   *
-   * @deprecated Please use `getPaymentStatus` instead.
-   *
-   * Note: This method will only work for Payment type transactions which do not have the tf_partial_payment attribute set.
-   * @see https://xrpl.org/payment.html#payment-flags
+   * Retrieve the transaction status for a given transaction hash.
    *
    * @param transactionHash The hash of the transaction.
    * @returns The status of the given transaction.
@@ -56,22 +51,7 @@ class XpringClient {
   public async getTransactionStatus(
     transactionHash: string,
   ): Promise<TransactionStatus> {
-    return this.getPaymentStatus(transactionHash)
-  }
-
-  /**
-   * Retrieve the transaction status for a Payment given transaction hash.
-   *
-   * Note: This method will only work for Payment type transactions which do not have the tf_partial_payment attribute set.
-   * @see https://xrpl.org/payment.html#payment-flags
-   *
-   * @param transactionHash The hash of the transaction.
-   * @returns The status of the given transaction.
-   */
-  public async getPaymentStatus(
-    transactionHash: string,
-  ): Promise<TransactionStatus> {
-    return this.decoratedClient.getPaymentStatus(transactionHash)
+    return this.decoratedClient.getTransactionStatus(transactionHash)
   }
 
   /**
@@ -101,4 +81,4 @@ class XpringClient {
   }
 }
 
-export default XpringClient
+export default XRPClient

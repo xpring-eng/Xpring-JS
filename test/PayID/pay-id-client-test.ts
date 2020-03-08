@@ -11,7 +11,6 @@ describe('Pay ID Client', function(): void {
 
     // WHEN an XRPAddress is requested THEN an unimplemented error is thrown.
     payIDClient.xrpAddressForPayID(payID).catch((error) => {
-      assert.typeOf(error, PayIDError.name)
       assert.equal(
         (error as PayIDError).errorType,
         PayIDErrorType.Unimplemented,

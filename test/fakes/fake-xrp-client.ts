@@ -1,13 +1,13 @@
 import { BigInteger } from 'big-integer'
-import { XpringClientDecorator } from '../../src/xpring-client-decorator'
+import { XRPClientDecorator } from '../../src/xrp-client-decorator'
 import TransactionStatus from '../../src/transaction-status'
 import { Wallet } from '../../src/index'
 import RawTransactionStatus from '../../src/raw-transaction-status'
 
-class FakeXpringClient implements XpringClientDecorator {
+class FakeXRPClient implements XRPClientDecorator {
   public constructor(
     public getBalanceValue: BigInteger,
-    public getPaymentStatusValue: TransactionStatus,
+    public getTransactionStatusValue: TransactionStatus,
     public sendValue: string,
     public getLastValidatedLedgerSequenceValue: number,
     public getRawTransactionStatusValue: RawTransactionStatus,
@@ -47,4 +47,4 @@ class FakeXpringClient implements XpringClientDecorator {
   }
 }
 
-export default FakeXpringClient
+export default FakeXRPClient

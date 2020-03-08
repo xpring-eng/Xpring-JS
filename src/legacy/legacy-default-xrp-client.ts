@@ -8,14 +8,14 @@ import RawTransactionStatus from '../raw-transaction-status'
 import LegacyGRPCNetworkClient from './legacy-grpc-network-client'
 import LegacyGRPCNetworkClientWeb from './legacy-grpc-network-client.web'
 import { LegacyNetworkClient } from './legacy-network-client'
-import { XpringClientDecorator } from '../xpring-client-decorator'
+import { XRPClientDecorator } from '../xrp-client-decorator'
 import TransactionStatus from '../transaction-status'
 import isNode from '../utils'
 
 /**
- * Error messages from XpringClient.
+ * Error messages from XRPClient.
  */
-export class LegacyXpringClientErrorMessages {
+export class LegacyXRPClientErrorMessages {
   public static readonly malformedResponse = 'Malformed Response.'
 
   public static readonly signingFailure = 'Unable to sign the transaction'
@@ -28,30 +28,30 @@ export class LegacyXpringClientErrorMessages {
 const ledgerSequenceMargin = 10
 
 /**
- * DefaultXpringClient is a client which interacts with the Xpring platform.
+ * DefaultXRPClient is a client which interacts with the Xpring platform.
  */
-class LegacyDefaultXpringClient implements XpringClientDecorator {
+class LegacyDefaultXRPClient implements XRPClientDecorator {
   /**
-   * Create a new DefaultXpringClient.
+   * Create a new DefaultXRPClient.
    *
-   * The DefaultXpringClient will use gRPC to communicate with the given endpoint.
+   * The DefaultXRPClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
-  public static defaultXpringClientWithEndpoint(
+  public static defaultXRPClientWithEndpoint(
     grpcURL: string,
     forceWeb = false,
-  ): LegacyDefaultXpringClient {
+  ): LegacyDefaultXRPClient {
     return isNode() && !forceWeb
-      ? new LegacyDefaultXpringClient(new LegacyGRPCNetworkClient(grpcURL))
-      : new LegacyDefaultXpringClient(new LegacyGRPCNetworkClientWeb(grpcURL))
+      ? new LegacyDefaultXRPClient(new LegacyGRPCNetworkClient(grpcURL))
+      : new LegacyDefaultXRPClient(new LegacyGRPCNetworkClientWeb(grpcURL))
   }
 
   /**
-   * Create a new DefaultXpringClient with a custom network client implementation.
+   * Create a new DefaultXRPClient with a custom network client implementation.
    *
-   * In general, clients should prefer to call `xpringClientWithEndpoint`. This constructor is provided to improve testability of this class.
+   * In general, clients should prefer to call `XRPClientWithEndpoint`. This constructor is provided to improve testability of this class.
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
    */
@@ -66,7 +66,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
   public async getBalance(address: string): Promise<BigInteger> {
     if (!Utils.isValidXAddress(address)) {
       return Promise.reject(
-        new Error(LegacyXpringClientErrorMessages.xAddressRequired),
+        new Error(LegacyXRPClientErrorMessages.xAddressRequired),
       )
     }
 
@@ -74,7 +74,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
       const balance = accountInfo.getBalance()
       if (balance === undefined) {
         return Promise.reject(
-          new Error(LegacyXpringClientErrorMessages.malformedResponse),
+          new Error(LegacyXRPClientErrorMessages.malformedResponse),
         )
       }
 
@@ -120,7 +120,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
   ): Promise<string> {
     if (!Utils.isValidXAddress(destination)) {
       return Promise.reject(
-        new Error(LegacyXpringClientErrorMessages.xAddressRequired),
+        new Error(LegacyXRPClientErrorMessages.xAddressRequired),
       )
     }
 
@@ -133,7 +133,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
             async (ledgerSequence) => {
               if (accountInfo.getSequence() === undefined) {
                 return Promise.reject(
-                  new Error(LegacyXpringClientErrorMessages.malformedResponse),
+                  new Error(LegacyXRPClientErrorMessages.malformedResponse),
                 )
               }
 
@@ -161,12 +161,12 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
                   sender,
                 )
               } catch (signingError) {
-                const signingErrorMessage = `${LegacyXpringClientErrorMessages.signingFailure}. ${signingError.message}`
+                const signingErrorMessage = `${LegacyXRPClientErrorMessages.signingFailure}. ${signingError.message}`
                 return Promise.reject(new Error(signingErrorMessage))
               }
               if (signedTransaction === undefined) {
                 return Promise.reject(
-                  new Error(LegacyXpringClientErrorMessages.signingFailure),
+                  new Error(LegacyXRPClientErrorMessages.signingFailure),
                 )
               }
 
@@ -184,9 +184,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
                   )
                   if (!transactionHash) {
                     return Promise.reject(
-                      new Error(
-                        LegacyXpringClientErrorMessages.malformedResponse,
-                      ),
+                      new Error(LegacyXRPClientErrorMessages.malformedResponse),
                     )
                   }
                   return Promise.resolve(transactionHash)
@@ -232,7 +230,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
       const feeAmount = fee.getAmount()
       if (feeAmount === undefined) {
         return Promise.reject(
-          new Error(LegacyXpringClientErrorMessages.malformedResponse),
+          new Error(LegacyXRPClientErrorMessages.malformedResponse),
         )
       }
       return feeAmount
@@ -242,7 +240,7 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
   public async accountExists(address: string): Promise<boolean> {
     const classicAddress = Utils.decodeXAddress(address)
     if (!classicAddress) {
-      throw new Error(LegacyXpringClientErrorMessages.xAddressRequired)
+      throw new Error(LegacyXRPClientErrorMessages.xAddressRequired)
     }
     try {
       await this.getBalance(address)
@@ -253,4 +251,4 @@ class LegacyDefaultXpringClient implements XpringClientDecorator {
   }
 }
 
-export default LegacyDefaultXpringClient
+export default LegacyDefaultXRPClient

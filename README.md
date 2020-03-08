@@ -148,7 +148,9 @@ console.log(balance); // Logs a balance in drops of XRP
 
 ### Checking Transaction Status
 
-A `XpringClient` can check the status of an payment on the XRP Ledger. Cu
+A `XRPClient` can check the status of an payment on the XRP Ledger.
+
+This method can only determine the status of [payment transactions](https://xrpl.org/payment.html) which do not have the partial payment flag ([tfPartialPayment](https://xrpl.org/payment.html#payment-flags)) set.
 
 Xpring-JS returns the following transaction states:
 - `succeeded`: The transaction was successfully validated and applied to the XRP Ledger.
@@ -161,13 +163,13 @@ Xpring-JS returns the following transaction states:
 These states are determined by the `TransactionStatus` enum.
 
 ```javascript
-const { XpringClient } = require("xpring-js");
+const { XRPClient } = require("xpring-js");
 
 const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
-const xpringClient = new XpringClient(remoteURL, true);
+const xrpClient = new XRPClient(remoteURL, true);
 
 const transactionHash = "9FC7D277C1C8ED9CE133CC17AEA9978E71FC644CE6F5F0C8E26F1C635D97AF4A";
-const transactionStatus = xpringClient.getPaymentStatus(transactionHash); // TransactionStatus.Succeeded
+const transactionStatus = xrpClient.getPaymentStatus(transactionHash); // TransactionStatus.Succeeded
 ```
 **Note:** The example transactionHash may lead to a "Transaction not found." error because the TestNet is regularly reset, or the accessed node may only maintain one
 month of history.  Recent transaction hashes can be found in the XRP Ledger Explorer: https://livenet.xrpl.org/
