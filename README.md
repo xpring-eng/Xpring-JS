@@ -30,12 +30,23 @@ Xpring SDK needs to communicate with a rippled node which has gRPC enabled. Cons
 
 To get developers started right away, Xpring currently hosts nodes. These nodes are provided on a best effort basis, and may be subject to downtime.
 
+if you are using Xpring-JS in a node environment, use the following addresses to boostrap your application:
+
 ```
 # TestNet
 alpha.test.xrp.xpring.io:50051
 
 # MainNet
 alpha.xrp.xpring.io:50051
+```
+
+If you are using Xpring-JS from within a browser, use the following addresses to boostrap your application:
+```
+#TestNet
+https://envoy.test.xrp.xpring.io
+
+#MainNet
+https://envoy.xrp.xpring.io
 ```
 
 ## Usage
