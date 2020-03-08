@@ -7,7 +7,7 @@ import RawTransactionStatus from '../../src/raw-transaction-status'
 class FakeXRPClient implements XRPClientDecorator {
   public constructor(
     public getBalanceValue: BigInteger,
-    public getTransactionStatusValue: TransactionStatus,
+    public getPaymentStatusValue: TransactionStatus,
     public sendValue: string,
     public getLastValidatedLedgerSequenceValue: number,
     public getRawTransactionStatusValue: RawTransactionStatus,
