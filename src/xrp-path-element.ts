@@ -4,8 +4,8 @@ import XRPCurrency from './xrp-currency'
 type PathElement = Payment.PathElement
 
 /*
- * A path in the XRP Ledger.
- * - SeeAlso: https://xrpl.org/paths.html
+ * A path step in an XRP Ledger Path.
+ * - SeeAlso: https://xrpl.org/paths.html#path-steps
  */
 export default class XRPPathElement {
   public account: string | undefined

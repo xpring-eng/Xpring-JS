@@ -1,4 +1,5 @@
 import { assert } from 'chai'
+import 'mocha'
 import XRPCurrency from '../src/xrp-currency'
 import XRPPathElement from '../src/xrp-path-element'
 import XRPPath from '../src/xrp-path'
@@ -6,7 +7,8 @@ import { Currency } from '../src/generated/web/org/xrpl/rpc/v1/amount_pb'
 import { Payment } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from '../src/generated/web/org/xrpl/rpc/v1/account_pb'
 
-// TODO(amiecorso): Refactor these to separate files.
+// TODO(amiecorso): Refactor tests to separate files.
+// Set up global variables for use in test cases
 const testCurrencyProto: Currency = new Currency()
 testCurrencyProto.setCode(new Uint8Array([1, 2, 3]))
 testCurrencyProto.setName('currencyName')
