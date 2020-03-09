@@ -39,8 +39,9 @@ export default class PayIDClient {
       },
     }
 
+    let response
     try {
-      const response = await this.axiosInstance.get<{ address: string }>(
+      response = await this.axiosInstance.get<{ address: string }>(
         url,
         requestConfig,
       )
@@ -62,13 +63,14 @@ export default class PayIDClient {
         throw new PayIDError(PayIDErrorType.Unknown, error.message)
       }
     }
+
+    const address = response.data?.address
+    if (!address) {
+      throw new PayIDError(
+        PayIDErrorType.UnexpectedResponse,
+        'Sucessful response was in an unknown format',
+      )
+    }
+    return address
   }
-  const address = response?.data?.address
-  if (!address) {
-    throw new PayIDError(
-      PayIDErrorType.UnexpectedResponse,
-      'Sucessful response was in an unknown format',
-    )
-  }
-  return address
 }
