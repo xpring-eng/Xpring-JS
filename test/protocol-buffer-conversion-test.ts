@@ -69,9 +69,9 @@ describe('Protocol Buffer Conversion', function(): void {
     const pathElement = new XRPPathElement(pathElementProto)
 
     // THEN the currency converted as expected.
-    assert.isNull(pathElement.account)
-    assert.isNull(pathElement.currency)
-    assert.isNull(pathElement.issuer)
+    assert.isUndefined(pathElement.account)
+    assert.isUndefined(pathElement.currency)
+    assert.isUndefined(pathElement.issuer)
   })
 
   // MARK: - Org_Xrpl_Rpc_V1_Transaction.Path
