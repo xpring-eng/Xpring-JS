@@ -8,27 +8,20 @@ type PathElement = Payment.PathElement
  * - SeeAlso: https://xrpl.org/paths.html
  */
 export default class XRPPathElement {
-  public account: string | null
+  public account: string | undefined
 
-  public currency: XRPCurrency | null
+  public currency!: XRPCurrency | undefined
 
-  public issuer: string | null
+  public issuer: string | undefined
 
-  // TODO(amiecorso): is it ok to disable non-null assertion operator in these lines? (or perhaps for full file?)
-  // These fields are non-optional in the protobuf, so if for example hasAccount() is true, we would expect
-  // getAccount() to be non-null.
   public constructor(pathElement: PathElement) {
-    this.account = pathElement.hasAccount()
-      ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        pathElement.getAccount()!.getAddress()
-      : null
-    this.currency = pathElement.hasCurrency()
-      ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        new XRPCurrency(pathElement.getCurrency()!)
-      : null
-    this.issuer = pathElement.hasIssuer()
-      ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        pathElement.getIssuer()!.getAddress()
-      : null
+    this.account = pathElement.getAccount()?.getAddress()
+    const currency = pathElement.getCurrency()
+    if (currency) {
+      this.currency = new XRPCurrency(currency)
+    } else {
+      this.currency = undefined
+    }
+    this.issuer = pathElement.getIssuer()?.getAddress()
   }
 }
