@@ -4,8 +4,8 @@ import isNode from '../utils'
 import { IlpNetworkClient } from './ilp-network-client'
 import GrpcIlpNetworkClient from './grpc-ilp-network-client'
 import GrpcIlpNetworkClientWeb from './grpc-ilp-network-client.web'
-import { GetBalanceResponse } from '../generated/web/ilp/get_balance_response_pb'
 import { SendPaymentResponse } from '../generated/web/ilp/send_payment_response_pb'
+import { AccountBalance } from './model/account-balance'
 
 class DefaultIlpClient implements IlpClientDecorator {
   /**
@@ -47,10 +47,12 @@ class DefaultIlpClient implements IlpClientDecorator {
   public async getBalance(
     address: string,
     bearerToken?: string,
-  ): Promise<GetBalanceResponse> {
+  ): Promise<AccountBalance> {
     const request = this.networkClient.GetBalanceRequest()
     request.setAccountId(address)
-    return this.networkClient.getBalance(request, bearerToken)
+    return this.networkClient
+      .getBalance(request, bearerToken)
+      .then((b) => AccountBalance.from(b))
   }
 
   /**

@@ -16,16 +16,35 @@ const fakeErroringNetworkClient = (): DefaultIlpClient => {
   )
 }
 
+// const successfulSendPaymentResponse = FakeIlpNetworkClientResponses.defaultSendResponse()
+
 describe('Default ILP Client', function(): void {
   it('Get balance - success', async function(): Promise<void> {
     // GIVEN a DefaultIlpClient
     const client = fakeSuceedingNetworkClient()
-
+    const successfulGetBalanceResponse = FakeIlpNetworkClientResponses.defaultGetBalanceResponse()
     // WHEN the balance for an account is requested
     const amount = await client.getBalance('test.foo.bar')
 
     // THEN the balance is returned
-    assert.equal(Number(amount.getNetBalance()), 100)
+    assert.equal(amount.accountId, successfulGetBalanceResponse.getAccountId())
+    assert.equal(amount.assetCode, successfulGetBalanceResponse.getAssetCode())
+    assert.equal(
+      amount.assetScale,
+      successfulGetBalanceResponse.getAssetScale(),
+    )
+    assert.equal(
+      Number(amount.clearingBalance),
+      successfulGetBalanceResponse.getClearingBalance(),
+    )
+    assert.equal(
+      Number(amount.prepaidAmount),
+      successfulGetBalanceResponse.getPrepaidAmount(),
+    )
+    assert.equal(
+      Number(amount.netBalance),
+      successfulGetBalanceResponse.getNetBalance(),
+    )
   })
 
   it('Get balance - error', function(done): void {

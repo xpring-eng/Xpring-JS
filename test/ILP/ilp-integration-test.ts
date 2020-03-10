@@ -1,4 +1,3 @@
-// import { fail } from 'assert'
 import IlpClient from '../../src/ILP/ilp-client'
 
 import assert = require('assert')
@@ -19,17 +18,17 @@ describe('ILP Integration Tests', function(): void {
     const message = await ILPClientNode.getBalance('sdk_account1', 'password')
 
     // THEN accountId should be sdk_account1
-    assert.equal(message.getAccountId(), 'sdk_account1')
+    assert.equal(message.accountId, 'sdk_account1')
     // AND assetCode should be XRP
-    assert.equal(message.getAssetCode(), 'XRP')
+    assert.equal(message.assetCode, 'XRP')
     // AND assetScale should be 9
-    assert.equal(message.getAssetScale(), 9)
+    assert.equal(message.assetScale, 9)
     // AND netBalance should be less than 0, since sdk_account1 always sends money in the Send Money test
-    assert(message.getNetBalance() <= 0)
+    assert(message.netBalance.lesserOrEquals(0))
     // AND clearingBalance should be less than 0, since sdk_account1 always sends money in the Send Money test
-    assert(message.getClearingBalance() <= 0)
+    assert(message.clearingBalance.lesserOrEquals(0))
     // AND prepaidAmount should be 0
-    assert.equal(message.getPrepaidAmount(), 0)
+    assert.equal(message.prepaidAmount, 0)
   })
 
   it('Send Money - Node Shim', async function(): Promise<void> {
