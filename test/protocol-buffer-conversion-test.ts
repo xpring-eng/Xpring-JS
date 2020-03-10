@@ -195,7 +195,7 @@ describe('Protocol Buffer Conversion', function(): void {
 
     // THEN the result has drops set and no issued amount.
     assert.isUndefined(currencyAmount?.issuedCurrency)
-    assert.isUndefined(currencyAmount?.drops, drops)
+    assert.equal(currencyAmount?.drops, drops)
   })
 
   it('Convert CurrencyAmount with Issued Currency', function(): void {
@@ -207,7 +207,7 @@ describe('Protocol Buffer Conversion', function(): void {
     const currencyAmount = new XRPCurrencyAmount(currencyAmountProto)
 
     // THEN the result has an issued currency set and no amount.
-    assert.equal(
+    assert.deepEqual(
       currencyAmount?.issuedCurrency,
       new XRPIssuedCurrency(testIssuedCurrency),
     )
@@ -222,7 +222,7 @@ describe('Protocol Buffer Conversion', function(): void {
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const currencyAmount = new XRPCurrencyAmount(currencyAmountProto)
 
-    // THEN the result is undefined
-    assert.isUndefined(currencyAmount)
+    // THEN the result is empty
+    assert.isEmpty(currencyAmount)
   })
 })

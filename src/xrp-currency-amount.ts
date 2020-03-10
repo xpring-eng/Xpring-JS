@@ -14,7 +14,12 @@ export default class XRPCurrencyAmount {
       case CurrencyAmount.AmountCase.ISSUED_CURRENCY_AMOUNT: {
         const issuedCurrencyAmount = currencyAmount.getIssuedCurrencyAmount()
         if (issuedCurrencyAmount) {
-          this.issuedCurrency = new XRPIssuedCurrency(issuedCurrencyAmount)
+          const tempIssuedCurrency = new XRPIssuedCurrency(issuedCurrencyAmount)
+          if (Object.keys(tempIssuedCurrency).length === 0) {
+            // if XRPIssuedCurrency is empty due to bad input... abort
+            return
+          }
+          this.issuedCurrency = tempIssuedCurrency
           this.drops = undefined
         }
         break
@@ -22,8 +27,13 @@ export default class XRPCurrencyAmount {
       case CurrencyAmount.AmountCase.XRP_AMOUNT: {
         const dropsAmount = currencyAmount.getXrpAmount()
         if (dropsAmount) {
-          this.drops = dropsAmount.getDrops()
+          const tempDrops = dropsAmount.getDrops()
+          if (!tempDrops) {
+            // if drops are undefined... abort
+            return
+          }
           this.issuedCurrency = undefined
+          this.drops = tempDrops
         }
         break
       }
