@@ -151,7 +151,7 @@ describe('Protocol Buffer Conversion', function(): void {
     const issuedCurrency = new XRPIssuedCurrency(issuedCurrencyProto)
 
     // THEN the issued currency converted as expected.
-    assert.equal(
+    assert.deepEqual(
       issuedCurrency?.currency,
       new XRPCurrency(issuedCurrencyProto.getCurrency()!),
     )
@@ -162,7 +162,7 @@ describe('Protocol Buffer Conversion', function(): void {
     // Commenting out for temporary testability of this class
     // TOD(amiecorso): restore
     // assert.equal(issuedCurrency?.value, bigInt(issuedCurrencyProto.getValue()))
-    assert.equal(issuedCurrency?.value, issuedCurrencyProto.getValue())
+    assert.equal(issuedCurrency?.value, Number(issuedCurrencyProto.getValue()))
   })
 
   it('Convert IssuedCurrency with bad value', function(): void {

@@ -11,18 +11,21 @@ export default class XRPIssuedCurrency {
   public currency: XRPCurrency | undefined
 
   // public value: BigInteger | undefined // commented out for temporary testability of this class
-  public value: string | undefined
+  public value: number | undefined
 
   public issuer: string | undefined
 
   public constructor(issuedCurrency: IssuedCurrencyAmount) {
+    // commenting this out for temporary testability of this class
+    // using number instead of big-int for testing bad values
+    // TODO: restore to big-int when type issues are resolved
     // const value = bigInt(issuedCurrency.getValue())
-    // if (!value) {
-    //   return
-    // }
-    // this.value = value
-    // Commenting this out ^^ for temporary testability of this class
-    this.value = issuedCurrency.getValue()
+    const value = Number(issuedCurrency.getValue())
+    if (value && typeof value === 'number') {
+      this.value = value
+    } else {
+      return
+    }
     const currency = issuedCurrency.getCurrency()
     if (currency) {
       this.currency = new XRPCurrency(currency)
