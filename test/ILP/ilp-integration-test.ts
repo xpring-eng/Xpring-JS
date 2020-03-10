@@ -39,11 +39,11 @@ describe('ILP Integration Tests', function(): void {
     // AND an account on the connector with accountId = sdk_account2
 
     // WHEN a payment is sent from sdk_account1 to sdk_account2 for 10 units
-    const request = new PaymentRequest(
-      bigInt(10),
-      '$money.ilpv4.dev/sdk_account2',
-      'sdk_account1',
-    )
+    const request = new PaymentRequest({
+      amount: bigInt(10),
+      destinationPaymentPointer: '$money.ilpv4.dev/sdk_account2',
+      senderAccountId: 'sdk_account1',
+    })
     const message = await ILPClientNode.sendPayment(request, 'password')
 
     // THEN the originalAmount should be equal to the amount sent
@@ -52,7 +52,7 @@ describe('ILP Integration Tests', function(): void {
     assert.equal(message.amountSent, 10)
     // AND the amountDelivered should be 10
     assert.equal(message.amountDelivered, 10)
-    // AND the payment should be successfull
+    // AND the payment should be successful
     assert.equal(message.successfulPayment, true)
   })
 })

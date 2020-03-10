@@ -29,14 +29,14 @@ export class PaymentRequest {
   /**
    * Initialize a new instance of PaymentRequest
    */
-  public constructor(
-    amount: BigInteger,
-    destinationPaymentPointer: string,
-    senderAccountId: string,
-  ) {
-    this.amount = amount
-    this.destinationPaymentPointer = destinationPaymentPointer
-    this.senderAccountId = senderAccountId
+  public constructor(options: {
+    amount: BigInteger
+    destinationPaymentPointer: string
+    senderAccountId: string
+  }) {
+    this.amount = options.amount
+    this.destinationPaymentPointer = options.destinationPaymentPointer
+    this.senderAccountId = options.senderAccountId
   }
 
   /**

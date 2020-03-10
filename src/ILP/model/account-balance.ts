@@ -56,19 +56,19 @@ export class AccountBalance {
   /**
    * Private constructor to initialize an AccountBalance
    */
-  constructor(
-    accountId: string,
-    assetCode: string,
-    assetScale: number,
-    clearingBalance: BigInteger,
-    prepaidAmount: BigInteger,
-  ) {
-    this.accountId = accountId
-    this.assetCode = assetCode
-    this.assetScale = assetScale
-    this.clearingBalance = clearingBalance
-    this.prepaidAmount = prepaidAmount
-    this.netBalance = clearingBalance.add(prepaidAmount)
+  constructor(options: {
+    accountId: string
+    assetCode: string
+    assetScale: number
+    clearingBalance: BigInteger
+    prepaidAmount: BigInteger
+  }) {
+    this.accountId = options.accountId
+    this.assetCode = options.assetCode
+    this.assetScale = options.assetScale
+    this.clearingBalance = options.clearingBalance
+    this.prepaidAmount = options.prepaidAmount
+    this.netBalance = options.clearingBalance.add(options.prepaidAmount)
   }
 
   /**
@@ -79,13 +79,13 @@ export class AccountBalance {
    * @return an AccountBalance with its fields set via the analogous protobuf fields.
    */
   static from(getBalanceResponse: GetBalanceResponse) {
-    return new AccountBalance(
-      getBalanceResponse.getAccountId(),
-      getBalanceResponse.getAssetCode(),
-      getBalanceResponse.getAssetScale(),
-      bigInt(getBalanceResponse.getClearingBalance()),
-      bigInt(getBalanceResponse.getPrepaidAmount()),
-    )
+    return new AccountBalance({
+      accountId: getBalanceResponse.getAccountId(),
+      assetCode: getBalanceResponse.getAssetCode(),
+      assetScale: getBalanceResponse.getAssetScale(),
+      clearingBalance: bigInt(getBalanceResponse.getClearingBalance()),
+      prepaidAmount: bigInt(getBalanceResponse.getPrepaidAmount()),
+    })
   }
 }
 

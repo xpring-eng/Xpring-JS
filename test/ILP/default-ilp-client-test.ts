@@ -70,11 +70,11 @@ describe('Default ILP Client', function(): void {
     const client = fakeSuceedingNetworkClient()
 
     // WHEN a payment request is sent
-    const request = new PaymentRequest(
-      bigInt(100),
-      '$money/baz',
-      'test.foo.bar',
-    )
+    const request = new PaymentRequest({
+      amount: bigInt(100),
+      destinationPaymentPointer: '$money/baz',
+      senderAccountId: 'test.foo.bar',
+    })
     const paymentResponse = await client.sendPayment(request)
 
     const successfulPaymentResponse = FakeIlpNetworkClientResponses.defaultSendResponse()
@@ -105,11 +105,11 @@ describe('Default ILP Client', function(): void {
     const client = fakeErroringNetworkClient()
 
     // WHEN a payment is requested
-    const request = new PaymentRequest(
-      bigInt(100),
-      '$money/baz',
-      'test.foo.bar',
-    )
+    const request = new PaymentRequest({
+      amount: bigInt(100),
+      destinationPaymentPointer: '$money/baz',
+      senderAccountId: 'test.foo.bar',
+    })
     client.sendPayment(request).catch((error) => {
       // THEN an error is thrown
       assert.typeOf(error, 'Error')

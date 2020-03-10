@@ -31,16 +31,16 @@ export class PaymentResponse {
   /**
    * Initializes a new PaymentResponse
    */
-  constructor(
-    originalAmount: BigInteger,
-    amountDelivered: BigInteger,
-    amountSent: BigInteger,
-    successfulPayment: boolean,
-  ) {
-    this.originalAmount = originalAmount
-    this.amountDelivered = amountDelivered
-    this.amountSent = amountSent
-    this.successfulPayment = successfulPayment
+  constructor(options: {
+    originalAmount: BigInteger
+    amountDelivered: BigInteger
+    amountSent: BigInteger
+    successfulPayment: boolean
+  }) {
+    this.originalAmount = options.originalAmount
+    this.amountDelivered = options.amountDelivered
+    this.amountSent = options.amountSent
+    this.successfulPayment = options.successfulPayment
   }
 
   /**
@@ -50,12 +50,12 @@ export class PaymentResponse {
    * @return a PaymentResponse with fields populated using the analogous fields in the proto object
    */
   public static from(protoResponse: SendPaymentResponse) {
-    return new PaymentResponse(
-      bigInt(protoResponse.getOriginalAmount()),
-      bigInt(protoResponse.getAmountDelivered()),
-      bigInt(protoResponse.getAmountSent()),
-      protoResponse.getSuccessfulPayment(),
-    )
+    return new PaymentResponse({
+      originalAmount: bigInt(protoResponse.getOriginalAmount()),
+      amountDelivered: bigInt(protoResponse.getAmountDelivered()),
+      amountSent: bigInt(protoResponse.getAmountSent()),
+      successfulPayment: protoResponse.getSuccessfulPayment(),
+    })
   }
 }
 
