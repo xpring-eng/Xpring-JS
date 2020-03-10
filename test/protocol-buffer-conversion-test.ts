@@ -160,7 +160,7 @@ describe('Protocol Buffer Conversion', function(): void {
       issuedCurrencyProto.getIssuer()?.getAddress(),
     )
     // Commenting out for temporary testability of this class
-    // TOD(amiecorso): restore
+    // TODO:(amiecorso): restore
     // assert.equal(issuedCurrency?.value, bigInt(issuedCurrencyProto.getValue()))
     assert.equal(issuedCurrency?.value, Number(issuedCurrencyProto.getValue()))
   })
