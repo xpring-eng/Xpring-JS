@@ -16,10 +16,11 @@ export default class XRPIssuedCurrency {
 
   public constructor(issuedCurrency: IssuedCurrencyAmount) {
     const value = bigInt(issuedCurrency.getValue())
-    if (!value) {
+    if (value && typeof value === 'string') {
+      this.value = value
+    } else {
       return
     }
-    this.value = value
     const currency = issuedCurrency.getCurrency()
     if (currency) {
       this.currency = new XRPCurrency(currency)

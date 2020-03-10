@@ -131,7 +131,7 @@ describe('Protocol Buffer Conversion', function(): void {
     const issuedCurrency = new XRPIssuedCurrency(issuedCurrencyProto)
 
     // THEN the issued currency converted as expected.
-    assert.equal(
+    assert.deepEqual(
       issuedCurrency?.currency,
       new XRPCurrency(issuedCurrencyProto.getCurrency()),
     )
