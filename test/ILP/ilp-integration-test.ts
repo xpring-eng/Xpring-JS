@@ -1,5 +1,5 @@
 // import { fail } from 'assert'
-import IlpClient from '../src/ilp-client'
+import IlpClient from '../../src/ILP/ilp-client'
 
 import assert = require('assert')
 

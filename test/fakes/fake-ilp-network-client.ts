@@ -1,4 +1,4 @@
-import { IlpNetworkClient } from '../../src/ilp-network-client'
+import { IlpNetworkClient } from '../../src/ILP/ilp-network-client'
 import { GetBalanceResponse } from '../../src/generated/node/ilp/get_balance_response_pb'
 import { SendPaymentResponse } from '../../src/generated/node/ilp/send_payment_response_pb'
 import { GetBalanceRequest } from '../../src/generated/node/ilp/get_balance_request_pb'
