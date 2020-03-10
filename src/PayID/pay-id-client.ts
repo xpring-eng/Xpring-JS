@@ -1,11 +1,6 @@
-import PayIDError from './pay-id-error'
-
-/* eslint-disable @typescript-eslint/require-await */
-// TODO(keefertaylor): Enable lint rules when method is implemented.
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable max-classes-per-file */
+import axios, { AxiosInstance } from 'axios'
+import { PayIDUtils } from 'xpring-common-js'
+import PayIDError, { PayIDErrorType } from './pay-id-error'
 
 /**
  * A client for PayID.
@@ -14,6 +9,13 @@ import PayIDError from './pay-id-error'
  * TODO(keefertaylor): Export this class in index.ts when it's ready for external consumption.
  */
 export default class PayIDClient {
+  /** An HTTP client. */
+  private readonly axiosInstance: AxiosInstance
+
+  public constructor() {
+    this.axiosInstance = axios.create({})
+  }
+
   /**
    * Retrieve the XRP Address authorized with a PayID.
    *
@@ -22,7 +24,53 @@ export default class PayIDClient {
    * @param payID The payID to resolve for an address.
    * @returns An XRP address representing the given PayID if one exists, otherwise undefined.
    */
-  public async xrpAddressForPayID(_payID: string): Promise<string | undefined> {
-    throw PayIDError.unimplemented
+  public async xrpAddressForPayID(payID: string): Promise<string | undefined> {
+    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
+    if (!paymentPointer) {
+      throw PayIDError.invalidPaymentPointer
+    }
+
+    const url = `https://${paymentPointer.host}${paymentPointer.path}`
+    // TODO(keefertaylor): Attach network parameter.
+    // TODO(keefertaylor): Generalize the below to allow requesting in other types.
+    const requestConfig = {
+      headers: {
+        Accept: 'application/xrp+json',
+      },
+    }
+
+    let response
+    try {
+      response = await this.axiosInstance.get<{ address: string }>(
+        url,
+        requestConfig,
+      )
+    } catch (error) {
+      // Handle erroneous responses from the server.
+      if (error.response) {
+        // 404 means no mapping was found.
+        if (error.response.status === 404) {
+          return undefined
+        }
+
+        // Otherwise re-throw the error as an unexepected response.
+        throw new PayIDError(
+          PayIDErrorType.UnexpectedResponse,
+          `${error.response.status} ${error.response.statusText}: ${error.response.data}`,
+        )
+      } else {
+        // Generically errors from the server which contained no response (timeouts, etc).
+        throw new PayIDError(PayIDErrorType.Unknown, error.message)
+      }
+    }
+
+    const address = response.data?.address
+    if (!address) {
+      throw new PayIDError(
+        PayIDErrorType.UnexpectedResponse,
+        'Sucessful response was in an unknown format',
+      )
+    }
+    return address
   }
 }
