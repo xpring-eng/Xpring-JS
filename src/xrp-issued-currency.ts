@@ -1,5 +1,5 @@
-// import bigInt from 'big-integer'
-import bigInt from 'bigint-typescript-definitions'
+import bigInt from 'big-integer'
+// import bigInt from 'bigint-typescript-definitions'
 import XRPCurrency from './xrp-currency'
 import { IssuedCurrencyAmount } from './generated/web/org/xrpl/rpc/v1/amount_pb'
 
