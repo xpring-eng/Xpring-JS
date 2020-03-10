@@ -1,8 +1,8 @@
-import { BigInteger } from 'big-integer'
 import { IlpClientDecorator } from './ilp-client-decorator'
 import DefaultIlpClient from './default-ilp-client'
-import { SendPaymentResponse } from '../generated/web/ilp/send_payment_response_pb'
 import { AccountBalance } from './model/account-balance'
+import { PaymentRequest } from './model/payment-request'
+import { PaymentResponse } from './model/payment-response'
 
 class IlpClient {
   private readonly decoratedClient: IlpClientDecorator
@@ -42,17 +42,10 @@ class IlpClient {
    *        well as if the payment was successful
    */
   public async sendPayment(
-    amount: BigInteger | number | string,
-    destinationPaymentPointer: string,
-    senderAccountId: string,
+    paymentRequest: PaymentRequest,
     bearerToken?: string,
-  ): Promise<SendPaymentResponse> {
-    return this.decoratedClient.sendPayment(
-      amount,
-      destinationPaymentPointer,
-      senderAccountId,
-      bearerToken,
-    )
+  ): Promise<PaymentResponse> {
+    return this.decoratedClient.sendPayment(paymentRequest, bearerToken)
   }
 }
 

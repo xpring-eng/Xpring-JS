@@ -4,7 +4,7 @@ import { SendPaymentRequest } from '../../generated/node/ilp/send_payment_reques
 /**
  * A request object htat can be used to send a payment request to a connector
  */
-class PaymentRequest {
+export class PaymentRequest {
   /**
    * The amount to send.  This amount is denominated in the asset code and asset scale of the sender's account
    * on the connector.  For example, if the account has an asset code of "USD" and an asset scale of 9,

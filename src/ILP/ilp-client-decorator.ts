@@ -1,6 +1,6 @@
-import { BigInteger } from 'big-integer'
-import { SendPaymentResponse } from '../generated/web/ilp/send_payment_response_pb'
 import { AccountBalance } from './model/account-balance'
+import { PaymentRequest } from './model/payment-request'
+import { PaymentResponse } from './model/payment-response'
 
 export interface IlpClientDecorator {
   /**
@@ -26,9 +26,7 @@ export interface IlpClientDecorator {
    *        well as if the payment was successful
    */
   sendPayment(
-    amount: BigInteger | number | string,
-    destinationPaymentPointer: string,
-    senderAccountId: string,
+    paymentRequest: PaymentRequest,
     bearerToken?: string,
-  ): Promise<SendPaymentResponse>
+  ): Promise<PaymentResponse>
 }

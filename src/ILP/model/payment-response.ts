@@ -4,7 +4,7 @@ import { SendPaymentResponse } from '../../generated/node/ilp/send_payment_respo
 /**
  * A response object containing details about a requested payment
  */
-class PaymentResponse {
+export class PaymentResponse {
   /**
    * A BigInteger representing the original amount to be sent in a given payment.
    */

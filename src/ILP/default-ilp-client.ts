@@ -1,11 +1,11 @@
-import { BigInteger } from 'big-integer'
 import { IlpClientDecorator } from './ilp-client-decorator'
 import isNode from '../utils'
 import { IlpNetworkClient } from './ilp-network-client'
 import GrpcIlpNetworkClient from './grpc-ilp-network-client'
 import GrpcIlpNetworkClientWeb from './grpc-ilp-network-client.web'
-import { SendPaymentResponse } from '../generated/web/ilp/send_payment_response_pb'
 import { AccountBalance } from './model/account-balance'
+import { PaymentRequest } from './model/payment-request'
+import { PaymentResponse } from './model/payment-response'
 
 class DefaultIlpClient implements IlpClientDecorator {
   /**
@@ -52,7 +52,7 @@ class DefaultIlpClient implements IlpClientDecorator {
     request.setAccountId(address)
     return this.networkClient
       .getBalance(request, bearerToken)
-      .then((b) => AccountBalance.from(b))
+      .then((response) => AccountBalance.from(response))
   }
 
   /**
@@ -68,16 +68,13 @@ class DefaultIlpClient implements IlpClientDecorator {
    *        well as if the payment was successful
    */
   public async sendPayment(
-    amount: BigInteger | number | string,
-    destinationPaymentPointer: string,
-    senderAccountId: string,
+    paymentRequest: PaymentRequest,
     bearerToken?: string,
-  ): Promise<SendPaymentResponse> {
-    const request = this.networkClient.SendPaymentRequest()
-    request.setDestinationPaymentPointer(destinationPaymentPointer)
-    request.setAmount(Number(amount))
-    request.setAccountId(senderAccountId)
-    return this.networkClient.send(request, bearerToken)
+  ): Promise<PaymentResponse> {
+    const request = paymentRequest.toProto()
+    return this.networkClient
+      .send(request, bearerToken)
+      .then((response) => PaymentResponse.from(response))
   }
 }
 
