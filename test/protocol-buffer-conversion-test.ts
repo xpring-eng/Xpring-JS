@@ -177,8 +177,8 @@ describe('Protocol Buffer Conversion', function(): void {
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const issuedCurrency = new XRPIssuedCurrency(issuedCurrencyProto)
 
-    // THEN the result is undefined
-    assert.isUndefined(issuedCurrency)
+    // THEN the result is empty
+    assert.isEmpty(issuedCurrency)
   })
 
   // CurrencyAmount tests
