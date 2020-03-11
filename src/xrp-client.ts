@@ -25,8 +25,6 @@ class XRPClient {
     useNewProtocolBuffers = true,
     forceWeb = false,
   ) {
-    console.log(`Use new proto ${useNewProtocolBuffers}`)
-
     const defaultXRPClient = useNewProtocolBuffers
       ? DefaultXRPClient.defaultXRPClientWithEndpoint(grpcURL, forceWeb)
       : LegacyDefaultXRPClient.defaultXRPClientWithEndpoint(grpcURL, forceWeb)
