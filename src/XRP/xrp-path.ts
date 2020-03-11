@@ -11,7 +11,11 @@ type PathElement = Payment.PathElement
 export default class XRPPath {
   public pathElements: XRPPathElement[]
 
-  public constructor(path: Path) {
+  public static from(path: Path): XRPPath | undefined {
+    return new XRPPath(path)
+  }
+
+  private constructor(path: Path) {
     const protoPathElements: PathElement[] = path.getElementsList()
     this.pathElements = protoPathElements.map(
       (pathElement) => new XRPPathElement(pathElement),

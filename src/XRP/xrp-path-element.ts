@@ -14,11 +14,15 @@ export default class XRPPathElement {
 
   public issuer: string | undefined
 
-  public constructor(pathElement: PathElement) {
+  public static from(pathElement: PathElement): XRPPathElement | undefined {
+    return new XRPPathElement(pathElement)
+  }
+
+  private constructor(pathElement: PathElement) {
     this.account = pathElement.getAccount()?.getAddress()
     const currency = pathElement.getCurrency()
     if (currency) {
-      this.currency = new XRPCurrency(currency)
+      this.currency = XRPCurrency.from(currency)
     } else {
       this.currency = undefined
     }
