@@ -30,12 +30,23 @@ Xpring SDK needs to communicate with a rippled node which has gRPC enabled. Cons
 
 To get developers started right away, Xpring currently hosts nodes. These nodes are provided on a best effort basis, and may be subject to downtime.
 
+if you are using Xpring-JS in a node environment, use the following addresses to boostrap your application:
+
 ```
 # TestNet
 alpha.test.xrp.xpring.io:50051
 
 # MainNet
 alpha.xrp.xpring.io:50051
+```
+
+If you are using Xpring-JS from within a browser, use the following addresses to boostrap your application:
+```
+#TestNet
+https://envoy.test.xrp.xpring.io
+
+#MainNet
+https://envoy.xrp.xpring.io
 ```
 
 ## Usage
@@ -127,18 +138,18 @@ wallet.verify(message, signature); // true
 const { XRPClient } = require("xpring-js");
 
 const remoteURL = alpha.test.xrp.xpring.io:50051; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
-const xpringClient = new XRPClient(remoteURL);
+const xrpClient = new XRPClient(remoteURL);
 ```
 
 #### Retrieving a Balance
 
-An `XRPClient` can check the balance of an account on the XRP Ledger.
+A `XRPClient` can check the balance of an account on the XRP Ledger.
 
 ```javascript
 const { XRPClient } = require("xpring-js");
 
 const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
-const xpringClient = new XRPClient(remoteURL);
+const xrpClient = new XRPClient(remoteURL);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
 
@@ -148,13 +159,15 @@ console.log(balance); // Logs a balance in drops of XRP
 
 ### Checking Transaction Status
 
-A `XRPClient` can check the status of an transaction on the XRP Ledger.
+A `XRPClient` can check the status of an payment on the XRP Ledger.
+
+This method can only determine the status of [payment transactions](https://xrpl.org/payment.html) which do not have the partial payment flag ([tfPartialPayment](https://xrpl.org/payment.html#payment-flags)) set.
 
 Xpring-JS returns the following transaction states:
 - `succeeded`: The transaction was successfully validated and applied to the XRP Ledger.
 - `failed:` The transaction was successfully validated but not applied to the XRP Ledger. Or the operation will never be validated.
 - `pending`: The transaction has not yet been validated, but may be validated in the future.
-- `unknown`: The transaction status could not be determined.
+- `unknown`: The transaction status could not be determined, the hash represented a non-payment type transaction, or the hash represented a transaction with the [tfPartialPayment](https://xrpl.org/payment.html#payment-flags) flag set.
 
 **Note:** For more information, see [Reliable Transaction Submission](https://xrpl.org/reliable-transaction-submission.html) and [Transaction Results](https://xrpl.org/transaction-results.html).
 
@@ -164,17 +177,17 @@ These states are determined by the `TransactionStatus` enum.
 const { XRPClient } = require("xpring-js");
 
 const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
-const xpringClient = new XRPClient(remoteURL);
+const xrpClient = new XRPClient(remoteURL);
 
 const transactionHash = "9FC7D277C1C8ED9CE133CC17AEA9978E71FC644CE6F5F0C8E26F1C635D97AF4A";
-const transactionStatus = xrpClient.getTransactionStatus(transactionHash); // TransactionStatus.Succeeded
+const transactionStatus = xrpClient.getPaymentStatus(transactionHash); // TransactionStatus.Succeeded
 ```
 **Note:** The example transactionHash may lead to a "Transaction not found." error because the TestNet is regularly reset, or the accessed node may only maintain one
 month of history.  Recent transaction hashes can be found in the XRP Ledger Explorer: https://livenet.xrpl.org/
 
 #### Sending XRP
 
-An `XRPClient` can send XRP to other accounts on the XRP Ledger.
+A `XRPClient` can send XRP to other accounts on the XRP Ledger.
 
 **Note:** The payment operation will block the calling thread until the operation reaches a definitive and irreversible success or failure state.
 
@@ -182,7 +195,7 @@ An `XRPClient` can send XRP to other accounts on the XRP Ledger.
 const { Wallet, XRPAmount, XRPClient } = require("xpring-js");
 
 const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
-const xpringClient = new XRPClient(remoteURL);
+const xrpClient = new XRPClient(remoteURL);
 
 // Amount of XRP to send
 const amount = BigInt("10");

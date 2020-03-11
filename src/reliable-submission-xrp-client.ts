@@ -18,10 +18,10 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
     return this.decoratedClient.getBalance(address)
   }
 
-  public async getTransactionStatus(
+  public async getPaymentStatus(
     transactionHash: string,
   ): Promise<TransactionStatus> {
-    return this.decoratedClient.getTransactionStatus(transactionHash)
+    return this.decoratedClient.getPaymentStatus(transactionHash)
   }
 
   public async send(
