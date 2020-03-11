@@ -13,7 +13,7 @@ export default class XRPCurrency {
     return new XRPCurrency(currency)
   }
 
-  public constructor(currency: Currency) {
+  private constructor(currency: Currency) {
     this.name = currency.getName()
     this.code = currency.getCode()
   }
