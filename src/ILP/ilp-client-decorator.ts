@@ -1,6 +1,6 @@
 import { BigInteger } from 'big-integer'
-import { GetBalanceResponse } from './generated/web/ilp/get_balance_response_pb'
-import { SendPaymentResponse } from './generated/web/ilp/send_payment_response_pb'
+import { GetBalanceResponse } from '../generated/web/ilp/get_balance_response_pb'
+import { SendPaymentResponse } from '../generated/web/ilp/send_payment_response_pb'
 
 export interface IlpClientDecorator {
   /**

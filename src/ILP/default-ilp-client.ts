@@ -1,11 +1,11 @@
 import { BigInteger } from 'big-integer'
 import { IlpClientDecorator } from './ilp-client-decorator'
-import isNode from './utils'
+import isNode from '../utils'
 import { IlpNetworkClient } from './ilp-network-client'
 import GrpcIlpNetworkClient from './grpc-ilp-network-client'
 import GrpcIlpNetworkClientWeb from './grpc-ilp-network-client.web'
-import { GetBalanceResponse } from './generated/web/ilp/get_balance_response_pb'
-import { SendPaymentResponse } from './generated/web/ilp/send_payment_response_pb'
+import { GetBalanceResponse } from '../generated/web/ilp/get_balance_response_pb'
+import { SendPaymentResponse } from '../generated/web/ilp/send_payment_response_pb'
 
 class DefaultIlpClient implements IlpClientDecorator {
   /**
