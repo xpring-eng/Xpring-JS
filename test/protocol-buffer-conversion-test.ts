@@ -10,7 +10,7 @@ describe('Protocol Buffer Conversion', function(): void {
     const currencyProto: Currency = new Currency()
     currencyProto.setCode(currencyCode)
     currencyProto.setName(currencyName)
-    
+
     // WHEN the protocol buffer is converted to a native Typescript type.
     const currency = new XRPCurrency(currencyProto)
 
