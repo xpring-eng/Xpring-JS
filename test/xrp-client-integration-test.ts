@@ -59,7 +59,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
   > {
     this.timeout(timeoutMs)
 
-    const transactionStatus = await legacyXRPClientNode.getTransactionStatus(
+    const transactionStatus = await legacyXRPClientNode.getPaymentStatus(
       transactionHash,
     )
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
@@ -70,7 +70,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
   > {
     this.timeout(timeoutMs)
 
-    const transactionStatus = await legacyXRPClientWeb.getTransactionStatus(
+    const transactionStatus = await legacyXRPClientWeb.getPaymentStatus(
       transactionHash,
     )
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
@@ -79,9 +79,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
   it('Get Transaction Status - rippled', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
-    const transactionStatus = await xrpClient.getTransactionStatus(
-      transactionHash,
-    )
+    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
 
