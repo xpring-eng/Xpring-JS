@@ -145,7 +145,7 @@ const xpringClient = new XpringClient(remoteURL, true)
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = test.xrp.xpring.io:50051; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
 const xpringClient = new XpringClient(remoteURL, true);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
@@ -161,7 +161,7 @@ console.log(balance); // Logs a balance in drops of XRP
 ```javascript
 const { Wallet, XRPAmount, XRPClient } = require("xpring-js");
 
-const remoteURL = test.xrp.xpring.io:50051; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
 const xpringClient = new XpringClient(remoteURL, true)
 
 // Amount of XRP to send
