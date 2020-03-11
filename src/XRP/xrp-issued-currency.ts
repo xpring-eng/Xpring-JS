@@ -23,7 +23,7 @@ export default class XRPIssuedCurrency {
     return undefined
   }
 
-  public constructor(issuedCurrency: IssuedCurrencyAmount) {
+  private constructor(issuedCurrency: IssuedCurrencyAmount) {
     this.value = bigInt(issuedCurrency.getValue())
     const currency = issuedCurrency.getCurrency()
     if (currency) {
