@@ -6,13 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## Added
-`XpringClient` has been renamed to `XRPClient`, which should be used going forward.  `XpringClient` class still exists and will be deprecated in the future.
+
+## 1.6.0 - March 12, 2020
+
+This release contains deprecations for the `XpringClient` class and the `getTransactionStatus` method. Clients should prefer to use `XRPClient` and `getPaymentStatus` respectively.
 
 #### Added
+- A new class, `XRPClient` is added which contains the functionality of the now deprecated XpringClient.
 - A new `getPaymentStatus` is added which retrieves the status of payment transactions.
 
 #### Deprecated
+- `XpringClient` is deprecated. Please use `XRPClient` instead.
 - `getTransactionStatus` is deprecated. Please use `getPaymentStatus` instead.
 
 ## 1.5.1 - March 4, 2020
