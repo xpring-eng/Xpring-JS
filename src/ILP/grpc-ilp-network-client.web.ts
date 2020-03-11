@@ -25,8 +25,12 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
       }
     }
     // FIXME wrong credentials
-    this.balanceClient = new BalanceServiceClient(grpcURL, null, null)
-    this.paymentClient = new IlpOverHttpServiceClient(grpcURL, null, null)
+    this.balanceClient = new BalanceServiceClient(grpcURL, null, {
+      withCredentials: 'true',
+    })
+    this.paymentClient = new IlpOverHttpServiceClient(grpcURL, null, {
+      withCredentials: 'true',
+    })
   }
 
   getBalance(
@@ -34,7 +38,9 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
     bearerToken?: string,
   ): Promise<GetBalanceResponse> {
     return new Promise((resolve, reject): void => {
-      const metaData: Metadata = { Authorization: bearerToken || '' }
+      const metaData: Metadata | undefined = bearerToken
+        ? { Authorization: bearerToken }
+        : undefined
 
       this.balanceClient.getBalance(request, metaData, (error, response) => {
         if (error != null || response === null) {
@@ -51,7 +57,9 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
     bearerToken?: string,
   ): Promise<SendPaymentResponse> {
     return new Promise((resolve, reject): void => {
-      const metaData: Metadata = { Authorization: bearerToken || '' }
+      const metaData: Metadata | undefined = bearerToken
+        ? { Authorization: bearerToken }
+        : undefined
 
       this.paymentClient.sendMoney(request, metaData, (error, response) => {
         if (error != null || response === null) {
