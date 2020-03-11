@@ -37,8 +37,8 @@ describe('Protocol Buffer Conversion', function(): void {
     const currency = XRPCurrency.from(currencyProto)
 
     // THEN the currency converted as expected.
-    assert.deepEqual(currency.code, currencyProto.getCode())
-    assert.deepEqual(currency.name, currencyProto.getName())
+    assert.deepEqual(currency?.code, currencyProto.getCode())
+    assert.deepEqual(currency?.name, currencyProto.getName())
   })
 
   it('Convert PathElement protobuf with all fields set to XRPPathElement', function(): void {
@@ -50,14 +50,17 @@ describe('Protocol Buffer Conversion', function(): void {
 
     // THEN the currency converted as expected.
     assert.equal(
-      pathElement.account,
+      pathElement?.account,
       pathElementProto.getAccount()!.getAddress(),
     )
     assert.deepEqual(
-      pathElement.currency,
+      pathElement?.currency,
       XRPCurrency.from(pathElementProto.getCurrency()!),
     )
-    assert.equal(pathElement.issuer, pathElementProto.getIssuer()!.getAddress())
+    assert.equal(
+      pathElement?.issuer,
+      pathElementProto.getIssuer()!.getAddress(),
+    )
   })
 
   it('Convert PathElement protobuf with no fields set to XRPPathElement', function(): void {
@@ -68,9 +71,9 @@ describe('Protocol Buffer Conversion', function(): void {
     const pathElement = XRPPathElement.from(pathElementProto)
 
     // THEN the currency converted as expected.
-    assert.isUndefined(pathElement.account)
-    assert.isUndefined(pathElement.currency)
-    assert.isUndefined(pathElement.issuer)
+    assert.isUndefined(pathElement?.account)
+    assert.isUndefined(pathElement?.currency)
+    assert.isUndefined(pathElement?.issuer)
   })
 
   // MARK: - Org_Xrpl_Rpc_V1_Transaction.Path
@@ -82,7 +85,7 @@ describe('Protocol Buffer Conversion', function(): void {
     const path = XRPPath.from(pathProto)
 
     // THEN there are zero paths in the output.
-    assert.equal(path.pathElements.length, 0)
+    assert.equal(path?.pathElements.length, 0)
   })
 
   it('Convert Path protobuf with one Path to XRPPath', function(): void {
@@ -94,7 +97,7 @@ describe('Protocol Buffer Conversion', function(): void {
     const path = XRPPath.from(pathProto)
 
     // THEN there is one path in the output.
-    assert.equal(path.pathElements.length, 1)
+    assert.equal(path?.pathElements.length, 1)
   })
 
   it('Convert Path protobuf with many Paths to XRPPath', function(): void {
@@ -110,6 +113,6 @@ describe('Protocol Buffer Conversion', function(): void {
     const path = XRPPath.from(pathProto)
 
     // THEN there are multiple paths in the output.
-    assert.equal(path.pathElements.length, 3)
+    assert.equal(path?.pathElements.length, 3)
   })
 })
