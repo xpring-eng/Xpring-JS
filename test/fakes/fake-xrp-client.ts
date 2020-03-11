@@ -8,7 +8,7 @@ import RawTransactionStatus from '../../src/raw-transaction-status'
 class FakeXRPClient implements XRPClientDecorator {
   public constructor(
     public getBalanceValue: BigInteger,
-    public getTransactionStatusValue: TransactionStatus,
+    public getPaymentStatusValue: TransactionStatus,
     public sendValue: string,
     public getLastValidatedLedgerSequenceValue: number,
     public getRawTransactionStatusValue: RawTransactionStatus,
@@ -20,10 +20,10 @@ class FakeXRPClient implements XRPClientDecorator {
     return Promise.resolve(this.getBalanceValue)
   }
 
-  public async getTransactionStatus(
+  public async getPaymentStatus(
     _transactionHash: string,
   ): Promise<TransactionStatus> {
-    return Promise.resolve(this.getTransactionStatusValue)
+    return Promise.resolve(this.getPaymentStatusValue)
   }
 
   public async send(

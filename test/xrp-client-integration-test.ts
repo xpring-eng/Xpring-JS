@@ -19,7 +19,7 @@ const transactionHash =
 
 // An XRPClient that makes requests. Uses the legacy protocol buffer implementation.
 const legacyGRPCURLNode = 'grpc.xpring.tech:80'
-const legacyXRPClientNode = new XRPClient(legacyGRPCURLNode)
+const legacyXRPClientNode = new XRPClient(legacyGRPCURLNode, false)
 
 // An XRPClient that makes requests. Uses the legacy protocol buffer implementation and sends the requests to an HTTP envoy emulating how the browser would behave
 const legacyGRPCURLWeb = 'https://grpchttp.xpring.io'
@@ -27,7 +27,7 @@ const legacyXRPClientWeb = new XRPClient(legacyGRPCURLWeb, false, true)
 
 // An XRPClient that makes requests. Uses rippled's gRPC implementation.
 const rippledURL = '3.14.64.116:50051'
-const xrpClient = new XRPClient(rippledURL, true)
+const xrpClient = new XRPClient(rippledURL)
 
 // Some amount of XRP to send.
 const amount = bigInt('1')

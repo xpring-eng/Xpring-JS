@@ -16,12 +16,15 @@ export interface XRPClientDecorator {
   getBalance(address: string): Promise<BigInteger>
 
   /**
-   * Retrieve the transaction status for a given transaction hash.
+   * Retrieve the transaction status for a Payment given transaction hash.
+   *
+   * Note: This method will only work for Payment type transactions which do not have the tf_partial_payment attribute set.
+   * @see https://xrpl.org/payment.html#payment-flags
    *
    * @param transactionHash The hash of the transaction.
    * @returns The status of the given transaction.
    */
-  getTransactionStatus(transactionHash: string): Promise<TransactionStatus>
+  getPaymentStatus(transactionHash: string): Promise<TransactionStatus>
 
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
