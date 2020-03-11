@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 `XpringClient` has been renamed to `XRPClient`, which should be used going forward.  `XpringClient` class still exists and will be deprecated in the future.
 
+#### Added
+- A new `getPaymentStatus` is added which retrieves the status of payment transactions.
+
+#### Deprecated
+- `getTransactionStatus` is deprecated. Please use `getPaymentStatus` instead.
+
 ## 1.5.1 - March 4, 2020
 
 This version allows browsers using xpring-js to include an Authorization header in gRPC requests.

@@ -54,9 +54,9 @@ describe('Reliable Submission XRP Client', function(): void {
     assert.deepEqual(returnedValue, fakedGetBalanceValue)
   })
 
-  it('Get Transaction Status - Response Not Modified', async function() {
+  it('Get Payment Status - Response Not Modified', async function() {
     // GIVEN a `ReliableSubmissionXRPClient` decorating a `FakeXRPClient` WHEN a transaction status is retrieved.
-    const returnedValue = await this.reliableSubmissionClient.getTransactionStatus(
+    const returnedValue = await this.reliableSubmissionClient.getPaymentStatus(
       testAddress,
     )
 
