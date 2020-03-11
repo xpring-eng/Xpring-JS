@@ -24,7 +24,6 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
         // Swallow the error here for browsers
       }
     }
-    // FIXME wrong credentials
     this.balanceClient = new BalanceServiceClient(grpcURL, null, {
       withCredentials: 'true',
     })
