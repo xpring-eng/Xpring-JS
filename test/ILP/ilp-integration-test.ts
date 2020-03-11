@@ -1,4 +1,6 @@
+import bigInt from 'big-integer'
 import IlpClient from '../../src/ILP/ilp-client'
+import { PaymentRequest } from '../../src/ILP/model/payment-request'
 
 import assert = require('assert')
 
@@ -37,20 +39,20 @@ describe('ILP Integration Tests', function(): void {
     // AND an account on the connector with accountId = sdk_account2
 
     // WHEN a payment is sent from sdk_account1 to sdk_account2 for 10 units
-    const message = await ILPClientNode.sendPayment(
-      10,
-      '$money.ilpv4.dev/sdk_account2',
-      'sdk_account1',
-      'password',
-    )
+    const request = new PaymentRequest({
+      amount: bigInt(10),
+      destinationPaymentPointer: '$money.ilpv4.dev/sdk_account2',
+      senderAccountId: 'sdk_account1',
+    })
+    const message = await ILPClientNode.sendPayment(request, 'password')
 
     // THEN the originalAmount should be equal to the amount sent
-    assert.equal(message.getOriginalAmount(), 10)
+    assert.equal(message.originalAmount, 10)
     // AND the amountSent should be equal to the originalAmount
-    assert.equal(message.getAmountSent(), 10)
+    assert.equal(message.amountSent, 10)
     // AND the amountDelivered should be 10
-    assert.equal(message.getAmountDelivered(), 10)
-    // AND the payment should be successfull
-    assert.equal(message.getSuccessfulPayment(), true)
+    assert.equal(message.amountDelivered, 10)
+    // AND the payment should be successful
+    assert.equal(message.successfulPayment, true)
   })
 })

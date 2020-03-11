@@ -1,56 +1,61 @@
-import { BigInteger } from 'big-integer'
-import { SendPaymentRequest } from '../../generated/node/ilp/send_payment_request_pb'
+import bigInt, { BigInteger } from 'big-integer'
+import { SendPaymentResponse } from '../../generated/node/ilp/send_payment_response_pb'
 
 /**
- * A request object that can be used to send a payment request to a connector
+ * A response object containing details about a requested payment
  */
 export class PaymentResult {
   /**
-   * The amount to send.  This amount is denominated in the asset code and asset scale of the sender's account
-   * on the connector.  For example, if the account has an asset code of "USD" and an asset scale of 9,
-   * a payment request of 100 units would send 100 nano-dollars.
+   * A BigInteger representing the original amount to be sent in a given payment.
    */
-  readonly amount: BigInteger
+  readonly originalAmount: BigInteger
 
   /**
-   * A payment pointer is a standardized identifier for payment accounts.
-   * This payment pointer will be the identifier for the account of the recipient of this payment on the ILP
-   * network.
-   *
-   * @see "https://github.com/interledger/rfcs/blob/master/0026-payment-pointers/0026-payment-pointers.md"
+   * The actual amount, in the receivers units, that was delivered to the receiver. Any currency conversion and/or
+   * connector fees may cause this to be different than the amount sent.
    */
-  readonly destinationPaymentPointer: string
+  readonly amountDelivered: BigInteger
 
   /**
-   * @return The accountID of the sender.
+   * The actual amount, in the senders units, that was sent to the receiver. In the case of a timeout or rejected
+   * packets this amount may be less than the requested amount to be sent.
    */
-  readonly senderAccountId: string
+  readonly amountSent: BigInteger
 
   /**
-   * Initialize a new instance of PaymentResult
+   * Indicates if the payment was completed successfully.
+   * true if payment was successful
    */
-  public constructor(options: {
-    amount: BigInteger
-    destinationPaymentPointer: string
-    senderAccountId: string
+  readonly successfulPayment: boolean
+
+  /**
+   * Initializes a new PaymentResult
+   */
+  constructor(options: {
+    originalAmount: BigInteger
+    amountDelivered: BigInteger
+    amountSent: BigInteger
+    successfulPayment: boolean
   }) {
-    this.amount = options.amount
-    this.destinationPaymentPointer = options.destinationPaymentPointer
-    this.senderAccountId = options.senderAccountId
+    this.originalAmount = options.originalAmount
+    this.amountDelivered = options.amountDelivered
+    this.amountSent = options.amountSent
+    this.successfulPayment = options.successfulPayment
   }
 
   /**
-   * Constructs a PaymentResult (non-proto) from this SendPaymentRequest
+   * Constructs a PaymentResult from a protobuf SendPaymentResponse
    *
-   * @return A SendPaymentRequest populated with the analogous fields in
-   *          a PaymentResult
+   * @param protoResponse a SendPaymentResponse to be converted
+   * @return a PaymentResult with fields populated using the analogous fields in the proto object
    */
-  public toProto(): SendPaymentRequest {
-    const protoRequest: SendPaymentRequest = new SendPaymentRequest()
-    protoRequest.setAmount(this.amount.toJSNumber())
-    protoRequest.setDestinationPaymentPointer(this.destinationPaymentPointer)
-    protoRequest.setAccountId(this.senderAccountId)
-    return protoRequest
+  public static from(protoResponse: SendPaymentResponse) {
+    return new PaymentResult({
+      originalAmount: bigInt(protoResponse.getOriginalAmount()),
+      amountDelivered: bigInt(protoResponse.getAmountDelivered()),
+      amountSent: bigInt(protoResponse.getAmountSent()),
+      successfulPayment: protoResponse.getSuccessfulPayment(),
+    })
   }
 }
 
