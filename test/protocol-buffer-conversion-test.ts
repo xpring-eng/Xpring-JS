@@ -34,7 +34,7 @@ describe('Protocol Buffer Conversion', function(): void {
     currencyProto.setName(currencyName)
 
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const currency = new XRPCurrency(currencyProto)
+    const currency = XRPCurrency.from(currencyProto)
 
     // THEN the currency converted as expected.
     assert.deepEqual(currency.code, currencyProto.getCode())
