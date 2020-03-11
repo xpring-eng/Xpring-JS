@@ -32,16 +32,16 @@ $ npm i xpring-js
 開発者がすぐに開発を開始できるように, Xpringは現在、サーバー側コンポーネントをホスト型サービスとして提供し、クライアント側ライブラリからのリクエストをXRPノードにプロキシします。開発者は次のエンドポイントに到達できます:
 
 ```
-# TestNet
+# TestNet - Node Environment
 test.xrp.xpring.io:50051
 
-# MainNet
+# MainNet - Node Environment
 main.xrp.xpring.io:50051
 
-#TestNet
+#TestNet - Browser Environment
 https://envoy.test.xrp.xpring.io
 
-#MainNet
+#MainNet - Browser Environment
 https://envoy.main.xrp.xpring.io
 ```
 
