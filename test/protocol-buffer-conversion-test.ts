@@ -46,7 +46,7 @@ describe('Protocol Buffer Conversion', function(): void {
     const pathElementProto = testPathElement
 
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const pathElement = new XRPPathElement(pathElementProto)
+    const pathElement = XRPPathElement.from(pathElementProto)
 
     // THEN the currency converted as expected.
     assert.equal(
@@ -55,7 +55,7 @@ describe('Protocol Buffer Conversion', function(): void {
     )
     assert.deepEqual(
       pathElement.currency,
-      new XRPCurrency(pathElementProto.getCurrency()!),
+      XRPCurrency.from(pathElementProto.getCurrency()!),
     )
     assert.equal(pathElement.issuer, pathElementProto.getIssuer()!.getAddress())
   })
@@ -65,7 +65,7 @@ describe('Protocol Buffer Conversion', function(): void {
     const pathElementProto = new Payment.PathElement()
 
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const pathElement = new XRPPathElement(pathElementProto)
+    const pathElement = XRPPathElement.from(pathElementProto)
 
     // THEN the currency converted as expected.
     assert.isUndefined(pathElement.account)
@@ -79,7 +79,7 @@ describe('Protocol Buffer Conversion', function(): void {
     const pathProto = new Payment.Path()
 
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const path = new XRPPath(pathProto)
+    const path = XRPPath.from(pathProto)
 
     // THEN there are zero paths in the output.
     assert.equal(path.pathElements.length, 0)
@@ -91,7 +91,7 @@ describe('Protocol Buffer Conversion', function(): void {
     pathProto.addElements(testPathElement)
 
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const path = new XRPPath(pathProto)
+    const path = XRPPath.from(pathProto)
 
     // THEN there is one path in the output.
     assert.equal(path.pathElements.length, 1)
@@ -107,7 +107,7 @@ describe('Protocol Buffer Conversion', function(): void {
     ])
 
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const path = new XRPPath(pathProto)
+    const path = XRPPath.from(pathProto)
 
     // THEN there are multiple paths in the output.
     assert.equal(path.pathElements.length, 3)
