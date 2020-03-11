@@ -138,7 +138,7 @@ wallet.verify(message, signature); // true
 const { XRPClient } = require("xpring-js");
 
 const remoteURL = alpha.test.xrp.xpring.io:50051; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
-const xrpClient = new XRPClient(remoteURL, true);
+const xrpClient = new XRPClient(remoteURL);
 ```
 
 #### Retrieving a Balance
@@ -149,7 +149,7 @@ A `XRPClient` can check the balance of an account on the XRP Ledger.
 const { XRPClient } = require("xpring-js");
 
 const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
-const xrpClient = new XRPClient(remoteURL, true);
+const xrpClient = new XRPClient(remoteURL);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
 
@@ -177,7 +177,7 @@ These states are determined by the `TransactionStatus` enum.
 const { XRPClient } = require("xpring-js");
 
 const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
-const xrpClient = new XRPClient(remoteURL, true);
+const xrpClient = new XRPClient(remoteURL);
 
 const transactionHash = "9FC7D277C1C8ED9CE133CC17AEA9978E71FC644CE6F5F0C8E26F1C635D97AF4A";
 const transactionStatus = xrpClient.getPaymentStatus(transactionHash); // TransactionStatus.Succeeded
@@ -195,7 +195,7 @@ A `XRPClient` can send XRP to other accounts on the XRP Ledger.
 const { Wallet, XRPAmount, XRPClient } = require("xpring-js");
 
 const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
-const xrpClient = new XRPClient(remoteURL, true);
+const xrpClient = new XRPClient(remoteURL);
 
 // Amount of XRP to send
 const amount = BigInt("10");
