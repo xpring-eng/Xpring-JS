@@ -17,12 +17,12 @@ class XRPClient {
    * The XRPClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
-   * @param useNewProtocolBuffers If `true`, then the new protocol buffer implementation from rippled will be used. Defaults to false.
+   * @param useNewProtocolBuffers If `true`, then the new protocol buffer implementation from rippled will be used. Defaults to true.
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public constructor(
     grpcURL: string,
-    useNewProtocolBuffers = false,
+    useNewProtocolBuffers = true,
     forceWeb = false,
   ) {
     const defaultXRPClient = useNewProtocolBuffers
@@ -43,7 +43,12 @@ class XRPClient {
   }
 
   /**
-   * Retrieve the transaction status for a given transaction hash.
+   * Retrieve the transaction status for a Payment given transaction hash.
+   *
+   * @deprecated Please use `getPaymentStatus` instead.
+   *
+   * Note: This method will only work for Payment type transactions which do not have the tf_partial_payment attribute set.
+   * @see https://xrpl.org/payment.html#payment-flags
    *
    * @param transactionHash The hash of the transaction.
    * @returns The status of the given transaction.
@@ -51,7 +56,22 @@ class XRPClient {
   public async getTransactionStatus(
     transactionHash: string,
   ): Promise<TransactionStatus> {
-    return this.decoratedClient.getTransactionStatus(transactionHash)
+    return this.getPaymentStatus(transactionHash)
+  }
+
+  /**
+   * Retrieve the transaction status for a Payment given transaction hash.
+   *
+   * Note: This method will only work for Payment type transactions which do not have the tf_partial_payment attribute set.
+   * @see https://xrpl.org/payment.html#payment-flags
+   *
+   * @param transactionHash The hash of the transaction.
+   * @returns The status of the given transaction.
+   */
+  public async getPaymentStatus(
+    transactionHash: string,
+  ): Promise<TransactionStatus> {
+    return this.decoratedClient.getPaymentStatus(transactionHash)
   }
 
   /**

@@ -1,5 +1,5 @@
 // import { fail } from 'assert'
-import IlpClient from '../src/ilp-client'
+import IlpClient from '../../src/ILP/ilp-client'
 
 import assert = require('assert')
 
@@ -38,7 +38,7 @@ describe('ILP Integration Tests', function(): void {
     // AND an account on the connector with accountId = sdk_account2
 
     // WHEN a payment is sent from sdk_account1 to sdk_account2 for 10 units
-    const message = await ILPClientNode.send(
+    const message = await ILPClientNode.sendPayment(
       10,
       '$money.ilpv4.dev/sdk_account2',
       'sdk_account1',

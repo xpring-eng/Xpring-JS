@@ -31,7 +31,17 @@ $ npm i xpring-js
 
 開発者がすぐに開発を開始できるように, Xpringは現在、サーバー側コンポーネントをホスト型サービスとして提供し、クライアント側ライブラリからのリクエストをXRPノードにプロキシします。開発者は次のエンドポイントに到達できます:
 ```
-grpc.xpring.tech:80
+# TestNet - Node
+alpha.test.xrp.xpring.io:50051
+
+# MainNet - Node
+alpha.xrp.xpring.io:50051
+
+#TestNet - Browser
+https://envoy.test.xrp.xpring.io
+
+#MainNet - Browser
+https://envoy.xrp.xpring.io
 ```
 
 Xpringは、XRPノードユーザーが[rippled](https://github.com/ripple/rippled)のオープンソースコンポーネントとしてアダプターを展開および使用するためのゼロコンフィグの方法の構築に取り組んでいます。乞うご期待！
