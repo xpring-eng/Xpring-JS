@@ -23,7 +23,7 @@ const legacyXRPClientNode = new XRPClient(legacyGRPCURLNode)
 
 // An XRPClient that makes requests. Uses the legacy protocol buffer implementation and sends the requests to an HTTP envoy emulating how the browser would behave
 const grpcWebURL = 'https://envoy.test.xrp.xpring.io'
-const xpringWebClient = new XRPClient(grpcWebURL, false, true)
+const xpringWebClient = new XRPClient(grpcWebURL, true, true)
 
 // An XRPClient that makes requests. Uses rippled's gRPC implementation.
 const rippledURL = 'test.xrp.xpring.io:50051'
