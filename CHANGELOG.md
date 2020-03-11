@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Changed
+- `XRPClient` now uses [rippled's protocol buffer API](https://github.com/ripple/rippled/pull/3254) rather than the legacy API. Users who wish to use the legacy API should pass `false` for `useNewProtocolBuffers` in the constructor.
+
 ## 1.6.0 - March 12, 2020
 
 This release contains deprecations for the `XpringClient` class and the `getTransactionStatus` method. Clients should prefer to use `XRPClient` and `getPaymentStatus` respectively.
