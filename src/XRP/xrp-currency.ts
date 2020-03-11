@@ -9,6 +9,10 @@ export default class XRPCurrency {
 
   public code: string | Uint8Array
 
+  public static from(currency: Currency): XRPCurrency | undefined {
+    return new XRPCurrency(currency)
+  }
+
   public constructor(currency: Currency) {
     this.name = currency.getName()
     this.code = currency.getCode()
