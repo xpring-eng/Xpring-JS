@@ -113,12 +113,32 @@ class DefaultXRPClient implements XRPClientDecorator {
   }
 
   /**
-   * Retrieve the transaction status for a given transaction hash.
+   * Retrieve the transaction status for a Payment given transaction hash.
+   *
+   * @deprecated Please use `getPaymentStatus` instead.
+   *
+   * Note: This method will only work for Payment type transactions which do not have the tf_partial_payment attribute set.
+   * @see https://xrpl.org/payment.html#payment-flags
    *
    * @param transactionHash The hash of the transaction.
    * @returns The status of the given transaction.
    */
   public async getTransactionStatus(
+    transactionHash: string,
+  ): Promise<TransactionStatus> {
+    return this.getPaymentStatus(transactionHash)
+  }
+
+  /**
+   * Retrieve the transaction status for a Payment given transaction hash.
+   *
+   * Note: This method will only work for Payment type transactions which do not have the tf_partial_payment attribute set.
+   * @see https://xrpl.org/payment.html#payment-flags
+   *
+   * @param transactionHash The hash of the transaction.
+   * @returns The status of the given transaction.
+   */
+  public async getPaymentStatus(
     transactionHash: string,
   ): Promise<TransactionStatus> {
     const transactionStatus = await this.getRawTransactionStatus(
