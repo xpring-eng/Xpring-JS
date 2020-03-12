@@ -43,7 +43,7 @@ class IlpClient {
     paymentRequest: PaymentRequest,
     bearerToken?: string,
   ): Promise<PaymentResult> {
-    return this.decoratedClient.sendPayment(paymentRequest, bearerToken,)
+    return this.decoratedClient.sendPayment(paymentRequest, bearerToken)
   }
 }
 

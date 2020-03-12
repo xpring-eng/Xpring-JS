@@ -78,7 +78,7 @@ export class AccountBalance {
    *                           to construct an AccountBalance
    * @return an AccountBalance with its fields set via the analogous protobuf fields.
    */
-  static from(getBalanceResponse: GetBalanceResponse) {
+  static from(getBalanceResponse: GetBalanceResponse): AccountBalance {
     return new AccountBalance({
       accountId: getBalanceResponse.getAccountId(),
       assetCode: getBalanceResponse.getAssetCode(),
