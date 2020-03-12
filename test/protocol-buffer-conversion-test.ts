@@ -551,8 +551,8 @@ describe('Protocol Buffer Conversion', function(): void {
     const signer = XRPSigner.from(signerProto)
 
     // THEN all fields are present and converted correctly.
-    assert.equal(signer.account, account)
-    assert.deepEqual(signer.signingPublicKey, signingPublicKey)
-    assert.deepEqual(signer.transactionSignature, transactionSignature)
+    assert.equal(signer?.account, account)
+    assert.deepEqual(signer?.signingPublicKey, signingPublicKey)
+    assert.deepEqual(signer?.transactionSignature, transactionSignature)
   })
 })
