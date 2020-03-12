@@ -4,7 +4,7 @@ import XRPPath from './xrp-path'
 
 // TODO(amiecorso): Modify this object to use X-Address format.
 export default class XRPPayment {
-  public static from(payment: Payment) {
+  public static from(payment: Payment): XRPPayment | undefined {
     let amount
     const paymentAmountValue = payment.getAmount()?.getValue()
     if (paymentAmountValue) {
