@@ -2,7 +2,7 @@ import { BigInteger } from 'big-integer'
 import { SendPaymentRequest } from '../../generated/node/ilp/send_payment_request_pb'
 
 /**
- * A request object htat can be used to send a payment request to a connector
+ * A request object that can be used to send a payment request to a connector
  */
 export class PaymentRequest {
   /**
