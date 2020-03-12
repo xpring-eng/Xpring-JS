@@ -139,13 +139,16 @@ describe('Protocol Buffer Conversion', function(): void {
     // THEN the issued currency converted as expected.
     assert.deepEqual(
       issuedCurrency?.currency,
-      XRPCurrency.from(issuedCurrencyProto.getCurrency()),
+      XRPCurrency.from(issuedCurrencyProto.getCurrency()!),
     )
     assert.equal(
       issuedCurrency?.issuer,
-      issuedCurrencyProto.getIssuer().getAddress(),
+      issuedCurrencyProto.getIssuer()?.getAddress(),
     )
-    assert.equal(issuedCurrency?.value, bigInt(issuedCurrencyProto.getValue()))
+    assert.deepEqual(
+      issuedCurrency?.value,
+      bigInt(issuedCurrencyProto.getValue()),
+    )
   })
 
   it('Convert IssuedCurrency with bad value', function(): void {

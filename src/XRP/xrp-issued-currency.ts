@@ -16,8 +16,13 @@ export default class XRPIssuedCurrency {
   public static from(
     issuedCurrency: IssuedCurrencyAmount,
   ): XRPIssuedCurrency | undefined {
-    const value = bigInt(issuedCurrency.getValue())
-    if (value && typeof value === 'bigint') {
+    let value
+    try {
+      value = bigInt(issuedCurrency.getValue())
+    } catch {
+      value = undefined
+    }
+    if (value) {
       return new XRPIssuedCurrency(issuedCurrency)
     }
     return undefined
