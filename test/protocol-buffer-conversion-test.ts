@@ -4,10 +4,14 @@ import XRPCurrency from '../src/XRP/xrp-currency'
 import XRPPathElement from '../src/XRP/xrp-path-element'
 import XRPPath from '../src/XRP/xrp-path'
 import XRPIssuedCurrency from '../src/XRP/xrp-issued-currency'
+import XRPCurrencyAmount from '../src/XRP/xrp-currency-amount'
 import {
   Currency,
+  CurrencyAmount,
   IssuedCurrencyAmount,
+  XRPDropsAmount,
 } from '../src/generated/web/org/xrpl/rpc/v1/amount_pb'
+
 import { Payment } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from '../src/generated/web/org/xrpl/rpc/v1/account_pb'
 
@@ -28,6 +32,18 @@ const testPathElement = new Payment.PathElement()
 testPathElement.setCurrency(testCurrencyProto)
 testPathElement.setAccount(testAccountAddress)
 testPathElement.setIssuer(testAccountAddressIssuer)
+
+// test IssuedCurrencyAmount
+const testIssuedCurrency = new IssuedCurrencyAmount()
+testIssuedCurrency.setCurrency(testCurrencyProto)
+testIssuedCurrency.setIssuer(testAccountAddress)
+testIssuedCurrency.setValue('100')
+
+// test Invalid IssuedCurrencyAmount
+const testInvalidIssuedCurrency = new IssuedCurrencyAmount()
+testInvalidIssuedCurrency.setCurrency(testCurrencyProto)
+testInvalidIssuedCurrency.setIssuer(testAccountAddress)
+testInvalidIssuedCurrency.setValue('xrp')
 
 describe('Protocol Buffer Conversion', function(): void {
   // Currency
@@ -165,5 +181,50 @@ describe('Protocol Buffer Conversion', function(): void {
 
     // THEN the result is undefined
     assert.isUndefined(issuedCurrency)
+  })
+
+  // CurrencyAmount tests
+  it('Convert CurrencyAmount with drops', function(): void {
+    // GIVEN a currency amount protocol buffer with an XRP amount.
+    const drops = '10'
+    const currencyAmountProto = new CurrencyAmount()
+    const xrpDropsAmountProto = new XRPDropsAmount()
+    xrpDropsAmountProto.setDrops(drops)
+    currencyAmountProto.setXrpAmount(xrpDropsAmountProto)
+
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const currencyAmount = XRPCurrencyAmount.from(currencyAmountProto)
+
+    // THEN the result has drops set and no issued amount.
+    assert.isUndefined(currencyAmount?.issuedCurrency)
+    assert.equal(currencyAmount?.drops, drops)
+  })
+
+  it('Convert CurrencyAmount with Issued Currency', function(): void {
+    // GIVEN a currency amount protocol buffer with an issued currency amount.
+    const currencyAmountProto = new CurrencyAmount()
+    currencyAmountProto.setIssuedCurrencyAmount(testIssuedCurrency)
+
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const currencyAmount = XRPCurrencyAmount.from(currencyAmountProto)
+
+    // THEN the result has an issued currency set and no amount.
+    assert.deepEqual(
+      currencyAmount?.issuedCurrency,
+      XRPIssuedCurrency.from(testIssuedCurrency),
+    )
+    assert.isUndefined(currencyAmount?.drops)
+  })
+
+  it('Convert CurrencyAmount with bad inputs', function(): void {
+    // GIVEN a currency amount protocol buffer with no amounts
+    const currencyAmountProto = new CurrencyAmount()
+    currencyAmountProto.setIssuedCurrencyAmount(testInvalidIssuedCurrency)
+
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const currencyAmount = XRPCurrencyAmount.from(currencyAmountProto)
+
+    // THEN the result is empty
+    assert.isEmpty(currencyAmount)
   })
 })
