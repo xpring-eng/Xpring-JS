@@ -501,9 +501,9 @@ describe('Protocol Buffer Conversion', function(): void {
     const memo = XRPMemo.from(memoProto)
 
     // THEN all fields are present and set correctly.
-    assert.deepEqual(memo.data, memoData)
-    assert.deepEqual(memo.format, memoFormat)
-    assert.deepEqual(memo.type, memoType)
+    assert.deepEqual(memo?.data, memoData)
+    assert.deepEqual(memo?.format, memoFormat)
+    assert.deepEqual(memo?.type, memoType)
   })
 
   it('Convert Memo with no fields set', function(): void {
@@ -514,8 +514,8 @@ describe('Protocol Buffer Conversion', function(): void {
     const memo = XRPMemo.from(memoProto)
 
     // THEN all fields are undefined.
-    assert.isUndefined(memo.data)
-    assert.isUndefined(memo.format)
-    assert.isUndefined(memo.type)
+    assert.isUndefined(memo?.data)
+    assert.isUndefined(memo?.format)
+    assert.isUndefined(memo?.type)
   })
 })
