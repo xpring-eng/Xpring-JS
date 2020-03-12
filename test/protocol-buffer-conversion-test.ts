@@ -1,8 +1,13 @@
 import { assert } from 'chai'
+import bigInt from 'big-integer'
 import XRPCurrency from '../src/XRP/xrp-currency'
 import XRPPathElement from '../src/XRP/xrp-path-element'
 import XRPPath from '../src/XRP/xrp-path'
-import { Currency } from '../src/generated/web/org/xrpl/rpc/v1/amount_pb'
+import XRPIssuedCurrency from '../src/XRP/xrp-issued-currency'
+import {
+  Currency,
+  IssuedCurrencyAmount,
+} from '../src/generated/web/org/xrpl/rpc/v1/amount_pb'
 import { Payment } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from '../src/generated/web/org/xrpl/rpc/v1/account_pb'
 
@@ -25,6 +30,7 @@ testPathElement.setAccount(testAccountAddress)
 testPathElement.setIssuer(testAccountAddressIssuer)
 
 describe('Protocol Buffer Conversion', function(): void {
+  // Currency
   it('Convert Currency protobuf to XRPCurrency object', function(): void {
     // GIVEN a Currency protocol buffer with a code and a name.
     const currencyCode: Uint8Array = new Uint8Array([1, 2, 3])
@@ -41,6 +47,7 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.deepEqual(currency?.name, currencyProto.getName())
   })
 
+  // PathElement
   it('Convert PathElement protobuf with all fields set to XRPPathElement', function(): void {
     // GIVEN a PathElement protocol buffer with all fields set.
     const pathElementProto = testPathElement
@@ -76,7 +83,7 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.isUndefined(pathElement?.issuer)
   })
 
-  // MARK: - Org_Xrpl_Rpc_V1_Transaction.Path
+  // Path
   it('Convert Path protobuf with no paths to XRPPath', function(): void {
     // GIVEN a set of paths with zero paths.
     const pathProto = new Payment.Path()
@@ -114,5 +121,46 @@ describe('Protocol Buffer Conversion', function(): void {
 
     // THEN there are multiple paths in the output.
     assert.equal(path?.pathElements.length, 3)
+  })
+
+  // IssuedCurrency
+  it('Convert IssuedCurrency to XRPIssuedCurrency', function(): void {
+    // GIVEN an issued currency protocol buffer
+    const issuedCurrencyProto = new IssuedCurrencyAmount()
+    issuedCurrencyProto.setCurrency(testCurrencyProto)
+    const accountAddressProto = new AccountAddress()
+    accountAddressProto.setAddress('r123')
+    issuedCurrencyProto.setIssuer(accountAddressProto)
+    issuedCurrencyProto.setValue('12345')
+
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const issuedCurrency = XRPIssuedCurrency.from(issuedCurrencyProto)
+
+    // THEN the issued currency converted as expected.
+    assert.deepEqual(
+      issuedCurrency?.currency,
+      XRPCurrency.from(issuedCurrencyProto.getCurrency()),
+    )
+    assert.equal(
+      issuedCurrency?.issuer,
+      issuedCurrencyProto.getIssuer().getAddress(),
+    )
+    assert.equal(issuedCurrency?.value, bigInt(issuedCurrencyProto.getValue()))
+  })
+
+  it('Convert IssuedCurrency with bad value', function(): void {
+    // GIVEN an issued currency protocol buffer with a non numeric value
+    const issuedCurrencyProto = new IssuedCurrencyAmount()
+    issuedCurrencyProto.setCurrency(testCurrencyProto)
+    const accountAddressProto = new AccountAddress()
+    accountAddressProto.setAddress('r123')
+    issuedCurrencyProto.setIssuer(accountAddressProto)
+    issuedCurrencyProto.setValue('xrp') // non-numeric
+
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const issuedCurrency = XRPIssuedCurrency.from(issuedCurrencyProto)
+
+    // THEN the result is undefined
+    assert.isUndefined(issuedCurrency)
   })
 })
