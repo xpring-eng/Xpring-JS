@@ -18,8 +18,6 @@ const fakeErroringNetworkClient = (): DefaultIlpClient => {
   )
 }
 
-// const successfulSendPaymentResponse = FakeIlpNetworkClientResponses.defaultSendResponse()
-
 describe('Default ILP Client', function(): void {
   it('Get balance - success', async function(): Promise<void> {
     // GIVEN a DefaultIlpClient
