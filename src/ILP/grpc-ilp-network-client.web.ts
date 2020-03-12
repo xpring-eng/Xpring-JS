@@ -6,7 +6,7 @@ import { SendPaymentResponse } from '../generated/web/ilp/send_payment_response_
 import isNode from '../utils'
 import { BalanceServiceClient } from '../generated/web/ilp/balance_service_grpc_web_pb'
 import { IlpOverHttpServiceClient } from '../generated/web/ilp/ilp_over_http_service_grpc_web_pb'
-import IlpCredentials from './ilp-credentials.web'
+import IlpWebCredentials from './auth/ilp-credentials.web'
 
 class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
   private readonly balanceClient: BalanceServiceClient
@@ -34,13 +34,17 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
     bearerToken?: string,
   ): Promise<GetBalanceResponse> {
     return new Promise((resolve, reject): void => {
-      this.balanceClient.getBalance(request, IlpCredentials.build(bearerToken), (error, response) => {
-        if (error != null || response === null) {
-          reject(error)
-          return
-        }
-        resolve(response)
-      })
+      this.balanceClient.getBalance(
+        request,
+        IlpWebCredentials.build(bearerToken),
+        (error, response) => {
+          if (error != null || response === null) {
+            reject(error)
+            return
+          }
+          resolve(response)
+        },
+      )
     })
   }
 
@@ -49,13 +53,17 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
     bearerToken?: string,
   ): Promise<SendPaymentResponse> {
     return new Promise((resolve, reject): void => {
-      this.paymentClient.sendMoney(request, IlpCredentials.build(bearerToken), (error, response) => {
-        if (error != null || response === null) {
-          reject(error)
-          return
-        }
-        resolve(response)
-      })
+      this.paymentClient.sendMoney(
+        request,
+        IlpWebCredentials.build(bearerToken),
+        (error, response) => {
+          if (error != null || response === null) {
+            reject(error)
+            return
+          }
+          resolve(response)
+        },
+      )
     })
   }
 

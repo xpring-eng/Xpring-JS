@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import IlpCredentials from '../../src/ILP/ilp-credentials'
+import IlpCredentials from '../../src/ILP/auth/ilp-credentials'
 
 describe('IlpCredentials Node', function(): void {
   it('Build - Undefined token', function(): void {

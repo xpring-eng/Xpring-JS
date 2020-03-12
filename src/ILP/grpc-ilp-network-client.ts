@@ -7,7 +7,7 @@ import { SendPaymentResponse } from '../generated/node/ilp/send_payment_response
 import isNode from '../utils'
 import { BalanceServiceClient } from '../generated/node/ilp/balance_service_grpc_pb'
 import { IlpOverHttpServiceClient } from '../generated/node/ilp/ilp_over_http_service_grpc_pb'
-import IlpCredentials from './ilp-credentials'
+import IlpCredentials from './auth/ilp-credentials'
 
 class GrpcIlpNetworkClient implements IlpNetworkClient {
   private readonly balanceClient: BalanceServiceClient
@@ -34,13 +34,17 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
     bearerToken?: string,
   ): Promise<GetBalanceResponse> {
     return new Promise((resolve, reject): void => {
-      this.balanceClient.getBalance(request, IlpCredentials.build(bearerToken), (error, response) => {
-        if (error != null || response === null) {
-          reject(error)
-          return
-        }
-        resolve(response)
-      })
+      this.balanceClient.getBalance(
+        request,
+        IlpCredentials.build(bearerToken),
+        (error, response) => {
+          if (error != null || response === null) {
+            reject(error)
+            return
+          }
+          resolve(response)
+        },
+      )
     })
   }
 
@@ -49,13 +53,17 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
     bearerToken?: string,
   ): Promise<SendPaymentResponse> {
     return new Promise((resolve, reject): void => {
-      this.paymentClient.sendMoney(request, IlpCredentials.build(bearerToken), (error, response) => {
-        if (error != null || response === null) {
-          reject(error)
-          return
-        }
-        resolve(response)
-      })
+      this.paymentClient.sendMoney(
+        request,
+        IlpCredentials.build(bearerToken),
+        (error, response) => {
+          if (error != null || response === null) {
+            reject(error)
+            return
+          }
+          resolve(response)
+        },
+      )
     })
   }
 
