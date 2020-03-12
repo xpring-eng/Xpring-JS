@@ -225,6 +225,6 @@ describe('Protocol Buffer Conversion', function(): void {
     const currencyAmount = XRPCurrencyAmount.from(currencyAmountProto)
 
     // THEN the result is empty
-    assert.isEmpty(currencyAmount)
+    assert.isUndefined(currencyAmount)
   })
 })
