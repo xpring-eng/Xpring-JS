@@ -7,6 +7,7 @@ import XRPIssuedCurrency from '../src/XRP/xrp-issued-currency'
 import XRPCurrencyAmount from '../src/XRP/xrp-currency-amount'
 import XRPPayment from '../src/XRP/xrp-payment'
 import XRPMemo from '../src/XRP/xrp-memo'
+import XRPSigner from '../src/XRP/xrp-signer'
 import {
   Currency,
   CurrencyAmount,
@@ -23,10 +24,14 @@ import {
   MemoData,
   MemoFormat,
   MemoType,
+  Account,
+  SigningPublicKey,
+  TransactionSignature,
 } from '../src/generated/web/org/xrpl/rpc/v1/common_pb'
 import {
   Payment,
   Memo,
+  Signer,
 } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from '../src/generated/web/org/xrpl/rpc/v1/account_pb'
 
@@ -517,5 +522,37 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.isUndefined(memo?.data)
     assert.isUndefined(memo?.format)
     assert.isUndefined(memo?.type)
+  })
+
+  // Signer
+  it('Convert Signer with all fields set', function(): void {
+    // GIVEN a Signer protocol buffer with all fields set.
+    const account = 'r123'
+    const signingPublicKey = new Uint8Array([1, 2, 3])
+    const transactionSignature = new Uint8Array([4, 5, 6])
+
+    const accountAddressProto = new AccountAddress()
+    accountAddressProto.setAddress(account)
+    const accountProto = new Account()
+    accountProto.setValue(accountAddressProto)
+
+    const signingPublicKeyProto = new SigningPublicKey()
+    signingPublicKeyProto.setValue(signingPublicKey)
+
+    const transactionSignatureProto = new TransactionSignature()
+    transactionSignatureProto.setValue(transactionSignature)
+
+    const signerProto = new Signer()
+    signerProto.setAccount(accountProto)
+    signerProto.setSigningPublicKey(signingPublicKeyProto)
+    signerProto.setTransactionSignature(transactionSignatureProto)
+
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const signer = XRPSigner.from(signerProto)
+
+    // THEN all fields are present and converted correctly.
+    assert.equal(signer.account, account)
+    assert.deepEqual(signer.signingPublicKey, signingPublicKey)
+    assert.deepEqual(signer.transactionSignature, transactionSignature)
   })
 })
