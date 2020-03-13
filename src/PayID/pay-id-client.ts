@@ -1,10 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/require-await */
-// import axios, { AxiosInstance } from 'axios'
 import { PayIDUtils } from 'xpring-common-js'
-import DefaultApi from './api/DefaultApi'
-import ApiClient from './ApiClient'
+import DefaultApi from './generated/api/DefaultApi'
+import ApiClient from './generated/ApiClient'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
 
 /**
@@ -14,13 +10,6 @@ import PayIDError, { PayIDErrorType } from './pay-id-error'
  * TODO(keefertaylor): Export this class in index.ts when it's ready for external consumption.
  */
 export default class PayIDClient {
-  /** An HTTP client. */
-  // private readonly axiosInstance: AxiosInstance
-
-  // public constructor() {
-  //   // this.axiosInstance = axios.create({})
-  // }
-
   /**
    * Retrieve the XRP Address authorized with a PayID.
    *
@@ -29,21 +18,26 @@ export default class PayIDClient {
    * @param payID The payID to resolve for an address.
    * @returns An XRP address representing the given PayID if one exists, otherwise undefined.
    */
+  // TODO(keefertaylor): It's likely that at some point we'll need to store instance state in this class. Make this a non-static
+  //                     method until a complete API spec proves it can be static.
+  // eslint-disable-next-line class-methods-use-this
   public async xrpAddressForPayID(payID: string): Promise<string | undefined> {
     const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
     if (!paymentPointer) {
       throw PayIDError.invalidPaymentPointer
     }
 
+    // Swagger generates the '/' in the URL by default and the payment pointer's 'path' is prefixed by a '/'. Strip off the leading '/'.
+    const path = paymentPointer.path.substring(1)
+
     const client = new ApiClient()
     client.basePath = `https://${paymentPointer.host}`
     const apiInstance = new DefaultApi(client)
 
-    // Swagger generates the '/' in the URL by default and the payment pointer's 'path' is prefixed by a '/'. Strip off the leading '/'.
-    const userAndHost = paymentPointer.path.substring(1)
-
     return new Promise((resolve, reject) => {
-      apiInstance.getUserAndHost(userAndHost, (error, data, _response) => {
+      // Ignore unused var in generated code.
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      apiInstance.getPath(path, (error, data, _response) => {
         if (error) {
           if (error.status === 404) {
             // Not Found
@@ -59,48 +53,5 @@ export default class PayIDClient {
         }
       })
     })
-
-    // const url = `https://${paymentPointer.host}${paymentPointer.path}`
-    // // TODO(keefertaylor): Attach network parameter.
-    // // TODO(keefertaylor): Generalize the below to allow requesting in other types.
-    // const requestConfig = {
-    //   headers: {
-    //     Accept: 'application/xrp+json',
-    //   },
-    // }
-
-    // let response
-    // try {
-    //   response = await this.axiosInstance.get<{ address: string }>(
-    //     url,
-    //     requestConfig,
-    //   )
-    // } catch (error) {
-    //   // Handle erroneous responses from the server.
-    //   if (error.response) {
-    //     // 404 means no mapping was found.
-    //     if (error.response.status === 404) {
-    //       return undefined
-    //     }
-
-    //     // Otherwise re-throw the error as an unexepected response.
-    //     throw new PayIDError(
-    //       PayIDErrorType.UnexpectedResponse,
-    //       `${error.response.status} ${error.response.statusText}: ${error.response.data}`,
-    //     )
-    //   } else {
-    //     // Generically errors from the server which contained no response (timeouts, etc).
-    //     throw new PayIDError(PayIDErrorType.Unknown, error.message)
-    //   }
-    // }
-
-    // const address = response.data?.address
-    // if (!address) {
-    //   throw new PayIDError(
-    //     PayIDErrorType.UnexpectedResponse,
-    //     'Sucessful response was in an unknown format',
-    //   )
-    // }
-    // return address
   }
 }

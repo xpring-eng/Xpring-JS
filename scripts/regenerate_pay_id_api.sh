@@ -3,16 +3,16 @@
 set -e -o pipefail
 
 # Folder to place the generated classes in.
-DESTINATION_FOLDER=./src/PayID/generated/swagger
+DESTINATION_FOLDER=./src/PayID/generated/
 
 # Open API Specfication to use for generation.
-PAY_ID_OPEN_API_SPEC=./pay-id-api-spec/pay-id.spec
+PAY_ID_OPEN_API_SPEC=./pay-id-api-spec/pay-id.v1.yml
 
 # Temporary directory to write files to.
 TMP_SWAGGER_DIR=./.tmp_swagger
 
 # Language to generate
-LANG=JavaScript
+LANG=javascript
 
 # Folder containing generated sources.
 GENERATED_SOURCES_FOLDER=$TMP_SWAGGER_DIR/src
@@ -50,7 +50,7 @@ echo "Swagger Generation Complete!"
 echo "Cleaning Up...."
 
 # Copy Source files
-cp -r $GENERATED_SOURCES_FOLDER/**/* $DESTINATION_FOLDER
+cp -r $GENERATED_SOURCES_FOLDER/* $DESTINATION_FOLDER
 # Remove everythinge else.
 rm -rf $TMP_SWAGGER_DIR
 

@@ -1,19 +1,19 @@
 openapi: 3.0.0
 info:
   title: PayID
-  version: '1.0'
+  version: '0.1'
 servers:
   - url: 'https://'
+# TODO(keefertaylor): Headers can be added in this file or manually set on the client. Evaluate and implement headers.
 paths:
-  '/{userAndHost}':
+  '/{path}':
     parameters:
       - schema:
           type: string
-        name: userAndHost
+        name: path
         in: path
         required: true
     get:
-      summary: users
       tags: []
       responses:
         '200':
@@ -27,7 +27,7 @@ paths:
                     type: string
         '404':
           description: Not Found
-      operationId: get-userAndHost
+      operationId: get-path
 components:
   schemas: {}
   securitySchemes: {}
