@@ -11,7 +11,7 @@ PAY_ID_OPEN_API_SPEC=./pay-id-api-spec/pay-id.v1.yml
 # Temporary directory to write files to.
 TMP_SWAGGER_DIR=./.tmp_swagger
 
-# Language to generate
+# Language to generate.
 LANG=javascript
 
 # Folder containing generated sources.
