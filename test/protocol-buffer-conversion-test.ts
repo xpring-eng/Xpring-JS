@@ -40,6 +40,7 @@ import {
   Memo,
   Signer,
   Transaction,
+  CheckCash,
 } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from '../src/generated/web/org/xrpl/rpc/v1/account_pb'
 
@@ -564,256 +565,285 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.deepEqual(signer?.transactionSignature, transactionSignature)
   })
 
-    // Transaction
-    it('Convert PAYMENT Transaction, all common fields set', function(): void {
-      // GIVEN a Transaction protocol buffer with all common fields set.
-      const account = "r123"
-      const fee: string = '1'
-      const sequence: number = 2
-      const signingPublicKey = new Uint8Array([1, 2, 3])
-      const transactionSignature = new Uint8Array([4, 5, 6])
-      const accountTransactionID = new Uint8Array([7, 8, 9])
-      const rawValue = 4
-      const flags = RippledFlags.checkFlag(rawValue, RippledFlags.TF_PARTIAL_PAYMENT)
-      const lastLedgerSequence: number = 5
-      const memoData = new Uint8Array([1, 2, 3])
-      const memoFormat = new Uint8Array([4, 5, 6])
-      const memoType = new Uint8Array([7, 8, 9])
+  // Transaction
+  it('Convert PAYMENT Transaction, all common fields set', function(): void {
+    // GIVEN a Transaction protocol buffer with all common fields set.
+    const account = 'r123'
+    const fee = '1'
+    const sequence = 2
+    const signingPublicKey = new Uint8Array([1, 2, 3])
+    const transactionSignature = new Uint8Array([4, 5, 6])
+    const accountTransactionID = new Uint8Array([7, 8, 9])
+    const rawValue = 4
+    const flags = RippledFlags.checkFlag(
+      rawValue,
+      RippledFlags.TF_PARTIAL_PAYMENT,
+    )
+    const lastLedgerSequence = 5
+    const memoData = new Uint8Array([1, 2, 3])
+    const memoFormat = new Uint8Array([4, 5, 6])
+    const memoType = new Uint8Array([7, 8, 9])
 
-      // memo proto
-      const memoDataProto = new MemoData()
-      memoDataProto.setValue(memoData)
-      const memoFormatProto = new MemoFormat()
-      memoFormatProto.setValue(memoFormat)
-      const memoTypeProto = new MemoType()
-      memoTypeProto.setValue(memoType)
+    // memo proto
+    const memoDataProto = new MemoData()
+    memoDataProto.setValue(memoData)
+    const memoFormatProto = new MemoFormat()
+    memoFormatProto.setValue(memoFormat)
+    const memoTypeProto = new MemoType()
+    memoTypeProto.setValue(memoType)
 
-      const memoProto = new Memo()
-      memoProto.setMemoData(memoDataProto)
-      memoProto.setMemoFormat(memoFormatProto)
-      memoProto.setMemoType(memoTypeProto)
+    const memoProto = new Memo()
+    memoProto.setMemoData(memoDataProto)
+    memoProto.setMemoFormat(memoFormatProto)
+    memoProto.setMemoType(memoTypeProto)
 
-      // signer proto
-      const signerAccountAddressProto = new AccountAddress()
-      signerAccountAddressProto.setAddress(account)
-      const signerAccountProto = new Account()
-      signerAccountProto.setValue(signerAccountAddressProto)
+    // signer proto
+    const signerAccountAddressProto = new AccountAddress()
+    signerAccountAddressProto.setAddress(account)
+    const signerAccountProto = new Account()
+    signerAccountProto.setValue(signerAccountAddressProto)
 
-      const signerSigningPublicKeyProto = new SigningPublicKey()
-      signerSigningPublicKeyProto.setValue(signingPublicKey)
+    const signerSigningPublicKeyProto = new SigningPublicKey()
+    signerSigningPublicKeyProto.setValue(signingPublicKey)
 
-      const signerTransactionSignatureProto = new TransactionSignature()
-      signerTransactionSignatureProto.setValue(transactionSignature
-        )
-      const signerProto = new Signer()
-      signerProto.setAccount(signerAccountProto)
-      signerProto.setSigningPublicKey(signerSigningPublicKeyProto)
-      signerProto.setTransactionSignature(signerTransactionSignatureProto)
+    const signerTransactionSignatureProto = new TransactionSignature()
+    signerTransactionSignatureProto.setValue(transactionSignature)
+    const signerProto = new Signer()
+    signerProto.setAccount(signerAccountProto)
+    signerProto.setSigningPublicKey(signerSigningPublicKeyProto)
+    signerProto.setTransactionSignature(signerTransactionSignatureProto)
 
-      const sourceTag: number = 6
+    const sourceTag = 6
 
-      // transaction proto
-      const transactionAccountAddressProto = new AccountAddress()
-      transactionAccountAddressProto.setAddress(account)
-      const transactionAccountProto = new Account()
-      transactionAccountProto.setValue(transactionAccountAddressProto)
+    // build up transaction proto
+    const transactionAccountAddressProto = new AccountAddress()
+    transactionAccountAddressProto.setAddress(account)
+    const transactionAccountProto = new Account()
+    transactionAccountProto.setValue(transactionAccountAddressProto)
 
-      const transactionFeeProto = new XRPDropsAmount()
-      transactionFeeProto.setDrops(fee)
+    const transactionFeeProto = new XRPDropsAmount()
+    transactionFeeProto.setDrops(fee)
 
-      const transactionSequenceProto = new Sequence()
-      transactionSequenceProto.setValue(sequence)
+    const transactionSequenceProto = new Sequence()
+    transactionSequenceProto.setValue(sequence)
 
-      const transactionSigningPublicKeyProto = new SigningPublicKey()
-      transactionSigningPublicKeyProto.setValue(signingPublicKey)
+    const transactionSigningPublicKeyProto = new SigningPublicKey()
+    transactionSigningPublicKeyProto.setValue(signingPublicKey)
 
-      const transactionTransactionSignatureProto = new TransactionSignature()
-      transactionTransactionSignatureProto.setValue(transactionSignature)
+    const transactionTransactionSignatureProto = new TransactionSignature()
+    transactionTransactionSignatureProto.setValue(transactionSignature)
 
-      const transactionAccountTransactionIDProto = new AccountTransactionID()
-      transactionAccountTransactionIDProto.setValue(accountTransactionID)
+    const transactionAccountTransactionIDProto = new AccountTransactionID()
+    transactionAccountTransactionIDProto.setValue(accountTransactionID)
 
-      const transactionFlagsProto = new Flags()
-      transactionFlagsProto.setValue(rawValue)
+    const transactionFlagsProto = new Flags()
+    transactionFlagsProto.setValue(rawValue)
 
-      const transactionLastLedgerSequenceProto = new LastLedgerSequence()
-      transactionLastLedgerSequenceProto.setValue(lastLedgerSequence)
+    const transactionLastLedgerSequenceProto = new LastLedgerSequence()
+    transactionLastLedgerSequenceProto.setValue(lastLedgerSequence)
 
-      const transactionSourceTagProto = new SourceTag()
-      transactionSourceTagProto.setValue(sourceTag)
+    const transactionSourceTagProto = new SourceTag()
+    transactionSourceTagProto.setValue(sourceTag)
 
-      const paymentCurrencyAmountProto = new CurrencyAmount()
-      paymentCurrencyAmountProto.setIssuedCurrencyAmount(testIssuedCurrency)
-      const paymentAmountProto = new Amount()
-      paymentAmountProto.setValue(paymentCurrencyAmountProto)
-      const destinationAccountAddressProto = new AccountAddress()
-      destinationAccountAddressProto.setAddress("r123")
-      const paymentDestinationProto = new Destination()
-      paymentDestinationProto.setValue(destinationAccountAddressProto)
-      const transactionPaymentProto = new Payment()
-      transactionPaymentProto.setAmount(paymentAmountProto)
-      transactionPaymentProto.setDestination(paymentDestinationProto)
+    const paymentCurrencyAmountProto = new CurrencyAmount()
+    paymentCurrencyAmountProto.setIssuedCurrencyAmount(testIssuedCurrency)
+    const paymentAmountProto = new Amount()
+    paymentAmountProto.setValue(paymentCurrencyAmountProto)
+    const destinationAccountAddressProto = new AccountAddress()
+    destinationAccountAddressProto.setAddress('r123')
+    const paymentDestinationProto = new Destination()
+    paymentDestinationProto.setValue(destinationAccountAddressProto)
+    const transactionPaymentProto = new Payment()
+    transactionPaymentProto.setAmount(paymentAmountProto)
+    transactionPaymentProto.setDestination(paymentDestinationProto)
 
-      const transactionProto = new Transaction()
-      transactionProto.setAccount(transactionAccountProto)
-      transactionProto.setFee(transactionFeeProto)
-      transactionProto.setSequence(transactionSequenceProto)
-      transactionProto.setSigningPublicKey(transactionSigningPublicKeyProto)
-      transactionProto.setTransactionSignature(transactionTransactionSignatureProto)
-      transactionProto.setAccountTransactionId(transactionAccountTransactionIDProto)
-      transactionProto.setFlags(transactionFlagsProto)
-      transactionProto.setLastLedgerSequence(transactionLastLedgerSequenceProto)
-      transactionProto.setMemosList([memoProto])
-      transactionProto.setSignersList([signerProto])
-      transactionProto.setSourceTag(transactionSourceTagProto)
-      transactionProto.setPayment(transactionPaymentProto)
+    const transactionProto = new Transaction()
+    transactionProto.setAccount(transactionAccountProto)
+    transactionProto.setFee(transactionFeeProto)
+    transactionProto.setSequence(transactionSequenceProto)
+    transactionProto.setSigningPublicKey(transactionSigningPublicKeyProto)
+    transactionProto.setTransactionSignature(
+      transactionTransactionSignatureProto,
+    )
+    transactionProto.setAccountTransactionId(
+      transactionAccountTransactionIDProto,
+    )
+    transactionProto.setFlags(transactionFlagsProto)
+    transactionProto.setLastLedgerSequence(transactionLastLedgerSequenceProto)
+    transactionProto.setMemosList([memoProto])
+    transactionProto.setSignersList([signerProto])
+    transactionProto.setSourceTag(transactionSourceTagProto)
+    transactionProto.setPayment(transactionPaymentProto)
 
-      // WHEN the protocol buffer is converted to a native TypeScript type.
-      const transaction = XRPTransaction.from(transactionProto)
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const transaction = XRPTransaction.from(transactionProto)
 
-      // THEN all fields are present and converted correctly.
-      assert.equal(transaction?.account, account)
-      assert.equal(transaction?.fee, fee)
-      assert.equal(transaction?.sequence, sequence)
-      assert.equal(transaction?.signingPublicKey, signingPublicKey)
-      assert.equal(transaction?.transactionSignature, transactionSignature)
-      assert.equal(transaction?.accountTransactionID, accountTransactionID)
-      assert.equal(transaction?.flags, flags)
-      assert.equal(transaction?.lastLedgerSequence, lastLedgerSequence)
-      assert.equal(transaction?.memos, [ XRPMemo(memo: memoProto) ])
-      assert.equal(transaction?.signers, [ XRPSigner(signer: signerProto) ])
-      assert.equal(transaction?.sourceTag, sourceTag)
-    })
+    // THEN all fields are present and converted correctly.
+    assert.equal(transaction?.account, account)
+    assert.equal(transaction?.fee, fee)
+    assert.equal(transaction?.sequence, sequence)
+    assert.equal(transaction?.signingPublicKey, signingPublicKey)
+    assert.equal(transaction?.transactionSignature, transactionSignature)
+    assert.equal(transaction?.accountTransactionID, accountTransactionID)
+    assert.equal(transaction?.flags, flags)
+    assert.equal(transaction?.lastLedgerSequence, lastLedgerSequence)
+    assert.deepEqual(transaction?.memos, [XRPMemo.from(memoProto)])
+    assert.deepEqual(transaction?.signers, [XRPSigner.from(signerProto)])
+    assert.equal(transaction?.sourceTag, sourceTag)
+  })
 
-    it( testConvertPaymentTransactionOnlyMandatoryCommonFieldsSet() {
-      // GIVEN a Transaction protocol buffer with only mandatory common fields set.
-      const account = "r123"
-      const fee: UInt64 = 1
-      const sequence: UInt32 = 2
-      const signingPublicKey = Data([1, 2, 3])
-      const transactionSignature = Data([4, 5, 6])
+  it('Convert PAYMENT Transaction with only mandatory common fields set', function(): void {
+    // GIVEN a Transaction protocol buffer with only mandatory common fields set.
+    const account = 'r123'
+    const fee = '1'
+    const sequence = 2
+    const signingPublicKey = new Uint8Array([1, 2, 3])
+    const transactionSignature = new Uint8Array([4, 5, 6])
 
-      const transactionProto = Org_Xrpl_Rpc_V1_Transaction.with {
-        $0.account = Org_Xrpl_Rpc_V1_Account.with {
-          $0.value = Org_Xrpl_Rpc_V1_AccountAddress.with {
-            $0.address = account
-          }
-        }
-        $0.fee = Org_Xrpl_Rpc_V1_XRPDropsAmount.with {
-          $0.drops = fee
-        }
-        $0.sequence = Org_Xrpl_Rpc_V1_Sequence.with {
-          $0.value = sequence
-        }
-        $0.signingPublicKey = Org_Xrpl_Rpc_V1_SigningPublicKey.with {
-          $0.value = signingPublicKey
-        }
-        $0.transactionSignature = Org_Xrpl_Rpc_V1_TransactionSignature.with {
-          $0.value = transactionSignature
-        }
+    // build up transaction proto
+    const transactionAccountAddressProto = new AccountAddress()
+    transactionAccountAddressProto.setAddress(account)
+    const transactionAccountProto = new Account()
+    transactionAccountProto.setValue(transactionAccountAddressProto)
 
-        $0.payment = Org_Xrpl_Rpc_V1_Payment.with {
-          $0.amount = Org_Xrpl_Rpc_V1_Amount.with {
-            $0.value = Org_Xrpl_Rpc_V1_CurrencyAmount.with {
-              $0.issuedCurrencyAmount = .testIssuedCurrency
-            }
-          }
-          $0.destination = Org_Xrpl_Rpc_V1_Destination.with {
-            $0.value = Org_Xrpl_Rpc_V1_AccountAddress.with {
-              $0.address = "r123"
-            }
-          }
-        }
-      }
+    const transactionFeeProto = new XRPDropsAmount()
+    transactionFeeProto.setDrops(fee)
 
-      // WHEN the protocol buffer is converted to a native TypeScript type.
-      const transaction = XRPTransaction(transaction: transactionProto)
+    const transactionSequenceProto = new Sequence()
+    transactionSequenceProto.setValue(sequence)
 
-      // THEN all fields are present and converted correctly.
-      XCTAssertEqual(transaction?.account, account)
-      XCTAssertEqual(transaction?.fee, fee)
-      XCTAssertEqual(transaction?.sequence, sequence)
-      XCTAssertEqual(transaction?.signingPublicKey, signingPublicKey)
-      XCTAssertEqual(transaction?.transactionSignature, transactionSignature)
-      XCTAssertNil(transaction?.accountTransactionID)
-      XCTAssertNil(transaction?.flags)
-      XCTAssertNil(transaction?.lastLedgerSequence)
-      XCTAssertNil(transaction?.memos)
-      XCTAssertNil(transaction?.signers)
-      XCTAssertNil(transaction?.sourceTag)
-    }
+    const transactionSigningPublicKeyProto = new SigningPublicKey()
+    transactionSigningPublicKeyProto.setValue(signingPublicKey)
 
-    it( testConvertPaymentTransactionWithBadPaymentFields() {
-      // GIVEN a Transaction protocol buffer with payment fields which are incorrect
-      const account = "r123"
-      const fee: UInt64 = 1
-      const sequence: UInt32 = 2
-      const signingPublicKey = Data([1, 2, 3])
-      const transactionSignature = Data([4, 5, 6])
+    const transactionTransactionSignatureProto = new TransactionSignature()
+    transactionTransactionSignatureProto.setValue(transactionSignature)
 
-      const transactionProto = Org_Xrpl_Rpc_V1_Transaction.with {
-        $0.account = Org_Xrpl_Rpc_V1_Account.with {
-          $0.value = Org_Xrpl_Rpc_V1_AccountAddress.with {
-            $0.address = account
-          }
-        }
-        $0.fee = Org_Xrpl_Rpc_V1_XRPDropsAmount.with {
-          $0.drops = fee
-        }
-        $0.sequence = Org_Xrpl_Rpc_V1_Sequence.with {
-          $0.value = sequence
-        }
-        $0.signingPublicKey = Org_Xrpl_Rpc_V1_SigningPublicKey.with {
-          $0.value = signingPublicKey
-        }
-        $0.transactionSignature = Org_Xrpl_Rpc_V1_TransactionSignature.with {
-          $0.value = transactionSignature
-        }
+    const paymentCurrencyAmountProto = new CurrencyAmount()
+    paymentCurrencyAmountProto.setIssuedCurrencyAmount(testIssuedCurrency)
+    const paymentAmountProto = new Amount()
+    paymentAmountProto.setValue(paymentCurrencyAmountProto)
+    const destinationAccountAddressProto = new AccountAddress()
+    destinationAccountAddressProto.setAddress('r123')
+    const paymentDestinationProto = new Destination()
+    paymentDestinationProto.setValue(destinationAccountAddressProto)
+    const transactionPaymentProto = new Payment()
+    transactionPaymentProto.setAmount(paymentAmountProto)
+    transactionPaymentProto.setDestination(paymentDestinationProto)
 
-        $0.payment = Org_Xrpl_Rpc_V1_Payment() // Empty fields, will not convert
-      }
+    const transactionProto = new Transaction()
+    transactionProto.setAccount(transactionAccountProto)
+    transactionProto.setFee(transactionFeeProto)
+    transactionProto.setSequence(transactionSequenceProto)
+    transactionProto.setSigningPublicKey(transactionSigningPublicKeyProto)
+    transactionProto.setTransactionSignature(
+      transactionTransactionSignatureProto,
+    )
+    transactionProto.setPayment(transactionPaymentProto)
 
-      // WHEN the protocol buffer is converted to a native TypeScript type.
-      const transaction = XRPTransaction(transaction: transactionProto)
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const transaction = XRPTransaction.from(transactionProto)
 
-      // THEN the result is nil
-      XCTAssertNil(transaction)
-    }
+    // THEN all fields are present and converted correctly.
+    assert.equal(transaction?.account, account)
+    assert.equal(transaction?.fee, fee)
+    assert.equal(transaction?.sequence, sequence)
+    assert.deepEqual(transaction?.signingPublicKey, signingPublicKey)
+    assert.deepEqual(transaction?.transactionSignature, transactionSignature)
+    assert.isUndefined(transaction?.accountTransactionID)
+    assert.isUndefined(transaction?.flags)
+    assert.isUndefined(transaction?.lastLedgerSequence)
+    assert.isUndefined(transaction?.memos)
+    assert.isUndefined(transaction?.signers)
+    assert.isUndefined(transaction?.sourceTag)
+  })
 
-    it( testConvertUnsupportedTransactionType() {
-      // GIVEN a Transaction protocol buffer with an unsupported transaction type.
-      const account = "r123"
-      const fee: UInt64 = 1
-      const sequence: UInt32 = 2
-      const signingPublicKey = Data([1, 2, 3])
-      const transactionSignature = Data([4, 5, 6])
+  it('Convert PAYMENT Transaction with bad payment fields', function(): void {
+    // GIVEN a Transaction protocol buffer with payment fields which are incorrect
+    const account = 'r123'
+    const fee = '1'
+    const sequence = 2
+    const signingPublicKey = new Uint8Array([1, 2, 3])
+    const transactionSignature = new Uint8Array([4, 5, 6])
 
-      const transactionProto = Org_Xrpl_Rpc_V1_Transaction.with {
-        $0.account = Org_Xrpl_Rpc_V1_Account.with {
-          $0.value = Org_Xrpl_Rpc_V1_AccountAddress.with {
-            $0.address = account
-          }
-        }
-        $0.fee = Org_Xrpl_Rpc_V1_XRPDropsAmount.with {
-          $0.drops = fee
-        }
-        $0.sequence = Org_Xrpl_Rpc_V1_Sequence.with {
-          $0.value = sequence
-        }
-        $0.signingPublicKey = Org_Xrpl_Rpc_V1_SigningPublicKey.with {
-          $0.value = signingPublicKey
-        }
-        $0.transactionSignature = Org_Xrpl_Rpc_V1_TransactionSignature.with {
-          $0.value = transactionSignature
-        }
+    // build up transaction proto
+    const transactionAccountAddressProto = new AccountAddress()
+    transactionAccountAddressProto.setAddress(account)
+    const transactionAccountProto = new Account()
+    transactionAccountProto.setValue(transactionAccountAddressProto)
 
-        $0.checkCash = Org_Xrpl_Rpc_V1_CheckCash() // Unsupported
-      }
+    const transactionFeeProto = new XRPDropsAmount()
+    transactionFeeProto.setDrops(fee)
 
-      // WHEN the protocol buffer is converted to a native TypeScript type.
-      const transaction = XRPTransaction(transaction: transactionProto)
+    const transactionSequenceProto = new Sequence()
+    transactionSequenceProto.setValue(sequence)
 
-      // THEN the result is nil
-      XCTAssertNil(transaction)
-    }
+    const transactionSigningPublicKeyProto = new SigningPublicKey()
+    transactionSigningPublicKeyProto.setValue(signingPublicKey)
+
+    const transactionTransactionSignatureProto = new TransactionSignature()
+    transactionTransactionSignatureProto.setValue(transactionSignature)
+
+    const transactionPaymentProto = new Payment() // Empty fields
+
+    const transactionProto = new Transaction()
+    transactionProto.setAccount(transactionAccountProto)
+    transactionProto.setFee(transactionFeeProto)
+    transactionProto.setSequence(transactionSequenceProto)
+    transactionProto.setSigningPublicKey(transactionSigningPublicKeyProto)
+    transactionProto.setTransactionSignature(
+      transactionTransactionSignatureProto,
+    )
+    transactionProto.setPayment(transactionPaymentProto) // Empty fields, will not convert
+
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const transaction = XRPTransaction.from(transactionProto)
+
+    // THEN the result is nil
+    assert.isUndefined(transaction)
+  })
+
+  it('Convert unsupported transaction type', function(): void {
+    // GIVEN a Transaction protocol buffer with an unsupported transaction type.
+    const account = 'r123'
+    const fee = '1'
+    const sequence = 2
+    const signingPublicKey = new Uint8Array([1, 2, 3])
+    const transactionSignature = new Uint8Array([4, 5, 6])
+
+    // build up transaction proto
+    const transactionAccountAddressProto = new AccountAddress()
+    transactionAccountAddressProto.setAddress(account)
+    const transactionAccountProto = new Account()
+    transactionAccountProto.setValue(transactionAccountAddressProto)
+
+    const transactionFeeProto = new XRPDropsAmount()
+    transactionFeeProto.setDrops(fee)
+
+    const transactionSequenceProto = new Sequence()
+    transactionSequenceProto.setValue(sequence)
+
+    const transactionSigningPublicKeyProto = new SigningPublicKey()
+    transactionSigningPublicKeyProto.setValue(signingPublicKey)
+
+    const transactionTransactionSignatureProto = new TransactionSignature()
+    transactionTransactionSignatureProto.setValue(transactionSignature)
+
+    const transactionCheckCashProto = new CheckCash() // Unsupported
+
+    const transactionProto = new Transaction()
+    transactionProto.setAccount(transactionAccountProto)
+    transactionProto.setFee(transactionFeeProto)
+    transactionProto.setSequence(transactionSequenceProto)
+    transactionProto.setSigningPublicKey(transactionSigningPublicKeyProto)
+    transactionProto.setTransactionSignature(
+      transactionTransactionSignatureProto,
+    )
+    transactionProto.setCheckCash(transactionCheckCashProto) // Unsupported
+
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const transaction = XRPTransaction.from(transactionProto)
+
+    // THEN the result is nil
+    assert.isUndefined(transaction)
+  })
 })
