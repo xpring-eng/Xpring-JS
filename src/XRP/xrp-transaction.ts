@@ -62,6 +62,9 @@ export default class XRPTransaction {
         if (payment) {
           paymentFields = XRPPayment.from(payment)
           type = Transaction.TransactionDataCase.PAYMENT
+          if (!paymentFields) {
+            return undefined
+          }
         } else {
           return undefined
         }

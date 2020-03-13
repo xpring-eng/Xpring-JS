@@ -687,8 +687,8 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.equal(transaction?.accountTransactionID, accountTransactionID)
     assert.equal(transaction?.flags, flags)
     assert.equal(transaction?.lastLedgerSequence, lastLedgerSequence)
-    assert.deepEqual(transaction?.memos, [XRPMemo.from(memoProto)])
-    assert.deepEqual(transaction?.signers, [XRPSigner.from(signerProto)])
+    assert.deepEqual(transaction?.memos, [XRPMemo.from(memoProto)!])
+    assert.deepEqual(transaction?.signers, [XRPSigner.from(signerProto)!])
     assert.equal(transaction?.sourceTag, sourceTag)
   })
 
