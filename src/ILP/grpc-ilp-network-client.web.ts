@@ -6,7 +6,7 @@ import { SendPaymentResponse } from '../generated/web/ilp/send_payment_response_
 import isNode from '../utils'
 import { BalanceServiceClient } from '../generated/web/ilp/balance_service_grpc_web_pb'
 import { IlpOverHttpServiceClient } from '../generated/web/ilp/ilp_over_http_service_grpc_web_pb'
-import IlpWebCredentials from './auth/ilp-credentials.web'
+import IlpCredentials from './auth/ilp-credentials.web'
 
 class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
   private readonly balanceClient: BalanceServiceClient
@@ -24,9 +24,13 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
         // Swallow the error here for browsers
       }
     }
-    // FIXME wrong credentials
-    this.balanceClient = new BalanceServiceClient(grpcURL, null, null)
-    this.paymentClient = new IlpOverHttpServiceClient(grpcURL, null, null)
+
+    this.balanceClient = new BalanceServiceClient(grpcURL, null, {
+      withCredentials: 'true',
+    })
+    this.paymentClient = new IlpOverHttpServiceClient(grpcURL, null, {
+      withCredentials: 'true',
+    })
   }
 
   getBalance(
@@ -36,7 +40,7 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
     return new Promise((resolve, reject): void => {
       this.balanceClient.getBalance(
         request,
-        IlpWebCredentials.build(bearerToken),
+        IlpCredentials.build(bearerToken),
         (error, response) => {
           if (error != null || response === null) {
             reject(error)
@@ -55,7 +59,7 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
     return new Promise((resolve, reject): void => {
       this.paymentClient.sendMoney(
         request,
-        IlpWebCredentials.build(bearerToken),
+        IlpCredentials.build(bearerToken),
         (error, response) => {
           if (error != null || response === null) {
             reject(error)

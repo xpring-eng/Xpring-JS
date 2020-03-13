@@ -5,7 +5,7 @@ import { Metadata } from 'grpc-web'
  * add an Authorization metadata header, and ensures every bearer token
  * going over the wire is prefixed with 'Bearer '
  */
-class IlpWebCredentials implements Metadata {
+class IlpCredentials implements Metadata {
   [s: string]: string
 
   /**
@@ -28,9 +28,9 @@ class IlpWebCredentials implements Metadata {
    * @return a new instance of IlpCredentials, with an Authorization header if token is defined,
    *          otherwise returns undefined
    */
-  public static build(token?: string): IlpWebCredentials | undefined {
+  public static build(token?: string): IlpCredentials | undefined {
     return token ? { Authorization: this.applyBearer(token) } : undefined
   }
 }
 
-export default IlpWebCredentials
+export default IlpCredentials
