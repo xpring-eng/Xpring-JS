@@ -1,4 +1,5 @@
 import { Metadata } from 'grpc'
+import { AuthUtils } from './auth-utils'
 
 /**
  * An extension of grpc.Metadata which provides a convenient way to
@@ -6,16 +7,6 @@ import { Metadata } from 'grpc'
  * going over the wire is prefixed with 'Bearer '
  */
 class IlpCredentials extends Metadata {
-  /**
-   * Prepends 'Bearer ' to an auth token, if it is not already prefixed with 'Bearer '
-   *
-   * @param token An authentication token, with or without a 'Bearer ' prefix
-   * @return token with a bearer prefix, or the original token if it already started with 'Bearer '
-   */
-  private static applyBearer(token: string): string {
-    return token.startsWith('Bearer ') ? token : 'Bearer '.concat(token)
-  }
-
   /**
    * Static initializer, which constructs a new IlpCredentials object and adds
    * an Authorization entry.  If token is undefined, an Authorization header will
@@ -26,7 +17,7 @@ class IlpCredentials extends Metadata {
    */
   public static build(token?: string): IlpCredentials {
     const credentials = new IlpCredentials()
-    credentials.add('Authorization', this.applyBearer(token || ''))
+    credentials.add('Authorization', AuthUtils.applyBearer(token || ''))
     return credentials
   }
 }
