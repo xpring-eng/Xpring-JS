@@ -89,7 +89,7 @@ module.exports = {
         'src/default-xrp-client.ts',
       ],
       rules: {
-        // This is actually a good rule to have enabled, but for the XpringClient, we define a helper error message class in the same file
+        // This is actually a good rule to have enabled, but for the XRPClient, we define a helper error message class in the same file
         'max-classes-per-file': 'off',
       },
     },
