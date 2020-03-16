@@ -28,16 +28,15 @@ $ npm i xpring-js
 
 Xpring SDK needs to communicate with a rippled node which has gRPC enabled. Consult the [rippled documentation](https://github.com/ripple/rippled#build-from-source) for details on how to build your own node.
 
-To get developers started right away, Xpring currently hosts nodes. These nodes are provided on a best effort basis, and may be subject to downtime.
+To get developers started right away, Xpring currently provides nodes.
 
-if you are using Xpring-JS in a node environment, use the following addresses to boostrap your application:
-
+If you are using Xpring-JS in a node environment, use the following addresses to boostrap your application:
 ```
 # TestNet
-alpha.test.xrp.xpring.io:50051
+test.xrp.xpring.io:50051
 
 # MainNet
-alpha.xrp.xpring.io:50051
+main.xrp.xpring.io:50051
 ```
 
 If you are using Xpring-JS from within a browser, use the following addresses to boostrap your application:
@@ -46,7 +45,7 @@ If you are using Xpring-JS from within a browser, use the following addresses to
 https://envoy.test.xrp.xpring.io
 
 #MainNet
-https://envoy.xrp.xpring.io
+https://envoy.main.xrp.xpring.io
 ```
 
 ## Usage
@@ -137,7 +136,7 @@ wallet.verify(message, signature); // true
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = alpha.test.xrp.xpring.io:50051; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
 const xrpClient = new XRPClient(remoteURL, true);
 ```
 
@@ -148,7 +147,7 @@ A `XRPClient` can check the balance of an account on the XRP Ledger.
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
 const xrpClient = new XRPClient(remoteURL, true);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
@@ -176,7 +175,7 @@ These states are determined by the `TransactionStatus` enum.
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
 const xrpClient = new XRPClient(remoteURL, true);
 
 const transactionHash = "9FC7D277C1C8ED9CE133CC17AEA9978E71FC644CE6F5F0C8E26F1C635D97AF4A";
@@ -194,7 +193,7 @@ A `XRPClient` can send XRP to other accounts on the XRP Ledger.
 ```javascript
 const { Wallet, XRPAmount, XRPClient } = require("xpring-js");
 
-const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
+const remoteURL = test.xrp.xpring.io:50051; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
 const xrpClient = new XRPClient(remoteURL, true);
 
 // Amount of XRP to send
