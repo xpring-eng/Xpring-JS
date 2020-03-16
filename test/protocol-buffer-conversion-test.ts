@@ -37,8 +37,8 @@ describe('Protocol Buffer Conversion', function(): void {
     const currency = XRPCurrency.from(currencyProto)
 
     // THEN the currency converted as expected.
-    assert.deepEqual(currency?.code, currencyProto.getCode())
-    assert.deepEqual(currency?.name, currencyProto.getName())
+    assert.deepEqual(currency.code, currencyProto.getCode())
+    assert.deepEqual(currency.name, currencyProto.getName())
   })
 
   it('Convert PathElement protobuf with all fields set to XRPPathElement', function(): void {
