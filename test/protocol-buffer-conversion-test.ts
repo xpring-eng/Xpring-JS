@@ -76,7 +76,6 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.isUndefined(pathElement?.issuer)
   })
 
-  // MARK: - Org_Xrpl_Rpc_V1_Transaction.Path
   it('Convert Path protobuf with no paths to XRPPath', function(): void {
     // GIVEN a set of paths with zero paths.
     const pathProto = new Payment.Path()
