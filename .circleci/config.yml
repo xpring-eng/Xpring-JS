@@ -25,7 +25,7 @@ jobs:
           name: "Install swagger"
           command: |
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-            brew install swagger-codegen
+            /home/linuxbrew/.linuxbrew/bin install swagger-codegen
 
       - run:
           name: "Install protoc plugin"
