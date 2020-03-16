@@ -49,7 +49,7 @@ export class PaymentResult {
    * @param protoResponse a SendPaymentResponse to be converted
    * @return a PaymentResult with fields populated using the analogous fields in the proto object
    */
-  public static from(protoResponse: SendPaymentResponse) {
+  public static from(protoResponse: SendPaymentResponse): PaymentResult {
     return new PaymentResult({
       originalAmount: bigInt(protoResponse.getOriginalAmount()),
       amountDelivered: bigInt(protoResponse.getAmountDelivered()),
