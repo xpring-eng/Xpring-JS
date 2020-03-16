@@ -156,7 +156,7 @@ describe('Default Xpring Client', function(): void {
   it('Get Payment Status - Unvalidated Transaction and Success Code', async function(): Promise<
     void
   > {
-    // GIVEN a XpringClient which will return an unvalidated transaction with a success code.
+    // GIVEN an XRPClient which will return an unvalidated transaction with a success code.
     const transactionStatusResponse = makeGetTransactionResponse(
       false,
       transactionStatusCodeSuccess,
@@ -183,9 +183,8 @@ describe('Default Xpring Client', function(): void {
     // Iterate over different types of transaction status codes which represent failures.
     /* eslint-disable no-await-in-loop */
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
-      // GIVEN an XRPClient which will return an unvalidated transaction with a failure code.
+      // GIVEN a XRPClient which will return an validated transaction with a failure code.
       const transactionStatusCodeFailure = transactionStatusFailureCodes[i]
-      // GIVEN a XpringClient which will return an validated transaction with a failure code.
       const transactionStatusResponse = makeGetTransactionResponse(
         true,
         transactionStatusCodeFailure,
@@ -215,7 +214,7 @@ describe('Default Xpring Client', function(): void {
   it('Get Payment Status - Validated Transaction and Success Code', async function(): Promise<
     void
   > {
-    // GIVEN a XpringClient which will return an validated transaction with a success code.
+    // GIVEN an XRPClient which will return an validated transaction with a success code.
     const transactionStatusResponse = makeGetTransactionResponse(
       true,
       transactionStatusCodeSuccess,
