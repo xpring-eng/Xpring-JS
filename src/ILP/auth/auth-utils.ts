@@ -1,3 +1,7 @@
+/**
+ * Utility class used by IlpCredentials to perform various tasks which are common to both web and node
+ * network clients.
+ */
 export class AuthUtils {
   /**
    * Prepends 'Bearer ' to an auth token, if it is not already prefixed with 'Bearer '
