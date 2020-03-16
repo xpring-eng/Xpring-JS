@@ -24,8 +24,10 @@ jobs:
       - run:
           name: "Install Maven"
           command: |
-            sudo apt update
-            sudo apt install maven
+            wget http://mirrors.sonic.net/apache/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.tar.gz
+            tar -zxf apache-maven-3.2.5-bin.tar.gz
+            sudo cp -R apache-maven-3.2.5 /usr/local
+            sudo ln -s /usr/local/apache-maven-3.2.5/bin/mvn /usr/bin/mvn
 
       - run:
           name: "Install protoc plugin"

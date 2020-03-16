@@ -25,6 +25,8 @@ paths:
                 properties:
                   address:
                     type: string
+                  network:
+                    type: string
         '404':
           description: Not Found
       operationId: get-path
