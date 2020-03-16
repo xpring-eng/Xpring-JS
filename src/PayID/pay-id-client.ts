@@ -34,10 +34,15 @@ export default class PayIDClient {
     client.basePath = `https://${paymentPointer.host}`
     const apiInstance = new DefaultApi(client)
 
+    console.log(`Going to hit ${client.basePath}/${path}`)
+
     return new Promise((resolve, reject) => {
       // Ignore unused var in generated code.
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       apiInstance.getPath(path, (error, data, _response) => {
+        console.log(`Err: ${error}`)
+        console.log(`Dat: ${data}`)
+
         if (error) {
           if (error.status === 404) {
             // Not Found
