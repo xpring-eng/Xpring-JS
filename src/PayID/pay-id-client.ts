@@ -30,19 +30,15 @@ export default class PayIDClient {
     // Swagger generates the '/' in the URL by default and the payment pointer's 'path' is prefixed by a '/'. Strip off the leading '/'.
     const path = paymentPointer.path.substring(1)
 
+    // TODO(keefertaylor): Append headers here.
     const client = new ApiClient()
     client.basePath = `https://${paymentPointer.host}`
     const apiInstance = new DefaultApi(client)
-
-    console.log(`Going to hit ${client.basePath}/${path}`)
 
     return new Promise((resolve, reject) => {
       // Ignore unused var in generated code.
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       apiInstance.resolvePayID(path, (error, data, _response) => {
-        console.log(`Err: ${error}`)
-        console.log(`Dat: ${data}`)
-
         if (error) {
           if (error.status === 404) {
             // Not Found
