@@ -11,12 +11,19 @@ paths:
         required: true
     get:
       summary: get-pay-id
+      # consumes:
+      #   - application/xrpl-mainnet+json
+      # produces:
+      #   - application/xrpl-mainnet+json
       tags: []
       responses:
         '200':
           description: OK
           content:
-            application/json:
+            application/xrpl-mainnet+json:
+              schema:
+                $ref: '#/components/schemas/Mapping'
+            application/xrpl-testnet+json:
               schema:
                 $ref: '#/components/schemas/Mapping'
         '404':
