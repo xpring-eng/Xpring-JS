@@ -21,8 +21,8 @@ jobs:
 
       - protobuf/install
 
-
       # Taken from: https://stackoverflow.com/questions/32942023/ubuntu-openjdk-8-unable-to-locate-package
+      # TODO(keefertaylor): Find a better way to install the correct version of java.
       - run:
           name: "Install Java"
           command: |
@@ -55,12 +55,14 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
+      # TODO(keefertaylor): If sdkman-init isn't run then `java` isn't in the PATH. Investigate why and remove.
       - run:
           name: "Compile Typescript"
           command: |
             source "$HOME/.sdkman/bin/sdkman-init.sh"
             npm run build
 
+      # TODO(keefertaylor): If sdkman-init isn't run then `java` isn't in the PATH. Investigate why and remove.
       - run:
           name: "Run Tests"
           command: |
