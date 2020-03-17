@@ -46,7 +46,8 @@ export default class PayIDClient {
             const message = `${error.status}: ${error.response.text}`
             reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
           }
-        } else if (data?.address) {
+          // TODO(keefertaylor): Mke sure that the network matches the requested network, otherwise throw an error.
+        } else if (data?.address && data?.network) {
           resolve(data.address)
         } else {
           reject(new PayIDError(PayIDErrorType.UnexpectedResponse))

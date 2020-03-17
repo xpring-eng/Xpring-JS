@@ -31,6 +31,9 @@ components:
       properties:
         address:
           type: string
+        network:
+          type: string
       required:
         - address
+        - network
 openapi: '3.0.0'
