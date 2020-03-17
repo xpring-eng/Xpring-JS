@@ -29,6 +29,8 @@ jobs:
             curl -s "https://get.sdkman.io" | bash
             source "$HOME/.sdkman/bin/sdkman-init.sh"
             sdk install java
+            source "$HOME/.sdkman/bin/sdkman-init.sh"
+
 
       - run:
           name: "Install protoc plugin"
