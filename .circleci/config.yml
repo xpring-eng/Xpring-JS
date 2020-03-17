@@ -55,8 +55,10 @@ jobs:
           name: "Diagnostics"
           command: |
             whoami
-            which java
+            echo $PATH
             echo $JAVA_HOME
+            which java
+
 
       - save_cache:
           paths:
