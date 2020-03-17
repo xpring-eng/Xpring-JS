@@ -29,7 +29,7 @@ jobs:
             curl -s "https://get.sdkman.io" | bash
             source "$HOME/.sdkman/bin/sdkman-init.sh"
             sdk install java
-            source "$HOME/.sdkman/bin/sdkman-init.sh"
+            export $PATH=$PATH:/home/circleci/.sdkman/candidates/java/current/bin/
 
 
       - run:
