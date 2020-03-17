@@ -21,11 +21,13 @@ jobs:
 
       - protobuf/install
 
+      # Taken from: https://stackoverflow.com/questions/32942023/ubuntu-openjdk-8-unable-to-locate-package
       - run:
           name: "Install Java"
           command: |
-            sudo apt update
-            sudo apt install default-jdk
+            curl -s "https://get.sdkman.io" | bash
+            source "$HOME/.sdkman/bin/sdkman-init.sh"
+            sdk install java
 
       - run:
           name: "Install Maven"
