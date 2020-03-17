@@ -66,8 +66,16 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - run: npm run build
-      - run: nyc npm test
+
+      - run:
+          name: "Compile Typescript"
+          command: |
+            npm run build
+
+      - run:
+          name: "Run Tests"
+          command: |
+            nyc npm test
 
       - run:
           name: Code Coverage
