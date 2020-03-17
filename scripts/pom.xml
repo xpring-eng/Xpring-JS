@@ -36,21 +36,21 @@
 	<build>
 		<plugins>
 			<plugin>
-                <groupId>io.swagger</groupId>
+                <groupId>io.swagger.codegen.v3</groupId>
                 <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>2.4.12</version>
+                <version>3.0.18</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>generate</goal>
                         </goals>
-                        <configuration>
-                            <inputSpec>../pay-id-api-spec/pay-id.v1.yml</inputSpec>
-                            <language>javascript</language>
-                            <output>./.tmp_swagger</output>
-                          </configuration>
                     </execution>
                 </executions>
+                                        <configuration>
+                            <inputSpec>pay-id.v1.yml</inputSpec>
+                            <language>java</language>
+                            <output>./.tmp_swagger</output>
+                          </configuration>
             </plugin>
 		</plugins>
 	</build>

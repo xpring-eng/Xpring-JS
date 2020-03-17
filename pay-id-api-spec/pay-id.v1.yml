@@ -23,7 +23,7 @@ paths:
                 $ref: '#/components/schemas/Mapping'
         '404':
           description: Not Found
-      operationId: resolveKeefer
+      operationId: resolveKeefer2
       description: Resolve a pay id
 components:
   schemas:
@@ -35,4 +35,4 @@ components:
           type: string
       required:
         - address
-swagger: "2.0"
+openapi: '3.0.0'

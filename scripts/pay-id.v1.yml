@@ -1,0 +1,38 @@
+info:
+  title: test
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  '/{path}':
+    parameters:
+      - schema:
+          type: string
+        name: path
+        in: path
+        required: true
+    get:
+      summary: get-pay-id
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mapping'
+        '404':
+          description: Not Found
+      operationId: resolveKeefer
+      description: Resolve a pay id
+components:
+  schemas:
+    Mapping:
+      title: Mapping
+      type: object
+      properties:
+        address:
+          type: string
+      required:
+        - address
+swagger: "2.0"

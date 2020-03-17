@@ -32,11 +32,15 @@ echo "Regenerating Swagger API from PayID Open API Spec"
 
 mkdir -p $TMP_SWAGGER_DIR
 mkdir -p $DESTINATION_FOLDER
-cd scripts && mvn install && cd ..
 
-# swagger-codegen generate --lang $LANG \
+# swagger-codegen generate \
+#   --lang $LANG \
 #   --input $PAY_ID_OPEN_API_SPEC \
 #   -o $TMP_SWAGGER_DIR \
+java -jar swagger-codegen.jar generate \
+  --lang $LANG \
+  --input $PAY_ID_OPEN_API_SPEC \
+  -o $TMP_SWAGGER_DIR \
 
 echo "Swagger Generation Complete!"
 
@@ -54,7 +58,7 @@ echo "Cleaning Up...."
 # Copy Source files
 cp -r $GENERATED_SOURCES_FOLDER/* $DESTINATION_FOLDER
 # Remove everythinge else.
-rm -rf $TMP_SWAGGER_DIR
+# rm -rf scripts/$TMP_SWAGGER_DIR
 
 echo "Done Cleaning Up"
 echo "All Done!"
