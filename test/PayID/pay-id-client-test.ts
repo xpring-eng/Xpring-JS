@@ -40,7 +40,6 @@ describe('Pay ID Client', function(): void {
       .get('/georgewashington')
       .reply(200, {
         address: 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4',
-        network: 'xrpl-mainnet',
       })
 
     // WHEN an XRP address is requested.

@@ -31,8 +31,6 @@ components:
       properties:
         address:
           type: string
-        network:
-          type: string
       required:
         - address
         - network
