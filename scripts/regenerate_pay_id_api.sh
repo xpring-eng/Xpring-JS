@@ -54,7 +54,7 @@ echo "Cleaning Up...."
 # Copy Source files
 cp -r $GENERATED_SOURCES_FOLDER/* $DESTINATION_FOLDER
 # Remove everythinge else.
-rm -rf scripts/$TMP_SWAGGER_DIR
+rm -rf $TMP_SWAGGER_DIR
 
 echo "Done Cleaning Up"
 echo "All Done!"
