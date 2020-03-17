@@ -37,7 +37,7 @@ mkdir -p $DESTINATION_FOLDER
 #   --lang $LANG \
 #   --input $PAY_ID_OPEN_API_SPEC \
 #   -o $TMP_SWAGGER_DIR \
-/home/circleci/.sdkman/candidates/java/current/bin/java -jar swagger-codegen.jar generate \
+java -jar swagger-codegen.jar generate \
   --lang $LANG \
   --input $PAY_ID_OPEN_API_SPEC \
   -o $TMP_SWAGGER_DIR \
