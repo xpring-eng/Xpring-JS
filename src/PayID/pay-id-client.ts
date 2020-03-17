@@ -39,7 +39,7 @@ export default class PayIDClient {
     return new Promise((resolve, reject) => {
       // Ignore unused var in generated code.
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      apiInstance.resolveKeefer2(path, (error, data, _response) => {
+      apiInstance.resolvePayID(path, (error, data, _response) => {
         console.log(`Err: ${error}`)
         console.log(`Dat: ${data}`)
 
