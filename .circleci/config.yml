@@ -50,17 +50,6 @@ jobs:
             npm i
             npm rebuild
 
-
-      - run:
-          name: "Diagnostics"
-          command: |
-            source "$HOME/.sdkman/bin/sdkman-init.sh"
-            whoami
-            echo $PATH
-            echo $JAVA_HOME
-            which java
-
-
       - save_cache:
           paths:
             - node_modules
@@ -69,11 +58,13 @@ jobs:
       - run:
           name: "Compile Typescript"
           command: |
+            source "$HOME/.sdkman/bin/sdkman-init.sh"
             npm run build
 
       - run:
           name: "Run Tests"
           command: |
+            source "$HOME/.sdkman/bin/sdkman-init.sh"
             nyc npm test
 
       - run:
