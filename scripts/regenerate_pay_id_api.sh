@@ -52,7 +52,7 @@ echo "Swagger Generation Complete!"
 echo "Cleaning Up...."
 
 # Copy Source files
-cp -r scripts/$GENERATED_SOURCES_FOLDER/* $DESTINATION_FOLDER
+cp -r $GENERATED_SOURCES_FOLDER/* $DESTINATION_FOLDER
 # Remove everythinge else.
 rm -rf $TMP_SWAGGER_DIR
 

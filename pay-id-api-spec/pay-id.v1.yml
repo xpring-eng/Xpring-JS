@@ -1,10 +1,8 @@
-swagger: "2.0"
 info:
-  title: PayID
-  version: '0.1'
+  title: test
+  version: '1.0'
 servers:
-  - url: 'https://'
-# TODO(keefertaylor): Headers can be added in this file or manually set on the client. Evaluate and implement headers.
+  - url: 'http://localhost:3000'
 paths:
   '/{path}':
     parameters:
@@ -14,6 +12,7 @@ paths:
         in: path
         required: true
     get:
+      summary: get-pay-id
       tags: []
       responses:
         '200':
@@ -21,15 +20,19 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  address:
-                    type: string
-                  network:
-                    type: string
+                $ref: '#/components/schemas/Mapping'
         '404':
           description: Not Found
-      operationId: get-path
+      operationId: resolveKeefer
+      description: Resolve a pay id
 components:
-  schemas: {}
-  securitySchemes: {}
+  schemas:
+    Mapping:
+      title: Mapping
+      type: object
+      properties:
+        address:
+          type: string
+      required:
+        - address
+swagger: "2.0"
