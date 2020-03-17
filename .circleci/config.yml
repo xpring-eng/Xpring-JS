@@ -30,14 +30,6 @@ jobs:
             sdk install java
 
       - run:
-          name: "Install Maven"
-          command: |
-            wget http://mirrors.sonic.net/apache/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.tar.gz
-            tar -zxf apache-maven-3.2.5-bin.tar.gz
-            sudo cp -R apache-maven-3.2.5 /usr/local
-            sudo ln -s /usr/local/apache-maven-3.2.5/bin/mvn /usr/bin/mvn
-
-      - run:
           name: "Install protoc plugin"
           command: |
             curl -L https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64 --output protoc-gen-grpc-web
