@@ -55,7 +55,6 @@ jobs:
           name: "Diagnostics"
           command: |
             source "$HOME/.sdkman/bin/sdkman-init.sh"
-            export PATH=/home/circleci/.sdkman/candidates/java/current/bin/:$PATH
             whoami
             echo $PATH
             echo $JAVA_HOME
