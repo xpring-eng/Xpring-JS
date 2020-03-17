@@ -21,6 +21,7 @@ jobs:
 
       - protobuf/install
 
+
       # Taken from: https://stackoverflow.com/questions/32942023/ubuntu-openjdk-8-unable-to-locate-package
       - run:
           name: "Install Java"
@@ -46,6 +47,14 @@ jobs:
             sudo npm -g i nyc codecov
             npm i
             npm rebuild
+
+
+      - run:
+          name: "Diagnostics"
+          command: |
+            whoami
+            which java
+            echo $JAVA_HOME
 
       - save_cache:
           paths:
