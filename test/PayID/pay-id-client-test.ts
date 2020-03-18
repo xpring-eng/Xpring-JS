@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import nock from 'nock'
 import { PayIDUtils } from 'xpring-common-js'
-import PayIDClient from '../../src/PayID/pay-id-client'
+import PayIDClient, { XRPLNetwork } from '../../src/PayID/pay-id-client'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
 
 describe('Pay ID Client', function(): void {
@@ -50,10 +50,11 @@ describe('Pay ID Client', function(): void {
     assert.exists(xrpAddress)
   })
 
-  it('xrpAddressForPayID - successful response - match not found', async function() {
+  it('xrpAddressForPayID - successful response - match not found', function(done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a 404 for the payID.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient()
+    const network = XRPLNetwork.Test
 
     const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
     if (!paymentPointer) {
@@ -65,11 +66,20 @@ describe('Pay ID Client', function(): void {
       .get('/georgewashington')
       .reply(404, {})
 
-    // WHEN an XRP address is requested.
-    const xrpAddress = await payIDClient.xrpAddressForPayID(payID)
+    // WHEN an XRPAddress is requested.
+    payIDClient.xrpAddressForPayID(payID, network).catch((error) => {
+      // THEN an unexpected response is thrown with the details of the error.
+      assert.equal(
+        (error as PayIDError).errorType,
+        PayIDErrorType.MappingNotFound,
+      )
 
-    // THEN the address is undefined.
-    assert.isUndefined(xrpAddress)
+      const { message } = error
+      assert.include(message, payID)
+      assert.include(message, network)
+
+      done()
+    })
   })
 
   it('xrpAddressForPayID - failed request', function(done) {
