@@ -145,29 +145,22 @@ describe('Protocol Buffer Conversion', function(): void {
   // IssuedCurrency
 
   it('Convert IssuedCurrency to XRPIssuedCurrency', function(): void {
-    // GIVEN an issued currency protocol buffer
-    const issuedCurrencyProto = new IssuedCurrencyAmount()
-    issuedCurrencyProto.setCurrency(testCurrencyProto)
-    const accountAddressProto = new AccountAddress()
-    accountAddressProto.setAddress('r123')
-    issuedCurrencyProto.setIssuer(accountAddressProto)
-    issuedCurrencyProto.setValue('12345')
-
+    // GIVEN an issued currency protocol buffer,
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const issuedCurrency = XRPIssuedCurrency.from(issuedCurrencyProto)
+    const issuedCurrency = XRPIssuedCurrency.from(testIssuedCurrency)
 
     // THEN the issued currency converted as expected.
     assert.deepEqual(
       issuedCurrency?.currency,
-      XRPCurrency.from(issuedCurrencyProto.getCurrency()!),
+      XRPCurrency.from(testIssuedCurrency.getCurrency()!),
     )
     assert.equal(
       issuedCurrency?.issuer,
-      issuedCurrencyProto.getIssuer()?.getAddress(),
+      testIssuedCurrency.getIssuer()?.getAddress(),
     )
     assert.deepEqual(
       issuedCurrency?.value,
-      bigInt(issuedCurrencyProto.getValue()),
+      bigInt(testIssuedCurrency.getValue()),
     )
   })
 
@@ -188,6 +181,7 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   // CurrencyAmount tests
+
   it('Convert CurrencyAmount with drops', function(): void {
     // GIVEN a currency amount protocol buffer with an XRP amount.
     const drops = '10'
