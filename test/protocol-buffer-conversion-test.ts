@@ -473,6 +473,7 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   // Memo
+
   it('Convert Memo with all fields set', function(): void {
     // GIVEN a memo with all fields set.
     const memoData = new Uint8Array([1, 2, 3])
