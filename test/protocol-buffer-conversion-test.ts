@@ -561,6 +561,7 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   // Transaction
+
   it('Convert PAYMENT Transaction, all common fields set', function(): void {
     // GIVEN a Transaction protocol buffer with all common fields set.
     const account = 'r123'
