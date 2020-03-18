@@ -67,6 +67,7 @@ testInvalidIssuedCurrency.setValue('xrp')
 
 describe('Protocol Buffer Conversion', function(): void {
   // Currency
+
   it('Convert Currency protobuf to XRPCurrency object', function(): void {
     // GIVEN a Currency protocol buffer with a code and a name.
     const currencyCode: Uint8Array = new Uint8Array([1, 2, 3])
@@ -79,11 +80,12 @@ describe('Protocol Buffer Conversion', function(): void {
     const currency = XRPCurrency.from(currencyProto)
 
     // THEN the currency converted as expected.
-    assert.deepEqual(currency?.code, currencyProto.getCode())
-    assert.deepEqual(currency?.name, currencyProto.getName())
+    assert.deepEqual(currency.code, currencyProto.getCode())
+    assert.deepEqual(currency.name, currencyProto.getName())
   })
 
   // PathElement
+
   it('Convert PathElement protobuf with all fields set to XRPPathElement', function(): void {
     // GIVEN a PathElement protocol buffer with all fields set.
     const pathElementProto = testPathElement
@@ -120,6 +122,7 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   // Path
+
   it('Convert Path protobuf with no paths to XRPPath', function(): void {
     // GIVEN a set of paths with zero paths.
     const pathProto = new Payment.Path()
@@ -160,41 +163,30 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   // IssuedCurrency
-  it('Convert IssuedCurrency to XRPIssuedCurrency', function(): void {
-    // GIVEN an issued currency protocol buffer
-    const issuedCurrencyProto = new IssuedCurrencyAmount()
-    issuedCurrencyProto.setCurrency(testCurrencyProto)
-    const accountAddressProto = new AccountAddress()
-    accountAddressProto.setAddress('r123')
-    issuedCurrencyProto.setIssuer(accountAddressProto)
-    issuedCurrencyProto.setValue('12345')
 
+  it('Convert IssuedCurrency to XRPIssuedCurrency', function(): void {
+    // GIVEN an issued currency protocol buffer,
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const issuedCurrency = XRPIssuedCurrency.from(issuedCurrencyProto)
+    const issuedCurrency = XRPIssuedCurrency.from(testIssuedCurrency)
 
     // THEN the issued currency converted as expected.
     assert.deepEqual(
       issuedCurrency?.currency,
-      XRPCurrency.from(issuedCurrencyProto.getCurrency()!),
+      XRPCurrency.from(testIssuedCurrency.getCurrency()!),
     )
     assert.equal(
       issuedCurrency?.issuer,
-      issuedCurrencyProto.getIssuer()?.getAddress(),
+      testIssuedCurrency.getIssuer()?.getAddress(),
     )
     assert.deepEqual(
       issuedCurrency?.value,
-      bigInt(issuedCurrencyProto.getValue()),
+      bigInt(testIssuedCurrency.getValue()),
     )
   })
 
   it('Convert IssuedCurrency with bad value', function(): void {
     // GIVEN an issued currency protocol buffer with a non numeric value
-    const issuedCurrencyProto = new IssuedCurrencyAmount()
-    issuedCurrencyProto.setCurrency(testCurrencyProto)
-    const accountAddressProto = new AccountAddress()
-    accountAddressProto.setAddress('r123')
-    issuedCurrencyProto.setIssuer(accountAddressProto)
-    issuedCurrencyProto.setValue('xrp') // non-numeric
+    const issuedCurrencyProto = testInvalidIssuedCurrency
 
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const issuedCurrency = XRPIssuedCurrency.from(issuedCurrencyProto)
@@ -204,6 +196,7 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   // CurrencyAmount tests
+
   it('Convert CurrencyAmount with drops', function(): void {
     // GIVEN a currency amount protocol buffer with an XRP amount.
     const drops = '10'
@@ -228,7 +221,7 @@ describe('Protocol Buffer Conversion', function(): void {
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const currencyAmount = XRPCurrencyAmount.from(currencyAmountProto)
 
-    // THEN the result has an issued currency set and no amount.
+    // THEN the result has an issued currency set and no drops amount.
     assert.deepEqual(
       currencyAmount?.issuedCurrency,
       XRPIssuedCurrency.from(testIssuedCurrency),
@@ -249,8 +242,9 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   // Payment
+
   it('Convert Payment with all fields set', function(): void {
-    // GIVEN a pyament protocol buffer with all fields set.
+    // GIVEN a payment protocol buffer with all fields set.
     // amount
     const currencyAmountProto = new CurrencyAmount()
     currencyAmountProto.setIssuedCurrencyAmount(testIssuedCurrency)
@@ -484,6 +478,7 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   // Memo
+
   it('Convert Memo with all fields set', function(): void {
     // GIVEN a memo with all fields set.
     const memoData = new Uint8Array([1, 2, 3])
