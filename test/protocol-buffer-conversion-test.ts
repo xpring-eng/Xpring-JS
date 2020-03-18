@@ -166,12 +166,7 @@ describe('Protocol Buffer Conversion', function(): void {
 
   it('Convert IssuedCurrency with bad value', function(): void {
     // GIVEN an issued currency protocol buffer with a non numeric value
-    const issuedCurrencyProto = new IssuedCurrencyAmount()
-    issuedCurrencyProto.setCurrency(testCurrencyProto)
-    const accountAddressProto = new AccountAddress()
-    accountAddressProto.setAddress('r123')
-    issuedCurrencyProto.setIssuer(accountAddressProto)
-    issuedCurrencyProto.setValue('xrp') // non-numeric
+    const issuedCurrencyProto = testInvalidIssuedCurrency
 
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const issuedCurrency = XRPIssuedCurrency.from(issuedCurrencyProto)
@@ -206,7 +201,7 @@ describe('Protocol Buffer Conversion', function(): void {
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const currencyAmount = XRPCurrencyAmount.from(currencyAmountProto)
 
-    // THEN the result has an issued currency set and no amount.
+    // THEN the result has an issued currency set and no drops amount.
     assert.deepEqual(
       currencyAmount?.issuedCurrency,
       XRPIssuedCurrency.from(testIssuedCurrency),
