@@ -575,6 +575,7 @@ describe('Protocol Buffer Conversion', function(): void {
       rawValue,
       RippledFlags.TF_PARTIAL_PAYMENT,
     )
+    const sourceTag = 6
     const lastLedgerSequence = 5
     const memoData = new Uint8Array([1, 2, 3])
     const memoFormat = new Uint8Array([4, 5, 6])
@@ -608,8 +609,6 @@ describe('Protocol Buffer Conversion', function(): void {
     signerProto.setAccount(signerAccountProto)
     signerProto.setSigningPublicKey(signerSigningPublicKeyProto)
     signerProto.setTransactionSignature(signerTransactionSignatureProto)
-
-    const sourceTag = 6
 
     // build up transaction proto
     const transactionAccountAddressProto = new AccountAddress()
