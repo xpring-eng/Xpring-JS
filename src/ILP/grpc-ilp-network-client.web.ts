@@ -70,6 +70,16 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
       )
     })
   }
+
+  /* eslint-disable class-methods-use-this */
+  public SendPaymentRequest(): SendPaymentRequest {
+    return new SendPaymentRequest()
+  }
+
+  public GetBalanceRequest(): GetBalanceRequest {
+    return new GetBalanceRequest()
+  }
+  /* eslint-enable class-methods-use-this */
 }
 
 export default GrpcIlpNetworkClientWeb
