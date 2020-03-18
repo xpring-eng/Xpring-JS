@@ -15,6 +15,7 @@ export default class XRPPayment {
     } else {
       return undefined
     }
+
     const destination = payment
       .getDestination()
       ?.getValue()
@@ -22,7 +23,9 @@ export default class XRPPayment {
     if (!destination) {
       return undefined // destination is required
     }
+
     const destinationTag = payment.getDestinationTag()?.getValue()
+
     // If the deliverMin field is set, it must be able to be transformed into a XRPCurrencyAmount.
     let deliverMin
     if (payment.hasDeliverMin()) {
@@ -36,7 +39,9 @@ export default class XRPPayment {
     } else {
       deliverMin = undefined
     }
+
     const invoiceID = payment.getInvoiceId()?.getValue()
+
     const paths =
       payment.getPathsList()?.length > 0
         ? payment.getPathsList().map((path) => XRPPath.from(path))
