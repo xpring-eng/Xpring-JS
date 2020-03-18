@@ -73,5 +73,3 @@ export default class PayIDClient {
     return address
   }
 }
-
-export { PayIDErrorType, PayIDError }
