@@ -2,13 +2,14 @@ import { PayIDUtils } from 'xpring-common-js'
 import DefaultApi from './generated/api/DefaultApi'
 import ApiClient from './generated/ApiClient'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
+import PayIDClientInterface from './pay-id-client-interface'
 
 /**
  * A client for PayID.
  *
  * @warning This class is experimental and should not be used in production applications.
  */
-export default class PayIDClient {
+export default class PayIDClient implements PayIDClientInterface {
   /**
    * Retrieve the XRP Address authorized with a PayID.
    *
