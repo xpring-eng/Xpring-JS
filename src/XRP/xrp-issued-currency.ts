@@ -15,12 +15,14 @@ export default class XRPIssuedCurrency {
     if (currency) {
       xrpCurrency = XRPCurrency.from(currency)
     }
+
     let value
     try {
       value = bigInt(issuedCurrency.getValue())
     } catch {
       value = undefined
     }
+
     if (value) {
       const issuer = issuedCurrency.getIssuer()?.getAddress()
       return new XRPIssuedCurrency(xrpCurrency, value, issuer)

@@ -8,7 +8,7 @@ type Path = Payment.Path
  * @see: https://xrpl.org/paths.html
  */
 export default class XRPPath {
-  public static from(path: Path): XRPPath | undefined {
+  public static from(path: Path): XRPPath {
     const pathElements = path
       .getElementsList()
       .map((pathElement) => XRPPathElement.from(pathElement))

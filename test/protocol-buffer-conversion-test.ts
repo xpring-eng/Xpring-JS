@@ -47,6 +47,7 @@ testInvalidIssuedCurrency.setValue('xrp')
 
 describe('Protocol Buffer Conversion', function(): void {
   // Currency
+
   it('Convert Currency protobuf to XRPCurrency object', function(): void {
     // GIVEN a Currency protocol buffer with a code and a name.
     const currencyCode: Uint8Array = new Uint8Array([1, 2, 3])
@@ -59,11 +60,12 @@ describe('Protocol Buffer Conversion', function(): void {
     const currency = XRPCurrency.from(currencyProto)
 
     // THEN the currency converted as expected.
-    assert.deepEqual(currency?.code, currencyProto.getCode())
-    assert.deepEqual(currency?.name, currencyProto.getName())
+    assert.deepEqual(currency.code, currencyProto.getCode())
+    assert.deepEqual(currency.name, currencyProto.getName())
   })
 
   // PathElement
+
   it('Convert PathElement protobuf with all fields set to XRPPathElement', function(): void {
     // GIVEN a PathElement protocol buffer with all fields set.
     const pathElementProto = testPathElement
@@ -100,6 +102,7 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   // Path
+
   it('Convert Path protobuf with no paths to XRPPath', function(): void {
     // GIVEN a set of paths with zero paths.
     const pathProto = new Payment.Path()
@@ -140,6 +143,7 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   // IssuedCurrency
+
   it('Convert IssuedCurrency to XRPIssuedCurrency', function(): void {
     // GIVEN an issued currency protocol buffer
     const issuedCurrencyProto = new IssuedCurrencyAmount()
