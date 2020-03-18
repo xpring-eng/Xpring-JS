@@ -5,10 +5,12 @@ import LegacyDefaultXRPClient from './legacy/legacy-default-xrp-client'
 import TransactionStatus from './transaction-status'
 import ReliableSubmissionXRPClient from './reliable-submission-xrp-client'
 import DefaultXRPClient from './default-xrp-client'
+import XRPClientInterface from './XRP/xrp-client-interface'
+
 /**
  * XRPClient is a client which interacts with the Xpring platform.
  */
-class XRPClient {
+class XRPClient implements XRPClientInterface {
   private readonly decoratedClient: XRPClientDecorator
 
   /**
