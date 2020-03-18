@@ -230,6 +230,7 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   // Payment
+
   it('Convert Payment with all fields set', function(): void {
     // GIVEN a pyament protocol buffer with all fields set.
     // amount

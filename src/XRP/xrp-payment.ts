@@ -40,7 +40,7 @@ export default class XRPPayment {
       deliverMin = undefined
     }
 
-    const invoiceID = payment.getInvoiceId()?.getValue()
+    const invoiceID = payment.getInvoiceId()?.getValue_asU8()
 
     const paths =
       payment.getPathsList()?.length > 0
@@ -77,7 +77,7 @@ export default class XRPPayment {
     readonly destination?: string,
     readonly destinationTag?: number,
     readonly deliverMin?: XRPCurrencyAmount,
-    readonly invoiceID?: Uint8Array | string,
+    readonly invoiceID?: Uint8Array,
     readonly paths?: (XRPPath | undefined)[],
     readonly sendMax?: XRPCurrencyAmount,
   ) {}
