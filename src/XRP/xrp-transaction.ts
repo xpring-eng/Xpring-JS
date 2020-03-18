@@ -5,7 +5,8 @@ import XRPTransactionType from './xrp-transaction-type'
 import XRPPayment from './xrp-payment'
 import XRPMemo from './xrp-memo'
 
-/* A transaction on the XRP Ledger.
+/*
+ * A transaction on the XRP Ledger.
  *
  * @see: https://xrpl.org/transaction-formats.html
  */
