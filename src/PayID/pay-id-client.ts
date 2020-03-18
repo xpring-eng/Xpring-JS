@@ -47,7 +47,7 @@ export default class PayIDClient {
     const client = new ApiClient()
     client.basePath = `https://${paymentPointer.host}`
 
-    // Accept only the given netowrk in response.
+    // Accept only the given network in response.
     const accepts = [`application/xrpl-${network}+json`]
 
     return new Promise((resolve, reject) => {
