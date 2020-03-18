@@ -1,6 +1,6 @@
 {
   "name": "xpring-js",
-  "version": "1.6.0",
+  "version": "2.0.1",
   "description": "XpringJS provides a Javascript based SDK for interacting with the Ripple Ledger.",
   "main": "build/index.js",
   "repository": {
@@ -16,9 +16,9 @@
     "build/**/*"
   ],
   "scripts": {
-    "build": "npm run clean && ./scripts/regenerate_protos.sh && npm run lint && tsc -d && copyfiles -u 2 './src/generated/**/*' ./build/generated",
-    "clean": "rm -rf ./src/generated ./dist ./build",
-    "pretest": "npm run clean && ./scripts/regenerate_protos.sh && npm run lint && tsc --noEmit",
+    "build": "npm run clean && ./scripts/regenerate_protos.sh && ./scripts/regenerate_pay_id_api.sh && npm run lint && tsc -d && copyfiles -u 2 './src/generated/**/*' ./build/generated",
+    "clean": "rm -rf ./src/generated ./dist ./build ./src/PayID/generated",
+    "pretest": "npm run clean && ./scripts/regenerate_protos.sh && ./scripts/regenerate_pay_id_api.sh && npm run lint && tsc --noEmit",
     "lint": "eslint . --ext .ts --fix",
     "test": "nyc mocha",
     "prepublishOnly": "npm run test && npm run build"
@@ -63,6 +63,7 @@
     "big-integer": "^1.6.48",
     "grpc": "^1.24.2",
     "grpc-web": "1.0.7",
+    "superagent": "^3.8.3",
     "xhr2": "0.2.0",
     "xpring-common-js": "4.1.0"
   },
