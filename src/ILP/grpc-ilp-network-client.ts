@@ -38,7 +38,7 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
         request,
         IlpCredentials.build(bearerToken),
         (error, response) => {
-          if (error != null || response === null) {
+          if (error || !response) {
             reject(error)
             return
           }
@@ -57,7 +57,7 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
         request,
         IlpCredentials.build(bearerToken),
         (error, response) => {
-          if (error != null || response === null) {
+          if (error || !response) {
             reject(error)
             return
           }
@@ -66,16 +66,6 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
       )
     })
   }
-
-  /* eslint-disable class-methods-use-this */
-  public SendPaymentRequest(): SendPaymentRequest {
-    return new SendPaymentRequest()
-  }
-
-  public GetBalanceRequest(): GetBalanceRequest {
-    return new GetBalanceRequest()
-  }
-  /* eslint-enable class-methods-use-this */
 }
 
 export default GrpcIlpNetworkClient

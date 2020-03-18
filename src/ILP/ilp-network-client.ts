@@ -32,8 +32,4 @@ export interface IlpNetworkClient {
     request: SendPaymentRequest,
     bearerToken?: string,
   ): Promise<SendPaymentResponse>
-
-  SendPaymentRequest(): SendPaymentRequest
-
-  GetBalanceRequest(): GetBalanceRequest
 }
