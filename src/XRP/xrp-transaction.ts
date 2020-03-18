@@ -19,14 +19,14 @@ export default class XRPTransaction {
       ?.getAddress()
     const fee = transaction.getFee()?.getDrops()
     const sequence = transaction.getSequence()?.getValue()
-    const signingPublicKey = transaction.getSigningPublicKey()?.getValue()
+    const signingPublicKey = transaction.getSigningPublicKey()?.getValue_asU8()
     const transactionSignature = transaction
       .getTransactionSignature()
-      ?.getValue()
+      ?.getValue_asU8()
 
     const accountTransactionID = transaction
       .getAccountTransactionId()
-      ?.getValue()
+      ?.getValue_asU8()
     const rawValue = transaction.getFlags()?.getValue()
     let flags
     if (rawValue) {
@@ -94,16 +94,16 @@ export default class XRPTransaction {
 
   private constructor(
     readonly account?: string,
-    readonly accountTransactionID?: Uint8Array | string,
+    readonly accountTransactionID?: Uint8Array,
     readonly fee?: string,
     readonly flags?: RippledFlags,
     readonly lastLedgerSequence?: number,
     readonly memos?: XRPMemo[],
     readonly sequence?: number,
     readonly signers?: XRPSigner[],
-    readonly signingPublicKey?: Uint8Array | string,
+    readonly signingPublicKey?: Uint8Array,
     readonly sourceTag?: number,
-    readonly transactionSignature?: Uint8Array | string,
+    readonly transactionSignature?: Uint8Array,
     readonly type?: XRPTransactionType,
     readonly paymentFields?: XRPPayment,
   ) {}
