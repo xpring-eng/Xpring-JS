@@ -1,7 +1,5 @@
 /**
  * An interface for a PayID client.
- *
- * @warning This class is experimental and should not be used in production applications.
  */
 export default interface PayIDClient {
   /**
