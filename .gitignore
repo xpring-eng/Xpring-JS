@@ -1,5 +1,6 @@
 # Ignore generated files.
 src/generated/*
+src/PayID/generated/*
 
 .idea/*
 # Ignore files compiled from typescript.
