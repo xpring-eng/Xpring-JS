@@ -45,7 +45,7 @@ describe('PayID Integration Tests', function(): void {
   it('Resolve PayID to XRP - unknown PayID - devnet', function(done) {
     this.timeout(timeoutMs)
 
-    // GIVEN a Pay ID that will resolve.
+    // GIVEN a Pay ID that will not resolve.
     const payID = '$dev.payid.xpring.money/hbergren'
     const network = XRPLNetwork.Dev
 
