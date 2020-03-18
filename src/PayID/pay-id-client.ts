@@ -11,7 +11,7 @@ import PayIDClientInterface from './pay-id-client-interface'
  */
 export default class PayIDClient implements PayIDClientInterface {
   /**
-   * Retrieve the XRP Address authorized with a PayID.
+   * Retrieve the XRP Address associated with a PayID.
    *
    * @note The returned value will always be in an X-Address format.
    *
