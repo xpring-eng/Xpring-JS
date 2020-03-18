@@ -8,7 +8,7 @@ type PathElement = Payment.PathElement
  * @see: https://xrpl.org/paths.html#path-steps
  */
 export default class XRPPathElement {
-  public static from(pathElement: PathElement): XRPPathElement | undefined {
+  public static from(pathElement: PathElement): XRPPathElement {
     const account = pathElement.getAccount()?.getAddress()
     const currency = pathElement.getCurrency()
     let xrpCurrency
