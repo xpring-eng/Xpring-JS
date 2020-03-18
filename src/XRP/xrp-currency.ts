@@ -5,12 +5,13 @@ import { Currency } from '../generated/web/org/xrpl/rpc/v1/amount_pb'
  * @see: https://xrpl.org/currency-formats.html#currency-codes
  */
 export default class XRPCurrency {
-  public static from(currency: Currency): XRPCurrency | undefined {
-    return new XRPCurrency(currency.getName(), currency.getCode())
+  public static from(currency: Currency): XRPCurrency {
+    return new XRPCurrency(currency.getName(), currency.getCode_asU8())
   }
 
-  private constructor(
-    readonly name: string,
-    readonly code: string | Uint8Array,
-  ) {}
+  /**
+   * @param name 3 character ASCII code
+   * @param code 160 bit currency code. 20 bytes
+   */
+  private constructor(readonly name: string, readonly code: Uint8Array) {}
 }
