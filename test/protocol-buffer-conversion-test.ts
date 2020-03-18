@@ -232,7 +232,7 @@ describe('Protocol Buffer Conversion', function(): void {
   // Payment
 
   it('Convert Payment with all fields set', function(): void {
-    // GIVEN a pyament protocol buffer with all fields set.
+    // GIVEN a payment protocol buffer with all fields set.
     // amount
     const currencyAmountProto = new CurrencyAmount()
     currencyAmountProto.setIssuedCurrencyAmount(testIssuedCurrency)
