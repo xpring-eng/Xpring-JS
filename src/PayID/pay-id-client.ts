@@ -1,6 +1,5 @@
 import { PayIDUtils } from 'xpring-common-js'
 import Mapping from './generated/model/Mapping'
-// import DefaultApi from './generated/api/DefaultApi'
 import ApiClient from './generated/ApiClient'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
 
@@ -17,7 +16,6 @@ export enum XRPLNetwork {
  * A client for PayID.
  *
  * @warning This class is experimental and should not be used in production applications.
- * TODO(keefertaylor): Export this class in index.ts when it's ready for external consumption.
  */
 export default class PayIDClient {
   /**

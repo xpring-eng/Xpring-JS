@@ -27,6 +27,10 @@ paths:
                 $ref: '#/components/schemas/Mapping'
         '404':
           description: Not Found
+        '415':
+          description: Bad MIME type
+        '503':
+          description: Internal error
       operationId: resolvePayID
       description: Resolve a pay id
 components:
