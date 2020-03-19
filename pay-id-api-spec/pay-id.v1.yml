@@ -16,7 +16,13 @@ paths:
         '200':
           description: OK
           content:
-            application/json:
+            application/xrpl-devnet+json:
+              schema:
+                $ref: '#/components/schemas/Mapping'
+            application/xrpl-mainnet+json:
+              schema:
+                $ref: '#/components/schemas/Mapping'
+            application/xrpl-testnet+json:
               schema:
                 $ref: '#/components/schemas/Mapping'
         '404':
