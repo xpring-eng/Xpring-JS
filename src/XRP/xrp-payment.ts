@@ -26,7 +26,7 @@ export default class XRPPayment {
     const paymentDeliverMinValue = payment.getDeliverMin()?.getValue()
     const deliverMin =
       paymentDeliverMinValue && XRPCurrencyAmount.from(paymentDeliverMinValue)
-    if (!deliverMin) {
+    if (paymentDeliverMinValue && !deliverMin) {
       return undefined
     }
 
@@ -41,7 +41,7 @@ export default class XRPPayment {
     const paymentSendMaxValue = payment.getSendMax()?.getValue()
     const sendMax =
       paymentSendMaxValue && XRPCurrencyAmount.from(paymentSendMaxValue)
-    if (!sendMax) {
+    if (paymentSendMaxValue && !sendMax) {
       return undefined
     }
 
