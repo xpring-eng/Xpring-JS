@@ -22,6 +22,8 @@ import XRPTransaction from '../../src/XRP/xrp-transaction'
 // primitive test values
 const testCurrencyName = 'currencyName'
 const testCurrencyCode = new Uint8Array([1, 2, 3])
+const testIssuedCurrencyValue = '100'
+const testInvalidIssuedCurrencyValue = 'xrp' // non-numeric
 const testAddress = 'XVfC9CTCJh6GN2x8bnrw3LtdbqiVCUFyQVMzRrMGUZpokKH'
 const testDestination = 'XV5sbjUmgPpvXv4ixFWZ5ptAYZ6PD28Sq49uo34VyjnmK5H'
 const testPublicKey = new Uint8Array([1, 2, 3])
@@ -42,13 +44,13 @@ accountAddressProto.setAddress(testAddress)
 const issuedCurrencyProto = new IssuedCurrencyAmount()
 issuedCurrencyProto.setCurrency(currencyProto)
 issuedCurrencyProto.setIssuer(accountAddressProto)
-issuedCurrencyProto.setValue('100')
+issuedCurrencyProto.setValue(testIssuedCurrencyValue)
 
 // Invalid IssuedCurrencyAmount proto
 const invalidIssuedCurrencyProto = new IssuedCurrencyAmount()
 invalidIssuedCurrencyProto.setCurrency(currencyProto)
 invalidIssuedCurrencyProto.setIssuer(accountAddressProto)
-invalidIssuedCurrencyProto.setValue('xrp')
+invalidIssuedCurrencyProto.setValue(testInvalidIssuedCurrencyValue)
 
 // Account proto
 const transactionAccountProto = new Account()
