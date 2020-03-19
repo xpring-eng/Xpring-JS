@@ -570,11 +570,7 @@ describe('Protocol Buffer Conversion', function(): void {
     const signingPublicKey = new Uint8Array([1, 2, 3])
     const transactionSignature = new Uint8Array([4, 5, 6])
     const accountTransactionID = new Uint8Array([7, 8, 9])
-    const rawValue = 4
-    const flags = RippledFlags.checkFlag(
-      rawValue,
-      RippledFlags.TF_PARTIAL_PAYMENT,
-    )
+    const flags = 4
     const sourceTag = 6
     const lastLedgerSequence = 5
     const memoData = new Uint8Array([1, 2, 3])
@@ -632,7 +628,7 @@ describe('Protocol Buffer Conversion', function(): void {
     transactionAccountTransactionIDProto.setValue(accountTransactionID)
 
     const transactionFlagsProto = new Flags()
-    transactionFlagsProto.setValue(rawValue)
+    transactionFlagsProto.setValue(flags)
 
     const transactionLastLedgerSequenceProto = new LastLedgerSequence()
     transactionLastLedgerSequenceProto.setValue(lastLedgerSequence)
