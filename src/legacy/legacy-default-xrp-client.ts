@@ -26,6 +26,8 @@ export class LegacyXRPClientErrorMessages {
 
   public static readonly xAddressRequired =
     'Please use the X-Address format. See: https://xrpaddress.info/.'
+
+  public static readonly unimplemented = 'Unimplemented.'
 }
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
@@ -257,7 +259,7 @@ class LegacyDefaultXRPClient implements XRPClientDecorator {
   public async paymentHistory(
     _address: string,
   ): Promise<Array<XRPTransaction>> {
-    throw new Error('paymentHistory unimplemented in legacy XRPClient')
+    throw new Error(LegacyXRPClientErrorMessages.unimplemented)
   }
 }
 
