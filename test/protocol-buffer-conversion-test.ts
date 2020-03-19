@@ -5,13 +5,21 @@ import XRPPathElement from '../src/XRP/xrp-path-element'
 import XRPPath from '../src/XRP/xrp-path'
 import XRPIssuedCurrency from '../src/XRP/xrp-issued-currency'
 import XRPCurrencyAmount from '../src/XRP/xrp-currency-amount'
+import XRPPayment from '../src/XRP/xrp-payment'
 import {
   Currency,
   CurrencyAmount,
   IssuedCurrencyAmount,
   XRPDropsAmount,
 } from '../src/generated/web/org/xrpl/rpc/v1/amount_pb'
-
+import {
+  Amount,
+  Destination,
+  DestinationTag,
+  DeliverMin,
+  InvoiceID,
+  SendMax,
+} from '../src/generated/web/org/xrpl/rpc/v1/common_pb'
 import { Payment } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from '../src/generated/web/org/xrpl/rpc/v1/account_pb'
 
@@ -219,5 +227,241 @@ describe('Protocol Buffer Conversion', function(): void {
 
     // THEN the result is empty
     assert.isUndefined(currencyAmount)
+  })
+
+  // Payment
+
+  it('Convert Payment with all fields set', function(): void {
+    // GIVEN a payment protocol buffer with all fields set.
+    // amount
+    const currencyAmountProto = new CurrencyAmount()
+    currencyAmountProto.setIssuedCurrencyAmount(testIssuedCurrency)
+    const amountProto = new Amount()
+    amountProto.setValue(currencyAmountProto)
+
+    // destination
+    const accountAddressProto = new AccountAddress()
+    accountAddressProto.setAddress('r123')
+    const destinationProto = new Destination()
+    destinationProto.setValue(accountAddressProto)
+
+    // destinationTag
+    const destinationTagProto = new DestinationTag()
+    destinationTagProto.setValue(2)
+
+    // deliverMin
+    const xrpAmountProto = new XRPDropsAmount()
+    xrpAmountProto.setDrops('10')
+    const deliverMinCurrencyAmountProto = new CurrencyAmount()
+    deliverMinCurrencyAmountProto.setXrpAmount(xrpAmountProto)
+    const deliverMinProto = new DeliverMin()
+    deliverMinProto.setValue(deliverMinCurrencyAmountProto)
+
+    // invoiceID
+    const invoiceIDProto = new InvoiceID()
+    invoiceIDProto.setValue(new Uint8Array([1, 2, 3]))
+
+    // paths
+    const accountAddressProto456 = new AccountAddress()
+    accountAddressProto456.setAddress('r456')
+    const accountAddressProto789 = new AccountAddress()
+    accountAddressProto789.setAddress('r789')
+    const accountAddressProtoABC = new AccountAddress()
+    accountAddressProtoABC.setAddress('rabc')
+
+    const pathElementProto456 = new Payment.PathElement()
+    pathElementProto456.setAccount(accountAddressProto456)
+    const pathElementProto789 = new Payment.PathElement()
+    pathElementProto789.setAccount(accountAddressProto789)
+    const pathElementProtoABC = new Payment.PathElement()
+    pathElementProtoABC.setAccount(accountAddressProtoABC)
+
+    const pathProtoOneElement = new Payment.Path()
+    pathProtoOneElement.setElementsList([pathElementProto456])
+    const pathProtoTwoElements = new Payment.Path()
+    pathProtoTwoElements.setElementsList([
+      pathElementProto789,
+      pathElementProtoABC,
+    ])
+
+    const paths = [pathProtoOneElement, pathProtoTwoElements]
+
+    // sendMax
+    const sendMaxXrpDropsAmountProto = new XRPDropsAmount()
+    sendMaxXrpDropsAmountProto.setDrops('20')
+    const sendMaxCurrencyAmountProto = new CurrencyAmount()
+    sendMaxCurrencyAmountProto.setXrpAmount(sendMaxXrpDropsAmountProto)
+    const sendMaxProto = new SendMax()
+    sendMaxProto.setValue(sendMaxCurrencyAmountProto)
+
+    // finally, populate paymentProto
+    const paymentProto = new Payment()
+    paymentProto.setAmount(amountProto)
+    paymentProto.setDestination(destinationProto)
+    paymentProto.setDestinationTag(destinationTagProto)
+    paymentProto.setDeliverMin(deliverMinProto)
+    paymentProto.setInvoiceId(invoiceIDProto)
+    paymentProto.setPathsList(paths)
+    paymentProto.setSendMax(sendMaxProto)
+
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const payment = XRPPayment.from(paymentProto)
+
+    // THEN the result is as expected.
+    assert.deepEqual(
+      payment?.amount,
+      XRPCurrencyAmount.from(paymentProto.getAmount()?.getValue()!),
+    )
+    assert.equal(
+      payment?.destination,
+      paymentProto
+        .getDestination()
+        ?.getValue()
+        ?.getAddress(),
+    )
+    assert.equal(
+      payment?.destinationTag,
+      paymentProto.getDestinationTag()?.getValue(),
+    )
+    assert.deepEqual(
+      payment?.deliverMin,
+      XRPCurrencyAmount.from(paymentProto.getDeliverMin()?.getValue()!),
+    )
+    assert.deepEqual(
+      payment?.invoiceID,
+      paymentProto.getInvoiceId()?.getValue(),
+    )
+    assert.deepEqual(
+      payment?.paths,
+      paymentProto.getPathsList().map((path) => XRPPath.from(path)),
+    )
+    assert.deepEqual(
+      payment?.sendMax,
+      XRPCurrencyAmount.from(paymentProto.getSendMax()?.getValue()!),
+    )
+  })
+
+  it('Convert Payment with only mandatory fields set', function(): void {
+    // GIVEN a payment protocol buffer with only mandatory fields set.
+    // amount
+    const currencyAmountProto = new CurrencyAmount()
+    currencyAmountProto.setIssuedCurrencyAmount(testIssuedCurrency)
+    const amountProto = new Amount()
+    amountProto.setValue(currencyAmountProto)
+
+    // destination
+    const accountAddressProto = new AccountAddress()
+    accountAddressProto.setAddress('r123')
+    const destinationProto = new Destination()
+    destinationProto.setValue(accountAddressProto)
+
+    const paymentProto = new Payment()
+    paymentProto.setAmount(amountProto)
+    paymentProto.setDestination(destinationProto)
+
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const payment = XRPPayment.from(paymentProto)
+
+    // THEN the result is as expected.
+    assert.deepEqual(
+      payment?.amount,
+      XRPCurrencyAmount.from(paymentProto.getAmount()?.getValue()!),
+    )
+    assert.equal(
+      payment?.destination,
+      paymentProto
+        .getDestination()
+        ?.getValue()
+        ?.getAddress(),
+    )
+    assert.isUndefined(payment?.destinationTag)
+    assert.isUndefined(payment?.deliverMin)
+    assert.isUndefined(payment?.invoiceID)
+    assert.isUndefined(payment?.paths)
+    assert.isUndefined(payment?.sendMax)
+  })
+
+  it('Convert Payment with invalid amount field', function(): void {
+    // GIVEN a pyament protocol buffer with an invalid amount field
+    // amount (invalid)
+    const currencyAmountProto = new CurrencyAmount()
+    currencyAmountProto.setIssuedCurrencyAmount(testInvalidIssuedCurrency)
+    const amountProto = new Amount()
+    amountProto.setValue(currencyAmountProto)
+
+    // destination
+    const accountAddressProto = new AccountAddress()
+    accountAddressProto.setAddress('r123')
+    const destinationProto = new Destination()
+    destinationProto.setValue(accountAddressProto)
+
+    const paymentProto = new Payment()
+    paymentProto.setAmount(amountProto)
+    paymentProto.setDestination(destinationProto)
+
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
+    assert.isUndefined(XRPPayment.from(paymentProto))
+  })
+
+  it('Convert Payment with invalid deliverMin field', function(): void {
+    // GIVEN a payment protocol buffer with an invalid deliverMin field
+    // amount
+    const currencyAmountProto = new CurrencyAmount()
+    currencyAmountProto.setIssuedCurrencyAmount(testIssuedCurrency)
+    const amountProto = new Amount()
+    amountProto.setValue(currencyAmountProto)
+
+    // destination
+    const accountAddressProto = new AccountAddress()
+    accountAddressProto.setAddress('r123')
+    const destinationProto = new Destination()
+    destinationProto.setValue(accountAddressProto)
+
+    // deliverMin (invalid)
+    const deliverMinCurrencyAmountProto = new CurrencyAmount()
+    deliverMinCurrencyAmountProto.setIssuedCurrencyAmount(
+      testInvalidIssuedCurrency,
+    )
+    const deliverMinProto = new DeliverMin()
+    deliverMinProto.setValue(deliverMinCurrencyAmountProto)
+
+    const paymentProto = new Payment()
+    paymentProto.setAmount(amountProto)
+    paymentProto.setDestination(destinationProto)
+    paymentProto.setDeliverMin(deliverMinProto)
+
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
+    assert.isUndefined(XRPPayment.from(paymentProto))
+  })
+
+  it('Convert Payment with invalid sendMax field', function(): void {
+    // GIVEN a payment protocol buffer with an invalid sendMax field
+    // amount
+    const currencyAmountProto = new CurrencyAmount()
+    currencyAmountProto.setIssuedCurrencyAmount(testIssuedCurrency)
+    const amountProto = new Amount()
+    amountProto.setValue(currencyAmountProto)
+
+    // destination
+    const accountAddressProto = new AccountAddress()
+    accountAddressProto.setAddress('r123')
+    const destinationProto = new Destination()
+    destinationProto.setValue(accountAddressProto)
+
+    // sendMax (invalid)
+    const sendMaxCurrencyAmountProto = new CurrencyAmount()
+    sendMaxCurrencyAmountProto.setIssuedCurrencyAmount(
+      testInvalidIssuedCurrency,
+    )
+    const sendMaxProto = new SendMax()
+    sendMaxProto.setValue(sendMaxCurrencyAmountProto)
+
+    const paymentProto = new Payment()
+    paymentProto.setAmount(amountProto)
+    paymentProto.setDestination(destinationProto)
+    paymentProto.setSendMax(sendMaxProto)
+
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
+    assert.isUndefined(XRPPayment.from(paymentProto))
   })
 })
