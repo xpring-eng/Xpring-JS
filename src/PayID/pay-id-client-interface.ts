@@ -11,5 +11,5 @@ export default interface PayIDClient {
    * @param network The network to resolve the address on. Defaults to Test.
    * @returns An XRP address representing the given PayID.
    */
-  xrpAddressForPayID(payID: string, network: XRPL): Promise<string>
+  xrpAddressForPayID(payID: string): Promise<string>
 }

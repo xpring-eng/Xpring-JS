@@ -2,7 +2,6 @@ import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import PayIDClientInterface from '../PayID/pay-id-client-interface'
 import XRPClientInterface from '../XRP/xrp-client-interface'
-import { XRPLNetwork } from '../PayID/pay-id-client'
 
 /**
  * Composes interactions of all Xpring services.
@@ -15,9 +14,7 @@ export default class XpringClient {
    * @param payIDClient A Pay ID Client used to interact with the Pay ID protocol.
    * @param xrpClient An XRP Client used to interact with the XRP Ledger protocol.
    */
-  // TODO(keefertaylor): Make these parameters interfaces rather than concrete class implementations.
   constructor(
-    private readonly network: XRPLNetwork,
     private readonly payIDClient: PayIDClientInterface,
     private readonly xrpClient: XRPClientInterface,
   ) {}
@@ -38,7 +35,6 @@ export default class XpringClient {
     // Resolve the destination address to an XRP address.
     const destinationAddress = await this.payIDClient.xrpAddressForPayID(
       destinationPayID,
-      this.network,
     )
 
     // Transact XRP to the resolved address.
