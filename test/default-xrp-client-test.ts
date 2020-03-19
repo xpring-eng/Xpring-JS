@@ -469,10 +469,10 @@ describe('Default Xpring Client', function(): void {
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
 
     // WHEN the payment history for an address is requested.
-    const transactionHistory = await xrpClient.paymentHistory(testAddress)
+    const paymentHistory = await xrpClient.paymentHistory(testAddress)
 
-    // THEN the transaction history is returned.
-    assert.exists(transactionHistory)
+    // THEN the payment history is returned.
+    assert.exists(paymentHistory)
   })
 
   it('Get Payment History - classic address', function(done): void {

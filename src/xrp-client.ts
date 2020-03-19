@@ -3,7 +3,7 @@ import { BigInteger } from 'big-integer'
 import { XRPClientDecorator } from './xrp-client-decorator'
 import LegacyDefaultXRPClient from './legacy/legacy-default-xrp-client'
 import TransactionStatus from './transaction-status'
-import XRPTransaction from './XRP/xrp-transaction'
+// import XRPTransaction from './XRP/xrp-transaction'
 import ReliableSubmissionXRPClient from './reliable-submission-xrp-client'
 import DefaultXRPClient from './default-xrp-client'
 import XRPClientInterface from './XRP/xrp-client-interface'
@@ -101,19 +101,6 @@ class XRPClient implements XRPClientInterface {
    */
   public async accountExists(address: string): Promise<boolean> {
     return this.decoratedClient.accountExists(address)
-  }
-
-  /**
-   * Return the history of payments for the given account.
-   * Note: This method only works for payment type transactions, see: https://xrpl.org/payment.html
-   * Note: This method only returns the history that is contained on the remote node, which may not contain a full history of the network.
-   *
-   * @param address: The address (account) for which to retrive payment history.
-   * @throws: An error if there was a problem communicating with the XRP Ledger.
-   * @return: An array of transactions associated with the account.
-   */
-  public async paymentHistory(address: string): Promise<Array<XRPTransaction>> {
-    return this.decoratedClient.paymentHistory(address)
   }
 }
 
