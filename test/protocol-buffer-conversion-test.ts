@@ -141,7 +141,7 @@ describe('Protocol Buffer Conversion', function(): void {
     // THEN there are multiple paths in the output.
     assert.equal(path?.pathElements.length, 3)
   })
-                 
+
   // IssuedCurrency
 
   it('Convert IssuedCurrency to XRPIssuedCurrency', function(): void {
