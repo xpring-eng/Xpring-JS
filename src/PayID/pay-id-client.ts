@@ -14,15 +14,6 @@ export enum XRPLNetwork {
 }
 
 /**
- * Possible networks to resolve
- */
-export enum XRPLNetwork {
-  Dev = 'devnet',
-  Test = 'testnet',
-  Main = 'mainnet',
-}
-
-/**
  * A client for PayID.
  *
  * @warning This class is experimental and should not be used in production applications.

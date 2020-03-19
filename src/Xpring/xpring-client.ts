@@ -1,7 +1,7 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
-import { PayIDClient } from '..'
-import XRPClient from '../xrp-client'
+import PayIDClientInterface from '../PayID/pay-id-client-interface'
+import XRPClientInterface from '../XRP/xrp-client-interface'
 import { XRPLNetwork } from '../PayID/pay-id-client'
 
 /**
@@ -18,8 +18,8 @@ export default class XpringClient {
   // TODO(keefertaylor): Make these parameters interfaces rather than concrete class implementations.
   constructor(
     private readonly network: XRPLNetwork,
-    private readonly payIDClient: PayIDClient,
-    private readonly xrpClient: XRPClient,
+    private readonly payIDClient: PayIDClientInterface,
+    private readonly xrpClient: XRPClientInterface,
   ) {}
 
   /**

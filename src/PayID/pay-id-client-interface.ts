@@ -8,7 +8,8 @@ export default interface PayIDClient {
    * @note The returned value will always be in an X-Address format.
    *
    * @param payID The payID to resolve for an address.
-   * @returns An XRP address representing the given PayID if one exists, otherwise undefined.
+   * @param network The network to resolve the address on. Defaults to Test.
+   * @returns An XRP address representing the given PayID.
    */
-  xrpAddressForPayID(payID: string): Promise<string | undefined>
+  xrpAddressForPayID(payID: string, network: XRPL): Promise<string>
 }
