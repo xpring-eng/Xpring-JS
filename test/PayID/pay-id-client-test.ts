@@ -1,8 +1,9 @@
 import { assert } from 'chai'
 import nock from 'nock'
 import { PayIDUtils } from 'xpring-common-js'
-import PayIDClient, { XRPLNetwork } from '../../src/PayID/pay-id-client'
+import PayIDClient from '../../src/PayID/pay-id-client'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
+import XRPLNetwork from '../../src/Common/xrpl-network'
 
 describe('Pay ID Client', function(): void {
   afterEach(function() {
