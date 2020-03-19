@@ -4,7 +4,7 @@ import PayIDClientInterface from '../PayID/pay-id-client-interface'
 import XRPClientInterface from '../XRP/xrp-client-interface'
 
 /**
- * Composes interactions of all Xpring services.
+ * Composes interactions of Xpring services.
  */
 export default class XpringClient {
   /**
