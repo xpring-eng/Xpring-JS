@@ -39,8 +39,6 @@ export default class XRPTransaction {
     let memos
     if (transaction.getMemosList().length > 0) {
       memos = transaction.getMemosList().map((memo) => XRPMemo.from(memo))
-    } else {
-      memos = undefined
     }
 
     let signers
@@ -48,8 +46,6 @@ export default class XRPTransaction {
       signers = transaction
         .getSignersList()
         .map((signer) => XRPSigner.from(signer))
-    } else {
-      signers = undefined
     }
 
     const sourceTag = transaction.getSourceTag()?.getValue()
@@ -59,15 +55,14 @@ export default class XRPTransaction {
     switch (transaction.getTransactionDataCase()) {
       case Transaction.TransactionDataCase.PAYMENT: {
         const payment = transaction.getPayment()
-        if (payment) {
-          paymentFields = XRPPayment.from(payment)
-          type = Transaction.TransactionDataCase.PAYMENT
-          if (!paymentFields) {
-            return undefined
-          }
-        } else {
+        if (!payment) {
           return undefined
         }
+        paymentFields = payment && XRPPayment.from(payment)
+        if (!paymentFields) {
+          return undefined
+        }
+        type = payment && Transaction.TransactionDataCase.PAYMENT
         break
       }
       default:
@@ -98,9 +93,9 @@ export default class XRPTransaction {
     readonly fee?: string,
     readonly flags?: RippledFlags,
     readonly lastLedgerSequence?: number,
-    readonly memos?: XRPMemo[],
+    readonly memos?: Array<XRPMemo>,
     readonly sequence?: number,
-    readonly signers?: XRPSigner[],
+    readonly signers?: Array<XRPSigner>,
     readonly signingPublicKey?: Uint8Array,
     readonly sourceTag?: number,
     readonly transactionSignature?: Uint8Array,
