@@ -5,15 +5,11 @@ import XRPPath from './xrp-path'
 // TODO(amiecorso): Modify this object to use X-Address format.
 export default class XRPPayment {
   public static from(payment: Payment): XRPPayment | undefined {
-    let amount
     const paymentAmountValue = payment.getAmount()?.getValue()
-    if (paymentAmountValue) {
-      amount = XRPCurrencyAmount.from(paymentAmountValue)
-      if (!amount) {
-        return undefined // amount is required
-      }
-    } else {
-      return undefined
+    const amount =
+      paymentAmountValue && XRPCurrencyAmount.from(paymentAmountValue)
+    if (!amount) {
+      return undefined // amount is required
     }
 
     const destination = payment
@@ -27,17 +23,11 @@ export default class XRPPayment {
     const destinationTag = payment.getDestinationTag()?.getValue()
 
     // If the deliverMin field is set, it must be able to be transformed into a XRPCurrencyAmount.
-    let deliverMin
-    if (payment.hasDeliverMin()) {
-      const paymentDeliverMinValue = payment.getDeliverMin()?.getValue()
-      if (paymentDeliverMinValue) {
-        deliverMin = XRPCurrencyAmount.from(paymentDeliverMinValue)
-        if (!deliverMin) {
-          return undefined
-        }
-      }
-    } else {
-      deliverMin = undefined
+    const paymentDeliverMinValue = payment.getDeliverMin()?.getValue()
+    const deliverMin =
+      paymentDeliverMinValue && XRPCurrencyAmount.from(paymentDeliverMinValue)
+    if (!deliverMin) {
+      return undefined
     }
 
     const invoiceID = payment.getInvoiceId()?.getValue_asU8()
@@ -47,18 +37,12 @@ export default class XRPPayment {
         ? payment.getPathsList().map((path) => XRPPath.from(path))
         : undefined
 
-    // If the sendMax field is set, it must be able to be transformed into a XRPCurrencyAmount.
-    let sendMax
-    if (payment.hasSendMax()) {
-      const paymentSendMaxValue = payment.getSendMax()?.getValue()
-      if (paymentSendMaxValue) {
-        sendMax = XRPCurrencyAmount.from(paymentSendMaxValue)
-        if (!sendMax) {
-          return undefined
-        }
-      } else {
-        sendMax = undefined
-      }
+    // If the sendMax field is set, it must be able to be transformed into an XRPCurrencyAmount.
+    const paymentSendMaxValue = payment.getSendMax()?.getValue()
+    const sendMax =
+      paymentSendMaxValue && XRPCurrencyAmount.from(paymentSendMaxValue)
+    if (!sendMax) {
+      return undefined
     }
 
     return new XRPPayment(
