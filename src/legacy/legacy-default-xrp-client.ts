@@ -1,3 +1,6 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 
 import bigInt, { BigInteger } from 'big-integer'
@@ -10,6 +13,7 @@ import LegacyGRPCNetworkClientWeb from './legacy-grpc-network-client.web'
 import { LegacyNetworkClient } from './legacy-network-client'
 import { XRPClientDecorator } from '../xrp-client-decorator'
 import TransactionStatus from '../transaction-status'
+import XRPTransaction from '../XRP/xrp-transaction'
 import isNode from '../utils'
 
 /**
@@ -248,6 +252,12 @@ class LegacyDefaultXRPClient implements XRPClientDecorator {
     } catch (e) {
       return false
     }
+  }
+
+  public async paymentHistory(
+    _address: string,
+  ): Promise<Array<XRPTransaction>> {
+    throw new Error('paymentHistory unimplemented in legacy XRPClient')
   }
 }
 
