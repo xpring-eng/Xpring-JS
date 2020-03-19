@@ -1,5 +1,5 @@
 import { PayIDUtils } from 'xpring-common-js'
-import Mapping from './generated/model/Mapping'
+import PaymentInformation from './generated/model/PaymentInformation'
 import ApiClient from './generated/ApiClient'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
 import PayIDClientInterface from './pay-id-client-interface'
@@ -51,7 +51,7 @@ export default class PayIDClient implements PayIDClientInterface {
       const formParams = {}
       const authNames = []
       const contentTypes = []
-      const returnType = Mapping
+      const returnType = PaymentInformation
       client.callApi(
         '/{path}',
         'GET',
@@ -74,8 +74,8 @@ export default class PayIDClient implements PayIDClientInterface {
               reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
             }
             // TODO(keefertaylor): make sure the header matches the request.
-          } else if (data?.address) {
-            resolve(data.address)
+          } else if (data?.addressDetails?.address) {
+            resolve(data.addressDetails.address)
           } else {
             reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
           }

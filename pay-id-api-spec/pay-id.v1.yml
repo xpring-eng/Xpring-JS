@@ -18,13 +18,13 @@ paths:
           content:
             application/xrpl-devnet+json:
               schema:
-                $ref: '#/components/schemas/Mapping'
+                $ref: '#/components/schemas/PaymentInformation'
             application/xrpl-mainnet+json:
               schema:
-                $ref: '#/components/schemas/Mapping'
+                $ref: '#/components/schemas/PaymentInformation'
             application/xrpl-testnet+json:
               schema:
-                $ref: '#/components/schemas/Mapping'
+                $ref: '#/components/schemas/PaymentInformation'
         '404':
           description: Not Found
         '415':
@@ -35,13 +35,29 @@ paths:
       description: Resolve a pay id
 components:
   schemas:
-    Mapping:
-      title: Mapping
+    CryptoAddressDetails:
+      title: CryptoAddressDetails
       type: object
       properties:
         address:
           type: string
+        tag:
+          type: string
       required:
         - address
-        - network
+    PaymentInformation:
+      title: PaymentInformation
+      type: object
+      properties:
+        addressDetailsType:
+          type: string
+        addressDetails:
+          $ref: '#/components/schemas/CryptoAddressDetails'
+        proof_of_control_signature:
+          type: string
+        paymentPointer:
+          type: string
+      required:
+        - addressDetailsType
+        - addressDetails
 openapi: '3.0.0'
