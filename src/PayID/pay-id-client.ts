@@ -3,15 +3,7 @@ import Mapping from './generated/model/Mapping'
 import ApiClient from './generated/ApiClient'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
 import PayIDClientInterface from './pay-id-client-interface'
-
-/**
- * Possible networks to resolve
- */
-export enum XRPLNetwork {
-  Dev = 'devnet',
-  Test = 'testnet',
-  Main = 'mainnet',
-}
+import XRPLNetwork from '../Common/xrpl-network'
 
 /**
  * A client for PayID.

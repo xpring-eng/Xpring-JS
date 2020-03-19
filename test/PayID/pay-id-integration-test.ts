@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
-import PayIDClient, { XRPLNetwork } from '../../src/PayID/pay-id-client'
+import PayIDClient from '../../src/PayID/pay-id-client'
+import XRPLNetwork from '../../src/Common/xrpl-network'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
