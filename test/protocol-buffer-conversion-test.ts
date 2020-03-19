@@ -88,7 +88,7 @@ describe('Protocol Buffer Conversion', function(): void {
   // Path
 
   it('Convert Path protobuf with no paths to XRPPath', function(): void {
-    // GIVEN a set of paths with zero paths.
+    // GIVEN a set of paths with zero path elements.
     const pathProto = new Payment.Path()
 
     // WHEN the protocol buffer is converted to a native TypeScript type.
@@ -99,7 +99,7 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   it('Convert Path protobuf with one Path to XRPPath', function(): void {
-    // GIVEN a set of paths with one path.
+    // GIVEN a set of paths with one path element.
     const pathProto = new Payment.Path()
     pathProto.addElements(testPathElement)
 
@@ -111,7 +111,7 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   it('Convert Path protobuf with many Paths to XRPPath', function(): void {
-    // GIVEN a set of paths with one path.
+    // GIVEN a set of paths with three path elements.
     const pathProto = new Payment.Path()
     pathProto.setElementsList([
       testPathElement,
