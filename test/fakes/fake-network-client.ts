@@ -33,11 +33,7 @@ import {
   GetAccountTransactionHistoryRequest,
   GetAccountTransactionHistoryResponse,
 } from '../../src/generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
-
-/**
- * A response for a request to retrieve type T. Either an instance of T, or an error.
- */
-type Response<T> = T | Error
+import Result from '../Common/Helpers/result'
 
 /**
  * A list of responses the fake network client will give.
@@ -74,19 +70,19 @@ export class FakeNetworkClientResponses {
    * @param getTransactionHistoryResponse The response or error that will be returned from teh getTransactionHistory request. Default to the default transaction history response.
    */
   public constructor(
-    public readonly getAccountInfoResponse: Response<
+    public readonly getAccountInfoResponse: Result<
       GetAccountInfoResponse
     > = FakeNetworkClientResponses.defaultAccountInfoResponse(),
-    public readonly getFeeResponse: Response<
+    public readonly getFeeResponse: Result<
       GetFeeResponse
     > = FakeNetworkClientResponses.defaultFeeResponse(),
-    public readonly submitransactionResponse: Response<
+    public readonly submitransactionResponse: Result<
       SubmitTransactionResponse
     > = FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
-    public readonly getTransactionStatusResponse: Response<
+    public readonly getTransactionStatusResponse: Result<
       GetTransactionResponse
     > = FakeNetworkClientResponses.defaultGetTransactionResponse(),
-    public readonly getTransactionHistoryResponse: Response<
+    public readonly getTransactionHistoryResponse: Result<
       GetAccountTransactionHistoryResponse
     > = FakeNetworkClientResponses.defaultGetTransactionHistoryResponse(),
   ) {}
