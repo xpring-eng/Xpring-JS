@@ -40,7 +40,7 @@ describe('Pay ID Client', function(): void {
     nock('https://xpring.money')
       .get('/georgewashington')
       .reply(200, {
-        addressDetailsType: 'crypto',
+        addressDetailsType: 'CryptoAddressDetails',
         addressDetails: {
           address: 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4',
         },
