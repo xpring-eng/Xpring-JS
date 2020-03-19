@@ -105,3 +105,5 @@ const testTransaction = XRPTransaction.from(transactionProto)
 
 // test Transactions array
 const testTransactions = [testTransaction, testTransaction]
+
+export { transactionProto, testTransaction, testTransactions }
