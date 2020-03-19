@@ -10,14 +10,16 @@ export default class XRPSigner {
       .getAccount()
       ?.getValue()
       ?.getAddress()
-    const signingPublicKey = signer.getSigningPublicKey()?.getValue()
-    const transactionSignature = signer.getTransactionSignature()?.getValue()
+    const signingPublicKey = signer.getSigningPublicKey()?.getValue_asU8()
+    const transactionSignature = signer
+      .getTransactionSignature()
+      ?.getValue_asU8()
     return new XRPSigner(account, signingPublicKey, transactionSignature)
   }
 
   private constructor(
     readonly account?: string,
-    readonly signingPublicKey?: Uint8Array | string,
-    readonly transactionSignature?: Uint8Array | string,
+    readonly signingPublicKey?: Uint8Array,
+    readonly transactionSignature?: Uint8Array,
   ) {}
 }
