@@ -11,10 +11,7 @@ export default class XRPIssuedCurrency {
     issuedCurrency: IssuedCurrencyAmount,
   ): XRPIssuedCurrency | undefined {
     const currency = issuedCurrency.getCurrency()
-    let xrpCurrency
-    if (currency) {
-      xrpCurrency = XRPCurrency.from(currency)
-    }
+    const xrpCurrency = currency && XRPCurrency.from(currency)
 
     let value
     try {
