@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import nock from 'nock'
 import { PayIDUtils } from 'xpring-common-js'
-import PayIDClient from '../../src/PayID/pay-id-client'
+import PayIDClient, { XRPLNetwork } from '../../src/PayID/pay-id-client'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
 
 describe('Pay ID Client', function(): void {
@@ -50,10 +50,11 @@ describe('Pay ID Client', function(): void {
     assert.exists(xrpAddress)
   })
 
-  it('xrpAddressForPayID - successful response - match not found', async function() {
+  it('xrpAddressForPayID - successful response - match not found', function(done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a 404 for the payID.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient()
+    const network = XRPLNetwork.Test
 
     const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
     if (!paymentPointer) {
@@ -65,23 +66,36 @@ describe('Pay ID Client', function(): void {
       .get('/georgewashington')
       .reply(404, {})
 
-    // WHEN an XRP address is requested.
-    const xrpAddress = await payIDClient.xrpAddressForPayID(payID)
+    // WHEN an XRPAddress is requested.
+    payIDClient.xrpAddressForPayID(payID, network).catch((error) => {
+      // THEN an unexpected response is thrown with the details of the error.
+      assert.equal(
+        (error as PayIDError).errorType,
+        PayIDErrorType.MappingNotFound,
+      )
 
-    // THEN the address is undefined.
-    assert.isUndefined(xrpAddress)
+      const { message } = error
+      assert.include(message, payID)
+      assert.include(message, network)
+
+      done()
+    })
   })
 
-  it('xrpAddressForPayID - failed request', function(done) {
+  it('xrpAddressForPayID - unknown mime type', function(done) {
     // GIVEN a PayIDClient and with mocked networking to return a server error.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient()
 
-    const serverErrorCode = 500
-    const serverErrorMessage = 'internal error'
+    const serverErrorCode = 415
+    const serverError = {
+      statusCode: serverErrorCode,
+      error: 'Unsupported Media Type',
+      message: 'Unknown MIME type requested.',
+    }
     nock('https://xpring.money')
       .get('/georgewashington')
-      .reply(serverErrorCode, serverErrorMessage)
+      .reply(serverErrorCode, serverError)
 
     // WHEN an XRPAddress is requested for a Pay ID.
     payIDClient.xrpAddressForPayID(payID).catch((error) => {
@@ -93,7 +107,38 @@ describe('Pay ID Client', function(): void {
 
       const { message } = error
       assert.include(message, `${serverErrorCode}`)
-      assert.include(message, serverErrorMessage)
+      assert.include(message, serverError.message)
+
+      done()
+    })
+  })
+
+  it('xrpAddressForPayID - failed request', function(done) {
+    // GIVEN a PayIDClient and with mocked networking to return a server error.
+    const payID = '$xpring.money/georgewashington'
+    const payIDClient = new PayIDClient()
+
+    const serverErrorCode = 503
+    const serverError = {
+      statusCode: serverErrorCode,
+      error: 'Internal error',
+      message: 'Something went wrong and it is not your fault',
+    }
+    nock('https://xpring.money')
+      .get('/georgewashington')
+      .reply(serverErrorCode, serverError)
+
+    // WHEN an XRPAddress is requested for a Pay ID.
+    payIDClient.xrpAddressForPayID(payID).catch((error) => {
+      // THEN an unexpected response is thrown with the details of the error.
+      assert.equal(
+        (error as PayIDError).errorType,
+        PayIDErrorType.UnexpectedResponse,
+      )
+
+      const { message } = error
+      assert.include(message, `${serverErrorCode}`)
+      assert.include(message, serverError.message)
 
       done()
     })

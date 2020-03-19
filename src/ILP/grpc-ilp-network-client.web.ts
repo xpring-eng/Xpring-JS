@@ -1,4 +1,3 @@
-import { Metadata } from 'grpc-web'
 import { IlpNetworkClient } from './ilp-network-client'
 import { GetBalanceRequest } from '../generated/web/ilp/get_balance_request_pb'
 import { GetBalanceResponse } from '../generated/web/ilp/get_balance_response_pb'
@@ -7,6 +6,7 @@ import { SendPaymentResponse } from '../generated/web/ilp/send_payment_response_
 import isNode from '../utils'
 import { BalanceServiceClient } from '../generated/web/ilp/balance_service_grpc_web_pb'
 import { IlpOverHttpServiceClient } from '../generated/web/ilp/ilp_over_http_service_grpc_web_pb'
+import IlpCredentials from './auth/ilp-credentials.web'
 
 class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
   private readonly balanceClient: BalanceServiceClient
@@ -24,6 +24,7 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
         // Swallow the error here for browsers
       }
     }
+
     this.balanceClient = new BalanceServiceClient(grpcURL, null, {
       withCredentials: 'true',
     })
@@ -37,17 +38,17 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
     bearerToken?: string,
   ): Promise<GetBalanceResponse> {
     return new Promise((resolve, reject): void => {
-      const metaData: Metadata | undefined = bearerToken
-        ? { Authorization: bearerToken }
-        : undefined
-
-      this.balanceClient.getBalance(request, metaData, (error, response) => {
-        if (error != null || response === null) {
-          reject(error)
-          return
-        }
-        resolve(response)
-      })
+      this.balanceClient.getBalance(
+        request,
+        IlpCredentials.build(bearerToken),
+        (error, response) => {
+          if (error || !response) {
+            reject(error)
+            return
+          }
+          resolve(response)
+        },
+      )
     })
   }
 
@@ -56,17 +57,17 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
     bearerToken?: string,
   ): Promise<SendPaymentResponse> {
     return new Promise((resolve, reject): void => {
-      const metaData: Metadata | undefined = bearerToken
-        ? { Authorization: bearerToken }
-        : undefined
-
-      this.paymentClient.sendMoney(request, metaData, (error, response) => {
-        if (error != null || response === null) {
-          reject(error)
-          return
-        }
-        resolve(response)
-      })
+      this.paymentClient.sendMoney(
+        request,
+        IlpCredentials.build(bearerToken),
+        (error, response) => {
+          if (error || !response) {
+            reject(error)
+            return
+          }
+          resolve(response)
+        },
+      )
     })
   }
 
