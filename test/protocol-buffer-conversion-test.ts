@@ -1,6 +1,5 @@
 import { assert } from 'chai'
 import bigInt from 'big-integer'
-import RippledFlags from '../src/rippled-flags'
 import XRPCurrency from '../src/XRP/xrp-currency'
 import XRPPathElement from '../src/XRP/xrp-path-element'
 import XRPPath from '../src/XRP/xrp-path'
