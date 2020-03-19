@@ -62,7 +62,7 @@ export default class XRPPayment {
     readonly destinationTag?: number,
     readonly deliverMin?: XRPCurrencyAmount,
     readonly invoiceID?: Uint8Array,
-    readonly paths?: (XRPPath | undefined)[],
+    readonly paths?: Array<XRPPath | undefined>,
     readonly sendMax?: XRPCurrencyAmount,
   ) {}
 }
