@@ -15,5 +15,7 @@ export default class XRPPath {
     return new XRPPath(pathElements)
   }
 
-  private constructor(readonly pathElements: (XRPPathElement | undefined)[]) {}
+  private constructor(
+    readonly pathElements: Array<XRPPathElement | undefined>,
+  ) {}
 }
