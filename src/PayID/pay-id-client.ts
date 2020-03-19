@@ -12,21 +12,19 @@ import XRPLNetwork from '../Common/xrpl-network'
  */
 export default class PayIDClient implements PayIDClientInterface {
   /**
+   * @param network The network that addresses will be resolved on.
+   */
+  constructor(public readonly network: XRPLNetwork) {}
+
+  /**
    * Retrieve the XRP Address associated with a PayID.
    *
    * @note The returned value will always be in an X-Address format.
    *
    * @param payID The payID to resolve for an address.
-   * @param network The network to resolve the address on. Defaults to Test.
    * @returns An XRP address representing the given PayID.
    */
-  // TODO(keefertaylor): It's likely that at some point we'll need to store instance state in this class. Make this a non-static
-  //                     method until a complete API spec proves it can be static.
-  // eslint-disable-next-line class-methods-use-this
-  public async xrpAddressForPayID(
-    payID: string,
-    network: XRPLNetwork = XRPLNetwork.Test,
-  ): Promise<string> {
+  async xrpAddressForPayID(payID: string): Promise<string> {
     const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
     if (!paymentPointer) {
       throw PayIDError.invalidPaymentPointer
@@ -39,7 +37,7 @@ export default class PayIDClient implements PayIDClientInterface {
     client.basePath = `https://${paymentPointer.host}`
 
     // Accept only the given network in response.
-    const accepts = [`application/xrpl-${network}+json`]
+    const accepts = [`application/xrpl-${this.network}+json`]
 
     return new Promise((resolve, reject) => {
       // NOTE: Swagger produces a higher level client that does not require this level of configuration,
@@ -69,7 +67,7 @@ export default class PayIDClient implements PayIDClientInterface {
         (error, data, _response) => {
           if (error) {
             if (error.status === 404) {
-              const message = `Could not resolve ${payID} on network ${network}`
+              const message = `Could not resolve ${payID} on network ${this.network}`
               reject(new PayIDError(PayIDErrorType.MappingNotFound, message))
             } else {
               const message = `${error.status}: ${error.response.text}`
