@@ -10,7 +10,6 @@ export default class XpringClient {
   /**
    * Create a new XpringClient.
    *
-   * @param network The network that interactions will take place on.
    * @param payIDClient A Pay ID Client used to interact with the Pay ID protocol.
    * @param xrpClient An XRP Client used to interact with the XRP Ledger protocol.
    */
