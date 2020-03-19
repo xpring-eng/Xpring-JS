@@ -6,6 +6,7 @@ import XRPPath from '../src/XRP/xrp-path'
 import XRPIssuedCurrency from '../src/XRP/xrp-issued-currency'
 import XRPCurrencyAmount from '../src/XRP/xrp-currency-amount'
 import XRPPayment from '../src/XRP/xrp-payment'
+import XRPMemo from '../src/XRP/xrp-memo'
 import {
   Currency,
   CurrencyAmount,
@@ -19,8 +20,14 @@ import {
   DeliverMin,
   InvoiceID,
   SendMax,
+  MemoData,
+  MemoFormat,
+  MemoType,
 } from '../src/generated/web/org/xrpl/rpc/v1/common_pb'
-import { Payment } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
+import {
+  Payment,
+  Memo,
+} from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from '../src/generated/web/org/xrpl/rpc/v1/account_pb'
 
 // TODO(amiecorso): Refactor tests to separate files.
@@ -463,5 +470,47 @@ describe('Protocol Buffer Conversion', function(): void {
 
     // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
     assert.isUndefined(XRPPayment.from(paymentProto))
+  })
+
+  // Memo
+
+  it('Convert Memo with all fields set', function(): void {
+    // GIVEN a memo with all fields set.
+    const memoData = new Uint8Array([1, 2, 3])
+    const memoFormat = new Uint8Array([4, 5, 6])
+    const memoType = new Uint8Array([7, 8, 9])
+
+    const memoDataProto = new MemoData()
+    memoDataProto.setValue(memoData)
+    const memoFormatProto = new MemoFormat()
+    memoFormatProto.setValue(memoFormat)
+    const memoTypeProto = new MemoType()
+    memoTypeProto.setValue(memoType)
+
+    const memoProto = new Memo()
+    memoProto.setMemoData(memoDataProto)
+    memoProto.setMemoFormat(memoFormatProto)
+    memoProto.setMemoType(memoTypeProto)
+
+    // WHEN the protocol buffer is converted to a native TypeScript type
+    const memo = XRPMemo.from(memoProto)
+
+    // THEN all fields are present and set correctly.
+    assert.deepEqual(memo?.data, memoData)
+    assert.deepEqual(memo?.format, memoFormat)
+    assert.deepEqual(memo?.type, memoType)
+  })
+
+  it('Convert Memo with no fields set', function(): void {
+    // GIVEN a memo with no fields set.
+    const memoProto = new Memo()
+
+    // WHEN the protocol buffer is converted to a native TypeScript type
+    const memo = XRPMemo.from(memoProto)
+
+    // THEN all fields are undefined.
+    assert.isUndefined(memo?.data)
+    assert.isUndefined(memo?.format)
+    assert.isUndefined(memo?.type)
   })
 })
