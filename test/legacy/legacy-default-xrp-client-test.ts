@@ -396,7 +396,7 @@ describe('Legacy Default Xpring Client', function(): void {
   })
 
   it('Get Payment Status - Validated Transaction and Success Code', async function() {
-    // GIVEN a XRPClient which will return an validated transaction with a success code.
+    // GIVEN an XRPClient which will return an validated transaction with a success code.
     const transactionStatusResponse = new TransactionStatusResponse()
     transactionStatusResponse.setValidated(true)
     transactionStatusResponse.setTransactionStatusCode(
@@ -422,7 +422,7 @@ describe('Legacy Default Xpring Client', function(): void {
   })
 
   it('Get Payment Status - Node Error', function(done) {
-    // GIVEN a XRPClient which will error when a transaction status is requested.
+    // GIVEN an XRPClient which will error when a transaction status is requested.
     const transactionStatusResponses = new FakeLegacyNetworkClientResponses(
       FakeLegacyNetworkClientResponses.defaultAccountInfoResponse(),
       FakeLegacyNetworkClientResponses.defaultFeeResponse(),
