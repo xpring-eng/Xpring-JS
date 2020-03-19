@@ -1,0 +1,47 @@
+info:
+  title: PayID
+  version: '0.0.1'
+paths:
+  '/{path}':
+    parameters:
+      - schema:
+          type: string
+        name: path
+        in: path
+        required: true
+    get:
+      summary: get-pay-id
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/xrpl-devnet+json:
+              schema:
+                $ref: '#/components/schemas/Mapping'
+            application/xrpl-mainnet+json:
+              schema:
+                $ref: '#/components/schemas/Mapping'
+            application/xrpl-testnet+json:
+              schema:
+                $ref: '#/components/schemas/Mapping'
+        '404':
+          description: Not Found
+        '415':
+          description: Bad MIME type
+        '503':
+          description: Internal error
+      operationId: resolvePayID
+      description: Resolve a pay id
+components:
+  schemas:
+    Mapping:
+      title: Mapping
+      type: object
+      properties:
+        address:
+          type: string
+      required:
+        - address
+        - network
+openapi: '3.0.0'
