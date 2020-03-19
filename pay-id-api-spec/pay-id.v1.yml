@@ -33,6 +33,31 @@ paths:
           description: Internal error
       operationId: resolvePayID
       description: Resolve a pay id
+  '/{path}/receipt':
+    parameters:
+      - schema:
+          type: string
+        name: path
+        in: path
+        required: true
+    get:
+      summary: get-receipt
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '422':
+          description: Unprocessable Entity
+        '503':
+          description: Service Unavailable
 components:
   schemas:
     CryptoAddressDetails:
@@ -60,4 +85,15 @@ components:
       required:
         - addressDetailsType
         - addressDetails
+    Receipt:
+      title: Receipt
+      type: object
+      properties:
+        invoiceHash:
+          type: string
+        transactionConfirmation:
+          type: string
+      required:
+        - invoiceHash
+        - transactionConfirmation
 openapi: '3.0.0'
