@@ -49,6 +49,7 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
   fakedFullPaymentValue,
 )
 // set up XRPTransaction object from Transaction protocol buffer
+// TODO(amiecorso): set up reusable mock protobuf objects for tests, because they are a huge pain to repeatedly construct
 const account = 'r123'
 const fee = '1'
 const sequence = 2
