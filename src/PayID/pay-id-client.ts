@@ -2,6 +2,7 @@ import { PayIDUtils } from 'xpring-common-js'
 import Mapping from './generated/model/Mapping'
 import ApiClient from './generated/ApiClient'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
+import PayIDClientInterface from './pay-id-client-interface'
 
 /**
  * Possible networks to resolve
@@ -17,15 +18,15 @@ export enum XRPLNetwork {
  *
  * @warning This class is experimental and should not be used in production applications.
  */
-export default class PayIDClient {
+export default class PayIDClient implements PayIDClientInterface {
   /**
-   * Retrieve the XRP Address authorized with a PayID.
+   * Retrieve the XRP Address associated with a PayID.
    *
    * @note The returned value will always be in an X-Address format.
    *
    * @param payID The payID to resolve for an address.
    * @param network The network to resolve the address on. Defaults to Test.
-   * @returns An XRP address representing the given PayID if one exists, otherwise undefined.
+   * @returns An XRP address representing the given PayID.
    */
   // TODO(keefertaylor): It's likely that at some point we'll need to store instance state in this class. Make this a non-static
   //                     method until a complete API spec proves it can be static.
@@ -33,7 +34,7 @@ export default class PayIDClient {
   public async xrpAddressForPayID(
     payID: string,
     network: XRPLNetwork = XRPLNetwork.Test,
-  ): Promise<string | undefined> {
+  ): Promise<string> {
     const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
     if (!paymentPointer) {
       throw PayIDError.invalidPaymentPointer
@@ -76,8 +77,8 @@ export default class PayIDClient {
         (error, data, _response) => {
           if (error) {
             if (error.status === 404) {
-              // Not Found
-              resolve(undefined)
+              const message = `Could not resolve ${payID} on network ${network}`
+              reject(new PayIDError(PayIDErrorType.MappingNotFound, message))
             } else {
               const message = `${error.status}: ${error.response.text}`
               reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
