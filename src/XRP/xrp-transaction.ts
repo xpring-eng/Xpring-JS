@@ -17,9 +17,13 @@ export default class XRPTransaction {
       .getAccount()
       ?.getValue()
       ?.getAddress()
+
     const fee = transaction.getFee()?.getDrops()
+
     const sequence = transaction.getSequence()?.getValue()
+
     const signingPublicKey = transaction.getSigningPublicKey()?.getValue_asU8()
+
     const transactionSignature = transaction
       .getTransactionSignature()
       ?.getValue_asU8()
@@ -27,13 +31,8 @@ export default class XRPTransaction {
     const accountTransactionID = transaction
       .getAccountTransactionId()
       ?.getValue_asU8()
-    const rawValue = transaction.getFlags()?.getValue()
-    let flags
-    if (rawValue) {
-      flags = RippledFlags.checkFlag(rawValue, RippledFlags.TF_PARTIAL_PAYMENT)
-    } else {
-      flags = undefined
-    }
+
+    const flags = transaction.getFlags()?.getValue()
 
     const lastLedgerSequence = transaction.getLastLedgerSequence()?.getValue()
 
@@ -50,7 +49,7 @@ export default class XRPTransaction {
         .getSignersList()
         .map((signer) => XRPSigner.from(signer))
     } else {
-      memos = undefined
+      signers = undefined
     }
 
     const sourceTag = transaction.getSourceTag()?.getValue()
@@ -75,6 +74,7 @@ export default class XRPTransaction {
         // Unsupported transaction type.
         return undefined
     }
+
     return new XRPTransaction(
       account,
       accountTransactionID,
