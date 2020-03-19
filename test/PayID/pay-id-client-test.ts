@@ -1,8 +1,9 @@
 import { assert } from 'chai'
 import nock from 'nock'
 import { PayIDUtils } from 'xpring-common-js'
-import PayIDClient, { XRPLNetwork } from '../../src/PayID/pay-id-client'
+import PayIDClient from '../../src/PayID/pay-id-client'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
+import XRPLNetwork from '../../src/Common/xrpl-network'
 
 describe('Pay ID Client', function(): void {
   afterEach(function() {
@@ -13,7 +14,7 @@ describe('Pay ID Client', function(): void {
   it('xrpAddressForPayID - invalid Pay ID', function(done): void {
     // GIVEN a PayIDClient and an invalid PayID.
     const invalidPayID = 'xpring.money/georgewashington' // Does not start with '$'
-    const payIDClient = new PayIDClient()
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     // WHEN an XRPAddress is requested for an invalid pay ID THEN an invalid payment pointer error is thrown.
     payIDClient.xrpAddressForPayID(invalidPayID).catch((error) => {
@@ -28,7 +29,7 @@ describe('Pay ID Client', function(): void {
   it('xrpAddressForPayID - successful response - match found', async function() {
     // GIVEN a PayID client, valid PayID and mocked networking to return a match for the PayID.
     const payID = '$xpring.money/georgewashington'
-    const payIDClient = new PayIDClient()
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
     if (!paymentPointer) {
@@ -53,7 +54,7 @@ describe('Pay ID Client', function(): void {
   it('xrpAddressForPayID - successful response - match not found', function(done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a 404 for the payID.
     const payID = '$xpring.money/georgewashington'
-    const payIDClient = new PayIDClient()
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
     const network = XRPLNetwork.Test
 
     const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
@@ -67,7 +68,7 @@ describe('Pay ID Client', function(): void {
       .reply(404, {})
 
     // WHEN an XRPAddress is requested.
-    payIDClient.xrpAddressForPayID(payID, network).catch((error) => {
+    payIDClient.xrpAddressForPayID(payID).catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
         (error as PayIDError).errorType,
@@ -85,7 +86,7 @@ describe('Pay ID Client', function(): void {
   it('xrpAddressForPayID - unknown mime type', function(done) {
     // GIVEN a PayIDClient and with mocked networking to return a server error.
     const payID = '$xpring.money/georgewashington'
-    const payIDClient = new PayIDClient()
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     const serverErrorCode = 415
     const serverError = {
@@ -116,7 +117,7 @@ describe('Pay ID Client', function(): void {
   it('xrpAddressForPayID - failed request', function(done) {
     // GIVEN a PayIDClient and with mocked networking to return a server error.
     const payID = '$xpring.money/georgewashington'
-    const payIDClient = new PayIDClient()
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     const serverErrorCode = 503
     const serverError = {
@@ -147,7 +148,7 @@ describe('Pay ID Client', function(): void {
   it('xrpAddressForPayID - successful response - unexpected response format', function(done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a match for the PayID.
     const payID = '$xpring.money/georgewashington'
-    const payIDClient = new PayIDClient()
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
     if (!paymentPointer) {
