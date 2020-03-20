@@ -17,7 +17,9 @@ import {
   Transaction,
 } from '../../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from '../../src/generated/web/org/xrpl/rpc/v1/account_pb'
+import { GetAccountTransactionHistoryResponse } from '../../src/generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import XRPTransaction from '../../src/XRP/xrp-transaction'
+import { GetTransactionResponse } from '../../src/generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 
 // primitive test values
 const testCurrencyName = 'currencyName'
@@ -94,18 +96,30 @@ transactionPaymentProto.setAmount(paymentAmountProto)
 transactionPaymentProto.setDestination(paymentDestinationProto)
 
 // Transaction proto (only mandatory common fields set)
-const transactionProto = new Transaction()
-transactionProto.setAccount(transactionAccountProto)
-transactionProto.setFee(transactionFeeProto)
-transactionProto.setSequence(transactionSequenceProto)
-transactionProto.setSigningPublicKey(transactionSigningPublicKeyProto)
-transactionProto.setTransactionSignature(transactionTransactionSignatureProto)
-transactionProto.setPayment(transactionPaymentProto)
+const testTransaction = new Transaction()
+testTransaction.setAccount(transactionAccountProto)
+testTransaction.setFee(transactionFeeProto)
+testTransaction.setSequence(transactionSequenceProto)
+testTransaction.setSigningPublicKey(transactionSigningPublicKeyProto)
+testTransaction.setTransactionSignature(transactionTransactionSignatureProto)
+testTransaction.setPayment(transactionPaymentProto)
+
+const getTransactionResponseProto = new GetTransactionResponse()
+getTransactionResponseProto.setTransaction(testTransaction)
+
+// GetAccountTransactionHistoryResponse proto
+const testGetAccountTransactionHistoryResponse = new GetAccountTransactionHistoryResponse()
+const transactionList = [
+  getTransactionResponseProto,
+  getTransactionResponseProto,
+]
+testGetAccountTransactionHistoryResponse.setTransactionsList(transactionList)
 
 // test XRPTransaction
-const testTransaction = XRPTransaction.from(transactionProto)
+const testXRPTransaction = XRPTransaction.from(testTransaction)
 
-// test Transactions array
-const testTransactions = [testTransaction, testTransaction]
-
-export { transactionProto, testTransaction, testTransactions }
+export {
+  testTransaction,
+  testXRPTransaction,
+  testGetAccountTransactionHistoryResponse,
+}

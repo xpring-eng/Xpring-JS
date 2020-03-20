@@ -67,7 +67,7 @@ export class FakeNetworkClientResponses {
    * @param getFeeResponse The response or error that will be returned from the getFee request. Defaults to the default fee response.
    * @param submitTransactionResponse The response or error that will be returned from the submitTransaction request. Defaults to the default submit transaction response.
    * @param getTransactionStatusResponse The response or error that will be returned from the getTransactionStatus request. Defaults to the default transaction status response.
-   * @param getTransactionHistoryResponse The response or error that will be returned from teh getTransactionHistory request. Default to the default transaction history response.
+   * @param getTransactionHistoryResponse The response or error that will be returned from the getTransactionHistory request. Default to the default transaction history response.
    */
   public constructor(
     public readonly getAccountInfoResponse: Result<
