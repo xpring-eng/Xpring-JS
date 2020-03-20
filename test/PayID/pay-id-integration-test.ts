@@ -2,6 +2,7 @@ import { assert } from 'chai'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
 import PayIDClient from '../../src/PayID/pay-id-client'
 import XRPLNetwork from '../../src/Common/xrpl-network'
+import ComplianceType from '../../src/PayID/compliance-type'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -72,6 +73,35 @@ describe('PayID Integration Tests', function(): void {
 
     // WHEN the Pay ID receipt endpoint is hit
     const invoice = await payIDClient.getInvoice(payID, 'abc123')
+
+    // THEN the server returns a result.
+    assert.exists(invoice)
+  })
+
+  it('postInvoice', async function(): Promise<void> {
+    this.timeout(timeoutMs)
+
+    // GIVEN a Pay ID.
+    const payID = '$travel.payid.xpring.money/dino'
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
+
+    // WHEN the Pay ID receipt endpoint is hit
+    const invoice = await payIDClient.postInvoice(
+      payID,
+      'x509 + sha256',
+      [],
+      '00:c9:22:69:31:8a:d6:6c:ea:da:c3:7f:2c:ac:a5:af:c0:02:ea:81:cb:65:b9:fd:0c:6d:46:5b:c9:1e:9d:3b:ef',
+      '8b:c3:ed:d1:9d:39:6f:af:40:72:bd:1e:18:5e:30:54:23:35',
+      ComplianceType.TravelRule,
+      'Theodore Kalaw',
+      'ef841530-f476-429c-b8f3-de25a0a29f80',
+      '520 Main Street',
+      'xpring',
+      '100',
+      1,
+      '2020-03-20T07:09:00',
+      'xpring',
+    )
 
     // THEN the server returns a result.
     assert.exists(invoice)
