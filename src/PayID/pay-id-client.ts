@@ -4,7 +4,7 @@ import ApiClient from './generated/ApiClient'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
 import PayIDClientInterface from './pay-id-client-interface'
 import XRPLNetwork from '../Common/xrpl-network'
-import SignatureWrapper from './generated/model/SignatureWrapper'
+import SignatureWrapperInvoice from './generated/model/SignatureWrapperInvoice'
 
 /**
  * A client for PayID.
@@ -85,7 +85,10 @@ export default class PayIDClient implements PayIDClientInterface {
     })
   }
 
-  async getInvoice(payID: string, nonce: string): Promise<SignatureWrapper> {
+  async getInvoice(
+    payID: string,
+    nonce: string,
+  ): Promise<SignatureWrapperInvoice> {
     // TODO(keefertaylor): Dedupe payment pointer logic
     const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
     if (!paymentPointer) {
@@ -116,7 +119,7 @@ export default class PayIDClient implements PayIDClientInterface {
       const formParams = {}
       const authNames = []
       const contentTypes = []
-      const returnType = SignatureWrapper
+      const returnType = SignatureWrapperInvoice
       client.callApi(
         '/{path}/invoice',
         'GET',

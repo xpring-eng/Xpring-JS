@@ -4,7 +4,7 @@ import { PayIDUtils } from 'xpring-common-js'
 import PayIDClient from '../../src/PayID/pay-id-client'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
 import XRPLNetwork from '../../src/Common/xrpl-network'
-import SignatureWrapper from '../../src/PayID/generated/model/SignatureWrapper'
+import SignatureWrapperInvoice from '../../src/PayID/generated/model/SignatureWrapperInvoice'
 
 // Parameters for getInvoice
 const nonce = '123456'
@@ -224,7 +224,7 @@ describe('Pay ID Client', function(): void {
     // THEN the invoice was the mocked response.
     assert.deepEqual(
       invoice,
-      SignatureWrapper.constructFromObject(mockResponse, null),
+      SignatureWrapperInvoice.constructFromObject(mockResponse, null),
     )
   })
 
