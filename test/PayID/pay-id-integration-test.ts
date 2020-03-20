@@ -76,4 +76,15 @@ describe('PayID Integration Tests', function(): void {
     // THEN the server returns a result.
     assert.exists(invoice)
   })
+
+  it('receipt', async function(): Promise<void> {
+    const payIDClient = new PayIDClient(XRPLNetwork.Main)
+
+    // WHEN the Pay ID receipt endpoint is hit then an error is not thrown.
+    await payIDClient.receipt(
+      payID,
+      'some_invoice_hash',
+      'some_transaction_hash',
+    )
+  })
 })

@@ -70,6 +70,27 @@ paths:
           name: nonce
           description: ''
           required: true
+  '/{path}/receipt':
+    post:
+      summary: ''
+      operationId: post-path-receipt
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '422':
+          description: Unprocessable Entity (WebDAV)
+        '503':
+          description: Service Unavailable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+        description: ''
 components:
   schemas:
     CryptoAddressDetails:
@@ -152,4 +173,15 @@ components:
         - publicKeyData
         - publicKey
         - signature
+    Receipt:
+      title: Receipt
+      type: object
+      properties:
+        invoiceHash:
+          type: string
+        transactionConfirmation:
+          type: string
+      required:
+        - invoiceHash
+        - transactionConfirmation
 openapi: '3.0.0'
