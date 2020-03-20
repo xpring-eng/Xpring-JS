@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 2.0.2 - March 19, 2020
+- Adds XpringClient, which composes various services.
+- Updates PayID implementation to use the proper headers.
+
 ## 2.0.1 - March 18, 2020
 - Fixed a bug in `DefaultIlpClient`. "Bearer " prefix was not being prepended to auth tokens, which caused authentication issues on Hermes.
 	- "Bearer " prefix now gets prepended to auth tokens, if it is not already there
