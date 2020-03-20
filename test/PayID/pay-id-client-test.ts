@@ -4,12 +4,18 @@ import { PayIDUtils } from 'xpring-common-js'
 import PayIDClient from '../../src/PayID/pay-id-client'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
 import XRPLNetwork from '../../src/Common/xrpl-network'
+import SignatureWrapper from '../../src/PayID/generated/model/SignatureWrapper'
+
+// Parameters for getInvoice
+const nonce = '123456'
 
 describe('Pay ID Client', function(): void {
   afterEach(function() {
     // Clean nock after each test.
     nock.cleanAll()
   })
+
+  // xrpAddressForPayID
 
   it('xrpAddressForPayID - invalid Pay ID', function(done): void {
     // GIVEN a PayIDClient and an invalid PayID.
@@ -176,4 +182,72 @@ describe('Pay ID Client', function(): void {
       done()
     })
   })
+
+  // getInvoice
+
+  it('getInvoice - successful response', async function() {
+    // GIVEN a PayID client, valid PayID and mocked networking to return a invoice for the Pay ID.
+    const payID = '$xpring.money/georgewashington'
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
+
+    const mockResponse = {
+      messageType: 'Invoice',
+      message: {
+        nonce,
+        expirationTime: '2020-03-18T04:04:02',
+        paymentInformation: {
+          addressDetailType: 'CryptoAddressDetails',
+          addressDetails: {
+            address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
+          },
+          proofOfControlSignature: '9743b52063cd84097a65d1633f5c74f5',
+          paymentPointer: '$xpring.money/dino',
+        },
+        complianceRequirements: ['TravelRule'],
+        memo: 'please send me travel rule data',
+        complianceHashes: [],
+      },
+      pkiType: 'x509+sha256',
+      pkiData: [],
+      publicKey:
+        '00:c9:22:69:31:8a:d6:6c:ea:da:c3:7f:2c:ac:a5:af:c0:02:ea:81:cb:65:b9:fd:0c:6d:46:5b:c9:1e:9d:3b:ef',
+      signature: '8b:c3:ed:d1:9d:39:6f:af:40:72:bd:1e:18:5e:30:54:23:35',
+    }
+
+    nock('https://xpring.money')
+      .get(`/georgewashington/invoice?nonce=${nonce}`)
+      .reply(200, mockResponse)
+
+    // WHEN the invoice endpoint is hit.
+    const invoice = await payIDClient.getInvoice(payID, nonce)
+
+    // THEN the invoice was the mocked response.
+    assert.deepEqual(
+      invoice,
+      SignatureWrapper.constructFromObject(mockResponse, null),
+    )
+  })
+
+  it('getInvoice - failure', function(done) {
+    // GIVEN a PayID client, valid PayID and mocked networking to return a failure when a invoice is requested.
+    const payID = '$xpring.money/georgewashington'
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
+
+    nock('https://xpring.money')
+      .get(`/georgewashington/receipt?nonce=${nonce}`)
+      .reply(503, {})
+
+    // WHEN the receipt endpoint is hit then an error is not thrown.
+    payIDClient.getInvoice(payID, nonce).catch((error) => {
+      // THEN an unexpected response is thrown with the details of the error.
+      assert.equal(
+        (error as PayIDError).errorType,
+        PayIDErrorType.UnexpectedResponse,
+      )
+
+      done()
+    })
+  })
+
+  // TODO(keefertaylor): Write tests for specific error codes returned by the API.
 })
