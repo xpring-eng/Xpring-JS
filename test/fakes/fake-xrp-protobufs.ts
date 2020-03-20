@@ -34,6 +34,8 @@ const testTransactionSignature = new Uint8Array([4, 5, 6])
 const testSequence = 1
 const testFee = '3'
 
+// VALID OBJECTS ===============================================
+
 // Currency proto
 const currencyProto: Currency = new Currency()
 currencyProto.setCode(testCurrencyCode)
@@ -48,12 +50,6 @@ const issuedCurrencyProto = new IssuedCurrencyAmount()
 issuedCurrencyProto.setCurrency(currencyProto)
 issuedCurrencyProto.setIssuer(accountAddressProto)
 issuedCurrencyProto.setValue(testIssuedCurrencyValue)
-
-// Invalid IssuedCurrencyAmount proto
-const invalidIssuedCurrencyProto = new IssuedCurrencyAmount()
-invalidIssuedCurrencyProto.setCurrency(currencyProto)
-invalidIssuedCurrencyProto.setIssuer(accountAddressProto)
-invalidIssuedCurrencyProto.setValue(testInvalidIssuedCurrencyValue)
 
 // Account proto
 const transactionAccountProto = new Account()
@@ -107,6 +103,7 @@ testPaymentTransaction.setTransactionSignature(
 )
 testPaymentTransaction.setPayment(transactionPaymentProto)
 
+// TransactionResponse proto
 const getTransactionResponseProto = new GetTransactionResponse()
 getTransactionResponseProto.setTransaction(testPaymentTransaction)
 
@@ -133,12 +130,64 @@ testGetAccountTransactionHistoryResponse.setTransactionsList(
   transactionResponseList,
 )
 
+// INVALID OBJECTS =============================================
+
+// Invalid IssuedCurrencyAmount proto
+const invalidIssuedCurrencyProto = new IssuedCurrencyAmount()
+invalidIssuedCurrencyProto.setCurrency(currencyProto)
+invalidIssuedCurrencyProto.setIssuer(accountAddressProto)
+invalidIssuedCurrencyProto.setValue(testInvalidIssuedCurrencyValue)
+
+// Invalid CurrencyAmount proto
+const invalidCurrencyAmountProto = new CurrencyAmount()
+invalidCurrencyAmountProto.setIssuedCurrencyAmount(invalidIssuedCurrencyProto)
+
+// Invalid Amount proto
+const invalidAmountProto = new Amount()
+invalidAmountProto.setValue(invalidCurrencyAmountProto)
+
+// Invalid Payment proto
+const invalidPaymentProto = new Payment()
+invalidPaymentProto.setAmount(invalidAmountProto) // invalid via bad buried IssuedCurrencyAmount
+invalidPaymentProto.setDestination(paymentDestinationProto)
+
+// Invalid Transaction proto (PAYMENT, malformed) (only mandatory common fields set)
+const testInvalidPaymentTransaction = new Transaction()
+testInvalidPaymentTransaction.setAccount(transactionAccountProto)
+testInvalidPaymentTransaction.setFee(transactionFeeProto)
+testInvalidPaymentTransaction.setSequence(transactionSequenceProto)
+testInvalidPaymentTransaction.setSigningPublicKey(
+  transactionSigningPublicKeyProto,
+)
+testInvalidPaymentTransaction.setTransactionSignature(
+  transactionTransactionSignatureProto,
+)
+testInvalidPaymentTransaction.setPayment(invalidPaymentProto)
+
+// Invalid TransactionResponse proto
+const invalidGetTransactionResponseProto = new GetTransactionResponse()
+invalidGetTransactionResponseProto.setTransaction(testInvalidPaymentTransaction)
+
+// Invalid GetAccountTransactionHistoryResponse proto
+const testInvalidGetAccountTransactionHistoryResponse = new GetAccountTransactionHistoryResponse()
+const invalidTransactionResponseList = [
+  invalidGetTransactionResponseProto, // one bad transaction (malformed Payment)
+  getTransactionResponseProto,
+]
+testGetAccountTransactionHistoryResponse.setTransactionsList(
+  invalidTransactionResponseList,
+)
+
+// XRP OBJECTS ===================================================
+
 // test XRPTransaction
 const testXRPTransaction = XRPTransaction.from(testPaymentTransaction)
 
 export {
   testPaymentTransaction,
+  testInvalidPaymentTransaction,
   testCheckCashTransaction,
   testXRPTransaction,
   testGetAccountTransactionHistoryResponse,
+  testInvalidGetAccountTransactionHistoryResponse,
 }

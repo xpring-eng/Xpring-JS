@@ -22,6 +22,7 @@ import {
   testGetAccountTransactionHistoryResponse,
   testCheckCashTransaction,
   testPaymentTransaction,
+  testInvalidGetAccountTransactionHistoryResponse,
 } from './fakes/fake-xrp-protobufs'
 import XRPTransaction from '../src/XRP/xrp-transaction'
 
@@ -469,9 +470,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Get Payment History - successful response', async function(): Promise<
-    void
-  > {
+  it('Payment History - successful response', async function(): Promise<void> {
     // GIVEN a DefaultXRPClient.
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
 
@@ -507,7 +506,7 @@ describe('Default Xpring Client', function(): void {
     assert.deepEqual(expectedPaymentHistory, paymentHistory)
   })
 
-  it('Get Payment History - classic address', function(done): void {
+  it('Payment History - classic address', function(done): void {
     // GIVEN an XRPClient and a classic address
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
     const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
@@ -520,7 +519,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Get Payment History - network failure', function(done): void {
+  it('Payment History - network failure', function(done): void {
     // GIVEN an XRPClient which wraps an erroring network client.
     const xrpClient = new DefaultXRPClient(fakeErroringNetworkClient)
 
@@ -532,7 +531,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Get Payment History - non-payment transactions', async function(): Promise<
+  it('Payment History - non-payment transactions', async function(): Promise<
     void
   > {
     // GIVEN an XRPClient client which will return a transaction history which contains non-payment transactions
@@ -546,7 +545,7 @@ describe('Default Xpring Client', function(): void {
       nonPaymentTransactionResponse,
     )
 
-    const heteroTransactionHistoryResponses = new FakeNetworkClientResponses(
+    const heteroHistoryNetworkResponses = new FakeNetworkClientResponses(
       FakeNetworkClientResponses.defaultAccountInfoResponse(),
       FakeNetworkClientResponses.defaultFeeResponse(),
       FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
@@ -555,7 +554,7 @@ describe('Default Xpring Client', function(): void {
     )
 
     const heteroHistoryNetworkClient = new FakeNetworkClient(
-      heteroTransactionHistoryResponses,
+      heteroHistoryNetworkResponses,
     )
 
     const xrpClient = new DefaultXRPClient(heteroHistoryNetworkClient)
@@ -570,5 +569,30 @@ describe('Default Xpring Client', function(): void {
     ]
 
     assert.deepEqual(expectedTransactionHistory, transactionHistory)
+  })
+
+  it('Payment History - invalid Payment', function(done) {
+    // GIVEN an XRPClient client which will return a transaction history which contains a malformed payment.
+    const invalidHistoryNetworkResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      FakeNetworkClientResponses.defaultGetTransactionResponse(),
+      testInvalidGetAccountTransactionHistoryResponse,
+    )
+    const invalidHistoryNetworkClient = new FakeNetworkClient(
+      invalidHistoryNetworkResponses,
+    )
+    const xrpClient = new DefaultXRPClient(invalidHistoryNetworkClient)
+
+    // WHEN the transactionHistory is requested THEN an error is thrown.
+    xrpClient.paymentHistory(testAddress).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(
+        error.message,
+        XRPClientErrorMessages.paymentConversionFailure,
+      )
+      done()
+    })
   })
 })
