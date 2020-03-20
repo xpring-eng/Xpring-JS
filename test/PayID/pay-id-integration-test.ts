@@ -63,9 +63,21 @@ describe('PayID Integration Tests', function(): void {
     })
   })
 
-  it('receipt', async function(): Promise<void> {
+  it('getInvoice', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
+    // GIVEN a Pay ID.
+    const payID = '$travel.payid.xpring.money/dino'
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
+
+    // WHEN the Pay ID receipt endpoint is hit
+    const invoice = await payIDClient.getInvoice(payID, 'abc123')
+
+    // THEN the server returns a result.
+    assert.exists(invoice)
+  })
+
+  it('receipt', async function(): Promise<void> {
     // GIVEN a Pay ID.
     const payID = '$travel.payid.xpring.money/dino'
     const payIDClient = new PayIDClient(XRPLNetwork.Main)

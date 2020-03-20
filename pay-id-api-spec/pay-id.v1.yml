@@ -33,6 +33,43 @@ paths:
           description: Internal error
       operationId: resolvePayID
       description: Resolve a pay id
+  '/{path}/invoice':
+    parameters:
+      - schema:
+          type: string
+        name: path
+        in: path
+        required: true
+    get:
+      summary: get-invoice
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/xrpl-devnet+json:
+              schema:
+                $ref: '#/components/schemas/SignatureWrapper'
+            application/xrpl-mainnet+json:
+              schema:
+                $ref: '#/components/schemas/SignatureWrapper'
+            application/xrpl-testnet+json:
+              schema:
+                $ref: '#/components/schemas/SignatureWrapper'
+        '404':
+          description: Not Found
+        '503':
+          description: Service Unavailable
+      operationId: get-path-invoice
+      parameters:
+        - schema:
+            # Typed as a string to get around swagger-codegen issues.
+            # TODO(keefertaylor): Fix after https://github.com/swagger-api/swagger-codegen/issues/10105 is resolved
+            type: string
+          in: query
+          name: nonce
+          description: ''
+          required: true
   '/{path}/receipt':
     parameters:
       - schema:
@@ -87,6 +124,61 @@ components:
       required:
         - addressDetailsType
         - addressDetails
+    Invoice:
+      title: Invoice
+      type: object
+      properties:
+        nonce:
+          type: string
+        expirationTime:
+          type: string
+        paymentInformation:
+          $ref: '#/components/schemas/PaymentInformation'
+        complianceRequirements:
+          type: array
+          items:
+            type: string
+        memo:
+          type: string
+        complianceHashes:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              hash:
+                type: string
+      required:
+        - nonce
+        - expirationTime
+        - paymentInformation
+        - complianceRequirements
+    SignatureWrapper:
+      title: SignatureWrapper
+      type: object
+      properties:
+        messageType:
+          type: string
+        message:
+          $ref: '#/components/schemas/Invoice'
+        pkiType:
+          type: string
+        pkiData:
+          type: array
+          items:
+            type: string
+        publicKey:
+          type: string
+        signature:
+          type: string
+      required:
+        - messageType
+        - message
+        - publicKeyType
+        - publicKeyData
+        - publicKey
+        - signature
     Receipt:
       title: Receipt
       type: object
