@@ -104,7 +104,7 @@ paths:
             schema:
               $ref: '#/components/schemas/SignatureWrapper_Invoice'
       operationId: post-path-invoice
-'/{path}/receipt':
+  '/{path}/receipt':
     parameters:
       - schema:
           type: string
