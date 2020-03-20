@@ -7,8 +7,6 @@ import XRPLNetwork from '../../src/Common/xrpl-network'
 const timeoutMs = 60 * 1000 // 1 minute
 
 describe('PayID Integration Tests', function(): void {
-  // xrpAddressForPayID
-
   it('Resolve PayID to XRP - known PayID - mainnet', async function(): Promise<
     void
   > {
@@ -64,8 +62,6 @@ describe('PayID Integration Tests', function(): void {
       done()
     })
   })
-
-  // getInvoice
 
   it('getInvoice', async function(): Promise<void> {
     this.timeout(timeoutMs)

@@ -148,8 +148,8 @@ components:
       required:
         - messageType
         - message
-        - pkiType
-        - pkiData
+        - publicKeyType
+        - publicKeyData
         - publicKey
         - signature
 openapi: '3.0.0'

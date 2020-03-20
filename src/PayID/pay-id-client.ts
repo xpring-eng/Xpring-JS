@@ -85,6 +85,12 @@ export default class PayIDClient implements PayIDClientInterface {
     })
   }
 
+  /**
+   * Generate a new invoice with compliance requests.
+   *
+   * @param payID The Pay ID to request an invoice for.
+   * @param nonce A randomly selected nonce that is unique to this invoice request.
+   */
   async getInvoice(payID: string, nonce: string): Promise<SignatureWrapper> {
     // TODO(keefertaylor): Dedupe payment pointer logic
     const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
