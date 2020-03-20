@@ -71,6 +71,12 @@ paths:
           description: ''
           required: true
   '/{path}/receipt':
+    parameters:
+      - schema:
+          type: string
+        name: path
+        in: path
+        required: true
     post:
       summary: ''
       operationId: post-path-receipt

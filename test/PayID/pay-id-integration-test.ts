@@ -78,6 +78,8 @@ describe('PayID Integration Tests', function(): void {
   })
 
   it('receipt', async function(): Promise<void> {
+    // GIVEN a Pay ID.
+    const payID = '$travel.payid.xpring.money/dino'
     const payIDClient = new PayIDClient(XRPLNetwork.Main)
 
     // WHEN the Pay ID receipt endpoint is hit then an error is not thrown.
