@@ -142,7 +142,7 @@ const xrpClient = new XRPClient(remoteURL, true);
 
 #### Retrieving a Balance
 
-A `XRPClient` can check the balance of an account on the XRP Ledger.
+An `XRPClient` can check the balance of an account on the XRP Ledger.
 
 ```javascript
 const { XRPClient } = require("xpring-js");
@@ -158,7 +158,7 @@ console.log(balance); // Logs a balance in drops of XRP
 
 ### Checking Transaction Status
 
-A `XRPClient` can check the status of an payment on the XRP Ledger.
+An `XRPClient` can check the status of an payment on the XRP Ledger.
 
 This method can only determine the status of [payment transactions](https://xrpl.org/payment.html) which do not have the partial payment flag ([tfPartialPayment](https://xrpl.org/payment.html#payment-flags)) set.
 
@@ -184,9 +184,22 @@ const transactionStatus = xrpClient.getPaymentStatus(transactionHash); // Transa
 **Note:** The example transactionHash may lead to a "Transaction not found." error because the TestNet is regularly reset, or the accessed node may only maintain one
 month of history.  Recent transaction hashes can be found in the XRP Ledger Explorer: https://livenet.xrpl.org/
 
+#### Payment history
+
+An `XRPClient` can return payments to and from an account.
+
+```javascript
+const { XRPClient } = require("xpring-js");
+
+const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
+const xrpClient = new XRPClient(remoteURL);
+const address = "XVMFQQBMhdouRqhPMuawgBMN1AVFTofPAdRsXG5RkPtUPNQ";
+const transactions = await xrpClient.paymentHistory(address);
+```
+
 #### Sending XRP
 
-A `XRPClient` can send XRP to other accounts on the XRP Ledger.
+An `XRPClient` can send XRP to other accounts on the XRP Ledger.
 
 **Note:** The payment operation will block the calling thread until the operation reaches a definitive and irreversible success or failure state.
 
