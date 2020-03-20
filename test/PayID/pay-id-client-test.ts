@@ -27,6 +27,10 @@ const scale = 1
 const timestamp = '2020-03-20T07:09:00'
 const beneficiaryName = 'xpring'
 
+// Parameters for reciept.
+const invoiceHash = 'some_invoice_hash'
+const transasctionConfirmation = 'some_transaction_confirmation'
+
 describe('Pay ID Client', function(): void {
   afterEach(function() {
     // Clean nock after each test.
@@ -208,7 +212,7 @@ describe('Pay ID Client', function(): void {
       messageType: 'Invoice',
       message: {
         nonce,
-        expirationTime: '2020-03-18T04:04:02',
+        expirationTime: '1584725859',
         paymentInformation: {
           addressDetailType: 'CryptoAddressDetails',
           addressDetails: {
@@ -251,7 +255,7 @@ describe('Pay ID Client', function(): void {
       .get(`/georgewashington/invoice?nonce=${nonce}`)
       .reply(503, {})
 
-    // WHEN the receipt endpoint is hit then an error is not thrown.
+    // WHEN the getInvoice endpoint is hit
     payIDClient.getInvoice(payID, nonce).catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
@@ -337,7 +341,7 @@ describe('Pay ID Client', function(): void {
       .post(`/georgewashington/invoice`)
       .reply(503, {})
 
-    // WHEN the receipt endpoint is hit then an error is not thrown.
+    // WHEN the postInvoice endpoint
     payIDClient
       .postInvoice(
         payID,
@@ -367,4 +371,55 @@ describe('Pay ID Client', function(): void {
   })
 
   // TODO(keefertaylor): Write tests for specific error codes returned by the postInvoice API.
+
+  it('receipt - successful response', async function() {
+    // GIVEN a PayID client, valid PayID and mocked networking to return a receipt for the Pay ID.
+    const payID = '$xpring.money/georgewashington'
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
+
+    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
+    if (!paymentPointer) {
+      throw new Error(
+        'Test precondition failed: Could not generate payment pointer',
+      )
+    }
+    nock('https://xpring.money')
+      .post('/georgewashington/receipt')
+      .reply(200, 'OK')
+
+    // WHEN the receipt endpoint is hit then an error is not thrown.
+    await payIDClient.receipt(payID, invoiceHash, transasctionConfirmation)
+  })
+
+  it('receipt - failure', function(done) {
+    // GIVEN a PayID client, valid PayID and mocked networking to return a failure when a receipt is requested.
+    const payID = '$xpring.money/georgewashington'
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
+
+    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
+    if (!paymentPointer) {
+      throw new Error(
+        'Test precondition failed: Could not generate payment pointer',
+      )
+    }
+
+    nock('https://xpring.money')
+      .post('/georgewashington/receipt')
+      .reply(503, {})
+
+    // WHEN the receipt endpoint is hit
+    payIDClient
+      .receipt(payID, invoiceHash, transasctionConfirmation)
+      .catch((error) => {
+        // THEN an unexpected response is thrown with the details of the error.
+        assert.equal(
+          (error as PayIDError).errorType,
+          PayIDErrorType.UnexpectedResponse,
+        )
+
+        done()
+      })
+  })
+
+  // TODO(keefertaylor): Write tests for specific error codes returned by the receipt API.
 })
