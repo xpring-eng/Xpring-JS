@@ -33,6 +33,35 @@ paths:
           description: Internal error
       operationId: resolvePayID
       description: Resolve a pay id
+  '/{path}/compliance':
+    parameters:
+      - schema:
+          type: string
+        name: path
+        in: path
+        required: true
+    get:
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignatureWrapper'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '413':
+          description: Request Entity Too Large}
+        '422':
+          description: Unprocessable Entity
+        '451':
+          description: Unavailable for Legal Reasons
+        '503':
+          description: Service Unavailable
+        operationId: get-path-compliance
 components:
   schemas:
     CryptoAddressDetails:
@@ -60,4 +89,101 @@ components:
       required:
         - addressDetailsType
         - addressDetails
+    Beneficiary:
+      title: Beneficiary
+      type: object
+      properties:
+        institutionName:
+          type: string
+        userLegalName:
+          type: string
+        userPhysicalAddress:
+          type: string
+        accountId:
+          type: string
+      required:
+        - institutionName
+    Value:
+      title: Value
+      type: object
+      properties:
+        amount:
+          type: string
+        scale:
+          type:
+            - string
+            - number
+      required:
+        - amount
+        - scale
+    Originator:
+      title: Originator
+      type: object
+      properties:
+        userLegalName:
+          type: string
+        accountId:
+          type: string
+        userPhysicalAddress:
+          type: string
+        institutionName:
+          type: string
+        value:
+          $ref: '#/components/schemas/Value'
+        timestamp:
+          type: string
+      required:
+        - userLegalName
+        - accountId
+        - userPhysicalAddress
+        - institutionName
+        - value
+        - timestamp
+    TravelRule:
+      title: TravelRule
+      type: object
+      properties:
+        originator:
+          $ref: '#/components/schemas/Originator'
+        beneficiary:
+          $ref: '#/components/schemas/Beneficiary'
+      required:
+        - originator
+        - beneficiary
+    Compliance:
+      title: Compliance
+      type: object
+      properties:
+        type:
+          type: string
+        data:
+          $ref: '#/components/schemas/TravelRule'
+      required:
+        - type
+        - data
+    SignatureWrapper:
+      title: SignatureWrapper
+      type: object
+      properties:
+        messageType:
+          type: string
+        message:
+          $ref: '#/components/schemas/Compliance'
+        pkiType:
+          type: string
+        pkiData:
+          type: array
+          items:
+            type: string
+        publicKey:
+          type: string
+        signature:
+          type: string
+      required:
+        - messageType
+        - message
+        - pkiType
+        - pkiData
+        - publicKey
+        - signature
 openapi: '3.0.0'
