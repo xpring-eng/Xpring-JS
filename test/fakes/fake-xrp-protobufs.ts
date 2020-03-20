@@ -174,7 +174,7 @@ const invalidTransactionResponseList = [
   invalidGetTransactionResponseProto, // one bad transaction (malformed Payment)
   getTransactionResponseProto,
 ]
-testGetAccountTransactionHistoryResponse.setTransactionsList(
+testInvalidGetAccountTransactionHistoryResponse.setTransactionsList(
   invalidTransactionResponseList,
 )
 
