@@ -1,30 +1,12 @@
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 import bigInt from 'big-integer'
-import { AccountAddress } from 'xpring-common-js/build/generated/org/xrpl/rpc/v1/account_pb'
-import {
-  Account,
-  Sequence,
-  SigningPublicKey,
-  TransactionSignature,
-  Amount,
-  Destination,
-} from 'xpring-common-js/build/generated/org/xrpl/rpc/v1/common_pb'
-import {
-  XRPDropsAmount,
-  Currency,
-  CurrencyAmount,
-  IssuedCurrencyAmount,
-} from 'xpring-common-js/build/generated/org/xrpl/rpc/v1/amount_pb'
-import {
-  Transaction,
-  Payment,
-} from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 import FakeXRPClient from './fakes/fake-xrp-client'
 import ReliableSubmissionXRPClient from '../src/reliable-submission-xrp-client'
 import RawTransactionStatus from '../src/raw-transaction-status'
 import TransactionStatus from '../src/transaction-status'
-import XRPTransaction from '../src/XRP/xrp-transaction'
+// import XRPTransaction from '../src/XRP/xrp-transaction'
+import { testXRPTransaction } from './fakes/fake-xrp-protobufs'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -48,64 +30,7 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
   fakedRawTransactionStatusLastLedgerSequenceValue,
   fakedFullPaymentValue,
 )
-// set up XRPTransaction object from Transaction protocol buffer
-// TODO(amiecorso): set up reusable mock protobuf objects for tests, because they are a huge pain to repeatedly construct
-const account = 'r123'
-const fee = '1'
-const sequence = 2
-const signingPublicKey = new Uint8Array([1, 2, 3])
-const transactionSignature = new Uint8Array([4, 5, 6])
-
-const testCurrencyProto: Currency = new Currency()
-testCurrencyProto.setCode(new Uint8Array([1, 2, 3]))
-testCurrencyProto.setName('currencyName')
-
-const testAccountAddress = new AccountAddress()
-testAccountAddress.setAddress('r123')
-
-const testIssuedCurrency = new IssuedCurrencyAmount()
-testIssuedCurrency.setCurrency(testCurrencyProto)
-testIssuedCurrency.setIssuer(testAccountAddress)
-testIssuedCurrency.setValue('100')
-
-const transactionAccountAddressProto = new AccountAddress()
-transactionAccountAddressProto.setAddress(account)
-const transactionAccountProto = new Account()
-transactionAccountProto.setValue(transactionAccountAddressProto)
-
-const transactionFeeProto = new XRPDropsAmount()
-transactionFeeProto.setDrops(fee)
-
-const transactionSequenceProto = new Sequence()
-transactionSequenceProto.setValue(sequence)
-
-const transactionSigningPublicKeyProto = new SigningPublicKey()
-transactionSigningPublicKeyProto.setValue(signingPublicKey)
-
-const transactionTransactionSignatureProto = new TransactionSignature()
-transactionTransactionSignatureProto.setValue(transactionSignature)
-
-const paymentCurrencyAmountProto = new CurrencyAmount()
-paymentCurrencyAmountProto.setIssuedCurrencyAmount(testIssuedCurrency)
-const paymentAmountProto = new Amount()
-paymentAmountProto.setValue(paymentCurrencyAmountProto)
-const destinationAccountAddressProto = new AccountAddress()
-destinationAccountAddressProto.setAddress('r123')
-const paymentDestinationProto = new Destination()
-paymentDestinationProto.setValue(destinationAccountAddressProto)
-const transactionPaymentProto = new Payment()
-transactionPaymentProto.setAmount(paymentAmountProto)
-transactionPaymentProto.setDestination(paymentDestinationProto)
-
-const transactionProto = new Transaction()
-transactionProto.setAccount(transactionAccountProto)
-transactionProto.setFee(transactionFeeProto)
-transactionProto.setSequence(transactionSequenceProto)
-transactionProto.setSigningPublicKey(transactionSigningPublicKeyProto)
-transactionProto.setTransactionSignature(transactionTransactionSignatureProto)
-transactionProto.setPayment(transactionPaymentProto)
-
-const fakedTransactionHistoryValue = [XRPTransaction.from(transactionProto)]
+const fakedTransactionHistoryValue = [testXRPTransaction!]
 
 describe('Reliable Submission XRP Client', function(): void {
   beforeEach(function() {
