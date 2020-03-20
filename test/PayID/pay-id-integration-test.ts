@@ -8,8 +8,6 @@ import ComplianceType from '../../src/PayID/compliance-type'
 const timeoutMs = 60 * 1000 // 1 minute
 
 describe('PayID Integration Tests', function(): void {
-  // xrpAddressForPayID
-
   it('Resolve PayID to XRP - known PayID - mainnet', async function(): Promise<
     void
   > {
@@ -66,8 +64,6 @@ describe('PayID Integration Tests', function(): void {
     })
   })
 
-  // getInvoice
-
   it('getInvoice', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
@@ -81,8 +77,6 @@ describe('PayID Integration Tests', function(): void {
     // THEN the server returns a result.
     assert.exists(invoice)
   })
-
-  // postInvoice
 
   it('postInvoice', async function(): Promise<void> {
     this.timeout(timeoutMs)

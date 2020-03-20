@@ -33,8 +33,6 @@ describe('Pay ID Client', function(): void {
     nock.cleanAll()
   })
 
-  // xrpAddressForPayID
-
   it('xrpAddressForPayID - invalid Pay ID', function(done): void {
     // GIVEN a PayIDClient and an invalid PayID.
     const invalidPayID = 'xpring.money/georgewashington' // Does not start with '$'
@@ -201,8 +199,6 @@ describe('Pay ID Client', function(): void {
     })
   })
 
-  // getInvoice
-
   it('getInvoice - successful response', async function() {
     // GIVEN a PayID client, valid PayID and mocked networking to return a invoice for the Pay ID.
     const payID = '$xpring.money/georgewashington'
@@ -267,9 +263,7 @@ describe('Pay ID Client', function(): void {
     })
   })
 
-  // TODO(keefertaylor): Write tests for specific error codes returned by the API.
-
-  // postInvoice
+  // TODO(keefertaylor): Write tests for specific error codes returned by the getInvoice API.
 
   it('postInvoice - successful response', async function() {
     // GIVEN a PayID client, valid PayID and mocked networking to return a invoice for the given Pay ID and compliance data.
@@ -372,5 +366,5 @@ describe('Pay ID Client', function(): void {
       })
   })
 
-  // TODO(keefertaylor): Write tests for specific error codes returned by the API.
+  // TODO(keefertaylor): Write tests for specific error codes returned by the postInvoice API.
 })

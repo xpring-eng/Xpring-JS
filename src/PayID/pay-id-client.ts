@@ -159,25 +159,23 @@ export default class PayIDClient implements PayIDClientInterface {
   /**
    * Post an invoice with compliance data.
    *
-   * TODO(keefertaylor): Document these parameters.
-   *
-   * @param payID
-   * @param publicKeyType
-   * @param publicKeyData
-   * @param publicKey
-   * @param signature
-   * @param ComplianceType
-   * @param originatorUserLegalName
-   * @param originatorAccountID
-   * @param originatorUserPhysicalAddress
-   * @param originatorInstitutionName
-   * @param valueAmount
-   * @param valueScale
-   * @param timestamp
-   * @param beneficiaryInstitutionName
-   * @param beneficiaryUserLegalName
-   * @param beneficiaryUserPhysicalAddress
-   * @param beneficiaryUserAccountID
+   * @param payID The Pay ID compliance data is associated with.
+   * @param publicKeyType The type of public key.
+   * @param publicKeyData An array of public keys which lead back to the root trust certificate.
+   * @param publicKey The public key.
+   * @param signature The signature of the operation.
+   * @param complianceType The type of compliance submitted.
+   * @param originatorUserLegalName The legal name of the originator.
+   * @param originatorAccountID The account ID of the originator.
+   * @param originatorUserPhysicalAddress The physical address of the originator.
+   * @param originatorInstitutionName The institution name of the originator.
+   * @param valueAmount The value being transferred.
+   * @param valueScale The scale of the value.
+   * @param timestamp The time that the operation occurred.
+   * @param beneficiaryInstitutionName The beneficiary insitution name.
+   * @param beneficiaryUserLegalName The legal name of the receiver at the beneficiary institution. Optional, defaults to undefined.
+   * @param beneficiaryUserPhysicalAddress The phsyical address of the receiver at the beneficiary institution. Optional, defaults to undefined.
+   * @param beneficiaryUserAccountID The account ID of the receiver at the beneficiary institution. Optional, defaults to undefined.
    */
   // eslint-disable-next-line class-methods-use-this
   async postInvoice(
