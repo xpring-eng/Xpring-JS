@@ -15,6 +15,7 @@ import {
 import {
   Payment,
   Transaction,
+  CheckCash,
 } from '../../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from '../../src/generated/web/org/xrpl/rpc/v1/account_pb'
 import { GetAccountTransactionHistoryResponse } from '../../src/generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
@@ -95,17 +96,32 @@ const transactionPaymentProto = new Payment()
 transactionPaymentProto.setAmount(paymentAmountProto)
 transactionPaymentProto.setDestination(paymentDestinationProto)
 
-// Transaction proto (only mandatory common fields set)
-const testTransaction = new Transaction()
-testTransaction.setAccount(transactionAccountProto)
-testTransaction.setFee(transactionFeeProto)
-testTransaction.setSequence(transactionSequenceProto)
-testTransaction.setSigningPublicKey(transactionSigningPublicKeyProto)
-testTransaction.setTransactionSignature(transactionTransactionSignatureProto)
-testTransaction.setPayment(transactionPaymentProto)
+// Transaction proto (PAYMENT) (only mandatory common fields set)
+const testPaymentTransaction = new Transaction()
+testPaymentTransaction.setAccount(transactionAccountProto)
+testPaymentTransaction.setFee(transactionFeeProto)
+testPaymentTransaction.setSequence(transactionSequenceProto)
+testPaymentTransaction.setSigningPublicKey(transactionSigningPublicKeyProto)
+testPaymentTransaction.setTransactionSignature(
+  transactionTransactionSignatureProto,
+)
+testPaymentTransaction.setPayment(transactionPaymentProto)
 
 const getTransactionResponseProto = new GetTransactionResponse()
-getTransactionResponseProto.setTransaction(testTransaction)
+getTransactionResponseProto.setTransaction(testPaymentTransaction)
+
+// Transaction proto (CHECKCASH) (only mandatory common fields set, currently unsupported)
+const checkCashProto = new CheckCash()
+
+const testCheckCashTransaction = new Transaction()
+testCheckCashTransaction.setAccount(transactionAccountProto)
+testCheckCashTransaction.setFee(transactionFeeProto)
+testCheckCashTransaction.setSequence(transactionSequenceProto)
+testCheckCashTransaction.setSigningPublicKey(transactionSigningPublicKeyProto)
+testCheckCashTransaction.setTransactionSignature(
+  transactionTransactionSignatureProto,
+)
+testCheckCashTransaction.setCheckCash(checkCashProto)
 
 // GetAccountTransactionHistoryResponse proto
 const testGetAccountTransactionHistoryResponse = new GetAccountTransactionHistoryResponse()
@@ -118,10 +134,11 @@ testGetAccountTransactionHistoryResponse.setTransactionsList(
 )
 
 // test XRPTransaction
-const testXRPTransaction = XRPTransaction.from(testTransaction)
+const testXRPTransaction = XRPTransaction.from(testPaymentTransaction)
 
 export {
-  testTransaction,
+  testPaymentTransaction,
+  testCheckCashTransaction,
   testXRPTransaction,
   testGetAccountTransactionHistoryResponse,
 }

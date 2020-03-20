@@ -18,7 +18,11 @@ import {
 } from '../src/generated/node/org/xrpl/rpc/v1/meta_pb'
 import TransactionStatus from '../src/transaction-status'
 import { Transaction } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { testGetAccountTransactionHistoryResponse } from './fakes/fake-xrp-protobufs'
+import {
+  testGetAccountTransactionHistoryResponse,
+  testCheckCashTransaction,
+  testPaymentTransaction,
+} from './fakes/fake-xrp-protobufs'
 import XRPTransaction from '../src/XRP/xrp-transaction'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -477,7 +481,7 @@ describe('Default Xpring Client', function(): void {
     // TODO(amiecorso): should I use the same logic that's in DefaultXRPClient to reconstruct the expected
     // payment transaction array?  Or should I just make my own directly like this: ?
     //
-    //        const expectedPaymentHistory = [XRPTransaction.from(testTransaction), XRPTransaction.from(testTransaction)]
+    //        const expectedPaymentHistory = [XRPTransaction.from(testPaymentTransaction), XRPTransaction.from(testPaymentTransaction)]
     // It leaves less room for error in the logic, but it no longer automatically reflects the composition of
     // the testGetAccountTransactionHistory object
     const testTransactionResponseList = testGetAccountTransactionHistoryResponse.getTransactionsList()
@@ -526,5 +530,45 @@ describe('Default Xpring Client', function(): void {
       assert.equal(error, FakeNetworkClientResponses.defaultError)
       done()
     })
+  })
+
+  it('Get Payment History - non-payment transactions', async function(): Promise<
+    void
+  > {
+    // GIVEN an XRPClient client which will return a transaction history which contains non-payment transactions
+
+    // Generate expected transactions from the default response, which only contains payments.
+    const nonPaymentTransactionResponse = new GetTransactionResponse()
+    nonPaymentTransactionResponse.setTransaction(testCheckCashTransaction)
+    const heteregeneousTransactionHistory = testGetAccountTransactionHistoryResponse // here, homogeneous w/ PAYMENT txns
+    heteregeneousTransactionHistory.addTransactions(
+      // add a CHECKCASH txn type
+      nonPaymentTransactionResponse,
+    )
+
+    const heteroTransactionHistoryResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      FakeNetworkClientResponses.defaultGetTransactionResponse(),
+      heteregeneousTransactionHistory,
+    )
+
+    const heteroHistoryNetworkClient = new FakeNetworkClient(
+      heteroTransactionHistoryResponses,
+    )
+
+    const xrpClient = new DefaultXRPClient(heteroHistoryNetworkClient)
+
+    // WHEN the transactionHistory is requested.
+    const transactionHistory = await xrpClient.paymentHistory(testAddress)
+
+    // THEN the returned transactions are conversions of the inputs with non-payment transactions filtered.
+    const expectedTransactionHistory = [
+      XRPTransaction.from(testPaymentTransaction),
+      XRPTransaction.from(testPaymentTransaction),
+    ]
+
+    assert.deepEqual(expectedTransactionHistory, transactionHistory)
   })
 })
