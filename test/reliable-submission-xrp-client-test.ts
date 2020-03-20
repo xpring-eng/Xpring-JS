@@ -151,7 +151,7 @@ describe('Reliable Submission XRP Client', function(): void {
       .catch(() => done())
   })
 
-  it('Get Payment History - Response Not Modified', async function() {
+  it('Payment History - Response Not Modified', async function() {
     // GIVEN a `ReliableSubmissionXRPClient` decorating a `FakeXRPClient` WHEN transaction history is retrieved.
     const returnedValue = await this.reliableSubmissionClient.paymentHistory(
       testAddress,
