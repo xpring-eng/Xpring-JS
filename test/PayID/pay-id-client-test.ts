@@ -5,6 +5,10 @@ import PayIDClient from '../../src/PayID/pay-id-client'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
 import XRPLNetwork from '../../src/Common/xrpl-network'
 
+// Parameters for reciept.
+const invoiceHash = 'some_invoice_hash'
+const transasctionConfirmation = 'some_transaction_confirmation'
+
 describe('Pay ID Client', function(): void {
   afterEach(function() {
     // Clean nock after each test.
@@ -176,4 +180,55 @@ describe('Pay ID Client', function(): void {
       done()
     })
   })
+
+  it('recipt - successful response', async function() {
+    // GIVEN a PayID client, valid PayID and mocked networking to return a receipt for the Pay ID.
+    const payID = '$xpring.money/georgewashington'
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
+
+    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
+    if (!paymentPointer) {
+      throw new Error(
+        'Test precondition failed: Could not generate payment pointer',
+      )
+    }
+    nock('https://xpring.money')
+      .post('/georgewashington/receipt')
+      .reply(200, 'OK')
+
+    // WHEN the receipt endpoint is hit then an error is not thrown.
+    await payIDClient.receipt(payID, invoiceHash, transasctionConfirmation)
+  })
+
+  it('recipt - failure', function(done) {
+    // GIVEN a PayID client, valid PayID and mocked networking to return a failure when a receipt is requested.
+    const payID = '$xpring.money/georgewashington'
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
+
+    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
+    if (!paymentPointer) {
+      throw new Error(
+        'Test precondition failed: Could not generate payment pointer',
+      )
+    }
+
+    nock('https://xpring.money')
+      .post('/georgewashington/receipt')
+      .reply(503, {})
+
+    // WHEN the receipt endpoint is hit then an error is not thrown.
+    payIDClient
+      .receipt(payID, invoiceHash, transasctionConfirmation)
+      .catch((error) => {
+        // THEN an unexpected response is thrown with the details of the error.
+        assert.equal(
+          (error as PayIDError).errorType,
+          PayIDErrorType.UnexpectedResponse,
+        )
+
+        done()
+      })
+  })
+
+  // TODO(keefertaylor): Write tests for specific error codes returned by the receipt API.
 })
