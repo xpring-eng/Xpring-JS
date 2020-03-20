@@ -7,6 +7,8 @@ import XRPLNetwork from '../../src/Common/xrpl-network'
 const timeoutMs = 60 * 1000 // 1 minute
 
 describe('PayID Integration Tests', function(): void {
+  // xrpAddressForPayID
+
   it('Resolve PayID to XRP - known PayID - mainnet', async function(): Promise<
     void
   > {
@@ -61,5 +63,22 @@ describe('PayID Integration Tests', function(): void {
 
       done()
     })
+  })
+
+  // receipt
+
+  it('receipt', async function(): Promise<void> {
+    this.timeout(timeoutMs)
+
+    // GIVEN a Pay ID.
+    const payID = '$travel.payid.xpring.money/dino'
+    const payIDClient = new PayIDClient(XRPLNetwork.Main)
+
+    // WHEN the Pay ID receipt endpoint is hit then an error is not thrown.
+    await payIDClient.receipt(
+      payID,
+      'some_invoice_hash',
+      'some_transaction_hash',
+    )
   })
 })

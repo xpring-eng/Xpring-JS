@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "npm run clean && ./scripts/regenerate_protos.sh && ./scripts/regenerate_pay_id_api.sh && npm run lint && tsc -d && copyfiles -u 2 './src/generated/**/*' ./build/generated",
-    "clean": "rm -rf ./src/generated ./dist ./build ./src/PayID/generated",
+    "clean": "",
     "pretest": "npm run clean && ./scripts/regenerate_protos.sh && ./scripts/regenerate_pay_id_api.sh && npm run lint && tsc --noEmit",
     "lint": "eslint . --ext .ts --fix",
     "test": "nyc mocha",

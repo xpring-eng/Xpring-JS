@@ -40,24 +40,26 @@ paths:
         name: path
         in: path
         required: true
-    get:
-      summary: get-receipt
-      tags: []
+    post:
+      summary: ''
+      operationId: post-path-receipt
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Receipt'
         '400':
           description: Bad Request
         '404':
           description: Not Found
         '422':
-          description: Unprocessable Entity
+          description: Unprocessable Entity (WebDAV)
         '503':
           description: Service Unavailable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+        description: ''
 components:
   schemas:
     CryptoAddressDetails:
