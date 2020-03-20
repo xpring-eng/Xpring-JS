@@ -234,7 +234,7 @@ describe('Pay ID Client', function(): void {
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     nock('https://xpring.money')
-      .get(`/georgewashington/receipt?nonce=${nonce}`)
+      .get(`/georgewashington/invoice?nonce=${nonce}`)
       .reply(503, {})
 
     // WHEN the receipt endpoint is hit then an error is not thrown.
