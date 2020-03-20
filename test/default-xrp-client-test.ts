@@ -578,14 +578,14 @@ describe('Default Xpring Client', function(): void {
       FakeNetworkClientResponses.defaultFeeResponse(),
       FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
       FakeNetworkClientResponses.defaultGetTransactionResponse(),
-      testInvalidGetAccountTransactionHistoryResponse,
+      testInvalidGetAccountTransactionHistoryResponse, // contains malformed payment
     )
     const invalidHistoryNetworkClient = new FakeNetworkClient(
       invalidHistoryNetworkResponses,
     )
     const xrpClient = new DefaultXRPClient(invalidHistoryNetworkClient)
 
-    // WHEN the transactionHistory is requested THEN an error is thrown.
+    // WHEN the transactionHistory is requested THEN a conversion error is thrown.
     xrpClient.paymentHistory(testAddress).catch((error) => {
       assert.typeOf(error, 'Error')
       assert.equal(
