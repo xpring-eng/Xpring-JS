@@ -109,11 +109,13 @@ getTransactionResponseProto.setTransaction(testTransaction)
 
 // GetAccountTransactionHistoryResponse proto
 const testGetAccountTransactionHistoryResponse = new GetAccountTransactionHistoryResponse()
-const transactionList = [
+const transactionResponseList = [
   getTransactionResponseProto,
   getTransactionResponseProto,
 ]
-testGetAccountTransactionHistoryResponse.setTransactionsList(transactionList)
+testGetAccountTransactionHistoryResponse.setTransactionsList(
+  transactionResponseList,
+)
 
 // test XRPTransaction
 const testXRPTransaction = XRPTransaction.from(testTransaction)

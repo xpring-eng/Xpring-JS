@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import { assert } from 'chai'
 
 import bigInt from 'big-integer'
@@ -17,6 +18,8 @@ import {
 } from '../src/generated/node/org/xrpl/rpc/v1/meta_pb'
 import TransactionStatus from '../src/transaction-status'
 import { Transaction } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { testGetAccountTransactionHistoryResponse } from './fakes/fake-xrp-protobufs'
+import XRPTransaction from '../src/XRP/xrp-transaction'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -471,8 +474,33 @@ describe('Default Xpring Client', function(): void {
     // WHEN the payment history for an address is requested.
     const paymentHistory = await xrpClient.paymentHistory(testAddress)
 
-    // THEN the payment history is returned.
-    assert.exists(paymentHistory)
+    // TODO(amiecorso): should I use the same logic that's in DefaultXRPClient to reconstruct the expected
+    // payment transaction array?  Or should I just make my own directly like this: ?
+    //
+    //        const expectedPaymentHistory = [XRPTransaction.from(testTransaction), XRPTransaction.from(testTransaction)]
+    // It leaves less room for error in the logic, but it no longer automatically reflects the composition of
+    // the testGetAccountTransactionHistory object
+    const testTransactionResponseList = testGetAccountTransactionHistoryResponse.getTransactionsList()
+    const expectedPaymentHistory: Array<XRPTransaction> = []
+    // eslint-disable-next-line no-restricted-syntax
+    // eslint-disable-next-line no-underscore-dangle
+    for (const _getTransactionResponse of testTransactionResponseList) {
+      const transaction = _getTransactionResponse.getTransaction()
+      switch (transaction?.getTransactionDataCase()) {
+        case Transaction.TransactionDataCase.PAYMENT: {
+          const xrpTransaction = XRPTransaction.from(transaction)
+          if (!xrpTransaction) {
+            throw new Error(XRPClientErrorMessages.paymentConversionFailure)
+          } else {
+            expectedPaymentHistory.push(xrpTransaction)
+          }
+          break
+        }
+        default:
+      }
+    } // end for
+    // THEN the payment history is returned as expected
+    assert.deepEqual(expectedPaymentHistory, paymentHistory)
   })
 
   it('Get Payment History - classic address', function(done): void {
