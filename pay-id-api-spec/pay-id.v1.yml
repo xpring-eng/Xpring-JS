@@ -33,6 +33,41 @@ paths:
           description: Internal error
       operationId: resolvePayID
       description: Resolve a pay id
+  '/{path}/invoice':
+      get:
+      summary: get-pay-id-invoice
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/xrpl-devnet+json:
+              schema:
+                $ref: '#/components/schemas/PaymentInformation'
+            application/xrpl-mainnet+json:
+              schema:
+                $ref: '#/components/schemas/PaymentInformation'
+            application/xrpl-testnet+json:
+              schema:
+                $ref: '#/components/schemas/PaymentInformation'
+        '404':
+          description: Not Found
+        '415':
+          description: Bad MIME type
+        '503':
+          description: Internal error
+      operationId: get-path-invoice
+      parameters:
+        - schema:
+            type: string
+          name: path
+          in: path
+          required: true
+        - schema:
+            type: number
+          in: query
+          name: nonce
+          required: true
 components:
   schemas:
     CryptoAddressDetails:
