@@ -5,9 +5,27 @@ import PayIDClient from '../../src/PayID/pay-id-client'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
 import XRPLNetwork from '../../src/Common/xrpl-network'
 import SignatureWrapperInvoice from '../../src/PayID/generated/model/SignatureWrapperInvoice'
+import SignatureWrapperCompliance from '../../src/PayID/generated/model/SignatureWrapperCompliance'
+import ComplianceType from '../../src/PayID/compliance-type'
 
 // Parameters for getInvoice
 const nonce = '123456'
+
+// Parameters for postInvoice
+const publicKeyType = 'x509+sha256'
+const publicKeyData = []
+const publicKey =
+  '00:c9:22:69:31:8a:d6:6c:ea:da:c3:7f:2c:ac:a5:af:c0:02:ea:81:cb:65:b9:fd:0c:6d:46:5b:c9:1e:9d:3b:ef'
+const signature = '8b:c3:ed:d1:9d:39:6f:af:40:72:bd:1e:18:5e:30:54:23:35'
+const complianceType = ComplianceType.TravelRule
+const originatorUserLegalName = 'Theodore Kalaw'
+const originatorAccountID = 'ef841530-f476-429c-b8f3-de25a0a29f80'
+const originatorUserPhysicalAddress = '520 Main Street'
+const originatorInstitutionName = 'xpring'
+const amount = '100'
+const scale = 1
+const timestamp = '2020-03-20T07:09:00'
+const beneficiaryName = 'xpring'
 
 describe('Pay ID Client', function(): void {
   afterEach(function() {
@@ -247,6 +265,111 @@ describe('Pay ID Client', function(): void {
 
       done()
     })
+  })
+
+  // TODO(keefertaylor): Write tests for specific error codes returned by the API.
+
+  // postInvoice
+
+  it('postInvoice - successful response', async function() {
+    // GIVEN a PayID client, valid PayID and mocked networking to return a invoice for the given Pay ID and compliance data.
+    const payID = '$xpring.money/georgewashington'
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
+
+    const mockResponse = {
+      messageType: 'Invoice',
+      message: {
+        nonce: '123456',
+        expirationTime: '2020-03-18T04:05:02',
+        paymentInformation: {
+          addressDetailType: 'CryptoAddressDetails',
+          addressDetails: {
+            address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
+          },
+          proofOfControlSignature: '9743b52063cd84097a65d1633f5c74f5',
+          paymentPointer: '$xpring.money/dino',
+        },
+        complianceRequirements: ['TravelRule'],
+        memo: 'thanks for travel rule data, here is your new invoice',
+        complianceHashes: [
+          {
+            type: 'TravelRule',
+            hash: '8743b52063cd84097a65d1633f5c74f5',
+          },
+        ],
+      },
+      pkiType: 'x509+sha256',
+      pkiData: [],
+      publicKey:
+        '00:c9:22:69:31:8a:d6:6c:ea:da:c3:7f:2c:ac:a5:af:c0:02:ea:81:cb:65:b9:fd:0c:6d:46:5b:c9:1e:9d:3b:ef',
+      signature: '8b:c3:ed:d1:9d:39:6f:af:40:72:bd:1e:18:5e:30:54:23:35...',
+    }
+
+    nock('https://xpring.money')
+      .post(`/georgewashington/invoice`)
+      .reply(200, mockResponse)
+
+    // WHEN the invoice endpoint is hit.
+    const invoice = await payIDClient.postInvoice(
+      payID,
+      publicKeyType,
+      publicKeyData,
+      publicKey,
+      signature,
+      complianceType,
+      originatorUserLegalName,
+      originatorAccountID,
+      originatorUserPhysicalAddress,
+      originatorInstitutionName,
+      amount,
+      scale,
+      timestamp,
+      beneficiaryName,
+    )
+
+    // THEN the invoice was the mocked response.
+    assert.deepEqual(
+      invoice,
+      SignatureWrapperCompliance.constructFromObject(mockResponse, null),
+    )
+  })
+
+  it('postInvoice - failure', function(done) {
+    // GIVEN a PayID client, valid PayID and mocked networking to return a failure when a invoice is requested.
+    const payID = '$xpring.money/georgewashington'
+    const payIDClient = new PayIDClient(XRPLNetwork.Test)
+
+    nock('https://xpring.money')
+      .post(`/georgewashington/invoice`)
+      .reply(503, {})
+
+    // WHEN the receipt endpoint is hit then an error is not thrown.
+    payIDClient
+      .postInvoice(
+        payID,
+        publicKeyType,
+        publicKeyData,
+        publicKey,
+        signature,
+        complianceType,
+        originatorUserLegalName,
+        originatorAccountID,
+        originatorUserPhysicalAddress,
+        originatorInstitutionName,
+        amount,
+        scale,
+        timestamp,
+        beneficiaryName,
+      )
+      .catch((error) => {
+        // THEN an unexpected response is thrown with the details of the error.
+        assert.equal(
+          (error as PayIDError).errorType,
+          PayIDErrorType.UnexpectedResponse,
+        )
+
+        done()
+      })
   })
 
   // TODO(keefertaylor): Write tests for specific error codes returned by the API.

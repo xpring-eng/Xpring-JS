@@ -5,6 +5,14 @@ import PayIDError, { PayIDErrorType } from './pay-id-error'
 import PayIDClientInterface from './pay-id-client-interface'
 import XRPLNetwork from '../Common/xrpl-network'
 import SignatureWrapperInvoice from './generated/model/SignatureWrapperInvoice'
+import Value from './generated/model/Value'
+import Originator from './generated/model/Originator'
+import Beneficiary from './generated/model/Beneficiary'
+import SignatureWrapperCompliance from './generated/model/SignatureWrapperCompliance'
+import Compliance from './generated/model/Compliance'
+import TravelRule from './generated/model/TravelRule'
+import DefaultApi from './generated/api/DefaultApi'
+import ComplianceType from './compliance-type'
 
 /**
  * A client for PayID.
@@ -138,6 +146,112 @@ export default class PayIDClient implements PayIDClientInterface {
             const message = `${error.status}: ${error.response.text}`
             reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
             // TODO(keefertaylor): make sure the header matches the request.
+          } else if (data) {
+            resolve(data)
+          } else {
+            reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
+          }
+        },
+      )
+    })
+  }
+
+  /**
+   * Post an invoice with compliance data.
+   *
+   * TODO(keefertaylor): Document these parameters.
+   *
+   * @param payID
+   * @param publicKeyType
+   * @param publicKeyData
+   * @param publicKey
+   * @param signature
+   * @param ComplianceType
+   * @param originatorUserLegalName
+   * @param originatorAccountID
+   * @param originatorUserPhysicalAddress
+   * @param originatorInstitutionName
+   * @param valueAmount
+   * @param valueScale
+   * @param timestamp
+   * @param beneficiaryInstitutionName
+   * @param beneficiaryUserLegalName
+   * @param beneficiaryUserPhysicalAddress
+   * @param beneficiaryUserAccountID
+   */
+  // eslint-disable-next-line class-methods-use-this
+  async postInvoice(
+    payID: string,
+    publicKeyType: string,
+    publicKeyData: Array<string>,
+    publicKey: string,
+    signature: string,
+    complianceType: ComplianceType,
+    originatorUserLegalName: string,
+    originatorAccountID: string,
+    originatorUserPhysicalAddress: string,
+    originatorInstitutionName: string,
+    valueAmount: string,
+    valueScale: number,
+    timestamp: string,
+    beneficiaryInstitutionName: string,
+    beneficiaryUserLegalName: string | undefined = undefined,
+    beneficiaryUserPhysicalAddress: string | undefined = undefined,
+    beneficiaryUserAccountID: string | undefined = undefined,
+  ): Promise<SignatureWrapperInvoice> {
+    const value = new Value(valueAmount, `${valueScale}`)
+
+    const originator = new Originator(
+      originatorUserLegalName,
+      originatorAccountID,
+      originatorUserPhysicalAddress,
+      originatorInstitutionName,
+      value,
+      timestamp,
+    )
+
+    const beneficiary = new Beneficiary(beneficiaryInstitutionName)
+    beneficiary.userLegalName = beneficiaryUserLegalName || undefined
+    beneficiary.userPhysicalAddress =
+      beneficiaryUserPhysicalAddress || undefined
+    beneficiary.accountId = beneficiaryUserAccountID || undefined
+
+    const travelRule = new TravelRule(originator, beneficiary)
+
+    const compliance = new Compliance(complianceType, travelRule)
+
+    const signatureWrapper = new SignatureWrapperCompliance(
+      complianceType,
+      compliance,
+      publicKeyType,
+      publicKeyData,
+      publicKey,
+      signature,
+    )
+
+    // TODO(keefertaylor): Dedupe payment pointer logic
+    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
+    if (!paymentPointer) {
+      throw PayIDError.invalidPaymentPointer
+    }
+
+    // Swagger generates the '/' in the URL by default and the payment pointer's 'path' is prefixed by a '/'. Strip off the leading '/'.
+    const path = paymentPointer.path.substring(1)
+
+    const client = new ApiClient()
+    client.basePath = `https://${paymentPointer.host}`
+
+    const apiInstance = new DefaultApi(client)
+
+    return new Promise((resolve, reject) => {
+      apiInstance.postPathInvoice(
+        path,
+        { body: signatureWrapper },
+        (error, data, _response) => {
+          // TODO(keefertaylor): Provide more granular error handling.
+          if (error) {
+            const message = `${error.status}: ${error.response.text}`
+            reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
           } else if (data) {
             resolve(data)
           } else {

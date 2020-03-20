@@ -49,13 +49,13 @@ paths:
           content:
             application/xrpl-devnet+json:
               schema:
-                $ref: '#/components/schemas/SignatureWrapper'
+                $ref: '#/components/schemas/SignatureWrapper_Invoice'
             application/xrpl-mainnet+json:
               schema:
-                $ref: '#/components/schemas/SignatureWrapper'
+                $ref: '#/components/schemas/SignatureWrapper_Invoice'
             application/xrpl-testnet+json:
               schema:
-                $ref: '#/components/schemas/SignatureWrapper'
+                $ref: '#/components/schemas/SignatureWrapper_Invoice'
         '404':
           description: Not Found
         '503':
@@ -70,6 +70,40 @@ paths:
           name: nonce
           description: ''
           required: true
+    post:
+      summary: post-invoice
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignatureWrapper_Compliance'
+            application/xrpl-mainnet+json:
+              schema:
+                $ref: '#/components/schemas/SignatureWrapper_Compliance'
+            application/xrpl-testnet+json:
+              schema:
+                $ref: '#/components/schemas/SignatureWrapper_Compliance'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '413':
+          description: Request Entity Too Large
+        '422':
+          description: Unprocessable Entity
+        '451':
+          description: Unavailable due to legal reasons
+        '503':
+          description: Service Unavailable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignatureWrapper_Invoice'
+      operationId: post-path-invoice
 components:
   schemas:
     CryptoAddressDetails:
@@ -201,7 +235,7 @@ components:
         amount:
           type: string
         scale:
-          type: number
+          type: string
       required:
         - amount
         - scale
