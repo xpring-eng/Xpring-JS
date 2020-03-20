@@ -130,4 +130,14 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
     const doesExist = await xrpClient.accountExists(recipientAddress)
     assert.equal(doesExist, true)
   })
+
+  it('Payment History - rippled', async function(): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const payments = await xrpClient.paymentHistory(recipientAddress)
+    // TODO(amiecorso): is this a sufficient integration test?
+    // do we need to check if the length of payments is > 0 or anything?
+    // (it seems that it's not guaranteed to be but that doesn't necessarily indicate a problem)
+    assert.exists(payments)
+  })
 })
