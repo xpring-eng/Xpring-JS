@@ -540,9 +540,9 @@ describe('Default Xpring Client', function(): void {
     // Generate expected transactions from the default response, which only contains payments.
     const nonPaymentTransactionResponse = new GetTransactionResponse()
     nonPaymentTransactionResponse.setTransaction(testCheckCashTransaction)
-    const heteregeneousTransactionHistory = testGetAccountTransactionHistoryResponse // here, homogeneous w/ PAYMENT txns
+    // add CHECKCASH transaction - history then contains payment and non-payment transactions
+    const heteregeneousTransactionHistory = testGetAccountTransactionHistoryResponse
     heteregeneousTransactionHistory.addTransactions(
-      // add a CHECKCASH txn type
       nonPaymentTransactionResponse,
     )
 
