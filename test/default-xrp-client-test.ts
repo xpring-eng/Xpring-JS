@@ -564,10 +564,23 @@ describe('Default Xpring Client', function(): void {
     const transactionHistory = await xrpClient.paymentHistory(testAddress)
 
     // THEN the returned transactions are conversions of the inputs with non-payment transactions filtered.
-    const expectedTransactionHistory = [
-      XRPTransaction.from(testPaymentTransaction),
-      XRPTransaction.from(testPaymentTransaction),
-    ]
+    const expectedTransactionHistory: Array<XRPTransaction> = []
+    for (const getTransactionResponse of testGetAccountTransactionHistoryResponse.getTransactionsList()) {
+      const transaction = getTransactionResponse.getTransaction()
+      switch (transaction?.getTransactionDataCase()) {
+        case Transaction.TransactionDataCase.PAYMENT: {
+          const xrpTransaction = XRPTransaction.from(transaction)
+          if (!xrpTransaction) {
+            throw new Error(XRPClientErrorMessages.paymentConversionFailure)
+          } else {
+            expectedTransactionHistory.push(xrpTransaction)
+          }
+          break
+        }
+        default:
+        // Intentionally do nothing, non-payment type transactions are ignored.
+      }
+    }
 
     assert.deepEqual(expectedTransactionHistory, transactionHistory)
   })
