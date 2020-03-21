@@ -319,6 +319,7 @@ class DefaultXRPClient implements XRPClientDecorator {
 
   /**
    * Return the history of payments for the given account.
+   *
    * Note: This method only works for payment type transactions, see: https://xrpl.org/payment.html
    * Note: This method only returns the history that is contained on the remote node, which may not contain a full history of the network.
    *
