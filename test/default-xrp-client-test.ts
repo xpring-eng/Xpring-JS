@@ -21,7 +21,6 @@ import { Transaction } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb
 import {
   testGetAccountTransactionHistoryResponse,
   testCheckCashTransaction,
-  testPaymentTransaction,
   testInvalidGetAccountTransactionHistoryResponse,
 } from './fakes/fake-xrp-protobufs'
 import XRPTransaction from '../src/XRP/xrp-transaction'
