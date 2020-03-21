@@ -477,17 +477,8 @@ describe('Default Xpring Client', function(): void {
     // WHEN the payment history for an address is requested.
     const paymentHistory = await xrpClient.paymentHistory(testAddress)
 
-    // TODO(amiecorso): should I use the same logic that's in DefaultXRPClient to reconstruct the expected
-    // payment transaction array?  Or should I just make my own directly like this: ?
-    //
-    //        const expectedPaymentHistory = [XRPTransaction.from(testPaymentTransaction), XRPTransaction.from(testPaymentTransaction)]
-    // It leaves less room for error in the logic, but it no longer automatically reflects the composition of
-    // the testGetAccountTransactionHistory object
-    const testTransactionResponseList = testGetAccountTransactionHistoryResponse.getTransactionsList()
     const expectedPaymentHistory: Array<XRPTransaction> = []
-    // eslint-disable-next-line no-restricted-syntax
-    // eslint-disable-next-line no-underscore-dangle
-    for (const getTransactionResponse of testTransactionResponseList) {
+    for (const getTransactionResponse of testGetAccountTransactionHistoryResponse.getTransactionsList()) {
       const transaction = getTransactionResponse.getTransaction()
       switch (transaction?.getTransactionDataCase()) {
         case Transaction.TransactionDataCase.PAYMENT: {
