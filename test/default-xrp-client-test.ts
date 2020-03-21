@@ -500,6 +500,7 @@ describe('Default Xpring Client', function(): void {
           break
         }
         default:
+        // Intentionally do nothing, non-payment type transactions are ignored.
       }
     } // end for
     // THEN the payment history is returned as expected
