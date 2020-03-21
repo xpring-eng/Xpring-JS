@@ -319,6 +319,7 @@ class DefaultXRPClient implements XRPClientDecorator {
 
   /**
    * Return the history of payments for the given account.
+   *
    * Note: This method only works for payment type transactions, see: https://xrpl.org/payment.html
    * Note: This method only returns the history that is contained on the remote node, which may not contain a full history of the network.
    *
@@ -348,9 +349,8 @@ class DefaultXRPClient implements XRPClientDecorator {
     // If a payment transaction fails conversion, throw an error.
     const payments: Array<XRPTransaction> = []
     // eslint-disable-next-line no-restricted-syntax
-    // eslint-disable-next-line no-underscore-dangle
-    for (const _getTransactionResponse of getTransactionResponses) {
-      const transaction = _getTransactionResponse.getTransaction()
+    for (const getTransactionResponse of getTransactionResponses) {
+      const transaction = getTransactionResponse.getTransaction()
       switch (transaction?.getTransactionDataCase()) {
         case Transaction.TransactionDataCase.PAYMENT: {
           const xrpTransaction = XRPTransaction.from(transaction)
@@ -362,6 +362,7 @@ class DefaultXRPClient implements XRPClientDecorator {
           break
         }
         default:
+        // Intentionally do nothing, non-payment type transactions are ignored.
       }
     } // end for
     return payments

@@ -21,7 +21,6 @@ import { Transaction } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb
 import {
   testGetAccountTransactionHistoryResponse,
   testCheckCashTransaction,
-  testPaymentTransaction,
   testInvalidGetAccountTransactionHistoryResponse,
 } from './fakes/fake-xrp-protobufs'
 import XRPTransaction from '../src/XRP/xrp-transaction'
@@ -477,18 +476,9 @@ describe('Default Xpring Client', function(): void {
     // WHEN the payment history for an address is requested.
     const paymentHistory = await xrpClient.paymentHistory(testAddress)
 
-    // TODO(amiecorso): should I use the same logic that's in DefaultXRPClient to reconstruct the expected
-    // payment transaction array?  Or should I just make my own directly like this: ?
-    //
-    //        const expectedPaymentHistory = [XRPTransaction.from(testPaymentTransaction), XRPTransaction.from(testPaymentTransaction)]
-    // It leaves less room for error in the logic, but it no longer automatically reflects the composition of
-    // the testGetAccountTransactionHistory object
-    const testTransactionResponseList = testGetAccountTransactionHistoryResponse.getTransactionsList()
     const expectedPaymentHistory: Array<XRPTransaction> = []
-    // eslint-disable-next-line no-restricted-syntax
-    // eslint-disable-next-line no-underscore-dangle
-    for (const _getTransactionResponse of testTransactionResponseList) {
-      const transaction = _getTransactionResponse.getTransaction()
+    for (const getTransactionResponse of testGetAccountTransactionHistoryResponse.getTransactionsList()) {
+      const transaction = getTransactionResponse.getTransaction()
       switch (transaction?.getTransactionDataCase()) {
         case Transaction.TransactionDataCase.PAYMENT: {
           const xrpTransaction = XRPTransaction.from(transaction)
@@ -500,6 +490,7 @@ describe('Default Xpring Client', function(): void {
           break
         }
         default:
+        // Intentionally do nothing, non-payment type transactions are ignored.
       }
     } // end for
     // THEN the payment history is returned as expected
@@ -539,9 +530,9 @@ describe('Default Xpring Client', function(): void {
     // Generate expected transactions from the default response, which only contains payments.
     const nonPaymentTransactionResponse = new GetTransactionResponse()
     nonPaymentTransactionResponse.setTransaction(testCheckCashTransaction)
-    const heteregeneousTransactionHistory = testGetAccountTransactionHistoryResponse // here, homogeneous w/ PAYMENT txns
+    // add CHECKCASH transaction - history then contains payment and non-payment transactions
+    const heteregeneousTransactionHistory = testGetAccountTransactionHistoryResponse
     heteregeneousTransactionHistory.addTransactions(
-      // add a CHECKCASH txn type
       nonPaymentTransactionResponse,
     )
 
@@ -563,10 +554,23 @@ describe('Default Xpring Client', function(): void {
     const transactionHistory = await xrpClient.paymentHistory(testAddress)
 
     // THEN the returned transactions are conversions of the inputs with non-payment transactions filtered.
-    const expectedTransactionHistory = [
-      XRPTransaction.from(testPaymentTransaction),
-      XRPTransaction.from(testPaymentTransaction),
-    ]
+    const expectedTransactionHistory: Array<XRPTransaction> = []
+    for (const getTransactionResponse of testGetAccountTransactionHistoryResponse.getTransactionsList()) {
+      const transaction = getTransactionResponse.getTransaction()
+      switch (transaction?.getTransactionDataCase()) {
+        case Transaction.TransactionDataCase.PAYMENT: {
+          const xrpTransaction = XRPTransaction.from(transaction)
+          if (!xrpTransaction) {
+            throw new Error(XRPClientErrorMessages.paymentConversionFailure)
+          } else {
+            expectedTransactionHistory.push(xrpTransaction)
+          }
+          break
+        }
+        default:
+        // Intentionally do nothing, non-payment type transactions are ignored.
+      }
+    }
 
     assert.deepEqual(expectedTransactionHistory, transactionHistory)
   })
