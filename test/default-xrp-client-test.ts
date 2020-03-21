@@ -487,8 +487,8 @@ describe('Default Xpring Client', function(): void {
     const expectedPaymentHistory: Array<XRPTransaction> = []
     // eslint-disable-next-line no-restricted-syntax
     // eslint-disable-next-line no-underscore-dangle
-    for (const _getTransactionResponse of testTransactionResponseList) {
-      const transaction = _getTransactionResponse.getTransaction()
+    for (const getTransactionResponse of testTransactionResponseList) {
+      const transaction = getTransactionResponse.getTransaction()
       switch (transaction?.getTransactionDataCase()) {
         case Transaction.TransactionDataCase.PAYMENT: {
           const xrpTransaction = XRPTransaction.from(transaction)

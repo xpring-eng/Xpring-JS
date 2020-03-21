@@ -349,9 +349,8 @@ class DefaultXRPClient implements XRPClientDecorator {
     // If a payment transaction fails conversion, throw an error.
     const payments: Array<XRPTransaction> = []
     // eslint-disable-next-line no-restricted-syntax
-    // eslint-disable-next-line no-underscore-dangle
-    for (const _getTransactionResponse of getTransactionResponses) {
-      const transaction = _getTransactionResponse.getTransaction()
+    for (const getTransactionResponse of getTransactionResponses) {
+      const transaction = getTransactionResponse.getTransaction()
       switch (transaction?.getTransactionDataCase()) {
         case Transaction.TransactionDataCase.PAYMENT: {
           const xrpTransaction = XRPTransaction.from(transaction)
