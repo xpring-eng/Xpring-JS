@@ -128,4 +128,12 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
     const doesExist = await xrpClient.accountExists(recipientAddress)
     assert.equal(doesExist, true)
   })
+
+  it('Payment History - rippled', async function(): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const payments = await xrpClient.paymentHistory(recipientAddress)
+
+    assert.exists(payments && payments.length > 0)
+  })
 })

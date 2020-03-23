@@ -32,16 +32,16 @@ $ npm i xpring-js
 開発者がすぐに開発を開始できるように, Xpringは現在、サーバー側コンポーネントをホスト型サービスとして提供し、クライアント側ライブラリからのリクエストをXRPノードにプロキシします。開発者は次のエンドポイントに到達できます:
 
 ```
-# TestNet - Node Environment
+# Testnet - Node Environment
 test.xrp.xpring.io:50051
 
-# MainNet - Node Environment
+# Mainnet - Node Environment
 main.xrp.xpring.io:50051
 
-#TestNet - Browser Environment
+#Testnet - Browser Environment
 https://envoy.test.xrp.xpring.io
 
-#MainNet - Browser Environment
+#Mainnet - Browser Environment
 https://envoy.main.xrp.xpring.io
 ```
 
@@ -134,7 +134,7 @@ wallet.verify(message, signature); // true
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL, true)
 ```
 
@@ -145,7 +145,7 @@ const xrpClient = new XRPClient(remoteURL, true)
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL, true);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
@@ -161,7 +161,7 @@ console.log(balance); // Logs a balance in drops of XRP
 ```javascript
 const { Wallet, XRPAmount, XRPClient } = require("xpring-js");
 
-const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL, true)
 
 // Amount of XRP to send

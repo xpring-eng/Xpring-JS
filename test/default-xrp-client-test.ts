@@ -1,7 +1,9 @@
+/* eslint-disable no-restricted-syntax */
 import { assert } from 'chai'
 
 import bigInt from 'big-integer'
 import { Utils, Wallet } from 'xpring-common-js'
+import XRPTestUtils from './XRP/helpers/xrp-test-utils'
 import DefaultXRPClient, {
   XRPClientErrorMessages,
 } from '../src/default-xrp-client'
@@ -17,6 +19,12 @@ import {
 } from '../src/generated/node/org/xrpl/rpc/v1/meta_pb'
 import TransactionStatus from '../src/transaction-status'
 import { Transaction } from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
+import {
+  testGetAccountTransactionHistoryResponse,
+  testCheckCashTransaction,
+  testInvalidGetAccountTransactionHistoryResponse,
+} from './fakes/fake-xrp-protobufs'
+import XRPTransaction from '../src/XRP/xrp-transaction'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -458,6 +466,109 @@ describe('Default Xpring Client', function(): void {
     xrpClient.accountExists(classicAddress).catch((error) => {
       assert.typeOf(error, 'Error')
       assert.equal(error.message, XRPClientErrorMessages.xAddressRequired)
+      done()
+    })
+  })
+
+  it('Payment History - successful response', async function(): Promise<void> {
+    // GIVEN a DefaultXRPClient.
+    const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
+
+    // WHEN the payment history for an address is requested.
+    const paymentHistory = await xrpClient.paymentHistory(testAddress)
+
+    const expectedPaymentHistory: Array<XRPTransaction> = XRPTestUtils.transactionHistoryToPaymentsList(
+      testGetAccountTransactionHistoryResponse,
+    )
+    // THEN the payment history is returned as expected
+    assert.deepEqual(expectedPaymentHistory, paymentHistory)
+  })
+
+  it('Payment History - classic address', function(done): void {
+    // GIVEN an XRPClient and a classic address
+    const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
+    const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
+
+    // WHEN the payment history for an account is requested THEN an error to use X-Addresses is thrown.
+    xrpClient.paymentHistory(classicAddress).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(error.message, XRPClientErrorMessages.xAddressRequired)
+      done()
+    })
+  })
+
+  it('Payment History - network failure', function(done): void {
+    // GIVEN an XRPClient which wraps an erroring network client.
+    const xrpClient = new DefaultXRPClient(fakeErroringNetworkClient)
+
+    // WHEN the payment history is requested THEN an error is propagated.
+    xrpClient.paymentHistory(testAddress).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, FakeNetworkClientResponses.defaultError)
+      done()
+    })
+  })
+
+  it('Payment History - non-payment transactions', async function(): Promise<
+    void
+  > {
+    // GIVEN an XRPClient client which will return a transaction history which contains non-payment transactions
+
+    // Generate expected transactions from the default response, which only contains payments.
+    const nonPaymentTransactionResponse = new GetTransactionResponse()
+    nonPaymentTransactionResponse.setTransaction(testCheckCashTransaction)
+    // add CHECKCASH transaction - history then contains payment and non-payment transactions
+    const heteregeneousTransactionHistory = testGetAccountTransactionHistoryResponse
+    heteregeneousTransactionHistory.addTransactions(
+      nonPaymentTransactionResponse,
+    )
+
+    const heteroHistoryNetworkResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      FakeNetworkClientResponses.defaultGetTransactionResponse(),
+      heteregeneousTransactionHistory,
+    )
+
+    const heteroHistoryNetworkClient = new FakeNetworkClient(
+      heteroHistoryNetworkResponses,
+    )
+
+    const xrpClient = new DefaultXRPClient(heteroHistoryNetworkClient)
+
+    // WHEN the transactionHistory is requested.
+    const transactionHistory = await xrpClient.paymentHistory(testAddress)
+
+    // THEN the returned transactions are conversions of the inputs with non-payment transactions filtered.
+    const expectedTransactionHistory: Array<XRPTransaction> = XRPTestUtils.transactionHistoryToPaymentsList(
+      testGetAccountTransactionHistoryResponse,
+    )
+
+    assert.deepEqual(expectedTransactionHistory, transactionHistory)
+  })
+
+  it('Payment History - invalid Payment', function(done) {
+    // GIVEN an XRPClient client which will return a transaction history which contains a malformed payment.
+    const invalidHistoryNetworkResponses = new FakeNetworkClientResponses(
+      FakeNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeNetworkClientResponses.defaultFeeResponse(),
+      FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+      FakeNetworkClientResponses.defaultGetTransactionResponse(),
+      testInvalidGetAccountTransactionHistoryResponse, // contains malformed payment
+    )
+    const invalidHistoryNetworkClient = new FakeNetworkClient(
+      invalidHistoryNetworkResponses,
+    )
+    const xrpClient = new DefaultXRPClient(invalidHistoryNetworkClient)
+
+    // WHEN the transactionHistory is requested THEN a conversion error is thrown.
+    xrpClient.paymentHistory(testAddress).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(
+        error.message,
+        XRPClientErrorMessages.paymentConversionFailure,
+      )
       done()
     })
   })

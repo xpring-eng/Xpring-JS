@@ -1,8 +1,10 @@
+/* eslint-disable no-restricted-syntax */
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
 import { XRPClientDecorator } from './xrp-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
+import XRPTransaction from './XRP/xrp-transaction'
 import GRPCNetworkClient from './grpc-xrp-network-client'
 import GRPCNetworkClientWeb from './grpc-xrp-network-client.web'
 import { NetworkClient } from './network-client'
@@ -44,6 +46,9 @@ export class XRPClientErrorMessages {
   public static readonly xAddressRequired =
     'Please use the X-Address format. See: https://xrpaddress.info/.'
   /* eslint-enable @typescript-eslint/indent */
+
+  public static readonly paymentConversionFailure =
+    'Could not convert payment transaction: (transaction). Please file a bug at https://github.com/xpring-eng/xpringkit'
 }
 
 /**
@@ -293,6 +298,57 @@ class DefaultXRPClient implements XRPClientDecorator {
     } catch (e) {
       return false
     }
+  }
+
+  /**
+   * Return the history of payments for the given account.
+   *
+   * Note: This method only works for payment type transactions, see: https://xrpl.org/payment.html
+   * Note: This method only returns the history that is contained on the remote node, which may not contain a full history of the network.
+   *
+   * @param address: The address (account) for which to retrive payment history.
+   * @throws: An error if there was a problem communicating with the XRP Ledger.
+   * @return: An array of transactions associated with the account.
+   */
+  public async paymentHistory(address: string): Promise<Array<XRPTransaction>> {
+    const classicAddress = Utils.decodeXAddress(address)
+    if (!classicAddress) {
+      throw new Error(XRPClientErrorMessages.xAddressRequired)
+    }
+
+    const account = this.networkClient.AccountAddress()
+    account.setAddress(classicAddress.address)
+
+    const request = this.networkClient.GetAccountTransactionHistoryRequest()
+    request.setAccount(account)
+
+    const transactionHistory = await this.networkClient.getTransactionHistory(
+      request,
+    )
+
+    const getTransactionResponses = transactionHistory.getTransactionsList()
+
+    // Filter transactions to payments only and convert them to XRPTransactions.
+    // If a payment transaction fails conversion, throw an error.
+    const payments: Array<XRPTransaction> = []
+    // eslint-disable-next-line no-restricted-syntax
+    for (const getTransactionResponse of getTransactionResponses) {
+      const transaction = getTransactionResponse.getTransaction()
+      switch (transaction?.getTransactionDataCase()) {
+        case Transaction.TransactionDataCase.PAYMENT: {
+          const xrpTransaction = XRPTransaction.from(transaction)
+          if (!xrpTransaction) {
+            throw new Error(XRPClientErrorMessages.paymentConversionFailure)
+          } else {
+            payments.push(xrpTransaction)
+          }
+          break
+        }
+        default:
+        // Intentionally do nothing, non-payment type transactions are ignored.
+      }
+    } // end for
+    return payments
   }
 }
 
