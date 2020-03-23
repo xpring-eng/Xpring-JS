@@ -14,7 +14,7 @@ export default class XRPTestUtils {
   static transactionHistoryToPaymentsList(
     transactionHistoryResponse: GetAccountTransactionHistoryResponse,
   ): Array<XRPTransaction> {
-    const paymentXRPTransactions = []
+    const paymentXRPTransactions: Array<XRPTransaction> = []
     const transactions = transactionHistoryResponse.getTransactionsList()
     for (let i = 0; i < transactions.length; i += 1) {
       const txn = transactions[i].getTransaction()
