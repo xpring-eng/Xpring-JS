@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Removed
-- `getTransactionStatus` is deprecated. Please use `getPaymentStatus` instead.
+- `getTransactionStatus` has been reomved. Please use `getPaymentStatus` instead.
 
 ## 1.6.0 - March 12, 2020
 
