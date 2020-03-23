@@ -186,7 +186,7 @@ month of history.  Recent transaction hashes can be found in the XRP Ledger Expl
 
 #### Payment history
 
-An `XRPClient` can return payments to and from an account.
+An `XRPClient` can return a list of payments to and from an account.
 
 ```javascript
 const { XRPClient } = require("xpring-js");
