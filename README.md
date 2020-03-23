@@ -297,7 +297,7 @@ An `IlpClient` can check the balance of an account on a connector.
 ```javascript
 const { IlpClient } = require("xpring-js")
 
-String grpcUrl = "hermes-envoy-test.xpring.io" // Testnet Hermes URL
+const grpcUrl = "hermes-envoy-test.xpring.io" // Testnet Hermes URL
 const ilpClient = new IlpClient(grpcUrl)
 
 const balance = await ilpClient.getBalance("demo_user", "2S1PZh3fEKnKg") // Just a demo user on Testnet
@@ -312,7 +312,7 @@ and a sender's account ID
 const { PaymentRequest, IlpClient } = require("xpring-js")
 const bigInt = require("big-integer")
 
-String grpcUrl = "hermes-envoy-test.xpring.io" // Testnet Hermes URL
+const grpcUrl = "hermes-envoy-test.xpring.io" // Testnet Hermes URL
 const ilpClient = new IlpClient(grpcUrl)
 const paymentRequest = new PaymentRequest({
     amount: 100,
