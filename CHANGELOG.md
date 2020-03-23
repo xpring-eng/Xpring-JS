@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 2.0.5 - March 23, 2020
+- Export ILP model objects. This was not done in earlier versions, so ILP functionality does not work between release 2.0.0 and 2.0.5
+
 ## 2.0.2 - March 19, 2020
 - Adds XpringClient, which composes various services.
 - Updates PayID implementation to use the proper headers.
