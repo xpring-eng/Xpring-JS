@@ -1,0 +1,325 @@
+info:
+  title: PayID
+  version: '0.0.1'
+paths:
+  '/{path}':
+    parameters:
+      - schema:
+          type: string
+        name: path
+        in: path
+        required: true
+    get:
+      summary: get-pay-id
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/xrpl-devnet+json:
+              schema:
+                $ref: '#/components/schemas/PaymentInformation'
+            application/xrpl-mainnet+json:
+              schema:
+                $ref: '#/components/schemas/PaymentInformation'
+            application/xrpl-testnet+json:
+              schema:
+                $ref: '#/components/schemas/PaymentInformation'
+        '404':
+          description: Not Found
+        '415':
+          description: Bad MIME type
+        '503':
+          description: Internal error
+      operationId: resolvePayID
+      description: Resolve a pay id
+  '/{path}/invoice':
+    parameters:
+      - schema:
+          type: string
+        name: path
+        in: path
+        required: true
+    get:
+      summary: get-invoice
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/xrpl-devnet+json:
+              schema:
+                $ref: '#/components/schemas/SignatureWrapper_Invoice'
+            application/xrpl-mainnet+json:
+              schema:
+                $ref: '#/components/schemas/SignatureWrapper_Invoice'
+            application/xrpl-testnet+json:
+              schema:
+                $ref: '#/components/schemas/SignatureWrapper_Invoice'
+        '404':
+          description: Not Found
+        '503':
+          description: Service Unavailable
+      operationId: get-path-invoice
+      parameters:
+        - schema:
+            # Typed as a string to get around swagger-codegen issues.
+            # TODO(keefertaylor): Fix after https://github.com/swagger-api/swagger-codegen/issues/10105 is resolved
+            type: string
+          in: query
+          name: nonce
+          description: ''
+          required: true
+    post:
+      summary: post-invoice
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignatureWrapper_Compliance'
+            application/xrpl-mainnet+json:
+              schema:
+                $ref: '#/components/schemas/SignatureWrapper_Compliance'
+            application/xrpl-testnet+json:
+              schema:
+                $ref: '#/components/schemas/SignatureWrapper_Compliance'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '413':
+          description: Request Entity Too Large
+        '422':
+          description: Unprocessable Entity
+        '451':
+          description: Unavailable due to legal reasons
+        '503':
+          description: Service Unavailable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignatureWrapper_Invoice'
+      operationId: post-path-invoice
+  '/{path}/receipt':
+    parameters:
+      - schema:
+          type: string
+        name: path
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-path-receipt
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+        '422':
+          description: Unprocessable Entity (WebDAV)
+        '503':
+          description: Service Unavailable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Receipt'
+        description: ''
+components:
+  schemas:
+    CryptoAddressDetails:
+      title: CryptoAddressDetails
+      type: object
+      properties:
+        address:
+          type: string
+        tag:
+          type: string
+      required:
+        - address
+    PaymentInformation:
+      title: PaymentInformation
+      type: object
+      properties:
+        addressDetailsType:
+          type: string
+        addressDetails:
+          $ref: '#/components/schemas/CryptoAddressDetails'
+        proof_of_control_signature:
+          type: string
+        paymentPointer:
+          type: string
+      required:
+        - addressDetailsType
+        - addressDetails
+    Invoice:
+      title: Invoice
+      type: object
+      properties:
+        nonce:
+          type: string
+        expirationTime:
+          type: string
+        paymentInformation:
+          $ref: '#/components/schemas/PaymentInformation'
+        complianceRequirements:
+          type: array
+          items:
+            type: string
+        memo:
+          type: string
+        complianceHashes:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              hash:
+                type: string
+      required:
+        - nonce
+        - expirationTime
+        - paymentInformation
+        - complianceRequirements
+    # SignatureWrapper_Invoice and SignatureWrapper_Complaince are actually oneof fields. Swagger doesn't generate this correctly
+    # in javascript. See: https://github.com/swagger-api/swagger-codegen/issues/10116
+    # TODO(keefertaylor): Use a oneof this when the above issue is resolved.
+    SignatureWrapper_Invoice:
+      title: SignatureWrapper Invoice Message
+      type: object
+      properties:
+        messageType:
+          type: string
+        message:
+          $ref: '#/components/schemas/Invoice'
+        publicKeyType:
+          type: string
+        publicKeyData:
+          type: array
+          items:
+            type: string
+        publicKey:
+          type: string
+        signature:
+          type: string
+      required:
+        - messageType
+        - message
+        - publicKeyType
+        - publicKeyData
+        - publicKey
+        - signature
+    SignatureWrapper_Compliance:
+      title: SignatureWrapper Compliance Message
+      type: object
+      properties:
+        messageType:
+          type: string
+        message:
+          $ref: '#/components/schemas/Compliance'
+        publicKeyType:
+          type: string
+        publicKeyData:
+          type: array
+          items:
+            type: string
+        publicKey:
+          type: string
+        signature:
+          type: string
+      required:
+        - messageType
+        - message
+        - publicKeyType
+        - publicKeyData
+        - publicKey
+        - signature
+    Beneficiary:
+      title: Beneficiary
+      type: object
+      properties:
+        institutionName:
+          type: string
+        userLegalName:
+          type: string
+        userPhysicalAddress:
+          type: string
+        accountId:
+          type: string
+      required:
+        - institutionName
+    Value:
+      title: Value
+      type: object
+      properties:
+        amount:
+          type: string
+        scale:
+          type: string
+      required:
+        - amount
+        - scale
+    Originator:
+      title: Originator
+      type: object
+      properties:
+        userLegalName:
+          type: string
+        accountId:
+          type: string
+        userPhysicalAddress:
+          type: string
+        institutionName:
+          type: string
+        value:
+          $ref: '#/components/schemas/Value'
+        timestamp:
+          type: string
+      required:
+        - userLegalName
+        - accountId
+        - userPhysicalAddress
+        - institutionName
+        - value
+        - timestamp
+    TravelRule:
+      title: TravelRule
+      type: object
+      properties:
+        originator:
+          $ref: '#/components/schemas/Originator'
+        beneficiary:
+          $ref: '#/components/schemas/Beneficiary'
+      required:
+        - originator
+        - beneficiary
+    Compliance:
+      title: Compliance
+      type: object
+      properties:
+        type:
+          type: string
+        data:
+          $ref: '#/components/schemas/TravelRule'
+      required:
+        - type
+        - data
+    Receipt:
+      title: Receipt
+      type: object
+      properties:
+        invoiceHash:
+          type: string
+        transactionConfirmation:
+          type: string
+      required:
+        - invoiceHash
+        - transactionConfirmation
+openapi: '3.0.0'

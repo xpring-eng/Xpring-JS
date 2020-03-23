@@ -72,15 +72,20 @@ module.exports = {
         'func-names': 'off',
         // Using non-null assertions (obj!.property) cancels the benefits of the strict null-checking mode, but these are test files, so we don't care.
         '@typescript-eslint/no-non-null-assertion': 'off',
-        // Allow unused variables in our test files when explicitly prepended with `_`.
-        '@typescript-eslint/no-unused-vars': [
-          'error',
-          { argsIgnorePattern: '^_' },
-        ],
         // For some test files, we shadow testing constants with function parameter names
         'no-shadow': 'off',
         // Some of our test files declare helper classes with errors
         'max-classes-per-file': 'off',
+      },
+    },
+    {
+      files: '**/*.ts',
+      rules: {
+        // Allow unused variables in our files when explicitly prepended with `_`.
+        '@typescript-eslint/no-unused-vars': [
+          'error',
+          { argsIgnorePattern: '^_' },
+        ],
       },
     },
     {
@@ -89,7 +94,7 @@ module.exports = {
         'src/default-xrp-client.ts',
       ],
       rules: {
-        // This is actually a good rule to have enabled, but for the XpringClient, we define a helper error message class in the same file
+        // This is actually a good rule to have enabled, but for the XRPClient, we define a helper error message class in the same file
         'max-classes-per-file': 'off',
       },
     },

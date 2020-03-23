@@ -5,10 +5,12 @@ import LegacyDefaultXRPClient from './legacy/legacy-default-xrp-client'
 import TransactionStatus from './transaction-status'
 import ReliableSubmissionXRPClient from './reliable-submission-xrp-client'
 import DefaultXRPClient from './default-xrp-client'
+import XRPClientInterface from './XRP/xrp-client-interface'
+
 /**
  * XRPClient is a client which interacts with the Xpring platform.
  */
-class XRPClient {
+class XRPClient implements XRPClientInterface {
   private readonly decoratedClient: XRPClientDecorator
 
   /**
@@ -17,12 +19,12 @@ class XRPClient {
    * The XRPClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
-   * @param useNewProtocolBuffers If `true`, then the new protocol buffer implementation from rippled will be used. Defaults to false.
+   * @param useNewProtocolBuffers If `true`, then the new protocol buffer implementation from rippled will be used. Defaults to true.
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public constructor(
     grpcURL: string,
-    useNewProtocolBuffers = false,
+    useNewProtocolBuffers = true,
     forceWeb = false,
   ) {
     const defaultXRPClient = useNewProtocolBuffers
