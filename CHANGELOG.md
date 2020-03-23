@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- `getTransactionStatus` has been reomved. Please use `getPaymentStatus` instead.
+
 ## 2.0.2 - March 19, 2020
 - Adds XpringClient, which composes various services.
 - Updates PayID implementation to use the proper headers.
