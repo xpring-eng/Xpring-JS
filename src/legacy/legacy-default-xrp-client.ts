@@ -1,6 +1,4 @@
 /* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 
 import bigInt, { BigInteger } from 'big-integer'
@@ -256,9 +254,8 @@ class LegacyDefaultXRPClient implements XRPClientDecorator {
     }
   }
 
-  public async paymentHistory(
-    _address: string,
-  ): Promise<Array<XRPTransaction>> {
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  public paymentHistory(_address: string): Promise<Array<XRPTransaction>> {
     throw new Error(LegacyXRPClientErrorMessages.unimplemented)
   }
 }

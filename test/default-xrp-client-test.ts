@@ -3,6 +3,7 @@ import { assert } from 'chai'
 
 import bigInt from 'big-integer'
 import { Utils, Wallet } from 'xpring-common-js'
+import XRPTestUtils from './XRP/helpers/xrp-test-utils'
 import DefaultXRPClient, {
   XRPClientErrorMessages,
 } from '../src/default-xrp-client'
@@ -476,23 +477,9 @@ describe('Default Xpring Client', function(): void {
     // WHEN the payment history for an address is requested.
     const paymentHistory = await xrpClient.paymentHistory(testAddress)
 
-    const expectedPaymentHistory: Array<XRPTransaction> = []
-    for (const getTransactionResponse of testGetAccountTransactionHistoryResponse.getTransactionsList()) {
-      const transaction = getTransactionResponse.getTransaction()
-      switch (transaction?.getTransactionDataCase()) {
-        case Transaction.TransactionDataCase.PAYMENT: {
-          const xrpTransaction = XRPTransaction.from(transaction)
-          if (!xrpTransaction) {
-            throw new Error(XRPClientErrorMessages.paymentConversionFailure)
-          } else {
-            expectedPaymentHistory.push(xrpTransaction)
-          }
-          break
-        }
-        default:
-        // Intentionally do nothing, non-payment type transactions are ignored.
-      }
-    } // end for
+    const expectedPaymentHistory: Array<XRPTransaction> = XRPTestUtils.transactionHistoryToPaymentsList(
+      testGetAccountTransactionHistoryResponse,
+    )
     // THEN the payment history is returned as expected
     assert.deepEqual(expectedPaymentHistory, paymentHistory)
   })
@@ -554,23 +541,9 @@ describe('Default Xpring Client', function(): void {
     const transactionHistory = await xrpClient.paymentHistory(testAddress)
 
     // THEN the returned transactions are conversions of the inputs with non-payment transactions filtered.
-    const expectedTransactionHistory: Array<XRPTransaction> = []
-    for (const getTransactionResponse of testGetAccountTransactionHistoryResponse.getTransactionsList()) {
-      const transaction = getTransactionResponse.getTransaction()
-      switch (transaction?.getTransactionDataCase()) {
-        case Transaction.TransactionDataCase.PAYMENT: {
-          const xrpTransaction = XRPTransaction.from(transaction)
-          if (!xrpTransaction) {
-            throw new Error(XRPClientErrorMessages.paymentConversionFailure)
-          } else {
-            expectedTransactionHistory.push(xrpTransaction)
-          }
-          break
-        }
-        default:
-        // Intentionally do nothing, non-payment type transactions are ignored.
-      }
-    }
+    const expectedTransactionHistory: Array<XRPTransaction> = XRPTestUtils.transactionHistoryToPaymentsList(
+      testGetAccountTransactionHistoryResponse,
+    )
 
     assert.deepEqual(expectedTransactionHistory, transactionHistory)
   })
