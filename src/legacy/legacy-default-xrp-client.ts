@@ -254,11 +254,8 @@ class LegacyDefaultXRPClient implements XRPClientDecorator {
     }
   }
 
-  /* eslint-disable @typescript-eslint/require-await */
   /* eslint-disable @typescript-eslint/no-unused-vars */
-  public async paymentHistory(
-    _address: string,
-  ): Promise<Array<XRPTransaction>> {
+  public paymentHistory(_address: string): Promise<Array<XRPTransaction>> {
     throw new Error(LegacyXRPClientErrorMessages.unimplemented)
   }
 }
