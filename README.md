@@ -156,7 +156,7 @@ const balance = await xrpClient.getBalance(address);
 console.log(balance); // Logs a balance in drops of XRP
 ```
 
-### Checking Transaction Status
+### Checking Payment Status
 
 A `XRPClient` can check the status of an payment on the XRP Ledger.
 
