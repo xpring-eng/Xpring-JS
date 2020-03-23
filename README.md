@@ -32,19 +32,19 @@ To get developers started right away, Xpring currently provides nodes.
 
 If you are using Xpring-JS in a node environment, use the following addresses to boostrap your application:
 ```
-# TestNet
+# Testnet
 test.xrp.xpring.io:50051
 
-# MainNet
+# Mainnet
 main.xrp.xpring.io:50051
 ```
 
 If you are using Xpring-JS from within a browser, use the following addresses to boostrap your application:
 ```
-#TestNet
+#Testnet
 https://envoy.test.xrp.xpring.io
 
-#MainNet
+#Mainnet
 https://envoy.main.xrp.xpring.io
 ```
 
@@ -136,7 +136,7 @@ wallet.verify(message, signature); // true
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL, true);
 ```
 
@@ -147,7 +147,7 @@ An `XRPClient` can check the balance of an account on the XRP Ledger.
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL, true);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
@@ -175,13 +175,13 @@ These states are determined by the `TransactionStatus` enum.
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL, true);
 
 const transactionHash = "9FC7D277C1C8ED9CE133CC17AEA9978E71FC644CE6F5F0C8E26F1C635D97AF4A";
 const transactionStatus = xrpClient.getPaymentStatus(transactionHash); // TransactionStatus.Succeeded
 ```
-**Note:** The example transactionHash may lead to a "Transaction not found." error because the TestNet is regularly reset, or the accessed node may only maintain one
+**Note:** The example transactionHash may lead to a "Transaction not found." error because the Testnet is regularly reset, or the accessed node may only maintain one
 month of history.  Recent transaction hashes can be found in the XRP Ledger Explorer: https://livenet.xrpl.org/
 
 #### Payment history
@@ -191,7 +191,7 @@ An `XRPClient` can return a list of payments to and from an account.
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = "alpha.test.xrp.xpring.io:50051"; // TestNet URL, use alpha.xrp.xpring.io:50051 for MainNet
+const remoteURL = "alpha.test.xrp.xpring.io:50051"; // Testnet URL, use alpha.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL);
 const address = "XVMFQQBMhdouRqhPMuawgBMN1AVFTofPAdRsXG5RkPtUPNQ";
 const transactions = await xrpClient.paymentHistory(address);
@@ -206,7 +206,7 @@ An `XRPClient` can send XRP to other accounts on the XRP Ledger.
 ```javascript
 const { Wallet, XRPAmount, XRPClient } = require("xpring-js");
 
-const remoteURL = test.xrp.xpring.io:50051; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
+const remoteURL = test.xrp.xpring.io:50051; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL, true);
 
 // Amount of XRP to send
