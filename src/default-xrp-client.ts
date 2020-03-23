@@ -317,7 +317,7 @@ class DefaultXRPClient implements XRPClientDecorator {
     }
 
     const account = this.networkClient.AccountAddress()
-    account.setAddress(address)
+    account.setAddress(classicAddress.address)
 
     const request = this.networkClient.GetAccountTransactionHistoryRequest()
     request.setAccount(account)
