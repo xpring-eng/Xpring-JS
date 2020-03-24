@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add a new `paymentHistory` method to `XRPClient`. This method allows clients to retrieve payment history for an address.
 
+## 3.0.2 - March 24, 2020
+
+This release contains minor fixes for exception handling in PayID.
+
 ## 3.0.1 - March 24, 2020
 
 This release contains minor fixes for exception handling in PayID.
