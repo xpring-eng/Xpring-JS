@@ -8,13 +8,13 @@ export interface IlpNetworkClient {
    * Retrieve the balance for the given address.
    *
    * @param request the details required for fetching the balance
-   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   * @param accessToken Optional access token. If using node network client, accessToken must be supplied, otherwise
    *        it will be picked up from a cookie.
    * @returns A {@link GetBalanceResponse} with balance information of the specified account
    */
   getBalance(
     request: GetBalanceRequest,
-    bearerToken?: string,
+    accessToken?: string,
   ): Promise<GetBalanceResponse>
 
   /**
@@ -22,7 +22,7 @@ export interface IlpNetworkClient {
    *
    * @param request the details of which account to send from, which payment pointer to receive to, and the amount to
    * send
-   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   * @param accessToken Optional access token. If using node network client, accessToken must be supplied, otherwise
    *        it will be picked up from a cookie.
    * @returns A promise which resolves to a `SendPaymentResponse` of the original amount, the amount sent
    *        in the senders denomination, and the amount that was delivered to the recipient in their denomination, as
@@ -30,7 +30,7 @@ export interface IlpNetworkClient {
    */
   send(
     request: SendPaymentRequest,
-    bearerToken?: string,
+    accessToken?: string,
   ): Promise<SendPaymentResponse>
 
   SendPaymentRequest(): SendPaymentRequest
