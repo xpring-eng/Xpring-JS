@@ -3,6 +3,7 @@ import { BigInteger } from 'big-integer'
 import { XRPClientDecorator } from './xrp-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
+import XRPTransaction from './XRP/xrp-transaction'
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
@@ -90,6 +91,10 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
 
   public async accountExists(address: string): Promise<boolean> {
     return this.decoratedClient.accountExists(address)
+  }
+
+  public async paymentHistory(address: string): Promise<Array<XRPTransaction>> {
+    return this.decoratedClient.paymentHistory(address)
   }
 }
 

@@ -34,6 +34,7 @@ import {
   GetAccountTransactionHistoryResponse,
 } from '../../src/generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import Result from '../Common/Helpers/result'
+import { testGetAccountTransactionHistoryResponse } from './fake-xrp-protobufs'
 
 /**
  * A list of responses the fake network client will give.
@@ -67,7 +68,7 @@ export class FakeNetworkClientResponses {
    * @param getFeeResponse The response or error that will be returned from the getFee request. Defaults to the default fee response.
    * @param submitTransactionResponse The response or error that will be returned from the submitTransaction request. Defaults to the default submit transaction response.
    * @param getTransactionStatusResponse The response or error that will be returned from the getTransactionStatus request. Defaults to the default transaction status response.
-   * @param getTransactionHistoryResponse The response or error that will be returned from teh getTransactionHistory request. Default to the default transaction history response.
+   * @param getTransactionHistoryResponse The response or error that will be returned from the getTransactionHistory request. Default to the default transaction history response.
    */
   public constructor(
     public readonly getAccountInfoResponse: Result<
@@ -160,8 +161,8 @@ export class FakeNetworkClientResponses {
    * Construct a default getTransactionHistoryResponse.
    */
   public static defaultGetTransactionHistoryResponse(): GetAccountTransactionHistoryResponse {
-    const response = new GetAccountTransactionHistoryResponse()
-    return response
+    // constructed in test/fakes/fake-xrp-protobufs.ts
+    return testGetAccountTransactionHistoryResponse
   }
 }
 

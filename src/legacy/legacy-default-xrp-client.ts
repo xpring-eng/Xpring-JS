@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 
 import bigInt, { BigInteger } from 'big-integer'
@@ -10,6 +11,7 @@ import LegacyGRPCNetworkClientWeb from './legacy-grpc-network-client.web'
 import { LegacyNetworkClient } from './legacy-network-client'
 import { XRPClientDecorator } from '../xrp-client-decorator'
 import TransactionStatus from '../transaction-status'
+import XRPTransaction from '../XRP/xrp-transaction'
 import isNode from '../utils'
 
 /**
@@ -22,6 +24,8 @@ export class LegacyXRPClientErrorMessages {
 
   public static readonly xAddressRequired =
     'Please use the X-Address format. See: https://xrpaddress.info/.'
+
+  public static readonly unimplemented = 'Unimplemented.'
 }
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
@@ -248,6 +252,11 @@ class LegacyDefaultXRPClient implements XRPClientDecorator {
     } catch (e) {
       return false
     }
+  }
+
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  public paymentHistory(_address: string): Promise<Array<XRPTransaction>> {
+    throw new Error(LegacyXRPClientErrorMessages.unimplemented)
   }
 }
 
