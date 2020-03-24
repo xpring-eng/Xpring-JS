@@ -324,7 +324,7 @@ export default class PayIDClient implements PayIDClientInterface {
           (error, _data, _response) => {
             // TODO(keefertaylor): Provide more specific error handling here.
             if (error) {
-              const message = `${error.status}: ${error.response.text}`
+              const message = `${error.status}: ${error.response?.text}`
               reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
             } else {
               resolve()
