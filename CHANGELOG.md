@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 3.0.1 - March 24, 2020
+
+This release contains minor fixes for exception handling in PayID.
+
 ## 3.0.0 - March 23, 2020
 - Export ILP model objects. This was not done in earlier versions, so ILP functionality does not work between release 2.0.0 and 3.0.0
 - `getTransactionStatus` has been reomved. Please use `getPaymentStatus` instead.
