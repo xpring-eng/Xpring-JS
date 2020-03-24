@@ -80,7 +80,7 @@ export default class PayIDClient implements PayIDClientInterface {
                 const message = `Could not resolve ${payID} on network ${this.network}`
                 reject(new PayIDError(PayIDErrorType.MappingNotFound, message))
               } else {
-                const message = `${error.status}: ${error.response.text}`
+                const message = `${error.status}: ${error.response?.text}`
                 reject(
                   new PayIDError(PayIDErrorType.UnexpectedResponse, message),
                 )
@@ -158,7 +158,7 @@ export default class PayIDClient implements PayIDClientInterface {
           (error, data, _response) => {
             // TODO(keefertaylor): Provide more granular error handling.
             if (error) {
-              const message = `${error.status}: ${error.response.text}`
+              const message = `${error.status}: ${error.response?.text}`
               reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
               // TODO(keefertaylor): make sure the header matches the request.
             } else if (data) {
@@ -268,7 +268,7 @@ export default class PayIDClient implements PayIDClientInterface {
           (error, data, _response) => {
             // TODO(keefertaylor): Provide more granular error handling.
             if (error) {
-              const message = `${error.status}: ${error.response.text}`
+              const message = `${error.status}: ${error.response?.text}`
               reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
             } else if (data) {
               resolve(data)
