@@ -1,5 +1,5 @@
 import { IlpClientDecorator } from './ilp-client-decorator'
-import isNode from '../utils'
+import isNode from '../Common/utils'
 import { IlpNetworkClient } from './ilp-network-client'
 import GrpcIlpNetworkClient from './grpc-ilp-network-client'
 import GrpcIlpNetworkClientWeb from './grpc-ilp-network-client.web'

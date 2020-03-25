@@ -2,7 +2,7 @@ import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 import XpringClient from '../../src/Xpring/xpring-client'
 import PayIDClient from '../../src/PayID/pay-id-client'
-import XRPClient from '../../src/xrp-client'
+import XRPClient from '../../src/XRP/xrp-client'
 import XRPLNetwork from '../../src/Common/xrpl-network'
 
 // A timeout for these tests.

@@ -1,33 +1,32 @@
 /* eslint-disable no-restricted-syntax */
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
-import { XRPClientDecorator } from './xrp-client-decorator'
-import TransactionStatus from './transaction-status'
-import RawTransactionStatus from './raw-transaction-status'
-import XRPTransaction from './XRP/xrp-transaction'
-import GRPCNetworkClient from './grpc-xrp-network-client'
-import GRPCNetworkClientWeb from './grpc-xrp-network-client.web'
-import { NetworkClient } from './network-client'
-import { GetFeeResponse } from './generated/web/org/xrpl/rpc/v1/get_fee_pb'
-import { AccountAddress } from './generated/web/org/xrpl/rpc/v1/account_pb'
 import {
   CurrencyAmount,
   XRPDropsAmount,
-} from './generated/web/org/xrpl/rpc/v1/amount_pb'
-import isNode from './utils'
-
-import { AccountRoot } from './generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
+} from './Generated/web/org/xrpl/rpc/v1/amount_pb'
+import { AccountRoot } from './Generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
 import {
   Destination,
   Amount,
   Account,
   LastLedgerSequence,
   SigningPublicKey,
-} from './generated/node/org/xrpl/rpc/v1/common_pb'
+} from './Generated/node/org/xrpl/rpc/v1/common_pb'
 import {
   Payment,
   Transaction,
-} from './generated/web/org/xrpl/rpc/v1/transaction_pb'
+} from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
+import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
+import { XRPClientDecorator } from './xrp-client-decorator'
+import TransactionStatus from './transaction-status'
+import RawTransactionStatus from './raw-transaction-status'
+import XRPTransaction from './xrp-transaction'
+import GRPCNetworkClient from './grpc-xrp-network-client'
+import GRPCNetworkClientWeb from './grpc-xrp-network-client.web'
+import { XRPNetworkClient } from './xrp-network-client'
+import isNode from '../Common/utils'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -79,7 +78,7 @@ class DefaultXRPClient implements XRPClientDecorator {
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
    */
-  public constructor(private readonly networkClient: NetworkClient) {}
+  public constructor(private readonly networkClient: XRPNetworkClient) {}
 
   /**
    * Retrieve the balance for the given address.

@@ -2,7 +2,7 @@ import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
-import XRPTransaction from './XRP/xrp-transaction'
+import XRPTransaction from './xrp-transaction'
 
 /** A decorator interface for XRPClients. */
 export interface XRPClientDecorator {

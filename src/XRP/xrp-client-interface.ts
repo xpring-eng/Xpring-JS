@@ -1,6 +1,6 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
-import TransactionStatus from '../transaction-status'
+import TransactionStatus from './transaction-status'
 
 /**
  * An interface describing XRPClient.

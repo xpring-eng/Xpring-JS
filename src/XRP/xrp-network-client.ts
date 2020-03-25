@@ -1,29 +1,29 @@
-import {
-  GetAccountInfoRequest,
-  GetAccountInfoResponse,
-} from './generated/web/org/xrpl/rpc/v1/get_account_info_pb'
-import {
-  GetFeeRequest,
-  GetFeeResponse,
-} from './generated/web/org/xrpl/rpc/v1/get_fee_pb'
-import {
-  GetTransactionRequest,
-  GetTransactionResponse,
-} from './generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from './generated/web/org/xrpl/rpc/v1/submit_pb'
-import { AccountAddress } from './generated/web/org/xrpl/rpc/v1/account_pb'
+} from './Generated/web/org/xrpl/rpc/v1/submit_pb'
 import {
   GetAccountTransactionHistoryRequest,
   GetAccountTransactionHistoryResponse,
-} from './generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+} from './Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+import {
+  GetFeeRequest,
+  GetFeeResponse,
+} from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
+import {
+  GetAccountInfoRequest,
+  GetAccountInfoResponse,
+} from './Generated/web/org/xrpl/rpc/v1/get_account_info_pb'
+import {
+  GetTransactionRequest,
+  GetTransactionResponse,
+} from './Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 
 /**
- * The network client interface provides a wrapper around network calls to the Xpring Platform.
+ * The network client interface provides a wrapper around network calls to the XRP node.
  */
-export interface NetworkClient {
+export interface XRPNetworkClient {
   getAccountInfo(
     request: GetAccountInfoRequest,
   ): Promise<GetAccountInfoResponse>

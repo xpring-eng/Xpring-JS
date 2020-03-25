@@ -2,32 +2,32 @@ import { credentials } from 'grpc'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
-} from './generated/node/org/xrpl/rpc/v1/get_account_info_pb'
+} from './Generated/node/org/xrpl/rpc/v1/get_account_info_pb'
 import {
   GetFeeRequest,
   GetFeeResponse,
-} from './generated/node/org/xrpl/rpc/v1/get_fee_pb'
+} from './Generated/node/org/xrpl/rpc/v1/get_fee_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from './generated/node/org/xrpl/rpc/v1/submit_pb'
-import { XRPLedgerAPIServiceClient } from './generated/node/org/xrpl/rpc/v1/xrp_ledger_grpc_pb'
-import { NetworkClient } from './network-client'
-import { AccountAddress } from './generated/node/org/xrpl/rpc/v1/account_pb'
-import isNode from './utils'
+} from './Generated/node/org/xrpl/rpc/v1/submit_pb'
+import { XRPLedgerAPIServiceClient } from './Generated/node/org/xrpl/rpc/v1/xrp_ledger_grpc_pb'
+import { AccountAddress } from './Generated/node/org/xrpl/rpc/v1/account_pb'
 import {
   GetAccountTransactionHistoryRequest,
   GetAccountTransactionHistoryResponse,
-} from './generated/node/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+} from './Generated/node/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import {
   GetTransactionRequest,
   GetTransactionResponse,
-} from './generated/node/org/xrpl/rpc/v1/get_transaction_pb'
+} from './Generated/node/org/xrpl/rpc/v1/get_transaction_pb'
+import isNode from '../Common/utils'
+import { XRPNetworkClient } from './xrp-network-client'
 
 /**
  * A GRPC Based network client.
  */
-class GRPCNetworkClient implements NetworkClient {
+class GRPCXRPNetworkClient implements XRPNetworkClient {
   private readonly grpcClient: XRPLedgerAPIServiceClient
 
   public constructor(grpcURL: string) {
@@ -139,4 +139,4 @@ class GRPCNetworkClient implements NetworkClient {
   /* eslint-enable class-methods-use-this */
 }
 
-export default GRPCNetworkClient
+export default GRPCXRPNetworkClient
