@@ -10,10 +10,14 @@ Xpring-JS is the JavaScript client side library of the Xpring SDK.
 
 ## Features
 Xpring-JS provides the following features:
-- Wallet generation and derivation (Seed or HD Wallet based)
-- Address validation
-- Account balance retrieval
-- Sending XRP payments
+- XRP:
+    - Wallet generation and derivation (Seed-based or HD Wallet-based)
+    - Address validation
+    - Account balance retrieval
+    - Sending XRP payments
+- Interledger (ILP):
+    - Account balance retrieval
+    - Send ILP Payments
 
 ## Installation
 
@@ -48,7 +52,15 @@ https://envoy.test.xrp.xpring.io
 https://envoy.main.xrp.xpring.io
 ```
 
-## Usage
+### Hermes Node
+Xpring SDK's `IlpClient` needs to communicate with Xpring's ILP infrastructure through an instance of [Hermes](https://github.com/xpring-eng/hermes-ilp).
+
+In order to connect to the Hermes instance that Xpring currently operates, you will need to create an ILP wallet [here](https://xpring.io/portal/ilp-wallet)
+
+Once your wallet has been created, you can use the gRPC URL specified in your wallet, as well as your **access token** to check your balance
+and send payments over ILP.
+
+## Usage: XRP
 
 **Note:** Xpring SDK only works with the X-Address format. For more information about this format, see the [Utilities section](#utilities) and <http://xrpaddress.info>.
 
@@ -276,6 +288,52 @@ const decodedClassicAddress = Utils.decodeXAddress(xAddress);
 
 console.log(decodedClassicAddress.address); // rnysDDrRXxz9z66DmCmfWpq4Z5s4TyUP3G
 console.log(decodedClassicAddress.tag); // 12345
+```
+
+## Usage: ILP
+### IlpClient
+`IlpClient` is the main interface into the ILP network.  `IlpClient` must be initialized with the URL of a Hermes instance.
+This can be found in your [wallet](https://xpring.io/portal/ilp-wallet).
+
+All calls to `IlpClient` must pass an access token, which can be generated in your [wallet](https://xpring.io/portal/ilp-wallet).
+
+```javascript
+const { IlpClient } = require("xpring-js")
+
+const grpcUrl = 'hermes-grpc-test.xpring.dev' // Testnet Hermes URL
+const ilpClient = new IlpClient(grpcUrl)
+```
+
+#### Retreiving a Balance
+An `IlpClient` can check the balance of an account on a connector.
+
+```javascript
+const { IlpClient } = require("xpring-js")
+
+const grpcUrl = "hermes-envoy-test.xpring.io" // Testnet Hermes URL
+const ilpClient = new IlpClient(grpcUrl)
+
+const balance = await ilpClient.getBalance("demo_user", "2S1PZh3fEKnKg") // Just a demo user on Testnet
+console.log("Net balance was " + balance.netBalance + " with asset scale " + balance.assetScale)
+```
+
+#### Sending a Payment
+An `IlpClient` can send an ILP payment to another ILP address by supplying a [Payment Pointer](https://github.com/interledger/rfcs/blob/master/0026-payment-pointers/0026-payment-pointers.md)
+and a sender's account ID
+
+```javascript
+const { PaymentRequest, IlpClient } = require("xpring-js")
+const bigInt = require("big-integer")
+
+const grpcUrl = "hermes-envoy-test.xpring.io" // Testnet Hermes URL
+const ilpClient = new IlpClient(grpcUrl)
+const paymentRequest = new PaymentRequest({
+    amount: 100,
+    destinationPaymentPointer: "$xpring.money/demo_receiver",
+    senderAccountId: "demo_user"
+  })
+
+PaymentResponse payment = ilpClient.sendPayment(paymentRequest, "2S1PZh3fEKnKg");
 ```
 
 # Contributing

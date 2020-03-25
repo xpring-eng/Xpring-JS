@@ -60,35 +60,43 @@ export default class PayIDClient implements PayIDClientInterface {
       const authNames = []
       const contentTypes = []
       const returnType = PaymentInformation
-      client.callApi(
-        '/{path}',
-        'GET',
-        pathParams,
-        queryParams,
-        headerParams,
-        formParams,
-        postBody,
-        authNames,
-        contentTypes,
-        accepts,
-        returnType,
-        (error, data, _response) => {
-          if (error) {
-            if (error.status === 404) {
-              const message = `Could not resolve ${payID} on network ${this.network}`
-              reject(new PayIDError(PayIDErrorType.MappingNotFound, message))
+
+      try {
+        client.callApi(
+          '/{path}',
+          'GET',
+          pathParams,
+          queryParams,
+          headerParams,
+          formParams,
+          postBody,
+          authNames,
+          contentTypes,
+          accepts,
+          returnType,
+          (error, data, _response) => {
+            if (error) {
+              if (error.status === 404) {
+                const message = `Could not resolve ${payID} on network ${this.network}`
+                reject(new PayIDError(PayIDErrorType.MappingNotFound, message))
+              } else {
+                const message = `${error.status}: ${error.response?.text}`
+                reject(
+                  new PayIDError(PayIDErrorType.UnexpectedResponse, message),
+                )
+              }
+              // TODO(keefertaylor): make sure the header matches the request.
+            } else if (data?.addressDetails?.address) {
+              resolve(data.addressDetails.address)
             } else {
-              const message = `${error.status}: ${error.response.text}`
-              reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
+              reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
             }
-            // TODO(keefertaylor): make sure the header matches the request.
-          } else if (data?.addressDetails?.address) {
-            resolve(data.addressDetails.address)
-          } else {
-            reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
-          }
-        },
-      )
+          },
+        )
+      } catch (exception) {
+        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
+        reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
+      }
     })
   }
 
@@ -133,31 +141,37 @@ export default class PayIDClient implements PayIDClientInterface {
       const authNames = []
       const contentTypes = []
       const returnType = SignatureWrapperInvoice
-      client.callApi(
-        '/{path}/invoice',
-        'GET',
-        pathParams,
-        queryParams,
-        headerParams,
-        formParams,
-        postBody,
-        authNames,
-        contentTypes,
-        accepts,
-        returnType,
-        (error, data, _response) => {
-          // TODO(keefertaylor): Provide more granular error handling.
-          if (error) {
-            const message = `${error.status}: ${error.response.text}`
-            reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
-            // TODO(keefertaylor): make sure the header matches the request.
-          } else if (data) {
-            resolve(data)
-          } else {
-            reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
-          }
-        },
-      )
+
+      try {
+        client.callApi(
+          '/{path}/invoice',
+          'GET',
+          pathParams,
+          queryParams,
+          headerParams,
+          formParams,
+          postBody,
+          authNames,
+          contentTypes,
+          accepts,
+          returnType,
+          (error, data, _response) => {
+            // TODO(keefertaylor): Provide more granular error handling.
+            if (error) {
+              const message = `${error.status}: ${error.response?.text}`
+              reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
+              // TODO(keefertaylor): make sure the header matches the request.
+            } else if (data) {
+              resolve(data)
+            } else {
+              reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
+            }
+          },
+        )
+      } catch (exception) {
+        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
+        reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
+      }
     })
   }
 
@@ -247,21 +261,26 @@ export default class PayIDClient implements PayIDClientInterface {
     const apiInstance = new DefaultApi(client)
 
     return new Promise((resolve, reject) => {
-      apiInstance.postPathInvoice(
-        path,
-        { body: signatureWrapper },
-        (error, data, _response) => {
-          // TODO(keefertaylor): Provide more granular error handling.
-          if (error) {
-            const message = `${error.status}: ${error.response.text}`
-            reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
-          } else if (data) {
-            resolve(data)
-          } else {
-            reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
-          }
-        },
-      )
+      try {
+        apiInstance.postPathInvoice(
+          path,
+          { body: signatureWrapper },
+          (error, data, _response) => {
+            // TODO(keefertaylor): Provide more granular error handling.
+            if (error) {
+              const message = `${error.status}: ${error.response?.text}`
+              reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
+            } else if (data) {
+              resolve(data)
+            } else {
+              reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
+            }
+          },
+        )
+      } catch (exception) {
+        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
+        reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
+      }
     })
   }
 
@@ -298,19 +317,24 @@ export default class PayIDClient implements PayIDClientInterface {
     }
 
     return new Promise((resolve, reject) => {
-      apiInstance.postPathReceipt(
-        payIDComponents.path,
-        opts,
-        (error, _data, _response) => {
-          // TODO(keefertaylor): Provide more specific error handling here.
-          if (error) {
-            const message = `${error.status}: ${error.response.text}`
-            reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
-          } else {
-            resolve()
-          }
-        },
-      )
+      try {
+        apiInstance.postPathReceipt(
+          payIDComponents.path,
+          opts,
+          (error, _data, _response) => {
+            // TODO(keefertaylor): Provide more specific error handling here.
+            if (error) {
+              const message = `${error.status}: ${error.response?.text}`
+              reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
+            } else {
+              resolve()
+            }
+          },
+        )
+      } catch (exception) {
+        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
+        reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
+      }
     })
   }
 
