@@ -10,10 +10,14 @@ Xpring-JS is the JavaScript client side library of the Xpring SDK.
 
 ## Features
 Xpring-JS provides the following features:
-- Wallet generation and derivation (Seed or HD Wallet based)
-- Address validation
-- Account balance retrieval
-- Sending XRP payments
+- XRP:
+    - Wallet generation and derivation (Seed-based or HD Wallet-based)
+    - Address validation
+    - Account balance retrieval
+    - Sending XRP payments
+- Interledger (ILP):
+    - Account balance retrieval
+    - Send ILP Payments
 
 ## Installation
 
@@ -32,23 +36,31 @@ To get developers started right away, Xpring currently provides nodes.
 
 If you are using Xpring-JS in a node environment, use the following addresses to boostrap your application:
 ```
-# TestNet
+# Testnet
 test.xrp.xpring.io:50051
 
-# MainNet
+# Mainnet
 main.xrp.xpring.io:50051
 ```
 
 If you are using Xpring-JS from within a browser, use the following addresses to boostrap your application:
 ```
-#TestNet
+#Testnet
 https://envoy.test.xrp.xpring.io
 
-#MainNet
+#Mainnet
 https://envoy.main.xrp.xpring.io
 ```
 
-## Usage
+### Hermes Node
+Xpring SDK's `IlpClient` needs to communicate with Xpring's ILP infrastructure through an instance of [Hermes](https://github.com/xpring-eng/hermes-ilp).
+
+In order to connect to the Hermes instance that Xpring currently operates, you will need to create an ILP wallet [here](https://xpring.io/portal/ilp-wallet)
+
+Once your wallet has been created, you can use the gRPC URL specified in your wallet, as well as your **access token** to check your balance
+and send payments over ILP.
+
+## Usage: XRP
 
 **Note:** Xpring SDK only works with the X-Address format. For more information about this format, see the [Utilities section](#utilities) and <http://xrpaddress.info>.
 
@@ -136,18 +148,18 @@ wallet.verify(message, signature); // true
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL, true);
 ```
 
 #### Retrieving a Balance
 
-A `XRPClient` can check the balance of an account on the XRP Ledger.
+An `XRPClient` can check the balance of an account on the XRP Ledger.
 
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL, true);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
@@ -156,9 +168,9 @@ const balance = await xrpClient.getBalance(address);
 console.log(balance); // Logs a balance in drops of XRP
 ```
 
-### Checking Transaction Status
+### Checking Payment Status
 
-A `XRPClient` can check the status of an payment on the XRP Ledger.
+An `XRPClient` can check the status of an payment on the XRP Ledger.
 
 This method can only determine the status of [payment transactions](https://xrpl.org/payment.html) which do not have the partial payment flag ([tfPartialPayment](https://xrpl.org/payment.html#payment-flags)) set.
 
@@ -175,25 +187,38 @@ These states are determined by the `TransactionStatus` enum.
 ```javascript
 const { XRPClient } = require("xpring-js");
 
-const remoteURL = "test.xrp.xpring.io:50051"; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
+const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL, true);
 
 const transactionHash = "9FC7D277C1C8ED9CE133CC17AEA9978E71FC644CE6F5F0C8E26F1C635D97AF4A";
 const transactionStatus = xrpClient.getPaymentStatus(transactionHash); // TransactionStatus.Succeeded
 ```
-**Note:** The example transactionHash may lead to a "Transaction not found." error because the TestNet is regularly reset, or the accessed node may only maintain one
+**Note:** The example transactionHash may lead to a "Transaction not found." error because the Testnet is regularly reset, or the accessed node may only maintain one
 month of history.  Recent transaction hashes can be found in the XRP Ledger Explorer: https://livenet.xrpl.org/
+
+#### Payment history
+
+An `XRPClient` can return a list of payments to and from an account.
+
+```javascript
+const { XRPClient } = require("xpring-js");
+
+const remoteURL = "alpha.test.xrp.xpring.io:50051"; // Testnet URL, use alpha.xrp.xpring.io:50051 for Mainnet
+const xrpClient = new XRPClient(remoteURL);
+const address = "XVMFQQBMhdouRqhPMuawgBMN1AVFTofPAdRsXG5RkPtUPNQ";
+const transactions = await xrpClient.paymentHistory(address);
+```
 
 #### Sending XRP
 
-A `XRPClient` can send XRP to other accounts on the XRP Ledger.
+An `XRPClient` can send XRP to other accounts on the XRP Ledger.
 
 **Note:** The payment operation will block the calling thread until the operation reaches a definitive and irreversible success or failure state.
 
 ```javascript
 const { Wallet, XRPAmount, XRPClient } = require("xpring-js");
 
-const remoteURL = test.xrp.xpring.io:50051; // TestNet URL, use main.xrp.xpring.io:50051 for MainNet
+const remoteURL = test.xrp.xpring.io:50051; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL, true);
 
 // Amount of XRP to send
@@ -263,6 +288,52 @@ const decodedClassicAddress = Utils.decodeXAddress(xAddress);
 
 console.log(decodedClassicAddress.address); // rnysDDrRXxz9z66DmCmfWpq4Z5s4TyUP3G
 console.log(decodedClassicAddress.tag); // 12345
+```
+
+## Usage: ILP
+### IlpClient
+`IlpClient` is the main interface into the ILP network.  `IlpClient` must be initialized with the URL of a Hermes instance.
+This can be found in your [wallet](https://xpring.io/portal/ilp-wallet).
+
+All calls to `IlpClient` must pass an access token, which can be generated in your [wallet](https://xpring.io/portal/ilp-wallet).
+
+```javascript
+const { IlpClient } = require("xpring-js")
+
+const grpcUrl = 'hermes-grpc-test.xpring.dev' // Testnet Hermes URL
+const ilpClient = new IlpClient(grpcUrl)
+```
+
+#### Retreiving a Balance
+An `IlpClient` can check the balance of an account on a connector.
+
+```javascript
+const { IlpClient } = require("xpring-js")
+
+const grpcUrl = "hermes-envoy-test.xpring.io" // Testnet Hermes URL
+const ilpClient = new IlpClient(grpcUrl)
+
+const balance = await ilpClient.getBalance("demo_user", "2S1PZh3fEKnKg") // Just a demo user on Testnet
+console.log("Net balance was " + balance.netBalance + " with asset scale " + balance.assetScale)
+```
+
+#### Sending a Payment
+An `IlpClient` can send an ILP payment to another ILP address by supplying a [Payment Pointer](https://github.com/interledger/rfcs/blob/master/0026-payment-pointers/0026-payment-pointers.md)
+and a sender's account ID
+
+```javascript
+const { PaymentRequest, IlpClient } = require("xpring-js")
+const bigInt = require("big-integer")
+
+const grpcUrl = "hermes-envoy-test.xpring.io" // Testnet Hermes URL
+const ilpClient = new IlpClient(grpcUrl)
+const paymentRequest = new PaymentRequest({
+    amount: 100,
+    destinationPaymentPointer: "$xpring.money/demo_receiver",
+    senderAccountId: "demo_user"
+  })
+
+PaymentResponse payment = ilpClient.sendPayment(paymentRequest, "2S1PZh3fEKnKg");
 ```
 
 # Contributing

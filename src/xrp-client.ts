@@ -6,6 +6,7 @@ import TransactionStatus from './transaction-status'
 import ReliableSubmissionXRPClient from './reliable-submission-xrp-client'
 import DefaultXRPClient from './default-xrp-client'
 import XRPClientInterface from './XRP/xrp-client-interface'
+import XRPTransaction from './XRP/xrp-transaction'
 
 /**
  * XRPClient is a client which interacts with the Xpring platform.
@@ -47,23 +48,6 @@ class XRPClient implements XRPClientInterface {
   /**
    * Retrieve the transaction status for a Payment given transaction hash.
    *
-   * @deprecated Please use `getPaymentStatus` instead.
-   *
-   * Note: This method will only work for Payment type transactions which do not have the tf_partial_payment attribute set.
-   * @see https://xrpl.org/payment.html#payment-flags
-   *
-   * @param transactionHash The hash of the transaction.
-   * @returns The status of the given transaction.
-   */
-  public async getTransactionStatus(
-    transactionHash: string,
-  ): Promise<TransactionStatus> {
-    return this.getPaymentStatus(transactionHash)
-  }
-
-  /**
-   * Retrieve the transaction status for a Payment given transaction hash.
-   *
    * Note: This method will only work for Payment type transactions which do not have the tf_partial_payment attribute set.
    * @see https://xrpl.org/payment.html#payment-flags
    *
@@ -100,6 +84,20 @@ class XRPClient implements XRPClientInterface {
    */
   public async accountExists(address: string): Promise<boolean> {
     return this.decoratedClient.accountExists(address)
+  }
+
+  /**
+   * Return the history of payments for the given account.
+   *
+   * Note: This method only works for payment type transactions, see: https://xrpl.org/payment.html
+   * Note: This method only returns the history that is contained on the remote node, which may not contain a full history of the network.
+   *
+   * @param address: The address (account) for which to retrive payment history.
+   * @throws: An error if there was a problem communicating with the XRP Ledger.
+   * @return: An array of transactions associated with the account.
+   */
+  public async paymentHistory(address: string): Promise<Array<XRPTransaction>> {
+    return this.decoratedClient.paymentHistory(address)
   }
 }
 

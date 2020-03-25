@@ -3,6 +3,7 @@ import { XRPClientDecorator } from '../../src/xrp-client-decorator'
 import TransactionStatus from '../../src/transaction-status'
 import { Wallet } from '../../src/index'
 import RawTransactionStatus from '../../src/raw-transaction-status'
+import XRPTransaction from '../../src/XRP/xrp-transaction'
 
 class FakeXRPClient implements XRPClientDecorator {
   public constructor(
@@ -12,6 +13,7 @@ class FakeXRPClient implements XRPClientDecorator {
     public getLastValidatedLedgerSequenceValue: number,
     public getRawTransactionStatusValue: RawTransactionStatus,
     public accountExistsValue: boolean,
+    public paymentHistoryValue: Array<XRPTransaction>,
   ) {}
 
   public async getBalance(_address: string): Promise<BigInteger> {
@@ -44,6 +46,12 @@ class FakeXRPClient implements XRPClientDecorator {
 
   public async accountExists(_address: string): Promise<boolean> {
     return Promise.resolve(this.accountExistsValue)
+  }
+
+  public async paymentHistory(
+    _address: string,
+  ): Promise<Array<XRPTransaction>> {
+    return Promise.resolve(this.paymentHistoryValue)
   }
 }
 

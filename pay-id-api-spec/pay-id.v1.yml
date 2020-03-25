@@ -2,6 +2,7 @@ info:
   title: PayID
   version: '0.0.1'
 paths:
+  # TODO(keefertaylor): Consider if we should just encode {path} into the base URL.
   '/{path}':
     parameters:
       - schema:
@@ -33,13 +34,7 @@ paths:
           description: Internal error
       operationId: resolvePayID
       description: Resolve a pay id
-  '/{path}/invoice':
-    parameters:
-      - schema:
-          type: string
-        name: path
-        in: path
-        required: true
+  '/invoice':
     get:
       summary: get-invoice
       tags: []
@@ -104,13 +99,7 @@ paths:
             schema:
               $ref: '#/components/schemas/SignatureWrapper_Invoice'
       operationId: post-path-invoice
-  '/{path}/receipt':
-    parameters:
-      - schema:
-          type: string
-        name: path
-        in: path
-        required: true
+  '/receipt':
     post:
       summary: ''
       operationId: post-path-receipt

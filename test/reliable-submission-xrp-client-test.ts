@@ -5,6 +5,8 @@ import FakeXRPClient from './fakes/fake-xrp-client'
 import ReliableSubmissionXRPClient from '../src/reliable-submission-xrp-client'
 import RawTransactionStatus from '../src/raw-transaction-status'
 import TransactionStatus from '../src/transaction-status'
+// import XRPTransaction from '../src/XRP/xrp-transaction'
+import { testXRPTransaction } from './fakes/fake-xrp-protobufs'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -28,6 +30,7 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
   fakedRawTransactionStatusLastLedgerSequenceValue,
   fakedFullPaymentValue,
 )
+const fakedTransactionHistoryValue = [testXRPTransaction!]
 
 describe('Reliable Submission XRP Client', function(): void {
   beforeEach(function() {
@@ -38,6 +41,7 @@ describe('Reliable Submission XRP Client', function(): void {
       fakedLastLedgerSequenceValue,
       fakedRawTransactionStatusValue,
       fakedAccountExistsValue,
+      fakedTransactionHistoryValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXRPClient(
       this.fakeXRPClient,
@@ -145,5 +149,15 @@ describe('Reliable Submission XRP Client', function(): void {
       .send('1', testAddress, wallet)
       .then(() => {})
       .catch(() => done())
+  })
+
+  it('Payment History - Response Not Modified', async function() {
+    // GIVEN a `ReliableSubmissionXRPClient` decorating a `FakeXRPClient` WHEN transaction history is retrieved.
+    const returnedValue = await this.reliableSubmissionClient.paymentHistory(
+      testAddress,
+    )
+
+    // THEN the result is returned unaltered.
+    assert.deepEqual(returnedValue, fakedTransactionHistoryValue)
   })
 })

@@ -59,7 +59,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
   > {
     this.timeout(timeoutMs)
 
-    const transactionStatus = await legacyXRPClientNode.getTransactionStatus(
+    const transactionStatus = await legacyXRPClientNode.getPaymentStatus(
       transactionHash,
     )
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
@@ -68,7 +68,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
   it('Get Transaction Status - Web Shim', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
-    const transactionStatus = await xpringWebClient.getTransactionStatus(
+    const transactionStatus = await xpringWebClient.getPaymentStatus(
       transactionHash,
     )
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
@@ -77,9 +77,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
   it('Get Transaction Status - rippled', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
-    const transactionStatus = await xrpClient.getTransactionStatus(
-      transactionHash,
-    )
+    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
 
@@ -129,5 +127,13 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
 
     const doesExist = await xrpClient.accountExists(recipientAddress)
     assert.equal(doesExist, true)
+  })
+
+  it('Payment History - rippled', async function(): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const payments = await xrpClient.paymentHistory(recipientAddress)
+
+    assert.exists(payments && payments.length > 0)
   })
 })

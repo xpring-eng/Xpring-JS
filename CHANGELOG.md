@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 3.0.4 - March 24, 2020
+
+This release contains minor fixes for exception handling in PayID.
+
+### Added
+- Add a new `paymentHistory` method to `XRPClient`. This method allows clients to retrieve payment history for an address.
+
+## 3.0.3 - March 24, 2020
+
+This release contains minor fixes for exception handling in PayID.
+
+## 3.0.2 - March 24, 2020
+
+This release contains minor fixes for exception handling in PayID.
+
+## 3.0.1 - March 24, 2020
+
+This release contains minor fixes for exception handling in PayID.
+
+## 3.0.0 - March 23, 2020
+- Export ILP model objects. This was not done in earlier versions, so ILP functionality does not work between release 2.0.0 and 3.0.0
+- `getTransactionStatus` has been reomved. Please use `getPaymentStatus` instead.
+
+
 ## 2.0.2 - March 19, 2020
 - Adds XpringClient, which composes various services.
 - Updates PayID implementation to use the proper headers.
