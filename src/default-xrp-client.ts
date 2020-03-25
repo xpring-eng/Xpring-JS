@@ -48,7 +48,7 @@ export class XRPClientErrorMessages {
   /* eslint-enable @typescript-eslint/indent */
 
   public static readonly paymentConversionFailure =
-    'Could not convert payment transaction: (transaction). Please file a bug at https://github.com/xpring-eng/xpringkit'
+    'Could not convert payment transaction: (transaction). Please file a bug at https://github.com/xpring-eng/Xpring-JS/issues'
 }
 
 /**
