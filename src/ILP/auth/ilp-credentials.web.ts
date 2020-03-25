@@ -9,7 +9,7 @@ import XpringIlpError from '../xpring-ilp-error'
 class IlpCredentials implements Metadata {
   [s: string]: string
 
-  private static BEARER_SPACE = 'Bearer '
+  private static BEARER_PREFIX = 'Bearer '
 
   /**
    * Static initializer, which constructs a new IlpCredentials object and adds
@@ -22,11 +22,11 @@ class IlpCredentials implements Metadata {
    *          otherwise returns undefined
    */
   public static build(token?: string): IlpCredentials | undefined {
-    if (token && token.startsWith(this.BEARER_SPACE)) {
+    if (token && token.startsWith(this.BEARER_PREFIX)) {
       throw XpringIlpError.invalidAccessToken
     }
     return token
-      ? { Authorization: this.BEARER_SPACE.concat(token) }
+      ? { Authorization: this.BEARER_PREFIX.concat(token) }
       : undefined
   }
 }

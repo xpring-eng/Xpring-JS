@@ -7,7 +7,7 @@ import XpringIlpError from '../xpring-ilp-error'
  * going over the wire is prefixed with 'Bearer '
  */
 class IlpCredentials extends Metadata {
-  private static BEARER_SPACE = 'Bearer '
+  private static BEARER_PREFIX = 'Bearer '
 
   /**
    * Static initializer, which constructs a new IlpCredentials object and adds
@@ -18,12 +18,12 @@ class IlpCredentials extends Metadata {
    * @return a new instance of IlpCredentials, with an Authorization header
    */
   public static build(token?: string): IlpCredentials {
-    if (token && token.startsWith(this.BEARER_SPACE)) {
+    if (token && token.startsWith(this.BEARER_PREFIX)) {
       throw XpringIlpError.invalidAccessToken
     }
 
     const credentials = new IlpCredentials()
-    credentials.add('Authorization', this.BEARER_SPACE.concat(token || ''))
+    credentials.add('Authorization', this.BEARER_PREFIX.concat(token || ''))
     return credentials
   }
 }
