@@ -31,12 +31,12 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
 
   getBalance(
     request: GetBalanceRequest,
-    bearerToken?: string,
+    accessToken?: string,
   ): Promise<GetBalanceResponse> {
     return new Promise((resolve, reject): void => {
       this.balanceClient.getBalance(
         request,
-        IlpCredentials.build(bearerToken),
+        IlpCredentials.build(accessToken),
         (error, response) => {
           if (error || !response) {
             reject(error)
@@ -50,12 +50,12 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
 
   send(
     request: SendPaymentRequest,
-    bearerToken?: string,
+    accessToken?: string,
   ): Promise<SendPaymentResponse> {
     return new Promise((resolve, reject): void => {
       this.paymentClient.sendMoney(
         request,
-        IlpCredentials.build(bearerToken),
+        IlpCredentials.build(accessToken),
         (error, response) => {
           if (error || !response) {
             reject(error)
