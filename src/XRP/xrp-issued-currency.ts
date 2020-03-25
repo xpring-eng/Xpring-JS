@@ -1,6 +1,6 @@
 import bigInt, { BigInteger } from 'big-integer'
+import { IssuedCurrencyAmount } from './Generated/web/org/xrpl/rpc/v1/amount_pb'
 import XRPCurrency from './xrp-currency'
-import { IssuedCurrencyAmount } from '../generated/web/org/xrpl/rpc/v1/amount_pb'
 
 /*
  * An issued currency on the XRP Ledger

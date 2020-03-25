@@ -3,7 +3,7 @@ import {
   CurrencyAmount,
   IssuedCurrencyAmount,
   XRPDropsAmount,
-} from '../../src/generated/web/org/xrpl/rpc/v1/amount_pb'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/amount_pb'
 import {
   Amount,
   Destination,
@@ -11,16 +11,16 @@ import {
   SigningPublicKey,
   TransactionSignature,
   Sequence,
-} from '../../src/generated/web/org/xrpl/rpc/v1/common_pb'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
   Payment,
   Transaction,
   CheckCash,
-} from '../../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { AccountAddress } from '../../src/generated/web/org/xrpl/rpc/v1/account_pb'
-import { GetAccountTransactionHistoryResponse } from '../../src/generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
-import XRPTransaction from '../../src/XRP/xrp-transaction'
-import { GetTransactionResponse } from '../../src/generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
+import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+import XRPTransaction from '../../../src/XRP/xrp-transaction'
+import { GetTransactionResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 
 // primitive test values
 const testCurrencyName = 'currencyName'
@@ -181,7 +181,7 @@ testInvalidGetAccountTransactionHistoryResponse.setTransactionsList(
 // XRP OBJECTS ===================================================
 
 // test XRPTransaction
-const testXRPTransaction = XRPTransaction.from(testPaymentTransaction)
+const testXRPTransaction = XRPTransaction.from(testPaymentTransaction)!!
 
 export {
   testPaymentTransaction,

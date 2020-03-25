@@ -1,44 +1,54 @@
 import { BigInteger } from 'big-integer'
-import { Wallet } from 'xpring-common-js'
-import XRPClientInterface from '../../../src/XRP/xrp-client-interface'
+import { XRPClientDecorator } from '../../../src/XRP/xrp-client-decorator'
+import TransactionStatus from '../../../src/XRP/transaction-status'
+import { Wallet } from '../../../src/index'
+import RawTransactionStatus from '../../../src/XRP/raw-transaction-status'
+import XRPTransaction from '../../../src/XRP/xrp-transaction'
 import Result from '../../Common/Helpers/result'
-import TransactionStatus from '../../../src/transaction-status'
 
-/**
- * A fake XRPClient Client which can return faked values.
- */
-export default class FakeXRPClient implements XRPClientInterface {
-  /**
-   * @param getBalanceResult Result returned for calls to `getBalance`.
-   * @param getPaymentStatusResult Result returned for calls to `getPaymentStatus`.
-   * @param sendResult Result returned for calls to `send`.
-   * @param accountExistsResult Result returned for calls to `accountExists`.
-   */
-  constructor(
-    private readonly getBalanceResult: Result<BigInteger>,
-    private readonly getPaymentStatusResult: Result<TransactionStatus>,
-    private readonly sendResult: Result<string>,
-    private readonly accountExistsResult: Result<boolean>,
+class FakeXRPClient implements XRPClientDecorator {
+  public constructor(
+    public getBalanceValue: Result<BigInteger>,
+    public getPaymentStatusValue: Result<TransactionStatus>,
+    public sendValue: Result<string>,
+    public getLastValidatedLedgerSequenceValue: Result<number>,
+    public getRawTransactionStatusValue: Result<RawTransactionStatus>,
+    public accountExistsValue: Result<boolean>,
+    public paymentHistoryValue: Result<Array<XRPTransaction>>,
   ) {}
 
-  getBalance(_address: string): Promise<BigInteger> {
-    return FakeXRPClient.returnOrThrow(this.getBalanceResult)
+  async getBalance(_address: string): Promise<BigInteger> {
+    return FakeXRPClient.returnOrThrow(this.getBalanceValue)
   }
 
-  getPaymentStatus(_transactionHash: string): Promise<TransactionStatus> {
-    return FakeXRPClient.returnOrThrow(this.getPaymentStatusResult)
+  async getPaymentStatus(_transactionHash: string): Promise<TransactionStatus> {
+    return FakeXRPClient.returnOrThrow(this.getPaymentStatusValue)
   }
 
-  send(
-    _amount: string | number | BigInteger,
+  async send(
+    _amount: BigInteger | number | string,
     _destination: string,
     _sender: Wallet,
   ): Promise<string> {
-    return FakeXRPClient.returnOrThrow(this.sendResult)
+    return FakeXRPClient.returnOrThrow(this.sendValue)
   }
 
-  accountExists(_address: string): Promise<boolean> {
-    return FakeXRPClient.returnOrThrow(this.accountExistsResult)
+  async getLastValidatedLedgerSequence(): Promise<number> {
+    return FakeXRPClient.returnOrThrow(this.getLastValidatedLedgerSequenceValue)
+  }
+
+  async getRawTransactionStatus(
+    _transactionHash: string,
+  ): Promise<RawTransactionStatus> {
+    return FakeXRPClient.returnOrThrow(this.getRawTransactionStatusValue)
+  }
+
+  async accountExists(_address: string): Promise<boolean> {
+    return FakeXRPClient.returnOrThrow(this.accountExistsValue)
+  }
+
+  async paymentHistory(_address: string): Promise<Array<XRPTransaction>> {
+    return FakeXRPClient.returnOrThrow(this.paymentHistoryValue)
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -49,3 +59,5 @@ export default class FakeXRPClient implements XRPClientInterface {
     return value
   }
 }
+
+export default FakeXRPClient

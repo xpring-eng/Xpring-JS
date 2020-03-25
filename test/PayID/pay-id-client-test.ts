@@ -4,8 +4,8 @@ import { PayIDUtils } from 'xpring-common-js'
 import PayIDClient from '../../src/PayID/pay-id-client'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
 import XRPLNetwork from '../../src/Common/xrpl-network'
-import SignatureWrapperInvoice from '../../src/PayID/generated/model/SignatureWrapperInvoice'
-import SignatureWrapperCompliance from '../../src/PayID/generated/model/SignatureWrapperCompliance'
+import SignatureWrapperInvoice from '../../src/PayID/Generated/model/SignatureWrapperInvoice'
+import SignatureWrapperCompliance from '../../src/PayID/Generated/model/SignatureWrapperCompliance'
 import ComplianceType from '../../src/PayID/compliance-type'
 
 // Parameters for getInvoice

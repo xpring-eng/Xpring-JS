@@ -1,6 +1,6 @@
 /* eslint-disable no-bitwise */
 import { assert } from 'chai'
-import RippledFlags from '../src/rippled-flags'
+import RippledFlags from '../../src/XRP/rippled-flags'
 import 'mocha'
 
 describe('rippled flags', function(): void {

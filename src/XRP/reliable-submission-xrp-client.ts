@@ -3,7 +3,7 @@ import { BigInteger } from 'big-integer'
 import { XRPClientDecorator } from './xrp-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
-import XRPTransaction from './XRP/xrp-transaction'
+import XRPTransaction from './xrp-transaction'
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))

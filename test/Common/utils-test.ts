@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { Utils } from '../src/index'
+import { Utils } from '../../src/index'
 import 'mocha'
 
 describe('utils', function(): void {

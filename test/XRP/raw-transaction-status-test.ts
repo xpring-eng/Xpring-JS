@@ -1,14 +1,14 @@
 import { assert } from 'chai'
-import RippledFlags from '../src/rippled-flags'
-import { GetTransactionResponse } from '../src/generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+import RippledFlags from '../../src/XRP/rippled-flags'
+import { GetTransactionResponse } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import {
   Transaction,
   Payment,
-} from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { TransactionStatus as LegacyTransactionStatus } from '../src/generated/web/legacy/transaction_status_pb'
+} from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { TransactionStatus as LegacyTransactionStatus } from '../../src/XRP/Generated/web/legacy/transaction_status_pb'
 import 'mocha'
-import RawTransactionStatus from '../src/raw-transaction-status'
-import { Flags } from '../src/generated/web/org/xrpl/rpc/v1/common_pb'
+import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
+import { Flags } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 
 describe('raw transaction status', function(): void {
   it('isFullPayment - legacy proto', function(): void {

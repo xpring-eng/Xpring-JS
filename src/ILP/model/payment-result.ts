@@ -1,5 +1,5 @@
 import bigInt, { BigInteger } from 'big-integer'
-import { SendPaymentResponse } from '../../generated/node/ilp/send_payment_response_pb'
+import { SendPaymentResponse } from '../Generated/node/send_payment_response_pb'
 
 /**
  * A response object containing details about a requested payment

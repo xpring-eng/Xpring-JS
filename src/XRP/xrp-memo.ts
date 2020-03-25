@@ -1,4 +1,4 @@
-import { Memo } from '../generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { Memo } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 /*
  * Represents a memo on the XRPLedger.

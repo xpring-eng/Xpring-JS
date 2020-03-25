@@ -1,45 +1,45 @@
 /* eslint-disable class-methods-use-this */
-import { Transaction } from '../../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { NetworkClient } from '../../src/network-client'
+import { Transaction } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { XRPNetworkClient } from '../../../src/XRP/xrp-network-client'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
-} from '../../src/generated/web/org/xrpl/rpc/v1/get_account_info_pb'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_info_pb'
 import {
   GetFeeRequest,
   GetFeeResponse,
   Fee,
-} from '../../src/generated/web/org/xrpl/rpc/v1/get_fee_pb'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_fee_pb'
 import {
   GetTransactionRequest,
   GetTransactionResponse,
-} from '../../src/generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from '../../src/generated/web/org/xrpl/rpc/v1/submit_pb'
-import { AccountRoot } from '../../src/generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/submit_pb'
+import { AccountRoot } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
 import {
   XRPDropsAmount,
   CurrencyAmount,
-} from '../../src/generated/web/org/xrpl/rpc/v1/amount_pb'
-import { AccountAddress } from '../../src/generated/web/org/xrpl/rpc/v1/account_pb'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/amount_pb'
+import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
   Meta,
   TransactionResult,
-} from '../../src/generated/web/org/xrpl/rpc/v1/meta_pb'
-import { Balance } from '../../src/generated/node/org/xrpl/rpc/v1/common_pb'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/meta_pb'
+import { Balance } from '../../../src/XRP/Generated/node/org/xrpl/rpc/v1/common_pb'
 import {
   GetAccountTransactionHistoryRequest,
   GetAccountTransactionHistoryResponse,
-} from '../../src/generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
-import Result from '../Common/Helpers/result'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+import Result from '../../Common/Helpers/result'
 import { testGetAccountTransactionHistoryResponse } from './fake-xrp-protobufs'
 
 /**
  * A list of responses the fake network client will give.
  */
-export class FakeNetworkClientResponses {
+export class FakeXRPNetworkClientResponses {
   /**
    * A default error.
    */
@@ -48,17 +48,17 @@ export class FakeNetworkClientResponses {
   /**
    * A default set of responses that will always succeed.
    */
-  public static defaultSuccessfulResponses = new FakeNetworkClientResponses()
+  public static defaultSuccessfulResponses = new FakeXRPNetworkClientResponses()
 
   /**
    * A default set of responses that will always fail.
    */
-  public static defaultErrorResponses = new FakeNetworkClientResponses(
-    FakeNetworkClientResponses.defaultError,
-    FakeNetworkClientResponses.defaultError,
-    FakeNetworkClientResponses.defaultError,
-    FakeNetworkClientResponses.defaultError,
-    FakeNetworkClientResponses.defaultError,
+  public static defaultErrorResponses = new FakeXRPNetworkClientResponses(
+    FakeXRPNetworkClientResponses.defaultError,
+    FakeXRPNetworkClientResponses.defaultError,
+    FakeXRPNetworkClientResponses.defaultError,
+    FakeXRPNetworkClientResponses.defaultError,
+    FakeXRPNetworkClientResponses.defaultError,
   )
 
   /**
@@ -73,19 +73,19 @@ export class FakeNetworkClientResponses {
   public constructor(
     public readonly getAccountInfoResponse: Result<
       GetAccountInfoResponse
-    > = FakeNetworkClientResponses.defaultAccountInfoResponse(),
+    > = FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
     public readonly getFeeResponse: Result<
       GetFeeResponse
-    > = FakeNetworkClientResponses.defaultFeeResponse(),
+    > = FakeXRPNetworkClientResponses.defaultFeeResponse(),
     public readonly submitransactionResponse: Result<
       SubmitTransactionResponse
-    > = FakeNetworkClientResponses.defaultSubmitTransactionResponse(),
+    > = FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse(),
     public readonly getTransactionStatusResponse: Result<
       GetTransactionResponse
-    > = FakeNetworkClientResponses.defaultGetTransactionResponse(),
+    > = FakeXRPNetworkClientResponses.defaultGetTransactionResponse(),
     public readonly getTransactionHistoryResponse: Result<
       GetAccountTransactionHistoryResponse
-    > = FakeNetworkClientResponses.defaultGetTransactionHistoryResponse(),
+    > = FakeXRPNetworkClientResponses.defaultGetTransactionHistoryResponse(),
   ) {}
 
   /**
@@ -169,9 +169,9 @@ export class FakeNetworkClientResponses {
 /**
  * A fake network client which stubs network interaction.
  */
-export class FakeNetworkClient implements NetworkClient {
+export class FakeXRPNetworkClient implements XRPNetworkClient {
   public constructor(
-    private readonly responses: FakeNetworkClientResponses = FakeNetworkClientResponses.defaultSuccessfulResponses,
+    private readonly responses: FakeXRPNetworkClientResponses = FakeXRPNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
 
   getAccountInfo(

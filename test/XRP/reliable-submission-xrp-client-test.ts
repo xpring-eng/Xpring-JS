@@ -2,10 +2,9 @@ import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 import bigInt from 'big-integer'
 import FakeXRPClient from './fakes/fake-xrp-client'
-import ReliableSubmissionXRPClient from '../src/reliable-submission-xrp-client'
-import RawTransactionStatus from '../src/raw-transaction-status'
-import TransactionStatus from '../src/transaction-status'
-// import XRPTransaction from '../src/XRP/xrp-transaction'
+import ReliableSubmissionXRPClient from '../../src/XRP/reliable-submission-xrp-client'
+import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
+import TransactionStatus from '../../src/XRP/transaction-status'
 import { testXRPTransaction } from './fakes/fake-xrp-protobufs'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -30,7 +29,7 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
   fakedRawTransactionStatusLastLedgerSequenceValue,
   fakedFullPaymentValue,
 )
-const fakedTransactionHistoryValue = [testXRPTransaction!]
+const fakedTransactionHistoryValue = [testXRPTransaction]
 
 describe('Reliable Submission XRP Client', function(): void {
   beforeEach(function() {

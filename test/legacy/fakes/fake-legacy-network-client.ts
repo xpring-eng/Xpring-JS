@@ -1,17 +1,17 @@
-import { LegacyNetworkClient } from '../../../src/legacy/legacy-network-client'
-import { AccountInfo } from '../../../src/generated/node/legacy/account_info_pb'
-import { Fee } from '../../../src/generated/node/legacy/fee_pb'
-import { SubmitSignedTransactionResponse } from '../../../src/generated/node/legacy/submit_signed_transaction_response_pb'
-import { LedgerSequence } from '../../../src/generated/node/legacy/ledger_sequence_pb'
-import { TransactionStatus } from '../../../src/generated/node/legacy/transaction_status_pb'
-import { XRPAmount } from '../../../src/generated/node/legacy/xrp_amount_pb'
-import { GetAccountInfoRequest } from '../../../src/generated/node/legacy/get_account_info_request_pb'
-import { GetFeeRequest } from '../../../src/generated/node/legacy/get_fee_request_pb'
-import { SubmitSignedTransactionRequest } from '../../../src/generated/node/legacy/submit_signed_transaction_request_pb'
-import { GetLatestValidatedLedgerSequenceRequest } from '../../../src/generated/node/legacy/get_latest_validated_ledger_sequence_request_pb'
-import { GetTransactionStatusRequest } from '../../../src/generated/node/legacy/get_transaction_status_request_pb'
-import { Payment } from '../../../src/generated/node/legacy/payment_pb'
-import { Transaction } from '../../../src/generated/node/legacy/transaction_pb'
+import { LegacyXRPNetworkClient } from '../../../src/XRP/legacy/legacy-xrp-network-client'
+import { AccountInfo } from '../../../src/XRP/Generated/node/legacy/account_info_pb'
+import { Fee } from '../../../src/XRP/Generated/node/legacy/fee_pb'
+import { SubmitSignedTransactionResponse } from '../../../src/XRP/Generated/node/legacy/submit_signed_transaction_response_pb'
+import { LedgerSequence } from '../../../src/XRP/Generated/node/legacy/ledger_sequence_pb'
+import { TransactionStatus } from '../../../src/XRP/Generated/node/legacy/transaction_status_pb'
+import { XRPAmount } from '../../../src/XRP/Generated/node/legacy/xrp_amount_pb'
+import { GetAccountInfoRequest } from '../../../src/XRP/Generated/node/legacy/get_account_info_request_pb'
+import { GetFeeRequest } from '../../../src/XRP/Generated/node/legacy/get_fee_request_pb'
+import { SubmitSignedTransactionRequest } from '../../../src/XRP/Generated/node/legacy/submit_signed_transaction_request_pb'
+import { GetLatestValidatedLedgerSequenceRequest } from '../../../src/XRP/Generated/node/legacy/get_latest_validated_ledger_sequence_request_pb'
+import { GetTransactionStatusRequest } from '../../../src/XRP/Generated/node/legacy/get_transaction_status_request_pb'
+import { Payment } from '../../../src/XRP/Generated/node/legacy/payment_pb'
+import { Transaction } from '../../../src/XRP/Generated/node/legacy/transaction_pb'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -136,7 +136,7 @@ export class FakeLegacyNetworkClientResponses {
 /**
  * A fake network client which stubs network interaction.
  */
-export class FakeLegacyNetworkClient implements LegacyNetworkClient {
+export class FakeLegacyNetworkClient implements LegacyXRPNetworkClient {
   public constructor(
     private readonly responses: FakeLegacyNetworkClientResponses = FakeLegacyNetworkClientResponses.defaultSuccessfulResponses,
   ) {}

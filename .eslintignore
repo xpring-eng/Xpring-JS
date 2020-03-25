@@ -1,5 +1,7 @@
 # Do not lint generated files.
-src/generated
+src/ILP/Generated
+src/PayID/Generated/
+src/XRP/Generated
 build
 
 # Do not lint submodules
