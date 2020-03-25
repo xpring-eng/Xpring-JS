@@ -2,6 +2,7 @@ import bigInt from 'big-integer'
 import { assert } from 'chai'
 import IlpClient from '../../src/ILP/ilp-client'
 import { PaymentRequest } from '../../src/ILP/model/payment-request'
+import XpringIlpError, { XpringIlpErrorType } from '../../src/ILP/xpring-ilp-error'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -42,11 +43,11 @@ describe('ILP Integration Tests', function(): void {
       await ILPClientNode.getBalance('sdk_account1', 'Bearer password')
     } catch (error) {
       // THEN an Error is thrown by IlpCredentials
-      assert.typeOf(error, 'Error')
       assert.equal(
-        error.message,
-        'Access token should not start with "Bearer "',
+        (error as XpringIlpError).errorType,
+        XpringIlpErrorType.InvalidAccessToken,
       )
+      assert.equal(error.message, XpringIlpError.invalidAccessToken.message)
     }
   })
 
@@ -89,11 +90,11 @@ describe('ILP Integration Tests', function(): void {
       await ILPClientNode.sendPayment(request, 'Bearer password')
     } catch (error) {
       // THEN an Error is thrown by IlpCredentials
-      assert.typeOf(error, 'Error')
       assert.equal(
-        error.message,
-        'Access token should not start with "Bearer "',
+        (error as XpringIlpError).errorType,
+        XpringIlpErrorType.InvalidAccessToken,
       )
+      assert.equal(error.message, XpringIlpError.invalidAccessToken.message)
     }
   })
 })

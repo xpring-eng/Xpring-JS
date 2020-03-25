@@ -1,4 +1,5 @@
 import { Metadata } from 'grpc-web'
+import XpringIlpError from '../xpring-ilp-error'
 
 /**
  * An extension of grpc-web.Metadata which provides a convenient way to
@@ -22,7 +23,7 @@ class IlpCredentials implements Metadata {
    */
   public static build(token?: string): IlpCredentials | undefined {
     if (token && token.startsWith(this.BEARER_SPACE)) {
-      throw new Error('Access token should not start with "Bearer "')
+      throw XpringIlpError.invalidAccessToken
     }
     return token
       ? { Authorization: this.BEARER_SPACE.concat(token) }

@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 import { fail } from 'assert'
 import IlpCredentials from '../../src/ILP/auth/ilp-credentials.web'
+import XpringIlpError, { XpringIlpErrorType } from '../../src/ILP/xpring-ilp-error'
 
 describe('IlpCredentials Web', function(): void {
   it('Build - Undefined token', function(): void {
@@ -36,11 +37,11 @@ describe('IlpCredentials Web', function(): void {
       fail()
     } catch (error) {
       // THEN and Error is thrown
-      assert.typeOf(error, 'Error')
       assert.equal(
-        error.message,
-        'Access token should not start with "Bearer "',
+        (error as XpringIlpError).errorType,
+        XpringIlpErrorType.InvalidAccessToken,
       )
+      assert.equal(error.message, XpringIlpError.invalidAccessToken.message)
     }
   })
 })
