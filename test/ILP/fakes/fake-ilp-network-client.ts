@@ -79,7 +79,7 @@ export class FakeIlpNetworkClient implements IlpNetworkClient {
 
   getBalance(
     _request: GetBalanceRequest,
-    _bearerToken: string,
+    _accessToken: string,
   ): Promise<GetBalanceResponse> {
     const response = this.responses.getBalanceResponse
     if (response instanceof Error) {
