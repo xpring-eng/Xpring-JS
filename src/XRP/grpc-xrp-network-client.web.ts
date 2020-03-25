@@ -1,33 +1,33 @@
 import {
-  GetAccountInfoRequest,
-  GetAccountInfoResponse,
-} from './generated/web/org/xrpl/rpc/v1/get_account_info_pb'
-import {
-  GetFeeRequest,
-  GetFeeResponse,
-} from './generated/web/org/xrpl/rpc/v1/get_fee_pb'
-import {
-  GetTransactionRequest,
-  GetTransactionResponse,
-} from './generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+  GetAccountTransactionHistoryRequest,
+  GetAccountTransactionHistoryResponse,
+} from './Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+import { XRPLedgerAPIServiceClient } from './Generated/web/org/xrpl/rpc/v1/xrp_ledger_grpc_web_pb'
+
+import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from './generated/web/org/xrpl/rpc/v1/submit_pb'
-import { XRPLedgerAPIServiceClient } from './generated/web/org/xrpl/rpc/v1/xrp_ledger_grpc_web_pb'
-
-import { NetworkClient } from './network-client'
-import { AccountAddress } from './generated/web/org/xrpl/rpc/v1/account_pb'
-import isNode from './utils'
+} from './Generated/web/org/xrpl/rpc/v1/submit_pb'
 import {
-  GetAccountTransactionHistoryRequest,
-  GetAccountTransactionHistoryResponse,
-} from './generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+  GetTransactionRequest,
+  GetTransactionResponse,
+} from './Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+import {
+  GetFeeRequest,
+  GetFeeResponse,
+} from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
+import {
+  GetAccountInfoRequest,
+  GetAccountInfoResponse,
+} from './Generated/web/org/xrpl/rpc/v1/get_account_info_pb'
+import { XRPNetworkClient } from './xrp-network-client'
+import isNode from '../Common/utils'
 
 /**
  * A GRPC Based network client.
  */
-class GRPCNetworkClient implements NetworkClient {
+class XRPGRPCNetworkClient implements XRPNetworkClient {
   private readonly grpcClient: XRPLedgerAPIServiceClient
 
   public constructor(grpcURL: string) {
@@ -147,4 +147,4 @@ class GRPCNetworkClient implements NetworkClient {
   /* eslint-enable class-methods-use-this */
 }
 
-export default GRPCNetworkClient
+export default XRPGRPCNetworkClient

@@ -1,20 +1,20 @@
 import { assert } from 'chai'
 import bigInt from 'big-integer'
-import XRPCurrency from '../src/XRP/xrp-currency'
-import XRPPathElement from '../src/XRP/xrp-path-element'
-import XRPPath from '../src/XRP/xrp-path'
-import XRPIssuedCurrency from '../src/XRP/xrp-issued-currency'
-import XRPCurrencyAmount from '../src/XRP/xrp-currency-amount'
-import XRPPayment from '../src/XRP/xrp-payment'
-import XRPMemo from '../src/XRP/xrp-memo'
-import XRPSigner from '../src/XRP/xrp-signer'
-import XRPTransaction from '../src/XRP/xrp-transaction'
+import XRPCurrency from '../../src/XRP/xrp-currency'
+import XRPPathElement from '../../src/XRP/xrp-path-element'
+import XRPPath from '../../src/XRP/xrp-path'
+import XRPIssuedCurrency from '../../src/XRP/xrp-issued-currency'
+import XRPCurrencyAmount from '../../src/XRP/xrp-currency-amount'
+import XRPPayment from '../../src/XRP/xrp-payment'
+import XRPMemo from '../../src/XRP/xrp-memo'
+import XRPSigner from '../../src/XRP/xrp-signer'
+import XRPTransaction from '../../src/XRP/xrp-transaction'
 import {
   Currency,
   CurrencyAmount,
   IssuedCurrencyAmount,
   XRPDropsAmount,
-} from '../src/generated/web/org/xrpl/rpc/v1/amount_pb'
+} from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/amount_pb'
 import {
   Amount,
   Destination,
@@ -33,15 +33,15 @@ import {
   Flags,
   LastLedgerSequence,
   SourceTag,
-} from '../src/generated/web/org/xrpl/rpc/v1/common_pb'
+} from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
   Payment,
   Memo,
   Signer,
   Transaction,
   CheckCash,
-} from '../src/generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { AccountAddress } from '../src/generated/web/org/xrpl/rpc/v1/account_pb'
+} from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { AccountAddress } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 
 // TODO(amiecorso): Refactor tests to separate files.
 // Set up global variables for use in test cases

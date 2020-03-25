@@ -2,17 +2,17 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 
 import bigInt, { BigInteger } from 'big-integer'
-import { AccountInfo } from '../generated/web/legacy/account_info_pb'
-import { XRPAmount } from '../generated/web/legacy/xrp_amount_pb'
+import { AccountInfo } from '../Generated/web/legacy/account_info_pb'
+import { XRPAmount } from '../Generated/web/legacy/xrp_amount_pb'
 
 import RawTransactionStatus from '../raw-transaction-status'
-import LegacyGRPCNetworkClient from './legacy-grpc-network-client'
-import LegacyGRPCNetworkClientWeb from './legacy-grpc-network-client.web'
-import { LegacyNetworkClient } from './legacy-network-client'
+import LegacyGRPCNetworkClient from './legacy-grpc-xrp-network-client'
+import LegacyGRPCNetworkClientWeb from './legacy-grpc-xrp-network-client.web'
+import { LegacyXRPNetworkClient } from './legacy-xrp-network-client'
 import { XRPClientDecorator } from '../xrp-client-decorator'
 import TransactionStatus from '../transaction-status'
-import XRPTransaction from '../XRP/xrp-transaction'
-import isNode from '../utils'
+import XRPTransaction from '../xrp-transaction'
+import isNode from '../../Common/utils'
 
 /**
  * Error messages from XRPClient.
@@ -59,7 +59,7 @@ class LegacyDefaultXRPClient implements XRPClientDecorator {
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
    */
-  public constructor(private readonly networkClient: LegacyNetworkClient) {}
+  public constructor(private readonly networkClient: LegacyXRPNetworkClient) {}
 
   /**
    * Retrieve the balance for the given address.

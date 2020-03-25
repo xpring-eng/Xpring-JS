@@ -1,5 +1,5 @@
-import { TransactionStatus } from './generated/web/legacy/transaction_status_pb'
-import { GetTransactionResponse } from './generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+import { TransactionStatus } from './Generated/web/legacy/transaction_status_pb'
+import { GetTransactionResponse } from './Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import RippledFlags from './rippled-flags'
 
 /** Abstraction around raw Transaction Status for compatibility. */

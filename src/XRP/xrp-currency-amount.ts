@@ -1,5 +1,5 @@
+import { CurrencyAmount } from './Generated/web/org/xrpl/rpc/v1/amount_pb'
 import XRPIssuedCurrency from './xrp-issued-currency'
-import { CurrencyAmount } from '../generated/web/org/xrpl/rpc/v1/amount_pb'
 
 // An amount of currency on the XRP Ledger
 // @see: https://xrpl.org/basic-data-types.html#specifying-currency-amounts

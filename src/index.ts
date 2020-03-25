@@ -7,9 +7,9 @@ export {
   WalletGenerationResult,
   Utils,
 } from 'xpring-common-js'
-export { default as RippledFlags } from './rippled-flags'
-export { default as TransactionStatus } from './transaction-status'
-export { default as XRPClient } from './xrp-client'
+export { default as RippledFlags } from './XRP/rippled-flags'
+export { default as TransactionStatus } from './XRP/transaction-status'
+export { default as XRPClient } from './XRP/xrp-client'
 export { PaymentRequest, PaymentResult, AccountBalance, IlpClient } from './ILP'
 export { default as PayIDClient } from './PayID/pay-id-client'
 export { PayIDErrorType, default as PayIDError } from './PayID/pay-id-error'
