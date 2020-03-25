@@ -63,7 +63,7 @@ export default class PayIDClient implements PayIDClientInterface {
 
       try {
         client.callApi(
-          '/{path}',
+          payIDComponents.path,
           'GET',
           pathParams,
           queryParams,
@@ -116,9 +116,6 @@ export default class PayIDClient implements PayIDClientInterface {
       throw PayIDError.invalidPaymentPointer
     }
 
-    // Swagger generates the '/' in the URL by default and the payment pointer's 'path' is prefixed by a '/'. Strip off the leading '/'.
-    const path = paymentPointer.path.substring(1)
-
     const client = new ApiClient()
     client.basePath = `https://${paymentPointer.host}`
 
@@ -131,7 +128,7 @@ export default class PayIDClient implements PayIDClientInterface {
       // TODO(keefertaylor): Dedupe this with the above information.
       const postBody = null
       const pathParams = {
-        path,
+        path: paymentPointer.path,
       }
       const queryParams = {
         nonce,
@@ -144,7 +141,7 @@ export default class PayIDClient implements PayIDClientInterface {
 
       try {
         client.callApi(
-          '/{path}/invoice',
+          `${paymentPointer.path}/invoice`,
           'GET',
           pathParams,
           queryParams,
@@ -252,18 +249,14 @@ export default class PayIDClient implements PayIDClientInterface {
       throw PayIDError.invalidPaymentPointer
     }
 
-    // Swagger generates the '/' in the URL by default and the payment pointer's 'path' is prefixed by a '/'. Strip off the leading '/'.
-    const path = paymentPointer.path.substring(1)
-
     const client = new ApiClient()
-    client.basePath = `https://${paymentPointer.host}`
+    client.basePath = `https://${paymentPointer.host}${paymentPointer.path}`
 
     const apiInstance = new DefaultApi(client)
 
     return new Promise((resolve, reject) => {
       try {
         apiInstance.postPathInvoice(
-          path,
           { body: signatureWrapper },
           (error, data, _response) => {
             // TODO(keefertaylor): Provide more granular error handling.
@@ -309,7 +302,7 @@ export default class PayIDClient implements PayIDClientInterface {
     }
 
     const client = new ApiClient()
-    client.basePath = `https://${payIDComponents.host}`
+    client.basePath = `https://${payIDComponents.host}${payIDComponents.path}`
 
     const apiInstance = new DefaultApi(client)
     const opts = {
@@ -318,19 +311,15 @@ export default class PayIDClient implements PayIDClientInterface {
 
     return new Promise((resolve, reject) => {
       try {
-        apiInstance.postPathReceipt(
-          payIDComponents.path,
-          opts,
-          (error, _data, _response) => {
-            // TODO(keefertaylor): Provide more specific error handling here.
-            if (error) {
-              const message = `${error.status}: ${error.response?.text}`
-              reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
-            } else {
-              resolve()
-            }
-          },
-        )
+        apiInstance.postPathReceipt(opts, (error, _data, _response) => {
+          // TODO(keefertaylor): Provide more specific error handling here.
+          if (error) {
+            const message = `${error.status}: ${error.response?.text}`
+            reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
+          } else {
+            resolve()
+          }
+        })
       } catch (exception) {
         // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
         reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
@@ -346,13 +335,9 @@ export default class PayIDClient implements PayIDClientInterface {
     if (!paymentPointer) {
       throw PayIDError.invalidPaymentPointer
     }
-
-    // Swagger generates the '/' in the URL by default and the payment pointer's 'path' is prefixed by a '/'. Strip off the leading '/'.
-    const path = paymentPointer.path.substring(1)
-
     return {
       host: paymentPointer.host,
-      path,
+      path: paymentPointer.path,
     }
   }
 }
