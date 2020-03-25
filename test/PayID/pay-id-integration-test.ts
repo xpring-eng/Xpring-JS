@@ -15,13 +15,13 @@ describe('PayID Integration Tests', function(): void {
 
     // GIVEN a Pay ID that will resolve on Mainnet.
     const payIDClient = new PayIDClient(XRPLNetwork.Main)
-    const payID = '$dev.payid.xpring.money/hbergren'
+    const payID = '$pay.michael.zochow.ski'
 
     // WHEN it is resolved to an XRP address
     const xrpAddress = await payIDClient.xrpAddressForPayID(payID)
 
     // THEN the address is the expected value.
-    assert.equal(xrpAddress, 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn')
+    assert.equal(xrpAddress, 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSHqcZEd67ddMfJG9Y')
   })
 
   it('Resolve PayID to XRP - known PayID - testnet', async function(): Promise<
