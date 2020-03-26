@@ -9,7 +9,7 @@ import { TransactionStatus as TransactionStatusResponse } from '../../src/XRP/Ge
 import LegacyDefaultXRPClient, {
   LegacyXRPClientErrorMessages,
 } from '../../src/XRP/legacy/legacy-default-xrp-client'
-import FakeGRPCError from '../fakes/fake-grpc-error'
+import FakeGRPCError from '../XRP/fakes/fake-grpc-error'
 
 import {
   FakeLegacyNetworkClient,
