@@ -1,27 +1,20 @@
 import { assert } from 'chai'
 import bigInt from 'big-integer'
-import {
-  FakeIlpNetworkClient,
-  FakeIlpNetworkClientResponses,
-} from './fakes/fake-ilp-network-client'
-import DefaultIlpClient from '../../src/ILP/default-ilp-client'
+import { FakeIlpNetworkClientResponses } from './fakes/fake-ilp-network-client'
 import { PaymentRequest } from '../../src/ILP/model/payment-request'
+import XpringIlpError from '../../src/ILP/xpring-ilp-error'
+import FakeDefaultIlpClients from './fakes/fake-default-ilp-clients'
 
-const fakeSuceedingNetworkClient = (): DefaultIlpClient => {
-  return new DefaultIlpClient(new FakeIlpNetworkClient())
-}
-const fakeErroringNetworkClient = (): DefaultIlpClient => {
-  return new DefaultIlpClient(
-    new FakeIlpNetworkClient(
-      FakeIlpNetworkClientResponses.defaultErrorResponses,
-    ),
-  )
-}
+const fakePaymentRequest = new PaymentRequest({
+  amount: bigInt(100),
+  destinationPaymentPointer: '$money/baz',
+  senderAccountId: 'test.foo.bar',
+})
 
 describe('Default ILP Client', function(): void {
   it('Get balance - success', async function(): Promise<void> {
     // GIVEN a DefaultIlpClient
-    const client = fakeSuceedingNetworkClient()
+    const client = FakeDefaultIlpClients.fakeSuceedingNetworkClient()
     // WHEN the balance for an account is requested
     const amount = await client.getBalance('test.foo.bar')
 
@@ -47,9 +40,9 @@ describe('Default ILP Client', function(): void {
     )
   })
 
-  it('Get balance - error', function(done): void {
+  it('Get balance - default error', function(done): void {
     // GIVEN a DefaultIlpClient
-    const client = fakeErroringNetworkClient()
+    const client = FakeDefaultIlpClients.fakeErroringNetworkClient()
 
     // WHEN the balance for an account is requested
     client.getBalance('test.foo.bar').catch((error) => {
@@ -63,17 +56,84 @@ describe('Default ILP Client', function(): void {
     })
   })
 
+  it('Get balance - Already Exists Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws an ALREADY_EXISTS error
+    const client = FakeDefaultIlpClients.fakeAlreadyExistsErrorClient()
+
+    // WHEN the balance for an account is requested
+    client.getBalance('test.foo.bar').catch((error) => {
+      // THEN the error is translated to a XpringIlpError
+      assert.equal(error as XpringIlpError, XpringIlpError.accountAlreadyExists)
+      done()
+    })
+  })
+
+  it('Get balance - Not Found Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a NOT_FOUND error
+    const client = FakeDefaultIlpClients.fakeNotFoundErrorClient()
+
+    // WHEN the balance for an account is requested
+    client.getBalance('test.foo.bar').catch((error) => {
+      // THEN the error is translated to a XpringIlpError
+      assert.equal(error as XpringIlpError, XpringIlpError.accountNotFound)
+      done()
+    })
+  })
+
+  it('Get balance - Invalid Argument Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws an INVALID_ARGUMENT error
+    const client = FakeDefaultIlpClients.fakeInvalidArgumentErrorClient()
+
+    // WHEN the balance for an account is requested
+    client.getBalance('test.foo.bar').catch((error) => {
+      // THEN the error is translated to a XpringIlpError
+      assert.equal(error as XpringIlpError, XpringIlpError.invalidArgument)
+      done()
+    })
+  })
+
+  it('Get balance - Unauthenticated Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws an UNAUTHENTICATED error
+    const client = FakeDefaultIlpClients.fakeUnauthenticatedErrorClient()
+
+    // WHEN the balance for an account is requested
+    client.getBalance('test.foo.bar').catch((error) => {
+      // THEN the error is translated to a XpringIlpError
+      assert.equal(error as XpringIlpError, XpringIlpError.unauthenticated)
+      done()
+    })
+  })
+
+  it('Get balance - Internal Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws an INTERNAL error
+    const client = FakeDefaultIlpClients.fakeInternalErrorClient()
+
+    // WHEN the balance for an account is requested
+    client.getBalance('test.foo.bar').catch((error) => {
+      // THEN the error is translated to a XpringIlpError
+      assert.equal(error as XpringIlpError, XpringIlpError.internal)
+      done()
+    })
+  })
+
+  it('Get balance - Invalid Access Token', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a XpringIlpError.invalidAccessToken error
+    const client = FakeDefaultIlpClients.fakeInvalidAccessTokenErrorClient()
+
+    // WHEN the balance for an account is requested
+    client.getBalance('test.foo.bar').catch((error) => {
+      // THEN the error is rethrown
+      assert.equal(error as XpringIlpError, XpringIlpError.invalidAccessToken)
+      done()
+    })
+  })
+
   it('Send - success', async function(): Promise<void> {
     // GIVEN a DefaultIlpClient
-    const client = fakeSuceedingNetworkClient()
+    const client = FakeDefaultIlpClients.fakeSuceedingNetworkClient()
 
     // WHEN a payment request is sent
-    const request = new PaymentRequest({
-      amount: bigInt(100),
-      destinationPaymentPointer: '$money/baz',
-      senderAccountId: 'test.foo.bar',
-    })
-    const paymentResponse = await client.sendPayment(request)
+    const paymentResponse = await client.sendPayment(fakePaymentRequest)
 
     const successfulPaymentResponse = FakeIlpNetworkClientResponses.defaultSendResponse()
     // THEN the original amount is equal to mocked original amount
@@ -100,21 +160,88 @@ describe('Default ILP Client', function(): void {
 
   it('Send - error', function(done): void {
     // GIVEN a DefaultIlpClient
-    const client = fakeErroringNetworkClient()
+    const client = FakeDefaultIlpClients.fakeErroringNetworkClient()
 
     // WHEN a payment is requested
-    const request = new PaymentRequest({
-      amount: bigInt(100),
-      destinationPaymentPointer: '$money/baz',
-      senderAccountId: 'test.foo.bar',
-    })
-    client.sendPayment(request).catch((error) => {
+    client.sendPayment(fakePaymentRequest).catch((error) => {
       // THEN an error is thrown
       assert.typeOf(error, 'Error')
       assert.equal(
         error.message,
         FakeIlpNetworkClientResponses.defaultError.message,
       )
+      done()
+    })
+  })
+
+  it('Send Payment - Already Exists Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws an ALREADY_EXISTS error
+    const client = FakeDefaultIlpClients.fakeAlreadyExistsErrorClient()
+
+    // WHEN a payment is sent
+    client.sendPayment(fakePaymentRequest).catch((error) => {
+      // THEN the error is translated to a XpringIlpError
+      assert.equal(error as XpringIlpError, XpringIlpError.accountAlreadyExists)
+      done()
+    })
+  })
+
+  it('Send Payment - Not Found Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a NOT_FOUND error
+    const client = FakeDefaultIlpClients.fakeNotFoundErrorClient()
+
+    // WHEN a payment is sent
+    client.sendPayment(fakePaymentRequest).catch((error) => {
+      // THEN the error is translated to a XpringIlpError
+      assert.equal(error as XpringIlpError, XpringIlpError.accountNotFound)
+      done()
+    })
+  })
+
+  it('Send Payment - Invalid Argument Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws an INVALID_ARGUMENT error
+    const client = FakeDefaultIlpClients.fakeInvalidArgumentErrorClient()
+
+    // WHEN a payment is sent
+    client.sendPayment(fakePaymentRequest).catch((error) => {
+      // THEN the error is translated to a XpringIlpError
+      assert.equal(error as XpringIlpError, XpringIlpError.invalidArgument)
+      done()
+    })
+  })
+
+  it('Send Payment - Unauthenticated Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws an UNAUTHENTICATED error
+    const client = FakeDefaultIlpClients.fakeUnauthenticatedErrorClient()
+
+    // WHEN a payment is sent
+    client.sendPayment(fakePaymentRequest).catch((error) => {
+      // THEN the error is translated to a XpringIlpError
+      assert.equal(error as XpringIlpError, XpringIlpError.unauthenticated)
+      done()
+    })
+  })
+
+  it('Send Payment - Internal Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws an INTERNAL error
+    const client = FakeDefaultIlpClients.fakeInternalErrorClient()
+
+    // WHEN a payment is sent
+    client.sendPayment(fakePaymentRequest).catch((error) => {
+      // THEN the error is translated to a XpringIlpError
+      assert.equal(error as XpringIlpError, XpringIlpError.internal)
+      done()
+    })
+  })
+
+  it('Send Payment - Invalid Access Token', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a XpringIlpError.invalidAccessToken error
+    const client = FakeDefaultIlpClients.fakeInvalidAccessTokenErrorClient()
+
+    // WHEN a payment is sent
+    client.sendPayment(fakePaymentRequest).catch((error) => {
+      // THEN the error is rethrown
+      assert.equal(error as XpringIlpError, XpringIlpError.invalidAccessToken)
       done()
     })
   })

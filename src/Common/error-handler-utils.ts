@@ -1,4 +1,4 @@
-import { Error } from 'grpc-web'
+import { Error as grpcWebError } from 'grpc-web'
 import { ServiceError, status } from 'grpc'
 import XpringIlpError from '../ILP/xpring-ilp-error'
 
@@ -20,15 +20,16 @@ export default class ErrorHandlerUtils {
    * @param error Any error returned by a network call.
    */
   public static handleIlpServiceError(
-    error: ServiceError | Error | XpringIlpError,
-  ): XpringIlpError {
-    // Just rethrow XpringIlpErrors
+    error: ServiceError | grpcWebError | XpringIlpError,
+  ): Error {
+    // Rethrow XpringIlpErrors
     if (error instanceof XpringIlpError) {
       return error
     }
-    // error is not a gRPC error, since gRPC errors always have a code.
+
+    // Just regular TS Errors (duck typed here)
     if (!error.code) {
-      return XpringIlpError.internal
+      return error as Error
     }
 
     switch (error.code) {

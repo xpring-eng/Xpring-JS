@@ -10,6 +10,7 @@ export interface IlpClientDecorator {
    * @param accessToken Optional access token. If using node network client, accessToken must be supplied, otherwise
    *        it will be picked up from a cookie.
    * @return A Promise<AccountBalance> with balance information of the specified account
+   * @throws a XpringIlpException if the inputs were invalid or an error occurs during the call.
    */
   getBalance(accountId: string, accessToken?: string): Promise<AccountBalance>
 
@@ -22,6 +23,7 @@ export interface IlpClientDecorator {
    * @returns A promise which resolves to a `PaymentResult` of the original amount, the amount sent
    *        in the senders denomination, and the amount that was delivered to the recipient in their denomination, as
    *        well as if the payment was successful
+   * @throws a XpringIlpException if the inputs were invalid or an error occurs during the call.
    */
   sendPayment(
     paymentRequest: PaymentRequest,

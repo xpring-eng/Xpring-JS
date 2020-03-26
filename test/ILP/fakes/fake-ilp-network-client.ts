@@ -1,8 +1,11 @@
+import { status } from 'grpc'
 import { IlpNetworkClient } from '../../../src/ILP/ilp-network-client'
 import { GetBalanceResponse } from '../../../src/ILP/Generated/node/get_balance_response_pb'
 import { SendPaymentResponse } from '../../../src/ILP/Generated/node/send_payment_response_pb'
 import { GetBalanceRequest } from '../../../src/ILP/Generated/node/get_balance_request_pb'
 import { SendPaymentRequest } from '../../../src/ILP/Generated/node/send_payment_request_pb'
+import FakeGRPCError from './fake-grpc-error'
+import XpringIlpError from '../../../src/ILP/xpring-ilp-error'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -16,6 +19,38 @@ export class FakeIlpNetworkClientResponses {
   public static defaultError = new Error('fake ilp network client failure')
 
   /**
+   * A fake GRPC error mocking grpc.status.ALREADY_EXISTS
+   */
+  public static alreadyExistsError = new FakeGRPCError(status.ALREADY_EXISTS)
+
+  /**
+   * A fake GRPC error mocking grpc.status.NOT_FOUND
+   */
+  public static notFoundError = new FakeGRPCError(status.NOT_FOUND)
+
+  /**
+   * A fake GRPC error mocking grpc.status.UNAUTHENTICATED
+   */
+  public static unauthenticatedError = new FakeGRPCError(status.UNAUTHENTICATED)
+
+  /**
+   * A fake GRPC error mocking grpc.status.INVALID_ARGUMENT
+   */
+  public static invalidArgumentError = new FakeGRPCError(
+    status.INVALID_ARGUMENT,
+  )
+
+  /**
+   * A fake GRPC error mocking grpc.status.INTERNAL
+   */
+  public static internalError = new FakeGRPCError(status.INTERNAL)
+
+  /**
+   * A real XpringIlpError which would get thrown if an access token starts with "Bearer "
+   */
+  public static invalidAccessTokenError = XpringIlpError.invalidAccessToken
+
+  /**
    * A default set of responses that will always succeed.
    */
   public static defaultSuccessfulResponses = new FakeIlpNetworkClientResponses()
@@ -26,6 +61,54 @@ export class FakeIlpNetworkClientResponses {
   public static defaultErrorResponses = new FakeIlpNetworkClientResponses(
     FakeIlpNetworkClientResponses.defaultError,
     FakeIlpNetworkClientResponses.defaultError,
+  )
+
+  /**
+   * A set of responses that will always fail with error = grpc.status.ALREADY_EXISTS.
+   */
+  public static alreadyExistsErrorResponses = new FakeIlpNetworkClientResponses(
+    FakeIlpNetworkClientResponses.alreadyExistsError,
+    FakeIlpNetworkClientResponses.alreadyExistsError,
+  )
+
+  /**
+   * A set of responses that will always fail with error = grpc.status.NOT_FOUND.
+   */
+  public static notFoundErrorResponses = new FakeIlpNetworkClientResponses(
+    FakeIlpNetworkClientResponses.notFoundError,
+    FakeIlpNetworkClientResponses.notFoundError,
+  )
+
+  /**
+   * A set of responses that will always fail with error = grpc.status.UNAUTHENTICATED.
+   */
+  public static unauthenticatedErrorResponses = new FakeIlpNetworkClientResponses(
+    FakeIlpNetworkClientResponses.unauthenticatedError,
+    FakeIlpNetworkClientResponses.unauthenticatedError,
+  )
+
+  /**
+   * A set of responses that will always fail with error = grpc.status.INVALID_ARGUMENT.
+   */
+  public static invalidArgumentErrorResponses = new FakeIlpNetworkClientResponses(
+    FakeIlpNetworkClientResponses.invalidArgumentError,
+    FakeIlpNetworkClientResponses.invalidArgumentError,
+  )
+
+  /**
+   * A set of responses that will always fail with error = grpc.status.INTERNAL.
+   */
+  public static internalErrorResponses = new FakeIlpNetworkClientResponses(
+    FakeIlpNetworkClientResponses.internalError,
+    FakeIlpNetworkClientResponses.internalError,
+  )
+
+  /**
+   * A set of responses that will always fail with error = XpringIlpError.invalidAccessToken.
+   */
+  public static invalidAccessTokenErrorResponses = new FakeIlpNetworkClientResponses(
+    FakeIlpNetworkClientResponses.invalidAccessTokenError,
+    FakeIlpNetworkClientResponses.invalidAccessTokenError,
   )
 
   /**
