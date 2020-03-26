@@ -3,6 +3,11 @@
  */
 export enum XpringIlpErrorType {
   InvalidAccessToken,
+  AccountAlreadyExists,
+  AccountNotFound,
+  Unauthenticated,
+  InvalidArgument,
+  Internal,
 }
 
 /**
@@ -15,6 +20,31 @@ export default class XpringIlpError extends Error {
   public static invalidAccessToken = new XpringIlpError(
     XpringIlpErrorType.InvalidAccessToken,
     'Access token should not start with "Bearer "',
+  )
+
+  public static accountAlreadyExists = new XpringIlpError(
+    XpringIlpErrorType.AccountAlreadyExists,
+    'Account already exists.',
+  )
+
+  public static accountNotFound = new XpringIlpError(
+    XpringIlpErrorType.AccountNotFound,
+    'Account not found.',
+  )
+
+  public static unauthenticated = new XpringIlpError(
+    XpringIlpErrorType.Unauthenticated,
+    'Authentication failed.',
+  )
+
+  public static invalidArgument = new XpringIlpError(
+    XpringIlpErrorType.InvalidArgument,
+    'Invalid argument in request body.',
+  )
+
+  public static internal = new XpringIlpError(
+    XpringIlpErrorType.Internal,
+    'Internal error occurred on ILP network.',
   )
 
   /**

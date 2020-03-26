@@ -6,6 +6,7 @@ import GrpcIlpNetworkClientWeb from './grpc-ilp-network-client.web'
 import { AccountBalance } from './model/account-balance'
 import { PaymentResult } from './model/payment-result'
 import { PaymentRequest } from './model/payment-request'
+import ErrorHandlerUtils from '../Common/error-handler-utils'
 
 class DefaultIlpClient implements IlpClientDecorator {
   /**
@@ -26,6 +27,8 @@ class DefaultIlpClient implements IlpClientDecorator {
       : new DefaultIlpClient(new GrpcIlpNetworkClientWeb(grpcURL))
   }
 
+  public constructor(private readonly networkClient: IlpNetworkClient) {}
+
   /**
    * Get the balance of the specified account on the connector.
    *
@@ -33,16 +36,6 @@ class DefaultIlpClient implements IlpClientDecorator {
    * @param accessToken Optional access token. If using node network client, accessToken must be supplied, otherwise
    *        it will be picked up from a cookie.
    * @return A Promise<AccountBalance> with balance information of the specified account
-   */
-  public constructor(private readonly networkClient: IlpNetworkClient) {}
-
-  /**
-   * Retrieve the balance for the given accountId.
-   *
-   * @param accountId The ILP accountId to retrieve a balance for.
-   * @param accessToken Optional access token. If using node network client, accessToken must be supplied, otherwise
-   *        it will be picked up from a cookie.
-   * @returns An AccountBalance with balance information of the specified account
    */
   public async getBalance(
     accountId: string,
@@ -52,6 +45,9 @@ class DefaultIlpClient implements IlpClientDecorator {
     request.setAccountId(accountId)
     return this.networkClient
       .getBalance(request, accessToken)
+      .catch((error) => {
+        throw ErrorHandlerUtils.handleIlpServiceError(error)
+      })
       .then((response) => AccountBalance.from(response))
   }
 
@@ -72,6 +68,9 @@ class DefaultIlpClient implements IlpClientDecorator {
     const request = paymentRequest.toProto()
     return this.networkClient
       .send(request, accessToken)
+      .catch((error) => {
+        throw ErrorHandlerUtils.handleIlpServiceError(error)
+      })
       .then((response) => PaymentResult.from(response))
   }
 }
