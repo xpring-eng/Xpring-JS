@@ -56,18 +56,6 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Get balance - Already Exists Error', function(done): void {
-    // GIVEN a DefaultIlpClient with a network client which always throws an ALREADY_EXISTS error
-    const client = FakeDefaultIlpClients.fakeAlreadyExistsErrorClient()
-
-    // WHEN the balance for an account is requested
-    client.getBalance('test.foo.bar').catch((error) => {
-      // THEN the error is translated to a XpringIlpError
-      assert.equal(error as XpringIlpError, XpringIlpError.accountAlreadyExists)
-      done()
-    })
-  })
-
   it('Get balance - Not Found Error', function(done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a NOT_FOUND error
     const client = FakeDefaultIlpClients.fakeNotFoundErrorClient()
@@ -170,18 +158,6 @@ describe('Default ILP Client', function(): void {
         error.message,
         FakeIlpNetworkClientResponses.defaultError.message,
       )
-      done()
-    })
-  })
-
-  it('Send Payment - Already Exists Error', function(done): void {
-    // GIVEN a DefaultIlpClient with a network client which always throws an ALREADY_EXISTS error
-    const client = FakeDefaultIlpClients.fakeAlreadyExistsErrorClient()
-
-    // WHEN a payment is sent
-    client.sendPayment(fakePaymentRequest).catch((error) => {
-      // THEN the error is translated to a XpringIlpError
-      assert.equal(error as XpringIlpError, XpringIlpError.accountAlreadyExists)
       done()
     })
   })

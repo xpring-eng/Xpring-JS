@@ -19,11 +19,6 @@ export class FakeIlpNetworkClientResponses {
   public static defaultError = new Error('fake ilp network client failure')
 
   /**
-   * A fake GRPC error mocking grpc.status.ALREADY_EXISTS
-   */
-  public static alreadyExistsError = new FakeGRPCError(status.ALREADY_EXISTS)
-
-  /**
    * A fake GRPC error mocking grpc.status.NOT_FOUND
    */
   public static notFoundError = new FakeGRPCError(status.NOT_FOUND)
@@ -61,14 +56,6 @@ export class FakeIlpNetworkClientResponses {
   public static defaultErrorResponses = new FakeIlpNetworkClientResponses(
     FakeIlpNetworkClientResponses.defaultError,
     FakeIlpNetworkClientResponses.defaultError,
-  )
-
-  /**
-   * A set of responses that will always fail with error = grpc.status.ALREADY_EXISTS.
-   */
-  public static alreadyExistsErrorResponses = new FakeIlpNetworkClientResponses(
-    FakeIlpNetworkClientResponses.alreadyExistsError,
-    FakeIlpNetworkClientResponses.alreadyExistsError,
   )
 
   /**

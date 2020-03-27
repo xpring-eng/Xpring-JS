@@ -3,7 +3,6 @@
  */
 export enum XpringIlpErrorType {
   InvalidAccessToken,
-  AccountAlreadyExists,
   AccountNotFound,
   Unauthenticated,
   InvalidArgument,
@@ -20,11 +19,6 @@ export default class XpringIlpError extends Error {
   public static invalidAccessToken = new XpringIlpError(
     XpringIlpErrorType.InvalidAccessToken,
     'Access token should not start with "Bearer "',
-  )
-
-  public static accountAlreadyExists = new XpringIlpError(
-    XpringIlpErrorType.AccountAlreadyExists,
-    'Account already exists.',
   )
 
   public static accountNotFound = new XpringIlpError(

@@ -24,8 +24,6 @@ export default class ErrorHandlerUtils {
   ): Error {
     if ('code' in error) {
       switch (error.code) {
-        case status.ALREADY_EXISTS:
-          return XpringIlpError.accountAlreadyExists
         case status.NOT_FOUND:
           return XpringIlpError.accountNotFound
         case status.UNAUTHENTICATED:

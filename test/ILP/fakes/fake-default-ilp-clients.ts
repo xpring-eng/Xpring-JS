@@ -27,17 +27,6 @@ export default class FakeDefaultIlpClients {
   }
 
   /**
-   * A DefaultIlpClient with a FakeIlpNetworkClient that always fails with grpc.status.ALREADY_EXISTS
-   */
-  public static fakeAlreadyExistsErrorClient = (): DefaultIlpClient => {
-    return new DefaultIlpClient(
-      new FakeIlpNetworkClient(
-        FakeIlpNetworkClientResponses.alreadyExistsErrorResponses,
-      ),
-    )
-  }
-
-  /**
    * A DefaultIlpClient with a FakeIlpNetworkClient that always fails with grpc.status.NOT_FOUND
    */
   public static fakeNotFoundErrorClient = (): DefaultIlpClient => {
