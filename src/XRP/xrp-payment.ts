@@ -3,6 +3,10 @@ import XRPCurrencyAmount from './xrp-currency-amount'
 import XRPPath from './xrp-path'
 
 // TODO(amiecorso): Modify this object to use X-Address format.
+/*
+ * Represents a payment on the XRP Ledger.
+ * @see: https://xrpl.org/payment.html
+ */
 export default class XRPPayment {
   public static from(payment: Payment): XRPPayment | undefined {
     const paymentAmountValue = payment.getAmount()?.getValue()
