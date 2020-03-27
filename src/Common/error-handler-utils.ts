@@ -22,27 +22,21 @@ export default class ErrorHandlerUtils {
   public static handleIlpServiceError(
     error: ServiceError | grpcWebError | XpringIlpError,
   ): Error {
-    // Rethrow XpringIlpErrors
-    if (error instanceof XpringIlpError) {
-      return error
+    if ('code' in error) {
+      switch (error.code) {
+        case status.ALREADY_EXISTS:
+          return XpringIlpError.accountAlreadyExists
+        case status.NOT_FOUND:
+          return XpringIlpError.accountNotFound
+        case status.UNAUTHENTICATED:
+          return XpringIlpError.unauthenticated
+        case status.INVALID_ARGUMENT:
+          return XpringIlpError.invalidArgument
+        default:
+          return XpringIlpError.internal
+      }
     }
 
-    // Just regular TS Errors (duck typed here)
-    if (!error.code) {
-      return error as Error
-    }
-
-    switch (error.code) {
-      case status.ALREADY_EXISTS:
-        return XpringIlpError.accountAlreadyExists
-      case status.NOT_FOUND:
-        return XpringIlpError.accountNotFound
-      case status.UNAUTHENTICATED:
-        return XpringIlpError.unauthenticated
-      case status.INVALID_ARGUMENT:
-        return XpringIlpError.invalidArgument
-      default:
-        return XpringIlpError.internal
-    }
+    return error
   }
 }
