@@ -12,7 +12,7 @@ import LegacyGRPCNetworkClientWeb from './legacy-grpc-xrp-network-client.web'
 import { LegacyXRPNetworkClient } from './legacy-xrp-network-client'
 import { XRPClientDecorator } from '../xrp-client-decorator'
 import TransactionStatus from '../transaction-status'
-import XRPTransaction from '../xrp-transaction'
+import XRPTransaction from '../model/xrp-transaction'
 import isNode from '../../Common/utils'
 
 /**

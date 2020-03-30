@@ -26,7 +26,7 @@ import {
   testCheckCashTransaction,
   testInvalidGetAccountTransactionHistoryResponse,
 } from './fakes/fake-xrp-protobufs'
-import XRPTransaction from '../../src/XRP/xrp-transaction'
+import XRPTransaction from '../../src/XRP/model/xrp-transaction'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 

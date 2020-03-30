@@ -1,4 +1,4 @@
-import { Currency } from './Generated/web/org/xrpl/rpc/v1/amount_pb'
+import { Currency } from '../Generated/web/org/xrpl/rpc/v1/amount_pb'
 
 /**
  * An issued currency on the XRP LEdger

@@ -2,7 +2,9 @@ import bigInt from 'big-integer'
 import { assert } from 'chai'
 import IlpClient from '../../src/ILP/ilp-client'
 import { PaymentRequest } from '../../src/ILP/model/payment-request'
-import XpringIlpError, { XpringIlpErrorType } from '../../src/ILP/xpring-ilp-error'
+import XpringIlpError, {
+  XpringIlpErrorType,
+} from '../../src/ILP/xpring-ilp-error'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
