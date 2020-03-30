@@ -1,5 +1,9 @@
 import { assert } from 'chai'
+import { fail } from 'assert'
 import IlpCredentials from '../../src/ILP/auth/ilp-credentials'
+import XpringIlpError, {
+  XpringIlpErrorType,
+} from '../../src/ILP/xpring-ilp-error'
 
 describe('IlpCredentials Node', function(): void {
   it('Build - Undefined token', function(): void {
@@ -14,26 +18,33 @@ describe('IlpCredentials Node', function(): void {
 
   it('Build - no prefix', function(): void {
     // GIVEN a bearer token with no "Bearer " prefix
-    const bearerToken = 'password'
+    const accessToken = 'password'
 
     // WHEN IlpCredentials are built
-    const credentials = IlpCredentials.build(bearerToken)
+    const credentials = IlpCredentials.build(accessToken)
 
     // THEN "Bearer " is added to token
     assert.equal(
       credentials.get('Authorization')[0],
-      'Bearer '.concat(bearerToken),
+      'Bearer '.concat(accessToken),
     )
   })
 
   it('Build - with prefix', function(): void {
     // GIVEN a bearer token with a "Bearer " prefix
-    const bearerToken = 'Bearer password'
+    const accessToken = 'Bearer password'
 
     // WHEN IlpCredentials are built
-    const credentials = IlpCredentials.build(bearerToken)
-
-    // THEN bearer token is unchanged
-    assert.equal(credentials.get('Authorization')[0], bearerToken)
+    try {
+      IlpCredentials.build(accessToken)
+      fail()
+    } catch (error) {
+      // THEN an Error is thrown
+      assert.equal(
+        (error as XpringIlpError).errorType,
+        XpringIlpErrorType.InvalidAccessToken,
+      )
+      assert.equal(error.message, XpringIlpError.invalidAccessToken.message)
+    }
   })
 })

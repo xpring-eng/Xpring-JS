@@ -3,17 +3,17 @@ import bigInt from 'big-integer'
 
 import { Utils, Wallet } from 'xpring-common-js'
 import chaiString from 'chai-string'
-import { TransactionStatus as TransactionStatusResponse } from '../../src/generated/node/legacy/transaction_status_pb'
+import { TransactionStatus as TransactionStatusResponse } from '../../src/XRP/Generated/node/legacy/transaction_status_pb'
 
 import LegacyDefaultXRPClient, {
   LegacyXRPClientErrorMessages,
-} from '../../src/legacy/legacy-default-xrp-client'
+} from '../../src/XRP/legacy/legacy-default-xrp-client'
 import {
   FakeLegacyNetworkClient,
   FakeLegacyNetworkClientResponses,
 } from './fakes/fake-legacy-network-client'
 import 'mocha'
-import TransactionStatus from '../../src/transaction-status'
+import TransactionStatus from '../../src/XRP/transaction-status'
 
 const fakeSucceedingNetworkClient = new FakeLegacyNetworkClient()
 const fakeErroringNetworkClient = new FakeLegacyNetworkClient(

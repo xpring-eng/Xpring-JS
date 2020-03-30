@@ -1,11 +1,11 @@
+import { GetBalanceRequest } from './Generated/web/get_balance_request_pb'
+import { GetBalanceResponse } from './Generated/web/get_balance_response_pb'
+import { SendPaymentRequest } from './Generated/web/send_payment_request_pb'
+import { SendPaymentResponse } from './Generated/web/send_payment_response_pb'
+import { BalanceServiceClient } from './Generated/web/balance_service_grpc_web_pb'
+import { IlpOverHttpServiceClient } from './Generated/web/ilp_over_http_service_grpc_web_pb'
+import isNode from '../Common/utils'
 import { IlpNetworkClient } from './ilp-network-client'
-import { GetBalanceRequest } from '../generated/web/ilp/get_balance_request_pb'
-import { GetBalanceResponse } from '../generated/web/ilp/get_balance_response_pb'
-import { SendPaymentRequest } from '../generated/web/ilp/send_payment_request_pb'
-import { SendPaymentResponse } from '../generated/web/ilp/send_payment_response_pb'
-import isNode from '../utils'
-import { BalanceServiceClient } from '../generated/web/ilp/balance_service_grpc_web_pb'
-import { IlpOverHttpServiceClient } from '../generated/web/ilp/ilp_over_http_service_grpc_web_pb'
 import IlpCredentials from './auth/ilp-credentials.web'
 
 class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
@@ -35,12 +35,12 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
 
   getBalance(
     request: GetBalanceRequest,
-    bearerToken?: string,
+    accessToken?: string,
   ): Promise<GetBalanceResponse> {
     return new Promise((resolve, reject): void => {
       this.balanceClient.getBalance(
         request,
-        IlpCredentials.build(bearerToken),
+        IlpCredentials.build(accessToken),
         (error, response) => {
           if (error || !response) {
             reject(error)
@@ -54,12 +54,12 @@ class GrpcIlpNetworkClientWeb implements IlpNetworkClient {
 
   send(
     request: SendPaymentRequest,
-    bearerToken?: string,
+    accessToken?: string,
   ): Promise<SendPaymentResponse> {
     return new Promise((resolve, reject): void => {
       this.paymentClient.sendMoney(
         request,
-        IlpCredentials.build(bearerToken),
+        IlpCredentials.build(accessToken),
         (error, response) => {
           if (error || !response) {
             reject(error)

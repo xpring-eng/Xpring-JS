@@ -1,5 +1,5 @@
 import { IlpClientDecorator } from './ilp-client-decorator'
-import isNode from '../utils'
+import isNode from '../Common/utils'
 import { IlpNetworkClient } from './ilp-network-client'
 import GrpcIlpNetworkClient from './grpc-ilp-network-client'
 import GrpcIlpNetworkClientWeb from './grpc-ilp-network-client.web'
@@ -27,12 +27,12 @@ class DefaultIlpClient implements IlpClientDecorator {
   }
 
   /**
-   * Create a new DefaultIlpClient with a custom network client implementation.
+   * Get the balance of the specified account on the connector.
    *
-   * In general, clients should prefer to call `defaultIlpClientWithEndpoint`. This constructor is provided to improve
-   * testability of this class.
-   *
-   * @param networkClient A network client which will manage remote RPCs to Hermes (the ILP proxy).
+   * @param accountId The account ID to get the balance for.
+   * @param accessToken Optional access token. If using node network client, accessToken must be supplied, otherwise
+   *        it will be picked up from a cookie.
+   * @return A Promise<AccountBalance> with balance information of the specified account
    */
   public constructor(private readonly networkClient: IlpNetworkClient) {}
 
@@ -40,38 +40,38 @@ class DefaultIlpClient implements IlpClientDecorator {
    * Retrieve the balance for the given accountId.
    *
    * @param accountId The ILP accountId to retrieve a balance for.
-   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   * @param accessToken Optional access token. If using node network client, accessToken must be supplied, otherwise
    *        it will be picked up from a cookie.
    * @returns An AccountBalance with balance information of the specified account
    */
   public async getBalance(
     accountId: string,
-    bearerToken?: string,
+    accessToken?: string,
   ): Promise<AccountBalance> {
     const request = this.networkClient.GetBalanceRequest()
     request.setAccountId(accountId)
     return this.networkClient
-      .getBalance(request, bearerToken)
+      .getBalance(request, accessToken)
       .then((response) => AccountBalance.from(response))
   }
 
   /**
-   * Send the given amount of XRP from the source wallet to the destination address.
+   * Send a payment from the given accountId to the destinationPaymentPointer payment pointer
    *
    * @param paymentRequest A PaymentRequest with options for sending a payment
-   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   * @param accessToken Optional access token. If using node network client, accessToken must be supplied, otherwise
    *        it will be picked up from a cookie.
-   * @returns A promise which resolves to a `PaymentResponse` of the original amount, the amount sent
+   * @returns A promise which resolves to a `PaymentResult` of the original amount, the amount sent
    *        in the senders denomination, and the amount that was delivered to the recipient in their denomination, as
    *        well as if the payment was successful
    */
   public async sendPayment(
     paymentRequest: PaymentRequest,
-    bearerToken?: string,
+    accessToken?: string,
   ): Promise<PaymentResult> {
     const request = paymentRequest.toProto()
     return this.networkClient
-      .send(request, bearerToken)
+      .send(request, accessToken)
       .then((response) => PaymentResult.from(response))
   }
 }

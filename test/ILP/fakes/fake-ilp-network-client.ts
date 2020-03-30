@@ -1,8 +1,8 @@
 import { IlpNetworkClient } from '../../../src/ILP/ilp-network-client'
-import { GetBalanceResponse } from '../../../src/generated/node/ilp/get_balance_response_pb'
-import { SendPaymentResponse } from '../../../src/generated/node/ilp/send_payment_response_pb'
-import { GetBalanceRequest } from '../../../src/generated/node/ilp/get_balance_request_pb'
-import { SendPaymentRequest } from '../../../src/generated/node/ilp/send_payment_request_pb'
+import { GetBalanceResponse } from '../../../src/ILP/Generated/node/get_balance_response_pb'
+import { SendPaymentResponse } from '../../../src/ILP/Generated/node/send_payment_response_pb'
+import { GetBalanceRequest } from '../../../src/ILP/Generated/node/get_balance_request_pb'
+import { SendPaymentRequest } from '../../../src/ILP/Generated/node/send_payment_request_pb'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -79,7 +79,7 @@ export class FakeIlpNetworkClient implements IlpNetworkClient {
 
   getBalance(
     _request: GetBalanceRequest,
-    _bearerToken: string,
+    _accessToken: string,
   ): Promise<GetBalanceResponse> {
     const response = this.responses.getBalanceResponse
     if (response instanceof Error) {
