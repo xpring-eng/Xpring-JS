@@ -296,7 +296,7 @@ class DefaultXRPClient implements XRPClientDecorator {
       await this.getBalance(address)
       return true
     } catch (e) {
-      if (e.code && e.code === grpc.status.NOT_FOUND) {
+      if (e?.code === grpc.status.NOT_FOUND) {
         return false
       }
       throw e // error code other than NOT_FOUND should re-throw error
