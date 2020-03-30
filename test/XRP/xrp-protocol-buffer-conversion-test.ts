@@ -1,14 +1,14 @@
 import { assert } from 'chai'
 import bigInt from 'big-integer'
-import XRPCurrency from '../../src/XRP/xrp-currency'
-import XRPPathElement from '../../src/XRP/xrp-path-element'
-import XRPPath from '../../src/XRP/xrp-path'
-import XRPIssuedCurrency from '../../src/XRP/xrp-issued-currency'
-import XRPCurrencyAmount from '../../src/XRP/xrp-currency-amount'
-import XRPPayment from '../../src/XRP/xrp-payment'
-import XRPMemo from '../../src/XRP/xrp-memo'
-import XRPSigner from '../../src/XRP/xrp-signer'
-import XRPTransaction from '../../src/XRP/xrp-transaction'
+import XRPCurrency from '../../src/XRP/model/xrp-currency'
+import XRPPathElement from '../../src/XRP/model/xrp-path-element'
+import XRPPath from '../../src/XRP/model/xrp-path'
+import XRPIssuedCurrency from '../../src/XRP/model/xrp-issued-currency'
+import XRPCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
+import XRPPayment from '../../src/XRP/model/xrp-payment'
+import XRPMemo from '../../src/XRP/model/xrp-memo'
+import XRPSigner from '../../src/XRP/model/xrp-signer'
+import XRPTransaction from '../../src/XRP/model/xrp-transaction'
 import {
   Currency,
   CurrencyAmount,

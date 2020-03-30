@@ -1,4 +1,4 @@
-import { Payment } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { Payment } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XRPPathElement from './xrp-path-element'
 
 type Path = Payment.Path
