@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## 3.0.4 - March 24, 2020
+
+This release contains minor fixes for exception handling in PayID.
+
 ### Added
 - Add a new `paymentHistory` method to `XRPClient`. This method allows clients to retrieve payment history for an address.
 

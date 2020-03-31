@@ -4,20 +4,20 @@ import { PaymentRequest } from './model/payment-request'
 
 export interface IlpClientDecorator {
   /**
-   * Retrieve the balance for the given accountId.
+   * Get the balance of the specified account on the connector.
    *
-   * @param accountId The ILP accountId to retrieve a balance for.
-   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   * @param accountId The account ID to get the balance for.
+   * @param accessToken Optional access token. If using node network client, accessToken must be supplied, otherwise
    *        it will be picked up from a cookie.
-   * @returns A {@link GetBalanceResponse} with balance information of the specified account
+   * @return A Promise<AccountBalance> with balance information of the specified account
    */
-  getBalance(accountId: string, bearerToken?: string): Promise<AccountBalance>
+  getBalance(accountId: string, accessToken?: string): Promise<AccountBalance>
 
   /**
-   * Send the given amount of XRP from the source wallet to the destination address.
+   * Send a payment from the given accountId to the destinationPaymentPointer payment pointer
    *
    * @param paymentRequest A PaymentRequest with options for sending a payment
-   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   * @param accessToken Optional access token. If using node network client, accessToken must be supplied, otherwise
    *        it will be picked up from a cookie.
    * @returns A promise which resolves to a `PaymentResult` of the original amount, the amount sent
    *        in the senders denomination, and the amount that was delivered to the recipient in their denomination, as
@@ -25,6 +25,6 @@ export interface IlpClientDecorator {
    */
   sendPayment(
     paymentRequest: PaymentRequest,
-    bearerToken?: string,
+    accessToken?: string,
   ): Promise<PaymentResult>
 }
