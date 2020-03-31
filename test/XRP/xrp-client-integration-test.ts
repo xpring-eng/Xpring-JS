@@ -117,7 +117,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
     assert.exists(result)
   })
 
-  it('Check if Account Exists - Legacy Node Shim', async function(): Promise<
+  it('Check if Account Exists - true - Legacy Node Shim', async function(): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -126,18 +126,33 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
     assert.equal(doesExist, true)
   })
 
-  it('Check if Account Exists - Web Shim', async function(): Promise<void> {
+  it('Check if Account Exists - true - Web Shim', async function(): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
 
     const doesExist = await xrpWebClient.accountExists(recipientAddress)
     assert.equal(doesExist, true)
   })
 
-  it('Check if Account Exists - rippled', async function(): Promise<void> {
+  it('Check if Account Exists - true - rippled', async function(): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
 
     const doesExist = await xrpClient.accountExists(recipientAddress)
+
     assert.equal(doesExist, true)
+  })
+
+  it('Check if Account Exists - false - rippled', async function(): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    const coinbaseMainnet = 'XVYUQ3SdUcVnaTNVanDYo1NamrUukPUPeoGMnmvkEExbtrj' // valid address but should NOT show up on testnet
+    const doesExist = await xrpClient.accountExists(coinbaseMainnet)
+    assert.equal(doesExist, false)
   })
 
   it('Payment History - rippled', async function(): Promise<void> {
