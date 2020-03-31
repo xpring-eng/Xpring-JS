@@ -3,6 +3,7 @@ import { assert } from 'chai'
 import bigInt from 'big-integer'
 import XRPClient from '../../src/XRP/xrp-client'
 import TransactionStatus from '../../src/XRP/transaction-status'
+import { XRPLNetwork } from '../../src'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -19,15 +20,19 @@ const transactionHash =
 
 // An XRPClient that makes requests. Uses the legacy protocol buffer implementation.
 const legacyGRPCURLNode = 'grpc.xpring.tech:80'
-const legacyXRPClientNode = new XRPClient(legacyGRPCURLNode, false)
+const legacyXRPClientNode = new XRPClient(
+  legacyGRPCURLNode,
+  XRPLNetwork.Test,
+  false,
+)
 
 // An XRPClient that makes requests. Uses the legacy protocol buffer implementation and sends the requests to an HTTP envoy emulating how the browser would behave
 const grpcWebURL = 'https://envoy.test.xrp.xpring.io'
-const xpringWebClient = new XRPClient(grpcWebURL, true, true)
+const xpringWebClient = new XRPClient(grpcWebURL, XRPLNetwork.Test, true, true)
 
 // An XRPClient that makes requests. Uses rippled's gRPC implementation.
 const rippledURL = 'test.xrp.xpring.io:50051'
-const xrpClient = new XRPClient(rippledURL, true)
+const xrpClient = new XRPClient(rippledURL, XRPLNetwork.Test, true)
 
 // Some amount of XRP to send.
 const amount = bigInt('1')

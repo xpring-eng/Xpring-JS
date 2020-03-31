@@ -1,7 +1,9 @@
 import { assert } from 'chai'
 import { fail } from 'assert'
 import IlpCredentials from '../../src/ILP/auth/ilp-credentials.web'
-import XpringIlpError, { XpringIlpErrorType } from '../../src/ILP/xpring-ilp-error'
+import XpringIlpError, {
+  XpringIlpErrorType,
+} from '../../src/ILP/xpring-ilp-error'
 
 describe('IlpCredentials Web', function(): void {
   it('Build - Undefined token', function(): void {

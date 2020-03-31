@@ -19,7 +19,7 @@ const payIDClient = new PayIDClient(network)
 
 // An XRPClient under test.
 const rippledURL = 'test.xrp.xpring.io:50051'
-const xrpClient = new XRPClient(rippledURL, true)
+const xrpClient = new XRPClient(rippledURL, XRPLNetwork.Test, true)
 
 // A XpringClient under test.
 const xpringClient = new XpringClient(payIDClient, xrpClient)
