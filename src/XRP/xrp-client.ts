@@ -6,7 +6,7 @@ import TransactionStatus from './transaction-status'
 import ReliableSubmissionXRPClient from './reliable-submission-xrp-client'
 import DefaultXRPClient from './default-xrp-client'
 import XRPClientInterface from './xrp-client-interface'
-import XRPTransaction from './xrp-transaction'
+import XRPTransaction from './model/xrp-transaction'
 import XRPLNetwork from '../Common/xrpl-network'
 
 /**
