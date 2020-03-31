@@ -6,10 +6,13 @@ import TransactionStatus from '../../src/XRP/transaction-status'
 import XpringClient from '../../src/Xpring/xpring-client'
 import FakeWallet from '../Common/Fakes/fake-wallet'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
+import { XRPLNetwork } from '../../src'
+import XpringError from '../../src/Xpring/xpring-error'
 
 /* Default values for the fake XRP Client. These values must be provided but are not varied in testing. */
 const fakeBalance = bigInt(10)
 const fakePaymentStatus = TransactionStatus.Succeeded
+const fakeTransactionHash = 'deadbeefdeadbeefdeadbeef'
 const fakeLastLedgerSequenceValue = 10
 const fakeAccountExistsResult = true
 const fakeRawTransactionStatus = new RawTransactionStatus(
@@ -36,7 +39,7 @@ const xrpError = new Error('Error from XRP')
 describe('Xpring Client', function(): void {
   it('send - success', async function(): Promise<void> {
     // GIVEN a XpringClient composed of a fake PayIDClient and a fake XRPClient which will both succeed.
-    const expectedTransactionHash = 'deadbeefdeadbeefdeadbeef'
+    const expectedTransactionHash = fakeTransactionHash
     const xrpClient = new FakeXRPClient(
       fakeBalance,
       fakePaymentStatus,
@@ -131,5 +134,31 @@ describe('Xpring Client', function(): void {
       assert.equal(error, payIDError)
       done()
     })
+  })
+
+  it('Constructor - XpringError thrown for mismatched networks', function(): void {
+    // GIVEN a PayIDClient and an XRPClient on different networks.
+    const xrpClient = new FakeXRPClient(
+      fakeBalance,
+      fakePaymentStatus,
+      fakeTransactionHash,
+      fakeLastLedgerSequenceValue,
+      fakeRawTransactionStatus,
+      fakeAccountExistsResult,
+      fakePaymentHistoryValue,
+      XRPLNetwork.Test,
+    )
+    const payIDClient = new FakePayIDClient(payIDError, XRPLNetwork.Main)
+
+    // WHEN a XpringClient is constructed THEN a mismatched network XpringError is thrown.
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const xpringClient = new XpringClient(payIDClient, xrpClient)
+      assert.fail(
+        `Should not have been able to construct a but instead created: ${xpringClient}`,
+      )
+    } catch (error) {
+      assert.deepEqual(error, XpringError.mismatchedNetworks)
+    }
   })
 })
