@@ -5,10 +5,14 @@ import { PaymentRequest } from '../../src/ILP/model/payment-request'
 import IlpError from '../../src/ILP/ilp-error'
 import FakeDefaultIlpClient from './fakes/fake-default-ilp-client'
 
+// Fake accountId
+const accountId = 'test.foo.bar'
+
+// Fake PaymentRequest
 const fakePaymentRequest = new PaymentRequest({
   amount: bigInt(100),
   destinationPaymentPointer: '$money/baz',
-  senderAccountId: 'test.foo.bar',
+  senderAccountId: accountId,
 })
 
 describe('Default ILP Client', function(): void {
@@ -16,7 +20,7 @@ describe('Default ILP Client', function(): void {
     // GIVEN a DefaultIlpClient
     const client = FakeDefaultIlpClient.fakeSuceedingNetworkClient()
     // WHEN the balance for an account is requested
-    const amount = await client.getBalance('test.foo.bar')
+    const amount = await client.getBalance(accountId)
 
     // THEN the balance is returned
     const successfulGetBalanceResponse = FakeIlpNetworkClientResponses.defaultGetBalanceResponse()
@@ -47,7 +51,7 @@ describe('Default ILP Client', function(): void {
     )
 
     // WHEN the balance for an account is requested
-    client.getBalance('test.foo.bar').catch((error) => {
+    client.getBalance(accountId).catch((error) => {
       // THEN an error is thrown
       assert.typeOf(error, 'Error')
       assert.equal(
@@ -66,7 +70,7 @@ describe('Default ILP Client', function(): void {
     )
 
     // WHEN the balance for an account is requested
-    client.getBalance('test.foo.bar').catch((error) => {
+    client.getBalance(accountId).catch((error) => {
       // THEN the error is translated to a XpringIlpError
       assert.equal(error as IlpError, IlpError.accountNotFound)
       done()
@@ -81,7 +85,7 @@ describe('Default ILP Client', function(): void {
     )
 
     // WHEN the balance for an account is requested
-    client.getBalance('test.foo.bar').catch((error) => {
+    client.getBalance(accountId).catch((error) => {
       // THEN the error is translated to a XpringIlpError
       assert.equal(error as IlpError, IlpError.invalidArgument)
       done()
@@ -96,7 +100,7 @@ describe('Default ILP Client', function(): void {
     )
 
     // WHEN the balance for an account is requested
-    client.getBalance('test.foo.bar').catch((error) => {
+    client.getBalance(accountId).catch((error) => {
       // THEN the error is translated to a XpringIlpError
       assert.equal(error as IlpError, IlpError.unauthenticated)
       done()
@@ -111,7 +115,7 @@ describe('Default ILP Client', function(): void {
     )
 
     // WHEN the balance for an account is requested
-    client.getBalance('test.foo.bar').catch((error) => {
+    client.getBalance(accountId).catch((error) => {
       // THEN the error is translated to a XpringIlpError
       assert.equal(error as IlpError, IlpError.internal)
       done()
@@ -126,7 +130,7 @@ describe('Default ILP Client', function(): void {
     )
 
     // WHEN the balance for an account is requested
-    client.getBalance('test.foo.bar').catch((error) => {
+    client.getBalance(accountId).catch((error) => {
       // THEN the error is translated to a XpringIlpError
       assert.equal(error as IlpError, IlpError.unknown)
       done()
@@ -140,7 +144,7 @@ describe('Default ILP Client', function(): void {
     )
 
     // WHEN the balance for an account is requested
-    client.getBalance('test.foo.bar').catch((error) => {
+    client.getBalance(accountId).catch((error) => {
       // THEN the error is simply rethrown
       assert.equal(error as IlpError, IlpError.invalidAccessToken)
       done()
