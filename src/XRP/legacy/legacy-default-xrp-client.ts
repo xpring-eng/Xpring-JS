@@ -2,6 +2,7 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 
 import bigInt, { BigInteger } from 'big-integer'
+import grpc from 'grpc'
 import { AccountInfo } from '../Generated/web/legacy/account_info_pb'
 import { XRPAmount } from '../Generated/web/legacy/xrp_amount_pb'
 
@@ -11,7 +12,7 @@ import LegacyGRPCNetworkClientWeb from './legacy-grpc-xrp-network-client.web'
 import { LegacyXRPNetworkClient } from './legacy-xrp-network-client'
 import { XRPClientDecorator } from '../xrp-client-decorator'
 import TransactionStatus from '../transaction-status'
-import XRPTransaction from '../xrp-transaction'
+import XRPTransaction from '../model/xrp-transaction'
 import isNode from '../../Common/utils'
 
 /**
@@ -249,8 +250,11 @@ class LegacyDefaultXRPClient implements XRPClientDecorator {
     try {
       await this.getBalance(address)
       return true
-    } catch (e) {
-      return false
+    } catch (error) {
+      if (error?.code === grpc.status.NOT_FOUND) {
+        return false
+      }
+      throw error // error code other than NOT_FOUND should re-throw error
     }
   }
 
