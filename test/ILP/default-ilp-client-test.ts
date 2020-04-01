@@ -118,6 +118,21 @@ describe('Default ILP Client', function(): void {
     })
   })
 
+  it('Get balance - Unknown Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+    // with code = grpc.status.INTERNAL
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.unknownError,
+    )
+
+    // WHEN the balance for an account is requested
+    client.getBalance('test.foo.bar').catch((error) => {
+      // THEN the error is translated to a XpringIlpError
+      assert.equal(error as IlpError, IlpError.unknown)
+      done()
+    })
+  })
+
   it('Get balance - Invalid Access Token', function(done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a XpringIlpError.invalidAccessToken error
     const client = FakeDefaultIlpClient.withErrors(
@@ -236,6 +251,21 @@ describe('Default ILP Client', function(): void {
     client.sendPayment(fakePaymentRequest).catch((error) => {
       // THEN the error is translated to a XpringIlpError
       assert.equal(error as IlpError, IlpError.internal)
+      done()
+    })
+  })
+
+  it('Send Payment - Unknown Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+    // with code = grpc.status.INTERNAL
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.unknownError,
+    )
+
+    // WHEN a payment is sent
+    client.sendPayment(fakePaymentRequest).catch((error) => {
+      // THEN the error is translated to a XpringIlpError
+      assert.equal(error as IlpError, IlpError.unknown)
       done()
     })
   })

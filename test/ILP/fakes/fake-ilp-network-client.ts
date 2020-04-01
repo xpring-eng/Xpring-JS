@@ -50,6 +50,8 @@ export class FakeIlpNetworkClientResponses {
    */
   public static defaultSuccessfulResponses = new FakeIlpNetworkClientResponses()
 
+  public static unknownError = new FakeGRPCError(status.UNKNOWN)
+
   public static create(responseError: Error): FakeIlpNetworkClientResponses {
     return new FakeIlpNetworkClientResponses(responseError, responseError)
   }

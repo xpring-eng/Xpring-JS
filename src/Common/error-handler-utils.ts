@@ -32,8 +32,10 @@ export default class ErrorHandlerUtils {
           return IlpError.unauthenticated
         case status.INVALID_ARGUMENT:
           return IlpError.invalidArgument
-        default:
+        case status.INTERNAL:
           return IlpError.internal
+        default:
+          return IlpError.unknown
       }
     }
 

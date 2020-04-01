@@ -7,6 +7,7 @@ export enum IlpErrorType {
   Unauthenticated,
   InvalidArgument,
   Internal,
+  Unknown,
 }
 
 /**
@@ -39,6 +40,11 @@ export default class IlpError extends Error {
   public static internal = new IlpError(
     IlpErrorType.Internal,
     'Internal error occurred on ILP network.',
+  )
+
+  public static unknown: IlpError = new IlpError(
+    IlpErrorType.Unknown,
+    'Unknown error occurred.',
   )
 
   /**
