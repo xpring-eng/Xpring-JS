@@ -12,16 +12,18 @@ import XpringIlpError from '../ILP/xpring-ilp-error'
 export default class ErrorHandlerUtils {
   /**
    * Handle an Error thrown from an Ilp network client call by translating it to
-   * a XpringIlpError. gRPC services follow return an error with a status code,
-   * so we need to map gRPC error status to native XpringIlpErrors.
-   * GrpcNetworkClient and GrpcNetworkClientWeb also sometimes throw a XpringIlpError,
-   * so we need to handle that case in here as well.
+   * a XpringIlpError.
+   *
+   * gRPC services follow return an error with a status code, so we need to map gRPC error status
+   * to native XpringIlpErrors.  GrpcNetworkClient and GrpcNetworkClientWeb also sometimes throw
+   * a XpringIlpError, so we need to handle that case in here as well.
    *
    * @param error Any error returned by a network call.
+   * @return A {@link XpringIlpError} that has been translated from a gRPC error, or which should be rethrown
    */
   public static handleIlpServiceError(
     error: ServiceError | grpcWebError | XpringIlpError,
-  ): Error {
+  ): XpringIlpError {
     if ('code' in error) {
       switch (error.code) {
         case status.NOT_FOUND:
@@ -35,6 +37,6 @@ export default class ErrorHandlerUtils {
       }
     }
 
-    return error
+    return error as XpringIlpError
   }
 }

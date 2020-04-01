@@ -50,53 +50,9 @@ export class FakeIlpNetworkClientResponses {
    */
   public static defaultSuccessfulResponses = new FakeIlpNetworkClientResponses()
 
-  /**
-   * A default set of responses that will always fail.
-   */
-  public static defaultErrorResponses = new FakeIlpNetworkClientResponses(
-    FakeIlpNetworkClientResponses.defaultError,
-    FakeIlpNetworkClientResponses.defaultError,
-  )
-
-  /**
-   * A set of responses that will always fail with error = grpc.status.NOT_FOUND.
-   */
-  public static notFoundErrorResponses = new FakeIlpNetworkClientResponses(
-    FakeIlpNetworkClientResponses.notFoundError,
-    FakeIlpNetworkClientResponses.notFoundError,
-  )
-
-  /**
-   * A set of responses that will always fail with error = grpc.status.UNAUTHENTICATED.
-   */
-  public static unauthenticatedErrorResponses = new FakeIlpNetworkClientResponses(
-    FakeIlpNetworkClientResponses.unauthenticatedError,
-    FakeIlpNetworkClientResponses.unauthenticatedError,
-  )
-
-  /**
-   * A set of responses that will always fail with error = grpc.status.INVALID_ARGUMENT.
-   */
-  public static invalidArgumentErrorResponses = new FakeIlpNetworkClientResponses(
-    FakeIlpNetworkClientResponses.invalidArgumentError,
-    FakeIlpNetworkClientResponses.invalidArgumentError,
-  )
-
-  /**
-   * A set of responses that will always fail with error = grpc.status.INTERNAL.
-   */
-  public static internalErrorResponses = new FakeIlpNetworkClientResponses(
-    FakeIlpNetworkClientResponses.internalError,
-    FakeIlpNetworkClientResponses.internalError,
-  )
-
-  /**
-   * A set of responses that will always fail with error = XpringIlpError.invalidAccessToken.
-   */
-  public static invalidAccessTokenErrorResponses = new FakeIlpNetworkClientResponses(
-    FakeIlpNetworkClientResponses.invalidAccessTokenError,
-    FakeIlpNetworkClientResponses.invalidAccessTokenError,
-  )
+  public static create(responseError: Error): FakeIlpNetworkClientResponses {
+    return new FakeIlpNetworkClientResponses(responseError, responseError)
+  }
 
   /**
    * Construct a new set of responses.
@@ -146,6 +102,12 @@ export class FakeIlpNetworkClient implements IlpNetworkClient {
   public constructor(
     private readonly responses: FakeIlpNetworkClientResponses = FakeIlpNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
+
+  public static withErrors(responseError: Error): FakeIlpNetworkClient {
+    return new FakeIlpNetworkClient(
+      FakeIlpNetworkClientResponses.create(responseError),
+    )
+  }
 
   getBalance(
     _request: GetBalanceRequest,
