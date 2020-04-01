@@ -2,7 +2,7 @@ import { assert } from 'chai'
 import bigInt from 'big-integer'
 import { FakeIlpNetworkClientResponses } from './fakes/fake-ilp-network-client'
 import { PaymentRequest } from '../../src/ILP/model/payment-request'
-import XpringIlpError from '../../src/ILP/xpring-ilp-error'
+import IlpError from '../../src/ILP/ilp-error'
 import FakeDefaultIlpClient from './fakes/fake-default-ilp-client'
 
 const fakePaymentRequest = new PaymentRequest({
@@ -68,7 +68,7 @@ describe('Default ILP Client', function(): void {
     // WHEN the balance for an account is requested
     client.getBalance('test.foo.bar').catch((error) => {
       // THEN the error is translated to a XpringIlpError
-      assert.equal(error as XpringIlpError, XpringIlpError.accountNotFound)
+      assert.equal(error as IlpError, IlpError.accountNotFound)
       done()
     })
   })
@@ -83,7 +83,7 @@ describe('Default ILP Client', function(): void {
     // WHEN the balance for an account is requested
     client.getBalance('test.foo.bar').catch((error) => {
       // THEN the error is translated to a XpringIlpError
-      assert.equal(error as XpringIlpError, XpringIlpError.invalidArgument)
+      assert.equal(error as IlpError, IlpError.invalidArgument)
       done()
     })
   })
@@ -98,7 +98,7 @@ describe('Default ILP Client', function(): void {
     // WHEN the balance for an account is requested
     client.getBalance('test.foo.bar').catch((error) => {
       // THEN the error is translated to a XpringIlpError
-      assert.equal(error as XpringIlpError, XpringIlpError.unauthenticated)
+      assert.equal(error as IlpError, IlpError.unauthenticated)
       done()
     })
   })
@@ -113,7 +113,7 @@ describe('Default ILP Client', function(): void {
     // WHEN the balance for an account is requested
     client.getBalance('test.foo.bar').catch((error) => {
       // THEN the error is translated to a XpringIlpError
-      assert.equal(error as XpringIlpError, XpringIlpError.internal)
+      assert.equal(error as IlpError, IlpError.internal)
       done()
     })
   })
@@ -127,7 +127,7 @@ describe('Default ILP Client', function(): void {
     // WHEN the balance for an account is requested
     client.getBalance('test.foo.bar').catch((error) => {
       // THEN the error is simply rethrown
-      assert.equal(error as XpringIlpError, XpringIlpError.invalidAccessToken)
+      assert.equal(error as IlpError, IlpError.invalidAccessToken)
       done()
     })
   })
@@ -190,7 +190,7 @@ describe('Default ILP Client', function(): void {
     // WHEN a payment is sent
     client.sendPayment(fakePaymentRequest).catch((error) => {
       // THEN the error is translated to a XpringIlpError
-      assert.equal(error as XpringIlpError, XpringIlpError.accountNotFound)
+      assert.equal(error as IlpError, IlpError.accountNotFound)
       done()
     })
   })
@@ -205,7 +205,7 @@ describe('Default ILP Client', function(): void {
     // WHEN a payment is sent
     client.sendPayment(fakePaymentRequest).catch((error) => {
       // THEN the error is translated to a XpringIlpError
-      assert.equal(error as XpringIlpError, XpringIlpError.invalidArgument)
+      assert.equal(error as IlpError, IlpError.invalidArgument)
       done()
     })
   })
@@ -220,7 +220,7 @@ describe('Default ILP Client', function(): void {
     // WHEN a payment is sent
     client.sendPayment(fakePaymentRequest).catch((error) => {
       // THEN the error is translated to a XpringIlpError
-      assert.equal(error as XpringIlpError, XpringIlpError.unauthenticated)
+      assert.equal(error as IlpError, IlpError.unauthenticated)
       done()
     })
   })
@@ -235,7 +235,7 @@ describe('Default ILP Client', function(): void {
     // WHEN a payment is sent
     client.sendPayment(fakePaymentRequest).catch((error) => {
       // THEN the error is translated to a XpringIlpError
-      assert.equal(error as XpringIlpError, XpringIlpError.internal)
+      assert.equal(error as IlpError, IlpError.internal)
       done()
     })
   })
@@ -249,7 +249,7 @@ describe('Default ILP Client', function(): void {
     // WHEN a payment is sent
     client.sendPayment(fakePaymentRequest).catch((error) => {
       // THEN the error is simply rethrown
-      assert.equal(error as XpringIlpError, XpringIlpError.invalidAccessToken)
+      assert.equal(error as IlpError, IlpError.invalidAccessToken)
       done()
     })
   })

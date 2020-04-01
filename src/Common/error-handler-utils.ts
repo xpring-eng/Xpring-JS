@@ -1,6 +1,6 @@
 import { Error as grpcWebError } from 'grpc-web'
 import { ServiceError, status } from 'grpc'
-import XpringIlpError from '../ILP/xpring-ilp-error'
+import IlpError from '../ILP/ilp-error'
 
 /**
  * Utility class for translating gRPC errors to native Xpring SDK errors.
@@ -19,24 +19,24 @@ export default class ErrorHandlerUtils {
    * a XpringIlpError, so we need to handle that case in here as well.
    *
    * @param error Any error returned by a network call.
-   * @return A {@link XpringIlpError} that has been translated from a gRPC error, or which should be rethrown
+   * @return A {@link IlpError} that has been translated from a gRPC error, or which should be rethrown
    */
   public static handleIlpServiceError(
-    error: ServiceError | grpcWebError | XpringIlpError,
-  ): XpringIlpError {
+    error: ServiceError | grpcWebError | IlpError,
+  ): IlpError {
     if ('code' in error) {
       switch (error.code) {
         case status.NOT_FOUND:
-          return XpringIlpError.accountNotFound
+          return IlpError.accountNotFound
         case status.UNAUTHENTICATED:
-          return XpringIlpError.unauthenticated
+          return IlpError.unauthenticated
         case status.INVALID_ARGUMENT:
-          return XpringIlpError.invalidArgument
+          return IlpError.invalidArgument
         default:
-          return XpringIlpError.internal
+          return IlpError.internal
       }
     }
 
-    return error as XpringIlpError
+    return error as IlpError
   }
 }

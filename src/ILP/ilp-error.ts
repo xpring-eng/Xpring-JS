@@ -1,7 +1,7 @@
 /**
  * Types of errors that originate from ILP.
  */
-export enum XpringIlpErrorType {
+export enum IlpErrorType {
   InvalidAccessToken,
   AccountNotFound,
   Unauthenticated,
@@ -12,32 +12,32 @@ export enum XpringIlpErrorType {
 /**
  * Represents errors thrown by ILP components of the Xpring SDK.
  */
-export default class XpringIlpError extends Error {
+export default class IlpError extends Error {
   /**
    * Default errors.
    */
-  public static invalidAccessToken = new XpringIlpError(
-    XpringIlpErrorType.InvalidAccessToken,
+  public static invalidAccessToken = new IlpError(
+    IlpErrorType.InvalidAccessToken,
     'Access token should not start with "Bearer "',
   )
 
-  public static accountNotFound = new XpringIlpError(
-    XpringIlpErrorType.AccountNotFound,
+  public static accountNotFound = new IlpError(
+    IlpErrorType.AccountNotFound,
     'Account not found.',
   )
 
-  public static unauthenticated = new XpringIlpError(
-    XpringIlpErrorType.Unauthenticated,
+  public static unauthenticated = new IlpError(
+    IlpErrorType.Unauthenticated,
     'Authentication failed.',
   )
 
-  public static invalidArgument = new XpringIlpError(
-    XpringIlpErrorType.InvalidArgument,
+  public static invalidArgument = new IlpError(
+    IlpErrorType.InvalidArgument,
     'Invalid argument in request body.',
   )
 
-  public static internal = new XpringIlpError(
-    XpringIlpErrorType.Internal,
+  public static internal = new IlpError(
+    IlpErrorType.Internal,
     'Internal error occurred on ILP network.',
   )
 
@@ -48,7 +48,7 @@ export default class XpringIlpError extends Error {
    * @param message The error message.
    */
   public constructor(
-    public readonly errorType: XpringIlpErrorType,
+    public readonly errorType: IlpErrorType,
     message: string | undefined = undefined,
   ) {
     super(message)

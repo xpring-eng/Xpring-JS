@@ -5,7 +5,7 @@ import { SendPaymentResponse } from '../../../src/ILP/Generated/node/send_paymen
 import { GetBalanceRequest } from '../../../src/ILP/Generated/node/get_balance_request_pb'
 import { SendPaymentRequest } from '../../../src/ILP/Generated/node/send_payment_request_pb'
 import FakeGRPCError from './fake-grpc-error'
-import XpringIlpError from '../../../src/ILP/xpring-ilp-error'
+import IlpError from '../../../src/ILP/ilp-error'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -43,7 +43,7 @@ export class FakeIlpNetworkClientResponses {
   /**
    * A real XpringIlpError which would get thrown if an access token starts with "Bearer "
    */
-  public static invalidAccessTokenError = XpringIlpError.invalidAccessToken
+  public static invalidAccessTokenError = IlpError.invalidAccessToken
 
   /**
    * A default set of responses that will always succeed.

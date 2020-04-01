@@ -1,5 +1,5 @@
 import { Metadata } from 'grpc'
-import XpringIlpError from '../xpring-ilp-error'
+import IlpError from '../ilp-error'
 
 /**
  * An extension of grpc.Metadata which provides a convenient way to
@@ -19,7 +19,7 @@ class IlpCredentials extends Metadata {
    */
   public static build(token?: string): IlpCredentials {
     if (token && token.startsWith(this.BEARER_PREFIX)) {
-      throw XpringIlpError.invalidAccessToken
+      throw IlpError.invalidAccessToken
     }
 
     const credentials = new IlpCredentials()

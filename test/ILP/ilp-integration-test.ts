@@ -2,7 +2,7 @@ import bigInt from 'big-integer'
 import { assert } from 'chai'
 import IlpClient from '../../src/ILP/ilp-client'
 import { PaymentRequest } from '../../src/ILP/model/payment-request'
-import XpringIlpError, { XpringIlpErrorType } from '../../src/ILP/xpring-ilp-error'
+import IlpError, { IlpErrorType } from '../../src/ILP/ilp-error'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -44,10 +44,10 @@ describe('ILP Integration Tests', function(): void {
     } catch (error) {
       // THEN an Error is thrown by IlpCredentials
       assert.equal(
-        (error as XpringIlpError).errorType,
-        XpringIlpErrorType.InvalidAccessToken,
+        (error as IlpError).errorType,
+        IlpErrorType.InvalidAccessToken,
       )
-      assert.equal(error.message, XpringIlpError.invalidAccessToken.message)
+      assert.equal(error.message, IlpError.invalidAccessToken.message)
     }
   })
 
@@ -91,10 +91,10 @@ describe('ILP Integration Tests', function(): void {
     } catch (error) {
       // THEN an Error is thrown by IlpCredentials
       assert.equal(
-        (error as XpringIlpError).errorType,
-        XpringIlpErrorType.InvalidAccessToken,
+        (error as IlpError).errorType,
+        IlpErrorType.InvalidAccessToken,
       )
-      assert.equal(error.message, XpringIlpError.invalidAccessToken.message)
+      assert.equal(error.message, IlpError.invalidAccessToken.message)
     }
   })
 })
