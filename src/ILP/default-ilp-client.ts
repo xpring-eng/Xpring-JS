@@ -27,6 +27,12 @@ class DefaultIlpClient implements IlpClientDecorator {
       : new DefaultIlpClient(new GrpcIlpNetworkClientWeb(grpcURL))
   }
 
+  /**
+   * This constructor is meant solely for testing purposes. Users should prefer
+   * DefaultIlpclient.defaultIlpClientWithEndpoint instead.
+   *
+   * @param networkClient A {@link IlpNetworkClient} which can make network calls to ILP infrastructure
+   */
   public constructor(private readonly networkClient: IlpNetworkClient) {}
 
   /**
