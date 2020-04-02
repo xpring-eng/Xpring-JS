@@ -14,10 +14,6 @@ const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
 // A wallet with some balance on TestNet.
 const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 
-// A hash of a successfully validated payment transaction.
-const transactionHash =
-  'DAA9F31628C952A48DAE71829E91847BF4EF23C0FABDD7218E41836D1E68EEBD'
-
 // An XRPClient that makes requests. Uses the legacy protocol buffer implementation.
 const legacyGRPCURLNode = 'grpc.xpring.tech:80'
 const legacyXRPClientNode = new XRPClient(
@@ -48,7 +44,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
   it('Get Account Balance - Web Shim', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
-    const balance = await xpringWebClient.getBalance(recipientAddress)
+    const balance = await xrpWebClient.getBalance(recipientAddress)
     assert.exists(balance)
   })
 
@@ -64,6 +60,11 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
   > {
     this.timeout(timeoutMs)
 
+    const transactionHash = await legacyXRPClientNode.send(
+      amount,
+      recipientAddress,
+      wallet,
+    )
     const transactionStatus = await legacyXRPClientNode.getPaymentStatus(
       transactionHash,
     )
@@ -73,7 +74,12 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
   it('Get Transaction Status - Web Shim', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
-    const transactionStatus = await xpringWebClient.getPaymentStatus(
+    const transactionHash = await xrpWebClient.send(
+      amount,
+      recipientAddress,
+      wallet,
+    )
+    const transactionStatus = await xrpWebClient.getPaymentStatus(
       transactionHash,
     )
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
@@ -82,6 +88,11 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
   it('Get Transaction Status - rippled', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
+    const transactionHash = await xrpClient.send(
+      amount,
+      recipientAddress,
+      wallet,
+    )
     const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
@@ -100,7 +111,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
   it('Send XRP - Web Shim', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
-    const result = await xpringWebClient.send(amount, recipientAddress, wallet)
+    const result = await xrpWebClient.send(amount, recipientAddress, wallet)
     assert.exists(result)
   })
 
@@ -125,7 +136,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
   > {
     this.timeout(timeoutMs)
 
-    const doesExist = await xpringWebClient.accountExists(recipientAddress)
+    const doesExist = await xrpWebClient.accountExists(recipientAddress)
     assert.equal(doesExist, true)
   })
 
