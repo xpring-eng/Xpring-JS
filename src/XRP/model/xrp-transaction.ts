@@ -1,5 +1,5 @@
-import { Transaction } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import RippledFlags from './rippled-flags'
+import { Transaction } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import RippledFlags from '../rippled-flags'
 import XRPSigner from './xrp-signer'
 import XRPTransactionType from './xrp-transaction-type'
 import XRPPayment from './xrp-payment'

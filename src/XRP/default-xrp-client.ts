@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
+import grpc from 'grpc'
 import {
   CurrencyAmount,
   XRPDropsAmount,
@@ -22,7 +23,7 @@ import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
 import { XRPClientDecorator } from './xrp-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
-import XRPTransaction from './xrp-transaction'
+import XRPTransaction from './model/xrp-transaction'
 import GRPCNetworkClient from './grpc-xrp-network-client'
 import GRPCNetworkClientWeb from './grpc-xrp-network-client.web'
 import { XRPNetworkClient } from './xrp-network-client'
@@ -294,8 +295,11 @@ class DefaultXRPClient implements XRPClientDecorator {
     try {
       await this.getBalance(address)
       return true
-    } catch (e) {
-      return false
+    } catch (error) {
+      if (error?.code === grpc.status.NOT_FOUND) {
+        return false
+      }
+      throw error // error code other than NOT_FOUND should re-throw error
     }
   }
 
