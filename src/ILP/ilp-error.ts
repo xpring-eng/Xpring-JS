@@ -1,3 +1,6 @@
+import { ServiceError, status } from 'grpc'
+import { Error as grpcWebError } from 'grpc-web'
+
 /**
  * Types of errors that originate from ILP.
  */
@@ -58,5 +61,35 @@ export default class IlpError extends Error {
     message: string | undefined = undefined,
   ) {
     super(message)
+  }
+
+  /**
+   * Handle an Error thrown from an Ilp network client call by translating it to
+   * a IlpError.
+   *
+   * gRPC services follow return an error with a status code, so we need to map gRPC error status
+   * to native IlpErrors.  GrpcNetworkClient and GrpcNetworkClientWeb also sometimes throw
+   * a IlpError, so we need to handle that case in here as well.
+   *
+   * @param error Any error returned by a network call.
+   * @return A {@link IlpError} that has been translated from a gRPC error, or which should be rethrown
+   */
+  public static from(error: ServiceError | grpcWebError | IlpError): IlpError {
+    if ('code' in error) {
+      switch (error.code) {
+        case status.NOT_FOUND:
+          return IlpError.accountNotFound
+        case status.UNAUTHENTICATED:
+          return IlpError.unauthenticated
+        case status.INVALID_ARGUMENT:
+          return IlpError.invalidArgument
+        case status.INTERNAL:
+          return IlpError.internal
+        default:
+          return IlpError.unknown
+      }
+    }
+
+    return error as IlpError
   }
 }

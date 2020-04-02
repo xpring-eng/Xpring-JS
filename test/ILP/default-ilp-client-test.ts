@@ -71,7 +71,7 @@ describe('Default ILP Client', function(): void {
 
     // WHEN the balance for an account is requested
     client.getBalance(accountId).catch((error) => {
-      // THEN the error is translated to a XpringIlpError
+      // THEN the error is translated to a IlpError
       assert.equal(error as IlpError, IlpError.accountNotFound)
       done()
     })
@@ -86,7 +86,7 @@ describe('Default ILP Client', function(): void {
 
     // WHEN the balance for an account is requested
     client.getBalance(accountId).catch((error) => {
-      // THEN the error is translated to a XpringIlpError
+      // THEN the error is translated to a IlpError
       assert.equal(error as IlpError, IlpError.invalidArgument)
       done()
     })
@@ -101,7 +101,7 @@ describe('Default ILP Client', function(): void {
 
     // WHEN the balance for an account is requested
     client.getBalance(accountId).catch((error) => {
-      // THEN the error is translated to a XpringIlpError
+      // THEN the error is translated to a IlpError
       assert.equal(error as IlpError, IlpError.unauthenticated)
       done()
     })
@@ -116,7 +116,7 @@ describe('Default ILP Client', function(): void {
 
     // WHEN the balance for an account is requested
     client.getBalance(accountId).catch((error) => {
-      // THEN the error is translated to a XpringIlpError
+      // THEN the error is translated to a IlpError
       assert.equal(error as IlpError, IlpError.internal)
       done()
     })
@@ -131,14 +131,14 @@ describe('Default ILP Client', function(): void {
 
     // WHEN the balance for an account is requested
     client.getBalance(accountId).catch((error) => {
-      // THEN the error is translated to a XpringIlpError
+      // THEN the error is translated to a IlpError
       assert.equal(error as IlpError, IlpError.unknown)
       done()
     })
   })
 
   it('Get balance - Invalid Access Token', function(done): void {
-    // GIVEN a DefaultIlpClient with a network client which always throws a XpringIlpError.invalidAccessToken error
+    // GIVEN a DefaultIlpClient with a network client which always throws a IlpError.invalidAccessToken error
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.invalidAccessTokenError,
     )
@@ -208,7 +208,7 @@ describe('Default ILP Client', function(): void {
 
     // WHEN a payment is sent
     client.sendPayment(fakePaymentRequest).catch((error) => {
-      // THEN the error is translated to a XpringIlpError
+      // THEN the error is translated to a IlpError
       assert.equal(error as IlpError, IlpError.accountNotFound)
       done()
     })
@@ -223,7 +223,7 @@ describe('Default ILP Client', function(): void {
 
     // WHEN a payment is sent
     client.sendPayment(fakePaymentRequest).catch((error) => {
-      // THEN the error is translated to a XpringIlpError
+      // THEN the error is translated to a IlpError
       assert.equal(error as IlpError, IlpError.invalidArgument)
       done()
     })
@@ -238,7 +238,7 @@ describe('Default ILP Client', function(): void {
 
     // WHEN a payment is sent
     client.sendPayment(fakePaymentRequest).catch((error) => {
-      // THEN the error is translated to a XpringIlpError
+      // THEN the error is translated to a IlpError
       assert.equal(error as IlpError, IlpError.unauthenticated)
       done()
     })
@@ -253,7 +253,7 @@ describe('Default ILP Client', function(): void {
 
     // WHEN a payment is sent
     client.sendPayment(fakePaymentRequest).catch((error) => {
-      // THEN the error is translated to a XpringIlpError
+      // THEN the error is translated to a IlpError
       assert.equal(error as IlpError, IlpError.internal)
       done()
     })
@@ -268,14 +268,14 @@ describe('Default ILP Client', function(): void {
 
     // WHEN a payment is sent
     client.sendPayment(fakePaymentRequest).catch((error) => {
-      // THEN the error is translated to a XpringIlpError
+      // THEN the error is translated to a IlpError
       assert.equal(error as IlpError, IlpError.unknown)
       done()
     })
   })
 
   it('Send Payment - Invalid Access Token', function(done): void {
-    // GIVEN a DefaultIlpClient with a network client which always throws a XpringIlpError.invalidAccessToken error
+    // GIVEN a DefaultIlpClient with a network client which always throws a IlpError.invalidAccessToken error
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.invalidAccessTokenError,
     )

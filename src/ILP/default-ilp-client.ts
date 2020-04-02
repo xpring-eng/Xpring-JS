@@ -6,7 +6,7 @@ import GrpcIlpNetworkClientWeb from './grpc-ilp-network-client.web'
 import { AccountBalance } from './model/account-balance'
 import { PaymentResult } from './model/payment-result'
 import { PaymentRequest } from './model/payment-request'
-import ErrorHandlerUtils from '../Common/error-handler-utils'
+import IlpError from './ilp-error'
 
 class DefaultIlpClient implements IlpClientDecorator {
   /**
@@ -53,7 +53,7 @@ class DefaultIlpClient implements IlpClientDecorator {
     return this.networkClient
       .getBalance(request, accessToken)
       .catch((error) => {
-        throw ErrorHandlerUtils.handleIlpServiceError(error)
+        throw IlpError.from(error)
       })
       .then((response) => AccountBalance.from(response))
   }
@@ -77,7 +77,7 @@ class DefaultIlpClient implements IlpClientDecorator {
     return this.networkClient
       .send(request, accessToken)
       .catch((error) => {
-        throw ErrorHandlerUtils.handleIlpServiceError(error)
+        throw IlpError.from(error)
       })
       .then((response) => PaymentResult.from(response))
   }

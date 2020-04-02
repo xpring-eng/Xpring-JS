@@ -41,7 +41,7 @@ export class FakeIlpNetworkClientResponses {
   public static internalError = new FakeGRPCError(status.INTERNAL)
 
   /**
-   * A real XpringIlpError which would get thrown if an access token starts with "Bearer "
+   * A real IlpError which would get thrown if an access token starts with "Bearer "
    */
   public static invalidAccessTokenError = IlpError.invalidAccessToken
 
