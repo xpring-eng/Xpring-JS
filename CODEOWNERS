@@ -1,4 +1,4 @@
-* @keefertaylor
+* @keefertaylor @amiecorso
 
 # Allow anyone in DevX reviewers to approve automated dependency updates from Dependabot.
 package* @xpring-eng/devx-reviewers
