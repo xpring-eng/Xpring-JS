@@ -5,25 +5,11 @@ import {
   Transaction,
   Payment,
 } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { TransactionStatus as LegacyTransactionStatus } from '../../src/XRP/Generated/web/legacy/transaction_status_pb'
 import 'mocha'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import { Flags } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 
 describe('raw transaction status', function(): void {
-  it('isFullPayment - legacy proto', function(): void {
-    // GIVEN a legacy transaction status protocol buffer.
-    const transactionStatus = new LegacyTransactionStatus()
-
-    // WHEN the transaction status is wrapped into a RawTransactionStatus object.
-    const rawTransactionStatus = RawTransactionStatus.fromTransactionStatus(
-      transactionStatus,
-    )
-
-    // THEN the raw transaction status reports it is a full payment.
-    assert.isTrue(rawTransactionStatus.isFullPayment)
-  })
-
   it('isFullPayment - non payment', function(): void {
     // GIVEN a getTxResponse which is not a payment.
     const transaction = new Transaction()
