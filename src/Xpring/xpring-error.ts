@@ -9,8 +9,11 @@ export enum XpringErrorType {
  * Represents errors thrown by PayID components of the Xpring SDK.
  */
 export default class XpringError extends Error {
-  /**
-   * Default errors.
+  /** 
+   * Input entities given to a Xpring component were attached to different networks. 
+   *
+   * For instance, this error may be thrown if a XpringClient was constructed with 
+   * a PayIDClient attached to Testnet and a XRPClient attached to Mainnet.
    */
   public static mismatchedNetworks = new XpringError(
     XpringErrorType.MismatchedNetworks,
