@@ -1,23 +1,9 @@
-import { TransactionStatus } from './Generated/web/legacy/transaction_status_pb'
 import { GetTransactionResponse } from './Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import RippledFlags from './rippled-flags'
 
 /** Abstraction around raw Transaction Status for compatibility. */
+// TODO(keefertaylor): This class is now defunt. Refactor and remove.
 export default class RawTransactionStatus {
-  /**
-   * Create a RawTransactionStatus from a TransactionStatus legacy protocol buffer.
-   */
-  static fromTransactionStatus(
-    transactionStatus: TransactionStatus,
-  ): RawTransactionStatus {
-    return new RawTransactionStatus(
-      transactionStatus.getValidated(),
-      transactionStatus.getTransactionStatusCode(),
-      transactionStatus.getLastLedgerSequence(),
-      true,
-    )
-  }
-
   /**
    * Create a RawTransactionStatus from a GetTransactionResponse protocol buffer.
    */
