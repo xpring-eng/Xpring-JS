@@ -5,11 +5,11 @@ import { Error as grpcWebError } from 'grpc-web'
  * Types of errors that originate from ILP.
  */
 export enum IlpErrorType {
-  InvalidAccessToken,
   AccountNotFound,
-  Unauthenticated,
-  InvalidArgument,
   Internal,
+  InvalidAccessToken,
+  InvalidArgument,
+  Unauthenticated,
   Unknown,
 }
 
@@ -20,19 +20,19 @@ export default class IlpError extends Error {
   /**
    * Default errors.
    */
-  public static invalidAccessToken = new IlpError(
-    IlpErrorType.InvalidAccessToken,
-    'Access token should not start with "Bearer "',
-  )
-
   public static accountNotFound = new IlpError(
     IlpErrorType.AccountNotFound,
     'Account not found.',
   )
 
-  public static unauthenticated = new IlpError(
-    IlpErrorType.Unauthenticated,
-    'Authentication failed.',
+  public static internal = new IlpError(
+    IlpErrorType.Internal,
+    'Internal error occurred on ILP network.',
+  )
+
+  public static invalidAccessToken = new IlpError(
+    IlpErrorType.InvalidAccessToken,
+    'Access token should not start with "Bearer "',
   )
 
   public static invalidArgument = new IlpError(
@@ -40,9 +40,9 @@ export default class IlpError extends Error {
     'Invalid argument in request body.',
   )
 
-  public static internal = new IlpError(
-    IlpErrorType.Internal,
-    'Internal error occurred on ILP network.',
+  public static unauthenticated = new IlpError(
+    IlpErrorType.Unauthenticated,
+    'Authentication failed.',
   )
 
   public static unknown: IlpError = new IlpError(
