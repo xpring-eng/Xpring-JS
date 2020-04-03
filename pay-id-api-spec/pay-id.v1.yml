@@ -2,7 +2,6 @@ info:
   title: PayID
   version: '0.0.1'
 paths:
-  # TODO(keefertaylor): Consider if we should just encode {path} into the base URL.
   '/{path}':
     parameters:
       - schema:
