@@ -6,7 +6,7 @@ export enum XpringErrorType {
 }
 
 /**
- * Represents errors thrown by PayID components of the Xpring SDK.
+ * Represents errors thrown by Xpring components of the Xpring SDK.
  */
 export default class XpringError extends Error {
   /** 
