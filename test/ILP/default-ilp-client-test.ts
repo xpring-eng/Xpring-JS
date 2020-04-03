@@ -1,29 +1,26 @@
 import { assert } from 'chai'
 import bigInt from 'big-integer'
-import {
-  FakeIlpNetworkClient,
-  FakeIlpNetworkClientResponses,
-} from './fakes/fake-ilp-network-client'
-import DefaultIlpClient from '../../src/ILP/default-ilp-client'
+import { FakeIlpNetworkClientResponses } from './fakes/fake-ilp-network-client'
 import { PaymentRequest } from '../../src/ILP/model/payment-request'
+import IlpError from '../../src/ILP/ilp-error'
+import FakeDefaultIlpClient from './fakes/fake-default-ilp-client'
 
-const fakeSuceedingNetworkClient = (): DefaultIlpClient => {
-  return new DefaultIlpClient(new FakeIlpNetworkClient())
-}
-const fakeErroringNetworkClient = (): DefaultIlpClient => {
-  return new DefaultIlpClient(
-    new FakeIlpNetworkClient(
-      FakeIlpNetworkClientResponses.defaultErrorResponses,
-    ),
-  )
-}
+// Fake accountId
+const accountId = 'test.foo.bar'
+
+// Fake PaymentRequest
+const fakePaymentRequest = new PaymentRequest({
+  amount: bigInt(100),
+  destinationPaymentPointer: '$money/baz',
+  senderAccountId: accountId,
+})
 
 describe('Default ILP Client', function(): void {
   it('Get balance - success', async function(): Promise<void> {
     // GIVEN a DefaultIlpClient
-    const client = fakeSuceedingNetworkClient()
+    const client = FakeDefaultIlpClient.fakeSuceedingNetworkClient()
     // WHEN the balance for an account is requested
-    const amount = await client.getBalance('test.foo.bar')
+    const amount = await client.getBalance(accountId)
 
     // THEN the balance is returned
     const successfulGetBalanceResponse = FakeIlpNetworkClientResponses.defaultGetBalanceResponse()
@@ -47,12 +44,14 @@ describe('Default ILP Client', function(): void {
     )
   })
 
-  it('Get balance - error', function(done): void {
+  it('Get balance - default error', function(done): void {
     // GIVEN a DefaultIlpClient
-    const client = fakeErroringNetworkClient()
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.defaultError,
+    )
 
     // WHEN the balance for an account is requested
-    client.getBalance('test.foo.bar').catch((error) => {
+    client.getBalance(accountId).catch((error) => {
       // THEN an error is thrown
       assert.typeOf(error, 'Error')
       assert.equal(
@@ -63,17 +62,101 @@ describe('Default ILP Client', function(): void {
     })
   })
 
+  it('Get balance - Not Found Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+    // with code = grpc.status.NOT_FOUND
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.notFoundError,
+    )
+
+    // WHEN the balance for an account is requested
+    client.getBalance(accountId).catch((error) => {
+      // THEN the error is translated to a IlpError
+      assert.equal(error as IlpError, IlpError.accountNotFound)
+      done()
+    })
+  })
+
+  it('Get balance - Invalid Argument Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+    // with code = grpc.status.INVALID_ARGUMENT
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.invalidArgumentError,
+    )
+
+    // WHEN the balance for an account is requested
+    client.getBalance(accountId).catch((error) => {
+      // THEN the error is translated to a IlpError
+      assert.equal(error as IlpError, IlpError.invalidArgument)
+      done()
+    })
+  })
+
+  it('Get balance - Unauthenticated Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+    // with code = grpc.status.UNAUTHENTICATED
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.unauthenticatedError,
+    )
+
+    // WHEN the balance for an account is requested
+    client.getBalance(accountId).catch((error) => {
+      // THEN the error is translated to a IlpError
+      assert.equal(error as IlpError, IlpError.unauthenticated)
+      done()
+    })
+  })
+
+  it('Get balance - Internal Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+    // with code = grpc.status.INTERNAL
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.internalError,
+    )
+
+    // WHEN the balance for an account is requested
+    client.getBalance(accountId).catch((error) => {
+      // THEN the error is translated to a IlpError
+      assert.equal(error as IlpError, IlpError.internal)
+      done()
+    })
+  })
+
+  it('Get balance - Unknown Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+    // with code = grpc.status.INTERNAL
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.unknownError,
+    )
+
+    // WHEN the balance for an account is requested
+    client.getBalance(accountId).catch((error) => {
+      // THEN the error is translated to a IlpError
+      assert.equal(error as IlpError, IlpError.unknown)
+      done()
+    })
+  })
+
+  it('Get balance - Invalid Access Token', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a IlpError.invalidAccessToken error
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.invalidAccessTokenError,
+    )
+
+    // WHEN the balance for an account is requested
+    client.getBalance(accountId).catch((error) => {
+      // THEN the error is simply rethrown
+      assert.equal(error as IlpError, IlpError.invalidAccessToken)
+      done()
+    })
+  })
+
   it('Send - success', async function(): Promise<void> {
     // GIVEN a DefaultIlpClient
-    const client = fakeSuceedingNetworkClient()
+    const client = FakeDefaultIlpClient.fakeSuceedingNetworkClient()
 
     // WHEN a payment request is sent
-    const request = new PaymentRequest({
-      amount: bigInt(100),
-      destinationPaymentPointer: '$money/baz',
-      senderAccountId: 'test.foo.bar',
-    })
-    const paymentResponse = await client.sendPayment(request)
+    const paymentResponse = await client.sendPayment(fakePaymentRequest)
 
     const successfulPaymentResponse = FakeIlpNetworkClientResponses.defaultSendResponse()
     // THEN the original amount is equal to mocked original amount
@@ -100,21 +183,107 @@ describe('Default ILP Client', function(): void {
 
   it('Send - error', function(done): void {
     // GIVEN a DefaultIlpClient
-    const client = fakeErroringNetworkClient()
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.defaultError,
+    )
 
     // WHEN a payment is requested
-    const request = new PaymentRequest({
-      amount: bigInt(100),
-      destinationPaymentPointer: '$money/baz',
-      senderAccountId: 'test.foo.bar',
-    })
-    client.sendPayment(request).catch((error) => {
+    client.sendPayment(fakePaymentRequest).catch((error) => {
       // THEN an error is thrown
       assert.typeOf(error, 'Error')
       assert.equal(
         error.message,
         FakeIlpNetworkClientResponses.defaultError.message,
       )
+      done()
+    })
+  })
+
+  it('Send Payment - Not Found Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+    // with code = grpc.status.NOT_FOUND
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.notFoundError,
+    )
+
+    // WHEN a payment is sent
+    client.sendPayment(fakePaymentRequest).catch((error) => {
+      // THEN the error is translated to a IlpError
+      assert.equal(error as IlpError, IlpError.accountNotFound)
+      done()
+    })
+  })
+
+  it('Send Payment - Invalid Argument Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+    // with code = grpc.status.INVALID_ARGUMENT
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.invalidArgumentError,
+    )
+
+    // WHEN a payment is sent
+    client.sendPayment(fakePaymentRequest).catch((error) => {
+      // THEN the error is translated to a IlpError
+      assert.equal(error as IlpError, IlpError.invalidArgument)
+      done()
+    })
+  })
+
+  it('Send Payment - Unauthenticated Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+    // with code = grpc.status.UNAUTHENTICATED
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.unauthenticatedError,
+    )
+
+    // WHEN a payment is sent
+    client.sendPayment(fakePaymentRequest).catch((error) => {
+      // THEN the error is translated to a IlpError
+      assert.equal(error as IlpError, IlpError.unauthenticated)
+      done()
+    })
+  })
+
+  it('Send Payment - Internal Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+    // with code = grpc.status.INTERNAL
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.internalError,
+    )
+
+    // WHEN a payment is sent
+    client.sendPayment(fakePaymentRequest).catch((error) => {
+      // THEN the error is translated to a IlpError
+      assert.equal(error as IlpError, IlpError.internal)
+      done()
+    })
+  })
+
+  it('Send Payment - Unknown Error', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+    // with code = grpc.status.INTERNAL
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.unknownError,
+    )
+
+    // WHEN a payment is sent
+    client.sendPayment(fakePaymentRequest).catch((error) => {
+      // THEN the error is translated to a IlpError
+      assert.equal(error as IlpError, IlpError.unknown)
+      done()
+    })
+  })
+
+  it('Send Payment - Invalid Access Token', function(done): void {
+    // GIVEN a DefaultIlpClient with a network client which always throws a IlpError.invalidAccessToken error
+    const client = FakeDefaultIlpClient.withErrors(
+      FakeIlpNetworkClientResponses.invalidAccessTokenError,
+    )
+
+    // WHEN a payment is sent
+    client.sendPayment(fakePaymentRequest).catch((error) => {
+      // THEN the error is simply rethrown
+      assert.equal(error as IlpError, IlpError.invalidAccessToken)
       done()
     })
   })
