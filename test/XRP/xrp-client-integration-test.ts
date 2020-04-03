@@ -13,59 +13,18 @@ const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
 // A wallet with some balance on TestNet.
 const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 
-// An XRPClient that makes requests. Uses the legacy protocol buffer implementation.
-const legacyGRPCURLNode = 'grpc.xpring.tech:80'
-const legacyXRPClientNode = new XRPClient(legacyGRPCURLNode, false)
-
-// An XRPClient that makes requests. Uses the legacy protocol buffer implementation and sends the requests to an HTTP envoy emulating how the browser would behave
+// An XRPClient that makes requests. Ssends the requests to an HTTP envoy emulating how the browser would behave.
 const grpcWebURL = 'https://envoy.test.xrp.xpring.io'
-const xrpWebClient = new XRPClient(grpcWebURL, true, true)
+const xrpWebClient = new XRPClient(grpcWebURL, true)
 
 // An XRPClient that makes requests. Uses rippled's gRPC implementation.
 const rippledURL = 'test.xrp.xpring.io:50051'
-const xrpClient = new XRPClient(rippledURL, true)
+const xrpClient = new XRPClient(rippledURL)
 
 // Some amount of XRP to send.
 const amount = bigInt('1')
 
 describe('Xpring JS XRPClient Integration Tests', function(): void {
-  it('Get Account Balance - Legacy Node Shim', async function(): Promise<void> {
-    this.timeout(timeoutMs)
-
-    const balance = await legacyXRPClientNode.getBalance(recipientAddress)
-    assert.exists(balance)
-  })
-
-  it('Get Account Balance - Web Shim', async function(): Promise<void> {
-    this.timeout(timeoutMs)
-
-    const balance = await xrpWebClient.getBalance(recipientAddress)
-    assert.exists(balance)
-  })
-
-  it('Get Account Balance - rippled', async function(): Promise<void> {
-    this.timeout(timeoutMs)
-
-    const balance = await xrpClient.getBalance(recipientAddress)
-    assert.exists(balance)
-  })
-
-  it('Get Transaction Status - Legacy Node Shim', async function(): Promise<
-    void
-  > {
-    this.timeout(timeoutMs)
-
-    const transactionHash = await legacyXRPClientNode.send(
-      amount,
-      recipientAddress,
-      wallet,
-    )
-    const transactionStatus = await legacyXRPClientNode.getPaymentStatus(
-      transactionHash,
-    )
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
-  })
-
   it('Get Transaction Status - Web Shim', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
@@ -92,17 +51,6 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
 
-  it('Send XRP - Legacy Node Shim', async function(): Promise<void> {
-    this.timeout(timeoutMs)
-
-    const result = await legacyXRPClientNode.send(
-      amount,
-      recipientAddress,
-      wallet,
-    )
-    assert.exists(result)
-  })
-
   it('Send XRP - Web Shim', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
@@ -115,15 +63,6 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
 
     const result = await xrpClient.send(amount, recipientAddress, wallet)
     assert.exists(result)
-  })
-
-  it('Check if Account Exists - true - Legacy Node Shim', async function(): Promise<
-    void
-  > {
-    this.timeout(timeoutMs)
-
-    const doesExist = await legacyXRPClientNode.accountExists(recipientAddress)
-    assert.equal(doesExist, true)
   })
 
   it('Check if Account Exists - true - Web Shim', async function(): Promise<
