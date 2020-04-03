@@ -24,24 +24,17 @@ class XRPClient implements XRPClientInterface {
    * The XRPClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
-   * @param network The network this XRPClient is connecting to. Defaults to undefined. If set to undefined, Testnet is assumed.
+   * @param network The network this XRPClient is connecting to.
    * @param useNewProtocolBuffers If `true`, then the new protocol buffer implementation from rippled will be used. Defaults to true.
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public constructor(
     grpcURL: string,
-    network: XRPLNetwork | undefined = undefined,
+    network: XRPLNetwork,
     useNewProtocolBuffers = true,
     forceWeb = false,
   ) {
-    // Warn that this will be breaking change in the future.
-    if (!network) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        'XRPClient was initialized without a `network` parameter. Defaulting to Testnet. In the future this warning will be an error.',
-      )
-    }
-    this.network = network ?? XRPLNetwork.Test
+    this.network = network
 
     const defaultXRPClient = useNewProtocolBuffers
       ? DefaultXRPClient.defaultXRPClientWithEndpoint(grpcURL, forceWeb)
