@@ -155,7 +155,7 @@ describe('Xpring Client', function(): void {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const xpringClient = new XpringClient(payIDClient, xrpClient)
       assert.fail(
-        `Should not have been able to construct a but instead created: ${xpringClient}`,
+        `Should not have been able to construct an instance of XpringClient but instead created: ${xpringClient}`,
       )
     } catch (error) {
       assert.deepEqual(error, XpringError.mismatchedNetworks)
