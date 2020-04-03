@@ -110,14 +110,10 @@ export default class PayIDClient implements PayIDClientInterface {
     payID: string,
     nonce: string,
   ): Promise<SignatureWrapperInvoice> {
-    // TODO(keefertaylor): Dedupe payment pointer logic
-    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    if (!paymentPointer) {
-      throw PayIDError.invalidPaymentPointer
-    }
+    const payIDComponents = PayIDClient.parsePayID(payID)
 
     const client = new ApiClient()
-    client.basePath = `https://${paymentPointer.host}`
+    client.basePath = `https://${payIDComponents.host}`
 
     // Accept only the given network in response.
     const accepts = [`application/xrpl-${this.network}+json`]
@@ -128,7 +124,7 @@ export default class PayIDClient implements PayIDClientInterface {
       // TODO(keefertaylor): Dedupe this with the above information.
       const postBody = null
       const pathParams = {
-        path: paymentPointer.path,
+        path: payIDComponents.path,
       }
       const queryParams = {
         nonce,
@@ -141,7 +137,7 @@ export default class PayIDClient implements PayIDClientInterface {
 
       try {
         client.callApi(
-          `${paymentPointer.path}/invoice`,
+          `${payIDComponents.path}/invoice`,
           'GET',
           pathParams,
           queryParams,
@@ -243,14 +239,10 @@ export default class PayIDClient implements PayIDClientInterface {
       signature,
     )
 
-    // TODO(keefertaylor): Dedupe payment pointer logic
-    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    if (!paymentPointer) {
-      throw PayIDError.invalidPaymentPointer
-    }
+    const payIDComponents = PayIDClient.parsePayID(payID)
 
     const client = new ApiClient()
-    client.basePath = `https://${paymentPointer.host}${paymentPointer.path}`
+    client.basePath = `https://${payIDComponents.host}${payIDComponents.path}`
 
     const apiInstance = new DefaultApi(client)
 
