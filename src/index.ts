@@ -17,3 +17,15 @@ export { PayIDErrorType, default as PayIDError } from './PayID/pay-id-error'
 export { default as XRPLNetwork } from './Common/xrpl-network'
 export { default as ComplianceType } from './PayID/compliance-type'
 export { default as XpringClient } from './Xpring/xpring-client'
+export {
+  XRPCurrencyAmount,
+  XRPCurrency,
+  XRPIssuedCurrency,
+  XRPMemo,
+  XRPPathElement,
+  XRPPath,
+  XRPPayment,
+  XRPSigner,
+  XRPTransactionType,
+  XRPTransaction,
+} from './XRP'
