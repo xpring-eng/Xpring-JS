@@ -3,6 +3,7 @@ import { assert } from 'chai'
 import bigInt from 'big-integer'
 import XRPClient from '../../src/XRP/xrp-client'
 import TransactionStatus from '../../src/XRP/transaction-status'
+import { XRPLNetwork } from '../../src'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -15,11 +16,11 @@ const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 
 // An XRPClient that makes requests. Ssends the requests to an HTTP envoy emulating how the browser would behave.
 const grpcWebURL = 'https://envoy.test.xrp.xpring.io'
-const xrpWebClient = new XRPClient(grpcWebURL, true)
+const xrpWebClient = new XRPClient(grpcWebURL, XRPLNetwork.Test, true)
 
 // An XRPClient that makes requests. Uses rippled's gRPC implementation.
 const rippledURL = 'test.xrp.xpring.io:50051'
-const xrpClient = new XRPClient(rippledURL)
+const xrpClient = new XRPClient(rippledURL, XRPLNetwork.Test)
 
 // Some amount of XRP to send.
 const amount = bigInt('1')

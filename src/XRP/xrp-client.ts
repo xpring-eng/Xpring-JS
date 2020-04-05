@@ -6,11 +6,15 @@ import ReliableSubmissionXRPClient from './reliable-submission-xrp-client'
 import DefaultXRPClient from './default-xrp-client'
 import XRPClientInterface from './xrp-client-interface'
 import XRPTransaction from './model/xrp-transaction'
+import XRPLNetwork from '../Common/xrpl-network'
 
 /**
  * XRPClient is a client which interacts with the Xpring platform.
  */
 class XRPClient implements XRPClientInterface {
+  /** The XRPL Network of the node that this client is communicating with. */
+  public readonly network: XRPLNetwork
+
   private readonly decoratedClient: XRPClientDecorator
 
   /**
@@ -19,9 +23,12 @@ class XRPClient implements XRPClientInterface {
    * The XRPClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
+   * @param network The network this XRPClient is connecting to.
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
-  public constructor(grpcURL: string, forceWeb = false) {
+  public constructor(grpcURL: string, network: XRPLNetwork, forceWeb = false) {
+    this.network = network
+
     const defaultXRPClient = DefaultXRPClient.defaultXRPClientWithEndpoint(
       grpcURL,
       forceWeb,
