@@ -708,6 +708,7 @@ describe('Protocol Buffer Conversion', function(): void {
     const sequence = 2
     const signingPublicKey = new Uint8Array([1, 2, 3])
     const transactionSignature = new Uint8Array([4, 5, 6])
+    const transactionHash = new Uint8Array([7, 8, 9])
 
     // build up transaction proto
     const transactionAccountAddressProto = new AccountAddress()
@@ -751,6 +752,7 @@ describe('Protocol Buffer Conversion', function(): void {
 
     const getTransactionResponseProto = new GetTransactionResponse()
     getTransactionResponseProto.setTransaction(transactionProto)
+    getTransactionResponseProto.setHash(transactionHash)
 
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const transaction = XRPTransaction.from(getTransactionResponseProto)
@@ -761,13 +763,13 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.equal(transaction?.sequence, sequence)
     assert.deepEqual(transaction?.signingPublicKey, signingPublicKey)
     assert.deepEqual(transaction?.transactionSignature, transactionSignature)
+    assert.equal(transaction?.hash, Utils.toHex(transactionHash))
     assert.isUndefined(transaction?.accountTransactionID)
     assert.isUndefined(transaction?.flags)
     assert.isUndefined(transaction?.lastLedgerSequence)
     assert.isUndefined(transaction?.memos)
     assert.isUndefined(transaction?.signers)
     assert.isUndefined(transaction?.sourceTag)
-    assert.isUndefined(transaction?.hash)
     assert.isUndefined(transaction?.timestamp)
   })
 
