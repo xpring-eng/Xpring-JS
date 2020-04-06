@@ -17,8 +17,7 @@ export default class XRPTestUtils {
     const paymentXRPTransactions: Array<XRPTransaction> = []
     const transactions = transactionHistoryResponse.getTransactionsList()
     for (let i = 0; i < transactions.length; i += 1) {
-      const txn = transactions[i].getTransaction()
-      const paymentXRPTransaction = XRPTransaction.from(txn!)
+      const paymentXRPTransaction = XRPTransaction.from(transactions[i])
       if (paymentXRPTransaction) {
         paymentXRPTransactions.push(paymentXRPTransaction)
       }

@@ -33,6 +33,7 @@ import {
   Flags,
   LastLedgerSequence,
   SourceTag,
+  Date,
 } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
   Payment,
@@ -42,6 +43,8 @@ import {
   CheckCash,
 } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
+import { GetTransactionResponse } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+import { Utils } from '../../src'
 
 // TODO(amiecorso): Refactor tests to separate files.
 // Set up global variables for use in test cases
@@ -569,6 +572,12 @@ describe('Protocol Buffer Conversion', function (): void {
     const memoData = new Uint8Array([1, 2, 3])
     const memoFormat = new Uint8Array([4, 5, 6])
     const memoType = new Uint8Array([7, 8, 9])
+    const transactionHash = new Uint8Array([7, 8, 9])
+
+    // Set date to Ripple epoch, January 1, 2000 (00:00 UTC).
+    // Expected timestamp is in unix time, 946684800 after Unix epoch.
+    const timestamp = 0
+    const expectedTimestamp = 946684800
 
     // memo proto
     const memoDataProto = new MemoData()
@@ -659,8 +668,16 @@ describe('Protocol Buffer Conversion', function (): void {
     transactionProto.setSourceTag(transactionSourceTagProto)
     transactionProto.setPayment(transactionPaymentProto)
 
+    const dateProto = new Date()
+    dateProto.setValue(timestamp)
+
+    const getTransactionResponseProto = new GetTransactionResponse()
+    getTransactionResponseProto.setTransaction(transactionProto)
+    getTransactionResponseProto.setDate(dateProto)
+    getTransactionResponseProto.setHash(transactionHash)
+
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const transaction = XRPTransaction.from(transactionProto)
+    const transaction = XRPTransaction.from(getTransactionResponseProto)
 
     // THEN all fields are present and converted correctly.
     assert.equal(transaction?.account, account)
@@ -674,6 +691,8 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.deepEqual(transaction?.memos, [XRPMemo.from(memoProto)!])
     assert.deepEqual(transaction?.signers, [XRPSigner.from(signerProto)!])
     assert.equal(transaction?.sourceTag, sourceTag)
+    assert.equal(transaction?.hash, Utils.toHex(transactionHash))
+    assert.equal(transaction?.timestamp, expectedTimestamp)
   })
 
   it('Convert PAYMENT Transaction with only mandatory common fields set', function (): void {
@@ -683,6 +702,7 @@ describe('Protocol Buffer Conversion', function (): void {
     const sequence = 2
     const signingPublicKey = new Uint8Array([1, 2, 3])
     const transactionSignature = new Uint8Array([4, 5, 6])
+    const transactionHash = new Uint8Array([7, 8, 9])
 
     // build up transaction proto
     const transactionAccountAddressProto = new AccountAddress()
@@ -724,8 +744,12 @@ describe('Protocol Buffer Conversion', function (): void {
     )
     transactionProto.setPayment(transactionPaymentProto)
 
+    const getTransactionResponseProto = new GetTransactionResponse()
+    getTransactionResponseProto.setTransaction(transactionProto)
+    getTransactionResponseProto.setHash(transactionHash)
+
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const transaction = XRPTransaction.from(transactionProto)
+    const transaction = XRPTransaction.from(getTransactionResponseProto)
 
     // THEN all fields are present and converted correctly.
     assert.equal(transaction?.account, account)
@@ -733,12 +757,14 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.equal(transaction?.sequence, sequence)
     assert.deepEqual(transaction?.signingPublicKey, signingPublicKey)
     assert.deepEqual(transaction?.transactionSignature, transactionSignature)
+    assert.equal(transaction?.hash, Utils.toHex(transactionHash))
     assert.isUndefined(transaction?.accountTransactionID)
     assert.isUndefined(transaction?.flags)
     assert.isUndefined(transaction?.lastLedgerSequence)
     assert.isUndefined(transaction?.memos)
     assert.isUndefined(transaction?.signers)
     assert.isUndefined(transaction?.sourceTag)
+    assert.isUndefined(transaction?.timestamp)
   })
 
   it('Convert PAYMENT Transaction with bad payment fields', function (): void {
@@ -779,8 +805,11 @@ describe('Protocol Buffer Conversion', function (): void {
     )
     transactionProto.setPayment(transactionPaymentProto) // Empty fields, will not convert
 
+    const getTransactionResponseProto = new GetTransactionResponse()
+    getTransactionResponseProto.setTransaction(transactionProto)
+
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const transaction = XRPTransaction.from(transactionProto)
+    const transaction = XRPTransaction.from(getTransactionResponseProto)
 
     // THEN the result is nil
     assert.isUndefined(transaction)
@@ -824,8 +853,11 @@ describe('Protocol Buffer Conversion', function (): void {
     )
     transactionProto.setCheckCash(transactionCheckCashProto) // Unsupported
 
+    const getTransactionResponseProto = new GetTransactionResponse()
+    getTransactionResponseProto.setTransaction(transactionProto)
+
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const transaction = XRPTransaction.from(transactionProto)
+    const transaction = XRPTransaction.from(getTransactionResponseProto)
 
     // THEN the result is nil
     assert.isUndefined(transaction)

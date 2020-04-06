@@ -1,9 +1,11 @@
+import { Utils } from 'xpring-common-js'
 import { Transaction } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import RippledFlags from '../rippled-flags'
 import XRPSigner from './xrp-signer'
 import XRPTransactionType from './xrp-transaction-type'
 import XRPPayment from './xrp-payment'
 import XRPMemo from './xrp-memo'
+import { GetTransactionResponse } from '../Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 
 /*
  * A transaction on the XRP Ledger.
@@ -12,8 +14,23 @@ import XRPMemo from './xrp-memo'
  */
 // TODO(amiecorso): Modify this object to use X-Address format.
 export default class XRPTransaction {
+<<<<<<< HEAD
   public static from(transaction: Transaction): XRPTransaction | undefined {
     const account = transaction.getAccount()?.getValue()?.getAddress()
+=======
+  public static from(
+    getTransactionResponse: GetTransactionResponse,
+  ): XRPTransaction | undefined {
+    const transaction = getTransactionResponse.getTransaction()
+    if (!transaction) {
+      return undefined
+    }
+
+    const account = transaction
+      .getAccount()
+      ?.getValue()
+      ?.getAddress()
+>>>>>>> origin/master
 
     const fee = transaction.getFee()?.getDrops()
 
@@ -67,7 +84,23 @@ export default class XRPTransaction {
         return undefined
     }
 
+    const transactionHashBytes = getTransactionResponse.getHash_asU8()
+    if (!transactionHashBytes) {
+      return undefined
+    }
+    const transactionHash = Utils.toHex(transactionHashBytes)
+
+    // Transactions report their timestamps since the Ripple Epoch, which is 946,684,800 seconds after
+    // the unix epoch. Convert transaction's timestamp to a unix timestamp.
+    // See: https://xrpl.org/basic-data-types.html#specifying-time
+    const rippleTransactionDate = getTransactionResponse.getDate()?.getValue()
+    const timestamp =
+      rippleTransactionDate !== undefined
+        ? rippleTransactionDate + 946684800
+        : undefined
+
     return new XRPTransaction(
+      transactionHash,
       account,
       accountTransactionID,
       fee,
@@ -81,10 +114,12 @@ export default class XRPTransaction {
       transactionSignature,
       type,
       paymentFields,
+      timestamp,
     )
   }
 
   private constructor(
+    readonly hash: string,
     readonly account?: string,
     readonly accountTransactionID?: Uint8Array,
     readonly fee?: string,
@@ -98,5 +133,6 @@ export default class XRPTransaction {
     readonly transactionSignature?: Uint8Array,
     readonly type?: XRPTransactionType,
     readonly paymentFields?: XRPPayment,
+    readonly timestamp?: number,
   ) {}
 }

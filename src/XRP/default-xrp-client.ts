@@ -339,7 +339,7 @@ class DefaultXRPClient implements XRPClientDecorator {
       const transaction = getTransactionResponse.getTransaction()
       switch (transaction?.getTransactionDataCase()) {
         case Transaction.TransactionDataCase.PAYMENT: {
-          const xrpTransaction = XRPTransaction.from(transaction)
+          const xrpTransaction = XRPTransaction.from(getTransactionResponse)
           if (!xrpTransaction) {
             throw new Error(XRPClientErrorMessages.paymentConversionFailure)
           } else {
