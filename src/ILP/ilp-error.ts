@@ -61,6 +61,8 @@ export default class IlpError extends Error {
     message: string | undefined = undefined,
   ) {
     super(message)
+    Object.setPrototypeOf(this, new.target.prototype)
+    Error.captureStackTrace(this)
   }
 
   /**

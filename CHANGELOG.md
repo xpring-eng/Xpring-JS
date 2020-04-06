@@ -9,12 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 - `XRPClient` requires a new parameter in it's constructor that identifies the network it is attached to.
-- `IlpClient` methods now throw `IlpError`s if something goes wrong during the call.
-    (either client side or server side).  
+- `IlpClient` methods now throw `IlpError`s if something goes wrong during the call
+    (either client side or server side).
     This is only breaking if users are handling special error cases, which were previously `grpc.ServiceError`s when
     calling from node.js, and `grpc-web.Error`s in the browser.
 - `XRPClient` methods now thorw `XRPError`s if something goes wrong during the call.
-
 
 ## 3.0.4 - March 24, 2020
 

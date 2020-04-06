@@ -46,5 +46,7 @@ export default class XRPError extends Error {
     message: string | undefined = undefined,
   ) {
     super(message)
+    Object.setPrototypeOf(this, new.target.prototype)
+    Error.captureStackTrace(this)
   }
 }
