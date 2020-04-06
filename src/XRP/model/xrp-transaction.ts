@@ -14,10 +14,6 @@ import { GetTransactionResponse } from '../Generated/web/org/xrpl/rpc/v1/get_tra
  */
 // TODO(amiecorso): Modify this object to use X-Address format.
 export default class XRPTransaction {
-<<<<<<< HEAD
-  public static from(transaction: Transaction): XRPTransaction | undefined {
-    const account = transaction.getAccount()?.getValue()?.getAddress()
-=======
   public static from(
     getTransactionResponse: GetTransactionResponse,
   ): XRPTransaction | undefined {
@@ -26,11 +22,7 @@ export default class XRPTransaction {
       return undefined
     }
 
-    const account = transaction
-      .getAccount()
-      ?.getValue()
-      ?.getAddress()
->>>>>>> origin/master
+    const account = transaction.getAccount()?.getValue()?.getAddress()
 
     const fee = transaction.getFee()?.getDrops()
 
