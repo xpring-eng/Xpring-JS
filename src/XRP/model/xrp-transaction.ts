@@ -80,10 +80,10 @@ export default class XRPTransaction {
     }
 
     const transactionHashBytes = getTransactionResponse.getHash_asU8()
-    const transactionHash =
-      transactionHashBytes.length !== 0
-        ? Utils.toHex(transactionHashBytes)
-        : undefined
+    if (!transactionHashBytes) {
+      return undefined
+    }
+    const transactionHash = Utils.toHex(transactionHashBytes)
 
     // Transactions report their timestamps since the Ripple Epoch, which is 946,684,800 seconds after
     // the unix epoch. Convert transaction's timestamp to a unix timestamp.
@@ -95,6 +95,7 @@ export default class XRPTransaction {
         : undefined
 
     return new XRPTransaction(
+      transactionHash,
       account,
       accountTransactionID,
       fee,
@@ -109,11 +110,11 @@ export default class XRPTransaction {
       type,
       paymentFields,
       timestamp,
-      transactionHash,
     )
   }
 
   private constructor(
+    readonly hash: string,
     readonly account?: string,
     readonly accountTransactionID?: Uint8Array,
     readonly fee?: string,
@@ -128,6 +129,5 @@ export default class XRPTransaction {
     readonly type?: XRPTransactionType,
     readonly paymentFields?: XRPPayment,
     readonly timestamp?: number,
-    readonly hash?: string,
   ) {}
 }
