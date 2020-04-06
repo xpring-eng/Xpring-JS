@@ -13,10 +13,7 @@ import XRPMemo from './xrp-memo'
 // TODO(amiecorso): Modify this object to use X-Address format.
 export default class XRPTransaction {
   public static from(transaction: Transaction): XRPTransaction | undefined {
-    const account = transaction
-      .getAccount()
-      ?.getValue()
-      ?.getAddress()
+    const account = transaction.getAccount()?.getValue()?.getAddress()
 
     const fee = transaction.getFee()?.getDrops()
 
