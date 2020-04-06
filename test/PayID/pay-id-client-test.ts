@@ -5,7 +5,6 @@ import PayIDClient from '../../src/PayID/pay-id-client'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
 import XRPLNetwork from '../../src/Common/xrpl-network'
 import SignatureWrapperInvoice from '../../src/PayID/Generated/model/SignatureWrapperInvoice'
-import SignatureWrapperCompliance from '../../src/PayID/Generated/model/SignatureWrapperCompliance'
 import ComplianceType from '../../src/PayID/compliance-type'
 
 // Parameters for getInvoice
@@ -328,7 +327,7 @@ describe('Pay ID Client', function(): void {
     // THEN the invoice was the mocked response.
     assert.deepEqual(
       invoice,
-      SignatureWrapperCompliance.constructFromObject(mockResponse, null),
+      SignatureWrapperInvoice.constructFromObject(mockResponse, null),
     )
   })
 
