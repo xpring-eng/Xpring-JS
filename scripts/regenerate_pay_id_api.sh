@@ -3,7 +3,7 @@
 set -e -o pipefail
 
 # Folder to place the generated classes in.
-DESTINATION_FOLDER=./src/PayID/generated/
+DESTINATION_FOLDER=./src/PayID/Generated/
 
 # Open API Specfication to use for generation.
 PAY_ID_OPEN_API_SPEC=./pay-id-api-spec/pay-id.v1.yml

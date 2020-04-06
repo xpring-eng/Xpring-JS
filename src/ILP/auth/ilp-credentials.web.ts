@@ -1,5 +1,5 @@
 import { Metadata } from 'grpc-web'
-import { AuthUtils } from './auth-utils'
+import IlpError from '../ilp-error'
 
 /**
  * An extension of grpc-web.Metadata which provides a convenient way to
@@ -8,6 +8,8 @@ import { AuthUtils } from './auth-utils'
  */
 class IlpCredentials implements Metadata {
   [s: string]: string
+
+  private static BEARER_PREFIX = 'Bearer '
 
   /**
    * Static initializer, which constructs a new IlpCredentials object and adds
@@ -20,7 +22,12 @@ class IlpCredentials implements Metadata {
    *          otherwise returns undefined
    */
   public static build(token?: string): IlpCredentials | undefined {
-    return token ? { Authorization: AuthUtils.applyBearer(token) } : undefined
+    if (token && token.startsWith(this.BEARER_PREFIX)) {
+      throw IlpError.invalidAccessToken
+    }
+    return token
+      ? { Authorization: this.BEARER_PREFIX.concat(token) }
+      : undefined
   }
 }
 

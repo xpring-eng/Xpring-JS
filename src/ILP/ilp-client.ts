@@ -18,32 +18,34 @@ class IlpClient {
    * Get the balance of the specified account on the connector.
    *
    * @param accountId The account ID to get the balance for.
-   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   * @param accessToken Optional access token. If using node network client, accessToken must be supplied, otherwise
    *        it will be picked up from a cookie.
-   * @return A {@link GetBalanceResponse} with balance information of the specified account
+   * @return A Promise<AccountBalance> with balance information of the specified account
+   * @throws an IlpError if the inputs were invalid or an error occurs during the call.
    */
   public async getBalance(
     accountId: string,
-    bearerToken?: string,
+    accessToken?: string,
   ): Promise<AccountBalance> {
-    return this.decoratedClient.getBalance(accountId, bearerToken)
+    return this.decoratedClient.getBalance(accountId, accessToken)
   }
 
   /**
-   * Send the given amount of XRP from the source wallet to the destination address.
+   * Send a payment from the given accountId to the destinationPaymentPointer payment pointer
    *
    * @param paymentRequest A PaymentRequest with options for sending a payment
-   * @param bearerToken Optional auth token. If using node network client, bearerToken must be supplied, otherwise
+   * @param accessToken Optional access token. If using node network client, accessToken must be supplied, otherwise
    *        it will be picked up from a cookie.
    * @returns A promise which resolves to a `PaymentResult` of the original amount, the amount sent
    *        in the senders denomination, and the amount that was delivered to the recipient in their denomination, as
    *        well as if the payment was successful
+   * @throws an IlpError if the inputs were invalid or an error occurs during the call.
    */
   public async sendPayment(
     paymentRequest: PaymentRequest,
-    bearerToken?: string,
+    accessToken?: string,
   ): Promise<PaymentResult> {
-    return this.decoratedClient.sendPayment(paymentRequest, bearerToken)
+    return this.decoratedClient.sendPayment(paymentRequest, accessToken)
   }
 }
 

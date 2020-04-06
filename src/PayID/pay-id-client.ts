@@ -1,17 +1,17 @@
 import { PayIDUtils } from 'xpring-common-js'
-import PaymentInformation from './generated/model/PaymentInformation'
-import ApiClient from './generated/ApiClient'
+import PaymentInformation from './Generated/model/PaymentInformation'
+import ApiClient from './Generated/ApiClient'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
 import PayIDClientInterface from './pay-id-client-interface'
 import XRPLNetwork from '../Common/xrpl-network'
-import SignatureWrapperInvoice from './generated/model/SignatureWrapperInvoice'
-import Value from './generated/model/Value'
-import Originator from './generated/model/Originator'
-import Beneficiary from './generated/model/Beneficiary'
-import SignatureWrapperCompliance from './generated/model/SignatureWrapperCompliance'
-import Compliance from './generated/model/Compliance'
-import TravelRule from './generated/model/TravelRule'
-import DefaultApi from './generated/api/DefaultApi'
+import SignatureWrapperInvoice from './Generated/model/SignatureWrapperInvoice'
+import Value from './Generated/model/Value'
+import Originator from './Generated/model/Originator'
+import Beneficiary from './Generated/model/Beneficiary'
+import SignatureWrapperCompliance from './Generated/model/SignatureWrapperCompliance'
+import Compliance from './Generated/model/Compliance'
+import TravelRule from './Generated/model/TravelRule'
+import DefaultApi from './Generated/api/DefaultApi'
 import ComplianceType from './compliance-type'
 
 interface PayIDComponents {
@@ -63,7 +63,7 @@ export default class PayIDClient implements PayIDClientInterface {
 
       try {
         client.callApi(
-          '/{path}',
+          payIDComponents.path,
           'GET',
           pathParams,
           queryParams,
@@ -110,17 +110,10 @@ export default class PayIDClient implements PayIDClientInterface {
     payID: string,
     nonce: string,
   ): Promise<SignatureWrapperInvoice> {
-    // TODO(keefertaylor): Dedupe payment pointer logic
-    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    if (!paymentPointer) {
-      throw PayIDError.invalidPaymentPointer
-    }
-
-    // Swagger generates the '/' in the URL by default and the payment pointer's 'path' is prefixed by a '/'. Strip off the leading '/'.
-    const path = paymentPointer.path.substring(1)
+    const payIDComponents = PayIDClient.parsePayID(payID)
 
     const client = new ApiClient()
-    client.basePath = `https://${paymentPointer.host}`
+    client.basePath = `https://${payIDComponents.host}`
 
     // Accept only the given network in response.
     const accepts = [`application/xrpl-${this.network}+json`]
@@ -131,7 +124,7 @@ export default class PayIDClient implements PayIDClientInterface {
       // TODO(keefertaylor): Dedupe this with the above information.
       const postBody = null
       const pathParams = {
-        path,
+        path: payIDComponents.path,
       }
       const queryParams = {
         nonce,
@@ -144,7 +137,7 @@ export default class PayIDClient implements PayIDClientInterface {
 
       try {
         client.callApi(
-          '/{path}/invoice',
+          `${payIDComponents.path}/invoice`,
           'GET',
           pathParams,
           queryParams,
@@ -246,24 +239,16 @@ export default class PayIDClient implements PayIDClientInterface {
       signature,
     )
 
-    // TODO(keefertaylor): Dedupe payment pointer logic
-    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    if (!paymentPointer) {
-      throw PayIDError.invalidPaymentPointer
-    }
-
-    // Swagger generates the '/' in the URL by default and the payment pointer's 'path' is prefixed by a '/'. Strip off the leading '/'.
-    const path = paymentPointer.path.substring(1)
+    const payIDComponents = PayIDClient.parsePayID(payID)
 
     const client = new ApiClient()
-    client.basePath = `https://${paymentPointer.host}`
+    client.basePath = `https://${payIDComponents.host}${payIDComponents.path}`
 
     const apiInstance = new DefaultApi(client)
 
     return new Promise((resolve, reject) => {
       try {
         apiInstance.postPathInvoice(
-          path,
           { body: signatureWrapper },
           (error, data, _response) => {
             // TODO(keefertaylor): Provide more granular error handling.
@@ -309,7 +294,7 @@ export default class PayIDClient implements PayIDClientInterface {
     }
 
     const client = new ApiClient()
-    client.basePath = `https://${payIDComponents.host}`
+    client.basePath = `https://${payIDComponents.host}${payIDComponents.path}`
 
     const apiInstance = new DefaultApi(client)
     const opts = {
@@ -318,19 +303,15 @@ export default class PayIDClient implements PayIDClientInterface {
 
     return new Promise((resolve, reject) => {
       try {
-        apiInstance.postPathReceipt(
-          payIDComponents.path,
-          opts,
-          (error, _data, _response) => {
-            // TODO(keefertaylor): Provide more specific error handling here.
-            if (error) {
-              const message = `${error.status}: ${error.response?.text}`
-              reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
-            } else {
-              resolve()
-            }
-          },
-        )
+        apiInstance.postPathReceipt(opts, (error, _data, _response) => {
+          // TODO(keefertaylor): Provide more specific error handling here.
+          if (error) {
+            const message = `${error.status}: ${error.response?.text}`
+            reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
+          } else {
+            resolve()
+          }
+        })
       } catch (exception) {
         // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
         reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
@@ -346,13 +327,9 @@ export default class PayIDClient implements PayIDClientInterface {
     if (!paymentPointer) {
       throw PayIDError.invalidPaymentPointer
     }
-
-    // Swagger generates the '/' in the URL by default and the payment pointer's 'path' is prefixed by a '/'. Strip off the leading '/'.
-    const path = paymentPointer.path.substring(1)
-
     return {
       host: paymentPointer.host,
-      path,
+      path: paymentPointer.path,
     }
   }
 }

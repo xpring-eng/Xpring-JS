@@ -2,14 +2,23 @@ import { assert } from 'chai'
 import bigInt from 'big-integer'
 import FakeXRPClient from '../XRP/fakes/fake-xrp-client'
 import FakePayIDClient from '../PayID/fakes/fake-pay-id-client'
-import TransactionStatus from '../../src/transaction-status'
+import TransactionStatus from '../../src/XRP/transaction-status'
 import XpringClient from '../../src/Xpring/xpring-client'
 import FakeWallet from '../Common/Fakes/fake-wallet'
+import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 
 /* Default values for the fake XRP Client. These values must be provided but are not varied in testing. */
 const fakeBalance = bigInt(10)
 const fakePaymentStatus = TransactionStatus.Succeeded
+const fakeLastLedgerSequenceValue = 10
 const fakeAccountExistsResult = true
+const fakeRawTransactionStatus = new RawTransactionStatus(
+  true,
+  'tesSUCCESS',
+  10,
+  true,
+)
+const fakePaymentHistoryValue = []
 
 /** An amount to send. */
 const amount = 10
@@ -32,7 +41,10 @@ describe('Xpring Client', function(): void {
       fakeBalance,
       fakePaymentStatus,
       expectedTransactionHash,
+      fakeLastLedgerSequenceValue,
+      fakeRawTransactionStatus,
       fakeAccountExistsResult,
+      fakePaymentHistoryValue,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -54,7 +66,10 @@ describe('Xpring Client', function(): void {
       fakeBalance,
       fakePaymentStatus,
       expectedTransactionHash,
+      fakeLastLedgerSequenceValue,
+      fakeRawTransactionStatus,
       fakeAccountExistsResult,
+      fakePaymentHistoryValue,
     )
 
     const payIDClient = new FakePayIDClient(payIDError)
@@ -75,7 +90,10 @@ describe('Xpring Client', function(): void {
       fakeBalance,
       fakePaymentStatus,
       xrpError,
+      fakeLastLedgerSequenceValue,
+      fakeRawTransactionStatus,
       fakeAccountExistsResult,
+      fakePaymentHistoryValue,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -97,7 +115,10 @@ describe('Xpring Client', function(): void {
       fakeBalance,
       fakePaymentStatus,
       xrpError,
+      fakeLastLedgerSequenceValue,
+      fakeRawTransactionStatus,
       fakeAccountExistsResult,
+      fakePaymentHistoryValue,
     )
 
     const payIDClient = new FakePayIDClient(payIDError)

@@ -1,8 +1,11 @@
+import { status } from 'grpc'
 import { IlpNetworkClient } from '../../../src/ILP/ilp-network-client'
-import { GetBalanceResponse } from '../../../src/generated/node/ilp/get_balance_response_pb'
-import { SendPaymentResponse } from '../../../src/generated/node/ilp/send_payment_response_pb'
-import { GetBalanceRequest } from '../../../src/generated/node/ilp/get_balance_request_pb'
-import { SendPaymentRequest } from '../../../src/generated/node/ilp/send_payment_request_pb'
+import { GetBalanceResponse } from '../../../src/ILP/Generated/node/get_balance_response_pb'
+import { SendPaymentResponse } from '../../../src/ILP/Generated/node/send_payment_response_pb'
+import { GetBalanceRequest } from '../../../src/ILP/Generated/node/get_balance_request_pb'
+import { SendPaymentRequest } from '../../../src/ILP/Generated/node/send_payment_request_pb'
+import FakeGRPCError from './fake-grpc-error'
+import IlpError from '../../../src/ILP/ilp-error'
 
 /**
  * A response for a request to retrieve type T. Either an instance of T, or an error.
@@ -16,17 +19,42 @@ export class FakeIlpNetworkClientResponses {
   public static defaultError = new Error('fake ilp network client failure')
 
   /**
+   * A fake GRPC error mocking grpc.status.NOT_FOUND
+   */
+  public static notFoundError = new FakeGRPCError(status.NOT_FOUND)
+
+  /**
+   * A fake GRPC error mocking grpc.status.UNAUTHENTICATED
+   */
+  public static unauthenticatedError = new FakeGRPCError(status.UNAUTHENTICATED)
+
+  /**
+   * A fake GRPC error mocking grpc.status.INVALID_ARGUMENT
+   */
+  public static invalidArgumentError = new FakeGRPCError(
+    status.INVALID_ARGUMENT,
+  )
+
+  /**
+   * A fake GRPC error mocking grpc.status.INTERNAL
+   */
+  public static internalError = new FakeGRPCError(status.INTERNAL)
+
+  /**
+   * A real IlpError which would get thrown if an access token starts with "Bearer "
+   */
+  public static invalidAccessTokenError = IlpError.invalidAccessToken
+
+  /**
    * A default set of responses that will always succeed.
    */
   public static defaultSuccessfulResponses = new FakeIlpNetworkClientResponses()
 
-  /**
-   * A default set of responses that will always fail.
-   */
-  public static defaultErrorResponses = new FakeIlpNetworkClientResponses(
-    FakeIlpNetworkClientResponses.defaultError,
-    FakeIlpNetworkClientResponses.defaultError,
-  )
+  public static unknownError = new FakeGRPCError(status.UNKNOWN)
+
+  public static create(responseError: Error): FakeIlpNetworkClientResponses {
+    return new FakeIlpNetworkClientResponses(responseError, responseError)
+  }
 
   /**
    * Construct a new set of responses.
@@ -77,9 +105,15 @@ export class FakeIlpNetworkClient implements IlpNetworkClient {
     private readonly responses: FakeIlpNetworkClientResponses = FakeIlpNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
 
+  public static withErrors(responseError: Error): FakeIlpNetworkClient {
+    return new FakeIlpNetworkClient(
+      FakeIlpNetworkClientResponses.create(responseError),
+    )
+  }
+
   getBalance(
     _request: GetBalanceRequest,
-    _bearerToken: string,
+    _accessToken: string,
   ): Promise<GetBalanceResponse> {
     const response = this.responses.getBalanceResponse
     if (response instanceof Error) {

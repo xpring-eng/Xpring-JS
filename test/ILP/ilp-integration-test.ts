@@ -1,8 +1,8 @@
 import bigInt from 'big-integer'
+import { assert } from 'chai'
 import IlpClient from '../../src/ILP/ilp-client'
 import { PaymentRequest } from '../../src/ILP/model/payment-request'
-
-import assert = require('assert')
+import IlpError, { IlpErrorType } from '../../src/ILP/ilp-error'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -30,7 +30,25 @@ describe('ILP Integration Tests', function(): void {
     // AND clearingBalance should be less than 0, since sdk_account1 always sends money in the Send Money test
     assert(message.clearingBalance.lesserOrEquals(0))
     // AND prepaidAmount should be 0
-    assert.equal(message.prepaidAmount, 0)
+    assert.equal(message.prepaidAmount.valueOf(), 0)
+  })
+
+  it('Get Account Balance - Bearer Token', async function(): Promise<void> {
+    this.timeout(timeoutMs)
+
+    // GIVEN an account on the devnet connector with accountId = sdk_account1
+
+    // WHEN the balance of that account is requested with an auth token prefixed with 'Bearer '
+    try {
+      await ILPClientNode.getBalance('sdk_account1', 'Bearer password')
+    } catch (error) {
+      // THEN an Error is thrown by IlpCredentials
+      assert.equal(
+        (error as IlpError).errorType,
+        IlpErrorType.InvalidAccessToken,
+      )
+      assert.equal(error.message, IlpError.invalidAccessToken.message)
+    }
   })
 
   it('Send Money - Node Shim', async function(): Promise<void> {
@@ -47,12 +65,36 @@ describe('ILP Integration Tests', function(): void {
     const message = await ILPClientNode.sendPayment(request, 'password')
 
     // THEN the originalAmount should be equal to the amount sent
-    assert.equal(message.originalAmount, 10)
+    assert.equal(message.originalAmount.valueOf(), 10)
     // AND the amountSent should be equal to the originalAmount
-    assert.equal(message.amountSent, 10)
+    assert.equal(message.amountSent.valueOf(), 10)
     // AND the amountDelivered should be 10
-    assert.equal(message.amountDelivered, 10)
+    assert.equal(message.amountDelivered.valueOf(), 10)
     // AND the payment should be successful
     assert.equal(message.successfulPayment, true)
+  })
+
+  it('Send Money - Bearer Token', async function(): Promise<void> {
+    this.timeout(timeoutMs)
+
+    // GIVEN an account on the connector with accountId = sdk_account1
+    // AND an account on the connector with accountId = sdk_account2
+
+    // WHEN a payment is sent from sdk_account1 to sdk_account2 for 10 units
+    try {
+      const request = new PaymentRequest({
+        amount: bigInt(10),
+        destinationPaymentPointer: '$money.ilpv4.dev/sdk_account2',
+        senderAccountId: 'sdk_account1',
+      })
+      await ILPClientNode.sendPayment(request, 'Bearer password')
+    } catch (error) {
+      // THEN an Error is thrown by IlpCredentials
+      assert.equal(
+        (error as IlpError).errorType,
+        IlpErrorType.InvalidAccessToken,
+      )
+      assert.equal(error.message, IlpError.invalidAccessToken.message)
+    }
   })
 })

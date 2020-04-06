@@ -1,6 +1,6 @@
 {
   "name": "xpring-js",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "XpringJS provides a Javascript based SDK for interacting with the Ripple Ledger.",
   "main": "build/index.js",
   "repository": {
@@ -16,8 +16,8 @@
     "build/**/*"
   ],
   "scripts": {
-    "build": "npm run clean && ./scripts/regenerate_protos.sh && ./scripts/regenerate_pay_id_api.sh && npm run lint && tsc -d && copyfiles -u 2 './src/generated/**/*' ./build/generated",
-    "clean": "rm -rf ./src/generated ./dist ./build ./src/PayID/generated",
+    "build": "npm run clean && ./scripts/regenerate_protos.sh && ./scripts/regenerate_pay_id_api.sh && npm run lint && tsc -d && copyfiles -u 2 './src/XRP/Generated/**/*' ./build/XRP/Generated && copyfiles -u 2 './src/ILP/Generated/**/*' ./build/ILP/Generated",
+    "clean": "rm -rf ./src/XRP/Generated ./src/ILP/Generated ./dist ./build ./src/PayID/Generated",
     "pretest": "npm run clean && ./scripts/regenerate_protos.sh && ./scripts/regenerate_pay_id_api.sh && npm run lint && tsc --noEmit",
     "lint": "eslint . --ext .ts --fix",
     "test": "nyc mocha",
@@ -48,8 +48,8 @@
     "mocha": "^7.0.1",
     "mocha-lcov-reporter": "1.3.0",
     "nock": "^12.0.2",
-    "nyc": "15.0.0",
-    "prettier": "^1.19.1",
+    "nyc": "15.0.1",
+    "prettier": "^2.0.4",
     "source-map-support": "0.5.16",
     "ts-node": "^8.6.2",
     "tslint-config-prettier": "^1.18.0",
@@ -65,7 +65,7 @@
     "grpc-web": "1.0.7",
     "superagent": "^5.2.2",
     "xhr2": "0.2.0",
-    "xpring-common-js": "4.1.0"
+    "xpring-common-js": "4.2.0"
   },
   "nyc": {
     "extension": [
