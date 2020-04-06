@@ -218,7 +218,7 @@ export class FakeXRPNetworkClient implements XRPNetworkClient {
   }
 
   getTransactionHistory(
-    _GetAccountTransactionHistoryRequestetAccountTransactionHistoryRequest: GetAccountTransactionHistoryRequest,
+    _GetAccountTransactionHistoryRequest: GetAccountTransactionHistoryRequest,
   ): Promise<GetAccountTransactionHistoryResponse> {
     const transactionHistoryResponse = this.responses
       .getTransactionHistoryResponse
