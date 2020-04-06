@@ -75,6 +75,9 @@
     "include": [
       "src/**/*.ts"
     ],
+    "exclude": [
+      "src/**/Generated/**/*"
+    ],
     "all": true,
     "check-leaks": true
   }
