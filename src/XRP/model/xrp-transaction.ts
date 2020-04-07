@@ -22,10 +22,7 @@ export default class XRPTransaction {
       return undefined
     }
 
-    const account = transaction
-      .getAccount()
-      ?.getValue()
-      ?.getAddress()
+    const account = transaction.getAccount()?.getValue()?.getAddress()
 
     const fee = transaction.getFee()?.getDrops()
 
