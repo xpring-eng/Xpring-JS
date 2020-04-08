@@ -36,8 +36,8 @@ const payID = '$xpring.money/georgewashington'
 const payIDError = new Error('Error from PayID')
 const xrpError = new Error('Error from XRP')
 
-describe('Xpring Client', function(): void {
-  it('send - success', async function(): Promise<void> {
+describe('Xpring Client', function (): void {
+  it('send - success', async function (): Promise<void> {
     // GIVEN a XpringClient composed of a fake PayIDClient and a fake XRPClient which will both succeed.
     const expectedTransactionHash = fakeTransactionHash
     const xrpClient = new FakeXRPClient(
@@ -62,7 +62,7 @@ describe('Xpring Client', function(): void {
     assert.equal(transactionHash, expectedTransactionHash)
   })
 
-  it('send - failure in PayID', function(done): void {
+  it('send - failure in PayID', function (done): void {
     // GIVEN a XpringClient composed of a PayIDClient which will throw an error.
     const expectedTransactionHash = 'deadbeefdeadbeefdeadbeef'
     const xrpClient = new FakeXRPClient(
@@ -87,7 +87,7 @@ describe('Xpring Client', function(): void {
     })
   })
 
-  it('send - failure in XRP', function(done): void {
+  it('send - failure in XRP', function (done): void {
     // GIVEN a XpringClient composed of an XRPClient which will throw an error.
     const xrpClient = new FakeXRPClient(
       fakeBalance,
@@ -112,7 +112,7 @@ describe('Xpring Client', function(): void {
     })
   })
 
-  it('send - failure in both', function(done): void {
+  it('send - failure in both', function (done): void {
     // GIVEN a XpringClient composed of an XRPClient and a PayID client which both throw errors.
     const xrpClient = new FakeXRPClient(
       fakeBalance,

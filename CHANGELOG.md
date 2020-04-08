@@ -5,7 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## 4.20 - April 7, 2020
+
+This build contains fixes for generated code that may have prevented earlier versions of the 4.x library from building.
+
+## 4.1.0 - April 6, 2020
+
+# Added
+- `XRPTransaction` contains additional synthetic fields to represent the timestamp and hash of the transaction.
+
+## 4.0.0 - April 6, 2020
 
 ## Changed
 - `XRPClient` requires a new parameter in it's constructor that identifies the network it is attached to.
