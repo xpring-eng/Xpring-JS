@@ -22,6 +22,8 @@ This build contains fixes for generated code that may have prevented earlier ver
     (either client side or server side).
     This is only breaking if users are handling special error cases, which were previously `grpc.ServiceError`s when
     calling from node.js, and `grpc-web.Error`s in the browser.
+- `XRPClient` methods now throw `XRPError`s if something goes wrong during the call.
+
 
 ## 3.0.4 - March 24, 2020
 
