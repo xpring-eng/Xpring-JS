@@ -1,12 +1,16 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import TransactionStatus from './transaction-status'
+import XRPLNetwork from '../Common/xrpl-network'
 import XRPTransaction from './model/xrp-transaction'
 
 /**
  * An interface describing XRPClient.
  */
 export default interface XRPClientInterface {
+  /** The XRPL Network of the node that this client is communicating with. */
+  network: XRPLNetwork
+
   /**
    * Retrieve the balance for the given address.
    *
