@@ -1,10 +1,10 @@
 import { assert } from 'chai'
 import bigInt from 'big-integer'
+import FakeWallet from 'xpring-common-js'
 import FakeXRPClient from '../XRP/fakes/fake-xrp-client'
 import FakePayIDClient from '../PayID/fakes/fake-pay-id-client'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import XpringClient from '../../src/Xpring/xpring-client'
-import FakeWallet from '../Common/Fakes/fake-wallet'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 
 /* Default values for the fake XRP Client. These values must be provided but are not varied in testing. */
