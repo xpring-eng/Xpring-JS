@@ -72,8 +72,8 @@ function makeGetTransactionResponse(
   return getTransactionResponse
 }
 
-describe('Default Xpring Client', function(): void {
-  it('Get Account Balance - successful response', async function(): Promise<
+describe('Default Xpring Client', function (): void {
+  it('Get Account Balance - successful response', async function (): Promise<
     void
   > {
     // GIVEN a DefaultXRPClient.
@@ -86,7 +86,7 @@ describe('Default Xpring Client', function(): void {
     assert.exists(balance)
   })
 
-  it('Get Account Balance - classic address', function(done): void {
+  it('Get Account Balance - classic address', function (done): void {
     // GIVEN an XRPClient and a classic address
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
     const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
@@ -99,7 +99,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Get Account Balance - error', function(done): void {
+  it('Get Account Balance - error', function (done): void {
     // GIVEN an XRPClient which wraps an erroring network client.
     const xrpClient = new DefaultXRPClient(fakeErroringNetworkClient)
 
@@ -111,7 +111,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Get Account Balance - malformed response, no balance', function(done): void {
+  it('Get Account Balance - malformed response, no balance', function (done): void {
     // GIVEN an XRPClient which wraps a network client with a malformed response.
     const accountInfoResponse = FakeXRPNetworkClientResponses.defaultAccountInfoResponse()
     accountInfoResponse.getAccountData()!.setBalance(undefined)
@@ -131,7 +131,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Get Payment Status - Unvalidated Transaction and Failure Code', async function(): Promise<
+  it('Get Payment Status - Unvalidated Transaction and Failure Code', async function (): Promise<
     void
   > {
     // Iterate over different types of transaction status codes which represent failures.
@@ -165,7 +165,7 @@ describe('Default Xpring Client', function(): void {
     /* eslint-enable no-await-in-loop */
   })
 
-  it('Get Payment Status - Unvalidated Transaction and Success Code', async function(): Promise<
+  it('Get Payment Status - Unvalidated Transaction and Success Code', async function (): Promise<
     void
   > {
     // GIVEN an XRPClient which will return an unvalidated transaction with a success code.
@@ -191,7 +191,7 @@ describe('Default Xpring Client', function(): void {
     assert.deepEqual(transactionStatus, TransactionStatus.Pending)
   })
 
-  it('Get Payment Status - Validated Transaction and Failure Code', async function(): Promise<
+  it('Get Payment Status - Validated Transaction and Failure Code', async function (): Promise<
     void
   > {
     // Iterate over different types of transaction status codes which represent failures.
@@ -225,7 +225,7 @@ describe('Default Xpring Client', function(): void {
     /* eslint-enable no-await-in-loop */
   })
 
-  it('Get Payment Status - Validated Transaction and Success Code', async function(): Promise<
+  it('Get Payment Status - Validated Transaction and Success Code', async function (): Promise<
     void
   > {
     // GIVEN an XRPClient which will return an validated transaction with a success code.
@@ -251,7 +251,7 @@ describe('Default Xpring Client', function(): void {
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
 
-  it('Get Transaction Status - Node Error', function(done): void {
+  it('Get Transaction Status - Node Error', function (done): void {
     // GIVEN an XRPClient which will error when a transaction status is requested.
     const transactionStatusResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -275,7 +275,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Send XRP Transaction - success with BigInteger', async function() {
+  it('Send XRP Transaction - success with BigInteger', async function () {
     // GIVEN an XRPClient, a wallet, and a BigInteger denomonated amount.
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
     const { wallet } = Wallet.generateRandomWallet()!
@@ -298,7 +298,7 @@ describe('Default Xpring Client', function(): void {
     assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
-  it('Send XRP Transaction - success with number', async function() {
+  it('Send XRP Transaction - success with number', async function () {
     // GIVEN an XRPClient, a wallet, and a number denominated amount.
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
     const { wallet } = Wallet.generateRandomWallet()!
@@ -321,7 +321,7 @@ describe('Default Xpring Client', function(): void {
     assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
-  it('Send XRP Transaction - success with string', async function() {
+  it('Send XRP Transaction - success with string', async function () {
     // GIVEN an XRPClient, a wallet, and a numeric string denominated amount.
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
     const { wallet } = Wallet.generateRandomWallet()!
@@ -344,7 +344,7 @@ describe('Default Xpring Client', function(): void {
     assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
-  it('Send XRP Transaction - failure with invalid string', function(done) {
+  it('Send XRP Transaction - failure with invalid string', function (done) {
     // GIVEN an XRPClient, a wallet and an amount that is invalid.
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
     const { wallet } = Wallet.generateRandomWallet()!
@@ -358,7 +358,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Send XRP Transaction - get fee failure', function(done) {
+  it('Send XRP Transaction - get fee failure', function (done) {
     // GIVEN an XRPClient which will fail to retrieve a fee.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -384,7 +384,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Send XRP Transaction - failure with classic address', function(done) {
+  it('Send XRP Transaction - failure with classic address', function (done) {
     // GIVEN an XRPClient, a wallet, and a classic address as the destination.
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
     const { wallet } = Wallet.generateRandomWallet()!
@@ -399,7 +399,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Send XRP Transaction - get account info failure', function(done) {
+  it('Send XRP Transaction - get account info failure', function (done) {
     // GIVEN an XRPClient which will fail to retrieve account info.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultError,
@@ -425,7 +425,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Send XRP Transaction - submission failure', function(done) {
+  it('Send XRP Transaction - submission failure', function (done) {
     // GIVEN an XRPClient which will to submit a transaction.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -451,7 +451,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Check if account exists - successful network request', async function() {
+  it('Check if account exists - successful network request', async function () {
     // GIVEN a DefaultXRPClient.
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
 
@@ -462,7 +462,7 @@ describe('Default Xpring Client', function(): void {
     assert.equal(exists, true)
   })
 
-  it('Check if account exists - failing network request w/ NOT_FOUND error', async function() {
+  it('Check if account exists - failing network request w/ NOT_FOUND error', async function () {
     // GIVEN a DefaultXRPClient with a network client that will report accounts as not found
     const notFoundError = new FakeGRPCError(
       'FakeGRPCError: account not found',
@@ -483,7 +483,7 @@ describe('Default Xpring Client', function(): void {
     assert.equal(exists, false)
   })
 
-  it('Check if account exists - failing network request w/ CANCELLED error', function(done) {
+  it('Check if account exists - failing network request w/ CANCELLED error', function (done) {
     // GIVEN a DefaultXRPClient with a network client that reports grpc operation as cancelled
     const cancelledError = new FakeGRPCError(
       'FakeGRPCError: operation was cancelled',
@@ -506,7 +506,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Check if account exists - error with classic address', function(done) {
+  it('Check if account exists - error with classic address', function (done) {
     // GIVEN a DefaultXRPClient and a classic address
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
     const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
@@ -519,7 +519,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Payment History - successful response', async function(): Promise<void> {
+  it('Payment History - successful response', async function (): Promise<void> {
     // GIVEN a DefaultXRPClient.
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
 
@@ -533,7 +533,7 @@ describe('Default Xpring Client', function(): void {
     assert.deepEqual(expectedPaymentHistory, paymentHistory)
   })
 
-  it('Payment History - classic address', function(done): void {
+  it('Payment History - classic address', function (done): void {
     // GIVEN an XRPClient and a classic address
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
     const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
@@ -546,7 +546,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Payment History - network failure', function(done): void {
+  it('Payment History - network failure', function (done): void {
     // GIVEN an XRPClient which wraps an erroring network client.
     const xrpClient = new DefaultXRPClient(fakeErroringNetworkClient)
 
@@ -558,7 +558,7 @@ describe('Default Xpring Client', function(): void {
     })
   })
 
-  it('Payment History - non-payment transactions', async function(): Promise<
+  it('Payment History - non-payment transactions', async function (): Promise<
     void
   > {
     // GIVEN an XRPClient client which will return a transaction history which contains non-payment transactions
@@ -597,7 +597,7 @@ describe('Default Xpring Client', function(): void {
     assert.deepEqual(expectedTransactionHistory, transactionHistory)
   })
 
-  it('Payment History - invalid Payment', function(done) {
+  it('Payment History - invalid Payment', function (done) {
     // GIVEN an XRPClient client which will return a transaction history which contains a malformed payment.
     const invalidHistoryNetworkResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
