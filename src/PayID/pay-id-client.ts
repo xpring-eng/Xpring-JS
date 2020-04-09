@@ -24,6 +24,16 @@ interface PayIDComponents {
  */
 export default class PayIDClient {
   /**
+   * Initialize a new PayID client.
+   *
+   * Networks in this constructor take the form of an asset and an optional network (<asset>-<network>), for instance:
+   * - xrpl-testnet
+   * - xrpl-mainnet
+   * - eth-rinkby
+   * - ach
+   *
+   * TODO(keefertaylor): Link a canonical list at payid.org when available.
+   *
    * @param network The network that addresses will be resolved on.
    */
   constructor(public readonly network: string) {}
