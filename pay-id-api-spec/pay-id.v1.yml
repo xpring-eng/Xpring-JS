@@ -73,13 +73,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignatureWrapper_Compliance'
+                $ref: '#/components/schemas/SignatureWrapper_Invoice'
             application/xrpl-mainnet+json:
               schema:
-                $ref: '#/components/schemas/SignatureWrapper_Compliance'
+                $ref: '#/components/schemas/SignatureWrapper_Invoice'
             application/xrpl-testnet+json:
               schema:
-                $ref: '#/components/schemas/SignatureWrapper_Compliance'
+                $ref: '#/components/schemas/SignatureWrapper_Invoice'
         '400':
           description: Bad Request
         '404':
@@ -96,7 +96,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignatureWrapper_Invoice'
+              $ref: '#/components/schemas/SignatureWrapper_Compliance'
       operationId: post-path-invoice
   '/receipt':
     post:

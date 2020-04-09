@@ -2,6 +2,7 @@ import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import PayIDClientInterface from '../PayID/pay-id-client-interface'
 import XRPClientInterface from '../XRP/xrp-client-interface'
+import XpringError from './xpring-error'
 
 /**
  * Composes interactions of Xpring services.
@@ -12,11 +13,19 @@ export default class XpringClient {
    *
    * @param payIDClient A Pay ID Client used to interact with the Pay ID protocol.
    * @param xrpClient An XRP Client used to interact with the XRP Ledger protocol.
+   * @throws A XpringError if the networks of the inputs do not match.
    */
   constructor(
     private readonly payIDClient: PayIDClientInterface,
     private readonly xrpClient: XRPClientInterface,
-  ) {}
+  ) {
+    // Verify that networks match.
+    const payIDNetwork = payIDClient.network
+    const xrpNetwork = xrpClient.network
+    if (payIDNetwork !== xrpNetwork) {
+      throw XpringError.mismatchedNetworks
+    }
+  }
 
   /**
    * Send the given amount of XRP from the source wallet to the destination Pay ID.

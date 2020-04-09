@@ -19,13 +19,13 @@ const payIDClient = new PayIDClient(network)
 
 // An XRPClient under test.
 const rippledURL = 'test.xrp.xpring.io:50051'
-const xrpClient = new XRPClient(rippledURL)
+const xrpClient = new XRPClient(rippledURL, XRPLNetwork.Test)
 
 // A XpringClient under test.
 const xpringClient = new XpringClient(payIDClient, xrpClient)
 
-describe('Xpring Integration Tests', function(): void {
-  it('Send XRP TestNet', async function(): Promise<void> {
+describe('Xpring Integration Tests', function (): void {
+  it('Send XRP TestNet', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID that will resolve.

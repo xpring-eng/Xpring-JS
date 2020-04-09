@@ -1,7 +1,14 @@
+import XRPLNetwork from '../Common/xrpl-network'
+
 /**
  * An interface for a PayID client.
  */
 export default interface PayIDClient {
+  /**
+   * @param network The network that addresses will be resolved on.
+   */
+  network: XRPLNetwork
+
   /**
    * Retrieve the XRP Address associated with a PayID.
    *

@@ -28,28 +28,10 @@ import GRPCNetworkClient from './grpc-xrp-network-client'
 import GRPCNetworkClientWeb from './grpc-xrp-network-client.web'
 import { XRPNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
+import XRPError from './xrp-error'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
-
-/**
- * Error messages from XRPClient.
- */
-export class XRPClientErrorMessages {
-  public static readonly malformedResponse = 'Malformed Response.'
-
-  public static readonly signingFailure = 'Unable to sign the transaction'
-
-  public static readonly unimplemented = 'Unimplemented.'
-
-  /* eslint-disable @typescript-eslint/indent */
-  public static readonly xAddressRequired =
-    'Please use the X-Address format. See: https://xrpaddress.info/.'
-  /* eslint-enable @typescript-eslint/indent */
-
-  public static readonly paymentConversionFailure =
-    'Could not convert payment transaction: (transaction). Please file a bug at https://github.com/xpring-eng/Xpring-JS/issues'
-}
 
 /**
  * DefaultXRPClient is a client which interacts with the Xpring platform.
@@ -90,7 +72,7 @@ class DefaultXRPClient implements XRPClientDecorator {
   public async getBalance(address: string): Promise<BigInteger> {
     const classicAddress = Utils.decodeXAddress(address)
     if (!classicAddress) {
-      return Promise.reject(new Error(XRPClientErrorMessages.xAddressRequired))
+      throw XRPError.xAddressRequired
     }
 
     const account = this.networkClient.AccountAddress()
@@ -102,7 +84,7 @@ class DefaultXRPClient implements XRPClientDecorator {
     const accountInfo = await this.networkClient.getAccountInfo(request)
     const accountData = accountInfo.getAccountData()
     if (!accountData) {
-      throw new Error(XRPClientErrorMessages.malformedResponse)
+      throw XRPError.malformedResponse
     }
 
     const balance = accountData
@@ -111,7 +93,7 @@ class DefaultXRPClient implements XRPClientDecorator {
       ?.getXrpAmount()
       ?.getDrops()
     if (!balance) {
-      throw new Error(XRPClientErrorMessages.malformedResponse)
+      throw XRPError.malformedResponse
     }
 
     return bigInt(balance)
@@ -157,12 +139,12 @@ class DefaultXRPClient implements XRPClientDecorator {
     sender: Wallet,
   ): Promise<string> {
     if (!Utils.isValidXAddress(destinationAddress)) {
-      throw new Error(XRPClientErrorMessages.xAddressRequired)
+      throw XRPError.xAddressRequired
     }
 
     const classicAddress = Utils.decodeXAddress(sender.getAddress())
     if (!classicAddress) {
-      throw new Error(XRPClientErrorMessages.xAddressRequired)
+      throw XRPError.xAddressRequired
     }
 
     const normalizedDrops = drops.toString()
@@ -216,7 +198,7 @@ class DefaultXRPClient implements XRPClientDecorator {
 
     const signedTransaction = Signer.signTransaction(transaction, sender)
     if (!signedTransaction) {
-      throw new Error(XRPClientErrorMessages.malformedResponse)
+      throw XRPError.malformedResponse
     }
 
     const submitTransactionRequest = this.networkClient.SubmitTransactionRequest()
@@ -250,7 +232,7 @@ class DefaultXRPClient implements XRPClientDecorator {
 
     const fee = getFeeResponse.getFee()?.getMinimumFee()
     if (!fee) {
-      throw new Error(XRPClientErrorMessages.malformedResponse)
+      throw XRPError.malformedResponse
     }
 
     return fee
@@ -270,12 +252,12 @@ class DefaultXRPClient implements XRPClientDecorator {
 
     const accountInfo = await this.networkClient.getAccountInfo(request)
     if (!accountInfo) {
-      throw new Error(XRPClientErrorMessages.malformedResponse)
+      throw XRPError.malformedResponse
     }
 
     const accountData = accountInfo.getAccountData()
     if (!accountData) {
-      throw new Error(XRPClientErrorMessages.malformedResponse)
+      throw XRPError.malformedResponse
     }
 
     return accountData
@@ -290,7 +272,7 @@ class DefaultXRPClient implements XRPClientDecorator {
   public async accountExists(address: string): Promise<boolean> {
     const classicAddress = Utils.decodeXAddress(address)
     if (!classicAddress) {
-      throw new Error(XRPClientErrorMessages.xAddressRequired)
+      throw XRPError.xAddressRequired
     }
     try {
       await this.getBalance(address)
@@ -316,7 +298,7 @@ class DefaultXRPClient implements XRPClientDecorator {
   public async paymentHistory(address: string): Promise<Array<XRPTransaction>> {
     const classicAddress = Utils.decodeXAddress(address)
     if (!classicAddress) {
-      throw new Error(XRPClientErrorMessages.xAddressRequired)
+      throw XRPError.xAddressRequired
     }
 
     const account = this.networkClient.AccountAddress()
@@ -339,9 +321,9 @@ class DefaultXRPClient implements XRPClientDecorator {
       const transaction = getTransactionResponse.getTransaction()
       switch (transaction?.getTransactionDataCase()) {
         case Transaction.TransactionDataCase.PAYMENT: {
-          const xrpTransaction = XRPTransaction.from(transaction)
+          const xrpTransaction = XRPTransaction.from(getTransactionResponse)
           if (!xrpTransaction) {
-            throw new Error(XRPClientErrorMessages.paymentConversionFailure)
+            throw XRPError.paymentConversionFailure
           } else {
             payments.push(xrpTransaction)
           }
