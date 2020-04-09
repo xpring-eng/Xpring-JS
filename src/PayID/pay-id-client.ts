@@ -61,12 +61,9 @@ export default class PayIDClient implements PayIDClientInterface {
     // Accept only the given network in response.
     const accepts = [`application/xrpl-${this.network}+json`]
 
-    const { error, data } = await this.makeRPC<PaymentInformation>(
-      basePath,
-      path,
-      accepts,
-      PaymentInformation,
-    )
+    const { error, data } = await PayIDClient.callSwaggerRPC<
+      PaymentInformation
+    >(basePath, path, accepts, PaymentInformation)
 
     if (error) {
       if (error.status === 404) {
@@ -101,12 +98,9 @@ export default class PayIDClient implements PayIDClientInterface {
     // Accept only the given network in response.
     const accepts = [`application/xrpl-${this.network}+json`]
 
-    const { error, data } = await this.makeRPC<SignatureWrapperInvoice>(
-      basePath,
-      path,
-      accepts,
-      SignatureWrapperInvoice,
-    )
+    const { error, data } = await PayIDClient.callSwaggerRPC<
+      SignatureWrapperInvoice
+    >(basePath, path, accepts, SignatureWrapperInvoice)
 
     // TODO(keefertaylor): Provide more granular error handling.
     if (error) {
@@ -280,20 +274,21 @@ export default class PayIDClient implements PayIDClientInterface {
   }
 
   /**
-   * Make an RPC with Swagger.
+   * Call an RPC endpoint with Swagger.
    *
    * This method provides access to bare metal components of Swagger's generated code. This is useful to do things like
    * modifying headers dynamically.
    *
-   * NOTE: This method assumes an HTTP GET. In the future, this can be configurable, if so desired.
+   * NOTE: For simplicity, this method assumes an HTTP GET. Query parameters should be encoded in the `path` parameter. In
+   * the future, this can be configurable if so desired.
    *
    * @param basePath The base URL for the RPC.
-   * @param path The path for the request. This value is taken as is, clients of this method are responsible for escaping or other transformations.
+   * @param path The path for the request. This value is taken as is, clients of this method are responsible for escaping
+   *             or other transformations.
    * @param accepts An array of acceptable Content-Type headers, ordered in preference from most to least desirable.
    * @param returnType The type of the returned object.
    */
-  // eslint-disable-next-line class-methods-use-this
-  async makeRPC<T>(
+  private static async callSwaggerRPC<T>(
     basePath: string,
     path: string,
     accepts: Array<string>,
