@@ -24,6 +24,21 @@ enum HTTPRequestType {
   Post = 'POST',
 }
 
+// TODO(keefertaylor): Do not use any. Either generate .d.ts files by using a typescript code generator or manually create interfaces.
+/** The result of a call to a Swagger RPC. */
+interface SwaggerCallResult<T> {
+  /** An error associated with the response. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  error: any
+
+  /** The complete HTTP response. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  response: any
+
+  /** The data returned by the call. */
+  data: T
+}
+
 /**
  * A client for PayID.
  *
@@ -50,79 +65,75 @@ export default class PayIDClient implements PayIDClientInterface {
     // Accept only the given network in response.
     const accepts = [`application/xrpl-${this.network}+json`]
 
-    return new Promise((resolve, reject) => {
-      try {
-        this.makeRPC<PaymentInformation>(
-          basePath,
-          payIDComponents.path,
-          HTTPRequestType.Get,
-          accepts,
-          PaymentInformation,
-          (error, data, _response) => {
-            if (error) {
-              if (error.status === 404) {
-                const message = `Could not resolve ${payID} on network ${this.network}`
-                reject(new PayIDError(PayIDErrorType.MappingNotFound, message))
-              } else {
-                const message = `${error.status}: ${error.response?.text}`
-                reject(
-                  new PayIDError(PayIDErrorType.UnexpectedResponse, message),
-                )
-              }
-              // TODO(keefertaylor): make sure the header matches the request.
-            } else if (data?.addressDetails?.address) {
-              resolve(data.addressDetails.address)
-            } else {
-              reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
-            }
-          },
-        )
-      } catch (exception) {
-        // Something really wrong happened, we don't have enough information to tell. This could be a
-        // transient network error, the payment pointer doesn't exist, or any other number of errors.
-        reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
+    const { error, data } = await this.makeRPC<PaymentInformation>(
+      basePath,
+      payIDComponents.path,
+      HTTPRequestType.Get,
+      accepts,
+      PaymentInformation,
+    )
+
+    if (error) {
+      if (error.status === 404) {
+        const message = `Could not resolve ${payID} on network ${this.network}`
+        throw new PayIDError(PayIDErrorType.MappingNotFound, message)
+      } else {
+        const message = `${error.status}: ${error.response?.text}`
+        throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
       }
-    })
+      // TODO(keefertaylor): make sure the header matches the request.
+    } else if (data?.addressDetails?.address) {
+      return data.addressDetails.address
+    } else {
+      throw new PayIDError(PayIDErrorType.UnexpectedResponse)
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
-  makeRPC<T>(
+  async makeRPC<T>(
     basePath: string,
     path: string,
     requestType: HTTPRequestType,
     accepts: Array<string>,
+    // The next line is T.type.
+    // TODO(keefertaylor): Figure out a way to express this in typescript.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     returnType: any,
-    // TODO(keefertaylor): Type these. I believe we can generate .d.ts files for swagger or we can manually type these interfaces.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    callback: (error: any, data: T, response: any) => void,
-  ): void {
-    const client = new ApiClient()
-    client.basePath = basePath
+  ): Promise<SwaggerCallResult<T>> {
+    return new Promise((resolve, _reject) => {
+      const client = new ApiClient()
+      client.basePath = basePath
 
-    // NOTE: Swagger produces a higher level client that does not require this level of configuration,
-    // however access to Accept headers is not available unless we access the underlying class.
-    const postBody = null
-    const queryParams = {}
-    const headerParams = {}
-    const formParams = {}
-    const authNames = []
-    const contentTypes = []
+      // NOTE: Swagger produces a higher level client that does not require this level of configuration,
+      // however access to Accept headers is not available unless we access the underlying class.
+      const postBody = null
+      const queryParams = {}
+      const headerParams = {}
+      const formParams = {}
+      const authNames = []
+      const contentTypes = []
 
-    client.callApi(
-      path,
-      requestType,
-      {},
-      queryParams,
-      headerParams,
-      formParams,
-      postBody,
-      authNames,
-      contentTypes,
-      accepts,
-      returnType,
-      callback,
-    )
+      client.callApi(
+        path,
+        requestType,
+        {},
+        queryParams,
+        headerParams,
+        formParams,
+        postBody,
+        authNames,
+        contentTypes,
+        accepts,
+        returnType,
+        (error, data, response) => {
+          resolve({
+            error,
+            data,
+            response,
+          })
+        },
+      )
+    })
   }
 
   /**
