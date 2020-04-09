@@ -2,8 +2,6 @@ import { PayIDUtils } from 'xpring-common-js'
 import PaymentInformation from './Generated/model/PaymentInformation'
 import ApiClient from './Generated/ApiClient'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
-import PayIDClientInterface from './pay-id-client-interface'
-import XRPLNetwork from '../Common/xrpl-network'
 import SignatureWrapperInvoice from './Generated/model/SignatureWrapperInvoice'
 import Value from './Generated/model/Value'
 import Originator from './Generated/model/Originator'
@@ -24,11 +22,13 @@ interface PayIDComponents {
  *
  * @warning This class is experimental and should not be used in production applications.
  */
-export default class PayIDClient implements PayIDClientInterface {
+export default class PayIDClient {
   /**
    * @param network The network that addresses will be resolved on.
    */
-  constructor(public readonly network: XRPLNetwork) {}
+  constructor(public readonly network: string) {
+    console.log(this.network)
+  }
 
   /**
    * Retrieve the XRP Address associated with a PayID.
@@ -45,7 +45,7 @@ export default class PayIDClient implements PayIDClientInterface {
     client.basePath = `https://${payIDComponents.host}`
 
     // Accept only the given network in response.
-    const accepts = [`application/xrpl-${this.network}+json`]
+    const accepts = [`application/${this.network}+json`]
 
     return new Promise((resolve, reject) => {
       // NOTE: Swagger produces a higher level client that does not require this level of configuration,
@@ -116,7 +116,7 @@ export default class PayIDClient implements PayIDClientInterface {
     client.basePath = `https://${payIDComponents.host}`
 
     // Accept only the given network in response.
-    const accepts = [`application/xrpl-${this.network}+json`]
+    const accepts = [`application/${this.network}+json`]
 
     return new Promise((resolve, reject) => {
       // NOTE: Swagger produces a higher level client that does not require this level of configuration,

@@ -1,6 +1,6 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
-import PayIDClientInterface from '../PayID/pay-id-client-interface'
+import XRPPayIDClientInterface from '../PayID/xrp-pay-id-client-interface'
 import XRPClientInterface from '../XRP/xrp-client-interface'
 import XpringError from './xpring-error'
 
@@ -16,11 +16,11 @@ export default class XpringClient {
    * @throws A XpringError if the networks of the inputs do not match.
    */
   constructor(
-    private readonly payIDClient: PayIDClientInterface,
+    private readonly payIDClient: XRPPayIDClientInterface,
     private readonly xrpClient: XRPClientInterface,
   ) {
     // Verify that networks match.
-    const payIDNetwork = payIDClient.network
+    const payIDNetwork = payIDClient.xrplNetwork
     const xrpNetwork = xrpClient.network
     if (payIDNetwork !== xrpNetwork) {
       throw XpringError.mismatchedNetworks
