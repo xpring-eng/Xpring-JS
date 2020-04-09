@@ -47,7 +47,7 @@
                         <configuration>
                             <inputSpec>../pay-id-api-spec/pay-id.v1.yml</inputSpec>
                             <language>javascript</language>
-                            <output>./.tmp_swagger</output>
+                            <output>../.tmp_swagger</output>
                             <generateModels>true</generateModels>
                             <generateModelTests>true</generateModelTests>
                             <generateModelDocumentation>true</generateModelDocumentation>

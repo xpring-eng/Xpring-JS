@@ -35,11 +35,6 @@ mkdir -p $DESTINATION_FOLDER
 
 cd scripts && mvn clean compile && cd ..
 
-# java -jar swagger-codegen.jar generate \
-#   --lang $LANG \
-#   --input $PAY_ID_OPEN_API_SPEC \
-#   -o $TMP_SWAGGER_DIR \
-
 echo "Swagger Generation Complete!"
 
 ##########################################################################
@@ -54,9 +49,9 @@ echo "Swagger Generation Complete!"
 echo "Cleaning Up...."
 
 # Copy Source files
-cp -r scripts/$GENERATED_SOURCES_FOLDER/* $DESTINATION_FOLDER
-# Remove everythinge else.
-# rm -rf scripts/$TMP_SWAGGER_DIR
+cp -r $GENERATED_SOURCES_FOLDER/* $DESTINATION_FOLDER
+# Remove everything else.
+rm -rf $TMP_SWAGGER_DIR
 
 echo "Done Cleaning Up"
 echo "All Done!"
