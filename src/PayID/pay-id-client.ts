@@ -50,62 +50,18 @@ export default class PayIDClient implements PayIDClientInterface {
     // Accept only the given network in response.
     const accepts = [`application/xrpl-${this.network}+json`]
 
-    // eslint-disable-next-line no-useless-catch
-    try {
-      const result = await this.makeRPC(
-        basePath,
-        payIDComponents.path,
-        HTTPRequestType.Get,
-        accepts,
-        `Could not resolve ${payID} on network ${this.network}`,
-        PaymentInformation,
-      )
-      return result
-    } catch (e) {
-      throw e
-    }
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  async makeRPC(
-    basePath: string,
-    path: string,
-    requestType: HTTPRequestType,
-    accepts: Array<string>,
-    errorMessage: string,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    returnType: any,
-  ): Promise<string> {
-    const client = new ApiClient()
-    client.basePath = basePath
-
     return new Promise((resolve, reject) => {
-      // NOTE: Swagger produces a higher level client that does not require this level of configuration,
-      // however access to Accept headers is not available unless we access the underlying class.
-      const postBody = null
-      const queryParams = {}
-      const headerParams = {}
-      const formParams = {}
-      const authNames = []
-      const contentTypes = []
-
       try {
-        client.callApi(
-          path,
-          requestType,
-          {},
-          queryParams,
-          headerParams,
-          formParams,
-          postBody,
-          authNames,
-          contentTypes,
+        this.makeRPC<PaymentInformation>(
+          basePath,
+          payIDComponents.path,
+          HTTPRequestType.Get,
           accepts,
-          returnType,
+          PaymentInformation,
           (error, data, _response) => {
             if (error) {
               if (error.status === 404) {
-                const message = errorMessage
+                const message = `Could not resolve ${payID} on network ${this.network}`
                 reject(new PayIDError(PayIDErrorType.MappingNotFound, message))
               } else {
                 const message = `${error.status}: ${error.response?.text}`
@@ -122,10 +78,51 @@ export default class PayIDClient implements PayIDClientInterface {
           },
         )
       } catch (exception) {
-        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
+        // Something really wrong happened, we don't have enough information to tell. This could be a
+        // transient network error, the payment pointer doesn't exist, or any other number of errors.
         reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
       }
     })
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  makeRPC<T>(
+    basePath: string,
+    path: string,
+    requestType: HTTPRequestType,
+    accepts: Array<string>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    returnType: any,
+    // TODO(keefertaylor): Type these. I believe we can generate .d.ts files for swagger or we can manually type these interfaces.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    callback: (error: any, data: T, response: any) => void,
+  ): void {
+    const client = new ApiClient()
+    client.basePath = basePath
+
+    // NOTE: Swagger produces a higher level client that does not require this level of configuration,
+    // however access to Accept headers is not available unless we access the underlying class.
+    const postBody = null
+    const queryParams = {}
+    const headerParams = {}
+    const formParams = {}
+    const authNames = []
+    const contentTypes = []
+
+    client.callApi(
+      path,
+      requestType,
+      {},
+      queryParams,
+      headerParams,
+      formParams,
+      postBody,
+      authNames,
+      contentTypes,
+      accepts,
+      returnType,
+      callback,
+    )
   }
 
   /**
