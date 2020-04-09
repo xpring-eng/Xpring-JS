@@ -19,6 +19,11 @@ interface PayIDComponents {
   path: string
 }
 
+// enum HTTPRequestType {
+//   Get = 'GET',
+//   Post = 'POST',
+// }
+
 /**
  * A client for PayID.
  *
@@ -40,32 +45,53 @@ export default class PayIDClient implements PayIDClientInterface {
    */
   async xrpAddressForPayID(payID: string): Promise<string> {
     const payIDComponents = PayIDClient.parsePayID(payID)
-
-    const client = new ApiClient()
-    client.basePath = `https://${payIDComponents.host}`
+    const basePath = `https://${payIDComponents.host}`
 
     // Accept only the given network in response.
     const accepts = [`application/xrpl-${this.network}+json`]
+
+    // eslint-disable-next-line no-useless-catch
+    try {
+      const result = await this.makeRPC(
+        basePath,
+        payIDComponents.path,
+        accepts,
+        `Could not resolve ${payID} on network ${this.network}`,
+        PaymentInformation,
+      )
+      return result
+    } catch (e) {
+      throw e
+    }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async makeRPC(
+    basePath: string,
+    path: string,
+    accepts: Array<string>,
+    errorMessage: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    returnType: any,
+  ): Promise<string> {
+    const client = new ApiClient()
+    client.basePath = basePath
 
     return new Promise((resolve, reject) => {
       // NOTE: Swagger produces a higher level client that does not require this level of configuration,
       // however access to Accept headers is not available unless we access the underlying class.
       const postBody = null
-      const pathParams = {
-        path: payIDComponents.path,
-      }
       const queryParams = {}
       const headerParams = {}
       const formParams = {}
       const authNames = []
       const contentTypes = []
-      const returnType = PaymentInformation
 
       try {
         client.callApi(
-          payIDComponents.path,
+          path,
           'GET',
-          pathParams,
+          {},
           queryParams,
           headerParams,
           formParams,
@@ -77,7 +103,7 @@ export default class PayIDClient implements PayIDClientInterface {
           (error, data, _response) => {
             if (error) {
               if (error.status === 404) {
-                const message = `Could not resolve ${payID} on network ${this.network}`
+                const message = errorMessage
                 reject(new PayIDError(PayIDErrorType.MappingNotFound, message))
               } else {
                 const message = `${error.status}: ${error.response?.text}`
