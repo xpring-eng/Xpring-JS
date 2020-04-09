@@ -31,6 +31,10 @@ jobs:
             sdk install java
             export PATH=/home/circleci/.sdkman/candidates/java/current/bin/:$PATH
 
+      - run:
+          name: "Install Maven"
+          command: |
+            sudo apt install maven
 
       - run:
           name: "Install protoc plugin"
