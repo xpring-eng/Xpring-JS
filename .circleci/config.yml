@@ -34,7 +34,7 @@ jobs:
       - run:
           name: "Install Maven"
           command: |
-            apt-get update
+            sudo apt-get update
             sudo apt install maven
 
       - run:
