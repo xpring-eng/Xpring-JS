@@ -19,10 +19,10 @@ interface PayIDComponents {
   path: string
 }
 
-// enum HTTPRequestType {
-//   Get = 'GET',
-//   Post = 'POST',
-// }
+enum HTTPRequestType {
+  Get = 'GET',
+  Post = 'POST',
+}
 
 /**
  * A client for PayID.
@@ -55,6 +55,7 @@ export default class PayIDClient implements PayIDClientInterface {
       const result = await this.makeRPC(
         basePath,
         payIDComponents.path,
+        HTTPRequestType.Get,
         accepts,
         `Could not resolve ${payID} on network ${this.network}`,
         PaymentInformation,
@@ -69,6 +70,7 @@ export default class PayIDClient implements PayIDClientInterface {
   async makeRPC(
     basePath: string,
     path: string,
+    requestType: HTTPRequestType,
     accepts: Array<string>,
     errorMessage: string,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -90,7 +92,7 @@ export default class PayIDClient implements PayIDClientInterface {
       try {
         client.callApi(
           path,
-          'GET',
+          requestType,
           {},
           queryParams,
           headerParams,
