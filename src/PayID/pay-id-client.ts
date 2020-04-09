@@ -26,9 +26,7 @@ export default class PayIDClient {
   /**
    * @param network The network that addresses will be resolved on.
    */
-  constructor(public readonly network: string) {
-    console.log(this.network)
-  }
+  constructor(public readonly network: string) {}
 
   /**
    * Retrieve the XRP Address associated with a PayID.
