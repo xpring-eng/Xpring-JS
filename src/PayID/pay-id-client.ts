@@ -61,13 +61,14 @@ export default class PayIDClient implements PayIDClientInterface {
   async xrpAddressForPayID(payID: string): Promise<string> {
     const payIDComponents = PayIDClient.parsePayID(payID)
     const basePath = `https://${payIDComponents.host}`
+    const { path } = payIDComponents
 
     // Accept only the given network in response.
     const accepts = [`application/xrpl-${this.network}+json`]
 
     const { error, data } = await this.makeRPC<PaymentInformation>(
       basePath,
-      payIDComponents.path,
+      path,
       HTTPRequestType.Get,
       accepts,
       PaymentInformation,
@@ -126,6 +127,7 @@ export default class PayIDClient implements PayIDClientInterface {
         accepts,
         returnType,
         (error, data, response) => {
+          // Transform results of the callback to a wrapper object.
           resolve({
             error,
             data,
@@ -147,61 +149,30 @@ export default class PayIDClient implements PayIDClientInterface {
     nonce: string,
   ): Promise<SignatureWrapperInvoice> {
     const payIDComponents = PayIDClient.parsePayID(payID)
-
-    const client = new ApiClient()
-    client.basePath = `https://${payIDComponents.host}`
+    const basePath = `https://${payIDComponents.host}`
+    const path = `${payIDComponents.path}/invoice?nonce=${nonce}`
 
     // Accept only the given network in response.
     const accepts = [`application/xrpl-${this.network}+json`]
 
-    return new Promise((resolve, reject) => {
-      // NOTE: Swagger produces a higher level client that does not require this level of configuration,
-      // however access to Accept headers is not available unless we access the underlying class.
-      // TODO(keefertaylor): Dedupe this with the above information.
-      const postBody = null
-      const pathParams = {
-        path: payIDComponents.path,
-      }
-      const queryParams = {
-        nonce,
-      }
-      const headerParams = {}
-      const formParams = {}
-      const authNames = []
-      const contentTypes = []
-      const returnType = SignatureWrapperInvoice
+    const { error, data } = await this.makeRPC<SignatureWrapperInvoice>(
+      basePath,
+      path,
+      HTTPRequestType.Get,
+      accepts,
+      SignatureWrapperInvoice,
+    )
 
-      try {
-        client.callApi(
-          `${payIDComponents.path}/invoice`,
-          'GET',
-          pathParams,
-          queryParams,
-          headerParams,
-          formParams,
-          postBody,
-          authNames,
-          contentTypes,
-          accepts,
-          returnType,
-          (error, data, _response) => {
-            // TODO(keefertaylor): Provide more granular error handling.
-            if (error) {
-              const message = `${error.status}: ${error.response?.text}`
-              reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
-              // TODO(keefertaylor): make sure the header matches the request.
-            } else if (data) {
-              resolve(data)
-            } else {
-              reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
-            }
-          },
-        )
-      } catch (exception) {
-        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
-        reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
-      }
-    })
+    // TODO(keefertaylor): Provide more granular error handling.
+    if (error) {
+      const message = `${error.status}: ${error.response?.text}`
+      throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
+      // TODO(keefertaylor): make sure the header matches the request.
+    } else if (data) {
+      return data
+    } else {
+      throw new PayIDError(PayIDErrorType.UnexpectedResponse)
+    }
   }
 
   /**
