@@ -19,13 +19,8 @@ interface PayIDComponents {
   path: string
 }
 
-enum HTTPRequestType {
-  Get = 'GET',
-  Post = 'POST',
-}
-
 // TODO(keefertaylor): Do not use any. Either generate .d.ts files by using a typescript code generator or manually create interfaces.
-/** The result of a call to a Swagger RPC. */
+/** The result of a call to a Swagger RPC which fetched a response of type T. */
 interface SwaggerCallResult<T> {
   /** An error associated with the response. */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,7 +64,6 @@ export default class PayIDClient implements PayIDClientInterface {
     const { error, data } = await this.makeRPC<PaymentInformation>(
       basePath,
       path,
-      HTTPRequestType.Get,
       accepts,
       PaymentInformation,
     )
@@ -94,7 +88,6 @@ export default class PayIDClient implements PayIDClientInterface {
   async makeRPC<T>(
     basePath: string,
     path: string,
-    requestType: HTTPRequestType,
     accepts: Array<string>,
     // The next line is T.type.
     // TODO(keefertaylor): Figure out a way to express this in typescript.
@@ -107,7 +100,11 @@ export default class PayIDClient implements PayIDClientInterface {
 
       // NOTE: Swagger produces a higher level client that does not require this level of configuration,
       // however access to Accept headers is not available unless we access the underlying class.
+      //
+      // NOTE: At some point additional fields may need to be generalized (ex. httpMethod). These fields
+      // are hidden for convenience and configurability and may be exposed when needed.
       const postBody = null
+      const httpMethod = 'GET'
       const queryParams = {}
       const headerParams = {}
       const formParams = {}
@@ -116,7 +113,7 @@ export default class PayIDClient implements PayIDClientInterface {
 
       client.callApi(
         path,
-        requestType,
+        httpMethod,
         {},
         queryParams,
         headerParams,
@@ -158,7 +155,6 @@ export default class PayIDClient implements PayIDClientInterface {
     const { error, data } = await this.makeRPC<SignatureWrapperInvoice>(
       basePath,
       path,
-      HTTPRequestType.Get,
       accepts,
       SignatureWrapperInvoice,
     )
@@ -253,27 +249,31 @@ export default class PayIDClient implements PayIDClientInterface {
 
     const apiInstance = new DefaultApi(client)
 
-    return new Promise((resolve, reject) => {
-      try {
-        apiInstance.postPathInvoice(
-          { body: signatureWrapper },
-          (error, data, _response) => {
-            // TODO(keefertaylor): Provide more granular error handling.
-            if (error) {
-              const message = `${error.status}: ${error.response?.text}`
-              reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
-            } else if (data) {
-              resolve(data)
-            } else {
-              reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
-            }
-          },
-        )
-      } catch (exception) {
-        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
-        reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
-      }
+    const { error, data } = await new Promise<
+      SwaggerCallResult<SignatureWrapperInvoice>
+    >((resolve, _reject) => {
+      apiInstance.postPathInvoice(
+        { body: signatureWrapper },
+        (swaggerError, swaggerData, response) => {
+          // Transform results of the callback to a wrapper object.
+          resolve({
+            error: swaggerError,
+            data: swaggerData,
+            response,
+          })
+        },
+      )
     })
+
+    // TODO(keefertaylor): Provide more granular error handling.
+    if (error) {
+      const message = `${error.status}: ${error.response?.text}`
+      throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
+    } else if (data) {
+      return data
+    } else {
+      throw new PayIDError(PayIDErrorType.UnexpectedResponse)
+    }
   }
 
   /**
