@@ -84,57 +84,6 @@ export default class PayIDClient implements PayIDClientInterface {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  async makeRPC<T>(
-    basePath: string,
-    path: string,
-    accepts: Array<string>,
-    // The next line is T.type.
-    // TODO(keefertaylor): Figure out a way to express this in typescript.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    returnType: any,
-  ): Promise<SwaggerCallResult<T>> {
-    return new Promise((resolve, _reject) => {
-      const client = new ApiClient()
-      client.basePath = basePath
-
-      // NOTE: Swagger produces a higher level client that does not require this level of configuration,
-      // however access to Accept headers is not available unless we access the underlying class.
-      //
-      // NOTE: At some point additional fields may need to be generalized (ex. httpMethod). These fields
-      // are hidden for convenience and configurability and may be exposed when needed.
-      const postBody = null
-      const httpMethod = 'GET'
-      const queryParams = {}
-      const headerParams = {}
-      const formParams = {}
-      const authNames = []
-      const contentTypes = []
-
-      client.callApi(
-        path,
-        httpMethod,
-        {},
-        queryParams,
-        headerParams,
-        formParams,
-        postBody,
-        authNames,
-        contentTypes,
-        accepts,
-        returnType,
-        (error, data, response) => {
-          // Transform results of the callback to a wrapper object.
-          resolve({
-            error,
-            data,
-            response,
-          })
-        },
-      )
-    })
-  }
-
   /**
    * Generate a new invoice with compliance requests.
    *
@@ -304,25 +253,93 @@ export default class PayIDClient implements PayIDClientInterface {
     client.basePath = `https://${payIDComponents.host}${payIDComponents.path}`
 
     const apiInstance = new DefaultApi(client)
-    const opts = {
-      body: payload,
-    }
 
-    return new Promise((resolve, reject) => {
-      try {
-        apiInstance.postPathReceipt(opts, (error, _data, _response) => {
-          // TODO(keefertaylor): Provide more specific error handling here.
-          if (error) {
-            const message = `${error.status}: ${error.response?.text}`
-            reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
-          } else {
-            resolve()
-          }
-        })
-      } catch (exception) {
-        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
-        reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
-      }
+    const { error } = await new Promise<
+      SwaggerCallResult<SignatureWrapperInvoice>
+    >((resolve, _reject) => {
+      apiInstance.postPathReceipt(
+        {
+          body: payload,
+        },
+        (swaggerError, swaggerData, response) => {
+          // Transform results of the callback to a wrapper object.
+          resolve({
+            error: swaggerError,
+            data: swaggerData,
+            response,
+          })
+        },
+      )
+    })
+
+    // TODO(keefertaylor): Provide more specific error handling here.
+    if (error) {
+      const message = `${error.status}: ${error.response?.text}`
+      throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
+    }
+  }
+
+  /**
+   * Make an RPC with Swagger.
+   *
+   * This method provides access to bare metal components of Swagger's generated code. This is useful to do things like
+   * modifying headers dynamically.
+   *
+   * NOTE: This method assumes an HTTP GET. In the future, this can be configurable, if so desired.
+   *
+   * @param basePath The base URL for the RPC.
+   * @param path The path for the request. This value is taken as is, clients of this method are responsible for escaping or other transformations.
+   * @param accepts An array of acceptable Content-Type headers, ordered in preference from most to least desirable.
+   * @param returnType The type of the returned object.
+   */
+  // eslint-disable-next-line class-methods-use-this
+  async makeRPC<T>(
+    basePath: string,
+    path: string,
+    accepts: Array<string>,
+    // The next line is T.type.
+    // TODO(keefertaylor): Figure out a way to express this in typescript.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    returnType: any,
+  ): Promise<SwaggerCallResult<T>> {
+    return new Promise((resolve, _reject) => {
+      const client = new ApiClient()
+      client.basePath = basePath
+
+      // NOTE: Swagger produces a higher level client that does not require this level of configuration,
+      // however access to Accept headers is not available unless we access the underlying class.
+      //
+      // NOTE: At some point additional fields may need to be generalized (ex. httpMethod). These fields
+      // are hidden for convenience and configurability and may be exposed when needed.
+      const postBody = null
+      const httpMethod = 'GET'
+      const queryParams = {}
+      const headerParams = {}
+      const formParams = {}
+      const authNames = []
+      const contentTypes = []
+
+      client.callApi(
+        path,
+        httpMethod,
+        {},
+        queryParams,
+        headerParams,
+        formParams,
+        postBody,
+        authNames,
+        contentTypes,
+        accepts,
+        returnType,
+        (error, data, response) => {
+          // Transform results of the callback to a wrapper object.
+          resolve({
+            error,
+            data,
+            response,
+          })
+        },
+      )
     })
   }
 
