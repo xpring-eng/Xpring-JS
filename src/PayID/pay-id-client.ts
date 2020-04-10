@@ -94,7 +94,7 @@ export default class PayIDClient implements PayIDClientInterface {
           },
         )
       } catch (exception) {
-        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
+        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the Pay ID doesn't exist, or any other number of errors.
         reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
       }
     })
@@ -162,7 +162,7 @@ export default class PayIDClient implements PayIDClientInterface {
           },
         )
       } catch (exception) {
-        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
+        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the Pay ID doesn't exist, or any other number of errors.
         reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
       }
     })
@@ -263,7 +263,7 @@ export default class PayIDClient implements PayIDClientInterface {
           },
         )
       } catch (exception) {
-        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
+        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the Pay ID doesn't exist, or any other number of errors.
         reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
       }
     })
@@ -313,7 +313,7 @@ export default class PayIDClient implements PayIDClientInterface {
           }
         })
       } catch (exception) {
-        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
+        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the Pay ID doesn't exist, or any other number of errors.
         reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
       }
     })
@@ -323,13 +323,13 @@ export default class PayIDClient implements PayIDClientInterface {
    * Parse a payID to a host and path.
    */
   private static parsePayID(payID: string): PayIDComponents {
-    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    if (!paymentPointer) {
-      throw PayIDError.invalidPaymentPointer
+    const payIDComponents = PayIDUtils.parsePayID(payID)
+    if (!payIDComponents) {
+      throw PayIDError.invalidPayID
     }
     return {
-      host: paymentPointer.host,
-      path: paymentPointer.path,
+      host: payIDComponents.host,
+      path: payIDComponents.path,
     }
   }
 }

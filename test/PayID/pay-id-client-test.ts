@@ -41,26 +41,21 @@ describe('Pay ID Client', function (): void {
     const invalidPayID = 'xpring.money/georgewashington' // Does not start with '$'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
-    // WHEN an XRPAddress is requested for an invalid pay ID THEN an invalid payment pointer error is thrown.
+    // WHEN an XRPAddress is requested for an invalid pay ID THEN an invalid Pay ID error is thrown.
     payIDClient.xrpAddressForPayID(invalidPayID).catch((error) => {
-      assert.equal(
-        (error as PayIDError).errorType,
-        PayIDErrorType.InvalidPaymentPointer,
-      )
+      assert.equal((error as PayIDError).errorType, PayIDErrorType.InvalidPayID)
       done()
     })
   })
 
   it('xrpAddressForPayID - successful response - match found', async function () {
     // GIVEN a PayID client, valid PayID and mocked networking to return a match for the PayID.
-    const payID = '$xpring.money/georgewashington'
+    const payID = 'georgewashington$xpring.money'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
-    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    if (!paymentPointer) {
-      throw new Error(
-        'Test precondition failed: Could not generate payment pointer',
-      )
+    const payIDComponents = PayIDUtils.parsePayID(payID)
+    if (!payIDComponents) {
+      throw new Error('Test precondition failed: Could not generate a Pay ID')
     }
     nock('https://xpring.money')
       .get('/georgewashington')
@@ -81,15 +76,13 @@ describe('Pay ID Client', function (): void {
 
   it('xrpAddressForPayID - successful response - match not found', function (done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a 404 for the payID.
-    const payID = '$xpring.money/georgewashington'
+    const payID = 'georgewashington$xpring.money'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
     const network = XRPLNetwork.Test
 
-    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    if (!paymentPointer) {
-      throw new Error(
-        'Test precondition failed: Could not generate payment pointer',
-      )
+    const payIDComponents = PayIDUtils.parsePayID(payID)
+    if (!payIDComponents) {
+      throw new Error('Test precondition failed: Could not parse Pay ID')
     }
     nock('https://xpring.money').get('/georgewashington').reply(404, {})
 
@@ -111,7 +104,7 @@ describe('Pay ID Client', function (): void {
 
   it('xrpAddressForPayID - unknown mime type', function (done) {
     // GIVEN a PayIDClient and with mocked networking to return a server error.
-    const payID = '$xpring.money/georgewashington'
+    const payID = 'georgewashington$xpring.money'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     const serverErrorCode = 415
@@ -142,7 +135,7 @@ describe('Pay ID Client', function (): void {
 
   it('xrpAddressForPayID - failed request', function (done) {
     // GIVEN a PayIDClient and with mocked networking to return a server error.
-    const payID = '$xpring.money/georgewashington'
+    const payID = 'georgewashington$xpring.money'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     const serverErrorCode = 503
@@ -173,14 +166,12 @@ describe('Pay ID Client', function (): void {
 
   it('xrpAddressForPayID - successful response - unexpected response format', function (done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a match for the PayID.
-    const payID = '$xpring.money/georgewashington'
+    const payID = 'georgewashington$xpring.money'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
-    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    if (!paymentPointer) {
-      throw new Error(
-        'Test precondition failed: Could not generate payment pointer',
-      )
+    const payIDComponents = PayIDUtils.parsePayID(payID)
+    if (!payIDComponents) {
+      throw new Error('Test precondition failed: Could not parse Pay ID')
     }
     // Field isn't named `address` in response.
     nock('https://xpring.money').get('/georgewashington').reply(200, {
@@ -200,7 +191,7 @@ describe('Pay ID Client', function (): void {
 
   it('getInvoice - successful response', async function () {
     // GIVEN a PayID client, valid PayID and mocked networking to return a invoice for the Pay ID.
-    const payID = '$xpring.money/georgewashington'
+    const payID = 'georgewashington$xpring.money'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     const mockResponse = {
@@ -243,7 +234,7 @@ describe('Pay ID Client', function (): void {
 
   it('getInvoice - failure', function (done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a failure when a invoice is requested.
-    const payID = '$xpring.money/georgewashington'
+    const payID = 'georgewashington$xpring.money'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     nock('https://xpring.money')
@@ -266,7 +257,7 @@ describe('Pay ID Client', function (): void {
 
   it('postInvoice - successful response', async function () {
     // GIVEN a PayID client, valid PayID and mocked networking to return a invoice for the given Pay ID and compliance data.
-    const payID = '$xpring.money/georgewashington'
+    const payID = 'georgewashington$xpring.money'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     const mockResponse = {
@@ -329,7 +320,7 @@ describe('Pay ID Client', function (): void {
 
   it('postInvoice - failure', function (done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a failure when a invoice is requested.
-    const payID = '$xpring.money/georgewashington'
+    const payID = 'georgewashington$xpring.money'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     nock('https://xpring.money')
@@ -369,14 +360,12 @@ describe('Pay ID Client', function (): void {
 
   it('receipt - successful response', async function () {
     // GIVEN a PayID client, valid PayID and mocked networking to return a receipt for the Pay ID.
-    const payID = '$xpring.money/georgewashington'
+    const payID = 'georgewashington$xpring.money'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
-    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    if (!paymentPointer) {
-      throw new Error(
-        'Test precondition failed: Could not generate payment pointer',
-      )
+    const payIDComponents = PayIDUtils.parsePayID(payID)
+    if (!payIDComponents) {
+      throw new Error('Test precondition failed: Could not parse Pay ID')
     }
     nock('https://xpring.money')
       .post('/georgewashington/receipt')
@@ -388,14 +377,12 @@ describe('Pay ID Client', function (): void {
 
   it('receipt - failure', function (done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a failure when a receipt is requested.
-    const payID = '$xpring.money/georgewashington'
+    const payID = 'georgewashington$xpring.money'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
-    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    if (!paymentPointer) {
-      throw new Error(
-        'Test precondition failed: Could not generate payment pointer',
-      )
+    const payIDComponents = PayIDUtils.parsePayID(payID)
+    if (!payIDComponents) {
+      throw new Error('Test precondition failed: Could not parse Pay ID')
     }
 
     nock('https://xpring.money')
