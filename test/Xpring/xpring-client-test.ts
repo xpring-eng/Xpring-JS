@@ -136,7 +136,7 @@ describe('Xpring Client', function (): void {
     })
   })
 
-  it('Constructor - XpringError thrown for mismatched networks', function(): void {
+  it('Constructor - XpringError thrown for mismatched networks', function (): void {
     // GIVEN a PayIDClient and an XRPClient on different networks.
     const xrpClient = new FakeXRPClient(
       fakeBalance,
