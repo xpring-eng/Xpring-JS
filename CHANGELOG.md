@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 4.2.1 - April 10, 2020
+
+This build contains fixes for some experimental components.
+
 ## 4.2.0 - April 7, 2020
 
 This build contains fixes for generated code that may have prevented earlier versions of the 4.x library from building.
