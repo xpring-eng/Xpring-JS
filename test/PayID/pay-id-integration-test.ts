@@ -64,6 +64,22 @@ describe('PayID Integration Tests', function (): void {
     })
   })
 
+  it('Resolve PayID to BTC - known PayID - mainnet', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    // GIVEN a Pay ID that will resolve on Mainnet.
+    const payIDClient = new PayIDClient('btc-mainnet')
+    const payID = '$dev.payid.xpring.money/hbergren'
+
+    // WHEN it is resolved to an XRP address
+    const btcAddress = await payIDClient.addressForPayID(payID)
+
+    // THEN the address is the expected value.
+    assert.equal(btcAddress, 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSHqcZEd67ddMfJG9Y')
+  })
+
   it('getInvoice', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
