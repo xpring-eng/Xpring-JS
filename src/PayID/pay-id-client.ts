@@ -39,14 +39,12 @@ export default class PayIDClient {
   constructor(public readonly network: string) {}
 
   /**
-   * Retrieve the XRP Address associated with a PayID.
-   *
-   * @note The returned value will always be in an X-Address format.
+   * Retrieve the address associated with a PayID.
    *
    * @param payID The payID to resolve for an address.
-   * @returns An XRP address representing the given PayID.
+   * @returns An address representing the given PayID.
    */
-  async xrpAddressForPayID(payID: string): Promise<string> {
+  async addressForPayID(payID: string): Promise<string> {
     const payIDComponents = PayIDClient.parsePayID(payID)
 
     const client = new ApiClient()
