@@ -18,7 +18,7 @@ describe('PayID Integration Tests', function (): void {
     const payID = '$pay.michael.zochow.ski'
 
     // WHEN it is resolved to an XRP address
-    const xrpAddress = await payIDClient.xrpAddressForPayID(payID)
+    const xrpAddress = await payIDClient.addressForPayID(payID)
 
     // THEN the address is the expected value.
     assert.equal(xrpAddress, 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSHqcZEd67ddMfJG9Y')
@@ -34,7 +34,7 @@ describe('PayID Integration Tests', function (): void {
     const payID = '$dev.payid.xpring.money/hbergren'
 
     // WHEN it is resolved to an XRP address on testnet
-    const xrpAddress = await payIDClient.xrpAddressForPayID(payID)
+    const xrpAddress = await payIDClient.addressForPayID(payID)
 
     // THEN the address is the expected value.
     assert.equal(xrpAddress, 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS')
@@ -49,7 +49,7 @@ describe('PayID Integration Tests', function (): void {
     const payIDClient = new XRPPayIDClient(network)
 
     // WHEN it is resolved to an unmapped value.
-    payIDClient.xrpAddressForPayID(payID).catch((error) => {
+    payIDClient.addressForPayID(payID).catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
         (error as PayIDError).errorType,
