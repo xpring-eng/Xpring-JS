@@ -2,8 +2,6 @@ import { PayIDUtils } from 'xpring-common-js'
 import PaymentInformation from './Generated/model/PaymentInformation'
 import ApiClient from './Generated/ApiClient'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
-import PayIDClientInterface from './pay-id-client-interface'
-import XRPLNetwork from '../Common/xrpl-network'
 import SignatureWrapperInvoice from './Generated/model/SignatureWrapperInvoice'
 import Value from './Generated/model/Value'
 import Originator from './Generated/model/Originator'
@@ -39,27 +37,35 @@ interface SwaggerCallResult<T> {
  *
  * @warning This class is experimental and should not be used in production applications.
  */
-export default class PayIDClient implements PayIDClientInterface {
+export default class PayIDClient {
   /**
+   * Initialize a new PayID client.
+   *
+   * Networks in this constructor take the form of an asset and an optional network (<asset>-<network>), for instance:
+   * - xrpl-testnet
+   * - xrpl-mainnet
+   * - eth-rinkby
+   * - ach
+   *
+   * TODO(keefertaylor): Link a canonical list at payid.org when available.
+   *
    * @param network The network that addresses will be resolved on.
    */
-  constructor(public readonly network: XRPLNetwork) {}
+  constructor(public readonly network: string) {}
 
   /**
-   * Retrieve the XRP Address associated with a PayID.
-   *
-   * @note The returned value will always be in an X-Address format.
+   * Retrieve the address associated with a PayID.
    *
    * @param payID The payID to resolve for an address.
-   * @returns An XRP address representing the given PayID.
+   * @returns An address representing the given PayID.
    */
-  async xrpAddressForPayID(payID: string): Promise<string> {
+  async addressForPayID(payID: string): Promise<string> {
     const payIDComponents = PayIDClient.parsePayID(payID)
     const basePath = `https://${payIDComponents.host}`
     const { path } = payIDComponents
 
     // Accept only the given network in response.
-    const accepts = [`application/xrpl-${this.network}+json`]
+    const accepts = [`application/${this.network}+json`]
 
     const { error, data } = await PayIDClient.callSwaggerRPC<
       PaymentInformation
@@ -96,7 +102,7 @@ export default class PayIDClient implements PayIDClientInterface {
     const path = `${payIDComponents.path}/invoice?nonce=${nonce}`
 
     // Accept only the given network in response.
-    const accepts = [`application/xrpl-${this.network}+json`]
+    const accepts = [`application/${this.network}+json`]
 
     const { error, data } = await PayIDClient.callSwaggerRPC<
       SignatureWrapperInvoice
