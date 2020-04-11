@@ -8,6 +8,14 @@ import XRPPath from './xrp-path'
  */
 // TODO(amiecorso): Modify this object to use X-Address format.
 export default class XRPPayment {
+  /**
+   * Constructs an XRPPayment from a Payment.
+   *
+   * @param payment a Payment (protobuf object) whose field values will be used
+   *                to construct an XRPPayment
+   * @return an XRPPayment with its fields set via the analogous protobuf fields.
+   * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L224
+   */
   public static from(payment: Payment): XRPPayment | undefined {
     const paymentAmountValue = payment.getAmount()?.getValue()
     const amount =
@@ -16,7 +24,10 @@ export default class XRPPayment {
       return undefined // amount is required
     }
 
-    const destination = payment.getDestination()?.getValue()?.getAddress()
+    const destination = payment
+      .getDestination()
+      ?.getValue()
+      ?.getAddress()
     if (!destination) {
       return undefined // destination is required
     }
@@ -57,6 +68,16 @@ export default class XRPPayment {
     )
   }
 
+  /**
+   *
+   * @param amount The amount of currency to deliver.
+   * @param destination The unique address of the account receiving the payment.
+   * @param destinationTag (Optional) Arbitrary tag that identifies the reason for the payment.
+   * @param deliverMin (Optional) Minimum amount of destination currency this transaction should deliver.
+   * @param invoiceID (Optional) Arbitrary 256-bit hash representing a specific reason or identifier for this payment.
+   * @param paths Array of payment paths to be used for this transaction.  Must be omitted for XRP-to-XRP transactions.
+   * @param sendMax (Optional) Highest amount of source currency this transaction is allowed to cost.
+   */
   private constructor(
     readonly amount?: XRPCurrencyAmount,
     readonly destination?: string,
