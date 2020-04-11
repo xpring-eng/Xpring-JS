@@ -10,8 +10,8 @@ export default class XRPCurrency {
    *
    * @param currency a Currency (protobuf object) whose field values will be used
    *                 to construct an XRPCurrency
-   * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/amount.proto#L41
    * @returns an XRPCurrency with its fields set via the analogous protobuf fields.
+   * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/amount.proto#L41
    */
   public static from(currency: Currency): XRPCurrency {
     return new XRPCurrency(currency.getName(), currency.getCode_asU8())
