@@ -6,7 +6,10 @@ import { Signer } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
  */
 export default class XRPSigner {
   public static from(signer: Signer): XRPSigner | undefined {
-    const account = signer.getAccount()?.getValue()?.getAddress()
+    const account = signer
+      .getAccount()
+      ?.getValue()
+      ?.getAddress()
     const signingPublicKey = signer.getSigningPublicKey()?.getValue_asU8()
     const transactionSignature = signer
       .getTransactionSignature()
