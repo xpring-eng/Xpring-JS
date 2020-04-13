@@ -7,7 +7,7 @@ import XRPLNetwork from '../../src/Common/xrpl-network'
 import SignatureWrapperInvoice from '../../src/PayID/Generated/model/SignatureWrapperInvoice'
 import ComplianceType from '../../src/PayID/compliance-type'
 
-// Parameters for getInvoice
+// Nonce for getInvoice and postInvoice
 const nonce = '123456'
 
 // Parameters for postInvoice
@@ -30,13 +30,13 @@ const beneficiaryName = 'xpring'
 const invoiceHash = 'some_invoice_hash'
 const transasctionConfirmation = 'some_transaction_confirmation'
 
-describe('Pay ID Client', function (): void {
-  afterEach(function () {
+describe('Pay ID Client', function(): void {
+  afterEach(function() {
     // Clean nock after each test.
     nock.cleanAll()
   })
 
-  it('xrpAddressForPayID - invalid Pay ID', function (done): void {
+  it('xrpAddressForPayID - invalid Pay ID', function(done): void {
     // GIVEN a PayIDClient and an invalid PayID.
     const invalidPayID = 'xpring.money/georgewashington' // Does not start with '$'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
@@ -51,7 +51,7 @@ describe('Pay ID Client', function (): void {
     })
   })
 
-  it('xrpAddressForPayID - successful response - match found', async function () {
+  it('xrpAddressForPayID - successful response - match found', async function() {
     // GIVEN a PayID client, valid PayID and mocked networking to return a match for the PayID.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
@@ -79,7 +79,7 @@ describe('Pay ID Client', function (): void {
     assert.exists(xrpAddress)
   })
 
-  it('xrpAddressForPayID - successful response - match not found', function (done) {
+  it('xrpAddressForPayID - successful response - match not found', function(done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a 404 for the payID.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
@@ -91,7 +91,9 @@ describe('Pay ID Client', function (): void {
         'Test precondition failed: Could not generate payment pointer',
       )
     }
-    nock('https://xpring.money').get('/georgewashington').reply(404, {})
+    nock('https://xpring.money')
+      .get('/georgewashington')
+      .reply(404, {})
 
     // WHEN an XRPAddress is requested.
     payIDClient.addressForPayID(payID).catch((error) => {
@@ -109,7 +111,7 @@ describe('Pay ID Client', function (): void {
     })
   })
 
-  it('xrpAddressForPayID - unknown mime type', function (done) {
+  it('xrpAddressForPayID - unknown mime type', function(done) {
     // GIVEN a PayIDClient and with mocked networking to return a server error.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
@@ -140,7 +142,7 @@ describe('Pay ID Client', function (): void {
     })
   })
 
-  it('xrpAddressForPayID - failed request', function (done) {
+  it('xrpAddressForPayID - failed request', function(done) {
     // GIVEN a PayIDClient and with mocked networking to return a server error.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
@@ -171,7 +173,7 @@ describe('Pay ID Client', function (): void {
     })
   })
 
-  it('xrpAddressForPayID - successful response - unexpected response format', function (done) {
+  it('xrpAddressForPayID - successful response - unexpected response format', function(done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a match for the PayID.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
@@ -183,9 +185,11 @@ describe('Pay ID Client', function (): void {
       )
     }
     // Field isn't named `address` in response.
-    nock('https://xpring.money').get('/georgewashington').reply(200, {
-      incorrectFieldName: 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4',
-    })
+    nock('https://xpring.money')
+      .get('/georgewashington')
+      .reply(200, {
+        incorrectFieldName: 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4',
+      })
 
     // WHEN an XRPAddress is requested for a Pay ID.
     payIDClient.addressForPayID(payID).catch((error) => {
@@ -198,7 +202,7 @@ describe('Pay ID Client', function (): void {
     })
   })
 
-  it('getInvoice - successful response', async function () {
+  it('getInvoice - successful response', async function() {
     // GIVEN a PayID client, valid PayID and mocked networking to return a invoice for the Pay ID.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
@@ -241,7 +245,7 @@ describe('Pay ID Client', function (): void {
     )
   })
 
-  it('getInvoice - failure', function (done) {
+  it('getInvoice - failure', function(done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a failure when a invoice is requested.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
@@ -264,7 +268,7 @@ describe('Pay ID Client', function (): void {
 
   // TODO(keefertaylor): Write tests for specific error codes returned by the getInvoice API.
 
-  it('postInvoice - successful response', async function () {
+  it('postInvoice - successful response', async function() {
     // GIVEN a PayID client, valid PayID and mocked networking to return a invoice for the given Pay ID and compliance data.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
@@ -300,11 +304,13 @@ describe('Pay ID Client', function (): void {
 
     nock('https://xpring.money')
       .post(`/georgewashington/invoice`)
+      .query({ nonce })
       .reply(200, mockResponse)
 
     // WHEN the invoice endpoint is hit.
     const invoice = await payIDClient.postInvoice(
       payID,
+      nonce,
       publicKeyType,
       publicKeyData,
       publicKey,
@@ -327,19 +333,21 @@ describe('Pay ID Client', function (): void {
     )
   })
 
-  it('postInvoice - failure', function (done) {
+  it('postInvoice - failure', function(done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a failure when a invoice is requested.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     nock('https://xpring.money')
       .post(`/georgewashington/invoice`)
+      .query({ nonce })
       .reply(503, {})
 
     // WHEN the postInvoice endpoint
     payIDClient
       .postInvoice(
         payID,
+        nonce,
         publicKeyType,
         publicKeyData,
         publicKey,
@@ -367,7 +375,7 @@ describe('Pay ID Client', function (): void {
 
   // TODO(keefertaylor): Write tests for specific error codes returned by the postInvoice API.
 
-  it('receipt - successful response', async function () {
+  it('receipt - successful response', async function() {
     // GIVEN a PayID client, valid PayID and mocked networking to return a receipt for the Pay ID.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
@@ -386,7 +394,7 @@ describe('Pay ID Client', function (): void {
     await payIDClient.receipt(payID, invoiceHash, transasctionConfirmation)
   })
 
-  it('receipt - failure', function (done) {
+  it('receipt - failure', function(done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a failure when a receipt is requested.
     const payID = '$xpring.money/georgewashington'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
