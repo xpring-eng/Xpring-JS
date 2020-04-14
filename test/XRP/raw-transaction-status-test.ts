@@ -9,8 +9,8 @@ import 'mocha'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import { Flags } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 
-describe('raw transaction status', function (): void {
-  it('isFullPayment - non payment', function (): void {
+describe('raw transaction status', function(): void {
+  it('isFullPayment - non payment', function(): void {
     // GIVEN a getTxResponse which is not a payment.
     const transaction = new Transaction()
     transaction.clearPayment()
@@ -27,7 +27,7 @@ describe('raw transaction status', function (): void {
     assert.isFalse(rawTransactionStatus.isFullPayment)
   })
 
-  it('isFullPayment - partial payment', function (): void {
+  it('isFullPayment - partial payment', function(): void {
     // GIVEN a getTxResponse which is a payment with the partial payment flags set.
     const payment = new Payment()
 
@@ -50,7 +50,7 @@ describe('raw transaction status', function (): void {
     assert.isFalse(rawTransactionStatus.isFullPayment)
   })
 
-  it('isFullPayment - payment', function (): void {
+  it('isFullPayment - payment', function(): void {
     // GIVEN a getTxResponse which is a payment.
     const payment = new Payment()
 
