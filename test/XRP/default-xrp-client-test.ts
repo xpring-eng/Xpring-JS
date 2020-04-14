@@ -6,9 +6,7 @@ import grpc from 'grpc'
 import { Utils, Wallet } from 'xpring-common-js'
 import FakeGRPCError from './fakes/fake-grpc-error'
 import XRPTestUtils from './helpers/xrp-test-utils'
-import DefaultXRPClient, {
-  XRPClientErrorMessages,
-} from '../../src/XRP/default-xrp-client'
+import DefaultXRPClient from '../../src/XRP/default-xrp-client'
 import {
   FakeXRPNetworkClient,
   FakeXRPNetworkClientResponses,
@@ -27,6 +25,7 @@ import {
   testInvalidGetAccountTransactionHistoryResponse,
 } from './fakes/fake-xrp-protobufs'
 import XRPTransaction from '../../src/XRP/model/xrp-transaction'
+import XRPError, { XRPErrorType } from '../../src/XRP/xrp-error'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -93,8 +92,7 @@ describe('Default Xpring Client', function(): void {
 
     // WHEN the balance for an account is requested THEN an error to use X-Addresses is thrown.
     xrpClient.getBalance(classicAddress).catch((error) => {
-      assert.typeOf(error, 'Error')
-      assert.equal(error.message, XRPClientErrorMessages.xAddressRequired)
+      assert.equal((error as XRPError).errorType, XRPErrorType.XAddressRequired)
       done()
     })
   })
@@ -125,8 +123,10 @@ describe('Default Xpring Client', function(): void {
 
     // WHEN a balance is requested THEN an error is propagated.
     xrpClient.getBalance(testAddress).catch((error) => {
-      assert.typeOf(error, 'Error')
-      assert.equal(error.message, XRPClientErrorMessages.malformedResponse)
+      assert.equal(
+        (error as XRPError).errorType,
+        XRPErrorType.MalformedResponse,
+      )
       done()
     })
   })
@@ -266,11 +266,7 @@ describe('Default Xpring Client', function(): void {
 
     // WHEN the transaction status is retrieved THEN an error is thrown.
     xrpClient.getPaymentStatus(transactionHash).catch((error) => {
-      assert.typeOf(error, 'Error')
-      assert.equal(
-        error.message,
-        FakeXRPNetworkClientResponses.defaultError.message,
-      )
+      assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
       done()
     })
   })
@@ -393,8 +389,7 @@ describe('Default Xpring Client', function(): void {
 
     // WHEN the account makes a transaction THEN an error is thrown.
     xrpClient.send(amount, destinationAddress, wallet).catch((error) => {
-      assert.typeOf(error, 'Error')
-      assert.equal(error.message, XRPClientErrorMessages.xAddressRequired)
+      assert.equal((error as XRPError).errorType, XRPErrorType.XAddressRequired)
       done()
     })
   })
@@ -416,11 +411,7 @@ describe('Default Xpring Client', function(): void {
 
     // WHEN a payment is attempted THEN an error is propagated.
     xrpClient.send(amount, destinationAddress, wallet).catch((error) => {
-      assert.typeOf(error, 'Error')
-      assert.equal(
-        error.message,
-        FakeXRPNetworkClientResponses.defaultError.message,
-      )
+      assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
       done()
     })
   })
@@ -442,11 +433,7 @@ describe('Default Xpring Client', function(): void {
 
     // WHEN a payment is attempted THEN an error is propagated.
     xrpClient.send(amount, destinationAddress, wallet).catch((error) => {
-      assert.typeOf(error, 'Error')
-      assert.equal(
-        error.message,
-        FakeXRPNetworkClientResponses.defaultError.message,
-      )
+      assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
       done()
     })
   })
@@ -513,8 +500,7 @@ describe('Default Xpring Client', function(): void {
 
     // WHEN accountExists is called using a classic address THEN an error to use X-Addresses is thrown.
     xrpClient.accountExists(classicAddress).catch((error) => {
-      assert.typeOf(error, 'Error')
-      assert.equal(error.message, XRPClientErrorMessages.xAddressRequired)
+      assert.equal((error as XRPError).errorType, XRPErrorType.XAddressRequired)
       done()
     })
   })
@@ -540,8 +526,7 @@ describe('Default Xpring Client', function(): void {
 
     // WHEN the payment history for an account is requested THEN an error to use X-Addresses is thrown.
     xrpClient.paymentHistory(classicAddress).catch((error) => {
-      assert.typeOf(error, 'Error')
-      assert.equal(error.message, XRPClientErrorMessages.xAddressRequired)
+      assert.equal((error as XRPError).errorType, XRPErrorType.XAddressRequired)
       done()
     })
   })
@@ -552,8 +537,7 @@ describe('Default Xpring Client', function(): void {
 
     // WHEN the payment history is requested THEN an error is propagated.
     xrpClient.paymentHistory(testAddress).catch((error) => {
-      assert.typeOf(error, 'Error')
-      assert.equal(error, FakeXRPNetworkClientResponses.defaultError)
+      assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
       done()
     })
   })
@@ -613,10 +597,9 @@ describe('Default Xpring Client', function(): void {
 
     // WHEN the transactionHistory is requested THEN a conversion error is thrown.
     xrpClient.paymentHistory(testAddress).catch((error) => {
-      assert.typeOf(error, 'Error')
       assert.equal(
-        error.message,
-        XRPClientErrorMessages.paymentConversionFailure,
+        (error as XRPError).errorType,
+        XRPErrorType.PaymentConversionFailure,
       )
       done()
     })

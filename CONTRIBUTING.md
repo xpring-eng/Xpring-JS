@@ -32,7 +32,7 @@ The library should build and pass all tests.
 $ git clone https://github.com/xpring-eng/xpring-js.git
 $ cd xpring-js
 
-# Pull Submdoules 
+# Pull Submodules
 $ git submodule update --init --recursive
 
 # Install dependencies
@@ -47,6 +47,12 @@ $ chmod +x /usr/local/bin/protoc-gen-grpc-web
 $ curl -L https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64 --output protoc-gen-grpc-web
 $ sudo mv protoc-gen-grpc-web /usr/local/bin/
 $ chmod +x /usr/local/bin/protoc-gen-grpc-web
+
+# Install Maven
+## OSX
+brew install mvn
+## Linux
+apt-get install mvn
 
 # Run tests.
 $ npm test

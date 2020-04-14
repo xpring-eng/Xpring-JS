@@ -2,15 +2,13 @@ import bigInt from 'big-integer'
 import { assert } from 'chai'
 import IlpClient from '../../src/ILP/ilp-client'
 import { PaymentRequest } from '../../src/ILP/model/payment-request'
-import XpringIlpError, {
-  XpringIlpErrorType,
-} from '../../src/ILP/xpring-ilp-error'
+import IlpError, { IlpErrorType } from '../../src/ILP/ilp-error'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
 
 // A ILP Client that makes requests.
-const ILPAddress = 'hermes-grpc.ilpv4.dev'
+const ILPAddress = 'hermes-envoy-test.xpring.io'
 const ILPClientNode = new IlpClient(ILPAddress)
 
 describe('ILP Integration Tests', function(): void {
@@ -46,10 +44,10 @@ describe('ILP Integration Tests', function(): void {
     } catch (error) {
       // THEN an Error is thrown by IlpCredentials
       assert.equal(
-        (error as XpringIlpError).errorType,
-        XpringIlpErrorType.InvalidAccessToken,
+        (error as IlpError).errorType,
+        IlpErrorType.InvalidAccessToken,
       )
-      assert.equal(error.message, XpringIlpError.invalidAccessToken.message)
+      assert.equal(error.message, IlpError.invalidAccessToken.message)
     }
   })
 
@@ -61,7 +59,7 @@ describe('ILP Integration Tests', function(): void {
     // WHEN a payment is sent from sdk_account1 to sdk_account2 for 10 units
     const request = new PaymentRequest({
       amount: bigInt(10),
-      destinationPaymentPointer: '$money.ilpv4.dev/sdk_account2',
+      destinationPaymentPointer: '$xpring.io/sdk_account2',
       senderAccountId: 'sdk_account1',
     })
     const message = await ILPClientNode.sendPayment(request, 'password')
@@ -93,10 +91,10 @@ describe('ILP Integration Tests', function(): void {
     } catch (error) {
       // THEN an Error is thrown by IlpCredentials
       assert.equal(
-        (error as XpringIlpError).errorType,
-        XpringIlpErrorType.InvalidAccessToken,
+        (error as IlpError).errorType,
+        IlpErrorType.InvalidAccessToken,
       )
-      assert.equal(error.message, XpringIlpError.invalidAccessToken.message)
+      assert.equal(error.message, IlpError.invalidAccessToken.message)
     }
   })
 })

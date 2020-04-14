@@ -2,8 +2,6 @@ import { PayIDUtils } from 'xpring-common-js'
 import PaymentInformation from './Generated/model/PaymentInformation'
 import ApiClient from './Generated/ApiClient'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
-import PayIDClientInterface from './pay-id-client-interface'
-import XRPLNetwork from '../Common/xrpl-network'
 import SignatureWrapperInvoice from './Generated/model/SignatureWrapperInvoice'
 import Value from './Generated/model/Value'
 import Originator from './Generated/model/Originator'
@@ -19,85 +17,74 @@ interface PayIDComponents {
   path: string
 }
 
+// TODO(keefertaylor): Do not use any. Either generate .d.ts files by using a typescript code generator or manually create interfaces.
+/** The result of a call to a Swagger RPC which fetched a response of type T. */
+interface SwaggerCallResult<T> {
+  /** An error associated with the response. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  error: any
+
+  /** The complete HTTP response. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  response: any
+
+  /** The data returned by the call. */
+  data: T
+}
+
 /**
  * A client for PayID.
  *
  * @warning This class is experimental and should not be used in production applications.
  */
-export default class PayIDClient implements PayIDClientInterface {
+export default class PayIDClient {
   /**
+   * Initialize a new PayID client.
+   *
+   * Networks in this constructor take the form of an asset and an optional network (<asset>-<network>), for instance:
+   * - xrpl-testnet
+   * - xrpl-mainnet
+   * - eth-rinkby
+   * - ach
+   *
+   * TODO(keefertaylor): Link a canonical list at payid.org when available.
+   *
    * @param network The network that addresses will be resolved on.
    */
-  constructor(public readonly network: XRPLNetwork) {}
+  constructor(public readonly network: string) {}
 
   /**
-   * Retrieve the XRP Address associated with a PayID.
-   *
-   * @note The returned value will always be in an X-Address format.
+   * Retrieve the address associated with a PayID.
    *
    * @param payID The payID to resolve for an address.
-   * @returns An XRP address representing the given PayID.
+   * @returns An address representing the given PayID.
    */
-  async xrpAddressForPayID(payID: string): Promise<string> {
+  async addressForPayID(payID: string): Promise<string> {
     const payIDComponents = PayIDClient.parsePayID(payID)
-
-    const client = new ApiClient()
-    client.basePath = `https://${payIDComponents.host}`
+    const basePath = `https://${payIDComponents.host}`
+    const { path } = payIDComponents
 
     // Accept only the given network in response.
-    const accepts = [`application/xrpl-${this.network}+json`]
+    const accepts = [`application/${this.network}+json`]
 
-    return new Promise((resolve, reject) => {
-      // NOTE: Swagger produces a higher level client that does not require this level of configuration,
-      // however access to Accept headers is not available unless we access the underlying class.
-      const postBody = null
-      const pathParams = {
-        path: payIDComponents.path,
-      }
-      const queryParams = {}
-      const headerParams = {}
-      const formParams = {}
-      const authNames = []
-      const contentTypes = []
-      const returnType = PaymentInformation
+    const { error, data } = await PayIDClient.callSwaggerRPC<
+      PaymentInformation
+    >(basePath, path, accepts, PaymentInformation)
 
-      try {
-        client.callApi(
-          payIDComponents.path,
-          'GET',
-          pathParams,
-          queryParams,
-          headerParams,
-          formParams,
-          postBody,
-          authNames,
-          contentTypes,
-          accepts,
-          returnType,
-          (error, data, _response) => {
-            if (error) {
-              if (error.status === 404) {
-                const message = `Could not resolve ${payID} on network ${this.network}`
-                reject(new PayIDError(PayIDErrorType.MappingNotFound, message))
-              } else {
-                const message = `${error.status}: ${error.response?.text}`
-                reject(
-                  new PayIDError(PayIDErrorType.UnexpectedResponse, message),
-                )
-              }
-              // TODO(keefertaylor): make sure the header matches the request.
-            } else if (data?.addressDetails?.address) {
-              resolve(data.addressDetails.address)
-            } else {
-              reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
-            }
-          },
-        )
-      } catch (exception) {
-        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
-        reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
+    if (error) {
+      if (error.status === 404) {
+        const message = `Could not resolve ${payID} on network ${this.network}`
+        throw new PayIDError(PayIDErrorType.MappingNotFound, message)
+      } else {
+        const message = `${error.status}: ${error.response?.text}`
+        throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
       }
-    })
+      // TODO(keefertaylor): make sure the header matches the request.
+    } else if (data?.addressDetails?.address) {
+      return data.addressDetails.address
+    } else {
+      throw new PayIDError(PayIDErrorType.UnexpectedResponse)
+    }
   }
 
   /**
@@ -110,66 +97,27 @@ export default class PayIDClient implements PayIDClientInterface {
     payID: string,
     nonce: string,
   ): Promise<SignatureWrapperInvoice> {
-    // TODO(keefertaylor): Dedupe payment pointer logic
-    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    if (!paymentPointer) {
-      throw PayIDError.invalidPaymentPointer
-    }
-
-    const client = new ApiClient()
-    client.basePath = `https://${paymentPointer.host}`
+    const payIDComponents = PayIDClient.parsePayID(payID)
+    const basePath = `https://${payIDComponents.host}`
+    const path = `${payIDComponents.path}/invoice?nonce=${nonce}`
 
     // Accept only the given network in response.
-    const accepts = [`application/xrpl-${this.network}+json`]
+    const accepts = [`application/${this.network}+json`]
 
-    return new Promise((resolve, reject) => {
-      // NOTE: Swagger produces a higher level client that does not require this level of configuration,
-      // however access to Accept headers is not available unless we access the underlying class.
-      // TODO(keefertaylor): Dedupe this with the above information.
-      const postBody = null
-      const pathParams = {
-        path: paymentPointer.path,
-      }
-      const queryParams = {
-        nonce,
-      }
-      const headerParams = {}
-      const formParams = {}
-      const authNames = []
-      const contentTypes = []
-      const returnType = SignatureWrapperInvoice
+    const { error, data } = await PayIDClient.callSwaggerRPC<
+      SignatureWrapperInvoice
+    >(basePath, path, accepts, SignatureWrapperInvoice)
 
-      try {
-        client.callApi(
-          `${paymentPointer.path}/invoice`,
-          'GET',
-          pathParams,
-          queryParams,
-          headerParams,
-          formParams,
-          postBody,
-          authNames,
-          contentTypes,
-          accepts,
-          returnType,
-          (error, data, _response) => {
-            // TODO(keefertaylor): Provide more granular error handling.
-            if (error) {
-              const message = `${error.status}: ${error.response?.text}`
-              reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
-              // TODO(keefertaylor): make sure the header matches the request.
-            } else if (data) {
-              resolve(data)
-            } else {
-              reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
-            }
-          },
-        )
-      } catch (exception) {
-        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
-        reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
-      }
-    })
+    // TODO(keefertaylor): Provide more granular error handling.
+    if (error) {
+      const message = `${error.status}: ${error.response?.text}`
+      throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
+      // TODO(keefertaylor): make sure the header matches the request.
+    } else if (data) {
+      return data
+    } else {
+      throw new PayIDError(PayIDErrorType.UnexpectedResponse)
+    }
   }
 
   /**
@@ -243,38 +191,38 @@ export default class PayIDClient implements PayIDClientInterface {
       signature,
     )
 
-    // TODO(keefertaylor): Dedupe payment pointer logic
-    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    if (!paymentPointer) {
-      throw PayIDError.invalidPaymentPointer
-    }
+    const payIDComponents = PayIDClient.parsePayID(payID)
 
     const client = new ApiClient()
-    client.basePath = `https://${paymentPointer.host}${paymentPointer.path}`
+    client.basePath = `https://${payIDComponents.host}${payIDComponents.path}`
 
     const apiInstance = new DefaultApi(client)
 
-    return new Promise((resolve, reject) => {
-      try {
-        apiInstance.postPathInvoice(
-          { body: signatureWrapper },
-          (error, data, _response) => {
-            // TODO(keefertaylor): Provide more granular error handling.
-            if (error) {
-              const message = `${error.status}: ${error.response?.text}`
-              reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
-            } else if (data) {
-              resolve(data)
-            } else {
-              reject(new PayIDError(PayIDErrorType.UnexpectedResponse))
-            }
-          },
-        )
-      } catch (exception) {
-        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
-        reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
-      }
+    const { error, data } = await new Promise<
+      SwaggerCallResult<SignatureWrapperInvoice>
+    >((resolve, _reject) => {
+      apiInstance.postPathInvoice(
+        { body: signatureWrapper },
+        (swaggerError, swaggerData, response) => {
+          // Transform results of the callback to a wrapper object.
+          resolve({
+            error: swaggerError,
+            data: swaggerData,
+            response,
+          })
+        },
+      )
     })
+
+    // TODO(keefertaylor): Provide more granular error handling.
+    if (error) {
+      const message = `${error.status}: ${error.response?.text}`
+      throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
+    } else if (data) {
+      return data
+    } else {
+      throw new PayIDError(PayIDErrorType.UnexpectedResponse)
+    }
   }
 
   /**
@@ -305,25 +253,94 @@ export default class PayIDClient implements PayIDClientInterface {
     client.basePath = `https://${payIDComponents.host}${payIDComponents.path}`
 
     const apiInstance = new DefaultApi(client)
-    const opts = {
-      body: payload,
-    }
 
-    return new Promise((resolve, reject) => {
-      try {
-        apiInstance.postPathReceipt(opts, (error, _data, _response) => {
-          // TODO(keefertaylor): Provide more specific error handling here.
-          if (error) {
-            const message = `${error.status}: ${error.response?.text}`
-            reject(new PayIDError(PayIDErrorType.UnexpectedResponse, message))
-          } else {
-            resolve()
-          }
-        })
-      } catch (exception) {
-        // Something really wrong happened, we don't have enough information to tell. This could be a transient network error, the payment pointer doesn't exist, or any other number of errors.
-        reject(new PayIDError(PayIDErrorType.Unknown, exception.message))
-      }
+    const { error } = await new Promise<
+      SwaggerCallResult<SignatureWrapperInvoice>
+    >((resolve, _reject) => {
+      apiInstance.postPathReceipt(
+        {
+          body: payload,
+        },
+        (swaggerError, swaggerData, response) => {
+          // Transform results of the callback to a wrapper object.
+          resolve({
+            error: swaggerError,
+            data: swaggerData,
+            response,
+          })
+        },
+      )
+    })
+
+    // TODO(keefertaylor): Provide more specific error handling here.
+    if (error) {
+      const message = `${error.status}: ${error.response?.text}`
+      throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
+    }
+  }
+
+  /**
+   * Call an RPC endpoint with Swagger.
+   *
+   * This method provides access to bare metal components of Swagger's generated code. This is useful to do things like
+   * modifying headers dynamically.
+   *
+   * NOTE: For simplicity, this method assumes an HTTP GET. Query parameters should be encoded in the `path` parameter. In
+   * the future, this can be configurable if so desired.
+   *
+   * @param basePath The base URL for the RPC.
+   * @param path The path for the request. This value is taken as is, clients of this method are responsible for escaping
+   *             or other transformations.
+   * @param accepts An array of acceptable Content-Type headers, ordered in preference from most to least desirable.
+   * @param returnType The type of the returned object.
+   */
+  private static async callSwaggerRPC<T>(
+    basePath: string,
+    path: string,
+    accepts: Array<string>,
+    // The next line is T.type.
+    // TODO(keefertaylor): Figure out a way to express this in typescript.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    returnType: any,
+  ): Promise<SwaggerCallResult<T>> {
+    return new Promise((resolve, _reject) => {
+      const client = new ApiClient()
+      client.basePath = basePath
+
+      // NOTE: Swagger produces a higher level client that does not require this level of configuration,
+      // however access to Accept headers is not available unless we access the underlying class.
+      //
+      // NOTE: At some point additional fields may need to be generalized (ex. httpMethod). These fields
+      // are hidden for convenience and configurability and may be exposed when needed.
+      const postBody = null
+      const httpMethod = 'GET'
+      const queryParams = {}
+      const headerParams = {}
+      const formParams = {}
+      const authNames = []
+      const contentTypes = []
+
+      client.callApi(
+        path,
+        httpMethod,
+        {},
+        queryParams,
+        headerParams,
+        formParams,
+        postBody,
+        authNames,
+        contentTypes,
+        accepts,
+        returnType,
+        (error, data, response) => {
+          // Transform results of the callback to a wrapper object.
+          resolve({
+            error,
+            data,
+            response,
+          })
+        },
+      )
     })
   }
 

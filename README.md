@@ -130,7 +130,7 @@ console.log(wallet.getPrivateKey()); // 0090802A50AA84EFB6CDB225F17C27616EA94048
 A wallet can also sign and verify arbitrary hex messages. Generally, users should use the functions on `XRPClient` to perform cryptographic functions rather than using these low level APIs.
 
 ```javascript
-const { Wallet } = require("xpringkit-js");
+const { Wallet } = require("xpring-js");
 
 const mnemonic = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about";
 const message = "deadbeef";
@@ -146,10 +146,10 @@ wallet.verify(message, signature); // true
 `XRPClient` is a gateway into the XRP Ledger. `XRPClient` is initialized with a single parameter, which is the URL of the remote adapter (see: ‘Server Side Component’ section above).
 
 ```javascript
-const { XRPClient } = require("xpring-js");
+const { XRPClient, XRPLNetwork } = require("xpring-js");
 
 const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
-const xrpClient = new XRPClient(remoteURL, true);
+const xrpClient = new XRPClient(remoteURL, XRPLNetwork.Test);
 ```
 
 #### Retrieving a Balance
@@ -157,10 +157,10 @@ const xrpClient = new XRPClient(remoteURL, true);
 An `XRPClient` can check the balance of an account on the XRP Ledger.
 
 ```javascript
-const { XRPClient } = require("xpring-js");
+const { XRPClient, XRPLNetwork } = require("xpring-js");
 
 const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
-const xrpClient = new XRPClient(remoteURL, true);
+const xrpClient = new XRPClient(remoteURL, XRPLNetwork.Test);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
 
@@ -185,10 +185,10 @@ Xpring-JS returns the following transaction states:
 These states are determined by the `TransactionStatus` enum.
 
 ```javascript
-const { XRPClient } = require("xpring-js");
+const { XRPClient, XRPLNetwork } = require("xpring-js");
 
 const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
-const xrpClient = new XRPClient(remoteURL, true);
+const xrpClient = new XRPClient(remoteURL, XRPLNetwork.Test);
 
 const transactionHash = "9FC7D277C1C8ED9CE133CC17AEA9978E71FC644CE6F5F0C8E26F1C635D97AF4A";
 const transactionStatus = xrpClient.getPaymentStatus(transactionHash); // TransactionStatus.Succeeded
@@ -201,7 +201,7 @@ month of history.  Recent transaction hashes can be found in the XRP Ledger Expl
 An `XRPClient` can return a list of payments to and from an account.
 
 ```javascript
-const { XRPClient } = require("xpring-js");
+const { XRPClient, XRPLNetwork } = require("xpring-js");
 
 const remoteURL = "alpha.test.xrp.xpring.io:50051"; // Testnet URL, use alpha.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL);
@@ -216,10 +216,10 @@ An `XRPClient` can send XRP to other accounts on the XRP Ledger.
 **Note:** The payment operation will block the calling thread until the operation reaches a definitive and irreversible success or failure state.
 
 ```javascript
-const { Wallet, XRPAmount, XRPClient } = require("xpring-js");
+const { Wallet, XRPAmount, XRPClient, XRPLNetwork } = require("xpring-js");
 
 const remoteURL = test.xrp.xpring.io:50051; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
-const xrpClient = new XRPClient(remoteURL, true);
+const xrpClient = new XRPClient(remoteURL, XRPLNetwork.Test);
 
 // Amount of XRP to send
 const amount = BigInt("10");

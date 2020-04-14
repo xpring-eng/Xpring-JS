@@ -1,8 +1,8 @@
+openapi: '3.0.0'
 info:
   title: PayID
   version: '0.0.1'
 paths:
-  # TODO(keefertaylor): Consider if we should just encode {path} into the base URL.
   '/{path}':
     parameters:
       - schema:
@@ -74,13 +74,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignatureWrapper_Compliance'
+                $ref: '#/components/schemas/SignatureWrapper_Invoice'
             application/xrpl-mainnet+json:
               schema:
-                $ref: '#/components/schemas/SignatureWrapper_Compliance'
+                $ref: '#/components/schemas/SignatureWrapper_Invoice'
             application/xrpl-testnet+json:
               schema:
-                $ref: '#/components/schemas/SignatureWrapper_Compliance'
+                $ref: '#/components/schemas/SignatureWrapper_Invoice'
         '400':
           description: Bad Request
         '404':
@@ -97,7 +97,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignatureWrapper_Invoice'
+              $ref: '#/components/schemas/SignatureWrapper_Compliance'
       operationId: post-path-invoice
   '/receipt':
     post:
@@ -311,4 +311,3 @@ components:
       required:
         - invoiceHash
         - transactionConfirmation
-openapi: '3.0.0'

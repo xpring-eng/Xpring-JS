@@ -1,9 +1,7 @@
 import { assert } from 'chai'
 import { fail } from 'assert'
 import IlpCredentials from '../../src/ILP/auth/ilp-credentials'
-import XpringIlpError, {
-  XpringIlpErrorType,
-} from '../../src/ILP/xpring-ilp-error'
+import IlpError, { IlpErrorType } from '../../src/ILP/ilp-error'
 
 describe('IlpCredentials Node', function(): void {
   it('Build - Undefined token', function(): void {
@@ -41,10 +39,10 @@ describe('IlpCredentials Node', function(): void {
     } catch (error) {
       // THEN an Error is thrown
       assert.equal(
-        (error as XpringIlpError).errorType,
-        XpringIlpErrorType.InvalidAccessToken,
+        (error as IlpError).errorType,
+        IlpErrorType.InvalidAccessToken,
       )
-      assert.equal(error.message, XpringIlpError.invalidAccessToken.message)
+      assert.equal(error.message, IlpError.invalidAccessToken.message)
     }
   })
 })

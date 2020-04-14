@@ -21,16 +21,25 @@ jobs:
 
       - protobuf/install
 
-      # Taken from: https://stackoverflow.com/questions/32942023/ubuntu-openjdk-8-unable-to-locate-package
-      # TODO(keefertaylor): Find a better way to install the correct version of java.
+      # Taken from: https://linuxize.com/post/install-java-on-debian-10/
       - run:
           name: "Install Java"
           command: |
-            curl -s "https://get.sdkman.io" | bash
-            source "$HOME/.sdkman/bin/sdkman-init.sh"
-            sdk install java
-            export PATH=/home/circleci/.sdkman/candidates/java/current/bin/:$PATH
+            sudo apt update
+            sudo apt install apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common
+            wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
+            sudo add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
+            sudo apt update
+            sudo apt install adoptopenjdk-8-hotspot
 
+      # Manually install maven because the version we need doesn't seem to be in a Debian package manager.
+      # TODO(keefertaylor): Find a package repository that contains this.
+      - run:
+          name: "Install Maven"
+          command: |
+            wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz -P /tmp
+            sudo tar xf /tmp/apache-maven-*.tar.gz -C /tmp
+            sudo ln -s /tmp/apache-maven-3.6.3/bin/mvn /usr/bin/mvn
 
       - run:
           name: "Install protoc plugin"
@@ -55,18 +64,14 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
-      # TODO(keefertaylor): If sdkman-init isn't run then `java` isn't in the PATH. Investigate why and remove.
       - run:
           name: "Compile Typescript"
           command: |
-            source "$HOME/.sdkman/bin/sdkman-init.sh"
             npm run build
 
-      # TODO(keefertaylor): If sdkman-init isn't run then `java` isn't in the PATH. Investigate why and remove.
       - run:
           name: "Run Tests"
           command: |
-            source "$HOME/.sdkman/bin/sdkman-init.sh"
             nyc npm test
 
       - run:
