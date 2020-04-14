@@ -29,7 +29,10 @@ export default class RawTransactionStatus {
 
     return new RawTransactionStatus(
       getTransactionResponse.getValidated(),
-      getTransactionResponse.getMeta()?.getTransactionResult()?.getResult(),
+      getTransactionResponse
+        .getMeta()
+        ?.getTransactionResult()
+        ?.getResult(),
       getTransactionResponse.getTransaction()?.getLastLedgerSequence(),
       isFullPayment,
     )

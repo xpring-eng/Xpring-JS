@@ -16,7 +16,10 @@ export default class XRPPayment {
       return undefined // amount is required
     }
 
-    const destination = payment.getDestination()?.getValue()?.getAddress()
+    const destination = payment
+      .getDestination()
+      ?.getValue()
+      ?.getAddress()
     if (!destination) {
       return undefined // destination is required
     }
