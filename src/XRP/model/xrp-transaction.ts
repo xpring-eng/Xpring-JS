@@ -102,6 +102,22 @@ export default class XRPTransaction {
         ? rippleTransactionDate + 946684800
         : undefined
 
+    const deliveredAmountProto = getTransactionResponse
+      .getMeta()
+      ?.getDeliveredAmount()
+
+    const deliveredAmountXRP = deliveredAmountProto
+      ?.getValue()
+      ?.getXrpAmount()
+      ?.getDrops()
+
+    const deliveredAmountIssuedCurrency = deliveredAmountProto
+      ?.getValue()
+      ?.getIssuedCurrencyAmount()
+      ?.getValue()
+
+    const deliveredAmount = deliveredAmountXRP ?? deliveredAmountIssuedCurrency
+
     return new XRPTransaction(
       transactionHash,
       account,
@@ -118,6 +134,7 @@ export default class XRPTransaction {
       type,
       paymentFields,
       timestamp,
+      deliveredAmount,
     )
   }
 
@@ -164,5 +181,6 @@ export default class XRPTransaction {
     readonly type?: XRPTransactionType,
     readonly paymentFields?: XRPPayment,
     readonly timestamp?: number,
+    readonly deliveredAmount?: string,
   ) {}
 }
