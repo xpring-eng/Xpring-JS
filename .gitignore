@@ -2,6 +2,9 @@
 src/ILP/Generated/*
 src/XRP/Generated/*
 src/PayID/Generated/*
+scripts/.settings/*
+scripts/.classpath
+scripts/.project
 
 .idea/*
 # Ignore files compiled from typescript.
