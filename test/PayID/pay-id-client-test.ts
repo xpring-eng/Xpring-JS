@@ -42,7 +42,7 @@ describe('Pay ID Client', function (): void {
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
     // WHEN an XRPAddress is requested for an invalid pay ID THEN an invalid Pay ID error is thrown.
-    payIDClient.xrpAddressForPayID(invalidPayID).catch((error) => {
+    payIDClient.addressForPayID(invalidPayID).catch((error) => {
       assert.equal((error as PayIDError).errorType, PayIDErrorType.InvalidPayID)
       done()
     })
@@ -67,7 +67,7 @@ describe('Pay ID Client', function (): void {
       })
 
     // WHEN an XRP address is requested.
-    const xrpAddress = await payIDClient.xrpAddressForPayID(payID)
+    const xrpAddress = await payIDClient.addressForPayID(payID)
 
     // THEN the address exists.
     // TODO(keefertaylor): Tighten up this condition when proper response parsing is implemented.
@@ -87,7 +87,7 @@ describe('Pay ID Client', function (): void {
     nock('https://xpring.money').get('/georgewashington').reply(404, {})
 
     // WHEN an XRPAddress is requested.
-    payIDClient.xrpAddressForPayID(payID).catch((error) => {
+    payIDClient.addressForPayID(payID).catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
         (error as PayIDError).errorType,
@@ -118,7 +118,7 @@ describe('Pay ID Client', function (): void {
       .reply(serverErrorCode, serverError)
 
     // WHEN an XRPAddress is requested for a Pay ID.
-    payIDClient.xrpAddressForPayID(payID).catch((error) => {
+    payIDClient.addressForPayID(payID).catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
         (error as PayIDError).errorType,
@@ -149,7 +149,7 @@ describe('Pay ID Client', function (): void {
       .reply(serverErrorCode, serverError)
 
     // WHEN an XRPAddress is requested for a Pay ID.
-    payIDClient.xrpAddressForPayID(payID).catch((error) => {
+    payIDClient.addressForPayID(payID).catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
         (error as PayIDError).errorType,
@@ -179,7 +179,7 @@ describe('Pay ID Client', function (): void {
     })
 
     // WHEN an XRPAddress is requested for a Pay ID.
-    payIDClient.xrpAddressForPayID(payID).catch((error) => {
+    payIDClient.addressForPayID(payID).catch((error) => {
       // THEN an unexpected response is thrown.
       assert.equal(
         (error as PayIDError).errorType,

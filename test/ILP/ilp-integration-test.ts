@@ -11,8 +11,8 @@ const timeoutMs = 60 * 1000 // 1 minute
 const ILPAddress = 'hermes-envoy-test.xpring.io'
 const ILPClientNode = new IlpClient(ILPAddress)
 
-describe('ILP Integration Tests', function (): void {
-  it("Get Bob's Account Balance - Node Shim", async function (): Promise<void> {
+describe('ILP Integration Tests', function(): void {
+  it("Get Bob's Account Balance - Node Shim", async function(): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an account on the devnet connector with accountId = sdk_account1
 
@@ -33,7 +33,7 @@ describe('ILP Integration Tests', function (): void {
     assert.equal(message.prepaidAmount.valueOf(), 0)
   })
 
-  it('Get Account Balance - Bearer Token', async function (): Promise<void> {
+  it('Get Account Balance - Bearer Token', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
     // GIVEN an account on the devnet connector with accountId = sdk_account1
@@ -51,7 +51,7 @@ describe('ILP Integration Tests', function (): void {
     }
   })
 
-  it('Send Money - Node Shim', async function (): Promise<void> {
+  it('Send Money - Node Shim', async function(): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an account on the connector with accountId = sdk_account1
     // AND an account on the connector with accountId = sdk_account2
@@ -74,7 +74,7 @@ describe('ILP Integration Tests', function (): void {
     assert.equal(message.successfulPayment, true)
   })
 
-  it('Send Money - Bearer Token', async function (): Promise<void> {
+  it('Send Money - Bearer Token', async function(): Promise<void> {
     this.timeout(timeoutMs)
 
     // GIVEN an account on the connector with accountId = sdk_account1
