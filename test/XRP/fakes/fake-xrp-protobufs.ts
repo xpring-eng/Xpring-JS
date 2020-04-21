@@ -49,7 +49,7 @@ const testPublicKey = new Uint8Array([1, 2, 3])
 const testTransactionSignature = new Uint8Array([4, 5, 6])
 const testSequence = 1
 const testFee = '3'
-const testDrops = '10'
+const testDrops = '20'
 const testDestinationTag = 2
 const testInvoiceID = new Uint8Array([7, 8, 9])
 const testMemoData = new Uint8Array([2, 4, 6])
@@ -184,7 +184,6 @@ sendMaxProto.setValue(testCurrencyAmountProtoDrops)
 const testPaymentProtoAllFieldsSet = new Payment()
 testPaymentProtoAllFieldsSet.setAmount(paymentAmountProto)
 testPaymentProtoAllFieldsSet.setDestination(paymentDestinationProto)
-testPaymentProtoAllFieldsSet.setDestinationTag()
 testPaymentProtoAllFieldsSet.setDestinationTag(destinationTagProto)
 testPaymentProtoAllFieldsSet.setDeliverMin(deliverMinProto)
 testPaymentProtoAllFieldsSet.setInvoiceId(invoiceIDProto)

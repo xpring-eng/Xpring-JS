@@ -170,7 +170,7 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.isUndefined(currencyAmount?.issuedCurrency)
     assert.equal(
       currencyAmount?.drops,
-      testCurrencyAmountProtoDrops.getXrpAmount().getDrops(),
+      testCurrencyAmountProtoDrops.getXrpAmount()?.getDrops(),
     )
   })
 
