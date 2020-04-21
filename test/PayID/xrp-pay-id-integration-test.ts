@@ -31,7 +31,7 @@ describe('PayID Integration Tests', function (): void {
 
     // GIVEN a Pay ID that will resolve on Testnet.
     const payIDClient = new XRPPayIDClient(XRPLNetwork.Test)
-    const payID = 'hbergren$dev.payid.xpring.money'
+    const payID = 'alice$dev.payid.xpring.money'
 
     // WHEN it is resolved to an XRP address on testnet
     const xrpAddress = await payIDClient.addressForPayID(payID)
