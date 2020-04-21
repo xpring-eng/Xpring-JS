@@ -64,14 +64,14 @@ describe('PayID Integration Tests', function (): void {
     })
   })
 
-  it('Resolve PayID to BTC - known PayID - mainnet', async function (): Promise<
+  it('Resolve PayID to BTC - known PayID - testnet', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID that will resolve on Mainnet.
-    const payIDClient = new PayIDClient('btc-mainnet')
-    const payID = '$dev.payid.xpring.money/hbergren'
+    const payIDClient = new PayIDClient('btc-testnet')
+    const payID = '$dev.payid.xpring.money/alice'
 
     // WHEN it is resolved to an XRP address
     const btcAddress = await payIDClient.addressForPayID(payID)
