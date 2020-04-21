@@ -350,13 +350,13 @@ export default class PayIDClient {
    * Parse a payID to a host and path.
    */
   private static parsePayID(payID: string): PayIDComponents {
-    const paymentPointer = PayIDUtils.parsePaymentPointer(payID)
-    if (!paymentPointer) {
-      throw PayIDError.invalidPaymentPointer
+    const payIDComponents = PayIDUtils.parsePayID(payID)
+    if (!payIDComponents) {
+      throw PayIDError.invalidPayID
     }
     return {
-      host: paymentPointer.host,
-      path: paymentPointer.path,
+      host: payIDComponents.host,
+      path: payIDComponents.path,
     }
   }
 }

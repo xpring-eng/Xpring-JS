@@ -5,6 +5,14 @@ import { Currency } from '../Generated/web/org/xrpl/rpc/v1/amount_pb'
  * @see: https://xrpl.org/currency-formats.html#currency-codes
  */
 export default class XRPCurrency {
+  /**
+   * Constructs an XRPCurrency from a Currency.
+   *
+   * @param currency a Currency (protobuf object) whose field values will be used
+   *                 to construct an XRPCurrency
+   * @returns an XRPCurrency with its fields set via the analogous protobuf fields.
+   * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/amount.proto#L41
+   */
   public static from(currency: Currency): XRPCurrency {
     return new XRPCurrency(currency.getName(), currency.getCode_asU8())
   }
