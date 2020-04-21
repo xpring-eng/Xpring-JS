@@ -21,7 +21,7 @@ describe('PayID Integration Tests', function (): void {
     const xrpAddress = await payIDClient.addressForPayID(payID)
 
     // THEN the address is the expected value.
-    assert.equal(xrpAddress, 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSHqcZEd67ddMfJG9Y')
+    assert.equal(xrpAddress, 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn')
   })
 
   it('Resolve PayID to XRP - known PayID - testnet', async function (): Promise<
@@ -44,7 +44,7 @@ describe('PayID Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID that will not resolve on Devnet.
-    const payID = '$dev.payid.xpring.money/alice'
+    const payID = '$dev.payid.xpring.money/does-not-exist'
     const network = XRPLNetwork.Dev
     const payIDClient = new XRPPayIDClient(network)
 
@@ -82,7 +82,7 @@ describe('PayID Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID.
-    const payID = '$travel.payid.xpring.money/dino'
+    const payID = '$travel.payid.xpring.money/alice'
     const payIDClient = new XRPPayIDClient(XRPLNetwork.Test)
 
     // WHEN the Pay ID receipt endpoint is hit
@@ -109,7 +109,7 @@ describe('PayID Integration Tests', function (): void {
 
   it('receipt', async function (): Promise<void> {
     // GIVEN a Pay ID.
-    const payID = '$travel.payid.xpring.money/dino'
+    const payID = '$travel.payid.xpring.money/alice'
     const payIDClient = new XRPPayIDClient(XRPLNetwork.Main)
 
     // WHEN the Pay ID receipt endpoint is hit then an error is not thrown.
