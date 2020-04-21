@@ -68,7 +68,7 @@ describe('PayID Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID.
-    const payID = 'dino$travel.payid.xpring.money'
+    const payID = 'alice$travel.payid.xpring.money'
     const payIDClient = new XRPPayIDClient(XRPLNetwork.Test)
 
     // WHEN the Pay ID receipt endpoint is hit
@@ -82,7 +82,7 @@ describe('PayID Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID.
-    const payID = 'dino$travel.payid.xpring.money'
+    const payID = 'alice$travel.payid.xpring.money'
     const payIDClient = new XRPPayIDClient(XRPLNetwork.Test)
 
     // WHEN the Pay ID receipt endpoint is hit
@@ -109,7 +109,7 @@ describe('PayID Integration Tests', function (): void {
 
   it('receipt', async function (): Promise<void> {
     // GIVEN a Pay ID.
-    const payID = 'dino$travel.payid.xpring.money'
+    const payID = 'alice$travel.payid.xpring.money'
     const payIDClient = new XRPPayIDClient(XRPLNetwork.Main)
 
     // WHEN the Pay ID receipt endpoint is hit then an error is not thrown.
