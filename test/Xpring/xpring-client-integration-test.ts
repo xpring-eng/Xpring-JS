@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 import XpringClient from '../../src/Xpring/xpring-client'
-import PayIDClient from '../../src/PayID/pay-id-client'
+import XRPPayIDClient from '../../src/PayID/xrp-pay-id-client'
 import XRPClient from '../../src/XRP/xrp-client'
 import XRPLNetwork from '../../src/Common/xrpl-network'
 
@@ -15,7 +15,7 @@ const network = XRPLNetwork.Test
 const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 
 // A PayIDClient under test.
-const payIDClient = new PayIDClient(network)
+const payIDClient = new XRPPayIDClient(network)
 
 // An XRPClient under test.
 const rippledURL = 'test.xrp.xpring.io:50051'
@@ -29,7 +29,7 @@ describe('Xpring Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID that will resolve.
-    const payID = '$dev.payid.xpring.money/hbergren'
+    const payID = 'alice$dev.payid.xpring.money'
 
     // WHEN XRP is sent to the Pay ID.
     const transactionHash = await xpringClient.send(10, payID, wallet)

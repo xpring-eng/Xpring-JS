@@ -14,6 +14,14 @@ import { GetTransactionResponse } from '../Generated/web/org/xrpl/rpc/v1/get_tra
  */
 // TODO(amiecorso): Modify this object to use X-Address format.
 export default class XRPTransaction {
+  /**
+   * Constructs an XRPTransaction from a Transaction.
+   *
+   * @param transaction a Transaction (protobuf object) whose field values will be used
+   *                    to construct an XRPTransaction
+   * @returns an XRPTransaction with its fields set via the analogous protobuf fields.
+   * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L13
+   */
   public static from(
     getTransactionResponse: GetTransactionResponse,
   ): XRPTransaction | undefined {
@@ -22,7 +30,10 @@ export default class XRPTransaction {
       return undefined
     }
 
-    const account = transaction.getAccount()?.getValue()?.getAddress()
+    const account = transaction
+      .getAccount()
+      ?.getValue()
+      ?.getAddress()
 
     const fee = transaction.getFee()?.getDrops()
 
@@ -68,7 +79,7 @@ export default class XRPTransaction {
         if (!paymentFields) {
           return undefined
         }
-        type = payment && Transaction.TransactionDataCase.PAYMENT
+        type = payment && XRPTransactionType.Payment
         break
       }
       default:
@@ -91,6 +102,22 @@ export default class XRPTransaction {
         ? rippleTransactionDate + 946684800
         : undefined
 
+    const deliveredAmountProto = getTransactionResponse
+      .getMeta()
+      ?.getDeliveredAmount()
+
+    const deliveredAmountXRP = deliveredAmountProto
+      ?.getValue()
+      ?.getXrpAmount()
+      ?.getDrops()
+
+    const deliveredAmountIssuedCurrency = deliveredAmountProto
+      ?.getValue()
+      ?.getIssuedCurrencyAmount()
+      ?.getValue()
+
+    const deliveredAmount = deliveredAmountXRP ?? deliveredAmountIssuedCurrency
+
     return new XRPTransaction(
       transactionHash,
       account,
@@ -107,9 +134,37 @@ export default class XRPTransaction {
       type,
       paymentFields,
       timestamp,
+      deliveredAmount,
     )
   }
 
+  /**
+   *
+   * @param hash The identifying hash of the transaction.
+   * @param account The unique address of the account that initiated the transaction.
+   * @param accountTransactionID (Optional) Hash value identifying another transaction.
+   *                              If provided, this transaction is only valid if the sending account's
+   *                              previously-sent transaction matches the provided hash.
+   * @param fee Integer amount of XRP, in drops, to be destroyed as a cost for distributing this transaction to the network.
+   * @param flags (Optional) Set of bit-flags for this transaction.
+   * @param lastLedgerSequence (Optional; strongly recommended) Highest ledger index this transaction can appear in.
+   *                            Specifying this field places a strict upper limit on how long the transaction can wait to be
+   *                            validated or rejected.
+   * @param memos (Optional) Additional arbitrary information used to identify this transaction.
+   * @param sequence The sequence number of the account sending the transaction. A transaction is only valid if the Sequence
+   *                  number is exactly 1 greater than the previous transaction from the same account.
+   * @param signers (Optional) Array of objects that represent a multi-signature which authorizes this transaction.
+   * @param signingPublicKey Hex representation of the public key that corresponds to the private key used to sign this transaction.
+   *                         If an empty string, indicates a multi-signature is present in the Signers field instead.
+   * @param sourceTag (Optional) Arbitrary integer used to identify the reason for this payment or a sender on whose behalf this
+   *                  transaction is made.
+   *                  Conventionally, a refund should specify the initial payment's SourceTag as the refund payment's DestinationTag.
+   * @param transactionSignature The signature that verifies this transaction as originating from the account it says it is from.
+   * @param type The type of transaction.
+   * @param paymentFields An XRPPayment object representing the additional fields present in a PAYMENT transaction.
+   *                      see "https://xrpl.org/payment.html#payment-fields"
+   * @param timestamp The transaction's timestamp, converted to a unix timestamp.
+   */
   private constructor(
     readonly hash: string,
     readonly account?: string,
@@ -126,5 +181,6 @@ export default class XRPTransaction {
     readonly type?: XRPTransactionType,
     readonly paymentFields?: XRPPayment,
     readonly timestamp?: number,
+    readonly deliveredAmount?: string,
   ) {}
 }

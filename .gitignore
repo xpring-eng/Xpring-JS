@@ -2,6 +2,9 @@
 src/ILP/Generated/*
 src/XRP/Generated/*
 src/PayID/Generated/*
+scripts/.settings/*
+scripts/.classpath
+scripts/.project
 
 .idea/*
 # Ignore files compiled from typescript.
@@ -9,6 +12,9 @@ build/*
 
 # Ignore files from VSCode.
 *.code-workspace
+scripts/.settings/*
+scripts/.classpath
+scripts/.project
 
 # Created by https://www.gitignore.io/api/osx,node
 # Edit at https://www.gitignore.io/?templates=osx,node
