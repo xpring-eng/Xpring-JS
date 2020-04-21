@@ -78,10 +78,10 @@ testInvalidIssuedCurrency.setCurrency(testCurrencyProto)
 testInvalidIssuedCurrency.setIssuer(testAccountAddress)
 testInvalidIssuedCurrency.setValue('xrp')
 
-describe('Protocol Buffer Conversion', function(): void {
+describe('Protocol Buffer Conversion', function (): void {
   // Currency
 
-  it('Convert Currency protobuf to XRPCurrency object', function(): void {
+  it('Convert Currency protobuf to XRPCurrency object', function (): void {
     // GIVEN a Currency protocol buffer with a code and a name.
     const currencyCode: Uint8Array = new Uint8Array([1, 2, 3])
     const currencyName = 'abc'
@@ -99,7 +99,7 @@ describe('Protocol Buffer Conversion', function(): void {
 
   // PathElement
 
-  it('Convert PathElement protobuf with all fields set to XRPPathElement', function(): void {
+  it('Convert PathElement protobuf with all fields set to XRPPathElement', function (): void {
     // GIVEN a PathElement protocol buffer with all fields set.
     const pathElementProto = testPathElement
 
@@ -121,7 +121,7 @@ describe('Protocol Buffer Conversion', function(): void {
     )
   })
 
-  it('Convert PathElement protobuf with no fields set to XRPPathElement', function(): void {
+  it('Convert PathElement protobuf with no fields set to XRPPathElement', function (): void {
     // GIVEN a PathElement protocol buffer with no fields set.
     const pathElementProto = new Payment.PathElement()
 
@@ -136,7 +136,7 @@ describe('Protocol Buffer Conversion', function(): void {
 
   // Path
 
-  it('Convert Path protobuf with no paths to XRPPath', function(): void {
+  it('Convert Path protobuf with no paths to XRPPath', function (): void {
     // GIVEN a set of paths with zero path elements.
     const pathProto = new Payment.Path()
 
@@ -147,7 +147,7 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.equal(path?.pathElements.length, 0)
   })
 
-  it('Convert Path protobuf with one Path to XRPPath', function(): void {
+  it('Convert Path protobuf with one Path to XRPPath', function (): void {
     // GIVEN a set of paths with one path element.
     const pathProto = new Payment.Path()
     pathProto.addElements(testPathElement)
@@ -159,7 +159,7 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.equal(path?.pathElements.length, 1)
   })
 
-  it('Convert Path protobuf with many Paths to XRPPath', function(): void {
+  it('Convert Path protobuf with many Paths to XRPPath', function (): void {
     // GIVEN a set of paths with three path elements.
     const pathProto = new Payment.Path()
     pathProto.setElementsList([
@@ -177,7 +177,7 @@ describe('Protocol Buffer Conversion', function(): void {
 
   // IssuedCurrency
 
-  it('Convert IssuedCurrency to XRPIssuedCurrency', function(): void {
+  it('Convert IssuedCurrency to XRPIssuedCurrency', function (): void {
     // GIVEN an issued currency protocol buffer,
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const issuedCurrency = XRPIssuedCurrency.from(testIssuedCurrency)
@@ -197,7 +197,7 @@ describe('Protocol Buffer Conversion', function(): void {
     )
   })
 
-  it('Convert IssuedCurrency with bad value', function(): void {
+  it('Convert IssuedCurrency with bad value', function (): void {
     // GIVEN an issued currency protocol buffer with a non numeric value
     const issuedCurrencyProto = testInvalidIssuedCurrency
 
@@ -210,7 +210,7 @@ describe('Protocol Buffer Conversion', function(): void {
 
   // CurrencyAmount tests
 
-  it('Convert CurrencyAmount with drops', function(): void {
+  it('Convert CurrencyAmount with drops', function (): void {
     // GIVEN a currency amount protocol buffer with an XRP amount.
     const drops = '10'
     const currencyAmountProto = new CurrencyAmount()
@@ -226,7 +226,7 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.equal(currencyAmount?.drops, drops)
   })
 
-  it('Convert CurrencyAmount with Issued Currency', function(): void {
+  it('Convert CurrencyAmount with Issued Currency', function (): void {
     // GIVEN a currency amount protocol buffer with an issued currency amount.
     const currencyAmountProto = new CurrencyAmount()
     currencyAmountProto.setIssuedCurrencyAmount(testIssuedCurrency)
@@ -242,7 +242,7 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.isUndefined(currencyAmount?.drops)
   })
 
-  it('Convert CurrencyAmount with bad inputs', function(): void {
+  it('Convert CurrencyAmount with bad inputs', function (): void {
     // GIVEN a currency amount protocol buffer with no amounts
     const currencyAmountProto = new CurrencyAmount()
     currencyAmountProto.setIssuedCurrencyAmount(testInvalidIssuedCurrency)
@@ -256,7 +256,7 @@ describe('Protocol Buffer Conversion', function(): void {
 
   // Payment
 
-  it('Convert Payment with all fields set', function(): void {
+  it('Convert Payment with all fields set', function (): void {
     // GIVEN a payment protocol buffer with all fields set.
     // amount
     const currencyAmountProto = new CurrencyAmount()
@@ -339,10 +339,7 @@ describe('Protocol Buffer Conversion', function(): void {
     )
     assert.equal(
       payment?.destination,
-      paymentProto
-        .getDestination()
-        ?.getValue()
-        ?.getAddress(),
+      paymentProto.getDestination()?.getValue()?.getAddress(),
     )
     assert.equal(
       payment?.destinationTag,
@@ -366,7 +363,7 @@ describe('Protocol Buffer Conversion', function(): void {
     )
   })
 
-  it('Convert Payment with only mandatory fields set', function(): void {
+  it('Convert Payment with only mandatory fields set', function (): void {
     // GIVEN a payment protocol buffer with only mandatory fields set.
     // amount
     const currencyAmountProto = new CurrencyAmount()
@@ -394,10 +391,7 @@ describe('Protocol Buffer Conversion', function(): void {
     )
     assert.equal(
       payment?.destination,
-      paymentProto
-        .getDestination()
-        ?.getValue()
-        ?.getAddress(),
+      paymentProto.getDestination()?.getValue()?.getAddress(),
     )
     assert.isUndefined(payment?.destinationTag)
     assert.isUndefined(payment?.deliverMin)
@@ -406,7 +400,7 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.isUndefined(payment?.sendMax)
   })
 
-  it('Convert Payment with invalid amount field', function(): void {
+  it('Convert Payment with invalid amount field', function (): void {
     // GIVEN a pyament protocol buffer with an invalid amount field
     // amount (invalid)
     const currencyAmountProto = new CurrencyAmount()
@@ -428,7 +422,7 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.isUndefined(XRPPayment.from(paymentProto))
   })
 
-  it('Convert Payment with invalid deliverMin field', function(): void {
+  it('Convert Payment with invalid deliverMin field', function (): void {
     // GIVEN a payment protocol buffer with an invalid deliverMin field
     // amount
     const currencyAmountProto = new CurrencyAmount()
@@ -459,7 +453,7 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.isUndefined(XRPPayment.from(paymentProto))
   })
 
-  it('Convert Payment with invalid sendMax field', function(): void {
+  it('Convert Payment with invalid sendMax field', function (): void {
     // GIVEN a payment protocol buffer with an invalid sendMax field
     // amount
     const currencyAmountProto = new CurrencyAmount()
@@ -492,7 +486,7 @@ describe('Protocol Buffer Conversion', function(): void {
 
   // Memo
 
-  it('Convert Memo with all fields set', function(): void {
+  it('Convert Memo with all fields set', function (): void {
     // GIVEN a memo with all fields set.
     const memoData = new Uint8Array([1, 2, 3])
     const memoFormat = new Uint8Array([4, 5, 6])
@@ -519,7 +513,7 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.deepEqual(memo?.type, memoType)
   })
 
-  it('Convert Memo with no fields set', function(): void {
+  it('Convert Memo with no fields set', function (): void {
     // GIVEN a memo with no fields set.
     const memoProto = new Memo()
 
@@ -533,7 +527,7 @@ describe('Protocol Buffer Conversion', function(): void {
   })
 
   // Signer
-  it('Convert Signer with all fields set', function(): void {
+  it('Convert Signer with all fields set', function (): void {
     // GIVEN a Signer protocol buffer with all fields set.
     const account = 'r123'
     const signingPublicKey = new Uint8Array([1, 2, 3])
@@ -566,7 +560,7 @@ describe('Protocol Buffer Conversion', function(): void {
 
   // Transaction
 
-  it('Convert PAYMENT Transaction, all common fields set', function(): void {
+  it('Convert PAYMENT Transaction, all common fields set', function (): void {
     // GIVEN a Transaction protocol buffer with all common fields set.
     const account = 'r123'
     const fee = '1'
@@ -718,7 +712,7 @@ describe('Protocol Buffer Conversion', function(): void {
     )
   })
 
-  it('Convert PAYMENT Transaction with only mandatory common fields set', function(): void {
+  it('Convert PAYMENT Transaction with only mandatory common fields set', function (): void {
     // GIVEN a Transaction protocol buffer with only mandatory common fields set.
     const account = 'r123'
     const fee = '1'
@@ -791,7 +785,7 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.isUndefined(transaction?.deliveredAmount)
   })
 
-  it('Convert PAYMENT Transaction with bad payment fields', function(): void {
+  it('Convert PAYMENT Transaction with bad payment fields', function (): void {
     // GIVEN a Transaction protocol buffer with payment fields which are incorrect
     const account = 'r123'
     const fee = '1'
@@ -839,7 +833,7 @@ describe('Protocol Buffer Conversion', function(): void {
     assert.isUndefined(transaction)
   })
 
-  it('Convert unsupported transaction type', function(): void {
+  it('Convert unsupported transaction type', function (): void {
     // GIVEN a Transaction protocol buffer with an unsupported transaction type.
     const account = 'r123'
     const fee = '1'
