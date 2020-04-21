@@ -2,7 +2,7 @@
  * Types of errors that originate from PayID.
  */
 export enum PayIDErrorType {
-  InvalidPaymentPointer,
+  InvalidPayID,
   MappingNotFound,
   UnexpectedResponse,
   Unimplemented,
@@ -21,8 +21,8 @@ export default class PayIDError extends Error {
     'Unimplemented',
   )
 
-  public static invalidPaymentPointer = new PayIDError(
-    PayIDErrorType.InvalidPaymentPointer,
+  public static invalidPayID = new PayIDError(
+    PayIDErrorType.InvalidPayID,
     'Invalid payment pointer',
   )
 
