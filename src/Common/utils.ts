@@ -5,9 +5,10 @@ const isNode = (): boolean => {
 }
 
 function dropsToXrp(drops: BigNumber.Value): string {
+  const dropsRegEx = RegExp(/^-?[0-9]*\.?[0-9]*$/)
+
   if (typeof drops === 'string') {
-    // eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
-    if (!drops.match(/^-?[0-9]*\.?[0-9]*$/)) {
+    if (!dropsRegEx.exec(drops)) {
       throw new Error(
         `dropsToXrp: invalid value '${drops}',` +
           ` should be a number matching (^-?[0-9]*\\.?[0-9]*$).`,
@@ -34,7 +35,8 @@ function dropsToXrp(drops: BigNumber.Value): string {
   // This should never happen; the value has already been
   // validated above. This just ensures BigNumber did not do
   // something unexpected.
-  if (!drops.match(/^-?[0-9]+$/)) {
+
+  if (!dropsRegEx.exec(drops)) {
     throw new Error(
       `dropsToXrp: failed sanity check -` +
         ` value '${drops}',` +
@@ -46,9 +48,11 @@ function dropsToXrp(drops: BigNumber.Value): string {
 }
 
 function xrpToDrops(xrp: BigNumber.Value): string {
+  const xrpRegEx = RegExp(/^-?[0-9]*\.?[0-9]*$/)
+
   if (typeof xrp === 'string') {
     // eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
-    if (!xrp.match(/^-?[0-9]*\.?[0-9]*$/)) {
+    if (!xrpRegEx.exec(xrp)) {
       throw new Error(
         `xrpToDrops: invalid value '${xrp}',` +
           ` should be a number matching (^-?[0-9]*\\.?[0-9]*$).`,
@@ -68,7 +72,7 @@ function xrpToDrops(xrp: BigNumber.Value): string {
   // This should never happen; the value has already been
   // validated above. This just ensures BigNumber did not do
   // something unexpected.
-  if (!xrp.match(/^-?[0-9.]+$/)) {
+  if (!xrpRegEx.exec(xrp)) {
     throw new Error(
       `xrpToDrops: failed sanity check -` +
         ` value '${xrp}',` +
