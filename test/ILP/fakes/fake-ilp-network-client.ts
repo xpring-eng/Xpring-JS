@@ -1,4 +1,4 @@
-import { status } from 'grpc'
+import grpcStatus from '../../../src/Common/grpc-status'
 import { IlpNetworkClient } from '../../../src/ILP/ilp-network-client'
 import { GetBalanceResponse } from '../../../src/ILP/Generated/node/get_balance_response_pb'
 import { SendPaymentResponse } from '../../../src/ILP/Generated/node/send_payment_response_pb'
@@ -19,26 +19,28 @@ export class FakeIlpNetworkClientResponses {
   public static defaultError = new Error('fake ilp network client failure')
 
   /**
-   * A fake GRPC error mocking grpc.status.NOT_FOUND
+   * A fake GRPC error mocking grpcStatus.NotFound
    */
-  public static notFoundError = new FakeGRPCError(status.NOT_FOUND)
+  public static notFoundError = new FakeGRPCError(grpcStatus.NotFound)
 
   /**
-   * A fake GRPC error mocking grpc.status.UNAUTHENTICATED
+   * A fake GRPC error mocking grpcStatus.Unauthenticated
    */
-  public static unauthenticatedError = new FakeGRPCError(status.UNAUTHENTICATED)
-
-  /**
-   * A fake GRPC error mocking grpc.status.INVALID_ARGUMENT
-   */
-  public static invalidArgumentError = new FakeGRPCError(
-    status.INVALID_ARGUMENT,
+  public static unauthenticatedError = new FakeGRPCError(
+    grpcStatus.Unauthenticated,
   )
 
   /**
-   * A fake GRPC error mocking grpc.status.INTERNAL
+   * A fake GRPC error mocking grpcStatus.InvalidArgument
    */
-  public static internalError = new FakeGRPCError(status.INTERNAL)
+  public static invalidArgumentError = new FakeGRPCError(
+    grpcStatus.InvalidArgument,
+  )
+
+  /**
+   * A fake GRPC error mocking grpcStatus.Internal
+   */
+  public static internalError = new FakeGRPCError(grpcStatus.Internal)
 
   /**
    * A real IlpError which would get thrown if an access token starts with "Bearer "
@@ -50,7 +52,7 @@ export class FakeIlpNetworkClientResponses {
    */
   public static defaultSuccessfulResponses = new FakeIlpNetworkClientResponses()
 
-  public static unknownError = new FakeGRPCError(status.UNKNOWN)
+  public static unknownError = new FakeGRPCError(grpcStatus.Unknown)
 
   public static create(responseError: Error): FakeIlpNetworkClientResponses {
     return new FakeIlpNetworkClientResponses(responseError, responseError)
