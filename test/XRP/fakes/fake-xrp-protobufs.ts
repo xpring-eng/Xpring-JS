@@ -63,7 +63,7 @@ const testTransactionHash = new Uint8Array([3, 5, 7, 9])
 // Set date to Ripple epoch, January 1, 2000 (00:00 UTC).
 // Expected timestamp is in unix time, 946684800 after Unix epoch.
 const testTimestamp = 0
-const expectedTimestamp = 94668480
+const expectedTimestamp = 946684800
 
 // VALID OBJECTS ===============================================
 
@@ -301,9 +301,7 @@ metaProto.setDeliveredAmount(deliveredAmountProto)
 
 // GetTransactionResponse protos
 const testGetTransactionResponseProto = new GetTransactionResponse()
-testGetTransactionResponseProto.setTransaction(
-  testTransactionPaymentMandatoryFields,
-)
+testGetTransactionResponseProto.setTransaction(testTransactionPaymentAllFields)
 testGetTransactionResponseProto.setDate(dateProto)
 testGetTransactionResponseProto.setHash(testTransactionHash)
 testGetTransactionResponseProto.setMeta(metaProto)
@@ -348,7 +346,7 @@ invalidDeliverMinProto.setValue(testInvalidCurrencyAmountProto)
 
 // Invalid SendMax proto
 const invalidSendMaxProto = new SendMax()
-sendMaxProto.setValue(testInvalidCurrencyAmountProto)
+invalidSendMaxProto.setValue(testInvalidCurrencyAmountProto)
 
 // Invalid Payment protos
 const testInvalidPaymentProtoBadAmount = new Payment()
