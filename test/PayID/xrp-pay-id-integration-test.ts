@@ -7,8 +7,8 @@ import ComplianceType from '../../src/PayID/compliance-type'
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
 
-describe('PayID Integration Tests', function(): void {
-  it('Resolve PayID to XRP - known PayID - mainnet', async function(): Promise<
+describe('PayID Integration Tests', function (): void {
+  it('Resolve PayID to XRP - known PayID - mainnet', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -24,7 +24,7 @@ describe('PayID Integration Tests', function(): void {
     assert.equal(xrpAddress, 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSHqcZEd67ddMfJG9Y')
   })
 
-  it('Resolve PayID to XRP - known PayID - testnet', async function(): Promise<
+  it('Resolve PayID to XRP - known PayID - testnet', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -40,7 +40,7 @@ describe('PayID Integration Tests', function(): void {
     assert.equal(xrpAddress, 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS')
   })
 
-  it('Resolve PayID to XRP - unknown PayID - devnet', function(done) {
+  it('Resolve PayID to XRP - unknown PayID - devnet', function (done) {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID that will not resolve on Devnet.
@@ -64,7 +64,7 @@ describe('PayID Integration Tests', function(): void {
     })
   })
 
-  it('getInvoice', async function(): Promise<void> {
+  it('getInvoice', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID.
@@ -78,7 +78,7 @@ describe('PayID Integration Tests', function(): void {
     assert.exists(invoice)
   })
 
-  it('postInvoice', async function(): Promise<void> {
+  it('postInvoice', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID.
@@ -107,7 +107,7 @@ describe('PayID Integration Tests', function(): void {
     assert.exists(invoice)
   })
 
-  it('receipt', async function(): Promise<void> {
+  it('receipt', async function (): Promise<void> {
     // GIVEN a Pay ID.
     const payID = '$travel.payid.xpring.money/dino'
     const payIDClient = new XRPPayIDClient(XRPLNetwork.Main)

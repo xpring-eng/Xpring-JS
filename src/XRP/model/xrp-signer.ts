@@ -14,10 +14,7 @@ export default class XRPSigner {
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L90
    */
   public static from(signer: Signer): XRPSigner | undefined {
-    const account = signer
-      .getAccount()
-      ?.getValue()
-      ?.getAddress()
+    const account = signer.getAccount()?.getValue()?.getAddress()
     const signingPublicKey = signer.getSigningPublicKey()?.getValue_asU8()
     const transactionSignature = signer
       .getTransactionSignature()
