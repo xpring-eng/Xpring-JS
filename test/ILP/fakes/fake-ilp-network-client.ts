@@ -1,4 +1,4 @@
-import grpcStatus from '../../../src/Common/grpc-status'
+import { StatusCode as grpcStatusCode } from 'grpc-web'
 import { IlpNetworkClient } from '../../../src/ILP/ilp-network-client'
 import { GetBalanceResponse } from '../../../src/ILP/Generated/node/get_balance_response_pb'
 import { SendPaymentResponse } from '../../../src/ILP/Generated/node/send_payment_response_pb'
@@ -21,26 +21,26 @@ export class FakeIlpNetworkClientResponses {
   /**
    * A fake GRPC error mocking grpcStatus.NotFound
    */
-  public static notFoundError = new FakeGRPCError(grpcStatus.NotFound)
+  public static notFoundError = new FakeGRPCError(grpcStatusCode.NOT_FOUND)
 
   /**
    * A fake GRPC error mocking grpcStatus.Unauthenticated
    */
   public static unauthenticatedError = new FakeGRPCError(
-    grpcStatus.Unauthenticated,
+    grpcStatusCode.UNAUTHENTICATED,
   )
 
   /**
    * A fake GRPC error mocking grpcStatus.InvalidArgument
    */
   public static invalidArgumentError = new FakeGRPCError(
-    grpcStatus.InvalidArgument,
+    grpcStatusCode.INVALID_ARGUMENT,
   )
 
   /**
    * A fake GRPC error mocking grpcStatus.Internal
    */
-  public static internalError = new FakeGRPCError(grpcStatus.Internal)
+  public static internalError = new FakeGRPCError(grpcStatusCode.INTERNAL)
 
   /**
    * A real IlpError which would get thrown if an access token starts with "Bearer "
@@ -52,7 +52,7 @@ export class FakeIlpNetworkClientResponses {
    */
   public static defaultSuccessfulResponses = new FakeIlpNetworkClientResponses()
 
-  public static unknownError = new FakeGRPCError(grpcStatus.Unknown)
+  public static unknownError = new FakeGRPCError(grpcStatusCode.UNKNOWN)
 
   public static create(responseError: Error): FakeIlpNetworkClientResponses {
     return new FakeIlpNetworkClientResponses(responseError, responseError)

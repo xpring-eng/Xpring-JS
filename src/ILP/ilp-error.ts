@@ -1,6 +1,5 @@
 import { ServiceError } from 'grpc'
-import { Error as grpcWebError } from 'grpc-web'
-import grpcStatus from '../Common/grpc-status'
+import { Error as grpcWebError, StatusCode as grpcStatusCode } from 'grpc-web'
 
 /**
  * Types of errors that originate from ILP.
@@ -78,13 +77,13 @@ export default class IlpError extends Error {
   public static from(error: ServiceError | grpcWebError | IlpError): IlpError {
     if ('code' in error) {
       switch (error.code) {
-        case grpcStatus.NotFound:
+        case grpcStatusCode.NOT_FOUND:
           return IlpError.accountNotFound
-        case grpcStatus.Unauthenticated:
+        case grpcStatusCode.UNAUTHENTICATED:
           return IlpError.unauthenticated
-        case grpcStatus.InvalidArgument:
+        case grpcStatusCode.INVALID_ARGUMENT:
           return IlpError.invalidArgument
-        case grpcStatus.Internal:
+        case grpcStatusCode.INTERNAL:
           return IlpError.internal
         default:
           return IlpError.unknown

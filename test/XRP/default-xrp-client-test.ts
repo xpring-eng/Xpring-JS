@@ -3,7 +3,7 @@ import { assert } from 'chai'
 
 import bigInt from 'big-integer'
 import { Utils, Wallet } from 'xpring-common-js'
-import grpcStatus from '../../src/Common/grpc-status'
+import { StatusCode as grpcStatusCode } from 'grpc-web'
 import FakeGRPCError from './fakes/fake-grpc-error'
 import XRPTestUtils from './helpers/xrp-test-utils'
 import DefaultXRPClient from '../../src/XRP/default-xrp-client'
@@ -453,7 +453,7 @@ describe('Default Xpring Client', function (): void {
     // GIVEN a DefaultXRPClient with a network client that will report accounts as not found
     const notFoundError = new FakeGRPCError(
       'FakeGRPCError: account not found',
-      grpcStatus.NotFound,
+      grpcStatusCode.NOT_FOUND,
     )
     const fakeNetworkClientResponses = new FakeXRPNetworkClientResponses(
       notFoundError, // getAccountInfoResponse
@@ -474,7 +474,7 @@ describe('Default Xpring Client', function (): void {
     // GIVEN a DefaultXRPClient with a network client that reports grpc operation as cancelled
     const cancelledError = new FakeGRPCError(
       'FakeGRPCError: operation was cancelled',
-      grpcStatus.Cancelled,
+      grpcStatusCode.CANCELLED,
     )
     const fakeNetworkClientResponses = new FakeXRPNetworkClientResponses(
       cancelledError, // getAccountInfoResponse
@@ -488,7 +488,7 @@ describe('Default Xpring Client', function (): void {
     // THEN an error is re-thrown (cannot conclude account doesn't exist)
     xrpClient.accountExists(testAddress).catch((error) => {
       assert.typeOf(error, 'Error')
-      assert.equal(error.code, grpcStatus.Cancelled)
+      assert.equal(error.code, grpcStatusCode.CANCELLED)
       done()
     })
   })

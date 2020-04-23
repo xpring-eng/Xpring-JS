@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
+import { StatusCode as grpcStatusCode } from 'grpc-web'
 import {
   CurrencyAmount,
   XRPDropsAmount,
@@ -28,7 +29,6 @@ import GRPCNetworkClientWeb from './grpc-xrp-network-client.web'
 import { XRPNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XRPError from './xrp-error'
-import grpcStatus from '../Common/grpc-status'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -278,7 +278,7 @@ class DefaultXRPClient implements XRPClientDecorator {
       await this.getBalance(address)
       return true
     } catch (error) {
-      if (error?.code === grpcStatus.NotFound) {
+      if (error?.code === grpcStatusCode.NOT_FOUND) {
         return false
       }
       throw error // error code other than NOT_FOUND should re-throw error
