@@ -7,7 +7,7 @@ import XRPLNetwork from '../../src/Common/xrpl-network'
 import SignatureWrapperInvoice from '../../src/PayID/Generated/model/SignatureWrapperInvoice'
 import ComplianceType from '../../src/PayID/compliance-type'
 
-// Parameters for getInvoice
+// Nonce for getInvoice and postInvoice
 const nonce = '123456'
 
 // Parameters for postInvoice
@@ -291,11 +291,13 @@ describe('Pay ID Client', function (): void {
 
     nock('https://xpring.money')
       .post(`/georgewashington/invoice`)
+      .query({ nonce })
       .reply(200, mockResponse)
 
     // WHEN the invoice endpoint is hit.
     const invoice = await payIDClient.postInvoice(
       payID,
+      nonce,
       publicKeyType,
       publicKeyData,
       publicKey,
@@ -325,12 +327,14 @@ describe('Pay ID Client', function (): void {
 
     nock('https://xpring.money')
       .post(`/georgewashington/invoice`)
+      .query({ nonce })
       .reply(503, {})
 
     // WHEN the postInvoice endpoint
     payIDClient
       .postInvoice(
         payID,
+        nonce,
         publicKeyType,
         publicKeyData,
         publicKey,
