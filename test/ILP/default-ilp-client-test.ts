@@ -64,7 +64,7 @@ describe('Default ILP Client', function (): void {
 
   it('Get balance - Not Found Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
-    // with code = grpc.status.NOT_FOUND
+    // with code = grpcStatusCode.NOT_FOUND
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.notFoundError,
     )
@@ -79,7 +79,7 @@ describe('Default ILP Client', function (): void {
 
   it('Get balance - Invalid Argument Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
-    // with code = grpc.status.INVALID_ARGUMENT
+    // with code = grpcStatusCode.INVALID_ARGUMENT
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.invalidArgumentError,
     )
@@ -94,7 +94,7 @@ describe('Default ILP Client', function (): void {
 
   it('Get balance - Unauthenticated Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
-    // with code = grpc.status.UNAUTHENTICATED
+    // with code = grpcStatusCode.UNAUTHENTICATED
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.unauthenticatedError,
     )
@@ -109,7 +109,7 @@ describe('Default ILP Client', function (): void {
 
   it('Get balance - Internal Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
-    // with code = grpc.status.INTERNAL
+    // with code = grpcStatusCode.INTERNAL
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.internalError,
     )
@@ -124,7 +124,7 @@ describe('Default ILP Client', function (): void {
 
   it('Get balance - Unknown Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
-    // with code = grpc.status.INTERNAL
+    // with code = grpcStatusCode.INTERNAL
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.unknownError,
     )
@@ -201,7 +201,7 @@ describe('Default ILP Client', function (): void {
 
   it('Send Payment - Not Found Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
-    // with code = grpc.status.NOT_FOUND
+    // with code = grpcStatusCode.NOT_FOUND
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.notFoundError,
     )
@@ -216,7 +216,7 @@ describe('Default ILP Client', function (): void {
 
   it('Send Payment - Invalid Argument Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
-    // with code = grpc.status.INVALID_ARGUMENT
+    // with code = grpcStatusCode.INVALID_ARGUMENT
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.invalidArgumentError,
     )
@@ -231,7 +231,7 @@ describe('Default ILP Client', function (): void {
 
   it('Send Payment - Unauthenticated Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
-    // with code = grpc.status.UNAUTHENTICATED
+    // with code = grpcStatusCode.UNAUTHENTICATED
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.unauthenticatedError,
     )
@@ -246,7 +246,7 @@ describe('Default ILP Client', function (): void {
 
   it('Send Payment - Internal Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
-    // with code = grpc.status.INTERNAL
+    // with code = grpcStatusCode.INTERNAL
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.internalError,
     )
@@ -261,7 +261,7 @@ describe('Default ILP Client', function (): void {
 
   it('Send Payment - Unknown Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
-    // with code = grpc.status.INTERNAL
+    // with code = grpcStatusCode.INTERNAL
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.unknownError,
     )

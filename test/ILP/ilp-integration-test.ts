@@ -59,7 +59,7 @@ describe('ILP Integration Tests', function (): void {
     // WHEN a payment is sent from sdk_account1 to sdk_account2 for 10 units
     const request = new PaymentRequest({
       amount: bigInt(10),
-      destinationPaymentPointer: '$xpring.io/sdk_account2',
+      destinationPaymentPointer: '$spsp-test.xpring.io/sdk_account2',
       senderAccountId: 'sdk_account1',
     })
     const message = await ILPClientNode.sendPayment(request, 'password')
@@ -84,7 +84,7 @@ describe('ILP Integration Tests', function (): void {
     try {
       const request = new PaymentRequest({
         amount: bigInt(10),
-        destinationPaymentPointer: '$money.ilpv4.dev/sdk_account2',
+        destinationPaymentPointer: '$spsp-test.xpring.io/sdk_account2',
         senderAccountId: 'sdk_account1',
       })
       await ILPClientNode.sendPayment(request, 'Bearer password')
