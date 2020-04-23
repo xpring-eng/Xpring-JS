@@ -57,11 +57,11 @@ module.exports = {
     'plugin:prettier/recommended',
   ],
 
-  rules: {
-    //   // This rule is about explicitly using `return undefined` when a function returns any non-undefined object.
-    //   // However, since we're using TypeScript, it will yell at us if a function is not allowed to return `undefined` in its signature, so we don't need this rule.
-    //   "consistent-return": "off",
-  },
+  // rules: {
+  //   // This rule is about explicitly using `return undefined` when a function returns any non-undefined object.
+  //   // However, since we're using TypeScript, it will yell at us if a function is not allowed to return `undefined` in its signature, so we don't need this rule.
+  //   "consistent-return": "off",
+  // },
 
   overrides: [
     // Overrides for all test files
