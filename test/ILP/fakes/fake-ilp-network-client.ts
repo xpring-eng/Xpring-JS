@@ -19,26 +19,26 @@ export class FakeIlpNetworkClientResponses {
   public static defaultError = new Error('fake ilp network client failure')
 
   /**
-   * A fake GRPC error mocking grpcStatus.NOT_FOUND
+   * A fake GRPC error mocking grpcStatusCode.NOT_FOUND
    */
   public static notFoundError = new FakeGRPCError(grpcStatusCode.NOT_FOUND)
 
   /**
-   * A fake GRPC error mocking grpcStatus.UNAUTHENTICATED
+   * A fake GRPC error mocking grpcStatusCode.UNAUTHENTICATED
    */
   public static unauthenticatedError = new FakeGRPCError(
     grpcStatusCode.UNAUTHENTICATED,
   )
 
   /**
-   * A fake GRPC error mocking grpcStatus.INVALID_ARGUMENT
+   * A fake GRPC error mocking grpcStatusCode.INVALID_ARGUMENT
    */
   public static invalidArgumentError = new FakeGRPCError(
     grpcStatusCode.INVALID_ARGUMENT,
   )
 
   /**
-   * A fake GRPC error mocking grpcStatus.INTERNAL
+   * A fake GRPC error mocking grpcStatusCode.INTERNAL
    */
   public static internalError = new FakeGRPCError(grpcStatusCode.INTERNAL)
 
