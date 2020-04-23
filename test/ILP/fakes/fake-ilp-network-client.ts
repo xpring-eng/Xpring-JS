@@ -1,4 +1,4 @@
-import { status } from 'grpc'
+import { StatusCode as grpcStatusCode } from 'grpc-web'
 import { IlpNetworkClient } from '../../../src/ILP/ilp-network-client'
 import { GetBalanceResponse } from '../../../src/ILP/Generated/node/get_balance_response_pb'
 import { SendPaymentResponse } from '../../../src/ILP/Generated/node/send_payment_response_pb'
@@ -19,26 +19,28 @@ export class FakeIlpNetworkClientResponses {
   public static defaultError = new Error('fake ilp network client failure')
 
   /**
-   * A fake GRPC error mocking grpc.status.NOT_FOUND
+   * A fake GRPC error mocking grpcStatusCode.NOT_FOUND
    */
-  public static notFoundError = new FakeGRPCError(status.NOT_FOUND)
+  public static notFoundError = new FakeGRPCError(grpcStatusCode.NOT_FOUND)
 
   /**
-   * A fake GRPC error mocking grpc.status.UNAUTHENTICATED
+   * A fake GRPC error mocking grpcStatusCode.UNAUTHENTICATED
    */
-  public static unauthenticatedError = new FakeGRPCError(status.UNAUTHENTICATED)
-
-  /**
-   * A fake GRPC error mocking grpc.status.INVALID_ARGUMENT
-   */
-  public static invalidArgumentError = new FakeGRPCError(
-    status.INVALID_ARGUMENT,
+  public static unauthenticatedError = new FakeGRPCError(
+    grpcStatusCode.UNAUTHENTICATED,
   )
 
   /**
-   * A fake GRPC error mocking grpc.status.INTERNAL
+   * A fake GRPC error mocking grpcStatusCode.INVALID_ARGUMENT
    */
-  public static internalError = new FakeGRPCError(status.INTERNAL)
+  public static invalidArgumentError = new FakeGRPCError(
+    grpcStatusCode.INVALID_ARGUMENT,
+  )
+
+  /**
+   * A fake GRPC error mocking grpcStatusCode.INTERNAL
+   */
+  public static internalError = new FakeGRPCError(grpcStatusCode.INTERNAL)
 
   /**
    * A real IlpError which would get thrown if an access token starts with "Bearer "
@@ -50,7 +52,7 @@ export class FakeIlpNetworkClientResponses {
    */
   public static defaultSuccessfulResponses = new FakeIlpNetworkClientResponses()
 
-  public static unknownError = new FakeGRPCError(status.UNKNOWN)
+  public static unknownError = new FakeGRPCError(grpcStatusCode.UNKNOWN)
 
   public static create(responseError: Error): FakeIlpNetworkClientResponses {
     return new FakeIlpNetworkClientResponses(responseError, responseError)
