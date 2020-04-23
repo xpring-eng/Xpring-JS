@@ -15,8 +15,8 @@ const fakePaymentRequest = new PaymentRequest({
   senderAccountId: accountId,
 })
 
-describe('Default ILP Client', function(): void {
-  it('Get balance - success', async function(): Promise<void> {
+describe('Default ILP Client', function (): void {
+  it('Get balance - success', async function (): Promise<void> {
     // GIVEN a DefaultIlpClient
     const client = FakeDefaultIlpClient.fakeSuceedingNetworkClient()
     // WHEN the balance for an account is requested
@@ -44,7 +44,7 @@ describe('Default ILP Client', function(): void {
     )
   })
 
-  it('Get balance - default error', function(done): void {
+  it('Get balance - default error', function (done): void {
     // GIVEN a DefaultIlpClient
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.defaultError,
@@ -62,7 +62,7 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Get balance - Not Found Error', function(done): void {
+  it('Get balance - Not Found Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
     // with code = grpc.status.NOT_FOUND
     const client = FakeDefaultIlpClient.withErrors(
@@ -77,7 +77,7 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Get balance - Invalid Argument Error', function(done): void {
+  it('Get balance - Invalid Argument Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
     // with code = grpc.status.INVALID_ARGUMENT
     const client = FakeDefaultIlpClient.withErrors(
@@ -92,7 +92,7 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Get balance - Unauthenticated Error', function(done): void {
+  it('Get balance - Unauthenticated Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
     // with code = grpc.status.UNAUTHENTICATED
     const client = FakeDefaultIlpClient.withErrors(
@@ -107,7 +107,7 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Get balance - Internal Error', function(done): void {
+  it('Get balance - Internal Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
     // with code = grpc.status.INTERNAL
     const client = FakeDefaultIlpClient.withErrors(
@@ -122,7 +122,7 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Get balance - Unknown Error', function(done): void {
+  it('Get balance - Unknown Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
     // with code = grpc.status.INTERNAL
     const client = FakeDefaultIlpClient.withErrors(
@@ -137,7 +137,7 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Get balance - Invalid Access Token', function(done): void {
+  it('Get balance - Invalid Access Token', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a IlpError.invalidAccessToken error
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.invalidAccessTokenError,
@@ -151,7 +151,7 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Send - success', async function(): Promise<void> {
+  it('Send - success', async function (): Promise<void> {
     // GIVEN a DefaultIlpClient
     const client = FakeDefaultIlpClient.fakeSuceedingNetworkClient()
 
@@ -181,7 +181,7 @@ describe('Default ILP Client', function(): void {
     )
   })
 
-  it('Send - error', function(done): void {
+  it('Send - error', function (done): void {
     // GIVEN a DefaultIlpClient
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.defaultError,
@@ -199,7 +199,7 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Send Payment - Not Found Error', function(done): void {
+  it('Send Payment - Not Found Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
     // with code = grpc.status.NOT_FOUND
     const client = FakeDefaultIlpClient.withErrors(
@@ -214,7 +214,7 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Send Payment - Invalid Argument Error', function(done): void {
+  it('Send Payment - Invalid Argument Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
     // with code = grpc.status.INVALID_ARGUMENT
     const client = FakeDefaultIlpClient.withErrors(
@@ -229,7 +229,7 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Send Payment - Unauthenticated Error', function(done): void {
+  it('Send Payment - Unauthenticated Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
     // with code = grpc.status.UNAUTHENTICATED
     const client = FakeDefaultIlpClient.withErrors(
@@ -244,7 +244,7 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Send Payment - Internal Error', function(done): void {
+  it('Send Payment - Internal Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
     // with code = grpc.status.INTERNAL
     const client = FakeDefaultIlpClient.withErrors(
@@ -259,7 +259,7 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Send Payment - Unknown Error', function(done): void {
+  it('Send Payment - Unknown Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
     // with code = grpc.status.INTERNAL
     const client = FakeDefaultIlpClient.withErrors(
@@ -274,7 +274,7 @@ describe('Default ILP Client', function(): void {
     })
   })
 
-  it('Send Payment - Invalid Access Token', function(done): void {
+  it('Send Payment - Invalid Access Token', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a IlpError.invalidAccessToken error
     const client = FakeDefaultIlpClient.withErrors(
       FakeIlpNetworkClientResponses.invalidAccessTokenError,
