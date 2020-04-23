@@ -3,8 +3,8 @@ import { fail } from 'assert'
 import IlpCredentials from '../../src/ILP/auth/ilp-credentials.web'
 import IlpError, { IlpErrorType } from '../../src/ILP/ilp-error'
 
-describe('IlpCredentials Web', function(): void {
-  it('Build - Undefined token', function(): void {
+describe('IlpCredentials Web', function (): void {
+  it('Build - Undefined token', function (): void {
     // GIVEN no bearer token
     // WHEN IlpCredentials are built without a bearer token
     const credentials = IlpCredentials.build()
@@ -13,7 +13,7 @@ describe('IlpCredentials Web', function(): void {
     assert(!credentials)
   })
 
-  it('Build - no prefix', function(): void {
+  it('Build - no prefix', function (): void {
     // GIVEN a bearer token with no "Bearer " prefix
     const accessToken = 'password'
 
@@ -27,7 +27,7 @@ describe('IlpCredentials Web', function(): void {
     )
   })
 
-  it('Build - with prefix', function(): void {
+  it('Build - with prefix', function (): void {
     // GIVEN a bearer token with a "Bearer " prefix
     const accessToken = 'Bearer password'
 
