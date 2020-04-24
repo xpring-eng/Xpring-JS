@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package io.xpring;
+
+option java_multiple_files = true;
+option java_outer_classname = "XrpAmountProto";
+option java_package = "io.xpring.proto";
+
+// A representation of an amount of XRP.
+// Next field: 2
+message XRPAmount {
+    // A numeric string representing the number of drops of XRP.
+    string drops = 1;
+}

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package io.xpring;
+
+option java_multiple_files = true;
+option java_outer_classname = "SubmitSignedTransactionResponseProto";
+option java_package = "io.xpring.proto";
+
+// A response when a signed transaction is submitted to the ledger.
+// Next field: 5
+message SubmitSignedTransactionResponse {
+  // Code indicating the preliminary result of the transaction.
+  string engine_result = 1;
+
+  // Numeric code indicating the preliminary result of the transaction, directly correlated to engine_result.
+  int64 engine_result_code = 2;
+
+  // Human-readable explanation of the transaction's preliminary result.
+  string engine_result_message = 3;
+
+  // The complete transaction in hex string format
+  string transaction_blob = 4;
+}

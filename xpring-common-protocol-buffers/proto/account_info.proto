@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package io.xpring;
+
+import "xrp_amount.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "AccountInfoProto";
+option java_package = "io.xpring.proto";
+
+// Information about an account on the ledger.
+// Next field: 6
+message AccountInfo {
+  // The account's current XRP balance.
+  XRPAmount balance = 1;
+
+  // The sequence number of the next valid transaction for this account.
+  uint64 sequence = 2;
+
+  // The number of objects this account owns in the ledger, which contributes to its owner reserve.
+  uint64 owner_count = 3;
+
+  // The identifying hash of the transaction that most recently modified this object.
+  string previous_affecting_transaction_id = 4;
+
+  // 	The index of the ledger that contains the transaction that most recently modified this object.
+  uint64 previous_affecting_transaction_ledger_version = 5;
+}

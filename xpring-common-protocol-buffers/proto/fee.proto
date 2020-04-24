@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package io.xpring;
+
+import "xrp_amount.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "FeeProto";
+option java_package = "io.xpring.proto";
+
+// A fee to submit a transaction to the XRP Ledger.
+// Next field: 2
+message Fee {
+  // The amount of the fee.
+  XRPAmount amount = 1;
+}

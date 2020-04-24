@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package io.xpring;
+
+import "fiat_amount.proto";
+import "xrp_amount.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "PaymentProto";
+option java_package = "io.xpring.proto";
+
+// Payment transaction specific information.
+// Next field: 4
+message Payment {
+    // The amount of currency to pay, in either fiat or XRP.
+    oneof amount {
+        XRPAmount xrp_amount = 1;
+        FiatAmount fiat_amount = 2;
+    }
+
+    // The destination of the payment.
+    string destination = 3;
+}

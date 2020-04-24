@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package io.xpring;
+
+option java_multiple_files = true;
+option java_outer_classname = "LedgerSequenceProto";
+option java_package = "io.xpring.proto";
+
+// Wrapper for a ledger sequence.
+// Next field: 2
+message LedgerSequence {
+  // The index of the ledger sequence.
+  uint32 index = 1;
+}

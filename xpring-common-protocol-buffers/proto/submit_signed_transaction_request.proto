@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package io.xpring;
+
+import "signed_transaction.proto";
+
+option java_multiple_files = true;
+option java_outer_classname = "SubmitSignedTransactionRequestProto";
+option java_package = "io.xpring.proto";
+
+// A request to submit the signed transaction to the ledger.
+// Next field: 2
+message SubmitSignedTransactionRequest {
+  // The signed transaction to submit.
+  SignedTransaction signed_transaction = 1;
+}
