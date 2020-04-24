@@ -144,6 +144,7 @@ export default class PayIDClient {
   // eslint-disable-next-line class-methods-use-this
   async postInvoice(
     payID: string,
+    nonce: string,
     publicKeyType: string,
     publicKeyData: Array<string>,
     publicKey: string,
@@ -202,6 +203,7 @@ export default class PayIDClient {
       SwaggerCallResult<SignatureWrapperInvoice>
     >((resolve, _reject) => {
       apiInstance.postPathInvoice(
+        nonce,
         { body: signatureWrapper },
         (swaggerError, swaggerData, response) => {
           // Transform results of the callback to a wrapper object.

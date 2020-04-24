@@ -105,6 +105,7 @@ describe('PayID Integration Tests', function (): void {
     // WHEN the Pay ID receipt endpoint is hit
     const invoice = await payIDClient.postInvoice(
       payID,
+      '123456',
       'x509 + sha256',
       [],
       '00:c9:22:69:31:8a:d6:6c:ea:da:c3:7f:2c:ac:a5:af:c0:02:ea:81:cb:65:b9:fd:0c:6d:46:5b:c9:1e:9d:3b:ef',
