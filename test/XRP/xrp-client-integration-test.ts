@@ -25,8 +25,8 @@ const xrpClient = new XRPClient(rippledURL, XRPLNetwork.Test)
 // Some amount of XRP to send.
 const amount = bigInt('1')
 
-describe('Xpring JS XRPClient Integration Tests', function(): void {
-  it('Get Transaction Status - Web Shim', async function(): Promise<void> {
+describe('Xpring JS XRPClient Integration Tests', function (): void {
+  it('Get Transaction Status - Web Shim', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const transactionHash = await xrpWebClient.send(
@@ -40,7 +40,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
 
-  it('Get Transaction Status - rippled', async function(): Promise<void> {
+  it('Get Transaction Status - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const transactionHash = await xrpClient.send(
@@ -52,21 +52,21 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
 
-  it('Send XRP - Web Shim', async function(): Promise<void> {
+  it('Send XRP - Web Shim', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const result = await xrpWebClient.send(amount, recipientAddress, wallet)
     assert.exists(result)
   })
 
-  it('Send XRP - rippled', async function(): Promise<void> {
+  it('Send XRP - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const result = await xrpClient.send(amount, recipientAddress, wallet)
     assert.exists(result)
   })
 
-  it('Check if Account Exists - true - Web Shim', async function(): Promise<
+  it('Check if Account Exists - true - Web Shim', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -75,7 +75,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
     assert.equal(doesExist, true)
   })
 
-  it('Check if Account Exists - true - rippled', async function(): Promise<
+  it('Check if Account Exists - true - rippled', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -85,7 +85,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
     assert.equal(doesExist, true)
   })
 
-  it('Check if Account Exists - false - rippled', async function(): Promise<
+  it('Check if Account Exists - false - rippled', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -95,7 +95,7 @@ describe('Xpring JS XRPClient Integration Tests', function(): void {
     assert.equal(doesExist, false)
   })
 
-  it('Payment History - rippled', async function(): Promise<void> {
+  it('Payment History - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const payments = await xrpClient.paymentHistory(recipientAddress)
