@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import BigNumber from 'bignumber.js'
-import { dropsToXrp, xrpToDrops } from '../../src/Common/utils'
+import { dropsToXrp, xrpToDrops } from '../../src/XRP/xrp-utils'
 import 'mocha'
 
 describe('xrp-drops-conversion', function (): void {
