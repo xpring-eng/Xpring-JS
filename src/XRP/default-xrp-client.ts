@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
-import grpc from 'grpc'
+import { StatusCode as grpcStatusCode } from 'grpc-web'
 import {
   CurrencyAmount,
   XRPDropsAmount,
@@ -278,7 +278,7 @@ class DefaultXRPClient implements XRPClientDecorator {
       await this.getBalance(address)
       return true
     } catch (error) {
-      if (error?.code === grpc.status.NOT_FOUND) {
+      if (error?.code === grpcStatusCode.NOT_FOUND) {
         return false
       }
       throw error // error code other than NOT_FOUND should re-throw error

@@ -1,9 +1,6 @@
 export {
-  AccountInfo,
   ClassicAddress,
   PayIDUtils,
-  SubmitSignedTransactionResponse,
-  XRPAmount,
   Wallet,
   WalletGenerationResult,
   Utils,

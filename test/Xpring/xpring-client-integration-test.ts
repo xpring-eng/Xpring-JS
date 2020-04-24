@@ -29,7 +29,7 @@ describe('Xpring Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID that will resolve.
-    const payID = '$dev.payid.xpring.money/hbergren'
+    const payID = 'alice$dev.payid.xpring.money'
 
     // WHEN XRP is sent to the Pay ID.
     const transactionHash = await xpringClient.send(10, payID, wallet)
