@@ -1,5 +1,6 @@
 import { assert } from 'chai'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
+import PayIDClient from '../../src/PayID/pay-id-client'
 import XRPPayIDClient from '../../src/PayID/xrp-pay-id-client'
 import XRPLNetwork from '../../src/Common/xrpl-network'
 import ComplianceType from '../../src/PayID/compliance-type'
@@ -15,13 +16,13 @@ describe('PayID Integration Tests', function (): void {
 
     // GIVEN a Pay ID that will resolve on Mainnet.
     const payIDClient = new XRPPayIDClient(XRPLNetwork.Main)
-    const payID = 'keefertaylor$xpring.money'
+    const payID = 'alice$dev.payid.xpring.money'
 
     // WHEN it is resolved to an XRP address
     const xrpAddress = await payIDClient.addressForPayID(payID)
 
     // THEN the address is the expected value.
-    assert.equal(xrpAddress, 'X77aLzN62SU9A136nqk5TYgPWotoTRKnB4DGnE9fApU9a4Y')
+    assert.equal(xrpAddress, 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn')
   })
 
   it('Resolve PayID to XRP - known PayID - testnet', async function (): Promise<
@@ -44,7 +45,7 @@ describe('PayID Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID that will not resolve on Devnet.
-    const payID = 'hbergren$dev.payid.xpring.money'
+    const payID = 'does-not-exist$dev.payid.xpring.money'
     const network = XRPLNetwork.Dev
     const payIDClient = new XRPPayIDClient(network)
 
@@ -62,6 +63,22 @@ describe('PayID Integration Tests', function (): void {
 
       done()
     })
+  })
+
+  it('Resolve PayID to BTC - known PayID - testnet', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    // GIVEN a Pay ID that will resolve on Mainnet.
+    const payIDClient = new PayIDClient('btc-testnet')
+    const payID = 'alice$dev.payid.xpring.money'
+
+    // WHEN it is resolved to an XRP address
+    const btcAddress = await payIDClient.addressForPayID(payID)
+
+    // THEN the address is the expected value.
+    assert.equal(btcAddress, '2NF9H32iwQcVcoAiiBmAtjpGmQfsmU5L6SR')
   })
 
   it('getInvoice', async function (): Promise<void> {
@@ -88,6 +105,7 @@ describe('PayID Integration Tests', function (): void {
     // WHEN the Pay ID receipt endpoint is hit
     const invoice = await payIDClient.postInvoice(
       payID,
+      '123456',
       'x509 + sha256',
       [],
       '00:c9:22:69:31:8a:d6:6c:ea:da:c3:7f:2c:ac:a5:af:c0:02:ea:81:cb:65:b9:fd:0c:6d:46:5b:c9:1e:9d:3b:ef',

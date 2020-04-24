@@ -99,6 +99,15 @@ paths:
             schema:
               $ref: '#/components/schemas/SignatureWrapper_Compliance'
       operationId: post-path-invoice
+      parameters:
+        - schema:
+            # Typed as a string to get around swagger-codegen issues.
+            # TODO(keefertaylor): Fix after https://github.com/swagger-api/swagger-codegen/issues/10105 is resolved
+            type: string
+          in: query
+          name: nonce
+          description: ''
+          required: true
   '/receipt':
     post:
       summary: ''
