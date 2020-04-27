@@ -4,6 +4,7 @@ import PayIDClient from '../../src/PayID/pay-id-client'
 import XRPPayIDClient from '../../src/PayID/xrp-pay-id-client'
 import XRPLNetwork from '../../src/Common/xrpl-network'
 import ComplianceType from '../../src/PayID/compliance-type'
+import { CryptoAddressDetails } from '../../src/PayID/Generated'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -78,7 +79,10 @@ describe('PayID Integration Tests', function (): void {
     const btcAddress = await payIDClient.addressForPayID(payID)
 
     // THEN the address is the expected value.
-    assert.equal(btcAddress, '2NF9H32iwQcVcoAiiBmAtjpGmQfsmU5L6SR')
+    assert.deepEqual(
+      btcAddress,
+      new CryptoAddressDetails('2NF9H32iwQcVcoAiiBmAtjpGmQfsmU5L6SR'),
+    )
   })
 
   it('getInvoice', async function (): Promise<void> {
