@@ -17,5 +17,5 @@ export default interface XRPPayIDClientInterface {
    * @param payID The payID to resolve for an address.
    * @returns An XRP address representing the given PayID.
    */
-  addressForPayID(payID: string): Promise<string>
+  xrpAddressForPayID(payID: string): Promise<string>
 }
