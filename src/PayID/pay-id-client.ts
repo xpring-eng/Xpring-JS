@@ -11,6 +11,7 @@ import Compliance from './Generated/model/Compliance'
 import TravelRule from './Generated/model/TravelRule'
 import DefaultApi from './Generated/api/DefaultApi'
 import ComplianceType from './compliance-type'
+import { CryptoAddressDetails } from './Generated'
 
 interface PayIDComponents {
   host: string
@@ -59,7 +60,7 @@ export default class PayIDClient {
    * @param payID The payID to resolve for an address.
    * @returns An address representing the given PayID.
    */
-  async addressForPayID(payID: string): Promise<string> {
+  async addressForPayID(payID: string): Promise<CryptoAddressDetails> {
     const payIDComponents = PayIDClient.parsePayID(payID)
     const basePath = `https://${payIDComponents.host}`
     const { path } = payIDComponents
@@ -80,8 +81,8 @@ export default class PayIDClient {
         throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
       }
       // TODO(keefertaylor): make sure the header matches the request.
-    } else if (data?.addressDetails?.address) {
-      return data.addressDetails.address
+    } else if (data?.addressDetails) {
+      return data.addressDetails
     } else {
       throw new PayIDError(PayIDErrorType.UnexpectedResponse)
     }

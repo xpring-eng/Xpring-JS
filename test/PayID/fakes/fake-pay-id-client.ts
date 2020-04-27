@@ -15,7 +15,7 @@ export default class FakePayIDClient implements XRPPayIDClientInterface {
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/require-await
-  async addressForPayID(_payID: string): Promise<string> {
+  async xrpAddressForPayID(_payID: string): Promise<string> {
     if (this.xrpAddressResult instanceof Error) {
       throw this.xrpAddressResult
     }

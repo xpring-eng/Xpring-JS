@@ -1,7 +1,3 @@
-[submodule "xpring-common-protocol-buffers"]
-	path = xpring-common-protocol-buffers
-	url = http://github.com/xpring-eng/xpring-common-protocol-buffers
-	branch = master
 [submodule "hermes-ilp"]
 	path = hermes-ilp
 	url = https://github.com/xpring-eng/hermes-ilp

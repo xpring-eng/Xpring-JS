@@ -4,6 +4,7 @@ import PayIDClient from '../../src/PayID/pay-id-client'
 import XRPPayIDClient from '../../src/PayID/xrp-pay-id-client'
 import XRPLNetwork from '../../src/Common/xrpl-network'
 import ComplianceType from '../../src/PayID/compliance-type'
+import { CryptoAddressDetails } from '../../src/PayID/Generated'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -19,7 +20,7 @@ describe('PayID Integration Tests', function (): void {
     const payID = 'alice$dev.payid.xpring.money'
 
     // WHEN it is resolved to an XRP address
-    const xrpAddress = await payIDClient.addressForPayID(payID)
+    const xrpAddress = await payIDClient.xrpAddressForPayID(payID)
 
     // THEN the address is the expected value.
     assert.equal(xrpAddress, 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn')
@@ -35,7 +36,7 @@ describe('PayID Integration Tests', function (): void {
     const payID = 'alice$dev.payid.xpring.money'
 
     // WHEN it is resolved to an XRP address on testnet
-    const xrpAddress = await payIDClient.addressForPayID(payID)
+    const xrpAddress = await payIDClient.xrpAddressForPayID(payID)
 
     // THEN the address is the expected value.
     assert.equal(xrpAddress, 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS')
@@ -50,7 +51,7 @@ describe('PayID Integration Tests', function (): void {
     const payIDClient = new XRPPayIDClient(network)
 
     // WHEN it is resolved to an unmapped value.
-    payIDClient.addressForPayID(payID).catch((error) => {
+    payIDClient.xrpAddressForPayID(payID).catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
         (error as PayIDError).errorType,
@@ -78,7 +79,10 @@ describe('PayID Integration Tests', function (): void {
     const btcAddress = await payIDClient.addressForPayID(payID)
 
     // THEN the address is the expected value.
-    assert.equal(btcAddress, '2NF9H32iwQcVcoAiiBmAtjpGmQfsmU5L6SR')
+    assert.deepEqual(
+      btcAddress,
+      new CryptoAddressDetails('2NF9H32iwQcVcoAiiBmAtjpGmQfsmU5L6SR'),
+    )
   })
 
   it('getInvoice', async function (): Promise<void> {
