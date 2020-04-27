@@ -61,6 +61,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "big-integer": "^1.6.48",
+    "bignumber.js": "^9.0.0",
     "grpc": "^1.24.2",
     "grpc-web": "1.0.7",
     "superagent": "^5.2.2",

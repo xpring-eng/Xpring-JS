@@ -14,7 +14,13 @@ export { default as XpringClient } from './Xpring/xpring-client'
 export { default as XRPError, XRPErrorType } from './XRP/xrp-error'
 export { default as IlpError, IlpErrorType } from './ILP/ilp-error'
 
-export { RippledFlags, TransactionStatus, XRPClient } from './XRP'
+export {
+  RippledFlags,
+  TransactionStatus,
+  XRPClient,
+  xrpToDrops,
+  dropsToXrp,
+} from './XRP'
 export {
   XRPCurrencyAmount,
   XRPCurrency,
