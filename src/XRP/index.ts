@@ -13,3 +13,4 @@ export {
   XRPTransactionType,
   XRPTransaction,
 } from './model'
+export { xrpToDrops, dropsToXrp } from './xrp-utils'
