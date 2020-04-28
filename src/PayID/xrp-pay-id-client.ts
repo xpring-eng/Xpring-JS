@@ -28,10 +28,10 @@ export default class XRPPayIDClient extends PayIDClient {
     const result = await super.addressForPayID(payID)
 
     const { address } = result
-    if (Utils.isValidXAddress(result.address)) {
+    if (Utils.isValidXAddress(address)) {
       return address
     }
-    const isTest = !(this.network === XRPLNetwork.Main)
+    const isTest = this.network !== XRPLNetwork.Main
     const encodedXAddress = Utils.encodeXAddress(address, result.tag, isTest)
     if (!encodedXAddress) {
       throw new PayIDError(
