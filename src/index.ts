@@ -13,6 +13,7 @@ export { default as ComplianceType } from './PayID/compliance-type'
 export { default as XpringClient } from './Xpring/xpring-client'
 export { default as XRPError, XRPErrorType } from './XRP/xrp-error'
 export { default as IlpError, IlpErrorType } from './ILP/ilp-error'
+export { default as XRPPayIDClient } from './PayID/xrp-pay-id-client'
 
 export {
   RippledFlags,
