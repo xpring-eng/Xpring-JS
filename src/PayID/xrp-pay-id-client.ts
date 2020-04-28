@@ -1,5 +1,7 @@
+import { Utils } from 'xpring-common-js'
 import PayIDClient from './pay-id-client'
 import XRPLNetwork from '../Common/xrpl-network'
+import PayIDError, { PayIDErrorType } from './pay-id-error'
 
 /**
  * Provides functionality for XRP in the PayID protocol.
@@ -23,6 +25,19 @@ export default class XRPPayIDClient extends PayIDClient {
    */
   async xrpAddressForPayID(payID: string): Promise<string> {
     const result = await super.addressForPayID(payID)
-    return result.address
+
+    const { address } = result
+    if (Utils.isValidXAddress(address)) {
+      return address
+    }
+    const isTest = this.network !== XRPLNetwork.Main
+    const encodedXAddress = Utils.encodeXAddress(address, result.tag, isTest)
+    if (!encodedXAddress) {
+      throw new PayIDError(
+        PayIDErrorType.UnexpectedResponse,
+        'The returned address was in an unexpected format',
+      )
+    }
+    return encodedXAddress
   }
 }
