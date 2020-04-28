@@ -1,8 +1,7 @@
 import { Utils } from 'xpring-common-js'
 import PayIDClient from './pay-id-client'
 import XRPLNetwork from '../Common/xrpl-network'
-import { PayIDError } from '..'
-import { PayIDErrorType } from './pay-id-error'
+import PayIDError, { PayIDErrorType } from './pay-id-error'
 
 /**
  * Provides functionality for XRP in the PayID protocol.
