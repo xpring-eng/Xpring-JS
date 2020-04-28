@@ -15,7 +15,13 @@ export { default as XRPError, XRPErrorType } from './XRP/xrp-error'
 export { default as IlpError, IlpErrorType } from './ILP/ilp-error'
 export { default as XRPPayIDClient } from './PayID/xrp-pay-id-client'
 
-export { RippledFlags, TransactionStatus, XRPClient } from './XRP'
+export {
+  RippledFlags,
+  TransactionStatus,
+  XRPClient,
+  xrpToDrops,
+  dropsToXrp,
+} from './XRP'
 export {
   XRPCurrencyAmount,
   XRPCurrency,
