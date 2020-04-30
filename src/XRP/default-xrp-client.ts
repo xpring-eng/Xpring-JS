@@ -1,33 +1,31 @@
 /* eslint-disable no-restricted-syntax */
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
-import { StatusCode as grpcStatusCode } from 'grpc-web'
+import { status as grpcStatusCode } from '@grpc/grpc-js'
 import {
   CurrencyAmount,
   XRPDropsAmount,
-} from './Generated/web/org/xrpl/rpc/v1/amount_pb'
-import { AccountRoot } from './Generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
+} from './Generated/org/xrpl/rpc/v1/amount_pb'
+import { AccountRoot } from './Generated/org/xrpl/rpc/v1/ledger_objects_pb'
 import {
   Destination,
   Amount,
   Account,
   LastLedgerSequence,
   SigningPublicKey,
-} from './Generated/node/org/xrpl/rpc/v1/common_pb'
+} from './Generated/org/xrpl/rpc/v1/common_pb'
 import {
   Payment,
   Transaction,
-} from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
-import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
+} from './Generated/org/xrpl/rpc/v1/transaction_pb'
+import { AccountAddress } from './Generated/org/xrpl/rpc/v1/account_pb'
+import { GetFeeResponse } from './Generated/org/xrpl/rpc/v1/get_fee_pb'
 import { XRPClientDecorator } from './xrp-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import XRPTransaction from './model/xrp-transaction'
 import GRPCNetworkClient from './grpc-xrp-network-client'
-import GRPCNetworkClientWeb from './grpc-xrp-network-client.web'
 import { XRPNetworkClient } from './xrp-network-client'
-import isNode from '../Common/utils'
 import XRPError from './xrp-error'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
@@ -43,15 +41,11 @@ class DefaultXRPClient implements XRPClientDecorator {
    * The DefaultXRPClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
-   * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public static defaultXRPClientWithEndpoint(
     grpcURL: string,
-    forceWeb = false,
   ): DefaultXRPClient {
-    return isNode() && !forceWeb
-      ? new DefaultXRPClient(new GRPCNetworkClient(grpcURL))
-      : new DefaultXRPClient(new GRPCNetworkClientWeb(grpcURL))
+    return new DefaultXRPClient(new GRPCNetworkClient(grpcURL))
   }
 
   /**

@@ -1,32 +1,37 @@
-import { credentials } from 'grpc'
-import { GetBalanceResponse } from './Generated/node/get_balance_response_pb'
-import { GetBalanceRequest } from './Generated/node/get_balance_request_pb'
-import { SendPaymentRequest } from './Generated/node/send_payment_request_pb'
-import { SendPaymentResponse } from './Generated/node/send_payment_response_pb'
-import { BalanceServiceClient } from './Generated/node/balance_service_grpc_pb'
-import { IlpOverHttpServiceClient } from './Generated/node/ilp_over_http_service_grpc_pb'
-import isNode from '../Common/utils'
+import * as grpc from '@grpc/grpc-js'
+import { ServiceClient } from '@grpc/grpc-js/build/src/make-client'
+import { GetBalanceResponse } from './Generated/get_balance_response_pb'
+import { GetBalanceRequest } from './Generated/get_balance_request_pb'
+import { SendPaymentRequest } from './Generated/send_payment_request_pb'
+import { SendPaymentResponse } from './Generated/send_payment_response_pb'
+import * as BalanceGrpcPb from './Generated/balance_service_grpc_pb'
+import * as ILPGrpcPb from './Generated/ilp_over_http_service_grpc_pb'
 import { IlpNetworkClient } from './ilp-network-client'
 import IlpCredentials from './auth/ilp-credentials'
 
 class GrpcIlpNetworkClient implements IlpNetworkClient {
-  private readonly balanceClient: BalanceServiceClient
+  private readonly balanceClient: ServiceClient
 
-  private readonly paymentClient: IlpOverHttpServiceClient
+  private readonly paymentClient: ServiceClient
 
   public constructor(grpcURL: string) {
-    if (isNode()) {
-      this.balanceClient = new BalanceServiceClient(
-        grpcURL,
-        credentials.createSsl(),
-      )
-      this.paymentClient = new IlpOverHttpServiceClient(
-        grpcURL,
-        credentials.createSsl(),
-      )
-    } else {
-      throw new Error('Use ILP-gRPC-Web Network Client on the browser!')
-    }
+    const BalanceServiceClient = grpc.makeClientConstructor(
+      BalanceGrpcPb['org.interledger.stream.proto.BalanceService'],
+      'BalanceService',
+    )
+    this.balanceClient = new BalanceServiceClient(
+      grpcURL,
+      grpc.credentials.createSsl(),
+    )
+
+    const IlpOverHttpServiceClient = grpc.makeClientConstructor(
+      ILPGrpcPb['org.interledger.stream.proto.IlpOverHttpService'],
+      'IlpOverHttpService',
+    )
+    this.paymentClient = new IlpOverHttpServiceClient(
+      grpcURL,
+      grpc.credentials.createSsl(),
+    )
   }
 
   getBalance(

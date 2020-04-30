@@ -1,4 +1,4 @@
-import { Signer } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { Signer } from '../Generated/org/xrpl/rpc/v1/transaction_pb'
 
 /*
  * Represents a signer of a transaction on the XRP Ledger.

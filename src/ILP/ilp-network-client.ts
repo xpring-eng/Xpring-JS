@@ -1,7 +1,7 @@
-import { GetBalanceRequest } from './Generated/web/get_balance_request_pb'
-import { GetBalanceResponse } from './Generated/web/get_balance_response_pb'
-import { SendPaymentRequest } from './Generated/web/send_payment_request_pb'
-import { SendPaymentResponse } from './Generated/web/send_payment_response_pb'
+import { GetBalanceRequest } from './Generated/get_balance_request_pb'
+import { GetBalanceResponse } from './Generated/get_balance_response_pb'
+import { SendPaymentRequest } from './Generated/send_payment_request_pb'
+import { SendPaymentResponse } from './Generated/send_payment_response_pb'
 
 export interface IlpNetworkClient {
   /**

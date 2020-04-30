@@ -3,7 +3,7 @@ import { assert } from 'chai'
 
 import bigInt from 'big-integer'
 import { Utils, Wallet } from 'xpring-common-js'
-import { StatusCode as grpcStatusCode } from 'grpc-web'
+import { status as grpcStatusCode } from '@grpc/grpc-js'
 import FakeGRPCError from './fakes/fake-grpc-error'
 import XRPTestUtils from './helpers/xrp-test-utils'
 import DefaultXRPClient from '../../src/XRP/default-xrp-client'
@@ -12,13 +12,13 @@ import {
   FakeXRPNetworkClientResponses,
 } from './fakes/fake-xrp-network-client'
 import 'mocha'
-import { GetTransactionResponse } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/get_transaction_pb'
+import { GetTransactionResponse } from '../../src/XRP/Generated/org/xrpl/rpc/v1/get_transaction_pb'
 import {
   Meta,
   TransactionResult,
-} from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/meta_pb'
+} from '../../src/XRP/Generated/org/xrpl/rpc/v1/meta_pb'
 import TransactionStatus from '../../src/XRP/transaction-status'
-import { Transaction } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { Transaction } from '../../src/XRP/Generated/org/xrpl/rpc/v1/transaction_pb'
 import {
   testGetAccountTransactionHistoryResponse,
   testCheckCashTransaction,

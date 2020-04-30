@@ -6,74 +6,53 @@ set -e -o pipefail
 # Generate Protocol Buffers from Rippled.
 ##########################################################################
 
-echo "Regenerating Protocol Buffers from Rippled"
+echo "Generating Protocol Buffers from Rippled"
 
 # Directory to write generated code to (.js and .d.ts files)
-XRP_OUT_DIR_WEB="./src/XRP/Generated/web"
-XRP_OUT_DIR_NODE="./src/XRP/Generated/node"
+XRP_OUT_DIR="./src/XRP/Generated/"
 
 PROTO_PATH="./rippled/src/ripple/proto/"
 PROTO_SRC_FILES=$PROTO_PATH/org/xrpl/rpc/v1/*.proto
 
-mkdir -p $XRP_OUT_DIR_WEB
-mkdir -p $XRP_OUT_DIR_NODE
+mkdir -p $XRP_OUT_DIR
 
-# Generate web code.
-$PWD/node_modules/grpc-tools/bin/protoc \
-    --js_out=import_style=commonjs,binary:$XRP_OUT_DIR_WEB \
-    --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:$XRP_OUT_DIR_WEB \
-    --proto_path $PROTO_PATH \
+# Generate code.
+npx grpc_tools_node_protoc \
+    --js_out=import_style=commonjs,binary:$XRP_OUT_DIR \
+    --grpc_out=generate_package_definition:$XRP_OUT_DIR \
+    -I $PROTO_PATH \
     $PROTO_SRC_FILES
 
-# Generate node code.
-$PWD/node_modules/grpc-tools/bin/protoc \
-    --js_out=import_style=commonjs,binary:$XRP_OUT_DIR_NODE \
-    --grpc_out=$XRP_OUT_DIR_NODE \
-    --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` \
-    --proto_path $PROTO_PATH \
-    $PROTO_SRC_FILES
-
-# Generate node typescript declaration files.
-$PWD/node_modules/grpc-tools/bin/protoc \
+# Generate typescript declaration files.
+npx protoc \
     --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts \
-    --ts_out=$XRP_OUT_DIR_NODE \
-    --proto_path=$PROTO_PATH \
+    --ts_out=generate_package_definition:$XRP_OUT_DIR \
+    -I $PROTO_PATH \
     $PROTO_SRC_FILES
 
 ##########################################################################
 # Generate Protocol Buffers from hermes-ilp.
 ##########################################################################
 
-echo "Regenerating Protocol Buffers from hermes-ilp"
+echo "Generating Protocol Buffers from hermes-ilp"
 
 # Directory to write generated code to (.js and .d.ts files)
-ILP_OUT_DIR_WEB="./src/ILP/Generated/web"
-ILP_OUT_DIR_NODE="./src/ILP/Generated/node"
+ILP_OUT_DIR="./src/ILP/Generated/"
 
-mkdir -p $ILP_OUT_DIR_WEB
-mkdir -p $ILP_OUT_DIR_NODE
+mkdir -p $ILP_OUT_DIR
 
-# Generate web code.
-$PWD/node_modules/grpc-tools/bin/protoc \
-    --js_out=import_style=commonjs,binary:$ILP_OUT_DIR_WEB \
-    --grpc-web_out=import_style=commonjs+dts,mode=grpcwebtext:$ILP_OUT_DIR_WEB \
-    --proto_path=$PWD/hermes-ilp/protocol-buffers/proto \
+# Generate code.
+npx grpc_tools_node_protoc \
+    --js_out=import_style=commonjs,binary:$ILP_OUT_DIR \
+    --grpc_out=generate_package_definition:$ILP_OUT_DIR \
+    -I $PWD/hermes-ilp/protocol-buffers/proto \
     $PWD/hermes-ilp/protocol-buffers/proto/*.proto
 
-# Generate node code.
-$PWD/node_modules/grpc-tools/bin/protoc \
-    --js_out=import_style=commonjs,binary:$ILP_OUT_DIR_NODE \
-    --grpc_out=$ILP_OUT_DIR_NODE \
+# Generate typescript declaration files.
+npx protoc \
     --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts \
-    --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` \
-    --proto_path=$PWD/hermes-ilp/protocol-buffers/proto \
-    $PWD/hermes-ilp/protocol-buffers/proto/*.proto
-
-# Generate node typescript declaration files.
-$PWD/node_modules/grpc-tools/bin/protoc \
-    --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts \
-    --ts_out=$ILP_OUT_DIR_NODE \
-    --proto_path=$PWD/hermes-ilp/protocol-buffers/proto \
+    --ts_out=generate_package_definition:$ILP_OUT_DIR \
+    -I $PWD/hermes-ilp/protocol-buffers/proto \
     $PWD/hermes-ilp/protocol-buffers/proto/*.proto
 
 echo "All done!"

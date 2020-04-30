@@ -1,8 +1,6 @@
 import { IlpClientDecorator } from './ilp-client-decorator'
-import isNode from '../Common/utils'
 import { IlpNetworkClient } from './ilp-network-client'
 import GrpcIlpNetworkClient from './grpc-ilp-network-client'
-import GrpcIlpNetworkClientWeb from './grpc-ilp-network-client.web'
 import { AccountBalance } from './model/account-balance'
 import { PaymentResult } from './model/payment-result'
 import { PaymentRequest } from './model/payment-request'
@@ -15,16 +13,11 @@ class DefaultIlpClient implements IlpClientDecorator {
    * The DefaultIlpClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
-   * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false.
-   * This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public static defaultIlpClientWithEndpoint(
     grpcURL: string,
-    forceWeb = false,
   ): DefaultIlpClient {
-    return isNode() && !forceWeb
-      ? new DefaultIlpClient(new GrpcIlpNetworkClient(grpcURL))
-      : new DefaultIlpClient(new GrpcIlpNetworkClientWeb(grpcURL))
+    return new DefaultIlpClient(new GrpcIlpNetworkClient(grpcURL))
   }
 
   /**

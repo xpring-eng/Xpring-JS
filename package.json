@@ -59,13 +59,11 @@
     "typescript-eslint-parser": "22.0.0"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.0.3",
     "axios": "^0.19.2",
     "big-integer": "^1.6.48",
     "bignumber.js": "^9.0.0",
-    "grpc": "^1.24.2",
-    "grpc-web": "1.0.7",
     "superagent": "^5.2.2",
-    "xhr2": "0.2.0",
     "xpring-common-js": "5.0.3"
   },
   "nyc": {

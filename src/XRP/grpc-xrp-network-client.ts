@@ -1,44 +1,44 @@
-import { credentials } from 'grpc'
+import * as grpc from '@grpc/grpc-js'
+import { ServiceClient } from '@grpc/grpc-js/build/src/make-client'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
-} from './Generated/node/org/xrpl/rpc/v1/get_account_info_pb'
+} from './Generated/org/xrpl/rpc/v1/get_account_info_pb'
 import {
   GetFeeRequest,
   GetFeeResponse,
-} from './Generated/node/org/xrpl/rpc/v1/get_fee_pb'
+} from './Generated/org/xrpl/rpc/v1/get_fee_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from './Generated/node/org/xrpl/rpc/v1/submit_pb'
-import { XRPLedgerAPIServiceClient } from './Generated/node/org/xrpl/rpc/v1/xrp_ledger_grpc_pb'
-import { AccountAddress } from './Generated/node/org/xrpl/rpc/v1/account_pb'
+} from './Generated/org/xrpl/rpc/v1/submit_pb'
+import * as XRPLedgerGrpcPb from './Generated/org/xrpl/rpc/v1/xrp_ledger_grpc_pb'
+import { AccountAddress } from './Generated/org/xrpl/rpc/v1/account_pb'
 import {
   GetAccountTransactionHistoryRequest,
   GetAccountTransactionHistoryResponse,
-} from './Generated/node/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+} from './Generated/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import {
   GetTransactionRequest,
   GetTransactionResponse,
-} from './Generated/node/org/xrpl/rpc/v1/get_transaction_pb'
-import isNode from '../Common/utils'
+} from './Generated/org/xrpl/rpc/v1/get_transaction_pb'
 import { XRPNetworkClient } from './xrp-network-client'
 
 /**
  * A GRPC Based network client.
  */
 class GRPCXRPNetworkClient implements XRPNetworkClient {
-  private readonly grpcClient: XRPLedgerAPIServiceClient
+  private readonly grpcClient: ServiceClient
 
   public constructor(grpcURL: string) {
-    if (isNode()) {
-      this.grpcClient = new XRPLedgerAPIServiceClient(
-        grpcURL,
-        credentials.createInsecure(),
-      )
-    } else {
-      throw new Error('Use gRPC-Web Network Client on the browser!')
-    }
+    const XRPLedgerAPIServiceClient = grpc.makeClientConstructor(
+      XRPLedgerGrpcPb['org.xrpl.rpc.v1.XRPLedgerAPIService'],
+      'XRPLedgerAPIService',
+    )
+    this.grpcClient = new XRPLedgerAPIServiceClient(
+      grpcURL,
+      grpc.credentials.createInsecure(),
+    )
   }
 
   public async getAccountInfo(

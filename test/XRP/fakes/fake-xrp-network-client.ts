@@ -1,38 +1,38 @@
 /* eslint-disable class-methods-use-this */
-import { Transaction } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { Transaction } from '../../../src/XRP/Generated/org/xrpl/rpc/v1/transaction_pb'
 import { XRPNetworkClient } from '../../../src/XRP/xrp-network-client'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_info_pb'
+} from '../../../src/XRP/Generated/org/xrpl/rpc/v1/get_account_info_pb'
 import {
   GetFeeRequest,
   GetFeeResponse,
   Fee,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_fee_pb'
+} from '../../../src/XRP/Generated/org/xrpl/rpc/v1/get_fee_pb'
 import {
   GetTransactionRequest,
   GetTransactionResponse,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+} from '../../../src/XRP/Generated/org/xrpl/rpc/v1/get_transaction_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/submit_pb'
-import { AccountRoot } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
+} from '../../../src/XRP/Generated/org/xrpl/rpc/v1/submit_pb'
+import { AccountRoot } from '../../../src/XRP/Generated/org/xrpl/rpc/v1/ledger_objects_pb'
 import {
   XRPDropsAmount,
   CurrencyAmount,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/amount_pb'
-import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
+} from '../../../src/XRP/Generated/org/xrpl/rpc/v1/amount_pb'
+import { AccountAddress } from '../../../src/XRP/Generated/org/xrpl/rpc/v1/account_pb'
 import {
   Meta,
   TransactionResult,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/meta_pb'
-import { Balance } from '../../../src/XRP/Generated/node/org/xrpl/rpc/v1/common_pb'
+} from '../../../src/XRP/Generated/org/xrpl/rpc/v1/meta_pb'
+import { Balance } from '../../../src/XRP/Generated/org/xrpl/rpc/v1/common_pb'
 import {
   GetAccountTransactionHistoryRequest,
   GetAccountTransactionHistoryResponse,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+} from '../../../src/XRP/Generated/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import Result from '../../Common/Helpers/result'
 import { testGetAccountTransactionHistoryResponse } from './fake-xrp-protobufs'
 import XRPError, { XRPErrorType } from '../../../src/XRP/xrp-error'

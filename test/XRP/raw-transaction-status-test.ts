@@ -1,13 +1,13 @@
 import { assert } from 'chai'
 import RippledFlags from '../../src/XRP/rippled-flags'
-import { GetTransactionResponse } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+import { GetTransactionResponse } from '../../src/XRP/Generated/org/xrpl/rpc/v1/get_transaction_pb'
 import {
   Transaction,
   Payment,
-} from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+} from '../../src/XRP/Generated/org/xrpl/rpc/v1/transaction_pb'
 import 'mocha'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
-import { Flags } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
+import { Flags } from '../../src/XRP/Generated/org/xrpl/rpc/v1/common_pb'
 
 describe('raw transaction status', function (): void {
   it('isFullPayment - non payment', function (): void {

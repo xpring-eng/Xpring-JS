@@ -1,11 +1,11 @@
 import { Utils } from 'xpring-common-js'
-import { Transaction } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { Transaction } from '../Generated/org/xrpl/rpc/v1/transaction_pb'
 import RippledFlags from '../rippled-flags'
 import XRPSigner from './xrp-signer'
 import XRPTransactionType from './xrp-transaction-type'
 import XRPPayment from './xrp-payment'
 import XRPMemo from './xrp-memo'
-import { GetTransactionResponse } from '../Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+import { GetTransactionResponse } from '../Generated/org/xrpl/rpc/v1/get_transaction_pb'
 
 /*
  * A transaction on the XRP Ledger.
