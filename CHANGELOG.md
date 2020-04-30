@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 4.2.3 - April 30, 2020
+
+# Added
+- `xrpToDrops` and `dropsToXrp` conversion utilities available.
+
 ## 4.2.2 - April 24, 2020
 
 # Added
