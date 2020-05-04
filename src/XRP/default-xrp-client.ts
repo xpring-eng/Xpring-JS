@@ -29,6 +29,7 @@ import GRPCNetworkClientWeb from './grpc-xrp-network-client.web'
 import { XRPNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XRPError from './xrp-error'
+import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -80,6 +81,10 @@ class DefaultXRPClient implements XRPClientDecorator {
 
     const request = this.networkClient.GetAccountInfoRequest()
     request.setAccount(account)
+
+    const ledger = new LedgerSpecifier()
+    ledger.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
+    request.setLedger(ledger)
 
     const accountInfo = await this.networkClient.getAccountInfo(request)
     const accountData = accountInfo.getAccountData()
@@ -250,6 +255,10 @@ class DefaultXRPClient implements XRPClientDecorator {
     const request = this.networkClient.GetAccountInfoRequest()
     request.setAccount(account)
 
+    const ledger = new LedgerSpecifier()
+    ledger.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
+    request.setLedger(ledger)
+
     const accountInfo = await this.networkClient.getAccountInfo(request)
     if (!accountInfo) {
       throw XRPError.malformedResponse
@@ -306,6 +315,10 @@ class DefaultXRPClient implements XRPClientDecorator {
 
     const request = this.networkClient.GetAccountTransactionHistoryRequest()
     request.setAccount(account)
+
+    const ledger = new LedgerSpecifier()
+    ledger.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
+    request.setLedgerSpecifier(ledger)
 
     const transactionHistory = await this.networkClient.getTransactionHistory(
       request,

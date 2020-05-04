@@ -204,7 +204,7 @@ An `XRPClient` can return a list of payments to and from an account.
 const { XRPClient, XRPLNetwork } = require("xpring-js");
 
 const remoteURL = "alpha.test.xrp.xpring.io:50051"; // Testnet URL, use alpha.xrp.xpring.io:50051 for Mainnet
-const xrpClient = new XRPClient(remoteURL);
+const xrpClient = new XRPClient(remoteURL, XRPLNetwork.Test);
 const address = "XVMFQQBMhdouRqhPMuawgBMN1AVFTofPAdRsXG5RkPtUPNQ";
 const transactions = await xrpClient.paymentHistory(address);
 ```

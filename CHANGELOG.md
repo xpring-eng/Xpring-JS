@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 4.2.3 - April 30, 2020
+
+# Added
+- `xrpToDrops` and `dropsToXrp` conversion utilities available.
+
 ## 4.2.2 - April 24, 2020
 
 # Added
@@ -28,7 +33,7 @@ This build contains fixes for generated code that may have prevented earlier ver
 ## 4.0.0 - April 6, 2020
 
 ## Changed
-- `XRPClient` requires a new parameter in it's constructor that identifies the network it is attached to.
+- `XRPClient` requires a new parameter in its constructor that identifies the network it is attached to.
 - `IlpClient` methods now throw `IlpError`s if something goes wrong during the call
     (either client side or server side).
     This is only breaking if users are handling special error cases, which were previously `grpc.ServiceError`s when
