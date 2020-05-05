@@ -29,8 +29,5 @@
   },
   "include": [
     "src/**/*"
-  ],
-  "exclude": [
-    "src/PayID/Generated/*"
   ]
 }
