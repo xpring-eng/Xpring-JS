@@ -1,24 +1,24 @@
-import { AccountAddress } from './Generated/org/xrpl/rpc/v1/account_pb'
+import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from './Generated/org/xrpl/rpc/v1/submit_pb'
+} from './Generated/web/org/xrpl/rpc/v1/submit_pb'
 import {
   GetAccountTransactionHistoryRequest,
   GetAccountTransactionHistoryResponse,
-} from './Generated/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+} from './Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import {
   GetFeeRequest,
   GetFeeResponse,
-} from './Generated/org/xrpl/rpc/v1/get_fee_pb'
+} from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
-} from './Generated/org/xrpl/rpc/v1/get_account_info_pb'
+} from './Generated/web/org/xrpl/rpc/v1/get_account_info_pb'
 import {
   GetTransactionRequest,
   GetTransactionResponse,
-} from './Generated/org/xrpl/rpc/v1/get_transaction_pb'
+} from './Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 
 /**
  * The network client interface provides a wrapper around network calls to the XRP node.

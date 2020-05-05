@@ -1,4 +1,4 @@
-import { GetTransactionResponse } from './Generated/org/xrpl/rpc/v1/get_transaction_pb'
+import { GetTransactionResponse } from './Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import RippledFlags from './rippled-flags'
 
 /** Abstraction around raw Transaction Status for compatibility. */

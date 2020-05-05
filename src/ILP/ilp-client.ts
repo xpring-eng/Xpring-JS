@@ -7,9 +7,10 @@ import { PaymentRequest } from './model/payment-request'
 class IlpClient {
   private readonly decoratedClient: IlpClientDecorator
 
-  public constructor(grpcURL: string) {
+  public constructor(grpcURL: string, forceWeb = false) {
     this.decoratedClient = DefaultIlpClient.defaultIlpClientWithEndpoint(
       grpcURL,
+      forceWeb,
     )
   }
 

@@ -3,7 +3,7 @@ import {
   CurrencyAmount,
   IssuedCurrencyAmount,
   XRPDropsAmount,
-} from '../../../src/XRP/Generated/org/xrpl/rpc/v1/amount_pb'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/amount_pb'
 import {
   Amount,
   Date,
@@ -24,19 +24,19 @@ import {
   LastLedgerSequence,
   SourceTag,
   DeliveredAmount,
-} from '../../../src/XRP/Generated/org/xrpl/rpc/v1/common_pb'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
   Payment,
   Transaction,
   CheckCash,
   Memo,
   Signer,
-} from '../../../src/XRP/Generated/org/xrpl/rpc/v1/transaction_pb'
-import { AccountAddress } from '../../../src/XRP/Generated/org/xrpl/rpc/v1/account_pb'
-import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
+import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import XRPTransaction from '../../../src/XRP/model/xrp-transaction'
-import { GetTransactionResponse } from '../../../src/XRP/Generated/org/xrpl/rpc/v1/get_transaction_pb'
-import { Meta } from '../../../src/XRP/Generated/org/xrpl/rpc/v1/meta_pb'
+import { GetTransactionResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+import { Meta } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/meta_pb'
 
 // primitive test values
 const testCurrencyName = 'currencyName'

@@ -1,5 +1,5 @@
 import { BigInteger } from 'big-integer'
-import { SendPaymentRequest } from '../Generated/send_payment_request_pb'
+import { SendPaymentRequest } from '../Generated/web/send_payment_request_pb'
 
 /**
  * A request object that can be used to send a payment request to a connector

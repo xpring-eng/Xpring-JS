@@ -1,5 +1,5 @@
 import bigInt, { BigInteger } from 'big-integer'
-import { GetBalanceResponse } from '../Generated/get_balance_response_pb'
+import { GetBalanceResponse } from '../Generated/web/get_balance_response_pb'
 
 /**
  * Response object for requests to get an account's balance

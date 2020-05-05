@@ -1,5 +1,4 @@
-import { ServiceError, status as grpcStatusCode } from '@grpc/grpc-js'
-
+import { Error as grpcWebError, StatusCode as grpcStatusCode } from 'grpc-web'
 /**
  * Types of errors that originate from ILP.
  */
@@ -73,7 +72,7 @@ export default class IlpError extends Error {
    * @param error Any error returned by a network call.
    * @return A {@link IlpError} that has been translated from a gRPC error, or which should be rethrown
    */
-  public static from(error: ServiceError | IlpError): IlpError {
+  public static from(error: grpcWebError | IlpError): IlpError {
     if ('code' in error) {
       switch (error.code) {
         case grpcStatusCode.NOT_FOUND:

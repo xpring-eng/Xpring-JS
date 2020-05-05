@@ -1,4 +1,4 @@
-import { Payment } from '../Generated/org/xrpl/rpc/v1/transaction_pb'
+import { Payment } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XRPCurrencyAmount from './xrp-currency-amount'
 import XRPPath from './xrp-path'
 

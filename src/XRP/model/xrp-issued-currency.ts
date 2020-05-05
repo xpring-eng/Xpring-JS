@@ -1,5 +1,5 @@
 import bigInt, { BigInteger } from 'big-integer'
-import { IssuedCurrencyAmount } from '../Generated/org/xrpl/rpc/v1/amount_pb'
+import { IssuedCurrencyAmount } from '../Generated/web/org/xrpl/rpc/v1/amount_pb'
 import XRPCurrency from './xrp-currency'
 
 /*
