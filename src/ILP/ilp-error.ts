@@ -1,4 +1,5 @@
 import { Error as grpcWebError, StatusCode as grpcStatusCode } from 'grpc-web'
+
 /**
  * Types of errors that originate from ILP.
  */
