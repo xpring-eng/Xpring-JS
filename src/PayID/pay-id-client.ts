@@ -78,7 +78,7 @@ export default class PayIDClient {
 
     const { error, data } = await PayIDClient.callSwaggerRPC<
       PaymentInformation
-    >(basePath, path, HTTPMethod.Get, null, accepts, PaymentInformation)
+    >(basePath, path, HTTPMethod.Get, undefined, accepts, PaymentInformation)
 
     if (error) {
       if (error.status === 404) {
@@ -115,7 +115,14 @@ export default class PayIDClient {
 
     const { error, data } = await PayIDClient.callSwaggerRPC<
       SignatureWrapperInvoice
-    >(basePath, path, HTTPMethod.Get, null, accepts, SignatureWrapperInvoice)
+    >(
+      basePath,
+      path,
+      HTTPMethod.Get,
+      undefined,
+      accepts,
+      SignatureWrapperInvoice,
+    )
 
     // TODO(keefertaylor): Provide more granular error handling.
     if (error) {
@@ -297,7 +304,7 @@ export default class PayIDClient {
    * @param path The path for the request. This value is taken as is, clients of this method are responsible for escaping
    *             or other transformations.
    * @param method The HTTP method to use for the request.
-   * @param postBody A body to post.
+   * @param postBody An optional body to POST.
    * @param accepts An array of acceptable Content-Type headers, ordered in preference from most to least desirable.
    * @param returnType The type of the returned object.
    */
@@ -305,7 +312,7 @@ export default class PayIDClient {
     basePath: string,
     path: string,
     httpMethod: HTTPMethod,
-    postBody: object,
+    postBody: object | undefined,
     accepts: Array<string>,
     // The next line is T.type.
     // TODO(keefertaylor): Figure out a way to express this in typescript.
