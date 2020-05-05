@@ -18,6 +18,14 @@ interface PayIDComponents {
   path: string
 }
 
+/**
+ * HTTP methods used on requests.
+ */
+enum HTTPMethod {
+  Get = 'GET',
+  Post = 'POST',
+}
+
 // TODO(keefertaylor): Do not use any. Either generate .d.ts files by using a typescript code generator or manually create interfaces.
 /** The result of a call to a Swagger RPC which fetched a response of type T. */
 interface SwaggerCallResult<T> {
@@ -70,7 +78,7 @@ export default class PayIDClient {
 
     const { error, data } = await PayIDClient.callSwaggerRPC<
       PaymentInformation
-    >(basePath, path, accepts, PaymentInformation)
+    >(basePath, path, HTTPMethod.Get, undefined, accepts, PaymentInformation)
 
     if (error) {
       if (error.status === 404) {
@@ -107,7 +115,14 @@ export default class PayIDClient {
 
     const { error, data } = await PayIDClient.callSwaggerRPC<
       SignatureWrapperInvoice
-    >(basePath, path, accepts, SignatureWrapperInvoice)
+    >(
+      basePath,
+      path,
+      HTTPMethod.Get,
+      undefined,
+      accepts,
+      SignatureWrapperInvoice,
+    )
 
     // TODO(keefertaylor): Provide more granular error handling.
     if (error) {
@@ -194,28 +209,22 @@ export default class PayIDClient {
     )
 
     const payIDComponents = PayIDClient.parsePayID(payID)
+    const basePath = `https://${payIDComponents.host}`
+    const path = `${payIDComponents.path}/invoice?nonce=${nonce}`
 
-    const client = new ApiClient()
-    client.basePath = `https://${payIDComponents.host}${payIDComponents.path}`
+    // Accept only the given network in response.
+    const accepts = [`application/${this.network}+json`]
 
-    const apiInstance = new DefaultApi(client)
-
-    const { error, data } = await new Promise<
-      SwaggerCallResult<SignatureWrapperInvoice>
-    >((resolve, _reject) => {
-      apiInstance.postPathInvoice(
-        nonce,
-        { body: signatureWrapper },
-        (swaggerError, swaggerData, response) => {
-          // Transform results of the callback to a wrapper object.
-          resolve({
-            error: swaggerError,
-            data: swaggerData,
-            response,
-          })
-        },
-      )
-    })
+    const { error, data } = await PayIDClient.callSwaggerRPC<
+      SignatureWrapperInvoice
+    >(
+      basePath,
+      path,
+      HTTPMethod.Post,
+      signatureWrapper,
+      accepts,
+      SignatureWrapperInvoice,
+    )
 
     // TODO(keefertaylor): Provide more granular error handling.
     if (error) {
@@ -294,12 +303,16 @@ export default class PayIDClient {
    * @param basePath The base URL for the RPC.
    * @param path The path for the request. This value is taken as is, clients of this method are responsible for escaping
    *             or other transformations.
+   * @param method The HTTP method to use for the request.
+   * @param postBody An optional body to POST.
    * @param accepts An array of acceptable Content-Type headers, ordered in preference from most to least desirable.
    * @param returnType The type of the returned object.
    */
   private static async callSwaggerRPC<T>(
     basePath: string,
     path: string,
+    httpMethod: HTTPMethod,
+    postBody: object | undefined,
     accepts: Array<string>,
     // The next line is T.type.
     // TODO(keefertaylor): Figure out a way to express this in typescript.
@@ -315,8 +328,6 @@ export default class PayIDClient {
       //
       // NOTE: At some point additional fields may need to be generalized (ex. httpMethod). These fields
       // are hidden for convenience and configurability and may be exposed when needed.
-      const postBody = null
-      const httpMethod = 'GET'
       const queryParams = {}
       const headerParams = {}
       const formParams = {}
