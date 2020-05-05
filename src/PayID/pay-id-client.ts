@@ -198,7 +198,7 @@ export default class PayIDClient {
     const compliance = new Compliance(ComplianceType.TravelRule, travelRule)
 
     const signatureWrapper = new SignatureWrapperCompliance(
-      'compliance',
+      'Compliance',
       compliance,
       publicKeyType,
       publicKeyData,
