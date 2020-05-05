@@ -23,7 +23,7 @@
     "moduleResolution": "node",
 
     // Advanced Options
-    "allowJs": false,
+    "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true
   },
