@@ -3,7 +3,6 @@ import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
 import PayIDClient from '../../src/PayID/pay-id-client'
 import XRPPayIDClient from '../../src/PayID/xrp-pay-id-client'
 import XRPLNetwork from '../../src/Common/xrpl-network'
-import ComplianceType from '../../src/PayID/compliance-type'
 import { CryptoAddressDetails } from '../../src/PayID/Generated'
 
 // A timeout for these tests.
@@ -114,7 +113,6 @@ describe('PayID Integration Tests', function (): void {
       [],
       '00:c9:22:69:31:8a:d6:6c:ea:da:c3:7f:2c:ac:a5:af:c0:02:ea:81:cb:65:b9:fd:0c:6d:46:5b:c9:1e:9d:3b:ef',
       '8b:c3:ed:d1:9d:39:6f:af:40:72:bd:1e:18:5e:30:54:23:35',
-      ComplianceType.TravelRule,
       'Theodore Kalaw',
       'ef841530-f476-429c-b8f3-de25a0a29f80',
       '520 Main Street',

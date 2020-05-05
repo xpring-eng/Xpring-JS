@@ -10,8 +10,8 @@ import SignatureWrapperCompliance from './Generated/model/SignatureWrapperCompli
 import Compliance from './Generated/model/Compliance'
 import TravelRule from './Generated/model/TravelRule'
 import DefaultApi from './Generated/api/DefaultApi'
-import ComplianceType from './compliance-type'
 import { CryptoAddressDetails } from './Generated'
+import ComplianceType from './compliance-type'
 
 interface PayIDComponents {
   host: string
@@ -144,7 +144,6 @@ export default class PayIDClient {
    * @param publicKeyData An array of public keys which lead back to the root trust certificate.
    * @param publicKey The public key.
    * @param signature The signature of the operation.
-   * @param complianceType The type of compliance submitted.
    * @param originatorUserLegalName The legal name of the originator.
    * @param originatorAccountID The account ID of the originator.
    * @param originatorUserPhysicalAddress The physical address of the originator.
@@ -165,7 +164,6 @@ export default class PayIDClient {
     publicKeyData: Array<string>,
     publicKey: string,
     signature: string,
-    complianceType: ComplianceType,
     originatorUserLegalName: string,
     originatorAccountID: string,
     originatorUserPhysicalAddress: string,
@@ -197,10 +195,10 @@ export default class PayIDClient {
 
     const travelRule = new TravelRule(originator, beneficiary)
 
-    const compliance = new Compliance(complianceType, travelRule)
+    const compliance = new Compliance(ComplianceType.TravelRule, travelRule)
 
     const signatureWrapper = new SignatureWrapperCompliance(
-      complianceType,
+      'compliance',
       compliance,
       publicKeyType,
       publicKeyData,
