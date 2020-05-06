@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 4.2.5 - May 6, 2020
+
+This minor release improves on existing features and fixes a typescript compilation failure.
+
+## 4.2.4 - May 6, 2020
+
+This minor release improves on existing features and fixes a typescript compilation failure.
+
 ## 4.2.3 - April 30, 2020
 
 # Added

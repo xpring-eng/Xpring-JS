@@ -1,6 +1,6 @@
 {
   "name": "xpring-js",
-  "version": "4.2.3",
+  "version": "4.2.5",
   "description": "XpringJS provides a Javascript based SDK for interacting with the Ripple Ledger.",
   "main": "build/index.js",
   "repository": {
@@ -16,7 +16,7 @@
     "build/**/*"
   ],
   "scripts": {
-    "build": "npm run clean && ./scripts/regenerate_protos.sh && ./scripts/regenerate_pay_id_api.sh && npm run lint && tsc -d --allowJs false && copyfiles -u 3 './src/XRP/Generated/**/*' ./build/XRP/Generated && copyfiles -u 3 './src/ILP/Generated/**/*' ./build/ILP/Generated && copyfiles -u 3 './src/PayID/Generated/**/*' ./build/PayID/Generated",
+    "build": "npm run clean && ./scripts/regenerate_protos.sh && ./scripts/regenerate_pay_id_api.sh && npm run lint && tsc -d && copyfiles -u 3 './src/XRP/Generated/**/*' ./build/XRP/Generated && copyfiles -u 3 './src/ILP/Generated/**/*' ./build/ILP/Generated",
     "clean": "rm -rf ./src/XRP/Generated ./src/ILP/Generated ./dist ./build ./src/PayID/Generated",
     "pretest": "npm run clean && ./scripts/regenerate_protos.sh && ./scripts/regenerate_pay_id_api.sh && npm run lint && tsc --noEmit",
     "lint": "eslint . --ext .ts --fix",
