@@ -154,7 +154,7 @@ components:
         paymentPointer:
           type: string
       required:
-        - addressDetailsType
+        - addressDetailType
         - addressDetails
     Invoice:
       title: Invoice
