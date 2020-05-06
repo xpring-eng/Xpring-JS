@@ -145,7 +145,7 @@ components:
       title: PaymentInformation
       type: object
       properties:
-        addressDetailsType:
+        addressDetailType:
           type: string
         addressDetails:
           $ref: '#/components/schemas/CryptoAddressDetails'
