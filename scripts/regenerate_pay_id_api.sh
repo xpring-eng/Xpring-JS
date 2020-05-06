@@ -55,3 +55,7 @@ rm -rf $TMP_SWAGGER_DIR
 
 echo "Done Cleaning Up"
 echo "All Done!"
+
+# Fix a bug where swagger outputs invalid types and tsc chokes on it.
+# TODO(keefertaylor): Improve / fix this hack.
+sed -i '' 's/module:ApiClient/ApiClient/g' src/PayID/Generated/ApiClient.js
