@@ -108,21 +108,21 @@ describe('utils', function (): void {
   //   )
   // })
 
-  it('encodeXAddress() - TestNet Address and Tag', function (): void {
-    // GIVEN a valid classic address on TestNet and a tag.
-    const address = 'rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1'
-    const tag = 12345
-    const isTest = true
+  // it('encodeXAddress() - TestNet Address and Tag', function (): void {
+  //   // GIVEN a valid classic address on TestNet and a tag.
+  //   const address = 'rU6K7V3Po4snVhBBaU29sesqs2qTQJWDw1'
+  //   const tag = 12345
+  //   const isTest = true
 
-    // WHEN they are encoded to an x-address.
-    const xAddress = Utils.encodeXAddress(address, tag, isTest)
+  //   // WHEN they are encoded to an x-address.
+  //   const xAddress = Utils.encodeXAddress(address, tag, isTest)
 
-    // THEN the result is as expected.
-    assert.strictEqual(
-      xAddress,
-      'TVsBZmcewpEHgajPi1jApLeYnHPJw82v9JNYf7dkGmWphmh',
-    )
-  })
+  //   // THEN the result is as expected.
+  //   assert.strictEqual(
+  //     xAddress,
+  //     'TVsBZmcewpEHgajPi1jApLeYnHPJw82v9JNYf7dkGmWphmh',
+  //   )
+  // })
 
   it('encodeXAddress() - Address Only', function (): void {
     // GIVEN a valid classic address.
