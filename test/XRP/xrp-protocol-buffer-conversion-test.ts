@@ -8,10 +8,23 @@ import XRPCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
 import XRPPayment from '../../src/XRP/model/xrp-payment'
 import XRPMemo from '../../src/XRP/model/xrp-memo'
 import XRPSigner from '../../src/XRP/model/xrp-signer'
+import XRPTransaction from '../../src/XRP/model/xrp-transaction'
+import { Utils } from '../../src'
 import {
+  testAddress,
+  testPublicKey,
+  testTransactionSignature,
+  testSequence,
+  testFee,
   testMemoData,
   testMemoFormat,
   testMemoType,
+  testAccountTransactionID,
+  testFlags,
+  testSourceTag,
+  testLastLedgerSequence,
+  testTransactionHash,
+  expectedTimestamp,
   testCurrencyProto,
   testPathElementProto,
   testEmptyPathElementProto,
@@ -26,11 +39,14 @@ import {
   testMemoProtoAllFields,
   testEmptyMemoProto,
   testSignerProto,
+  testGetTransactionResponseProto,
+  testGetTransactionResponseProtoMandatoryOnly,
   testInvalidIssuedCurrencyProto,
   testInvalidCurrencyAmountProto,
   testInvalidPaymentProtoBadAmount,
   testInvalidPaymentProtoBadDeliverMin,
   testInvalidPaymentProtoBadSendMax,
+  testInvalidGetTransactionResponseProto,
 } from './fakes/fake-xrp-protobufs'
 
 // TODO(amiecorso): Refactor tests to separate files.
@@ -316,5 +332,77 @@ describe('Protocol Buffer Conversion', function (): void {
       signer?.transactionSignature,
       testSignerProto.getTransactionSignature()?.getValue_asU8(),
     )
+  })
+
+  // Transaction
+
+  it('Convert PAYMENT Transaction, all common fields set', function (): void {
+    // GIVEN a GetTransactionResponse protobuf containing a Transaction protobuf with all common fields set.
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const transaction = XRPTransaction.from(testGetTransactionResponseProto)
+
+    // THEN all fields are present and converted correctly.
+    assert.equal(transaction?.account, testAddress)
+    assert.equal(transaction?.fee, testFee)
+    assert.equal(transaction?.sequence, testSequence)
+    assert.equal(transaction?.signingPublicKey, testPublicKey)
+    assert.equal(transaction?.transactionSignature, testTransactionSignature)
+    assert.equal(transaction?.accountTransactionID, testAccountTransactionID)
+    assert.equal(transaction?.flags, testFlags)
+    assert.equal(transaction?.lastLedgerSequence, testLastLedgerSequence)
+    assert.deepEqual(transaction?.memos, [
+      XRPMemo.from(testMemoProtoAllFields)!,
+    ])
+    assert.deepEqual(transaction?.signers, [XRPSigner.from(testSignerProto)!])
+    assert.equal(transaction?.sourceTag, testSourceTag)
+    assert.equal(transaction?.hash, Utils.toHex(testTransactionHash))
+    assert.equal(transaction?.timestamp, expectedTimestamp)
+    assert.equal(
+      transaction?.deliveredAmount,
+      testGetTransactionResponseProto
+        ?.getMeta()
+        ?.getDeliveredAmount()
+        ?.getValue()
+        ?.getIssuedCurrencyAmount()
+        ?.getValue(),
+    )
+  })
+
+  it('Convert PAYMENT Transaction with only mandatory common fields set', function (): void {
+    // GIVEN a GetTransactionResponse protocol buffer containing a Transaction protobuf with only mandatory common fields set.
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const transaction = XRPTransaction.from(
+      testGetTransactionResponseProtoMandatoryOnly,
+    )
+
+    // THEN all fields are present and converted correctly.
+    assert.equal(transaction?.account, testAddress)
+    assert.equal(transaction?.fee, testFee)
+    assert.equal(transaction?.sequence, testSequence)
+    assert.deepEqual(transaction?.signingPublicKey, testPublicKey)
+    assert.deepEqual(
+      transaction?.transactionSignature,
+      testTransactionSignature,
+    )
+    assert.equal(transaction?.hash, Utils.toHex(testTransactionHash))
+    assert.isUndefined(transaction?.accountTransactionID)
+    assert.isUndefined(transaction?.flags)
+    assert.isUndefined(transaction?.lastLedgerSequence)
+    assert.isUndefined(transaction?.memos)
+    assert.isUndefined(transaction?.signers)
+    assert.isUndefined(transaction?.sourceTag)
+    assert.isUndefined(transaction?.timestamp)
+    assert.isUndefined(transaction?.deliveredAmount)
+  })
+
+  it('Convert PAYMENT Transaction with bad payment fields', function (): void {
+    // GIVEN a GetTransactionResponse protocol buffer with Transaction payment fields which are incorrect
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const transaction = XRPTransaction.from(
+      testInvalidGetTransactionResponseProto,
+    )
+
+    // THEN the result is undefined
+    assert.isUndefined(transaction)
   })
 })
