@@ -3,12 +3,12 @@ coverage:
     patch:
       default:
         target: 80%
-        threshold: 1%
+        threshold: .01
         base: auto
         if_ci_failed: error
     project:
       default:
         target: 80%
-        threshold: 1%
+        threshold: 0.01
         base: auto
         if_ci_failed: error
