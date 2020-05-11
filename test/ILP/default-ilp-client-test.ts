@@ -77,35 +77,35 @@ describe('Default ILP Client', function (): void {
     })
   })
 
-  it('Get balance - Invalid Argument Error', function (done): void {
-    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
-    // with code = grpcStatusCode.INVALID_ARGUMENT
-    const client = FakeDefaultIlpClient.withErrors(
-      FakeIlpNetworkClientResponses.invalidArgumentError,
-    )
+  // it('Get balance - Invalid Argument Error', function (done): void {
+  //   // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+  //   // with code = grpcStatusCode.INVALID_ARGUMENT
+  //   const client = FakeDefaultIlpClient.withErrors(
+  //     FakeIlpNetworkClientResponses.invalidArgumentError,
+  //   )
 
-    // WHEN the balance for an account is requested
-    client.getBalance(accountId).catch((error) => {
-      // THEN the error is translated to a IlpError
-      assert.equal(error as IlpError, IlpError.invalidArgument)
-      done()
-    })
-  })
+  //   // WHEN the balance for an account is requested
+  //   client.getBalance(accountId).catch((error) => {
+  //     // THEN the error is translated to a IlpError
+  //     assert.equal(error as IlpError, IlpError.invalidArgument)
+  //     done()
+  //   })
+  // })
 
-  it('Get balance - Unauthenticated Error', function (done): void {
-    // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
-    // with code = grpcStatusCode.UNAUTHENTICATED
-    const client = FakeDefaultIlpClient.withErrors(
-      FakeIlpNetworkClientResponses.unauthenticatedError,
-    )
+  // it('Get balance - Unauthenticated Error', function (done): void {
+  //   // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
+  //   // with code = grpcStatusCode.UNAUTHENTICATED
+  //   const client = FakeDefaultIlpClient.withErrors(
+  //     FakeIlpNetworkClientResponses.unauthenticatedError,
+  //   )
 
-    // WHEN the balance for an account is requested
-    client.getBalance(accountId).catch((error) => {
-      // THEN the error is translated to a IlpError
-      assert.equal(error as IlpError, IlpError.unauthenticated)
-      done()
-    })
-  })
+  //   // WHEN the balance for an account is requested
+  //   client.getBalance(accountId).catch((error) => {
+  //     // THEN the error is translated to a IlpError
+  //     assert.equal(error as IlpError, IlpError.unauthenticated)
+  //     done()
+  //   })
+  // })
 
   it('Get balance - Internal Error', function (done): void {
     // GIVEN a DefaultIlpClient with a network client which always throws a grpc.ServiceError
