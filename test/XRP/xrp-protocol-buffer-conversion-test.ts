@@ -40,7 +40,6 @@ import {
   testEmptyMemoProto,
   testSignerProto,
   testGetTransactionResponseProto,
-  testGetTransactionResponseProtoMandatoryOnly,
   testInvalidIssuedCurrencyProto,
   testInvalidCurrencyAmountProto,
   testInvalidPaymentProtoBadAmount,
@@ -365,32 +364,5 @@ describe('Protocol Buffer Conversion', function (): void {
         ?.getIssuedCurrencyAmount()
         ?.getValue(),
     )
-  })
-
-  it('Convert PAYMENT Transaction with only mandatory common fields set', function (): void {
-    // GIVEN a GetTransactionResponse protocol buffer containing a Transaction protobuf with only mandatory common fields set.
-    // WHEN the protocol buffer is converted to a native TypeScript type.
-    const transaction = XRPTransaction.from(
-      testGetTransactionResponseProtoMandatoryOnly,
-    )
-
-    // THEN all fields are present and converted correctly.
-    assert.equal(transaction?.account, testAddress)
-    assert.equal(transaction?.fee, testFee)
-    assert.equal(transaction?.sequence, testSequence)
-    assert.deepEqual(transaction?.signingPublicKey, testPublicKey)
-    assert.deepEqual(
-      transaction?.transactionSignature,
-      testTransactionSignature,
-    )
-    assert.equal(transaction?.hash, Utils.toHex(testTransactionHash))
-    assert.isUndefined(transaction?.accountTransactionID)
-    assert.isUndefined(transaction?.flags)
-    assert.isUndefined(transaction?.lastLedgerSequence)
-    assert.isUndefined(transaction?.memos)
-    assert.isUndefined(transaction?.signers)
-    assert.isUndefined(transaction?.sourceTag)
-    assert.isUndefined(transaction?.timestamp)
-    assert.isUndefined(transaction?.deliveredAmount)
   })
 })
