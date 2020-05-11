@@ -5,7 +5,7 @@ import { XRPLNetwork } from '../../../src'
 /**
  * A fake XRPPayIDClient which can return faked values.
  */
-export default class FakePayIDClient implements XRPPayIDClientInterface {
+export default class FakeXRPPayIDClient implements XRPPayIDClientInterface {
   /**
    * @param xrpAddressResult The object that will be returned or thrown from a call to `xrpAddressForPayID`.
    */
