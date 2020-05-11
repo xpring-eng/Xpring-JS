@@ -4,15 +4,6 @@ import { dropsToXrp, xrpToDrops } from '../../src/XRP/xrp-utils'
 import 'mocha'
 
 describe('xrp-drops-conversion', function (): void {
-  // xrpToDrops and dropsToXrp tests
-  it('dropsToXrp() - works with a typical amount', function (): void {
-    // GIVEN a typical, valid drops value, WHEN converted to xrp
-    const xrp = dropsToXrp('2000000')
-
-    // THEN the conversion is as expected
-    assert.strictEqual(xrp, '2', '2 million drops equals 2 XRP')
-  })
-
   it('dropsToXrp() - works with fractions', function (): void {
     // GIVEN drops amounts that convert to fractional xrp amounts
     // WHEN converted to xrp THEN the conversion is as expected
