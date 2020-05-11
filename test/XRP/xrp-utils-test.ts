@@ -4,6 +4,23 @@ import { dropsToXrp, xrpToDrops } from '../../src/XRP/xrp-utils'
 import 'mocha'
 
 describe('xrp-drops-conversion', function (): void {
+  it('dropsToXrp() - works with zero', function (): void {
+    // GIVEN several equivalent representations of zero
+    // WHEN converted to xrp, THEN the result is zero
+    let xrp = dropsToXrp('0')
+    assert.strictEqual(xrp, '0', '0 drops equals 0 XRP')
+
+    // negative zero is equivalent to zero
+    xrp = dropsToXrp('-0')
+    assert.strictEqual(xrp, '0', '-0 drops equals 0 XRP')
+
+    xrp = dropsToXrp('0.00')
+    assert.strictEqual(xrp, '0', '0.00 drops equals 0 XRP')
+
+    xrp = dropsToXrp('000000000')
+    assert.strictEqual(xrp, '0', '000000000 drops equals 0 XRP')
+  })
+
   it('dropsToXrp() - works with a negative value', function (): void {
     // GIVEN a negative drops amount
     // WHEN converted to xrp
