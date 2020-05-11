@@ -127,16 +127,16 @@ describe('PayID Integration Tests', function (): void {
     assert.exists(invoice)
   })
 
-  it('receipt', async function (): Promise<void> {
-    // GIVEN a Pay ID.
-    const payID = 'dino$travel.payid.xpring.money'
-    const payIDClient = new XRPPayIDClient(XRPLNetwork.Main)
+  // it('receipt', async function (): Promise<void> {
+  //   // GIVEN a Pay ID.
+  //   const payID = 'dino$travel.payid.xpring.money'
+  //   const payIDClient = new XRPPayIDClient(XRPLNetwork.Main)
 
-    // WHEN the Pay ID receipt endpoint is hit then an error is not thrown.
-    await payIDClient.receipt(
-      payID,
-      'some_invoice_hash',
-      'some_transaction_hash',
-    )
-  })
+  //   // WHEN the Pay ID receipt endpoint is hit then an error is not thrown.
+  //   await payIDClient.receipt(
+  //     payID,
+  //     'some_invoice_hash',
+  //     'some_transaction_hash',
+  //   )
+  // })
 })
