@@ -25,8 +25,8 @@ const timestamp = '2020-03-20T07:09:00'
 const beneficiaryName = 'xpring'
 
 // Parameters for reciept.
-const invoiceHash = 'some_invoice_hash'
-const transasctionConfirmation = 'some_transaction_confirmation'
+// const invoiceHash = 'some_invoice_hash'
+// const transasctionConfirmation = 'some_transaction_confirmation'
 
 describe('Pay ID Client', function (): void {
   afterEach(function () {
