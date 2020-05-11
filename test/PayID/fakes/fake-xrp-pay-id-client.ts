@@ -3,7 +3,7 @@ import Result from '../../Common/Helpers/result'
 import { XRPLNetwork } from '../../../src'
 
 /**
- * A fake Pay ID Client which can return faked values.
+ * A fake XRPPayIDClient which can return faked values.
  */
 export default class FakePayIDClient implements XRPPayIDClientInterface {
   /**
