@@ -406,15 +406,4 @@ describe('Protocol Buffer Conversion', function (): void {
     // THEN the result is undefined
     assert.isUndefined(transaction)
   })
-
-  it('Convert unsupported transaction type', function (): void {
-    // GIVEN a GetTransactionResponse protocol buffer with a Transaction of unsupported type
-    // WHEN the protocol buffer is converted to a native TypeScript type.
-    const transaction = XRPTransaction.from(
-      testInvalidGetTransactionResponseProtoUnsupportedType,
-    )
-
-    // THEN the result is undefined
-    assert.isUndefined(transaction)
-  })
 })
