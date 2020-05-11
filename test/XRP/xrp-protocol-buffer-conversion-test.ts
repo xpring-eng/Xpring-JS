@@ -46,7 +46,6 @@ import {
   testInvalidPaymentProtoBadAmount,
   testInvalidPaymentProtoBadDeliverMin,
   testInvalidPaymentProtoBadSendMax,
-  testInvalidGetTransactionResponseProto,
 } from './fakes/fake-xrp-protobufs'
 
 // TODO(amiecorso): Refactor tests to separate files.
@@ -393,16 +392,5 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.isUndefined(transaction?.sourceTag)
     assert.isUndefined(transaction?.timestamp)
     assert.isUndefined(transaction?.deliveredAmount)
-  })
-
-  it('Convert PAYMENT Transaction with bad payment fields', function (): void {
-    // GIVEN a GetTransactionResponse protocol buffer with Transaction payment fields which are incorrect
-    // WHEN the protocol buffer is converted to a native TypeScript type.
-    const transaction = XRPTransaction.from(
-      testInvalidGetTransactionResponseProto,
-    )
-
-    // THEN the result is undefined
-    assert.isUndefined(transaction)
   })
 })
