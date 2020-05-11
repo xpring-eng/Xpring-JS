@@ -47,7 +47,6 @@ import {
   testInvalidPaymentProtoBadDeliverMin,
   testInvalidPaymentProtoBadSendMax,
   testInvalidGetTransactionResponseProto,
-  testInvalidGetTransactionResponseProtoUnsupportedType,
 } from './fakes/fake-xrp-protobufs'
 
 // TODO(amiecorso): Refactor tests to separate files.

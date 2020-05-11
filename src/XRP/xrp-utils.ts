@@ -3,8 +3,8 @@ import BigNumber from 'bignumber.js'
 function dropsToXrp(drops: BigNumber.Value): string {
   const dropsRegEx = RegExp(/^-?[0-9]*\.?[0-9]*$/)
 
-  console.log("tickling CI")
-  
+  console.log('tickling CI')
+
   if (typeof drops === 'string') {
     if (!dropsRegEx.exec(drops)) {
       throw new Error(
