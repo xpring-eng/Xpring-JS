@@ -356,52 +356,52 @@ describe('Pay ID Client', function (): void {
       })
   })
 
-  // TODO(keefertaylor): Write tests for specific error codes returned by the postInvoice API.
+  // // TODO(keefertaylor): Write tests for specific error codes returned by the postInvoice API.
 
-  it('receipt - successful response', async function () {
-    // GIVEN a PayID client, valid PayID and mocked networking to return a receipt for the Pay ID.
-    const payID = 'georgewashington$xpring.money'
-    const payIDClient = new PayIDClient(XRPLNetwork.Test)
+  // it('receipt - successful response', async function () {
+  //   // GIVEN a PayID client, valid PayID and mocked networking to return a receipt for the Pay ID.
+  //   const payID = 'georgewashington$xpring.money'
+  //   const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
-    const payIDComponents = PayIDUtils.parsePayID(payID)
-    if (!payIDComponents) {
-      throw new Error('Test precondition failed: Could not parse Pay ID')
-    }
-    nock('https://xpring.money')
-      .post('/georgewashington/receipt')
-      .reply(200, 'OK')
+  //   const payIDComponents = PayIDUtils.parsePayID(payID)
+  //   if (!payIDComponents) {
+  //     throw new Error('Test precondition failed: Could not parse Pay ID')
+  //   }
+  //   nock('https://xpring.money')
+  //     .post('/georgewashington/receipt')
+  //     .reply(200, 'OK')
 
-    // WHEN the receipt endpoint is hit then an error is not thrown.
-    await payIDClient.receipt(payID, invoiceHash, transasctionConfirmation)
-  })
+  //   // WHEN the receipt endpoint is hit then an error is not thrown.
+  //   await payIDClient.receipt(payID, invoiceHash, transasctionConfirmation)
+  // })
 
-  it('receipt - failure', function (done) {
-    // GIVEN a PayID client, valid PayID and mocked networking to return a failure when a receipt is requested.
-    const payID = 'georgewashington$xpring.money'
-    const payIDClient = new PayIDClient(XRPLNetwork.Test)
+  // it('receipt - failure', function (done) {
+  //   // GIVEN a PayID client, valid PayID and mocked networking to return a failure when a receipt is requested.
+  //   const payID = 'georgewashington$xpring.money'
+  //   const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
-    const payIDComponents = PayIDUtils.parsePayID(payID)
-    if (!payIDComponents) {
-      throw new Error('Test precondition failed: Could not parse Pay ID')
-    }
+  //   const payIDComponents = PayIDUtils.parsePayID(payID)
+  //   if (!payIDComponents) {
+  //     throw new Error('Test precondition failed: Could not parse Pay ID')
+  //   }
 
-    nock('https://xpring.money')
-      .post('/georgewashington/receipt')
-      .reply(503, {})
+  //   nock('https://xpring.money')
+  //     .post('/georgewashington/receipt')
+  //     .reply(503, {})
 
-    // WHEN the receipt endpoint is hit
-    payIDClient
-      .receipt(payID, invoiceHash, transasctionConfirmation)
-      .catch((error) => {
-        // THEN an unexpected response is thrown with the details of the error.
-        assert.equal(
-          (error as PayIDError).errorType,
-          PayIDErrorType.UnexpectedResponse,
-        )
+  //   // WHEN the receipt endpoint is hit
+  //   payIDClient
+  //     .receipt(payID, invoiceHash, transasctionConfirmation)
+  //     .catch((error) => {
+  //       // THEN an unexpected response is thrown with the details of the error.
+  //       assert.equal(
+  //         (error as PayIDError).errorType,
+  //         PayIDErrorType.UnexpectedResponse,
+  //       )
 
-        done()
-      })
-  })
+  //       done()
+  //     })
+  // })
 
   // TODO(keefertaylor): Write tests for specific error codes returned by the receipt API.
 })
