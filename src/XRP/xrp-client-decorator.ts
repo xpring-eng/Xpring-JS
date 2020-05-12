@@ -45,7 +45,7 @@ export interface XRPClientDecorator {
    *
    * @returns The index of the latest validated ledger.
    */
-  getLastValidatedLedgerSequence(): Promise<number>
+  getOpenLedgerSequence(): Promise<number>
 
   /**
    * Retrieve the raw transaction status for the given transaction hash.

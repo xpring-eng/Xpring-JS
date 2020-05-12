@@ -69,7 +69,7 @@ describe('Reliable Submission XRP Client', function (): void {
 
   it('Get Latest Ledger Sequence - Response Not Modified', async function () {
     // GIVEN a `ReliableSubmissionXRPClient` decorating a `FakeXRPClient` WHEN the latest ledger sequence is retrieved.
-    const returnedValue = await this.reliableSubmissionClient.getLastValidatedLedgerSequence()
+    const returnedValue = await this.reliableSubmissionClient.getOpenLedgerSequence()
 
     // THEN the result is returned unaltered.
     assert.deepEqual(returnedValue, fakedLastLedgerSequenceValue)
