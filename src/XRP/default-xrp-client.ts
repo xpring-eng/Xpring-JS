@@ -316,10 +316,6 @@ class DefaultXRPClient implements XRPClientDecorator {
     const request = this.networkClient.GetAccountTransactionHistoryRequest()
     request.setAccount(account)
 
-    const ledger = new LedgerSpecifier()
-    ledger.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
-    request.setLedgerSpecifier(ledger)
-
     const transactionHistory = await this.networkClient.getTransactionHistory(
       request,
     )
