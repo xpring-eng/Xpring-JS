@@ -2,6 +2,7 @@
  * Types of errors that originate from interacting with XRPL.
  */
 export enum XRPErrorType {
+  InvalidInputs,
   PaymentConversionFailure,
   MalformedResponse,
   SigningError,
