@@ -54,7 +54,7 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
     }
 
     // Retrieve the latest ledger index.
-    let latestLedgerSequence = await this.getLastValidatedLedgerSequence()
+    let openLedgerSequence = await this.getOpenLedgerSequence()
 
     // Poll until the transaction is validated, or until the lastLedgerSequence has been passed.
     /*
@@ -65,13 +65,13 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
      */
     /* eslint-disable no-await-in-loop */
     while (
-      latestLedgerSequence <= lastLedgerSequence &&
+      openLedgerSequence <= lastLedgerSequence &&
       !rawTransactionStatus.isValidated
     ) {
       await sleep(ledgerCloseTimeMs)
 
-      // Update latestLedgerSequence and rawTransactionStatus
-      latestLedgerSequence = await this.getLastValidatedLedgerSequence()
+      // Update openLedgerSequence and rawTransactionStatus
+      openLedgerSequence = await this.getOpenLedgerSequence()
       rawTransactionStatus = await this.getRawTransactionStatus(transactionHash)
     }
     /* eslint-enable no-await-in-loop */
@@ -79,8 +79,8 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
     return transactionHash
   }
 
-  public async getLastValidatedLedgerSequence(): Promise<number> {
-    return this.decoratedClient.getLastValidatedLedgerSequence()
+  public async getOpenLedgerSequence(): Promise<number> {
+    return this.decoratedClient.getOpenLedgerSequence()
   }
 
   public async getRawTransactionStatus(
