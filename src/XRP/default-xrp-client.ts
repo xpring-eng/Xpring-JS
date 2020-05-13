@@ -243,6 +243,31 @@ class DefaultXRPClient implements XRPClientDecorator {
     return fee
   }
 
+  public async isLedgerSequenceValidated(
+    address: string,
+    ledgerSequence: number,
+  ): Promise<boolean> {
+    const account = this.networkClient.AccountAddress()
+    account.setAddress(address)
+
+    const ledgerSpecifier = new LedgerSpecifier()
+    ledgerSpecifier.setSequence(ledgerSequence)
+
+    const request = this.networkClient.GetAccountInfoRequest()
+    request.setAccount(account)
+    request.setLedger(ledgerSpecifier)
+
+    try {
+      const accountInfo = await this.networkClient.getAccountInfo(request)
+      return accountInfo.getValidated()
+    } catch (e) {
+      if (e.details === 'ledgerNotFound' && e.code === 5) {
+        return false
+      }
+      throw e
+    }
+  }
+
   private async getFee(): Promise<GetFeeResponse> {
     const getFeeRequest = this.networkClient.GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)
