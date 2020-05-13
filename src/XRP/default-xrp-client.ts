@@ -29,10 +29,25 @@ import GRPCNetworkClientWeb from './grpc-xrp-network-client.web'
 import { XRPNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XRPError from './xrp-error'
-import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
+import {
+  LedgerSpecifier,
+  LedgerRange,
+} from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
+
+/** Results of doing a transaction search. */
+export enum TransactionSearchResult {
+  /** The transaction was found. */
+  Found,
+
+  /** The given range was completely searched and the transaction was not found. */
+  NotFound,
+
+  /** The given transaction was not found but the range wasn't completely searched so it is still possible the transaction exists. */
+  NotFoundButRangeNotComplete,
+}
 
 /**
  * DefaultXRPClient is a client which interacts with the Xpring platform.
@@ -216,20 +231,67 @@ class DefaultXRPClient implements XRPClientDecorator {
     return Utils.toHex(response.getHash_asU8())
   }
 
+  // TODO(keefertaylor): Rename this function.
   public async getLastValidatedLedgerSequence(): Promise<number> {
     const getFeeResponse = await this.getFee()
     return getFeeResponse.getLedgerCurrentIndex()
   }
 
+  // TODO(keefertaylor): Specify whether min / max are inclusive or exclusive.
+  public async transactionExistsInRange(
+    transactionHash: string,
+    min: number,
+    max: number,
+  ): Promise<TransactionSearchResult> {
+    const ledgerRangeProto = new LedgerRange()
+    ledgerRangeProto.setLedgerIndexMin(min)
+    ledgerRangeProto.setLedgerIndexMax(max)
+
+    const getTransactionRequest = this.networkClient.GetTransactionRequest()
+    getTransactionRequest.setHash(Utils.toBytes(transactionHash))
+    getTransactionRequest.setLedgerRange(ledgerRangeProto)
+
+    try {
+      await this.networkClient.getTransaction(getTransactionRequest)
+      return TransactionSearchResult.Found
+    } catch (error) {
+      // TODO(keefertaylor): Matching on magic strings is probably a bad long term idea.
+      const magicStringConclusiveRange = 'txn not found. searched_all = true'
+      const magicStringInconclusiveRange = 'txn not found. searched_all = false'
+
+      // If details isn't on the error object,  something has gone way further awry than expected. Re-throw.
+      const { details } = error
+      if (!details) {
+        throw error
+      }
+
+      // Three cases:
+      // - Case 1: The string is one of the magic strings and all ledgers were searched.
+      if (details === magicStringConclusiveRange) {
+        return TransactionSearchResult.NotFound
+      }
+      // - Case 2: The string is one of the magic strings and al ledgers were not searched
+      if (details === magicStringInconclusiveRange) {
+        return TransactionSearchResult.NotFoundButRangeNotComplete
+      }
+      // - Case 3: Neither string is matched so we can't determine anything. Re-throw.
+      throw error
+    }
+  }
+
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    const getTxRequest = this.networkClient.GetTransactionRequest()
-    getTxRequest.setHash(Utils.toBytes(transactionHash))
+    const getTransactionRequest = this.networkClient.GetTransactionRequest()
+    getTransactionRequest.setHash(Utils.toBytes(transactionHash))
 
-    const getTxResponse = await this.networkClient.getTransaction(getTxRequest)
+    const getTransactionResponse = await this.networkClient.getTransaction(
+      getTransactionRequest,
+    )
 
-    return RawTransactionStatus.fromGetTransactionResponse(getTxResponse)
+    return RawTransactionStatus.fromGetTransactionResponse(
+      getTransactionResponse,
+    )
   }
 
   private async getMinimumFee(): Promise<XRPDropsAmount> {
