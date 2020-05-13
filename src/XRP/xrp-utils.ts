@@ -7,13 +7,13 @@ function dropsToXrp(drops: BigNumber.Value): string {
   if (typeof drops === 'string') {
     if (!dropsRegEx.exec(drops)) {
       throw new XRPError(
-        XRPErrorType.InvalidInputs,
+        XRPErrorType.InvalidInput,
         `dropsToXrp: invalid value '${drops}',` +
           ` should be a number matching (^-?[0-9]*\\.?[0-9]*$).`,
       )
     } else if (drops === '.') {
       throw new XRPError(
-        XRPErrorType.InvalidInputs,
+        XRPErrorType.InvalidInput,
         `dropsToXrp: invalid value '${drops}',` +
           ` should be a BigNumber or string-encoded number.`,
       )
@@ -29,7 +29,7 @@ function dropsToXrp(drops: BigNumber.Value): string {
   // drops are only whole units
   if (drops.includes('.')) {
     throw new XRPError(
-      XRPErrorType.InvalidInputs,
+      XRPErrorType.InvalidInput,
       `dropsToXrp: value '${drops}' has too many decimal places.`,
     )
   }
@@ -40,7 +40,7 @@ function dropsToXrp(drops: BigNumber.Value): string {
 
   if (!dropsRegEx.exec(drops)) {
     throw new XRPError(
-      XRPErrorType.InvalidInputs,
+      XRPErrorType.InvalidInput,
       `dropsToXrp: failed sanity check -` +
         ` value '${drops}',` +
         ` does not match (^-?[0-9]+$).`,
@@ -57,13 +57,13 @@ function xrpToDrops(xrp: BigNumber.Value): string {
     // eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
     if (!xrpRegEx.exec(xrp)) {
       throw new XRPError(
-        XRPErrorType.InvalidInputs,
+        XRPErrorType.InvalidInput,
         `xrpToDrops: invalid value '${xrp}',` +
           ` should be a number matching (^-?[0-9]*\\.?[0-9]*$).`,
       )
     } else if (xrp === '.') {
       throw new XRPError(
-        XRPErrorType.InvalidInputs,
+        XRPErrorType.InvalidInput,
         `xrpToDrops: invalid value '${xrp}',` +
           ` should be a BigNumber or string-encoded number.`,
       )
@@ -79,7 +79,7 @@ function xrpToDrops(xrp: BigNumber.Value): string {
   // something unexpected.
   if (!xrpRegEx.exec(xrp)) {
     throw new XRPError(
-      XRPErrorType.InvalidInputs,
+      XRPErrorType.InvalidInput,
       `xrpToDrops: failed sanity check -` +
         ` value '${xrp}',` +
         ` does not match (^-?[0-9.]+$).`,
@@ -89,7 +89,7 @@ function xrpToDrops(xrp: BigNumber.Value): string {
   const components = xrp.split('.')
   if (components.length > 2) {
     throw new XRPError(
-      XRPErrorType.InvalidInputs,
+      XRPErrorType.InvalidInput,
       `xrpToDrops: failed sanity check -` +
         ` value '${xrp}' has` +
         ` too many decimal points.`,
@@ -99,7 +99,7 @@ function xrpToDrops(xrp: BigNumber.Value): string {
   const fraction = components[1] || '0'
   if (fraction.length > 6) {
     throw new XRPError(
-      XRPErrorType.InvalidInputs,
+      XRPErrorType.InvalidInput,
       `xrpToDrops: value '${xrp}' has too many decimal places.`,
     )
   }
