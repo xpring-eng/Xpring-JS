@@ -609,7 +609,7 @@ describe('Default Xpring Client', function (): void {
   it('isLedgerSequenceValidated - Validated Ledger', async function (): Promise<
     void
   > {
-    // GIVEN an XRPClient client which will return an account info object indicating a validated ledger.
+    // GIVEN an XRPClient which will return an account info object indicating a validated ledger.
     const getAccountInfoResponse = new GetAccountInfoResponse()
     getAccountInfoResponse.setValidated(true)
 
@@ -638,7 +638,7 @@ describe('Default Xpring Client', function (): void {
   it('isLedgerSequenceValidated - Open Ledger', async function (): Promise<
     void
   > {
-    // GIVEN an XRPClient client which will return an account info object indicating an open ledger.
+    // GIVEN an XRPClient which will return an account info object indicating an open ledger.
     const getAccountInfoResponse = new GetAccountInfoResponse()
     getAccountInfoResponse.setValidated(false)
 
@@ -667,7 +667,7 @@ describe('Default Xpring Client', function (): void {
   it('isLedgerSequenceValidated - Ledger Not Found', async function (): Promise<
     void
   > {
-    // GIVEN an XRPClient client which error with a ledgerNotFound.
+    // GIVEN an XRPClient which error with a ledgerNotFound.
     const ledgerNotFoundError = new FakeGRPCError(
       'Fake Error: Ledger not found',
       grpcStatusCode.NOT_FOUND,
@@ -696,7 +696,7 @@ describe('Default Xpring Client', function (): void {
   })
 
   it('isLedgerSequenceValidated - Network Error', function (done) {
-    // GIVEN an XRPClient client which will error on network requests.
+    // GIVEN an XRPClient which will error on network requests.
     const xrpClient = new DefaultXRPClient(fakeErroringNetworkClient)
 
     // Arbitrarily chosen.
