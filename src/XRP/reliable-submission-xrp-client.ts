@@ -53,10 +53,11 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
       )
     }
 
-    // Retrieve the latest ledger index.
-    let latestLedgerSequence = await this.getLastValidatedLedgerSequence()
+    let lastLedgerIsValidated = await this.isLedgerSequenceValidated(
+      lastLedgerSequence,
+    )
 
-    // Poll until the transaction is validated, or until the lastLedgerSequence has been passed.
+    // Poll until the transaction is validated, or until a ledger at the transaction's lastLedgerSequence has been validated.
     /*
      * In general, performing an await as part of each operation is an indication that the program is not taking full advantage of the parallelization benefits of async/await.
      * Usually, the code should be refactored to create all the promises at once, then get access to the results using Promise.all(). Otherwise, each successive operation will not start until the previous one has completed.
@@ -64,15 +65,14 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
      * https://eslint.org/docs/rules/no-await-in-loop
      */
     /* eslint-disable no-await-in-loop */
-    while (
-      latestLedgerSequence <= lastLedgerSequence &&
-      !rawTransactionStatus.isValidated
-    ) {
+    while (!lastLedgerIsValidated && !rawTransactionStatus.isValidated) {
       await sleep(ledgerCloseTimeMs)
 
       // Update latestLedgerSequence and rawTransactionStatus
-      latestLedgerSequence = await this.getLastValidatedLedgerSequence()
       rawTransactionStatus = await this.getRawTransactionStatus(transactionHash)
+      lastLedgerIsValidated = await this.isLedgerSequenceValidated(
+        lastLedgerSequence,
+      )
     }
     /* eslint-enable no-await-in-loop */
 

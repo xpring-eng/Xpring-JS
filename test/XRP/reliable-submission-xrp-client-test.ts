@@ -30,7 +30,7 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
   fakedFullPaymentValue,
 )
 const fakedTransactionHistoryValue = [testXRPTransaction]
-const fakeIsLedgerValidatedValue = true
+const fakeIsLedgerValidatedValue = false
 
 describe('Reliable Submission XRP Client', function (): void {
   beforeEach(function () {
@@ -91,11 +91,9 @@ describe('Reliable Submission XRP Client', function (): void {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
     this.timeout(5000)
 
-    // GIVEN A ledger sequence number that will increment in 200ms.
+    // GIVEN an XRP client which will report the last ledger sequence is validated in 200ms.
     setTimeout(() => {
-      const latestLedgerSequence =
-        fakedRawTransactionStatusLastLedgerSequenceValue + 1
-      this.fakeXRPClient.latestLedgerSequence = latestLedgerSequence
+      this.fakeXRPClient.isLedgerSequenceValidatedValue = true
     }, 200)
     const { wallet } = Wallet.generateRandomWallet()!
 

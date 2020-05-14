@@ -7,7 +7,7 @@ const defaultClient = DefaultXRPClient.defaultXRPClientWithEndpoint(
   'main.xrp.xpring.io:50051',
 )
 
-describe('Default Xpring Client Integration Tests', function (): void {
+describe('DefaultXRPClient Integration Tests', function (): void {
   it('isLedgerSequenceValidated - validated ledger', async function (): Promise<
     void
   > {

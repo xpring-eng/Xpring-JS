@@ -258,7 +258,15 @@ class DefaultXRPClient implements XRPClientDecorator {
       const accountInfo = await this.networkClient.getAccountInfo(request)
       return accountInfo.getValidated()
     } catch (error) {
-      if (error.details === 'ledgerNotFound' && error.code === 5) {
+      // Depending on whether the node variant or the web variant of gRPC produced these error messages, the `ledgerNotFound` attribute is placed in different locations.
+      const containsLedgerNotFoundText =
+        error.details === 'ledgerNotFound' || error.message === 'ledgerNotFound'
+
+      // NOTE: Using only the code is insufficient because there could have been an account not found error.
+      if (
+        error.code === grpcStatusCode.NOT_FOUND &&
+        containsLedgerNotFoundText
+      ) {
         return false
       }
       throw error
