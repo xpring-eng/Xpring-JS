@@ -156,7 +156,7 @@ class DefaultXRPClient implements XRPClientDecorator {
 
     const fee = await this.getMinimumFee()
     const accountData = await this.getAccountData(classicAddress.address)
-    const lastValidatedLedgerSequence = await this.getLastValidatedLedgerSequence()
+    const currentOpenLedgerSequence = await this.getCurrentOpenLedgerSequence()
 
     const xrpDropsAmount = new XRPDropsAmount()
     xrpDropsAmount.setDrops(normalizedDrops)
@@ -185,7 +185,7 @@ class DefaultXRPClient implements XRPClientDecorator {
 
     const lastLedgerSequence = new LastLedgerSequence()
     lastLedgerSequence.setValue(
-      lastValidatedLedgerSequence + maxLedgerVersionOffset,
+      currentOpenLedgerSequence + maxLedgerVersionOffset,
     )
 
     const signingPublicKeyBytes = Utils.toBytes(sender.getPublicKey())
@@ -216,7 +216,7 @@ class DefaultXRPClient implements XRPClientDecorator {
     return Utils.toHex(response.getHash_asU8())
   }
 
-  public async getLastValidatedLedgerSequence(): Promise<number> {
+  public async getCurrentOpenLedgerSequence(): Promise<number> {
     const getFeeResponse = await this.getFee()
     return getFeeResponse.getLedgerCurrentIndex()
   }
@@ -243,12 +243,20 @@ class DefaultXRPClient implements XRPClientDecorator {
     return fee
   }
 
+  /**
+   * Check if the given ledger sequence number is validated.
+   *
+   * @param ledgerSequence The ledger sequence to check.
+   * @return A boolean indicating if the given sequence is validated.
+   */
   public async isLedgerSequenceValidated(
-    address: string,
     ledgerSequence: number,
   ): Promise<boolean> {
+    // Genesis account - will always exist.
+    const genesisAdress = 'rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh'
+
     const account = this.networkClient.AccountAddress()
-    account.setAddress(address)
+    account.setAddress(genesisAdress)
 
     const ledgerSpecifier = new LedgerSpecifier()
     ledgerSpecifier.setSequence(ledgerSequence)
