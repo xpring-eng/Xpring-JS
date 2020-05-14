@@ -707,6 +707,4 @@ describe('Default Xpring Client', function (): void {
       done()
     })
   })
-
-  // TODO: Open sequence, unvalidated, network error.
 })

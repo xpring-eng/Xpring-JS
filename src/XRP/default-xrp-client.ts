@@ -272,7 +272,7 @@ class DefaultXRPClient implements XRPClientDecorator {
       throw error
     }
   }
-  
+
   private async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
 
