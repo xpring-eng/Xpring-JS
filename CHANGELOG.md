@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 This minor release fixes a bug in which incomplete transaction history was being returned from `paymentHistory`.
 
+## 4.2.7 = May 6, 2020
+
+This minor release fixes a typescript compilation failure.
+
 ## 4.2.6 - May 6, 2020
 
 This minor release improves on existing features and fixes a typescript compilation failure.
