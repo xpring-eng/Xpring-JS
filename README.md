@@ -325,7 +325,7 @@ and a sender's account ID
 const { PaymentRequest, IlpClient } = require("xpring-js")
 const bigInt = require("big-integer")
 
-const grpcUrl = "hermes-envoy-test.xpring.io" // Testnet Hermes URL
+const grpcUrl = "prod.grpcng.wallet.xpring.io:443" // Testnet Hermes URL
 const ilpClient = new IlpClient(grpcUrl)
 const paymentRequest = new PaymentRequest({
     amount: 100,
