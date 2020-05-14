@@ -11,7 +11,7 @@ class FakeXRPClient implements XRPClientDecorator {
     public getBalanceValue: Result<BigInteger>,
     public getPaymentStatusValue: Result<TransactionStatus>,
     public sendValue: Result<string>,
-    public getLastValidatedLedgerSequenceValue: Result<number>,
+    public getCurrentOpenLedgerSequenceValue: Result<number>,
     public getRawTransactionStatusValue: Result<RawTransactionStatus>,
     public accountExistsValue: Result<boolean>,
     public paymentHistoryValue: Result<Array<XRPTransaction>>,
@@ -34,8 +34,8 @@ class FakeXRPClient implements XRPClientDecorator {
     return FakeXRPClient.returnOrThrow(this.sendValue)
   }
 
-  async getLastValidatedLedgerSequence(): Promise<number> {
-    return FakeXRPClient.returnOrThrow(this.getLastValidatedLedgerSequenceValue)
+  async getCurrentOpenLedgerSequence(): Promise<number> {
+    return FakeXRPClient.returnOrThrow(this.getCurrentOpenLedgerSequenceValue)
   }
 
   async getRawTransactionStatus(
