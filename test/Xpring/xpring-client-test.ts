@@ -2,7 +2,7 @@ import { assert } from 'chai'
 import bigInt from 'big-integer'
 import { FakeWallet } from 'xpring-common-js'
 import FakeXRPClient from '../XRP/fakes/fake-xrp-client'
-import FakePayIDClient from '../PayID/fakes/fake-pay-id-client'
+import FakeXRPPayIDClient from '../PayID/fakes/fake-xrp-pay-id-client'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import XpringClient from '../../src/Xpring/xpring-client'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
@@ -51,7 +51,7 @@ describe('Xpring Client', function (): void {
     )
 
     const resolvedXRPAddress = 'r123'
-    const payIDClient = new FakePayIDClient(resolvedXRPAddress)
+    const payIDClient = new FakeXRPPayIDClient(resolvedXRPAddress)
 
     const xpringClient = new XpringClient(payIDClient, xrpClient)
 
@@ -75,7 +75,7 @@ describe('Xpring Client', function (): void {
       fakePaymentHistoryValue,
     )
 
-    const payIDClient = new FakePayIDClient(payIDError)
+    const payIDClient = new FakeXRPPayIDClient(payIDError)
 
     const xpringClient = new XpringClient(payIDClient, xrpClient)
 
@@ -100,7 +100,7 @@ describe('Xpring Client', function (): void {
     )
 
     const resolvedXRPAddress = 'r123'
-    const payIDClient = new FakePayIDClient(resolvedXRPAddress)
+    const payIDClient = new FakeXRPPayIDClient(resolvedXRPAddress)
 
     const xpringClient = new XpringClient(payIDClient, xrpClient)
 
@@ -124,7 +124,7 @@ describe('Xpring Client', function (): void {
       fakePaymentHistoryValue,
     )
 
-    const payIDClient = new FakePayIDClient(payIDError)
+    const payIDClient = new FakeXRPPayIDClient(payIDError)
 
     const xpringClient = new XpringClient(payIDClient, xrpClient)
 
@@ -148,7 +148,7 @@ describe('Xpring Client', function (): void {
       fakePaymentHistoryValue,
       XRPLNetwork.Test,
     )
-    const payIDClient = new FakePayIDClient(payIDError, XRPLNetwork.Main)
+    const payIDClient = new FakeXRPPayIDClient(payIDError, XRPLNetwork.Main)
 
     // WHEN a XpringClient is constructed THEN a mismatched network XpringError is thrown.
     try {
