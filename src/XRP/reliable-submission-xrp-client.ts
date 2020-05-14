@@ -96,6 +96,16 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
   public async paymentHistory(address: string): Promise<Array<XRPTransaction>> {
     return this.decoratedClient.paymentHistory(address)
   }
+
+  /**
+   * Check if the given ledger sequence number is validated.
+   *
+   * @param ledgerSequence The ledger sequence to check.
+   * @return A boolean indicating if the given sequence is validated.
+   */
+  public isLedgerSequenceValidated(ledgerSequence: number): Promise<boolean> {
+    return this.decoratedClient.isLedgerSequenceValidated(ledgerSequence)
+  }
 }
 
 export default ReliableSubmissionXRPClient

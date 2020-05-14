@@ -15,6 +15,7 @@ class FakeXRPClient implements XRPClientDecorator {
     public getRawTransactionStatusValue: Result<RawTransactionStatus>,
     public accountExistsValue: Result<boolean>,
     public paymentHistoryValue: Result<Array<XRPTransaction>>,
+    public isLedgerSequenceValidatedValue: Result<boolean>,
     public readonly network: XRPLNetwork = XRPLNetwork.Test,
   ) {}
 
@@ -50,6 +51,10 @@ class FakeXRPClient implements XRPClientDecorator {
 
   async paymentHistory(_address: string): Promise<Array<XRPTransaction>> {
     return FakeXRPClient.returnOrThrow(this.paymentHistoryValue)
+  }
+
+  async isLedgerSequenceValidated(_ledgerSequence: number): Promise<boolean> {
+    return FakeXRPClient.returnOrThrow(this.isLedgerSequenceValidatedValue)
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

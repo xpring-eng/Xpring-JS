@@ -30,6 +30,7 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
   fakedFullPaymentValue,
 )
 const fakedTransactionHistoryValue = [testXRPTransaction]
+const fakeIsLedgerValidatedValue = true
 
 describe('Reliable Submission XRP Client', function (): void {
   beforeEach(function () {
@@ -41,6 +42,7 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedRawTransactionStatusValue,
       fakedAccountExistsValue,
       fakedTransactionHistoryValue,
+      fakeIsLedgerValidatedValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXRPClient(
       this.fakeXRPClient,
@@ -158,5 +160,16 @@ describe('Reliable Submission XRP Client', function (): void {
 
     // THEN the result is returned unaltered.
     assert.deepEqual(returnedValue, fakedTransactionHistoryValue)
+  })
+
+  it('is - Response Not Modified', async function () {
+    // GIVEN a `ReliableSubmissionXRPClient` decorating a `FakeXRPClient` WHEN a ledger is tested for validation.
+    const ledgerSequence = 1 // Arbitrarily chosen.
+    const returnedValue = await this.reliableSubmissionClient.isLedgerSequenceValidated(
+      ledgerSequence,
+    )
+
+    // THEN the result is returned unaltered.
+    assert.deepEqual(returnedValue, fakeIsLedgerValidatedValue)
   })
 })

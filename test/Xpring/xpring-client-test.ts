@@ -22,6 +22,7 @@ const fakeRawTransactionStatus = new RawTransactionStatus(
   true,
 )
 const fakePaymentHistoryValue = []
+const fakeIsLedgerValidatedValue = true
 
 /** An amount to send. */
 const amount = 10
@@ -48,6 +49,7 @@ describe('Xpring Client', function (): void {
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
+      fakeIsLedgerValidatedValue,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -73,6 +75,7 @@ describe('Xpring Client', function (): void {
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
+      fakeIsLedgerValidatedValue,
     )
 
     const payIDClient = new FakePayIDClient(payIDError)
@@ -97,6 +100,7 @@ describe('Xpring Client', function (): void {
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
+      fakeIsLedgerValidatedValue,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -122,6 +126,7 @@ describe('Xpring Client', function (): void {
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
+      fakeIsLedgerValidatedValue,
     )
 
     const payIDClient = new FakePayIDClient(payIDError)
@@ -146,6 +151,7 @@ describe('Xpring Client', function (): void {
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
+      fakeIsLedgerValidatedValue,
       XRPLNetwork.Test,
     )
     const payIDClient = new FakePayIDClient(payIDError, XRPLNetwork.Main)

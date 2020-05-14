@@ -258,8 +258,6 @@ class DefaultXRPClient implements XRPClientDecorator {
       const accountInfo = await this.networkClient.getAccountInfo(request)
       return accountInfo.getValidated()
     } catch (error) {
-      console.log('error')
-
       if (error.details === 'ledgerNotFound' && error.code === 5) {
         return false
       }

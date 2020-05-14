@@ -76,4 +76,12 @@ export interface XRPClientDecorator {
    * @return: An array of transactions associated with the account.
    */
   paymentHistory(address: string): Promise<Array<XRPTransaction>>
+
+  /**
+   * Check if the given ledger sequence number is validated.
+   *
+   * @param ledgerSequence The ledger sequence to check.
+   * @return A boolean indicating if the given sequence is validated.
+   */
+  isLedgerSequenceValidated(ledgerSequence: number): Promise<boolean>
 }
