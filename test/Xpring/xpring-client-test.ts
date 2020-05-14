@@ -13,7 +13,7 @@ import XpringError from '../../src/Xpring/xpring-error'
 const fakeBalance = bigInt(10)
 const fakePaymentStatus = TransactionStatus.Succeeded
 const fakeTransactionHash = 'deadbeefdeadbeefdeadbeef'
-const fakeLastLedgerSequenceValue = 10
+const fakeCurrentOpenLedgerSequenceValue = 10
 const fakeAccountExistsResult = true
 const fakeRawTransactionStatus = new RawTransactionStatus(
   true,
@@ -44,7 +44,7 @@ describe('Xpring Client', function (): void {
       fakeBalance,
       fakePaymentStatus,
       expectedTransactionHash,
-      fakeLastLedgerSequenceValue,
+      fakeCurrentOpenLedgerSequenceValue,
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
@@ -69,7 +69,7 @@ describe('Xpring Client', function (): void {
       fakeBalance,
       fakePaymentStatus,
       expectedTransactionHash,
-      fakeLastLedgerSequenceValue,
+      fakeCurrentOpenLedgerSequenceValue,
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
@@ -93,7 +93,7 @@ describe('Xpring Client', function (): void {
       fakeBalance,
       fakePaymentStatus,
       xrpError,
-      fakeLastLedgerSequenceValue,
+      fakeCurrentOpenLedgerSequenceValue,
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
@@ -118,7 +118,7 @@ describe('Xpring Client', function (): void {
       fakeBalance,
       fakePaymentStatus,
       xrpError,
-      fakeLastLedgerSequenceValue,
+      fakeCurrentOpenLedgerSequenceValue,
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
@@ -142,7 +142,7 @@ describe('Xpring Client', function (): void {
       fakeBalance,
       fakePaymentStatus,
       fakeTransactionHash,
-      fakeLastLedgerSequenceValue,
+      fakeCurrentOpenLedgerSequenceValue,
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
