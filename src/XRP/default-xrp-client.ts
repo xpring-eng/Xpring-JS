@@ -232,6 +232,41 @@ class DefaultXRPClient implements XRPClientDecorator {
     return RawTransactionStatus.fromGetTransactionResponse(getTxResponse)
   }
 
+  /**
+   * Check if the given ledger sequence number is validated.
+   *
+   * @param ledgerSequence The ledger sequence to check.
+   * @return A boolean indicating if the given sequence is validated.
+   */
+  public async isLedgerSequenceValidated(
+    ledgerSequence: number,
+  ): Promise<boolean> {
+    // Genesis account - will always exist.
+    const genesisAdress = 'rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh'
+
+    const account = this.networkClient.AccountAddress()
+    account.setAddress(genesisAdress)
+
+    const ledgerSpecifier = new LedgerSpecifier()
+    ledgerSpecifier.setSequence(ledgerSequence)
+
+    const request = this.networkClient.GetAccountInfoRequest()
+    request.setAccount(account)
+    request.setLedger(ledgerSpecifier)
+
+    try {
+      const accountInfo = await this.networkClient.getAccountInfo(request)
+      return accountInfo.getValidated()
+    } catch (error) {
+      console.log('error')
+
+      if (error.details === 'ledgerNotFound' && error.code === 5) {
+        return false
+      }
+      throw error
+    }
+  }
+
   private async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
 

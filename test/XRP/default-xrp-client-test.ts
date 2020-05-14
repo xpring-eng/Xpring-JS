@@ -26,6 +26,7 @@ import {
 } from './fakes/fake-xrp-protobufs'
 import XRPTransaction from '../../src/XRP/model/xrp-transaction'
 import XRPError, { XRPErrorType } from '../../src/XRP/xrp-error'
+import { GetAccountInfoResponse } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/get_account_info_pb'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -604,4 +605,108 @@ describe('Default Xpring Client', function (): void {
       done()
     })
   })
+
+  it('isLedgerSequenceValidated - Validated Ledger', async function (): Promise<
+    void
+  > {
+    // GIVEN an XRPClient client which will return an account info object indicating a validated ledger.
+    const getAccountInfoResponse = new GetAccountInfoResponse()
+    getAccountInfoResponse.setValidated(true)
+
+    const responses = new FakeXRPNetworkClientResponses(
+      getAccountInfoResponse,
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse(),
+      FakeXRPNetworkClientResponses.defaultGetTransactionResponse(),
+      FakeXRPNetworkClientResponses.defaultGetTransactionHistoryResponse(),
+    )
+    const xrpNetworkClient = new FakeXRPNetworkClient(responses)
+    const xrpClient = new DefaultXRPClient(xrpNetworkClient)
+
+    // Arbitrarily chosen.
+    const ledgerSequence = 1
+
+    // WHEN the ledger is tested to be validated.
+    const isValidated = await xrpClient.isLedgerSequenceValidated(
+      ledgerSequence,
+    )
+
+    // THEN the ledger reports itself as validated.
+    assert.isTrue(isValidated)
+  })
+
+  it('isLedgerSequenceValidated - Open Ledger', async function (): Promise<
+    void
+  > {
+    // GIVEN an XRPClient client which will return an account info object indicating an open ledger.
+    const getAccountInfoResponse = new GetAccountInfoResponse()
+    getAccountInfoResponse.setValidated(false)
+
+    const responses = new FakeXRPNetworkClientResponses(
+      getAccountInfoResponse,
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse(),
+      FakeXRPNetworkClientResponses.defaultGetTransactionResponse(),
+      FakeXRPNetworkClientResponses.defaultGetTransactionHistoryResponse(),
+    )
+    const xrpNetworkClient = new FakeXRPNetworkClient(responses)
+    const xrpClient = new DefaultXRPClient(xrpNetworkClient)
+
+    // Arbitrarily chosen.
+    const ledgerSequence = 1
+
+    // WHEN the ledger is tested to be validated.
+    const isValidated = await xrpClient.isLedgerSequenceValidated(
+      ledgerSequence,
+    )
+
+    // THEN the ledger reports itself as not validated.
+    assert.isFalse(isValidated)
+  })
+
+  it('isLedgerSequenceValidated - Ledger Not Found', async function (): Promise<
+    void
+  > {
+    // GIVEN an XRPClient client which error with a ledgerNotFound.
+    const ledgerNotFoundError = new FakeGRPCError(
+      'Fake Error: Ledger not found',
+      grpcStatusCode.NOT_FOUND,
+      'ledgerNotFound',
+    )
+    const responses = new FakeXRPNetworkClientResponses(
+      ledgerNotFoundError,
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse(),
+      FakeXRPNetworkClientResponses.defaultGetTransactionResponse(),
+      FakeXRPNetworkClientResponses.defaultGetTransactionHistoryResponse(),
+    )
+    const xrpNetworkClient = new FakeXRPNetworkClient(responses)
+    const xrpClient = new DefaultXRPClient(xrpNetworkClient)
+
+    // Arbitrarily chosen.
+    const ledgerSequence = 1
+
+    // WHEN the ledger is tested to be validated.
+    const isValidated = await xrpClient.isLedgerSequenceValidated(
+      ledgerSequence,
+    )
+
+    // THEN the ledger reports itself as not validated.
+    assert.isFalse(isValidated)
+  })
+
+  it('isLedgerSequenceValidated - Network Error', function (done) {
+    // GIVEN an XRPClient client which will error on network requests.
+    const xrpClient = new DefaultXRPClient(fakeErroringNetworkClient)
+
+    // Arbitrarily chosen.
+    const ledgerSequence = 1
+
+    // WHEN the ledger is tested to be validated THEN an error is thrown.
+    xrpClient.isLedgerSequenceValidated(ledgerSequence).catch((_error) => {
+      done()
+    })
+  })
+
+  // TODO: Open sequence, unvalidated, network error.
 })

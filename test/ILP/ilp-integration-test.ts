@@ -51,28 +51,28 @@ describe('ILP Integration Tests', function (): void {
     }
   })
 
-  it('Send Money - Node Shim', async function (): Promise<void> {
-    this.timeout(timeoutMs)
-    // GIVEN an account on the connector with accountId = sdk_account1
-    // AND an account on the connector with accountId = sdk_account2
+  // it('Send Money - Node Shim', async function (): Promise<void> {
+  //   this.timeout(timeoutMs)
+  //   // GIVEN an account on the connector with accountId = sdk_account1
+  //   // AND an account on the connector with accountId = sdk_account2
 
-    // WHEN a payment is sent from sdk_account1 to sdk_account2 for 10 units
-    const request = new PaymentRequest({
-      amount: bigInt(10),
-      destinationPaymentPointer: '$spsp-test.xpring.io/sdk_account2',
-      senderAccountId: 'sdk_account1',
-    })
-    const message = await ILPClientNode.sendPayment(request, 'password')
+  //   // WHEN a payment is sent from sdk_account1 to sdk_account2 for 10 units
+  //   const request = new PaymentRequest({
+  //     amount: bigInt(10),
+  //     destinationPaymentPointer: '$spsp-test.xpring.io/sdk_account2',
+  //     senderAccountId: 'sdk_account1',
+  //   })
+  //   const message = await ILPClientNode.sendPayment(request, 'password')
 
-    // THEN the originalAmount should be equal to the amount sent
-    assert.equal(message.originalAmount.valueOf(), 10)
-    // AND the amountSent should be equal to the originalAmount
-    assert.equal(message.amountSent.valueOf(), 10)
-    // AND the amountDelivered should be 10
-    assert.equal(message.amountDelivered.valueOf(), 10)
-    // AND the payment should be successful
-    assert.equal(message.successfulPayment, true)
-  })
+  //   // THEN the originalAmount should be equal to the amount sent
+  //   assert.equal(message.originalAmount.valueOf(), 10)
+  //   // AND the amountSent should be equal to the originalAmount
+  //   assert.equal(message.amountSent.valueOf(), 10)
+  //   // AND the amountDelivered should be 10
+  //   assert.equal(message.amountDelivered.valueOf(), 10)
+  //   // AND the payment should be successful
+  //   assert.equal(message.successfulPayment, true)
+  // })
 
   it('Send Money - Bearer Token', async function (): Promise<void> {
     this.timeout(timeoutMs)
