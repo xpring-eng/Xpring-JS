@@ -8,7 +8,7 @@ import IlpError, { IlpErrorType } from '../../src/ILP/ilp-error'
 const timeoutMs = 60 * 1000 // 1 minute
 
 // A ILP Client that makes requests.
-const ILPAddress = 'hermes-envoy-test.xpring.io'
+const ILPAddress = 'stg.grpcng.wallet.xpring.io'
 const ILPClientNode = new IlpClient(ILPAddress)
 
 describe('ILP Integration Tests', function (): void {
@@ -59,7 +59,7 @@ describe('ILP Integration Tests', function (): void {
     // WHEN a payment is sent from sdk_account1 to sdk_account2 for 10 units
     const request = new PaymentRequest({
       amount: bigInt(10),
-      destinationPaymentPointer: '$spsp-test.xpring.io/sdk_account2',
+      destinationPaymentPointer: '$stage.xpring.money/sdk_account2',
       senderAccountId: 'sdk_account1',
     })
     const message = await ILPClientNode.sendPayment(request, 'password')
