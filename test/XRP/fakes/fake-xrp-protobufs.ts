@@ -64,6 +64,8 @@ const testTransactionHash = new Uint8Array([3, 5, 7, 9])
 // Expected timestamp is in unix time, 946684800 after Unix epoch.
 const testTimestamp = 0
 const expectedTimestamp = 946684800
+const testIsValidated = true
+const testLedgerIndex = 1000
 
 // VALID OBJECTS ===============================================
 
@@ -305,6 +307,8 @@ testGetTransactionResponseProto.setTransaction(testTransactionPaymentAllFields)
 testGetTransactionResponseProto.setDate(dateProto)
 testGetTransactionResponseProto.setHash(testTransactionHash)
 testGetTransactionResponseProto.setMeta(metaProto)
+testGetTransactionResponseProto.setValidated(testIsValidated)
+testGetTransactionResponseProto.setLedgerIndex(testLedgerIndex)
 
 const testGetTransactionResponseProtoMandatoryOnly = new GetTransactionResponse()
 testGetTransactionResponseProtoMandatoryOnly.setTransaction(
