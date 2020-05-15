@@ -433,6 +433,8 @@ export {
   testTransactionHash,
   testTimestamp,
   expectedTimestamp,
+  testIsValidated,
+  testLedgerIndex,
   testCurrencyProto,
   testPathElementProto,
   testEmptyPathElementProto,
