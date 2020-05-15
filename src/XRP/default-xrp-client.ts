@@ -156,7 +156,7 @@ class DefaultXRPClient implements XRPClientDecorator {
 
     const fee = await this.getMinimumFee()
     const accountData = await this.getAccountData(classicAddress.address)
-    const lastValidatedLedgerSequence = await this.getLastValidatedLedgerSequence()
+    const openLedgerSequence = await this.getOpenLedgerSequence()
 
     const xrpDropsAmount = new XRPDropsAmount()
     xrpDropsAmount.setDrops(normalizedDrops)
@@ -184,9 +184,7 @@ class DefaultXRPClient implements XRPClientDecorator {
     payment.setAmount(amount)
 
     const lastLedgerSequence = new LastLedgerSequence()
-    lastLedgerSequence.setValue(
-      lastValidatedLedgerSequence + maxLedgerVersionOffset,
-    )
+    lastLedgerSequence.setValue(openLedgerSequence + maxLedgerVersionOffset)
 
     const signingPublicKeyBytes = Utils.toBytes(sender.getPublicKey())
     const signingPublicKey = new SigningPublicKey()
@@ -216,9 +214,47 @@ class DefaultXRPClient implements XRPClientDecorator {
     return Utils.toHex(response.getHash_asU8())
   }
 
-  public async getLastValidatedLedgerSequence(): Promise<number> {
+  public async getOpenLedgerSequence(): Promise<number> {
     const getFeeResponse = await this.getFee()
     return getFeeResponse.getLedgerCurrentIndex()
+  }
+
+  /**
+   * Retrieve the latest validated ledger sequence on the XRP Ledger.
+   *
+   * Note: This call will throw if the given account does not exist on the ledger at the current time. It is the
+   * *caller's responsibility* to ensure this invariant is met.
+   *
+   * Note: The input address *must* be in a classic address form. Inputs are not checked to this internal method.
+   *
+   * TODO(keefertaylor): The above requirements are onerous, difficult to reason about and the logic of this method is
+   * brittle. Replace this method's implementation when rippled supports a `ledger` RPC via gRPC.
+   *
+   * @param address An address that exists at the current time. The address is unchecked and must be a classic address.
+   * @return The index of the latest validated ledger.
+   * @throws XRPException If there was a problem communicating with the XRP Ledger.
+   */
+  public async getLatestValidatedLedgerSequence(
+    address: string,
+  ): Promise<number> {
+    // rippled doesn't support a gRPC call that tells us the latest validated ledger sequence. To get around this,
+    // query the account info for an account which will exist, using a shortcut for the latest validated ledger. The
+    // response will contain the ledger the information was retrieved at.
+    const accountAddress = new AccountAddress()
+    accountAddress.setAddress(address)
+
+    const ledgerSpecifier = new LedgerSpecifier()
+    ledgerSpecifier.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
+
+    const getAccountInfoRequest = this.networkClient.GetAccountInfoRequest()
+    getAccountInfoRequest.setAccount(accountAddress)
+    getAccountInfoRequest.setLedger(ledgerSpecifier)
+
+    const getAccountInfoResponse = await this.networkClient.getAccountInfo(
+      getAccountInfoRequest,
+    )
+
+    return getAccountInfoResponse.getLedgerIndex()
   }
 
   public async getRawTransactionStatus(
