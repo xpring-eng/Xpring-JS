@@ -156,7 +156,7 @@ class DefaultXRPClient implements XRPClientDecorator {
 
     const fee = await this.getMinimumFee()
     const accountData = await this.getAccountData(classicAddress.address)
-    const currentOpenLedgerSequence = await this.getCurrentOpenLedgerSequence()
+    const lastValidatedLedgerSequence = await this.getLastValidatedLedgerSequence()
 
     const xrpDropsAmount = new XRPDropsAmount()
     xrpDropsAmount.setDrops(normalizedDrops)
@@ -185,7 +185,7 @@ class DefaultXRPClient implements XRPClientDecorator {
 
     const lastLedgerSequence = new LastLedgerSequence()
     lastLedgerSequence.setValue(
-      currentOpenLedgerSequence + maxLedgerVersionOffset,
+      lastValidatedLedgerSequence + maxLedgerVersionOffset,
     )
 
     const signingPublicKeyBytes = Utils.toBytes(sender.getPublicKey())
@@ -216,7 +216,7 @@ class DefaultXRPClient implements XRPClientDecorator {
     return Utils.toHex(response.getHash_asU8())
   }
 
-  public async getCurrentOpenLedgerSequence(): Promise<number> {
+  public async getLastValidatedLedgerSequence(): Promise<number> {
     const getFeeResponse = await this.getFee()
     return getFeeResponse.getLedgerCurrentIndex()
   }
