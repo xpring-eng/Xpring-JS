@@ -41,11 +41,11 @@ export interface XRPClientDecorator {
   ): Promise<string>
 
   /**
-   * Retrieve the currently open ledger's sequence number.
+   * Retrieve the latest validated ledger sequence on the XRP Ledger.
    *
-   * @returns The index of the currently open ledger.
+   * @returns The index of the latest validated ledger.
    */
-  getCurrentOpenLedgerSequence(): Promise<number>
+  getLastValidatedLedgerSequence(): Promise<number>
 
   /**
    * Retrieve the raw transaction status for the given transaction hash.
