@@ -23,7 +23,7 @@ export default class XRPPayIDClient extends PayIDClient
    * @see https://xrpaddress.info/
    *
    * @param payID The payID to resolve for an address.
-   * @returns An address representing the given PayID.
+   * @returns An XRP address representing the given PayID.
    */
   async xrpAddressForPayID(payID: string): Promise<string> {
     const result = await super.addressForPayID(payID)
