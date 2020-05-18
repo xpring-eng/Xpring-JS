@@ -66,7 +66,7 @@
     "grpc-web": "1.0.7",
     "superagent": "^5.2.2",
     "xhr2": "0.2.0",
-    "xpring-common-js": "5.0.3"
+    "xpring-common-js": "5.0.4"
   },
   "nyc": {
     "extension": [
