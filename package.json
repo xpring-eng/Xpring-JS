@@ -1,6 +1,6 @@
 {
   "name": "xpring-js",
-  "version": "4.2.8",
+  "version": "4.2.9",
   "description": "XpringJS provides a Javascript based SDK for interacting with the Ripple Ledger.",
   "main": "build/index.js",
   "repository": {
@@ -55,7 +55,7 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^9.0.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.7.5",
+    "typescript": "^3.9.2",
     "typescript-eslint-parser": "22.0.0"
   },
   "dependencies": {
@@ -66,7 +66,7 @@
     "grpc-web": "1.0.7",
     "superagent": "^5.2.2",
     "xhr2": "0.2.0",
-    "xpring-common-js": "5.0.3"
+    "xpring-common-js": "5.0.4"
   },
   "nyc": {
     "extension": [

@@ -115,6 +115,10 @@ export default class XRPTransaction {
 
     const deliveredAmount = deliveredAmountXRP ?? deliveredAmountIssuedCurrency
 
+    const validated = getTransactionResponse.getValidated()
+
+    const ledgerIndex = getTransactionResponse.getLedgerIndex()
+
     return new XRPTransaction(
       transactionHash,
       account,
@@ -132,6 +136,8 @@ export default class XRPTransaction {
       paymentFields,
       timestamp,
       deliveredAmount,
+      validated,
+      ledgerIndex,
     )
   }
 
@@ -160,7 +166,12 @@ export default class XRPTransaction {
    * @param type The type of transaction.
    * @param paymentFields An XRPPayment object representing the additional fields present in a PAYMENT transaction.
    *                      see "https://xrpl.org/payment.html#payment-fields"
+   * @param deliveredAmount The actual amount delivered by this transaction, in the case of a partial payment.
+   *                        see "https://xrpl.org/partial-payments.html#the-delivered_amount-field"
    * @param timestamp The transaction's timestamp, converted to a unix timestamp.
+   * @param validated A boolean indicating whether or not this transaction was found on a validated ledger, and not an open or closed ledger.
+   *                  see "https://xrpl.org/ledgers.html#open-closed-and-validated-ledgers"
+   * @param ledgerIndex The index of the ledger on which this transaction was found.
    */
   private constructor(
     readonly hash: string,
@@ -179,5 +190,7 @@ export default class XRPTransaction {
     readonly paymentFields?: XRPPayment,
     readonly timestamp?: number,
     readonly deliveredAmount?: string,
+    readonly validated?: boolean,
+    readonly ledgerIndex?: number,
   ) {}
 }

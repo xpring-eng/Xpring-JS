@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 4.2.9 - 2020-05-17
+
+This fix release fixes a build issue when using Xpring-JS with typescript.
+
 ## 4.2.8 - 2020-05-15
 
 This minor release fixes a bug in which incomplete transaction history was being returned from `paymentHistory`.
