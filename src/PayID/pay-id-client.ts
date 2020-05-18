@@ -53,7 +53,7 @@ export default class PayIDClient {
    * Networks in this constructor take the form of an asset and an optional network (<asset>-<network>), for instance:
    * - xrpl-testnet
    * - xrpl-mainnet
-   * - eth-rinkby
+   * - eth-rinkeby
    * - ach
    *
    * TODO(keefertaylor): Link a canonical list at payid.org when available.
