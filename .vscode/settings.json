@@ -23,5 +23,6 @@
     "mocha.files.glob": "test/**/*-test.ts",
     "mocha.requires": [
         "ts-node/register"
-    ]
+    ],
+    "java.configuration.updateBuildConfiguration": "disabled"
 }
