@@ -380,6 +380,28 @@ class DefaultXRPClient implements XRPClientDecorator {
     } // end for
     return payments
   }
+
+  /**
+   * Retrieve the payment transaction corresponding to the given transaction hash.
+   *
+   * Note: This method can return transactions that are not included in a fully validated ledger.
+   *       See the `validated` field to make this distinction.
+   *
+   * @param transactionHash The hash of the transaction to retrieve.
+   * @throws XRPException If the transaction hash was invalid.
+   * @return An XRPTransaction object representing an XRP Ledger transaction.
+   */
+  public async getPayment(
+    transactionHash: string,
+  ): Promise<XRPTransaction | undefined> {
+    const getTransactionRequest = this.networkClient.GetTransactionRequest()
+    getTransactionRequest.setHash(Utils.toBytes(transactionHash))
+
+    const getTransactionResponse = await this.networkClient.getTransaction(
+      getTransactionRequest,
+    )
+    return XRPTransaction.from(getTransactionResponse)
+  }
 }
 
 export default DefaultXRPClient

@@ -63,4 +63,16 @@ export default interface XRPClientInterface {
    * @return: An array of transactions associated with the account.
    */
   paymentHistory(address: string): Promise<Array<XRPTransaction>>
+
+  /**
+   * Retrieve the payment transaction corresponding to the given transaction hash.
+   *
+   * Note: This method can return transactions that are not included in a fully validated ledger.
+   *       See the `validated` field to make this distinction.
+   *
+   * @param transactionHash The hash of the transaction to retrieve.
+   * @throws XRPException If the transaction hash was invalid.
+   * @return An XRPTransaction object representing an XRP Ledger transaction.
+   */
+  getPayment(transactionHash: string): Promise<XRPTransaction | undefined>
 }

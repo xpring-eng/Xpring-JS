@@ -10,7 +10,7 @@ export interface XRPClientDecorator {
    * Retrieve the balance for the given address.
    *
    * @param address The X-Address to retrieve a balance for.
-   * @returns A `BigInteger` representing the number of drops of XRP in the account.
+   * @return A `BigInteger` representing the number of drops of XRP in the account.
    */
 
   getBalance(address: string): Promise<BigInteger>
@@ -22,7 +22,7 @@ export interface XRPClientDecorator {
    * @see https://xrpl.org/payment.html#payment-flags
    *
    * @param transactionHash The hash of the transaction.
-   * @returns The status of the given transaction.
+   * @return The status of the given transaction.
    */
   getPaymentStatus(transactionHash: string): Promise<TransactionStatus>
 
@@ -32,7 +32,7 @@ export interface XRPClientDecorator {
    * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
-   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   * @return A promise which resolves to a string representing the hash of the submitted transaction.
    */
   send(
     amount: BigInteger | number | string,
@@ -61,7 +61,7 @@ export interface XRPClientDecorator {
    * Retrieve the raw transaction status for the given transaction hash.
    *
    * @param transactionHash: The hash of the transaction.
-   * @Return The status of the given transaction.
+   * @return The status of the given transaction.
    */
   getRawTransactionStatus(
     transactionHash: string,
@@ -71,7 +71,7 @@ export interface XRPClientDecorator {
    * Check if an address exists on the XRP Ledger.
    *
    * @param address The address to check the existence of.
-   * @returns A boolean if the account is on the blockchain.
+   * @return A boolean if the account is on the blockchain.
    */
   accountExists(address: string): Promise<boolean>
 
@@ -81,9 +81,21 @@ export interface XRPClientDecorator {
    * Note: This method only works for payment type transactions, see: https://xrpl.org/payment.html
    * Note: This method only returns the history that is contained on the remote node, which may not contain a full history of the network.
    *
-   * @param address: The address (account) for which to retrive payment history.
-   * @throws: An error if there was a problem communicating with the XRP Ledger.
-   * @return: An array of transactions associated with the account.
+   * @param address The address (account) for which to retrive payment history.
+   * @throws An error if there was a problem communicating with the XRP Ledger.
+   * @return An array of transactions associated with the account.
    */
   paymentHistory(address: string): Promise<Array<XRPTransaction>>
+
+  /**
+   * Retrieve the payment transaction corresponding to the given transaction hash.
+   *
+   * Note: This method can return transactions that are not included in a fully validated ledger.
+   *       See the `validated` field to make this distinction.
+   *
+   * @param transactionHash The hash of the transaction to retrieve.
+   * @throws XRPException If the transaction hash was invalid.
+   * @return An XRPTransaction object representing an XRP Ledger transaction.
+   */
+  getPayment(transactionHash: string): Promise<XRPTransaction | undefined>
 }
