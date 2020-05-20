@@ -25,7 +25,7 @@ const xrpClient = new XRPClient(rippledURL, XRPLNetwork.Test)
 // Some amount of XRP to send.
 const amount = bigInt('1')
 
-describe('Xpring JS XRPClient Integration Tests', function (): void {
+describe('XRPClient Integration Tests', function (): void {
   it('Get Transaction Status - Web Shim', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
@@ -101,5 +101,19 @@ describe('Xpring JS XRPClient Integration Tests', function (): void {
     const payments = await xrpClient.paymentHistory(recipientAddress)
 
     assert.exists(payments && payments.length > 0)
+  })
+
+  it('Get Transaction - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const transactionHash = await xrpClient.send(
+      amount,
+      recipientAddress,
+      wallet,
+    )
+
+    const transaction = await xrpClient.getPayment(transactionHash)
+
+    assert.exists(transaction)
   })
 })
