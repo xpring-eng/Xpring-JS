@@ -108,7 +108,7 @@ class XRPClient implements XRPClientInterface {
    *       See the `validated` field to make this distinction.
    *
    * @param transactionHash The hash of the transaction to retrieve.
-   * @throws Error if the transaction hash was invalid.
+   * @throws An error if the transaction hash was invalid.
    * @return An XRPTransaction object representing an XRP Ledger transaction.
    */
   public async getPayment(

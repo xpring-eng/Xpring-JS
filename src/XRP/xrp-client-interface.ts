@@ -71,7 +71,7 @@ export default interface XRPClientInterface {
    *       See the `validated` field to make this distinction.
    *
    * @param transactionHash The hash of the transaction to retrieve.
-   * @throws Error if the transaction hash was invalid.
+   * @throws An error if the transaction hash was invalid.
    * @return An XRPTransaction object representing an XRP Ledger transaction.
    */
   getPayment(transactionHash: string): Promise<XRPTransaction | undefined>
