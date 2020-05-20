@@ -22,6 +22,7 @@ import { Transaction } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transac
 import {
   testGetAccountTransactionHistoryResponse,
   testCheckCashTransaction,
+  testGetTransactionResponseProto,
   testInvalidGetAccountTransactionHistoryResponse,
 } from './fakes/fake-xrp-protobufs'
 import XRPTransaction from '../../src/XRP/model/xrp-transaction'
@@ -71,7 +72,7 @@ function makeGetTransactionResponse(
   return getTransactionResponse
 }
 
-describe('Default Xpring Client', function (): void {
+describe('Default XRP Client', function (): void {
   it('Get Account Balance - successful response', async function (): Promise<
     void
   > {
@@ -604,4 +605,32 @@ describe('Default Xpring Client', function (): void {
       done()
     })
   })
+
+  it('Get Payment - successful response', async function (): Promise<void> {
+    // GIVEN a DefaultXRPClient with mocked networking that will succeed for getTransaction.
+    const fakeNetworkResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse(),
+      testGetTransactionResponseProto,
+    )
+    const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
+    const xrpClient = new DefaultXRPClient(fakeNetworkClient)
+
+    // WHEN a transaction is requested.
+    const transaction = await xrpClient.getPayment(transactionHash)
+
+    // THEN the returned transaction is as expected.
+    assert.deepEqual(
+      transaction,
+      XRPTransaction.from(testGetTransactionResponseProto),
+    )
+  })
+
+  // not found error
+  // same as malformed hash??
+
+  // malformed payment
+
+  // non-payment txn
 })
