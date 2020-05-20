@@ -81,7 +81,7 @@ export interface XRPClientDecorator {
    * Note: This method only works for payment type transactions, see: https://xrpl.org/payment.html
    * Note: This method only returns the history that is contained on the remote node, which may not contain a full history of the network.
    *
-   * @param address The address (account) for which to retrive payment history.
+   * @param address The address (account) for which to retrieve payment history.
    * @throws An error if there was a problem communicating with the XRP Ledger.
    * @return An array of transactions associated with the account.
    */
