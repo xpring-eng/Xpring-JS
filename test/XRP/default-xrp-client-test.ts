@@ -23,6 +23,8 @@ import {
   testGetAccountTransactionHistoryResponse,
   testCheckCashTransaction,
   testGetTransactionResponseProto,
+  testInvalidGetTransactionResponseProto,
+  testInvalidGetTransactionResponseProtoUnsupportedType,
   testInvalidGetAccountTransactionHistoryResponse,
 } from './fakes/fake-xrp-protobufs'
 import XRPTransaction from '../../src/XRP/model/xrp-transaction'
@@ -627,10 +629,66 @@ describe('Default XRP Client', function (): void {
     )
   })
 
-  // not found error
-  // same as malformed hash??
+  it('Get Payment - failing network request with NOT_FOUND error', function (done) {
+    // GIVEN a DefaultXRPClient with mocked networking that will fail to retrieve a transaction w/ NOT_FOUND error code.
+    const notFoundError = new FakeGRPCError(
+      'FakeGRPCError: account not found',
+      grpcStatusCode.NOT_FOUND,
+    )
+    const fakeNetworkResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse(),
+      notFoundError,
+    )
+    const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
+    const xrpClient = new DefaultXRPClient(fakeNetworkClient)
 
-  // malformed payment
+    // WHEN a transaction is requested, THEN the error is re-thrown.
+    xrpClient.getPayment(transactionHash).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(error.code, grpcStatusCode.NOT_FOUND)
+      done()
+    })
+  })
 
-  // non-payment txn
+  it('Get Payment - malformed payment transaction', async function (): Promise<
+    void
+  > {
+    // GIVEN a DefaultXRPClient with mocked networking that will return a malformed payment transaction.
+    const fakeNetworkResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse(),
+      testInvalidGetTransactionResponseProto,
+    )
+    const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
+    const xrpClient = new DefaultXRPClient(fakeNetworkClient)
+
+    // WHEN a transaction is requested.
+    const transaction = await xrpClient.getPayment(transactionHash)
+
+    // THEN the result is undefined
+    assert.isUndefined(transaction)
+  })
+
+  it('Get Payment - unsupported transaction type', async function (): Promise<
+    void
+  > {
+    // GIVEN a DefaultXRPClient with mocked networking that will return an unsupported transaction type.
+    const fakeNetworkResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse(),
+      testInvalidGetTransactionResponseProtoUnsupportedType,
+    )
+    const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
+    const xrpClient = new DefaultXRPClient(fakeNetworkClient)
+
+    // WHEN a transaction is requested.
+    const transaction = await xrpClient.getPayment(transactionHash)
+
+    // THEN the result is undefined
+    assert.isUndefined(transaction)
+  })
 })
