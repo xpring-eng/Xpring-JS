@@ -110,4 +110,5 @@ function xrpToDrops(xrp: BigNumber.Value): string {
     .toString(10)
 }
 
-export default { xrpToDrops, dropsToXrp }
+const XRPUtils = { dropsToXrp, xrpToDrops }
+export default XRPUtils
