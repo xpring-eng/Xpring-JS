@@ -27,4 +27,4 @@ export {
   XRPSigner,
   XRPTransactionType,
   XRPTransaction,
-} from './XRP'
+} from './XRP/model'
