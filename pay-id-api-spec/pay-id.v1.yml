@@ -141,21 +141,36 @@ components:
           type: string
       required:
         - address
-    PaymentInformation:
-      title: PaymentInformation
+    Address:
+      title: Address
       type: object
       properties:
+        paymentNetwork:
+          type: string
+        environment?:
+          type: string
         addressDetailsType:
           type: string
         addressDetails:
           $ref: '#/components/schemas/CryptoAddressDetails'
-        proof_of_control_signature:
-          type: string
-        paymentPointer:
-          type: string
       required:
+        - paymentNetwork
         - addressDetailsType
         - addressDetails
+    PaymentInformation:
+      title: PaymentInformation
+      type: object
+      properties:
+        addresses:
+          type: Address[]
+        proofOfControlSignature:
+          type: string
+        payId:
+          type: string
+        memo:
+          type: string
+      required:
+        - addresses
     Invoice:
       title: Invoice
       type: object
