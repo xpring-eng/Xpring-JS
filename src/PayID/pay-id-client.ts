@@ -90,6 +90,7 @@ export default class PayIDClient {
       }
       // TODO(keefertaylor): make sure the header matches the request.
     } else if (data?.addresses) {
+      // TODO(amiecorso): what if addresses is empty or contains more than one CryptoAddressDetails?
       return data.addresses[0].addressDetails
     } else {
       throw new PayIDError(PayIDErrorType.UnexpectedResponse)
