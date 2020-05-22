@@ -89,8 +89,8 @@ export default class PayIDClient {
         throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
       }
       // TODO(keefertaylor): make sure the header matches the request.
-    } else if (data?.addressDetails) {
-      return data.addressDetails
+    } else if (data?.addresses) {
+      return data.addresses[0].addressDetails
     } else {
       throw new PayIDError(PayIDErrorType.UnexpectedResponse)
     }

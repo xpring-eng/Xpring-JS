@@ -147,7 +147,7 @@ components:
       properties:
         paymentNetwork:
           type: string
-        environment?:
+        environment:
           type: string
         addressDetailsType:
           type: string
@@ -162,7 +162,9 @@ components:
       type: object
       properties:
         addresses:
-          type: Address[]
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
         proofOfControlSignature:
           type: string
         payId:
