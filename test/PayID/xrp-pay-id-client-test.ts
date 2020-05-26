@@ -24,10 +24,14 @@ describe('XRP Pay ID Client', function (): void {
     nock('https://xpring.money')
       .get('/georgewashington')
       .reply(200, {
-        addressDetailsType: 'CryptoAddressDetails',
-        addressDetails: {
-          address: xAddress,
-        },
+        addresses: [
+          {
+            addressDetailsType: 'CryptoAddressDetails',
+            addressDetails: {
+              address: xAddress,
+            },
+          },
+        ],
       })
 
     // WHEN an XRP address is requested.
@@ -52,10 +56,14 @@ describe('XRP Pay ID Client', function (): void {
     nock('https://xpring.money')
       .get('/georgewashington')
       .reply(200, {
-        addressDetailsType: 'CryptoAddressDetails',
-        addressDetails: {
-          address: classicAddress,
-        },
+        addresses: [
+          {
+            addressDetailsType: 'CryptoAddressDetails',
+            addressDetails: {
+              address: classicAddress,
+            },
+          },
+        ],
       })
 
     // WHEN an XRP address is requested.
@@ -81,11 +89,15 @@ describe('XRP Pay ID Client', function (): void {
     nock('https://xpring.money')
       .get('/georgewashington')
       .reply(200, {
-        addressDetailsType: 'CryptoAddressDetails',
-        addressDetails: {
-          address: classicAddress,
-          tag,
-        },
+        addresses: [
+          {
+            addressDetailsType: 'CryptoAddressDetails',
+            addressDetails: {
+              address: classicAddress,
+              tag,
+            },
+          },
+        ],
       })
 
     // WHEN an XRP address is requested.
