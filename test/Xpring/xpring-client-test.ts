@@ -3,6 +3,7 @@ import bigInt from 'big-integer'
 import { FakeWallet } from 'xpring-common-js'
 import FakeXRPClient from '../XRP/fakes/fake-xrp-client'
 import FakeXRPPayIDClient from '../PayID/fakes/fake-xrp-pay-id-client'
+import { testXRPTransaction } from '../XRP/fakes/fake-xrp-protobufs'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import XpringClient from '../../src/Xpring/xpring-client'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
@@ -22,6 +23,7 @@ const fakeRawTransactionStatus = new RawTransactionStatus(
   true,
 )
 const fakePaymentHistoryValue = []
+const fakeGetPaymentValue = testXRPTransaction
 
 /** An amount to send. */
 const amount = 10
@@ -48,6 +50,7 @@ describe('Xpring Client', function (): void {
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
+      fakeGetPaymentValue,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -73,6 +76,7 @@ describe('Xpring Client', function (): void {
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
+      fakeGetPaymentValue,
     )
 
     const payIDClient = new FakeXRPPayIDClient(payIDError)
@@ -97,6 +101,7 @@ describe('Xpring Client', function (): void {
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
+      fakeGetPaymentValue,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -122,6 +127,7 @@ describe('Xpring Client', function (): void {
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
+      fakeGetPaymentValue,
     )
 
     const payIDClient = new FakeXRPPayIDClient(payIDError)
@@ -146,6 +152,7 @@ describe('Xpring Client', function (): void {
       fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
+      fakeGetPaymentValue,
       XRPLNetwork.Test,
     )
     const payIDClient = new FakeXRPPayIDClient(payIDError, XRPLNetwork.Main)
