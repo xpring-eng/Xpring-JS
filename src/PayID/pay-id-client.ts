@@ -89,8 +89,9 @@ export default class PayIDClient {
         throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
       }
       // TODO(keefertaylor): make sure the header matches the request.
-    } else if (data?.addressDetails) {
-      return data.addressDetails
+    } else if (data?.addresses) {
+      // TODO(amiecorso): what if addresses is empty or contains more than one CryptoAddressDetails?
+      return data.addresses[0].addressDetails
     } else {
       throw new PayIDError(PayIDErrorType.UnexpectedResponse)
     }
