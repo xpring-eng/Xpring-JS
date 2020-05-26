@@ -72,7 +72,7 @@ export default interface XRPClientInterface {
    *
    * @param transactionHash The hash of the transaction to retrieve.
    * @throws An error if the transaction hash was invalid.
-   * @return An {@link XRPTransaction} object representing an XRP Ledger transaction.
+   * @returns An {@link XRPTransaction} object representing an XRP Ledger transaction.
    */
   getPayment(transactionHash: string): Promise<XRPTransaction | undefined>
 }

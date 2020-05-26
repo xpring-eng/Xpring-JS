@@ -10,7 +10,7 @@ export interface XRPClientDecorator {
    * Retrieve the balance for the given address.
    *
    * @param address The X-Address to retrieve a balance for.
-   * @return A `BigInteger` representing the number of drops of XRP in the account.
+   * @returns A `BigInteger` representing the number of drops of XRP in the account.
    */
 
   getBalance(address: string): Promise<BigInteger>
@@ -22,7 +22,7 @@ export interface XRPClientDecorator {
    * @see https://xrpl.org/payment.html#payment-flags
    *
    * @param transactionHash The hash of the transaction.
-   * @return The status of the given transaction.
+   * @returns The status of the given transaction.
    */
   getPaymentStatus(transactionHash: string): Promise<TransactionStatus>
 
@@ -32,7 +32,7 @@ export interface XRPClientDecorator {
    * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
-   * @return A promise which resolves to a string representing the hash of the submitted transaction.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   send(
     amount: BigInteger | number | string,
@@ -52,7 +52,7 @@ export interface XRPClientDecorator {
    * brittle. Replace this method's implementation when rippled supports a `ledger` RPC via gRPC.
    *
    * @param address An address that exists at the current time. The address is unchecked and must be a classic address.
-   * @return The index of the latest validated ledger.
+   * @returns The index of the latest validated ledger.
    * @throws XRPException If there was a problem communicating with the XRP Ledger.
    */
   getLatestValidatedLedgerSequence(address: string): Promise<number>
@@ -61,7 +61,7 @@ export interface XRPClientDecorator {
    * Retrieve the raw transaction status for the given transaction hash.
    *
    * @param transactionHash: The hash of the transaction.
-   * @return The status of the given transaction.
+   * @returns The status of the given transaction.
    */
   getRawTransactionStatus(
     transactionHash: string,
@@ -71,7 +71,7 @@ export interface XRPClientDecorator {
    * Check if an address exists on the XRP Ledger.
    *
    * @param address The address to check the existence of.
-   * @return A boolean if the account is on the blockchain.
+   * @returns A boolean if the account is on the blockchain.
    */
   accountExists(address: string): Promise<boolean>
 
@@ -83,7 +83,7 @@ export interface XRPClientDecorator {
    *
    * @param address The address (account) for which to retrieve payment history.
    * @throws An error if there was a problem communicating with the XRP Ledger.
-   * @return An array of transactions associated with the account.
+   * @returns An array of transactions associated with the account.
    */
   paymentHistory(address: string): Promise<Array<XRPTransaction>>
 
@@ -95,7 +95,7 @@ export interface XRPClientDecorator {
    *
    * @param transactionHash The hash of the transaction to retrieve.
    * @throws An error if the transaction hash was invalid.
-   * @return An {@link XRPTransaction} object representing an XRP Ledger transaction.
+   * @returns An {@link XRPTransaction} object representing an XRP Ledger transaction.
    */
   getPayment(transactionHash: string): Promise<XRPTransaction | undefined>
 }

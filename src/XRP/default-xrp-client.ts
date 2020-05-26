@@ -231,7 +231,7 @@ class DefaultXRPClient implements XRPClientDecorator {
    * brittle. Replace this method's implementation when rippled supports a `ledger` RPC via gRPC.
    *
    * @param address An address that exists at the current time. The address is unchecked and must be a classic address.
-   * @return The index of the latest validated ledger.
+   * @returns The index of the latest validated ledger.
    * @throws XRPException If there was a problem communicating with the XRP Ledger.
    */
   public async getLatestValidatedLedgerSequence(
@@ -389,7 +389,7 @@ class DefaultXRPClient implements XRPClientDecorator {
    *
    * @param transactionHash The hash of the transaction to retrieve.
    * @throws An error if the transaction hash was invalid.
-   * @return An {@link XRPTransaction} object representing an XRP Ledger transaction.
+   * @returns An {@link XRPTransaction} object representing an XRP Ledger transaction.
    */
   public async getPayment(
     transactionHash: string,
