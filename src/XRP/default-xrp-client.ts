@@ -389,7 +389,7 @@ class DefaultXRPClient implements XRPClientDecorator {
    *
    * @param transactionHash The hash of the transaction to retrieve.
    * @throws An error if the transaction hash was invalid.
-   * @return An XRPTransaction object representing an XRP Ledger transaction.
+   * @return An {@link XRPTransaction} object representing an XRP Ledger transaction.
    */
   public async getPayment(
     transactionHash: string,
