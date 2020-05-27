@@ -5,11 +5,20 @@ stages:
   image: node:12
   stage: test
   before_script:
-    #- apt-get update
-    #- apt-get install -y git
+    # install packages
+    - wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
+    - add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
+    - apt update
+    - apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common adoptopenjdk-8-hotspot
+    # install maven
+    - wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz -P /tmp
+    - tar xf /tmp/apache-maven-*.tar.gz -C /tmp
+    - ln -s /tmp/apache-maven-3.6.3/bin/mvn /usr/bin/mvn
+    # install protoc-gen
     - curl -L https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64 --output protoc-gen-grpc-web
     - mv protoc-gen-grpc-web /usr/local/bin/
     - chmod +x /usr/local/bin/protoc-gen-grpc-web
+    # install npm deps
     - npm i --cache .npm --prefer-offline --no-audit --progress=false nyc codecov protoc grpc-tools
     - npm i --cache .npm --prefer-offline --no-audit --progress=false
     - git submodule update --init --recursive
