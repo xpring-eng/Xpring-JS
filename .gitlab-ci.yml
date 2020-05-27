@@ -5,9 +5,10 @@ stages:
   image: node:12-alpine
   stage: test
   before_script:
-    - apk add bash
+    - apk add bash git
     - npm i --cache .npm --prefer-offline --no-audit --progress=false nyc codecov
     - npm i --cache .npm --prefer-offline --no-audit --progress=false
+    - git submodule update --init --recursive
 
 compile typescript:
   stage: test
