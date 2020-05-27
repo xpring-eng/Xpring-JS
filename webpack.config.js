@@ -22,6 +22,12 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.js'],
   },
+  // Some libraries import Node modules but don't use them in the browser.
+  // Tell webpack to provide empty mocks for them so importing them works.
+  node: {
+    fs: 'empty',
+    child_process: 'empty',
+  },
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'dist'),
