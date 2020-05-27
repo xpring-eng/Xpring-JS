@@ -5,6 +5,7 @@ stages:
   image: node:12-alpine
   stage: test
   before_script:
+    - apk add bash
     - npm i --cache .npm --prefer-offline --no-audit --progress=false nyc codecov
     - npm i --cache .npm --prefer-offline --no-audit --progress=false
 
@@ -18,10 +19,10 @@ run tests:
   stage: test
   extends: .test
   script:
-    - nyc npm test
+    - ./node_modules/nyc/bin/nyc.js npm test
 
 code coverage:
   stage: test
   extends: .test
   script:
-    - nyc report --reporter=text-lcov
+    - ./node_modules/nyc/bin/nyc.js report --reporter=text-lcov
