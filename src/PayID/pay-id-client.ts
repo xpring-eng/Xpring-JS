@@ -90,8 +90,8 @@ export default class PayIDClient {
       }
       // TODO(keefertaylor): make sure the header matches the request.
     } else if (data?.addresses) {
+      // With a specific network, exactly one address should be returned by a PayId lookup.
       if (data.addresses.length === 1) {
-        // With a specific network, exactly one address should be returned by a PayId lookup.
         return data.addresses[0].addressDetails
       }
       throw new PayIDError(PayIDErrorType.UnexpectedResponse)
