@@ -1,5 +1,4 @@
 stages:
-  - lint
   - test
 
 .test:
@@ -8,12 +7,6 @@ stages:
   before_script:
     - npm i --cache .npm --prefer-offline --no-audit --progress=false nyc codecov
     - npm i --cache .npm --prefer-offline --no-audit --progress=false
-
-lint:
-  stage: lint
-  extends: .test
-  script:
-    - npm run lintNoFix
 
 compile typescript:
   stage: test
