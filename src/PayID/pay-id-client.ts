@@ -90,8 +90,11 @@ export default class PayIDClient {
       }
       // TODO(keefertaylor): make sure the header matches the request.
     } else if (data?.addresses) {
-      // TODO(amiecorso): what if addresses is empty or contains more than one CryptoAddressDetails?
-      return data.addresses[0].addressDetails
+      if (data.addresses.length === 1) {
+        // With a specific network, exactly one address should be returned by a PayId lookup.
+        return data.addresses[0].addressDetails
+      }
+      throw new PayIDError(PayIDErrorType.UnexpectedResponse)
     } else {
       throw new PayIDError(PayIDErrorType.UnexpectedResponse)
     }
