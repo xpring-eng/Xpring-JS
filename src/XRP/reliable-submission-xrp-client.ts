@@ -123,6 +123,12 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
   public async paymentHistory(address: string): Promise<Array<XRPTransaction>> {
     return this.decoratedClient.paymentHistory(address)
   }
+
+  public async getPayment(
+    transactionHash: string,
+  ): Promise<XRPTransaction | undefined> {
+    return this.decoratedClient.getPayment(transactionHash)
+  }
 }
 
 export default ReliableSubmissionXRPClient

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+New method `getPayment` added to `XRPClient` which allows retrieval of a payment transaction by hash.
+
 ## 4.2.9 - 2020-05-17
 
 This fix release fixes a build issue when using Xpring-JS with typescript.
