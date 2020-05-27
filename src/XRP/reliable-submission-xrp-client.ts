@@ -1,9 +1,11 @@
-import { Wallet } from 'xpring-common-js'
+import { Utils, Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import { XRPClientDecorator } from './xrp-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
 import XRPTransaction from './model/xrp-transaction'
+import { XRPError } from '..'
+import { XRPErrorType } from './xrp-error'
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
@@ -53,8 +55,29 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
       )
     }
 
+    // Decode the sending address to a classic address for use in determining the last ledger sequence.
+    // An invariant of `getLatestValidatedLedgerSequence` is that the given input address (1) exists when the method
+    // is called and (2) is in a classic address form.
+    //
+    // The sending address should always exist, except in the case where it is deleted. A deletion would supersede the
+    // transaction in flight, either by:
+    // 1) Consuming the nonce sequence number of the transaction, which would effectively cancel the transaction
+    // 2) Occur after the transaction has settled which is an unlikely enough case that we ignore it.
+    //
+    // This logic is brittle and should be replaced when we have an RPC that can give us this data.
+    const classicAddress = Utils.decodeXAddress(sender.getAddress())
+    if (!classicAddress) {
+      throw new XRPError(
+        XRPErrorType.Unknown,
+        'The source wallet reported an address which could not be decoded to a classic address',
+      )
+    }
+    const sourceClassicAddress = classicAddress.address
+
     // Retrieve the latest ledger index.
-    let currentOpenLedgerSequence = await this.getCurrentOpenLedgerSequence()
+    let latestLedgerSequence = await this.getLatestValidatedLedgerSequence(
+      sourceClassicAddress,
+    )
 
     // Poll until the transaction is validated, or until the lastLedgerSequence has been passed.
     /*
@@ -65,13 +88,15 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
      */
     /* eslint-disable no-await-in-loop */
     while (
-      currentOpenLedgerSequence <= lastLedgerSequence &&
+      latestLedgerSequence <= lastLedgerSequence &&
       !rawTransactionStatus.isValidated
     ) {
       await sleep(ledgerCloseTimeMs)
 
       // Update latestLedgerSequence and rawTransactionStatus
-      currentOpenLedgerSequence = await this.getCurrentOpenLedgerSequence()
+      latestLedgerSequence = await this.getLatestValidatedLedgerSequence(
+        sourceClassicAddress,
+      )
       rawTransactionStatus = await this.getRawTransactionStatus(transactionHash)
     }
     /* eslint-enable no-await-in-loop */
@@ -79,8 +104,10 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
     return transactionHash
   }
 
-  public async getCurrentOpenLedgerSequence(): Promise<number> {
-    return this.decoratedClient.getCurrentOpenLedgerSequence()
+  public async getLatestValidatedLedgerSequence(
+    address: string,
+  ): Promise<number> {
+    return this.decoratedClient.getLatestValidatedLedgerSequence(address)
   }
 
   public async getRawTransactionStatus(
@@ -95,6 +122,12 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
 
   public async paymentHistory(address: string): Promise<Array<XRPTransaction>> {
     return this.decoratedClient.paymentHistory(address)
+  }
+
+  public async getPayment(
+    transactionHash: string,
+  ): Promise<XRPTransaction | undefined> {
+    return this.decoratedClient.getPayment(transactionHash)
   }
 }
 
