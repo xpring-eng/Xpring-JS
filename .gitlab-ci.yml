@@ -6,7 +6,7 @@ stages:
   stage: test
   before_script:
     - apk add bash git
-    - npm i --cache .npm --prefer-offline --no-audit --progress=false nyc codecov
+    - npm i --cache .npm --prefer-offline --no-audit --progress=false nyc codecov protoc
     - npm i --cache .npm --prefer-offline --no-audit --progress=false
     - git submodule update --init --recursive
 
