@@ -52,7 +52,7 @@ export interface XRPClientDecorator {
    * brittle. Replace this method's implementation when rippled supports a `ledger` RPC via gRPC.
    *
    * @param address An address that exists at the current time. The address is unchecked and must be a classic address.
-   * @return The index of the latest validated ledger.
+   * @returns The index of the latest validated ledger.
    * @throws XRPException If there was a problem communicating with the XRP Ledger.
    */
   getLatestValidatedLedgerSequence(address: string): Promise<number>
@@ -61,7 +61,7 @@ export interface XRPClientDecorator {
    * Retrieve the raw transaction status for the given transaction hash.
    *
    * @param transactionHash: The hash of the transaction.
-   * @Return The status of the given transaction.
+   * @returns The status of the given transaction.
    */
   getRawTransactionStatus(
     transactionHash: string,
@@ -81,9 +81,21 @@ export interface XRPClientDecorator {
    * Note: This method only works for payment type transactions, see: https://xrpl.org/payment.html
    * Note: This method only returns the history that is contained on the remote node, which may not contain a full history of the network.
    *
-   * @param address: The address (account) for which to retrive payment history.
-   * @throws: An error if there was a problem communicating with the XRP Ledger.
-   * @return: An array of transactions associated with the account.
+   * @param address The address (account) for which to retrieve payment history.
+   * @throws An error if there was a problem communicating with the XRP Ledger.
+   * @returns An array of transactions associated with the account.
    */
   paymentHistory(address: string): Promise<Array<XRPTransaction>>
+
+  /**
+   * Retrieve the payment transaction corresponding to the given transaction hash.
+   *
+   * Note: This method can return transactions that are not included in a fully validated ledger.
+   *       See the `validated` field to make this distinction.
+   *
+   * @param transactionHash The hash of the transaction to retrieve.
+   * @throws An error if the transaction hash was invalid.
+   * @returns An {@link XRPTransaction} object representing an XRP Ledger transaction.
+   */
+  getPayment(transactionHash: string): Promise<XRPTransaction | undefined>
 }

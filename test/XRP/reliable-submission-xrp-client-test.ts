@@ -30,6 +30,7 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
   fakedFullPaymentValue,
 )
 const fakedTransactionHistoryValue = [testXRPTransaction]
+const fakedGetPaymentValue = testXRPTransaction
 
 describe('Reliable Submission XRP Client', function (): void {
   beforeEach(function () {
@@ -41,6 +42,7 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedRawTransactionStatusValue,
       fakedAccountExistsValue,
       fakedTransactionHistoryValue,
+      fakedGetPaymentValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXRPClient(
       this.fakeXRPClient,
