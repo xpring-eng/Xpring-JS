@@ -6,7 +6,7 @@ stages:
   stage: test
   before_script:
     # install packages
-    - wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
+    - wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
     - add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
     - apt update
     - apt install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common adoptopenjdk-8-hotspot
