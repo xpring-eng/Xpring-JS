@@ -231,7 +231,7 @@ class DefaultXRPClient implements XRPClientDecorator {
    * brittle. Replace this method's implementation when rippled supports a `ledger` RPC via gRPC.
    *
    * @param address An address that exists at the current time. The address is unchecked and must be a classic address.
-   * @return The index of the latest validated ledger.
+   * @returns The index of the latest validated ledger.
    * @throws XRPException If there was a problem communicating with the XRP Ledger.
    */
   public async getLatestValidatedLedgerSequence(
@@ -336,7 +336,7 @@ class DefaultXRPClient implements XRPClientDecorator {
    * Note: This method only works for payment type transactions, see: https://xrpl.org/payment.html
    * Note: This method only returns the history that is contained on the remote node, which may not contain a full history of the network.
    *
-   * @param address: The address (account) for which to retrive payment history.
+   * @param address: The address (account) for which to retrieve payment history.
    * @throws: An error if there was a problem communicating with the XRP Ledger.
    * @return: An array of transactions associated with the account.
    */
@@ -379,6 +379,28 @@ class DefaultXRPClient implements XRPClientDecorator {
       }
     } // end for
     return payments
+  }
+
+  /**
+   * Retrieve the payment transaction corresponding to the given transaction hash.
+   *
+   * Note: This method can return transactions that are not included in a fully validated ledger.
+   *       See the `validated` field to make this distinction.
+   *
+   * @param transactionHash The hash of the transaction to retrieve.
+   * @throws An error if the transaction hash was invalid.
+   * @returns An {@link XRPTransaction} object representing an XRP Ledger transaction.
+   */
+  public async getPayment(
+    transactionHash: string,
+  ): Promise<XRPTransaction | undefined> {
+    const getTransactionRequest = this.networkClient.GetTransactionRequest()
+    getTransactionRequest.setHash(Utils.toBytes(transactionHash))
+
+    const getTransactionResponse = await this.networkClient.getTransaction(
+      getTransactionRequest,
+    )
+    return XRPTransaction.from(getTransactionResponse)
   }
 }
 
