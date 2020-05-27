@@ -1,0 +1,34 @@
+stages:
+  - lint
+  - test
+
+.test:
+  image: node:12-alpine
+  stage: test
+  before_script:
+    - npm i --cache .npm --prefer-offline --no-audit --progress=false nyc codecov
+    - npm i --cache .npm --prefer-offline --no-audit --progress=false
+
+lint:
+  stage: lint
+  extends: .test
+  script:
+    - npm run lintNoFix
+
+compile typescript:
+  stage: test
+  extends: .test
+  script:
+    - npm run build
+
+run tests:
+  stage: test
+  extends: .test
+  script:
+    - nyc npm test
+
+code coverage:
+  stage: test
+  extends: .test
+  script:
+    - nyc report --reporter=text-lcov
