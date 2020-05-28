@@ -239,7 +239,7 @@ class DefaultXRPClient implements XRPClientDecorator {
   ): Promise<number> {
     // rippled doesn't support a gRPC call that tells us the latest validated ledger sequence. To get around this,
     // query the account info for an account which will exist, using a shortcut for the latest validated ledger. The
-    // response will contain the ledger the information was retrieved at.
+    // response will contain the ledger index the information was retrieved at.
     const accountAddress = new AccountAddress()
     accountAddress.setAddress(address)
 
