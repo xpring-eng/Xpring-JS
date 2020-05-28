@@ -44,4 +44,4 @@ code coverage:
   script:
     - mkdir .nyc_output
     - ./node_modules/nyc/bin/nyc.js report --reporter=text-lcov
-    - codecov
+    - ./node_modules/codecov/bin/codecov
