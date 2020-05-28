@@ -224,6 +224,62 @@ describe('Protocol Buffer Conversion', function (): void {
       payment?.destinationTag,
       testPaymentProtoAllFieldsSet.getDestinationTag()?.getValue(),
     )
+    assert.equal(
+      payment?.destinationXAddress,
+      Utils.encodeXAddress(payment?.destination!, payment?.destinationTag),
+    )
+    assert.deepEqual(
+      payment?.deliverMin,
+      XRPCurrencyAmount.from(
+        testPaymentProtoAllFieldsSet.getDeliverMin()?.getValue()!,
+      ),
+    )
+    assert.deepEqual(
+      payment?.invoiceID,
+      testPaymentProtoAllFieldsSet.getInvoiceId()?.getValue(),
+    )
+    assert.deepEqual(
+      payment?.paths,
+      testPaymentProtoAllFieldsSet
+        .getPathsList()
+        .map((path) => XRPPath.from(path)),
+    )
+    assert.deepEqual(
+      payment?.sendMax,
+      XRPCurrencyAmount.from(
+        testPaymentProtoAllFieldsSet.getSendMax()?.getValue()!,
+      ),
+    )
+  })
+
+  it('Convert Payment with all fields set - Testnet', function (): void {
+    // GIVEN a payment protocol buffer with all fields set.
+    // WHEN the protocol buffer is converted to a native TypeScript type with isTest flag set to true.
+    const payment = XRPPayment.from(testPaymentProtoAllFieldsSet, true)
+
+    // THEN the result is as expected.
+    assert.deepEqual(
+      payment?.amount,
+      XRPCurrencyAmount.from(
+        testPaymentProtoAllFieldsSet.getAmount()?.getValue()!,
+      ),
+    )
+    assert.equal(
+      payment?.destination,
+      testPaymentProtoAllFieldsSet.getDestination()?.getValue()?.getAddress(),
+    )
+    assert.equal(
+      payment?.destinationTag,
+      testPaymentProtoAllFieldsSet.getDestinationTag()?.getValue(),
+    )
+    assert.equal(
+      payment?.destinationXAddress,
+      Utils.encodeXAddress(
+        payment?.destination!,
+        payment?.destinationTag,
+        true,
+      ),
+    )
     assert.deepEqual(
       payment?.deliverMin,
       XRPCurrencyAmount.from(
@@ -266,6 +322,10 @@ describe('Protocol Buffer Conversion', function (): void {
         .getDestination()
         ?.getValue()
         ?.getAddress(),
+    )
+    assert.equal(
+      payment?.destinationXAddress,
+      Utils.encodeXAddress(payment?.destination!, payment?.destinationTag),
     )
     assert.isUndefined(payment?.destinationTag)
     assert.isUndefined(payment?.deliverMin)
