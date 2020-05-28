@@ -19,11 +19,13 @@ export default class XRPTransaction {
    *
    * @param transaction a Transaction (protobuf object) whose field values will be used
    *                    to construct an XRPTransaction
+   * @param isTest Whether this Transaction object came from the XRPL Testnet, defaults to `false`.
    * @returns an XRPTransaction with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L13
    */
   public static from(
     getTransactionResponse: GetTransactionResponse,
+    isTest = false,
   ): XRPTransaction | undefined {
     const transaction = getTransactionResponse.getTransaction()
     if (!transaction) {
@@ -31,6 +33,10 @@ export default class XRPTransaction {
     }
 
     const account = transaction.getAccount()?.getValue()?.getAddress()
+
+    const accountXAddress = account
+      ? Utils.encodeXAddress(account, undefined, isTest)
+      : undefined
 
     const fee = transaction.getFee()?.getDrops()
 
@@ -72,7 +78,7 @@ export default class XRPTransaction {
         if (!payment) {
           return undefined
         }
-        paymentFields = payment && XRPPayment.from(payment)
+        paymentFields = payment && XRPPayment.from(payment, isTest)
         if (!paymentFields) {
           return undefined
         }
@@ -122,6 +128,7 @@ export default class XRPTransaction {
     return new XRPTransaction(
       transactionHash,
       account,
+      accountXAddress,
       accountTransactionID,
       fee,
       flags,
@@ -147,6 +154,8 @@ export default class XRPTransaction {
    * @param account The unique address of the account that initiated the transaction.
    * @param accountTransactionID (Optional) Hash value identifying another transaction.
    *                              If provided, this transaction is only valid if the sending account's
+   * @param accountXAddress The unique address of the account that initiated the transaction, encoded as an X-address.
+   *                        See https://xrpaddress.info/.
    *                              previously-sent transaction matches the provided hash.
    * @param fee Integer amount of XRP, in drops, to be destroyed as a cost for distributing this transaction to the network.
    * @param flags (Optional) Set of bit-flags for this transaction.
@@ -176,6 +185,7 @@ export default class XRPTransaction {
   private constructor(
     readonly hash: string,
     readonly account?: string,
+    readonly accountXAddress?: string,
     readonly accountTransactionID?: Uint8Array,
     readonly fee?: string,
     readonly flags?: RippledFlags,

@@ -1,3 +1,4 @@
+import { Utils } from 'xpring-common-js'
 import { Payment } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XRPCurrencyAmount from './xrp-currency-amount'
 import XRPPath from './xrp-path'
@@ -13,10 +14,11 @@ export default class XRPPayment {
    *
    * @param payment a Payment (protobuf object) whose field values will be used
    *                to construct an XRPPayment
+   * @param isTest Whether this Payment object came from the XRPL Testnet, defaults to `false`.
    * @return an XRPPayment with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L224
    */
-  public static from(payment: Payment): XRPPayment | undefined {
+  public static from(payment: Payment, isTest = false): XRPPayment | undefined {
     const paymentAmountValue = payment.getAmount()?.getValue()
     const amount =
       paymentAmountValue && XRPCurrencyAmount.from(paymentAmountValue)
@@ -30,6 +32,12 @@ export default class XRPPayment {
     }
 
     const destinationTag = payment.getDestinationTag()?.getValue()
+
+    const destinationXAddress = Utils.encodeXAddress(
+      destination,
+      destinationTag,
+      isTest,
+    )
 
     // If the deliverMin field is set, it must be able to be transformed into a XRPCurrencyAmount.
     const paymentDeliverMinValue = payment.getDeliverMin()?.getValue()
@@ -58,6 +66,7 @@ export default class XRPPayment {
       amount,
       destination,
       destinationTag,
+      destinationXAddress,
       deliverMin,
       invoiceID,
       paths,
@@ -70,6 +79,8 @@ export default class XRPPayment {
    * @param amount The amount of currency to deliver.
    * @param destination The unique address of the account receiving the payment.
    * @param destinationTag (Optional) Arbitrary tag that identifies a hosted recipient to pay, or the reason for the payment.
+   * @param destinationXAddress The address and (optional) destination tag of the account receiving the payment,
+   *                             encoded in X-Address format. See https://xrpaddress.info/.
    * @param deliverMin (Optional) Minimum amount of destination currency this transaction should deliver.
    * @param invoiceID (Optional) Arbitrary 256-bit hash representing a specific reason or identifier for this payment.
    * @param paths Array of payment paths to be used for this transaction.  Must be omitted for XRP-to-XRP transactions.
@@ -79,6 +90,7 @@ export default class XRPPayment {
     readonly amount?: XRPCurrencyAmount,
     readonly destination?: string,
     readonly destinationTag?: number,
+    readonly destinationXAddress?: string,
     readonly deliverMin?: XRPCurrencyAmount,
     readonly invoiceID?: Uint8Array,
     readonly paths?: Array<XRPPath | undefined>,
