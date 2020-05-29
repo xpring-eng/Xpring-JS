@@ -4,7 +4,7 @@ import { XRPClientDecorator } from './xrp-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
 import XRPTransaction from './model/xrp-transaction'
-import { XRPError } from '..'
+import { XRPError, XRPLNetwork } from '..'
 import { XRPErrorType } from './xrp-error'
 
 async function sleep(milliseconds: number): Promise<void> {
@@ -15,7 +15,10 @@ async function sleep(milliseconds: number): Promise<void> {
  * An XRPClient which blocks on `send` calls until the transaction has reached a deterministic state.
  */
 class ReliableSubmissionXRPClient implements XRPClientDecorator {
-  public constructor(private readonly decoratedClient: XRPClientDecorator) {}
+  public constructor(
+    private readonly decoratedClient: XRPClientDecorator,
+    readonly network: XRPLNetwork,
+  ) {}
 
   public async getBalance(address: string): Promise<BigInteger> {
     return this.decoratedClient.getBalance(address)
