@@ -12,10 +12,10 @@ PAY_ID_OPEN_API_SPEC=./pay-id-api-spec/pay-id.v1.yml
 TMP_SWAGGER_DIR=./.tmp_swagger
 
 # Language to generate.
-LANG=javascript
+LANG=typescript-axios
 
 # Folder containing generated sources.
-GENERATED_SOURCES_FOLDER=$TMP_SWAGGER_DIR/src
+GENERATED_SOURCES_FOLDER=$TMP_SWAGGER_DIR/
 
 ##########################################################################
 # Remove any stale files which are already generated.
@@ -33,8 +33,7 @@ echo "Regenerating Swagger API from PayID Open API Spec"
 mkdir -p $TMP_SWAGGER_DIR
 mkdir -p $DESTINATION_FOLDER
 
-cd scripts && mvn clean compile && cd ..
-
+npx openapi-generator generate -i $PAY_ID_OPEN_API_SPEC -g $LANG -o $TMP_SWAGGER_DIR
 echo "Swagger Generation Complete!"
 
 ##########################################################################
@@ -55,7 +54,3 @@ rm -rf $TMP_SWAGGER_DIR
 
 echo "Done Cleaning Up"
 echo "All Done!"
-
-# Fix a bug where swagger outputs invalid types and tsc chokes on it.
-# TODO(keefertaylor): Improve / fix this hack.
-sed -i -e 's/module:ApiClient/ApiClient/g' ./src/PayID/Generated/ApiClient.js

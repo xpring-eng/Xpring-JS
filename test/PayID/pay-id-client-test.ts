@@ -4,7 +4,7 @@ import { PayIDUtils } from 'xpring-common-js'
 import PayIDClient from '../../src/PayID/pay-id-client'
 import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
 import XRPLNetwork from '../../src/Common/xrpl-network'
-import SignatureWrapperInvoice from '../../src/PayID/Generated/model/SignatureWrapperInvoice'
+import { SignatureWrapperInvoice } from '../../src/PayID/Generated/api'
 
 // Nonce for getInvoice and postInvoice
 const nonce = '123456'
@@ -202,10 +202,16 @@ describe('Pay ID Client', function (): void {
         nonce,
         expirationTime: '1584725859',
         paymentInformation: {
-          addressDetailType: 'CryptoAddressDetails',
-          addressDetails: {
-            address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
-          },
+          addresses: [
+            {
+              paymentNetwork: 'xrpl',
+              paymentEnvironment: 'main',
+              addressDetailsType: 'CryptoAddressDetails',
+              addressDetails: {
+                address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
+              },
+            },
+          ],
           proofOfControlSignature: '9743b52063cd84097a65d1633f5c74f5',
           paymentPointer: '$xpring.money/dino',
         },
@@ -213,8 +219,8 @@ describe('Pay ID Client', function (): void {
         memo: 'please send me travel rule data',
         complianceHashes: [],
       },
-      pkiType: 'x509+sha256',
-      pkiData: [],
+      publicKeyType: 'x509+sha256',
+      publicKeyData: [],
       publicKey:
         '00:c9:22:69:31:8a:d6:6c:ea:da:c3:7f:2c:ac:a5:af:c0:02:ea:81:cb:65:b9:fd:0c:6d:46:5b:c9:1e:9d:3b:ef',
       signature: '8b:c3:ed:d1:9d:39:6f:af:40:72:bd:1e:18:5e:30:54:23:35',
@@ -228,10 +234,7 @@ describe('Pay ID Client', function (): void {
     const invoice = await payIDClient.getInvoice(payID, nonce)
 
     // THEN the invoice was the mocked response.
-    assert.deepEqual(
-      invoice,
-      SignatureWrapperInvoice.constructFromObject(mockResponse, null),
-    )
+    assert.deepEqual(invoice, mockResponse)
   })
 
   it('getInvoice - failure', function (done) {
@@ -262,18 +265,13 @@ describe('Pay ID Client', function (): void {
     const payID = 'georgewashington$xpring.money'
     const payIDClient = new PayIDClient(XRPLNetwork.Test)
 
-    const mockResponse = {
+    const mockResponse: SignatureWrapperInvoice = {
       messageType: 'Invoice',
       message: {
         nonce: '123456',
         expirationTime: '2020-03-18T04:05:02',
         paymentInformation: {
-          addressDetailType: 'CryptoAddressDetails',
-          addressDetails: {
-            address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
-          },
-          proofOfControlSignature: '9743b52063cd84097a65d1633f5c74f5',
-          paymentPointer: '$xpring.money/dino',
+          addresses: [],
         },
         complianceRequirements: ['TravelRule'],
         memo: 'thanks for travel rule data, here is your new invoice',
@@ -284,8 +282,8 @@ describe('Pay ID Client', function (): void {
           },
         ],
       },
-      pkiType: 'x509+sha256',
-      pkiData: [],
+      publicKeyType: 'x509+sha256',
+      publicKeyData: [],
       publicKey:
         '00:c9:22:69:31:8a:d6:6c:ea:da:c3:7f:2c:ac:a5:af:c0:02:ea:81:cb:65:b9:fd:0c:6d:46:5b:c9:1e:9d:3b:ef',
       signature: '8b:c3:ed:d1:9d:39:6f:af:40:72:bd:1e:18:5e:30:54:23:35...',
@@ -315,10 +313,7 @@ describe('Pay ID Client', function (): void {
     )
 
     // THEN the invoice was the mocked response.
-    assert.deepEqual(
-      invoice,
-      SignatureWrapperInvoice.constructFromObject(mockResponse, null),
-    )
+    assert.deepEqual(invoice, mockResponse)
   })
 
   it('postInvoice - failure', function (done) {
