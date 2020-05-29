@@ -9,7 +9,7 @@ import XRPPayment from '../../src/XRP/model/xrp-payment'
 import XRPMemo from '../../src/XRP/model/xrp-memo'
 import XRPSigner from '../../src/XRP/model/xrp-signer'
 import XRPTransaction from '../../src/XRP/model/xrp-transaction'
-import { Utils } from '../../src'
+import { Utils, XRPLNetwork } from '../../src'
 import {
   testAddress,
   testPublicKey,
@@ -255,7 +255,10 @@ describe('Protocol Buffer Conversion', function (): void {
   it('Convert Payment with all fields set - Testnet', function (): void {
     // GIVEN a payment protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native TypeScript type with isTest flag set to true.
-    const payment = XRPPayment.from(testPaymentProtoAllFieldsSet, true)
+    const payment = XRPPayment.from(
+      testPaymentProtoAllFieldsSet,
+      XRPLNetwork.Test,
+    )
 
     // THEN the result is as expected.
     assert.deepEqual(
