@@ -2,6 +2,7 @@ import { Utils } from 'xpring-common-js'
 import { Payment } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XRPCurrencyAmount from './xrp-currency-amount'
 import XRPPath from './xrp-path'
+import XRPLNetwork from '../../Common/xrpl-network'
 
 /*
  * Represents a payment on the XRP Ledger.
@@ -14,11 +15,14 @@ export default class XRPPayment {
    *
    * @param payment a Payment (protobuf object) whose field values will be used
    *                to construct an XRPPayment
-   * @param isTest Whether this Payment object came from the XRPL Testnet, defaults to `false`.
+   * @param xrplNetwork The XRPL network from which this object was retrieved, defaults to XRPLNetwork.Main (Mainnet).
    * @return an XRPPayment with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L224
    */
-  public static from(payment: Payment, isTest = false): XRPPayment | undefined {
+  public static from(
+    payment: Payment,
+    xrplNetwork = XRPLNetwork.Main,
+  ): XRPPayment | undefined {
     const paymentAmountValue = payment.getAmount()?.getValue()
     const amount =
       paymentAmountValue && XRPCurrencyAmount.from(paymentAmountValue)
@@ -36,7 +40,7 @@ export default class XRPPayment {
     const destinationXAddress = Utils.encodeXAddress(
       destination,
       destinationTag,
-      isTest,
+      xrplNetwork === XRPLNetwork.Test,
     )
 
     // If the deliverMin field is set, it must be able to be transformed into a XRPCurrencyAmount.

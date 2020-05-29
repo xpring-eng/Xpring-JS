@@ -6,6 +6,7 @@ import XRPTransactionType from './xrp-transaction-type'
 import XRPPayment from './xrp-payment'
 import XRPMemo from './xrp-memo'
 import { GetTransactionResponse } from '../Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+import XRPLNetwork from '../../Common/xrpl-network'
 
 /*
  * A transaction on the XRP Ledger.
@@ -19,13 +20,13 @@ export default class XRPTransaction {
    *
    * @param transaction a Transaction (protobuf object) whose field values will be used
    *                    to construct an XRPTransaction
-   * @param isTest Whether this Transaction object came from the XRPL Testnet, defaults to `false`.
+   * @param xrplNetwork The XRPL network from which this object was retrieved, defaults to XRPLNetwork.Main (Mainnet).
    * @returns an XRPTransaction with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L13
    */
   public static from(
     getTransactionResponse: GetTransactionResponse,
-    isTest = false,
+    xrplNetwork = XRPLNetwork.Main,
   ): XRPTransaction | undefined {
     const transaction = getTransactionResponse.getTransaction()
     if (!transaction) {
@@ -35,7 +36,11 @@ export default class XRPTransaction {
     const account = transaction.getAccount()?.getValue()?.getAddress()
 
     const accountXAddress = account
-      ? Utils.encodeXAddress(account, undefined, isTest)
+      ? Utils.encodeXAddress(
+          account,
+          undefined,
+          xrplNetwork === XRPLNetwork.Test,
+        )
       : undefined
 
     const fee = transaction.getFee()?.getDrops()
@@ -78,7 +83,7 @@ export default class XRPTransaction {
         if (!payment) {
           return undefined
         }
-        paymentFields = payment && XRPPayment.from(payment, isTest)
+        paymentFields = payment && XRPPayment.from(payment, xrplNetwork)
         if (!paymentFields) {
           return undefined
         }

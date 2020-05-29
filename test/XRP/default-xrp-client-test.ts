@@ -692,7 +692,7 @@ describe('Default XRP Client', function (): void {
     // THEN the returned transaction is as expected.
     assert.deepEqual(
       transaction,
-      XRPTransaction.from(testGetTransactionResponseProto),
+      XRPTransaction.from(testGetTransactionResponseProto, true),
     )
   })
 
