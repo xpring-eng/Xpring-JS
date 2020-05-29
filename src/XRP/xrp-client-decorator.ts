@@ -3,9 +3,15 @@ import { BigInteger } from 'big-integer'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import XRPTransaction from './model/xrp-transaction'
+import XRPLNetwork from '../Common/xrpl-network'
 
 /** A decorator interface for XRPClients. */
 export interface XRPClientDecorator {
+  /**
+   * The network this XRPClient is connecting to.
+   */
+  network: XRPLNetwork
+
   /**
    * Retrieve the balance for the given address.
    *

@@ -30,6 +30,7 @@ import { XRPNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XRPError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
+import XRPLNetwork from '../Common/xrpl-network'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -44,15 +45,17 @@ class DefaultXRPClient implements XRPClientDecorator {
    * The DefaultXRPClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
+   * @param network The network this XRPClient is connecting to.
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public static defaultXRPClientWithEndpoint(
     grpcURL: string,
+    network: XRPLNetwork,
     forceWeb = false,
   ): DefaultXRPClient {
     return isNode() && !forceWeb
-      ? new DefaultXRPClient(new GRPCNetworkClient(grpcURL))
-      : new DefaultXRPClient(new GRPCNetworkClientWeb(grpcURL))
+      ? new DefaultXRPClient(new GRPCNetworkClient(grpcURL), network)
+      : new DefaultXRPClient(new GRPCNetworkClientWeb(grpcURL), network)
   }
 
   /**
@@ -61,8 +64,12 @@ class DefaultXRPClient implements XRPClientDecorator {
    * In general, clients should prefer to call `xrpClientWithEndpoint`. This constructor is provided to improve testability of this class.
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
+   * @param network The network this XRPClient is connecting to.
    */
-  public constructor(private readonly networkClient: XRPNetworkClient) {}
+  public constructor(
+    private readonly networkClient: XRPNetworkClient,
+    readonly network: XRPLNetwork,
+  ) {}
 
   /**
    * Retrieve the balance for the given address.
