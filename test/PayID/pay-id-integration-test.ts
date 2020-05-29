@@ -3,7 +3,6 @@ import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
 import PayIDClient from '../../src/PayID/pay-id-client'
 import XRPPayIDClient from '../../src/PayID/xrp-pay-id-client'
 import XRPLNetwork from '../../src/Common/xrpl-network'
-// import { CryptoAddressDetails } from '../../src/PayID/Generated/api'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute

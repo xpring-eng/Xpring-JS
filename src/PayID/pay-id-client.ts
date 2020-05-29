@@ -1,16 +1,5 @@
 import { PayIDUtils } from 'xpring-common-js'
-// import PaymentInformation from './Generated/model/PaymentInformation'
-// import ApiClient from './Generated/ApiClient'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
-// import Value from './Generated/model/Value'
-// import Originator from './Generated/model/Originator'
-// import Beneficiary from './Generated/model/Beneficiary'
-// import SignatureWrapperInvoice from './Generated/model/SignatureWrapperInvoice'
-// import SignatureWrapperCompliance from './Generated/model/SignatureWrapperCompliance'
-// import Compliance from './Generated/model/Compliance'
-// import TravelRule from './Generated/model/TravelRule'
-// import DefaultApi from './Generated/api/DefaultApi'
-// import { CryptoAddressDetails } from './Generated'
 import ComplianceType from './compliance-type'
 import {
   Beneficiary,
@@ -30,29 +19,6 @@ interface PayIDComponents {
   host: string
   path: string
 }
-
-// /**
-//  * HTTP methods used on requests.
-//  */
-// enum HTTPMethod {
-//   Get = 'GET',
-//   Post = 'POST',
-// }
-
-// TODO(keefertaylor): Do not use any. Either generate .d.ts files by using a typescript code generator or manually create interfaces.
-/** The result of a call to a Swagger RPC which fetched a response of type T. */
-// interface SwaggerCallResult<T> {
-//   /** An error associated with the response. */
-//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//   error: any
-
-//   /** The complete HTTP response. */
-//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//   response: any
-
-//   /** The data returned by the call. */
-//   data: T
-// }
 
 /**
  * A client for PayID.
@@ -98,8 +64,17 @@ export default class PayIDClient {
       const { data } = await api.resolvePayID(path, options)
       // TODO(keefertaylor): make sure the header matches the request.
       if (data?.addresses) {
-        // TODO(amiecorso): what if addresses is empty or contains more than one CryptoAddressDetails?
-        return data.addresses[0].addressDetails
+        // With a specific network, exactly one address should be returned by a PayID lookup.
+        if (data.addresses.length === 1) {
+          return data.addresses[0].addressDetails
+        } else {
+          return Promise.reject(
+            new PayIDError(
+              PayIDErrorType.UnexpectedResponse,
+              'Received more addresses than expected',
+            ),
+          )
+        }
       } else {
         return Promise.reject(
           new PayIDError(
