@@ -373,7 +373,10 @@ class DefaultXRPClient implements XRPClientDecorator {
       const transaction = getTransactionResponse.getTransaction()
       switch (transaction?.getTransactionDataCase()) {
         case Transaction.TransactionDataCase.PAYMENT: {
-          const xrpTransaction = XRPTransaction.from(getTransactionResponse)
+          const xrpTransaction = XRPTransaction.from(
+            getTransactionResponse,
+            this.isTest(),
+          )
           if (!xrpTransaction) {
             throw XRPError.paymentConversionFailure
           } else {
@@ -407,7 +410,14 @@ class DefaultXRPClient implements XRPClientDecorator {
     const getTransactionResponse = await this.networkClient.getTransaction(
       getTransactionRequest,
     )
-    return XRPTransaction.from(getTransactionResponse)
+    return XRPTransaction.from(getTransactionResponse, this.isTest())
+  }
+
+  /**
+   * Return a boolean indicating whether this client is connected to the XRPL Testnet or not.
+   */
+  private isTest(): boolean {
+    return this.network === XRPLNetwork.Test
   }
 }
 
