@@ -11,12 +11,14 @@ We're thrilled you're interested and your help is greatly appreciated. Contribut
 Xpring-JS is a JavaScript library that is shipped as a consumable artifact in NPM.
 
 This library relies depends on both:
+
 - [Xpring Common JS](http://github.com/xpring-eng/xpring-common-js): Common code shared across Xpring SDK in JavaScript.
 - [Xpring Common Protocol Buffers](http://github.com/xpring-eng/xpring-common-protocol-buffers): Common protocol buffers shared across Xpring SDK.
 
 ## Requirements for a Successful Pull Request
 
 Before being considered for review or merging, each pull request must:
+
 - Pass continuous integration tests.
 - Update documentation for any new features.
 - Be free of lint errors. Please run `eslint` before sending a pull request.
@@ -47,12 +49,6 @@ $ chmod +x /usr/local/bin/protoc-gen-grpc-web
 $ curl -L https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64 --output protoc-gen-grpc-web
 $ sudo mv protoc-gen-grpc-web /usr/local/bin/
 $ chmod +x /usr/local/bin/protoc-gen-grpc-web
-
-# Install Maven
-## OSX
-brew install mvn
-## Linux
-apt-get install mvn
 
 # Run tests.
 $ npm test

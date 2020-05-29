@@ -1,44 +1,23 @@
 import { PayIDUtils } from 'xpring-common-js'
-import PaymentInformation from './Generated/model/PaymentInformation'
-import ApiClient from './Generated/ApiClient'
 import PayIDError, { PayIDErrorType } from './pay-id-error'
-import Value from './Generated/model/Value'
-import Originator from './Generated/model/Originator'
-import Beneficiary from './Generated/model/Beneficiary'
-import SignatureWrapperInvoice from './Generated/model/SignatureWrapperInvoice'
-import SignatureWrapperCompliance from './Generated/model/SignatureWrapperCompliance'
-import Compliance from './Generated/model/Compliance'
-import TravelRule from './Generated/model/TravelRule'
-import DefaultApi from './Generated/api/DefaultApi'
-import { CryptoAddressDetails } from './Generated'
 import ComplianceType from './compliance-type'
+import {
+  Beneficiary,
+  DefaultApi,
+  SignatureWrapperInvoice,
+  CryptoAddressDetails,
+  Value,
+  Originator,
+  TravelRule,
+  SignatureWrapperCompliance,
+  Compliance,
+} from './Generated/api'
+
+/* eslint-disable */
 
 interface PayIDComponents {
   host: string
   path: string
-}
-
-/**
- * HTTP methods used on requests.
- */
-enum HTTPMethod {
-  Get = 'GET',
-  Post = 'POST',
-}
-
-// TODO(keefertaylor): Do not use any. Either generate .d.ts files by using a typescript code generator or manually create interfaces.
-/** The result of a call to a Swagger RPC which fetched a response of type T. */
-interface SwaggerCallResult<T> {
-  /** An error associated with the response. */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  error: any
-
-  /** The complete HTTP response. */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  response: any
-
-  /** The data returned by the call. */
-  data: T
 }
 
 /**
@@ -71,32 +50,51 @@ export default class PayIDClient {
   async addressForPayID(payID: string): Promise<CryptoAddressDetails> {
     const payIDComponents = PayIDClient.parsePayID(payID)
     const basePath = `https://${payIDComponents.host}`
-    const { path } = payIDComponents
 
-    // Accept only the given network in response.
-    const accepts = [`application/${this.network}+json`]
+    // Swagger API adds the leading '/' in path automatically because it is part of the endpoint.
+    const path = payIDComponents.path.substring(1)
 
-    const { error, data } = await PayIDClient.callSwaggerRPC<
-      PaymentInformation
-    >(basePath, path, HTTPMethod.Get, undefined, accepts, PaymentInformation)
+    const api = new DefaultApi(undefined, basePath)
 
-    if (error) {
-      if (error.status === 404) {
-        const message = `Could not resolve ${payID} on network ${this.network}`
-        throw new PayIDError(PayIDErrorType.MappingNotFound, message)
-      } else {
-        const message = `${error.status}: ${error.response?.text}`
-        throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
-      }
+    const options = PayIDClient.makeOptionsWithAcceptTypes(
+      `application/${this.network}+json`,
+    )
+
+    try {
+      const { data } = await api.resolvePayID(path, options)
       // TODO(keefertaylor): make sure the header matches the request.
-    } else if (data?.addresses?.length === 1) {
-      // With a specific network, exactly one address should be returned by a PayID lookup.
-      if (data.addresses.length === 1) {
-        return data.addresses[0].addressDetails
+      if (data?.addresses) {
+        // With a specific network, exactly one address should be returned by a PayID lookup.
+        if (data.addresses.length === 1) {
+          return data.addresses[0].addressDetails
+        } else {
+          return Promise.reject(
+            new PayIDError(
+              PayIDErrorType.UnexpectedResponse,
+              'Received more addresses than expected',
+            ),
+          )
+        }
+      } else {
+        return Promise.reject(
+          new PayIDError(
+            PayIDErrorType.UnexpectedResponse,
+            'Too many addresses returned',
+          ),
+        )
       }
-      throw new PayIDError(PayIDErrorType.UnexpectedResponse)
-    } else {
-      throw new PayIDError(PayIDErrorType.UnexpectedResponse)
+    } catch (error) {
+      if (error.response?.status === 404) {
+        const message = `Could not resolve ${payID} on network ${this.network}`
+        return Promise.reject(
+          new PayIDError(PayIDErrorType.MappingNotFound, message),
+        )
+      } else {
+        const message = PayIDClient.messageFromMaybeHTTPError(error)
+        return Promise.reject(
+          new PayIDError(PayIDErrorType.UnexpectedResponse, message),
+        )
+      }
     }
   }
 
@@ -111,32 +109,23 @@ export default class PayIDClient {
     nonce: string,
   ): Promise<SignatureWrapperInvoice> {
     const payIDComponents = PayIDClient.parsePayID(payID)
-    const basePath = `https://${payIDComponents.host}`
-    const path = `${payIDComponents.path}/invoice?nonce=${nonce}`
+    const basePath = `https://${payIDComponents.host}${payIDComponents.path}`
 
-    // Accept only the given network in response.
-    const accepts = [`application/${this.network}+json`]
-
-    const { error, data } = await PayIDClient.callSwaggerRPC<
-      SignatureWrapperInvoice
-    >(
-      basePath,
-      path,
-      HTTPMethod.Get,
-      undefined,
-      accepts,
-      SignatureWrapperInvoice,
+    const options = PayIDClient.makeOptionsWithAcceptTypes(
+      `application/${this.network}+json`,
     )
 
-    // TODO(keefertaylor): Provide more granular error handling.
-    if (error) {
-      const message = `${error.status}: ${error.response?.text}`
-      throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
-      // TODO(keefertaylor): make sure the header matches the request.
-    } else if (data) {
+    const api = new DefaultApi(undefined, basePath)
+
+    try {
+      const { data } = await api.getPathInvoice(nonce, options)
       return data
-    } else {
-      throw new PayIDError(PayIDErrorType.UnexpectedResponse)
+    } catch (error) {
+      // TODO(keefertaylor): Provide more granular error handling.
+      const message = PayIDClient.messageFromMaybeHTTPError(error)
+      return Promise.reject(
+        new PayIDError(PayIDErrorType.UnexpectedResponse, message),
+      )
     }
   }
 
@@ -180,62 +169,66 @@ export default class PayIDClient {
     beneficiaryUserPhysicalAddress: string | undefined = undefined,
     beneficiaryUserAccountID: string | undefined = undefined,
   ): Promise<SignatureWrapperInvoice> {
-    const value = new Value(valueAmount, `${valueScale}`)
+    const value: Value = {
+      amount: valueAmount,
+      scale: valueScale + '',
+    }
 
-    const originator = new Originator(
-      originatorUserLegalName,
-      originatorAccountID,
-      originatorUserPhysicalAddress,
-      originatorInstitutionName,
+    const originator: Originator = {
+      userLegalName: originatorUserLegalName,
+      accountId: originatorAccountID,
+      userPhysicalAddress: originatorUserPhysicalAddress,
+      institutionName: originatorInstitutionName,
       value,
       timestamp,
-    )
+    }
 
-    const beneficiary = new Beneficiary(beneficiaryInstitutionName)
-    beneficiary.userLegalName = beneficiaryUserLegalName || undefined
-    beneficiary.userPhysicalAddress =
-      beneficiaryUserPhysicalAddress || undefined
-    beneficiary.accountId = beneficiaryUserAccountID || undefined
+    const beneficiary: Beneficiary = {
+      institutionName: beneficiaryInstitutionName,
+      userLegalName: beneficiaryUserLegalName,
+      userPhysicalAddress: beneficiaryUserPhysicalAddress,
+      accountId: beneficiaryUserAccountID,
+    }
 
-    const travelRule = new TravelRule(originator, beneficiary)
+    const travelRule: TravelRule = {
+      originator,
+      beneficiary,
+    }
 
-    const compliance = new Compliance(ComplianceType.TravelRule, travelRule)
+    const compliance: Compliance = {
+      type: ComplianceType.TravelRule,
+      data: travelRule,
+    }
 
-    const signatureWrapper = new SignatureWrapperCompliance(
-      'Compliance',
-      compliance,
+    const signatureWrapper: SignatureWrapperCompliance = {
+      messageType: 'Compliance',
+      message: compliance,
       publicKeyType,
       publicKeyData,
       publicKey,
       signature,
-    )
+    }
 
     const payIDComponents = PayIDClient.parsePayID(payID)
-    const basePath = `https://${payIDComponents.host}`
-    const path = `${payIDComponents.path}/invoice?nonce=${nonce}`
+    const basePath = `https://${payIDComponents.host}${payIDComponents.path}`
 
-    // Accept only the given network in response.
-    const accepts = [`application/${this.network}+json`]
-
-    const { error, data } = await PayIDClient.callSwaggerRPC<
-      SignatureWrapperInvoice
-    >(
-      basePath,
-      path,
-      HTTPMethod.Post,
-      signatureWrapper,
-      accepts,
-      SignatureWrapperInvoice,
+    const options = PayIDClient.makeOptionsWithAcceptTypes(
+      `application/${this.network}+json`,
     )
+    const api = new DefaultApi(undefined, basePath)
 
-    // TODO(keefertaylor): Provide more granular error handling.
-    if (error) {
-      const message = `${error.status}: ${error.response?.text}`
-      throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
-    } else if (data) {
+    try {
+      const { data } = await api.postPathInvoice(
+        nonce,
+        signatureWrapper,
+        options,
+      )
       return data
-    } else {
-      throw new PayIDError(PayIDErrorType.UnexpectedResponse)
+    } catch (error) {
+      const message = PayIDClient.messageFromMaybeHTTPError(error)
+      return Promise.reject(
+        new PayIDError(PayIDErrorType.UnexpectedResponse, message),
+      )
     }
   }
 
@@ -263,101 +256,50 @@ export default class PayIDClient {
       transactionConfirmation,
     }
 
-    const client = new ApiClient()
-    client.basePath = `https://${payIDComponents.host}${payIDComponents.path}`
+    const basePath = `https://${payIDComponents.host}${payIDComponents.path}`
+    const api = new DefaultApi(undefined, basePath)
 
-    const apiInstance = new DefaultApi(client)
-
-    const { error } = await new Promise<
-      SwaggerCallResult<SignatureWrapperInvoice>
-    >((resolve, _reject) => {
-      apiInstance.postPathReceipt(
-        {
-          body: payload,
-        },
-        (swaggerError, swaggerData, response) => {
-          // Transform results of the callback to a wrapper object.
-          resolve({
-            error: swaggerError,
-            data: swaggerData,
-            response,
-          })
-        },
+    try {
+      await api.postPathReceipt(payload)
+    } catch (error) {
+      // TODO(keefertaylor): Provide more specific error handling here.
+      const message = PayIDClient.messageFromMaybeHTTPError(error)
+      return Promise.reject(
+        new PayIDError(PayIDErrorType.UnexpectedResponse, message),
       )
-    })
-
-    // TODO(keefertaylor): Provide more specific error handling here.
-    if (error) {
-      const message = `${error.status}: ${error.response?.text}`
-      throw new PayIDError(PayIDErrorType.UnexpectedResponse, message)
     }
   }
 
   /**
-   * Call an RPC endpoint with Swagger.
+   * Try to create a pretty formatted error message given an error which may be an HTTP error.
    *
-   * This method provides access to bare metal components of Swagger's generated code. This is useful to do things like
-   * modifying headers dynamically.
-   *
-   * NOTE: For simplicity, this method assumes an HTTP GET. Query parameters should be encoded in the `path` parameter. In
-   * the future, this can be configurable if so desired.
-   *
-   * @param basePath The base URL for the RPC.
-   * @param path The path for the request. This value is taken as is, clients of this method are responsible for escaping
-   *             or other transformations.
-   * @param method The HTTP method to use for the request.
-   * @param postBody An optional body to POST.
-   * @param accepts An array of acceptable Content-Type headers, ordered in preference from most to least desirable.
-   * @param returnType The type of the returned object.
+   * @param error An error which may be an HTTP error.
+   * @returns A sane message for upstream errors.
    */
-  private static async callSwaggerRPC<T>(
-    basePath: string,
-    path: string,
-    httpMethod: HTTPMethod,
-    postBody: object | undefined,
-    accepts: Array<string>,
-    // The next line is T.type.
-    // TODO(keefertaylor): Figure out a way to express this in typescript.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    returnType: any,
-  ): Promise<SwaggerCallResult<T>> {
-    return new Promise((resolve, _reject) => {
-      const client = new ApiClient()
-      client.basePath = basePath
+  private static messageFromMaybeHTTPError(error: any): string {
+    // Try to nicely form an error if the error is the result of an HTTP request, fall back to
+    // just printing the error otherwise.
+    return error.response?.status
+      ? `${error.response?.status}: ${error.response?.data?.message}`
+      : error.message
+  }
 
-      // NOTE: Swagger produces a higher level client that does not require this level of configuration,
-      // however access to Accept headers is not available unless we access the underlying class.
-      //
-      // NOTE: At some point additional fields may need to be generalized (ex. httpMethod). These fields
-      // are hidden for convenience and configurability and may be exposed when needed.
-      const queryParams = {}
-      const headerParams = {}
-      const formParams = {}
-      const authNames = []
-      const contentTypes = []
+  /**
+   * Make a set of options for the API that include a header with `Accept` set to the given value.
+   *
+   * @param acceptType The value for the `Accept` header.
+   * @returns An options object that can be passed to an api.
+   */
+  private static makeOptionsWithAcceptTypes(acceptType: string): object {
+    const headers = {
+      Accept: acceptType,
+    }
 
-      client.callApi(
-        path,
-        httpMethod,
-        {},
-        queryParams,
-        headerParams,
-        formParams,
-        postBody,
-        authNames,
-        contentTypes,
-        accepts,
-        returnType,
-        (error, data, response) => {
-          // Transform results of the callback to a wrapper object.
-          resolve({
-            error,
-            data,
-            response,
-          })
-        },
-      )
-    })
+    const options = {
+      headers,
+    }
+
+    return options
   }
 
   /**
