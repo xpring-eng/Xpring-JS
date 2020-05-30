@@ -159,9 +159,9 @@ export default class XRPTransaction {
    * @param account The unique address of the account that initiated the transaction.
    * @param accountTransactionID (Optional) Hash value identifying another transaction.
    *                              If provided, this transaction is only valid if the sending account's
+   *                              previously-sent transaction matches the provided hash.
    * @param accountXAddress The unique address of the account that initiated the transaction, encoded as an X-address.
    *                        See https://xrpaddress.info/.
-   *                              previously-sent transaction matches the provided hash.
    * @param fee Integer amount of XRP, in drops, to be destroyed as a cost for distributing this transaction to the network.
    * @param flags (Optional) Set of bit-flags for this transaction.
    * @param lastLedgerSequence (Optional; strongly recommended) Highest ledger index this transaction can appear in.

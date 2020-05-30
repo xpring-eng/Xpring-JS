@@ -84,7 +84,7 @@ export default class XRPPayment {
    * @param destination The unique address of the account receiving the payment.
    * @param destinationTag (Optional) Arbitrary tag that identifies a hosted recipient to pay, or the reason for the payment.
    * @param destinationXAddress The address and (optional) destination tag of the account receiving the payment,
-   *                             encoded in X-Address format. See https://xrpaddress.info/.
+   *                             encoded in X-address format. See https://xrpaddress.info/.
    * @param deliverMin (Optional) Minimum amount of destination currency this transaction should deliver.
    * @param invoiceID (Optional) Arbitrary 256-bit hash representing a specific reason or identifier for this payment.
    * @param paths Array of payment paths to be used for this transaction.  Must be omitted for XRP-to-XRP transactions.
