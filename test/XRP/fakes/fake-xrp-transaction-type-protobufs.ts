@@ -1,4 +1,7 @@
-import { AccountSet } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import {
+  AccountSet,
+  AccountDelete,
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import {
   ClearFlag,
   Domain,
@@ -7,7 +10,10 @@ import {
   SetFlag,
   TransferRate,
   TickSize,
+  Destination,
+  DestinationTag,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
+import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 
 // Primitive test values ===============================================================
 
@@ -20,10 +26,13 @@ const testSetFlag = 4
 const testTransferRate = 1234567890
 const testTickSize = 7
 
+// AccountDelete
+const testDestination = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
+const testDestinationTag = 13
+
 // Protobuf objects ======================================================================
 
 // AccountSet protos
-
 const testClearFlagProto = new ClearFlag()
 testClearFlagProto.setValue(testClearFlag)
 
@@ -57,4 +66,22 @@ testAccountSetProtoAllFields.setTickSize(testTickSizeProto)
 const testAccountSetProtoOneFieldSet = new AccountSet()
 testAccountSetProtoOneFieldSet.setClearFlag(testClearFlagProto)
 
-export { testAccountSetProtoAllFields, testAccountSetProtoOneFieldSet }
+// AccountDelete protos
+const testAccountAddressProto = new AccountAddress()
+testAccountAddressProto.setAddress(testDestination)
+
+const testDestinationProto = new Destination()
+testDestinationProto.setValue(testAccountAddressProto)
+
+const testDestinationTagProto = new DestinationTag()
+testDestinationTagProto.setValue(testDestinationTag)
+
+const testAccountDeleteProto = new AccountDelete()
+testAccountDeleteProto.setDestination(testDestinationProto)
+testAccountDeleteProto.setDestinationTag(testDestinationTagProto)
+
+export {
+  testAccountSetProtoAllFields,
+  testAccountSetProtoOneFieldSet,
+  testAccountDeleteProto,
+}

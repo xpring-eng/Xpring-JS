@@ -1,8 +1,10 @@
 import { assert } from 'chai'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
+import XRPAccountDelete from '../../src/XRP/model/xrp-account-delete'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
+  testAccountDeleteProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {
@@ -60,5 +62,21 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(accountSet?.setFlag)
     assert.isUndefined(accountSet?.transferRate)
     assert.isUndefined(accountSet?.tickSize)
+  })
+
+  it('Convert AccountDelete protobuf with all fields to XRPAccountDelete object', function (): void {
+    // GIVEN an AccountDelete protocol buffer with all fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const accountDelete = XRPAccountDelete.from(testAccountDeleteProto)
+
+    // THEN the AccountDelete converted as expected.
+    assert.deepEqual(
+      accountDelete?.destination,
+      testAccountDeleteProto.getDestination()?.getValue()?.getAddress(),
+    )
+    assert.deepEqual(
+      accountDelete?.destination,
+      testAccountDeleteProto.getDestination()?.getValue()?.getAddress(),
+    )
   })
 })
