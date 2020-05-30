@@ -55,5 +55,7 @@ testAccountSetProtoAllFields.setSetFlag(testSetFlagProto)
 testAccountSetProtoAllFields.setTransferRate(testTransferRateProto)
 testAccountSetProtoAllFields.setTickSize(testTickSizeProto)
 
-// eslint-disable-next-line import/prefer-default-export
-export { testAccountSetProtoAllFields }
+const testAccountSetProtoOneFieldSet = new AccountSet()
+testAccountSetProtoOneFieldSet.setClearFlag(testClearFlagProto)
+
+export { testAccountSetProtoAllFields, testAccountSetProtoOneFieldSet }
