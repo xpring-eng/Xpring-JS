@@ -1,6 +1,7 @@
 import {
   AccountSet,
   AccountDelete,
+  CheckCancel,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import {
   ClearFlag,
@@ -12,6 +13,7 @@ import {
   TickSize,
   Destination,
   DestinationTag,
+  CheckID,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 
@@ -30,6 +32,9 @@ const testTickSize = 7
 const testDestination = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
 const testDestinationTag = 13
 
+// CheckCancel values
+const testCheckId =
+  '49647F0D748DC3FE26BDACBC57F251AADEFFF391403EC9BF87C97F67E9977FB0'
 // Protobuf objects ======================================================================
 
 // AccountSet protos
