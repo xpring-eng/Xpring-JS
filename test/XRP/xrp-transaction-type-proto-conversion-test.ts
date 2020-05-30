@@ -8,6 +8,7 @@ import {
   testAccountDeleteProto,
   testAccountDeleteProtoNoTag,
   testCheckCancelProto,
+  testInvalidCheckCancelProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {
@@ -106,5 +107,14 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
       checkCancel?.checkId,
       testCheckCancelProto.getCheckId()?.getValue_asB64(),
     )
+  })
+
+  it('Convert CheckCancel protobuf with missing checkId', function (): void {
+    // GIVEN a CheckCancel protocol buffer without a checkId.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const checkCancel = XRPCheckCancel.from(testInvalidCheckCancelProto)
+
+    // THEN the result is undefined.
+    assert.isUndefined(checkCancel)
   })
 })

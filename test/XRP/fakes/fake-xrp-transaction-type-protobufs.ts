@@ -95,10 +95,15 @@ testCheckIdProto.setValue(testCheckId)
 const testCheckCancelProto = new CheckCancel()
 testCheckCancelProto.setCheckId(testCheckIdProto)
 
+// Invalid Protobuf Objects ========================================================================
+
+const testInvalidCheckCancelProto = new CheckCancel()
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
   testAccountDeleteProto,
   testAccountDeleteProtoNoTag,
   testCheckCancelProto,
+  testInvalidCheckCancelProto,
 }
