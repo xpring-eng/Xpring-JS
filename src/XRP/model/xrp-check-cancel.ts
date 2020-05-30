@@ -5,6 +5,7 @@ import { CheckCancel } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
  * Cancels an unredeemed Check, removing it from the ledger without sending any money.
  * The source or the destination of the check can cancel a Check at any time using this transaction type.
  * If the Check has expired, any address can cancel it.
+ *
  * @see: https://xrpl.org/checkcancel.html
  */
 export default class XRPCheckCancel {
