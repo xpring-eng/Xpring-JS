@@ -2,6 +2,7 @@ import { AccountSet } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 /*
  * Represents an AccountSet transaction on the XRP Ledger.
+ * An AccountSet transaction modifies the properties of an account in the XRP Ledger.
  * @see: https://xrpl.org/accountset.html
  */
 export default class XRPAccountSet {

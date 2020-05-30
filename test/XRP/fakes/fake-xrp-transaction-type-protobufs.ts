@@ -24,7 +24,6 @@ const testTickSize = 7
 
 // AccountSet protos
 
-// Establish sub-protos
 const testClearFlagProto = new ClearFlag()
 testClearFlagProto.setValue(testClearFlag)
 
