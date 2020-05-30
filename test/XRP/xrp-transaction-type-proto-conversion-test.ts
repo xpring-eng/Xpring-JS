@@ -5,6 +5,7 @@ import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
   testAccountDeleteProto,
+  testAccountDeleteProtoNoTag,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {
@@ -78,5 +79,18 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
       accountDelete?.destination,
       testAccountDeleteProto.getDestination()?.getValue()?.getAddress(),
     )
+  })
+
+  it('Convert AccountDelete protobuf with no tag to XRPAccountDelete object', function (): void {
+    // GIVEN an AccountDelete protocol buffer with only destination field set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const accountDelete = XRPAccountDelete.from(testAccountDeleteProtoNoTag)
+
+    // THEN the AccountDelete converted as expected.
+    assert.deepEqual(
+      accountDelete?.destination,
+      testAccountDeleteProtoNoTag.getDestination()?.getValue()?.getAddress(),
+    )
+    assert.isUndefined(accountDelete?.destinationTag)
   })
 })

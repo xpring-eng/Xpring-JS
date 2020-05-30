@@ -80,8 +80,12 @@ const testAccountDeleteProto = new AccountDelete()
 testAccountDeleteProto.setDestination(testDestinationProto)
 testAccountDeleteProto.setDestinationTag(testDestinationTagProto)
 
+const testAccountDeleteProtoNoTag = new AccountDelete()
+testAccountDeleteProtoNoTag.setDestination(testDestinationProto)
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
   testAccountDeleteProto,
+  testAccountDeleteProtoNoTag,
 }
