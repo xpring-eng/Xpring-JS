@@ -47,12 +47,12 @@ export default class XRPAccountSet {
    *                  Valid values are 3 to 15 inclusive, or 0 to disable. (Requires the TickSize amendment.)
    */
   private constructor(
-    readonly clearFlag?: number, // uint32
-    readonly domain?: string, // string
-    readonly emailHash?: Uint8Array, // bytes
-    readonly messageKey?: Uint8Array, // bytes
-    readonly setFlag?: number, // uint32
-    readonly transferRate?: number, // uint32
-    readonly tickSize?: number, // uint32 (note says is actually uint8)
+    readonly clearFlag?: number,
+    readonly domain?: string,
+    readonly emailHash?: Uint8Array,
+    readonly messageKey?: Uint8Array,
+    readonly setFlag?: number,
+    readonly transferRate?: number,
+    readonly tickSize?: number,
   ) {}
 }
