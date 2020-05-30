@@ -8,7 +8,7 @@ import XRPLNetwork from '../Common/xrpl-network'
 /** A decorator interface for XRPClients. */
 export interface XRPClientDecorator {
   /**
-   * The network this XRPClient is connecting to.
+   * The XRPL network this XRPClient is connecting to.
    */
   network: XRPLNetwork
 
