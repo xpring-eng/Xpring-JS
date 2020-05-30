@@ -1,13 +1,11 @@
 import { assert } from 'chai'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
 import XRPAccountDelete from '../../src/XRP/model/xrp-account-delete'
-import XRPCheckCancel from '../../src/XRP/model/xrp-check-cancel'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
   testAccountDeleteProto,
   testAccountDeleteProtoNoTag,
-  testCheckCancelProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {
@@ -94,17 +92,5 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
       testAccountDeleteProtoNoTag.getDestination()?.getValue()?.getAddress(),
     )
     assert.isUndefined(accountDelete?.destinationTag)
-  })
-
-  it('Convert CheckCancel protobuf to XRPCheckCancel object', function (): void {
-    // GIVEN a CheckCancel protocol buffer.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCancel = XRPCheckCancel.from(testCheckCancelProto)
-
-    // THEN the CheckCancel converted as expected.
-    assert.equal(
-      checkCancel?.checkId,
-      testCheckCancelProto.getCheckId()?.getValue_asB64(),
-    )
   })
 })
