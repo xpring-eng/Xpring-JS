@@ -295,7 +295,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert EscrowCancel protobuf to XRPEscrowCancel object - missing fields', function (): void {
     // GIVEN an EscrowCancel protocol buffer missing required fields.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowCancel = XRPEscrowCancel.from(testEscrowCancelProto)
+    const escrowCancel = XRPEscrowCancel.from(testInvalidEscrowCancelProto)
 
     // THEN the result is undefined.
     assert.isUndefined(escrowCancel)
