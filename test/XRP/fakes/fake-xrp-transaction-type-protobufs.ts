@@ -5,6 +5,7 @@ import {
   CheckCash,
   CheckCreate,
   DepositPreauth,
+  EscrowCancel,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import {
   ClearFlag,
@@ -24,6 +25,8 @@ import {
   InvoiceID,
   Authorize,
   Unauthorize,
+  Owner,
+  OfferSequence,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
@@ -54,6 +57,9 @@ const testCheckId =
 const testInvoiceId =
   '6F1DFD1D0FE8A32E40E1F2C05CF1C15545BAB56B617F9C6C2D63A6B704BEF59B'
 const testExpiration = 570113521
+
+// EscrowCancel values
+const testOfferSequence = 23
 
 // Protobuf objects ======================================================================
 
@@ -151,7 +157,7 @@ const testCheckCreateProtoMandatoryFields = new CheckCreate()
 testCheckCreateProtoMandatoryFields.setDestination(testDestinationProto)
 testCheckCreateProtoMandatoryFields.setSendMax(testSendMaxProto)
 
-// DepositPreauth
+// DepositPreauth protos
 const testAuthorizeProto = new Authorize()
 testAuthorizeProto.setValue(testAccountAddressProto)
 
@@ -163,6 +169,17 @@ testDepositPreauthProtoSetAuthorize.setAuthorize(testAuthorizeProto)
 
 const testDepositPreauthProtoSetUnauthorize = new DepositPreauth()
 testDepositPreauthProtoSetUnauthorize.setUnauthorize(testUnauthorizeProto)
+
+// EscrowCancel proto
+const testOwnerProto = new Owner()
+testOwnerProto.setValue(testAccountAddressProto)
+
+const testOfferSequenceProto = new OfferSequence()
+testOfferSequenceProto.setValue(testOfferSequence)
+
+const testEscrowCancelProto = new EscrowCancel()
+testEscrowCancelProto.setOwner(testOwnerProto)
+testEscrowCancelProto.setOfferSequence(testOfferSequenceProto)
 
 // Invalid Protobuf Objects ========================================================================
 
@@ -177,6 +194,10 @@ testInvalidCheckCashProto.setAmount(testAmountProto)
 const testInvalidCheckCreateProto = new CheckCreate()
 testInvalidCheckCreateProto.setSendMax(testSendMaxProto)
 
+// Invalid EscrowCancel proto (missing owner)
+const testInvalidEscrowCancelProto = new EscrowCancel()
+testInvalidEscrowCancelProto.setOfferSequence(testOfferSequenceProto)
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -189,7 +210,9 @@ export {
   testCheckCreateProtoMandatoryFields,
   testDepositPreauthProtoSetAuthorize,
   testDepositPreauthProtoSetUnauthorize,
+  testEscrowCancelProto,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
+  testInvalidEscrowCancelProto,
 }
