@@ -3,6 +3,7 @@ import nock from 'nock'
 import { PayIDUtils, Utils } from 'xpring-common-js'
 import XRPLNetwork from '../../src/Common/xrpl-network'
 import XRPPayIDClient from '../../src/PayID/xrp-pay-id-client'
+import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
 
 describe('XRP Pay ID Client', function (): void {
   afterEach(function () {
@@ -105,5 +106,46 @@ describe('XRP Pay ID Client', function (): void {
 
     // THEN the address is the given input in X-Address format.
     assert.equal(xrpAddress, xAddress)
+  })
+
+  it('xrpAddressForPayID - successful response - multiple classic addresses returned', function (done) {
+    // GIVEN a PayID client, valid PayID and mocked networking to return multiple addresses for the PayID.
+    const payID = 'georgewashington$xpring.money'
+    const payIDClient = new XRPPayIDClient(XRPLNetwork.Test)
+
+    const classicAddress = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
+
+    const payIDComponents = PayIDUtils.parsePayID(payID)
+    if (!payIDComponents) {
+      throw new Error('Test precondition failed: Could not generate a Pay ID')
+    }
+    nock('https://xpring.money')
+      .get('/georgewashington')
+      .reply(200, {
+        addresses: [
+          {
+            addressDetailsType: 'CryptoAddressDetails',
+            addressDetails: {
+              address: classicAddress,
+            },
+          },
+          {
+            addressDetailsType: 'CryptoAddressDetails',
+            addressDetails: {
+              address: classicAddress,
+            },
+          },
+        ],
+      })
+
+    // WHEN an XRP address is requested
+    payIDClient.xrpAddressForPayID(payID).catch((error) => {
+      // THEN an unexpected response is thrown with the details of the error.
+      assert.equal(
+        (error as PayIDError).errorType,
+        PayIDErrorType.UnexpectedResponse,
+      )
+      done()
+    })
   })
 })

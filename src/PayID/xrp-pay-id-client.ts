@@ -33,7 +33,18 @@ export default class XRPPayIDClient extends PayIDClient
       return address
     }
     const isTest = this.network !== XRPLNetwork.Main
-    const encodedXAddress = Utils.encodeXAddress(address, result.tag, isTest)
+
+    const tag = result.tag ? Number(result.tag) : undefined
+
+    // Ensure if there was a tag attached that it could be parsed to a number.
+    if (result.tag && tag === undefined) {
+      throw new PayIDError(
+        PayIDErrorType.UnexpectedResponse,
+        'The returned tag was in an unexpected format',
+      )
+    }
+
+    const encodedXAddress = Utils.encodeXAddress(address, tag, isTest)
     if (!encodedXAddress) {
       throw new PayIDError(
         PayIDErrorType.UnexpectedResponse,
