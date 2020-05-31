@@ -27,7 +27,7 @@ export default class XRPDepositPreauth {
   }
 
   /**
-   *
+   * Note: authorize and unauthorize are mutually exclusive fields: one but not both should be set.
    * @param authorize (Optional) The XRP Ledger address of the sender to preauthorize.
    * @param unauthorize (Optional) The XRP Ledger address of a sender whose preauthorization should be revoked.
    */
