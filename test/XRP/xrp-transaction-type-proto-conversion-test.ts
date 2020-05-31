@@ -22,6 +22,7 @@ import {
   testDepositPreauthProtoSetAuthorize,
   testDepositPreauthProtoSetUnauthorize,
   testEscrowCancelProto,
+  testInvalidEscrowCancelProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import { XRPCurrencyAmount } from '../../src/XRP/model'
 
