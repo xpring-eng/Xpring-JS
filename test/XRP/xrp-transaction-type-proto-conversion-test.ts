@@ -5,6 +5,7 @@ import XRPCheckCancel from '../../src/XRP/model/xrp-check-cancel'
 import XRPCheckCash from '../../src/XRP/model/xrp-check-cash'
 import XRPCheckCreate from '../../src/XRP/model/xrp-check-create'
 import XRPDepositPreauth from '../../src/XRP/model/xrp-deposit-preauth'
+import XRPEscrowCancel from '../../src/XRP/model/xrp-escrow-cancel'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -20,6 +21,7 @@ import {
   testInvalidCheckCreateProto,
   testDepositPreauthProtoSetAuthorize,
   testDepositPreauthProtoSetUnauthorize,
+  testEscrowCancelProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import { XRPCurrencyAmount } from '../../src/XRP/model'
 
@@ -272,5 +274,30 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
         ?.getValue()
         ?.getAddress(),
     )
+  })
+
+  it('Convert EscrowCancel protobuf to XRPEscrowCancel object - valid fields', function (): void {
+    // GIVEN an EscrowCancel protocol buffer with all fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const escrowCancel = XRPEscrowCancel.from(testEscrowCancelProto)
+
+    // THEN the EscrowCancel converted as expected.
+    assert.equal(
+      escrowCancel?.owner,
+      testEscrowCancelProto.getOwner()?.getValue()?.getAddress(),
+    )
+    assert.equal(
+      escrowCancel?.offerSequence,
+      testEscrowCancelProto.getOfferSequence()?.getValue(),
+    )
+  })
+
+  it('Convert EscrowCancel protobuf to XRPEscrowCancel object - missing fields', function (): void {
+    // GIVEN an EscrowCancel protocol buffer missing required fields.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const escrowCancel = XRPEscrowCancel.from(testEscrowCancelProto)
+
+    // THEN the result is undefined.
+    assert.isUndefined(escrowCancel)
   })
 })
