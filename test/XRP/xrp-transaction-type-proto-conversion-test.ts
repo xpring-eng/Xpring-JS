@@ -4,6 +4,7 @@ import XRPAccountDelete from '../../src/XRP/model/xrp-account-delete'
 import XRPCheckCancel from '../../src/XRP/model/xrp-check-cancel'
 import XRPCheckCash from '../../src/XRP/model/xrp-check-cash'
 import XRPCheckCreate from '../../src/XRP/model/xrp-check-create'
+import XRPDepositPreauth from '../../src/XRP/model/xrp-deposit-preauth'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -17,6 +18,8 @@ import {
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
+  testDepositPreauthProtoSetAuthorize,
+  testDepositPreauthProtoSetUnauthorize,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import { XRPCurrencyAmount } from '../../src/XRP/model'
 
@@ -235,5 +238,39 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the result is undefined.
     assert.isUndefined(checkCreate)
+  })
+
+  it('Convert DepositPreauth protobuf to XRPDepositPreauth object - authorize set', function (): void {
+    // GIVEN a DespoitPreauth protocol buffer with authorize field set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const depositPreauth = XRPDepositPreauth.from(
+      testDepositPreauthProtoSetAuthorize,
+    )
+
+    // THEN the DepositPreauth converted as expected.
+    assert.equal(
+      depositPreauth?.authorize,
+      testDepositPreauthProtoSetAuthorize
+        .getAuthorize()
+        ?.getValue()
+        ?.getAddress(),
+    )
+  })
+
+  it('Convert DepositPreauth protobuf to XRPDepositPreauth object - unauthorize set', function (): void {
+    // GIVEN a DespoitPreauth protocol buffer with unauthorize field set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const depositPreauth = XRPDepositPreauth.from(
+      testDepositPreauthProtoSetUnauthorize,
+    )
+
+    // THEN the DepositPreauth converted as expected.
+    assert.equal(
+      depositPreauth?.unauthorize,
+      testDepositPreauthProtoSetUnauthorize
+        .getUnauthorize()
+        ?.getValue()
+        ?.getAddress(),
+    )
   })
 })
