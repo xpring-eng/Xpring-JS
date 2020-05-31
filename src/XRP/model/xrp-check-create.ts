@@ -3,8 +3,8 @@ import { XRPCurrencyAmount } from '.'
 
 /*
  * Represents a CheckCreate transaction on the XRP Ledger.
- * Create a Check object in the ledger, which is a deferred payment that can be cashed by its intended destination.
- * The sender of this transaction is the sender of the Check.
+ * A CheckCreate transaction creates a Check object in the ledger, which is a deferred payment that can be cashed
+ * by its intended destination.  The sender of this transaction is the sender of the Check.
  *
  * @see: https://xrpl.org/checkcreate.html
  */
