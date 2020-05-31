@@ -2,14 +2,19 @@ import { assert } from 'chai'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
 import XRPAccountDelete from '../../src/XRP/model/xrp-account-delete'
 import XRPCheckCancel from '../../src/XRP/model/xrp-check-cancel'
+import XRPCheckCash from '../../src/XRP/model/xrp-check-cash'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
   testAccountDeleteProto,
   testAccountDeleteProtoNoTag,
   testCheckCancelProto,
+  testCheckCashProtoWithAmount,
+  testCheckCashProtoWithDeliverMin,
   testInvalidCheckCancelProto,
+  testInvalidCheckCashProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
+import { XRPCurrencyAmount } from '../../src/XRP/model'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {
   // AccountSet
@@ -116,5 +121,52 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the result is undefined.
     assert.isUndefined(checkCancel)
+  })
+
+  it('Convert CheckCash protobuf to XRPCheckCash object - amount field set', function (): void {
+    // GIVEN a valid CheckCash protocol buffer with amount field set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const checkCash = XRPCheckCash.from(testCheckCashProtoWithAmount)
+
+    // THEN the CheckCash converted as expected.
+    assert.equal(
+      checkCash?.checkId,
+      testCheckCashProtoWithAmount.getCheckId()?.getValue_asB64(),
+    )
+    assert.deepEqual(
+      checkCash?.amount,
+      XRPCurrencyAmount.from(
+        testCheckCashProtoWithAmount.getAmount()!.getValue()!,
+      ),
+    )
+    assert.isUndefined(checkCash?.deliverMin)
+  })
+
+  it('Convert CheckCash protobuf to XRPCheckCash object - deliverMin field set', function (): void {
+    // GIVEN a valid CheckCash protocol buffer with deliverMin field set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const checkCash = XRPCheckCash.from(testCheckCashProtoWithDeliverMin)
+
+    // THEN the CheckCash converted as expected.
+    assert.equal(
+      checkCash?.checkId,
+      testCheckCashProtoWithDeliverMin.getCheckId()?.getValue_asB64(),
+    )
+    assert.isUndefined(checkCash?.amount)
+    assert.deepEqual(
+      checkCash?.deliverMin,
+      XRPCurrencyAmount.from(
+        testCheckCashProtoWithDeliverMin.getDeliverMin()!.getValue()!,
+      ),
+    )
+  })
+
+  it('Convert invalid CheckCash protobuf to XRPCheckCash object - missing checkId ', function (): void {
+    // GIVEN an invalid CheckCash protocol buffer missing the checkId field.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const checkCash = XRPCheckCash.from(testInvalidCheckCashProto)
+
+    // THEN the result is undefined.
+    assert.isUndefined(checkCash)
   })
 })
