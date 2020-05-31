@@ -87,6 +87,8 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(accountSet?.tickSize)
   })
 
+  // AccountDelete
+
   it('Convert AccountDelete protobuf with all fields to XRPAccountDelete object', function (): void {
     // GIVEN an AccountDelete protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
@@ -116,6 +118,8 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(accountDelete?.destinationTag)
   })
 
+  // CheckCancel
+
   it('Convert CheckCancel protobuf to XRPCheckCancel object', function (): void {
     // GIVEN a CheckCancel protocol buffer.
     // WHEN the protocol buffer is converted to a native Typescript type.
@@ -136,6 +140,8 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // THEN the result is undefined.
     assert.isUndefined(checkCancel)
   })
+
+  // CheckCash
 
   it('Convert CheckCash protobuf to XRPCheckCash object - amount field set', function (): void {
     // GIVEN a valid CheckCash protocol buffer with amount field set.
@@ -183,6 +189,8 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // THEN the result is undefined.
     assert.isUndefined(checkCash)
   })
+
+  // CheckCreate
 
   it('Convert CheckCreate protobuf to XRPCheckCreate object - all fields', function (): void {
     // GIVEN a CheckCreate protocol buffer with all fields set.
@@ -247,6 +255,8 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(checkCreate)
   })
 
+  // DepositPreauth
+
   it('Convert DepositPreauth protobuf to XRPDepositPreauth object - authorize set', function (): void {
     // GIVEN a DespoitPreauth protocol buffer with authorize field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
@@ -281,6 +291,8 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
+  // Escrow Cancel
+
   it('Convert EscrowCancel protobuf to XRPEscrowCancel object - valid fields', function (): void {
     // GIVEN an EscrowCancel protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
@@ -305,6 +317,8 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // THEN the result is undefined.
     assert.isUndefined(escrowCancel)
   })
+
+  // EscrowCreate
 
   it('Convert EscrowCreate protobuf to XRPEscrowCreate object - all fields', function (): void {
     // GIVEN an EscrowCreate protocol buffer with all fields set.
