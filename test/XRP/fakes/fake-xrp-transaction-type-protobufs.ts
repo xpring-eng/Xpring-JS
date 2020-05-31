@@ -3,6 +3,7 @@ import {
   AccountDelete,
   CheckCancel,
   CheckCash,
+  CheckCreate,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import {
   ClearFlag,
@@ -17,6 +18,9 @@ import {
   CheckID,
   Amount,
   DeliverMin,
+  Expiration,
+  SendMax,
+  InvoiceID,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
@@ -42,6 +46,11 @@ const testDestinationTag = 13
 // CheckCancel, CheckCash values
 const testCheckId =
   '49647F0D748DC3FE26BDACBC57F251AADEFFF391403EC9BF87C97F67E9977FB0'
+
+// CheckCreate values
+const testInvoiceId =
+  '6F1DFD1D0FE8A32E40E1F2C05CF1C15545BAB56B617F9C6C2D63A6B704BEF59B'
+const testExpiration = 570113521
 
 // Protobuf objects ======================================================================
 
@@ -118,6 +127,27 @@ const testCheckCashProtoWithDeliverMin = new CheckCash()
 testCheckCashProtoWithDeliverMin.setCheckId(testCheckIdProto)
 testCheckCashProtoWithDeliverMin.setDeliverMin(testDeliverMinProto)
 
+// CheckCreate protos
+const testSendMaxProto = new SendMax()
+testSendMaxProto.setValue(testCurrencyAmountProtoDrops)
+
+const testExpirationProto = new Expiration()
+testExpirationProto.setValue(testExpiration)
+
+const testInvoiceIdProto = new InvoiceID()
+testInvoiceIdProto.setValue(testInvoiceId)
+
+const testCheckCreateProtoAllFields = new CheckCreate()
+testCheckCreateProtoAllFields.setDestination(testDestinationProto)
+testCheckCreateProtoAllFields.setSendMax(testSendMaxProto)
+testCheckCreateProtoAllFields.setDestinationTag(testDestinationTagProto)
+testCheckCreateProtoAllFields.setExpiration(testExpirationProto)
+testCheckCreateProtoAllFields.setInvoiceId(testInvoiceIdProto)
+
+const testCheckCreateProtoMandatoryFields = new CheckCreate()
+testCheckCreateProtoMandatoryFields.setDestination(testDestinationProto)
+testCheckCreateProtoMandatoryFields.setSendMax(testSendMaxProto)
+
 // Invalid Protobuf Objects ========================================================================
 
 // Invalid CheckCancel proto (missing checkId)
@@ -127,6 +157,10 @@ const testInvalidCheckCancelProto = new CheckCancel()
 const testInvalidCheckCashProto = new CheckCash()
 testInvalidCheckCashProto.setAmount(testAmountProto)
 
+// Invalid CheckCreate proto (missing destination)
+const testInvalidCheckCreateProto = new CheckCreate()
+testInvalidCheckCreateProto.setSendMax(testSendMaxProto)
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -135,6 +169,9 @@ export {
   testCheckCancelProto,
   testCheckCashProtoWithAmount,
   testCheckCashProtoWithDeliverMin,
+  testCheckCreateProtoAllFields,
+  testCheckCreateProtoMandatoryFields,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
+  testInvalidCheckCreateProto,
 }
