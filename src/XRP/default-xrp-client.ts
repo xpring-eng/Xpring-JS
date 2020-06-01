@@ -2,7 +2,6 @@
 import { Signer, Utils, Wallet } from 'xpring-common-js'
 import bigInt, { BigInteger } from 'big-integer'
 import { StatusCode as grpcStatusCode } from 'grpc-web'
-import { Memo } from 'xpring-common-js/build/generated/org/xrpl/rpc/v1/transaction_pb'
 import {
   CurrencyAmount,
   XRPDropsAmount,
@@ -19,6 +18,7 @@ import {
   MemoType,
 } from './Generated/node/org/xrpl/rpc/v1/common_pb'
 import {
+  Memo,
   Payment,
   Transaction,
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -34,7 +34,7 @@ import { XRPNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XRPError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
-import XrpTransactionMemo from './model/xrp-transaction-memo'
+import { XRPMemo } from './model'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -147,7 +147,7 @@ class DefaultXRPClient implements XRPClientDecorator {
     drops: BigInteger | number | string,
     destinationAddress: string,
     sender: Wallet,
-    memos?: XrpTransactionMemo[],
+    memos?: XRPMemo[],
   ): Promise<string> {
     if (!Utils.isValidXAddress(destinationAddress)) {
       throw XRPError.xAddressRequired
@@ -209,15 +209,22 @@ class DefaultXRPClient implements XRPClientDecorator {
       memos
         .map((memo) => {
           const xrpMemo = new Memo()
-          const memoData = new MemoData()
-          memoData.setValue(memo.data)
-          xrpMemo.setMemoData(memoData)
-          const memoFormat = new MemoFormat()
-          memoFormat.setValue(memo.format || '')
-          xrpMemo.setMemoFormat(memoFormat)
-          const memoType = new MemoType()
-          memoType.setValue(memo.type || '')
-          xrpMemo.setMemoType(memoType)
+          if (memo.data) {
+            const memoData = new MemoData()
+            memoData.setValue(memo.data)
+            xrpMemo.setMemoData(memoData)
+          }
+          if (memo.format) {
+            const memoFormat = new MemoFormat()
+            memoFormat.setValue(memo.format)
+            xrpMemo.setMemoFormat(memoFormat)
+          }
+          if (memo.type) {
+            const memoType = new MemoType()
+            memoType.setValue(memo.type || '')
+            xrpMemo.setMemoType(memoType)
+          }
+
           return xrpMemo
         })
         .forEach((memo) => transaction.addMemos(memo))

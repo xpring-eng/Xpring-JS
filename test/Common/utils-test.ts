@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 import { Utils } from '../../src/index'
 import 'mocha'
+import { stringToHex, stringToUint8Array } from '../../src/Common/utils'
 
 describe('utils', function (): void {
   it('isValidAddress() - Valid Classic Address', function (): void {
@@ -301,5 +302,46 @@ describe('utils', function (): void {
 
     // THEN the hash is undefined.
     assert.isUndefined(transactionHash)
+  })
+
+  it('stringToHex() - converts string correctly', function (): void {
+    // GIVEN the best line delivered on film
+    // WHEN that line is converted to hex
+    // THEN the hex value is correct
+    assert.equal(stringToHex('oh, hi mark'), '6f682c206869206d61726b')
+  })
+
+  it('stringToHex() - empty string handled correctly', function (): void {
+    // GIVEN an empty string
+    // WHEN that string is converted to hex
+    // THEN the hex value is also empty
+    assert.equal(stringToHex(''), '')
+  })
+
+  it('stringToUint8Array() - handles empty values correctly', function (): void {
+    // GIVEN an empty
+    // WHEN that line is converted to a Uint8Array
+    // THEN the value is undefined
+    assert.equal(stringToUint8Array(), undefined)
+  })
+
+  it('stringToUint8Array() - handles non-hex values correctly', function (): void {
+    // GIVEN the best line delivered on film
+    // WHEN that line is converted to a Uint8Array
+    // THEN the value is correct
+    assert.deepEqual(
+      stringToUint8Array('oh, hi mark', false),
+      Uint8Array.of(111, 104, 44, 32, 104, 105, 32, 109, 97, 114, 107),
+    )
+  })
+
+  it('stringToUint8Array() - handles hex values correctly', function (): void {
+    // GIVEN the hex version of the best line delivered on film
+    // WHEN that line is converted to a Uint8Array
+    // THEN the value is correct
+    assert.deepEqual(
+      stringToUint8Array('6f682c206869206d61726b', true),
+      Uint8Array.of(111, 104, 44, 32, 104, 105, 32, 109, 97, 114, 107),
+    )
   })
 })
