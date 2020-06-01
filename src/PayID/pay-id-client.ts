@@ -38,8 +38,13 @@ export default class PayIDClient {
    * TODO(keefertaylor): Link a canonical list at payid.org when available.
    *
    * @param network The network that addresses will be resolved on.
+   * @param useHttps Whether to use HTTPS when making PayID requests. Most users should set this to 'true' to avoid
+   *                 Man-in-the-Middle attacks. Exposed as an option for testing purposes. Defaults to true.
    */
-  constructor(public readonly network: string) {}
+  constructor(
+    public readonly network: string,
+    private readonly useHttps: boolean = true,
+  ) {}
 
   /**
    * Retrieve the address associated with a PayID.
@@ -49,7 +54,9 @@ export default class PayIDClient {
    */
   async addressForPayID(payID: string): Promise<CryptoAddressDetails> {
     const payIDComponents = PayIDClient.parsePayID(payID)
-    const basePath = `https://${payIDComponents.host}`
+    const basePath = this.useHttps
+      ? `https://${payIDComponents.host}`
+      : `http://${payIDComponents.host}`
 
     // Swagger API adds the leading '/' in path automatically because it is part of the endpoint.
     const path = payIDComponents.path.substring(1)
@@ -109,7 +116,9 @@ export default class PayIDClient {
     nonce: string,
   ): Promise<SignatureWrapperInvoice> {
     const payIDComponents = PayIDClient.parsePayID(payID)
-    const basePath = `https://${payIDComponents.host}${payIDComponents.path}`
+    const basePath = this.useHttps
+      ? `https://${payIDComponents.host}${payIDComponents.path}`
+      : `http://${payIDComponents.host}${payIDComponents.path}`
 
     const options = PayIDClient.makeOptionsWithAcceptTypes(
       `application/${this.network}+json`,
@@ -210,7 +219,9 @@ export default class PayIDClient {
     }
 
     const payIDComponents = PayIDClient.parsePayID(payID)
-    const basePath = `https://${payIDComponents.host}${payIDComponents.path}`
+    const basePath = this.useHttps
+      ? `https://${payIDComponents.host}${payIDComponents.path}`
+      : `http://${payIDComponents.host}${payIDComponents.path}`
 
     const options = PayIDClient.makeOptionsWithAcceptTypes(
       `application/${this.network}+json`,
@@ -256,7 +267,9 @@ export default class PayIDClient {
       transactionConfirmation,
     }
 
-    const basePath = `https://${payIDComponents.host}${payIDComponents.path}`
+    const basePath = this.useHttps
+      ? `https://${payIDComponents.host}${payIDComponents.path}`
+      : `http://${payIDComponents.host}${payIDComponents.path}`
     const api = new DefaultApi(undefined, basePath)
 
     try {
