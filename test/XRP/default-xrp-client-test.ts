@@ -5,7 +5,7 @@ import bigInt from 'big-integer'
 import { Utils, Wallet } from 'xpring-common-js'
 import { StatusCode as grpcStatusCode } from 'grpc-web'
 import FakeGRPCError from './fakes/fake-grpc-error'
-import XRPTestUtils from './helpers/xrp-test-utils'
+import XRPTestUtils, { iForgotToPickUpCarlMemo } from './helpers/xrp-test-utils'
 import DefaultXRPClient from '../../src/XRP/default-xrp-client'
 import {
   FakeXRPNetworkClient,
@@ -272,6 +272,31 @@ describe('Default XRP Client', function (): void {
       assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
       done()
     })
+  })
+
+  it('Send XRP Transaction - success with memo and BigInteger', async function () {
+    // GIVEN an XRPClient, a wallet, and a BigInteger denomonated amount.
+    const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
+    const { wallet } = Wallet.generateRandomWallet()!
+    const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
+    const amount = bigInt('10')
+    const memos = [iForgotToPickUpCarlMemo]
+
+    // WHEN the account makes a transaction.
+    const transactionHash = await xrpClient.send(
+      amount,
+      destinationAddress,
+      wallet,
+      memos,
+    )
+
+    // THEN the transaction hash exists and is the expected hash
+    const expectedTransactionHash = Utils.toHex(
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
+    )
+
+    assert.exists(transactionHash)
+    assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
   it('Send XRP Transaction - success with BigInteger', async function () {

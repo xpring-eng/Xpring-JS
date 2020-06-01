@@ -4,6 +4,7 @@ import bigInt from 'big-integer'
 import XRPClient from '../../src/XRP/xrp-client'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { XRPLNetwork } from '../../src'
+import { iForgotToPickUpCarlMemo } from './helpers/xrp-test-utils'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -59,11 +60,37 @@ describe('XRPClient Integration Tests', function (): void {
     assert.exists(result)
   })
 
+  it('Send XRP with memo - Web Shim', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const result = await xrpWebClient.send(amount, recipientAddress, wallet, [
+      iForgotToPickUpCarlMemo,
+    ])
+    assert.exists(result)
+
+    const transaction = await xrpClient.getPayment(result)
+
+    assert.deepEqual(transaction?.memos, [iForgotToPickUpCarlMemo])
+  })
+
   it('Send XRP - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const result = await xrpClient.send(amount, recipientAddress, wallet)
     assert.exists(result)
+  })
+
+  it('Send XRP with memo - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const result = await xrpClient.send(amount, recipientAddress, wallet, [
+      iForgotToPickUpCarlMemo,
+    ])
+    assert.exists(result)
+
+    const transaction = await xrpClient.getPayment(result)
+
+    assert.deepEqual(transaction?.memos, [iForgotToPickUpCarlMemo])
   })
 
   it('Check if Account Exists - true - Web Shim', async function (): Promise<

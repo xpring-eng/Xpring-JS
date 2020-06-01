@@ -7,6 +7,7 @@ import DefaultXRPClient from './default-xrp-client'
 import XRPClientInterface from './xrp-client-interface'
 import XRPTransaction from './model/xrp-transaction'
 import XRPLNetwork from '../Common/xrpl-network'
+import { XRPMemo } from './model'
 
 /**
  * XRPClient is a client which interacts with the Xpring platform.
@@ -64,17 +65,19 @@ class XRPClient implements XRPClientInterface {
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
-   * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
+   * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
+   * @param memos An optional list of memos to add to the transaction.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
     amount: BigInteger | number | string,
     destination: string,
     sender: Wallet,
+    memos?: XRPMemo[],
   ): Promise<string> {
-    return this.decoratedClient.send(amount, destination, sender)
+    return this.decoratedClient.send(amount, destination, sender, memos)
   }
 
   /**

@@ -1,5 +1,6 @@
 import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import XRPTransaction from '../../../src/XRP/model/xrp-transaction'
+import XRPMemo from '../../../src/XRP/model/xrp-memo'
 
 /**
  * Convenience class for utility functions used in test cases for XRPClient infrastructure.
@@ -25,3 +26,9 @@ export default class XRPTestUtils {
     return paymentXRPTransactions
   }
 }
+
+export const iForgotToPickUpCarlMemo = XRPMemo.fromMemoFields(
+  { value: 'I forgot to pick up Carl...' },
+  { value: 'jaypeg' },
+  { value: 'meme' },
+)

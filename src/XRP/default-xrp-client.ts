@@ -141,6 +141,7 @@ class DefaultXRPClient implements XRPClientDecorator {
    * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destinationAddress A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
+   * @param memos An optional list of memos to add to the transaction.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(

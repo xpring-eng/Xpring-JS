@@ -6,6 +6,7 @@ import TransactionStatus from './transaction-status'
 import XRPTransaction from './model/xrp-transaction'
 import { XRPError } from '..'
 import { XRPErrorType } from './xrp-error'
+import XRPMemo from './model/xrp-memo'
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
@@ -31,6 +32,7 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
     amount: string | number | BigInteger,
     destination: string,
     sender: Wallet,
+    memos?: XRPMemo[],
   ): Promise<string> {
     const ledgerCloseTimeMs = 4 * 1000
 
@@ -39,6 +41,7 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
       amount,
       destination,
       sender,
+      memos,
     )
     await sleep(ledgerCloseTimeMs)
 
