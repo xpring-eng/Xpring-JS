@@ -306,6 +306,7 @@ export default class PayIDClient {
   private static makeOptionsWithAcceptTypes(acceptType: string): object {
     const headers = {
       Accept: acceptType,
+      'PayID-Version': 1.0,
     }
 
     const options = {
