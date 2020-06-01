@@ -17,12 +17,23 @@ export default class XRPEscrowFinish {
   public static from(escrowFinish: EscrowFinish): XRPEscrowFinish | undefined {
     const owner = escrowFinish.getOwner()?.getValue()?.getAddress()
     const offerSequence = escrowFinish.getOfferSequence()?.getValue()
+    // owner and offerSequence are required fields
+    if (!owner || !offerSequence) {
+      return undefined
+    }
     const condition = escrowFinish.getCondition()?.getValue_asB64()
     const fulfillment = escrowFinish.getFulfillment()?.getValue_asB64()
 
     return new XRPEscrowFinish(owner, offerSequence, condition, fulfillment)
   }
 
+  /**
+   *
+   * @param owner Address of the source account that funded the held payment.
+   * @param offerSequence Transaction sequence of EscrowCreate transaction that created the held payment to finish.
+   * @param condition (Optional) Hex value matching the previously-supplied PREIMAGE-SHA-256 crypto-condition  of the held payment.
+   * @param fulfillment (Optional) Hex value of the PREIMAGE-SHA-256 crypto-condition fulfillment  matching the held payment's Condition.
+   */
   private constructor(
     readonly owner?: string,
     readonly offerSequence?: number,
