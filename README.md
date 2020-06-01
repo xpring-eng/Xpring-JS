@@ -206,7 +206,7 @@ const { XRPClient, XRPLNetwork } = require("xpring-js");
 const remoteURL = "alpha.test.xrp.xpring.io:50051"; // Testnet URL, use alpha.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XRPClient(remoteURL, XRPLNetwork.Test);
 const transactionHash = "9FC7D277C1C8ED9CE133CC17AEA9978E71FC644CE6F5F0C8E26F1C635D97AF4A";
-const transaction = await xrpClient.getPayment(transactionHash);
+const payment = await xrpClient.getPayment(transactionHash);
 ```
 **Note:** The example transactionHash may lead to a "Transaction not found." error because the Testnet is regularly reset, or the accessed node may only maintain one
 month of history.  Recent transaction hashes can be found in the XRP Ledger Explorer: https://livenet.xrpl.org/
