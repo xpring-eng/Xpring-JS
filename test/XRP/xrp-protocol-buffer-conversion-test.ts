@@ -25,6 +25,8 @@ import {
   testLastLedgerSequence,
   testTransactionHash,
   expectedTimestamp,
+  testIsValidated,
+  testLedgerIndex,
   testCurrencyProto,
   testPathElementProto,
   testEmptyPathElementProto,
@@ -367,6 +369,8 @@ describe('Protocol Buffer Conversion', function (): void {
         ?.getIssuedCurrencyAmount()
         ?.getValue(),
     )
+    assert.equal(transaction?.validated, testIsValidated)
+    assert.equal(transaction?.ledgerIndex, testLedgerIndex)
   })
 
   it('Convert PAYMENT Transaction with only mandatory common fields set', function (): void {

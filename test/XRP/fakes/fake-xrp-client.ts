@@ -11,10 +11,11 @@ class FakeXRPClient implements XRPClientDecorator {
     public getBalanceValue: Result<BigInteger>,
     public getPaymentStatusValue: Result<TransactionStatus>,
     public sendValue: Result<string>,
-    public getLastValidatedLedgerSequenceValue: Result<number>,
+    public getLatestValidatedLedgerSequenceValue: Result<number>,
     public getRawTransactionStatusValue: Result<RawTransactionStatus>,
     public accountExistsValue: Result<boolean>,
     public paymentHistoryValue: Result<Array<XRPTransaction>>,
+    public getPaymentValue: Result<XRPTransaction>,
     public readonly network: XRPLNetwork = XRPLNetwork.Test,
   ) {}
 
@@ -34,8 +35,10 @@ class FakeXRPClient implements XRPClientDecorator {
     return FakeXRPClient.returnOrThrow(this.sendValue)
   }
 
-  async getLastValidatedLedgerSequence(): Promise<number> {
-    return FakeXRPClient.returnOrThrow(this.getLastValidatedLedgerSequenceValue)
+  async getLatestValidatedLedgerSequence(_address: string): Promise<number> {
+    return FakeXRPClient.returnOrThrow(
+      this.getLatestValidatedLedgerSequenceValue,
+    )
   }
 
   async getRawTransactionStatus(
@@ -50,6 +53,12 @@ class FakeXRPClient implements XRPClientDecorator {
 
   async paymentHistory(_address: string): Promise<Array<XRPTransaction>> {
     return FakeXRPClient.returnOrThrow(this.paymentHistoryValue)
+  }
+
+  async getPayment(
+    _transactionHash: string,
+  ): Promise<XRPTransaction | undefined> {
+    return FakeXRPClient.returnOrThrow(this.getPaymentValue)
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
