@@ -10,6 +10,12 @@ import XRPLNetwork from '../../Common/xrpl-network'
  */
 export default class XRPPayment {
   /**
+   * The address and (optional) destination tag of the account receiving the payment, encoded in X-address format.
+   * See https://xrpaddress.info/.
+   */
+  destinationXAddress: string | undefined
+
+  /**
    * Constructs an XRPPayment from a Payment.
    *
    * @param payment a Payment (protobuf object) whose field values will be used
@@ -36,12 +42,6 @@ export default class XRPPayment {
 
     const destinationTag = payment.getDestinationTag()?.getValue()
 
-    const destinationXAddress = Utils.encodeXAddress(
-      destination,
-      destinationTag,
-      xrplNetwork === XRPLNetwork.Test,
-    )
-
     // If the deliverMin field is set, it must be able to be transformed into a XRPCurrencyAmount.
     const paymentDeliverMinValue = payment.getDeliverMin()?.getValue()
     const deliverMin =
@@ -66,10 +66,10 @@ export default class XRPPayment {
     }
 
     return new XRPPayment(
+      xrplNetwork,
       amount,
       destination,
       destinationTag,
-      destinationXAddress,
       deliverMin,
       invoiceID,
       paths,
@@ -79,24 +79,31 @@ export default class XRPPayment {
 
   /**
    *
+   * @param xrplNetwork The XRPL Network from which this object was retrieved.
    * @param amount The amount of currency to deliver.
    * @deprecated @param destination The unique address of the account receiving the payment.
    * @deprecated @param destinationTag (Optional) Arbitrary tag that identifies a hosted recipient to pay, or the reason for the payment.
-   * @param destinationXAddress The address and (optional) destination tag of the account receiving the payment,
-   *                             encoded in X-address format. See https://xrpaddress.info/.
    * @param deliverMin (Optional) Minimum amount of destination currency this transaction should deliver.
    * @param invoiceID (Optional) Arbitrary 256-bit hash representing a specific reason or identifier for this payment.
    * @param paths Array of payment paths to be used for this transaction.  Must be omitted for XRP-to-XRP transactions.
    * @param sendMax (Optional) Highest amount of source currency this transaction is allowed to cost.
    */
   private constructor(
+    readonly xrplNetwork: XRPLNetwork,
     readonly amount?: XRPCurrencyAmount,
     readonly destination?: string,
     readonly destinationTag?: number,
-    readonly destinationXAddress?: string,
     readonly deliverMin?: XRPCurrencyAmount,
     readonly invoiceID?: Uint8Array,
     readonly paths?: Array<XRPPath | undefined>,
     readonly sendMax?: XRPCurrencyAmount,
-  ) {}
+  ) {
+    this.destinationXAddress = destination
+      ? Utils.encodeXAddress(
+          destination,
+          destinationTag,
+          xrplNetwork === XRPLNetwork.Test,
+        )
+      : undefined
+  }
 }
