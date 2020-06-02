@@ -11,12 +11,7 @@ const isNode = (): boolean => {
  * @returns the hex encoded version of the string.
  */
 export const stringToHex = (value: string): string => {
-  let result = ''
-  // eslint-disable-next-line no-plusplus
-  for (let i = 0; i < value.length; i++) {
-    result += value.charCodeAt(i).toString(16)
-  }
-  return result
+  return Buffer.from(value).toString('hex')
 }
 
 /**
