@@ -13,6 +13,8 @@ import {
   Compliance,
 } from './Generated/api'
 
+const PAYID_API_VERSION = '1.0'
+
 /* eslint-disable */
 
 interface PayIDComponents {
@@ -306,6 +308,7 @@ export default class PayIDClient {
   private static makeOptionsWithAcceptTypes(acceptType: string): object {
     const headers = {
       Accept: acceptType,
+      'PayID-Version': PAYID_API_VERSION,
     }
 
     const options = {
