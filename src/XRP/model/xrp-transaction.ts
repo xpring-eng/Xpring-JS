@@ -13,8 +13,19 @@ import XRPLNetwork from '../../Common/xrpl-network'
  *
  * @see: https://xrpl.org/transaction-formats.html
  */
-// TODO(amiecorso): Modify this object to use X-Address format.
 export default class XRPTransaction {
+  /**
+   * The unique address of the account that initiated the transaction, encoded as an X-address.
+   * See https://xrpaddress.info/.
+   */
+  accountXAddress: string | undefined
+
+  /**
+   * The unique address and source tag of the sender that initiated the transaction, encoded as an X-address.
+   * See https://xrpaddress.info.
+   */
+  sourceXAddress: string | undefined
+
   /**
    * Constructs an XRPTransaction from a Transaction.
    *
@@ -34,14 +45,6 @@ export default class XRPTransaction {
     }
 
     const account = transaction.getAccount()?.getValue()?.getAddress()
-
-    const accountXAddress = account
-      ? Utils.encodeXAddress(
-          account,
-          undefined,
-          xrplNetwork === XRPLNetwork.Test,
-        )
-      : undefined
 
     const fee = transaction.getFee()?.getDrops()
 
@@ -131,9 +134,9 @@ export default class XRPTransaction {
     const ledgerIndex = getTransactionResponse.getLedgerIndex()
 
     return new XRPTransaction(
+      xrplNetwork,
       transactionHash,
       account,
-      accountXAddress,
       accountTransactionID,
       fee,
       flags,
@@ -155,13 +158,12 @@ export default class XRPTransaction {
 
   /**
    *
+   * @param xrplNetwork The XRPL network from which this object was retrieved.
    * @param hash The identifying hash of the transaction.
    * @param account The unique address of the account that initiated the transaction.
    * @param accountTransactionID (Optional) Hash value identifying another transaction.
    *                              If provided, this transaction is only valid if the sending account's
    *                              previously-sent transaction matches the provided hash.
-   * @param accountXAddress The unique address of the account that initiated the transaction, encoded as an X-address.
-   *                        See https://xrpaddress.info/.
    * @param fee Integer amount of XRP, in drops, to be destroyed as a cost for distributing this transaction to the network.
    * @param flags (Optional) Set of bit-flags for this transaction.
    * @param lastLedgerSequence (Optional; strongly recommended) Highest ledger index this transaction can appear in.
@@ -188,9 +190,9 @@ export default class XRPTransaction {
    * @param ledgerIndex The index of the ledger on which this transaction was found.
    */
   private constructor(
+    readonly xrplNetwork: XRPLNetwork,
     readonly hash: string,
     readonly account?: string,
-    readonly accountXAddress?: string,
     readonly accountTransactionID?: Uint8Array,
     readonly fee?: string,
     readonly flags?: RippledFlags,
@@ -207,5 +209,22 @@ export default class XRPTransaction {
     readonly deliveredAmount?: string,
     readonly validated?: boolean,
     readonly ledgerIndex?: number,
-  ) {}
+  ) {
+    this.accountXAddress = account
+      ? Utils.encodeXAddress(
+          account,
+          undefined,
+          xrplNetwork === XRPLNetwork.Test,
+        )
+      : undefined
+
+    this.sourceXAddress =
+      account && sourceTag
+        ? Utils.encodeXAddress(
+            account,
+            sourceTag,
+            xrplNetwork === XRPLNetwork.Test,
+          )
+        : undefined
+  }
 }
