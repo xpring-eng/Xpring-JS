@@ -8,7 +8,6 @@ import XRPLNetwork from '../../Common/xrpl-network'
  * Represents a payment on the XRP Ledger.
  * @see: https://xrpl.org/payment.html
  */
-// TODO(amiecorso): Modify this object to use X-Address format.
 export default class XRPPayment {
   /**
    * Constructs an XRPPayment from a Payment.
