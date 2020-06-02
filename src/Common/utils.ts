@@ -25,6 +25,9 @@ export const stringToUint8Array = (
   value?: string,
   isHex?: boolean,
 ): Uint8Array | undefined => {
+  if (value?.length === 0) {
+    return new Uint8Array()
+  }
   return value && !isHex
     ? Utils.toBytes(stringToHex(value))
     : (value && Utils.toBytes(value)) || undefined

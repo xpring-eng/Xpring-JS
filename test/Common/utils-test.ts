@@ -325,6 +325,13 @@ describe('utils', function (): void {
     assert.equal(stringToUint8Array(), undefined)
   })
 
+  it('stringToUint8Array() - handles blank values correctly', function (): void {
+    // GIVEN an empty
+    // WHEN that line is converted to a Uint8Array
+    // THEN the value is undefined
+    assert.deepEqual(stringToUint8Array(''), new Uint8Array())
+  })
+
   it('stringToUint8Array() - handles non-hex values correctly', function (): void {
     // GIVEN the best line delivered on film
     // WHEN that line is converted to a Uint8Array

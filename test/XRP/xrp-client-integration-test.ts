@@ -5,6 +5,9 @@ import XRPClient from '../../src/XRP/xrp-client'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { XRPLNetwork } from '../../src'
 import {
+  expectedNoDataMemo,
+  expectedNoFormatMemo,
+  expectedNoTypeMemo,
   iForgotToPickUpCarlMemo,
   noDataMemo,
   noFormatMemo,
@@ -80,9 +83,9 @@ describe('XRPClient Integration Tests', function (): void {
 
     assert.deepEqual(transaction?.memos, [
       iForgotToPickUpCarlMemo,
-      noDataMemo,
-      noFormatMemo,
-      noTypeMemo,
+      expectedNoDataMemo,
+      expectedNoFormatMemo,
+      expectedNoTypeMemo,
     ])
   })
 
@@ -108,9 +111,9 @@ describe('XRPClient Integration Tests', function (): void {
 
     assert.deepEqual(transaction?.memos, [
       iForgotToPickUpCarlMemo,
-      noDataMemo,
-      noFormatMemo,
-      noTypeMemo,
+      expectedNoDataMemo,
+      expectedNoFormatMemo,
+      expectedNoTypeMemo,
     ])
   })
 
