@@ -275,14 +275,14 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - success with memo and BigInteger', async function () {
-    // GIVEN an XRPClient, a wallet, and a BigInteger denomonated amount.
+    // GIVEN an XRPClient, a wallet, and a BigInteger denominated amount and a memo.
     const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
     const memos = [iForgotToPickUpCarlMemo]
 
-    // WHEN the account makes a transaction.
+    // WHEN the account makes a transaction with a memo.
     const transactionHash = await xrpClient.send(
       amount,
       destinationAddress,
@@ -290,7 +290,7 @@ describe('Default XRP Client', function (): void {
       memos,
     )
 
-    // THEN the transaction hash exists and is the expected hash
+    // THEN the transaction hash exists and finds the transaction with the memo.
     const expectedTransactionHash = Utils.toHex(
       FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
     )
