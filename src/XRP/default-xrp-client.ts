@@ -222,7 +222,7 @@ class DefaultXRPClient implements XRPClientDecorator {
           }
           if (memo.type) {
             const memoType = new MemoType()
-            memoType.setValue(memo.type || '')
+            memoType.setValue(memo.type)
             xrpMemo.setMemoType(memoType)
           }
 

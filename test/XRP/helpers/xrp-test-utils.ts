@@ -32,3 +32,20 @@ export const iForgotToPickUpCarlMemo = XRPMemo.fromMemoFields(
   { value: 'jaypeg' },
   { value: 'meme' },
 )
+
+export const noDataMemo = XRPMemo.fromMemoFields(
+  undefined,
+  { value: 'jaypeg' },
+  { value: 'meme' },
+)
+
+export const noFormatMemo = XRPMemo.fromMemoFields(
+  { value: 'I forgot to pick up Carl...' },
+  undefined,
+  { value: 'meme' },
+)
+
+export const noTypeMemo = XRPMemo.fromMemoFields(
+  { value: 'I forgot to pick up Carl...' },
+  { value: 'jaypeg' },
+)

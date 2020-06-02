@@ -31,27 +31,6 @@ export default class XRPMemo {
   }
 
   /**
-   * Constructs an XRPMemo from raw values that represent the fields of a memo.
-   *
-   * @param data an optional Uint8Array for the data in the memo.
-   * @param format an optional Uint8Array for the format in the memo.
-   * @param type an optional Uint8Array for the type in the memo.
-   * @returns an XRPMemo with its fields set via the arguments matching the names of said fields.
-   * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L80
-   */
-  public static fromRaw(
-    data?: Uint8Array,
-    format?: Uint8Array,
-    type?: Uint8Array,
-  ): XRPMemo {
-    return {
-      data,
-      format,
-      type,
-    }
-  }
-
-  /**
    * Converts strings that may or may not be hex (as indicated by the MemoField argument) into the
    * Uint8Array fields needed for an XRPMemo instance.
    *
