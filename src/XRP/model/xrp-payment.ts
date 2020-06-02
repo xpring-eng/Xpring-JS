@@ -80,8 +80,8 @@ export default class XRPPayment {
   /**
    *
    * @param amount The amount of currency to deliver.
-   * @param destination The unique address of the account receiving the payment.
-   * @param destinationTag (Optional) Arbitrary tag that identifies a hosted recipient to pay, or the reason for the payment.
+   * @deprecated @param destination The unique address of the account receiving the payment.
+   * @deprecated @param destinationTag (Optional) Arbitrary tag that identifies a hosted recipient to pay, or the reason for the payment.
    * @param destinationXAddress The address and (optional) destination tag of the account receiving the payment,
    *                             encoded in X-address format. See https://xrpaddress.info/.
    * @param deliverMin (Optional) Minimum amount of destination currency this transaction should deliver.
