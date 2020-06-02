@@ -148,7 +148,7 @@ class DefaultXRPClient implements XRPClientDecorator {
     drops: BigInteger | number | string,
     destinationAddress: string,
     sender: Wallet,
-    memos?: XRPMemo[],
+    memos?: Array<XRPMemo>,
   ): Promise<string> {
     if (!Utils.isValidXAddress(destinationAddress)) {
       throw XRPError.xAddressRequired

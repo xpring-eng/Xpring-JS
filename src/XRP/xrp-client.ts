@@ -75,7 +75,7 @@ class XRPClient implements XRPClientInterface {
     amount: BigInteger | number | string,
     destination: string,
     sender: Wallet,
-    memos?: XRPMemo[],
+    memos?: Array<XRPMemo>,
   ): Promise<string> {
     return this.decoratedClient.send(amount, destination, sender, memos)
   }

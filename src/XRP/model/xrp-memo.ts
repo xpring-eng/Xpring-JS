@@ -1,6 +1,10 @@
 import { Memo } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { stringToUint8Array } from '../../Common/utils'
 
+/**
+ * Provides a means of passing a string to a memo that allows for user
+ * specification as to whether or not the string is already a hex string.
+ */
 export interface MemoField {
   value?: string
   isHex?: boolean

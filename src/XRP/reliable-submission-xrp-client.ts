@@ -32,7 +32,7 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
     amount: string | number | BigInteger,
     destination: string,
     sender: Wallet,
-    memos?: XRPMemo[],
+    memos?: Array<XRPMemo>,
   ): Promise<string> {
     const ledgerCloseTimeMs = 4 * 1000
 

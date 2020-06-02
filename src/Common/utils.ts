@@ -1,4 +1,4 @@
-import { Utils } from 'xpring-common-js/build/src'
+import { Utils } from 'xpring-common-js'
 
 const isNode = (): boolean => {
   return process?.release?.name === 'node'
