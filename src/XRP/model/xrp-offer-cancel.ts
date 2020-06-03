@@ -24,7 +24,6 @@ export default class XRPOfferCancel {
   }
 
   /**
-   *
    * @param offerSequence The sequence number of a previous OfferCreate transaction. If specified,
    *                      cancel any offer object in the ledger that was created by that transaction.
    *                      It is not considered an error if the offer specified does not exist.
