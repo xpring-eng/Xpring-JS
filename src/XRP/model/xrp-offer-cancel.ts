@@ -16,6 +16,10 @@ export default class XRPOfferCancel {
    */
   public static from(offerCancel: OfferCancel): XRPOfferCancel | undefined {
     const offerSequence = offerCancel.getOfferSequence()?.getValue()
+    // offerSequence is a required field
+    if (!offerSequence) {
+      return undefined
+    }
     return new XRPOfferCancel(offerSequence)
   }
 
