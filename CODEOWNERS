@@ -1,4 +1,7 @@
 * @keefertaylor @amiecorso
 
+# Docs team owns markdown files
+*.md @loisrp
+
 # Allow anyone in DevX reviewers to approve automated dependency updates from Dependabot.
 package* @xpring-eng/devx-reviewers
