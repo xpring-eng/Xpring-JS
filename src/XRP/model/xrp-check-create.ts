@@ -41,7 +41,6 @@ export default class XRPCheckCreate {
   }
 
   /**
-   *
    * @param destination The unique address of the account that can cash the Check.
    * @param sendMax Maximum amount of source currency the Check is allowed to debit the sender, including transfer fees on non-XRP currencies.
    *                The Check can only credit the destination with the same currency (from the same issuer, for non-XRP currencies).

@@ -47,7 +47,6 @@ export default class XRPEscrowCreate {
   }
 
   /**
-   *
    * @param amount Amount of XRP, in drops, to deduct from the sender's balance and escrow.
    *                Once escrowed, the XRP can either go to the Destination address (after the FinishAfter time)
    *                or returned to the sender (after the CancelAfter time).

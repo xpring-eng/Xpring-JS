@@ -265,7 +265,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   // DepositPreauth
 
   it('Convert DepositPreauth protobuf to XRPDepositPreauth object - authorize set', function (): void {
-    // GIVEN a DespoitPreauth protocol buffer with authorize field set.
+    // GIVEN a DepositPreauth protocol buffer with authorize field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
     const depositPreauth = XRPDepositPreauth.from(
       testDepositPreauthProtoSetAuthorize,

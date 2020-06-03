@@ -28,7 +28,6 @@ export default class XRPEscrowFinish {
   }
 
   /**
-   *
    * @param owner Address of the source account that funded the held payment.
    * @param offerSequence Transaction sequence of EscrowCreate transaction that created the held payment to finish.
    * @param condition (Optional) Hex value matching the previously-supplied PREIMAGE-SHA-256 crypto-condition  of the held payment.
