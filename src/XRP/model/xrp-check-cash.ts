@@ -36,7 +36,6 @@ export default class XRPCheckCash {
   }
 
   /**
-   *
    * @param checkId The ID of the Check ledger object to cash, as a 64-character hexadecimal string.
    * @param amount (Optional) Redeem the Check for exactly this amount, if possible.
    *                The currency must match that of the SendMax of the corresponding CheckCreate transaction.

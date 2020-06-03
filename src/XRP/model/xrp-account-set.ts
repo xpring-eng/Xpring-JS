@@ -3,6 +3,7 @@ import { AccountSet } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 /*
  * Represents an AccountSet transaction on the XRP Ledger.
  * An AccountSet transaction modifies the properties of an account in the XRP Ledger.
+ *
  * @see: https://xrpl.org/accountset.html
  */
 export default class XRPAccountSet {
@@ -35,7 +36,6 @@ export default class XRPAccountSet {
   }
 
   /**
-   *
    * @param clearFlag (Optional) Unique identifier of a flag to disable for this account.
    * @param domain (Optional) The domain that owns this account, as a string of hex representing the ASCII for the domain in lowercase.
    * @param emailHash (Optional) Hash of an email address to be used for generating an avatar image.

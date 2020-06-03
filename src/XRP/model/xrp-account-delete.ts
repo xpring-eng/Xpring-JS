@@ -4,6 +4,7 @@ import { AccountDelete } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
  * Represents an AccountDelete transaction on the XRP Ledger.
  * An AccountDelete transaction deletes an account and any objects it owns in the XRP Ledger,
  * if possible, sending the account's remaining XRP to a specified destination account.
+ *
  * @see: https://xrpl.org/accountdelete.html
  */
 export default class XRPAccountDelete {

@@ -26,7 +26,6 @@ export default class XRPEscrowCancel {
   }
 
   /**
-   *
    * @param owner Address of the source account that funded the escrow payment.
    * @param offerSequence Transaction sequence of EscrowCreate transaction that created the escrow to cancel.
    */
