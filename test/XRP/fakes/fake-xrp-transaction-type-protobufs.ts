@@ -236,7 +236,6 @@ testEscrowFinishProtoMandatoryOnly.setOfferSequence(testOfferSequenceProto)
 const testOfferCancelProto = new OfferCancel()
 testOfferCancelProto.setOfferSequence(testOfferSequenceProto)
 
-// Offer
 // Invalid Protobuf Objects ========================================================================
 
 // Invalid CheckCancel proto (missing checkId)
