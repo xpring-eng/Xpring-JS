@@ -464,7 +464,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert Invalid OfferCancel protobuf to XRPOfferCancel object', function (): void {
+  it('Convert OfferCancel protobuf to XRPOfferCancel object - missing required field', function (): void {
     // GIVEN an OfferCancel protocol buffer missing the offerSequence field.
     // WHEN the protocol buffer is converted to a native Typescript type.
     const offerCancel = XRPOfferCancel.from(testInvalidOfferCancelProto)
