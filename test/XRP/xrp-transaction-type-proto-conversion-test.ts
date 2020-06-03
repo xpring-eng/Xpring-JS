@@ -8,6 +8,7 @@ import XRPDepositPreauth from '../../src/XRP/model/xrp-deposit-preauth'
 import XRPEscrowCancel from '../../src/XRP/model/xrp-escrow-cancel'
 import XRPEscrowCreate from '../../src/XRP/model/xrp-escrow-create'
 import XRPEscrowFinish from '../../src/XRP/model/xrp-escrow-finish'
+import XRPOfferCancel from '../../src/XRP/model/xrp-offer-cancel'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -25,12 +26,14 @@ import {
   testEscrowCreateProtoMandatoryOnly,
   testEscrowFinishProtoAllFields,
   testEscrowFinishProtoMandatoryOnly,
+  testOfferCancelProto,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
   testInvalidEscrowCancelProto,
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
+  testInvalidOfferCancelProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import { XRPCurrencyAmount } from '../../src/XRP/model'
 
@@ -447,5 +450,26 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the result is undefined.
     assert.isUndefined(escrowFinish)
+  })
+
+  it('Convert OfferCancel protobuf to XRPOfferCancel object', function (): void {
+    // GIVEN an OfferCancel protocol buffer with offerSequence field set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const offerCancel = XRPOfferCancel.from(testOfferCancelProto)
+
+    // THEN the OfferCancel converted as expected.
+    assert.deepEqual(
+      offerCancel?.offerSequence,
+      testOfferCancelProto.getOfferSequence()?.getValue(),
+    )
+  })
+
+  it('Convert Invalid OfferCancel protobuf to XRPOfferCancel object', function (): void {
+    // GIVEN an OfferCancel protocol buffer missing the offerSequence field.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const offerCancel = XRPOfferCancel.from(testInvalidOfferCancelProto)
+
+    // THEN the result is undefined.
+    assert.isUndefined(offerCancel)
   })
 })
