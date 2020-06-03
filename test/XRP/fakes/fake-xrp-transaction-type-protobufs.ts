@@ -37,6 +37,7 @@ import {
 // Primitive test values ===============================================================
 
 // AccountSet values
+
 const testClearFlag = 5
 const testDomain = 'testdomain'
 const testEmailHash = new Uint8Array([8, 9, 10])
@@ -64,6 +65,7 @@ const testOfferSequence = 23
 // Protobuf objects ======================================================================
 
 // AccountSet protos
+
 const testClearFlagProto = new ClearFlag()
 testClearFlagProto.setValue(testClearFlag)
 
