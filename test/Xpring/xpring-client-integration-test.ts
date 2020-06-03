@@ -4,6 +4,15 @@ import XpringClient from '../../src/Xpring/xpring-client'
 import XRPPayIDClient from '../../src/PayID/xrp-pay-id-client'
 import XRPClient from '../../src/XRP/xrp-client'
 import XRPLNetwork from '../../src/Common/xrpl-network'
+import {
+  expectedNoDataMemo,
+  expectedNoFormatMemo,
+  expectedNoTypeMemo,
+  iForgotToPickUpCarlMemo,
+  noDataMemo,
+  noFormatMemo,
+  noTypeMemo,
+} from '../XRP/helpers/xrp-test-utils'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -36,5 +45,32 @@ describe('Xpring Integration Tests', function (): void {
 
     // THEN a transaction hash is returned.
     assert.exists(transactionHash)
+  })
+
+  it('Send XRP TestNet with memos', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    // GIVEN a Pay ID that will resolve.
+    const payID = 'alice$dev.payid.xpring.money'
+
+    // WHEN XRP is sent to the Pay ID, including a memo.
+    const transactionHash = await xpringClient.send(10, payID, wallet, [
+      iForgotToPickUpCarlMemo,
+      noDataMemo,
+      noFormatMemo,
+      noTypeMemo,
+    ])
+
+    // THEN a transaction hash is returned and the memos are present.
+    assert.exists(transactionHash)
+
+    const transaction = await xrpClient.getPayment(transactionHash)
+
+    assert.deepEqual(transaction?.memos, [
+      iForgotToPickUpCarlMemo,
+      expectedNoDataMemo,
+      expectedNoFormatMemo,
+      expectedNoTypeMemo,
+    ])
   })
 })
