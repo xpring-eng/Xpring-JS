@@ -9,6 +9,7 @@ import {
   EscrowCreate,
   EscrowFinish,
   OfferCancel,
+  OfferCreate,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import {
   ClearFlag,
@@ -34,6 +35,8 @@ import {
   FinishAfter,
   Condition,
   Fulfillment,
+  TakerGets,
+  TakerPays,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
@@ -77,6 +80,7 @@ const testCondition =
 
 // EscrowFinish values
 const testFulfillment = 'A0028000'
+
 // Protobuf objects ======================================================================
 
 // AccountSet protos
@@ -238,6 +242,22 @@ testEscrowFinishProtoMandatoryOnly.setOfferSequence(testOfferSequenceProto)
 const testOfferCancelProto = new OfferCancel()
 testOfferCancelProto.setOfferSequence(testOfferSequenceProto)
 
+// OfferCreate proto
+const testTakerGetsProto = new TakerGets()
+testTakerGetsProto.setValue(testCurrencyAmountProtoDrops)
+
+const testTakerPaysProto = new TakerPays()
+testTakerPaysProto.setValue(testCurrencyAmountProtoDrops)
+
+const testOfferCreateProtoAllFields = new OfferCreate()
+testOfferCreateProtoAllFields.setExpiration(testExpirationProto)
+testOfferCreateProtoAllFields.setOfferSequence(testOfferSequenceProto)
+testOfferCreateProtoAllFields.setTakerGets(testTakerGetsProto)
+testOfferCreateProtoAllFields.setTakerPays(testTakerPaysProto)
+
+const testOfferCreateProtoMandatoryOnly = new OfferCreate()
+testOfferCreateProtoMandatoryOnly.setTakerGets(testTakerGetsProto)
+testOfferCreateProtoMandatoryOnly.setTakerPays(testTakerPaysProto)
 // Invalid Protobuf Objects ========================================================================
 
 // Invalid CheckCancel proto (missing checkId)
@@ -266,6 +286,10 @@ testInvalidEscrowFinishProto.setOfferSequence(testOfferSequenceProto)
 // Invalid OfferCancel proto (missing offerSequence)
 const testInvalidOfferCancelProto = new OfferCancel()
 
+// Invalid OfferCreate proto (missing takerGets)
+const testInvalidOfferCreateProto = new OfferCreate()
+testInvalidOfferCreateProto.setTakerPays(testTakerPaysProto)
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -284,6 +308,8 @@ export {
   testEscrowFinishProtoAllFields,
   testEscrowFinishProtoMandatoryOnly,
   testOfferCancelProto,
+  testOfferCreateProtoAllFields,
+  testOfferCreateProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -291,4 +317,5 @@ export {
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
+  testInvalidOfferCreateProto,
 }
