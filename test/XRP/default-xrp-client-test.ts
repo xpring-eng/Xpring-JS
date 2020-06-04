@@ -283,12 +283,12 @@ describe('Default XRP Client', function (): void {
     const memos = [iForgotToPickUpCarlMemo]
 
     // WHEN the account makes a transaction with a memo.
-    const transactionHash = await xrpClient.send(
+    const transactionHash = await xrpClient.sendWithDetails({
       amount,
-      destinationAddress,
-      wallet,
+      destination: destinationAddress,
+      sender: wallet,
       memos,
-    )
+    })
 
     // THEN the transaction hash exists and finds the transaction with the memo.
     const expectedTransactionHash = Utils.toHex(

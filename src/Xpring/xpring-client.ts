@@ -1,9 +1,9 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import XRPPayIDClientInterface from '../PayID/xrp-pay-id-client-interface'
-import XRPClientInterface from '../XRP/xrp-client-interface'
 import XpringError from './xpring-error'
-import XRPMemo from '../XRP/model/xrp-memo'
+import SendMoneyDetails from '../XRP/model/send-money-details'
+import XRPClientInterface from '../XRP/xrp-client-interface'
 
 /**
  * Composes interactions of Xpring services.
@@ -31,7 +31,7 @@ export default class XpringClient {
   /**
    * Send the given amount of XRP from the source wallet to the destination Pay ID.
    *
-   * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
+   * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destinationPayID A destination Pay ID to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
@@ -40,14 +40,42 @@ export default class XpringClient {
     amount: BigInteger | number | string,
     destinationPayID: string,
     sender: Wallet,
-    memos?: Array<XRPMemo>,
   ): Promise<string> {
+    return this.sendWithDetails({
+      amount,
+      destination: destinationPayID,
+      sender,
+    })
+  }
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination Pay ID, allowing
+   * for additional details to be specified for use with supplementary features of the XRP
+   * ledger.
+   *
+   * @param sendMoneyDetails - a wrapper object containing details for constructing a transaction.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  public async sendWithDetails(
+    sendMoneyDetails: SendMoneyDetails,
+  ): Promise<string> {
+    const {
+      amount,
+      destination: destinationPayID,
+      sender,
+      memos,
+    } = sendMoneyDetails
     // Resolve the destination address to an XRP address.
     const destinationAddress = await this.payIDClient.xrpAddressForPayID(
       destinationPayID,
     )
 
     // Transact XRP to the resolved address.
-    return this.xrpClient.send(amount, destinationAddress, sender, memos)
+    return this.xrpClient.sendWithDetails({
+      amount,
+      destination: destinationAddress,
+      sender,
+      memos,
+    })
   }
 }

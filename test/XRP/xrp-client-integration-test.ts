@@ -71,12 +71,18 @@ describe('XRPClient Integration Tests', function (): void {
   it('Send XRP with memo - Web Shim', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const result = await xrpWebClient.send(amount, recipientAddress, wallet, [
+    const memos = [
       iForgotToPickUpCarlMemo,
       noDataMemo,
       noFormatMemo,
       noTypeMemo,
-    ])
+    ]
+    const result = await xrpWebClient.sendWithDetails({
+      amount,
+      destination: recipientAddress,
+      sender: wallet,
+      memos,
+    })
     assert.exists(result)
 
     const transaction = await xrpClient.getPayment(result)
@@ -98,13 +104,18 @@ describe('XRPClient Integration Tests', function (): void {
 
   it('Send XRP with memo - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
-
-    const result = await xrpClient.send(amount, recipientAddress, wallet, [
+    const memos = [
       iForgotToPickUpCarlMemo,
       noDataMemo,
       noFormatMemo,
       noTypeMemo,
-    ])
+    ]
+    const result = await xrpClient.sendWithDetails({
+      amount,
+      destination: recipientAddress,
+      sender: wallet,
+      memos,
+    })
     assert.exists(result)
 
     const transaction = await xrpClient.getPayment(result)
