@@ -10,6 +10,7 @@ import XRPEscrowCreate from '../../src/XRP/model/xrp-escrow-create'
 import XRPEscrowFinish from '../../src/XRP/model/xrp-escrow-finish'
 import XRPOfferCancel from '../../src/XRP/model/xrp-offer-cancel'
 import XRPOfferCreate from '../../src/XRP/model/xrp-offer-create'
+import XRPPaymentChannelClaim from '../../src/XRP/model/xrp-payment-channel-claim'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -38,6 +39,9 @@ import {
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
   testInvalidOfferCreateProto,
+  testPaymentChannelClaimProtoAllFields,
+  testPaymentChannelClaimProtoMandatoryOnly,
+  testInvalidPaymentChannelClaimProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import { XRPCurrencyAmount } from '../../src/XRP/model'
 
@@ -538,5 +542,72 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the result is undefined.
     assert.isUndefined(offerCreate)
+  })
+
+  // PaymentChannelClaim
+
+  it('Convert PaymentChannelClaim protobuf to XRPPaymentChannelClaim object - all fields', function (): void {
+    // GIVEN a PaymentChannelClaim protocol buffer with all fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const paymentChannelClaim = XRPPaymentChannelClaim.from(
+      testPaymentChannelClaimProtoAllFields,
+    )
+
+    // THEN the PaymentChannelClaim converted as expected.
+    assert.equal(
+      paymentChannelClaim?.channel,
+      testPaymentChannelClaimProtoAllFields.getChannel()?.getValue_asB64(),
+    )
+    assert.deepEqual(
+      paymentChannelClaim?.balance,
+      XRPCurrencyAmount.from(
+        testPaymentChannelClaimProtoAllFields.getBalance()!.getValue()!,
+      ),
+    )
+    assert.deepEqual(
+      paymentChannelClaim?.amount,
+      XRPCurrencyAmount.from(
+        testPaymentChannelClaimProtoAllFields.getAmount()!.getValue()!,
+      ),
+    )
+    assert.equal(
+      paymentChannelClaim?.signature,
+      testPaymentChannelClaimProtoAllFields
+        .getPaymentChannelSignature()
+        ?.getValue_asB64(),
+    )
+    assert.equal(
+      paymentChannelClaim?.publicKey,
+      testPaymentChannelClaimProtoAllFields.getPublicKey()?.getValue_asB64(),
+    )
+  })
+
+  it('Convert PaymentChannelClaim protobuf to XRPPaymentChannelClaim object - mandatory field', function (): void {
+    // GIVEN a PaymentChannelClaim protocol buffer with only mandatory field set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const paymentChannelClaim = XRPPaymentChannelClaim.from(
+      testPaymentChannelClaimProtoMandatoryOnly,
+    )
+
+    // THEN the PaymentChannelClaim converted as expected.
+    assert.equal(
+      paymentChannelClaim?.channel,
+      testPaymentChannelClaimProtoMandatoryOnly.getChannel()?.getValue_asB64(),
+    )
+    assert.isUndefined(paymentChannelClaim?.balance)
+    assert.isUndefined(paymentChannelClaim?.amount)
+    assert.isUndefined(paymentChannelClaim?.signature)
+    assert.isUndefined(paymentChannelClaim?.publicKey)
+  })
+
+  it('Convert PaymentChannelClaim protobuf to XRPPaymentChannelClaim object - missing mandatory field', function (): void {
+    // GIVEN a PaymentChannelClaim protocol buffer missing the mandatory field.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const paymentChannelClaim = XRPPaymentChannelClaim.from(
+      testInvalidPaymentChannelClaimProto,
+    )
+
+    // THEN the result is undefined.
+    assert.isUndefined(paymentChannelClaim)
   })
 })
