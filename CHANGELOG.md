@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- A new optional argument `memos?: Array<XRPMemo>` is added to the `send` method of `XpringClient` and `XpringClientInterface` which allows appending memos to a transaction on the XRP ledger.
+
 ## 4.3.0 - 2020-06-01
 
 ### Added
