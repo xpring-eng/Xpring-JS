@@ -42,8 +42,8 @@ import XRPLNetwork from '../../../src/Common/xrpl-network'
 // primitive test values
 const testCurrencyName = 'currencyName'
 const testCurrencyCode = new Uint8Array([1, 2, 3])
-const testAddress = 'XVfC9CTCJh6GN2x8bnrw3LtdbqiVCUFyQVMzRrMGUZpokKH'
-const testAddress2 = 'XV5sbjUmgPpvXv4ixFWZ5ptAYZ6PD28Sq49uo34VyjnmK5H'
+const testAddress = 'rsKouRxYLWGseFwXSAo57qXjcGiNqR55wr'
+const testAddress2 = 'rPuNV4oA6f3SrKA4pLEpdVZW6QLvn3UJxK'
 const testIssuedCurrencyValue = '100'
 const testInvalidIssuedCurrencyValue = 'xrp' // non-numeric
 const testPublicKey = new Uint8Array([1, 2, 3])
