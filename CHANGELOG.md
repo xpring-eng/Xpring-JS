@@ -8,7 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `XRPPayment` and `XRPTransaction` now contain X-address representations of their address and tag fields.
 - A new optional argument `memos?: Array<XRPMemo>` is added to the `send` method of `XpringClient` and `XpringClientInterface` which allows appending memos to a transaction on the XRP ledger.
+
+#### Deprecated
+- `XRPPayment.destination` and `XRPPayment.destinationTag` are deprecated.  Please use the X-address encoding `destinationXAddress` instead.
 
 ## 4.3.0 - 2020-06-01
 
