@@ -292,7 +292,10 @@ describe('Default XRP Client', function (): void {
 
   it('Send XRP Transaction - success with memo and BigInteger', async function () {
     // GIVEN an XRPClient, a wallet, and a BigInteger denominated amount and a memo.
-    const xrpClient = new DefaultXRPClient(fakeSucceedingNetworkClient)
+    const xrpClient = new DefaultXRPClient(
+      fakeSucceedingNetworkClient,
+      XRPLNetwork.Test,
+    )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
