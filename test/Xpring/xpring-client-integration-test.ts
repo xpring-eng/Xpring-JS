@@ -50,16 +50,22 @@ describe('Xpring Integration Tests', function (): void {
   it('Send XRP TestNet with memos', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    // GIVEN a Pay ID that will resolve.
+    // GIVEN a Pay ID that will resolve and some memos.
     const payID = 'alice$dev.payid.xpring.money'
-
-    // WHEN XRP is sent to the Pay ID, including a memo.
-    const transactionHash = await xpringClient.send(10, payID, wallet, [
+    const memos = [
       iForgotToPickUpCarlMemo,
       noDataMemo,
       noFormatMemo,
       noTypeMemo,
-    ])
+    ]
+
+    // WHEN XRP is sent to the Pay ID, including a memo.
+    const transactionHash = await xpringClient.sendWithDetails({
+      amount: 10,
+      destination: payID,
+      sender: wallet,
+      memos,
+    })
 
     // THEN a transaction hash is returned and the memos are present.
     assert.exists(transactionHash)

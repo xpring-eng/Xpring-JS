@@ -34,7 +34,7 @@ import { XRPNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XRPError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
-import { XRPMemo } from './model'
+import SendXrpDetails from './model/send-xrp-details'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -138,18 +138,40 @@ class DefaultXRPClient implements XRPClientDecorator {
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
-   * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
+   * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destinationAddress A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
-   * @param memos An optional list of memos to add to the transaction.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    drops: BigInteger | number | string,
+    amount: BigInteger | number | string,
     destinationAddress: string,
     sender: Wallet,
-    memos?: Array<XRPMemo>,
   ): Promise<string> {
+    return this.sendWithDetails({
+      amount,
+      destination: destinationAddress,
+      sender,
+    })
+  }
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination Pay ID, allowing
+   * for additional details to be specified for use with supplementary features of the XRP
+   * ledger.
+   *
+   * @param sendMoneyDetails - a wrapper object containing details for constructing a transaction.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  public async sendWithDetails(
+    sendMoneyDetails: SendXrpDetails,
+  ): Promise<string> {
+    const {
+      amount: drops,
+      sender,
+      destination: destinationAddress,
+      memos,
+    } = sendMoneyDetails
     if (!Utils.isValidXAddress(destinationAddress)) {
       throw XRPError.xAddressRequired
     }

@@ -3,7 +3,7 @@ import { BigInteger } from 'big-integer'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import XRPTransaction from './model/xrp-transaction'
-import { XRPMemo } from './model'
+import SendXrpDetails from './model/send-xrp-details'
 
 /** A decorator interface for XRPClients. */
 export interface XRPClientDecorator {
@@ -33,15 +33,23 @@ export interface XRPClientDecorator {
    * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
-   * @param memos An optional list of memos to add to the transaction.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   send(
     amount: BigInteger | number | string,
     destination: string,
     sender: Wallet,
-    memos?: Array<XRPMemo>,
   ): Promise<string>
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination Pay ID, allowing
+   * for additional details to be specified for use with supplementary features of the XRP
+   * ledger.
+   *
+   * @param sendMoneyDetails - a wrapper object containing details for constructing a transaction.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  sendWithDetails(sendMoneyDetails: SendXrpDetails): Promise<string>
 
   /**
    * Retrieve the latest validated ledger sequence on the XRP Ledger.
