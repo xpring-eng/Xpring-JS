@@ -5,7 +5,7 @@ import { Wallet, XRPLNetwork } from '../../../src/index'
 import RawTransactionStatus from '../../../src/XRP/raw-transaction-status'
 import XRPTransaction from '../../../src/XRP/model/xrp-transaction'
 import Result from '../../Common/Helpers/result'
-import SendMoneyDetails from '../../../src/XRP/model/send-money-details'
+import SendXrpDetails from '../../../src/XRP/model/send-xrp-details'
 
 class FakeXRPClient implements XRPClientDecorator {
   public constructor(
@@ -36,7 +36,7 @@ class FakeXRPClient implements XRPClientDecorator {
     return FakeXRPClient.returnOrThrow(this.sendValue)
   }
 
-  async sendWithDetails(_sendMoneyDetails: SendMoneyDetails): Promise<string> {
+  async sendWithDetails(_sendMoneyDetails: SendXrpDetails): Promise<string> {
     return FakeXRPClient.returnOrThrow(this.sendValue)
   }
 

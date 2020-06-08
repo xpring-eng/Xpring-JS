@@ -7,7 +7,7 @@ import XRPMemo from './xrp-memo'
  * destination field may be a PayID, XAddress, or other type of address. Handling
  * of the given destination type is the responsibility of the client.
  */
-export default interface SendMoneyDetails {
+export default interface SendXrpDetails {
   amount: BigInteger | number | string
   destination: string
   sender: Wallet

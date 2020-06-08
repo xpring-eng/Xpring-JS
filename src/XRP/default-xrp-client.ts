@@ -34,7 +34,7 @@ import { XRPNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XRPError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
-import SendMoneyDetails from './model/send-money-details'
+import SendXrpDetails from './model/send-xrp-details'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -164,7 +164,7 @@ class DefaultXRPClient implements XRPClientDecorator {
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async sendWithDetails(
-    sendMoneyDetails: SendMoneyDetails,
+    sendMoneyDetails: SendXrpDetails,
   ): Promise<string> {
     const {
       amount: drops,

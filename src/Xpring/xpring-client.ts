@@ -2,7 +2,7 @@ import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import XRPPayIDClientInterface from '../PayID/xrp-pay-id-client-interface'
 import XpringError from './xpring-error'
-import SendMoneyDetails from '../XRP/model/send-money-details'
+import SendXrpDetails from '../XRP/model/send-xrp-details'
 import XRPClientInterface from '../XRP/xrp-client-interface'
 
 /**
@@ -57,7 +57,7 @@ export default class XpringClient {
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async sendWithDetails(
-    sendMoneyDetails: SendMoneyDetails,
+    sendMoneyDetails: SendXrpDetails,
   ): Promise<string> {
     const {
       amount,

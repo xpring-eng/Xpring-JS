@@ -4,7 +4,7 @@ import TransactionStatus from './transaction-status'
 import XRPLNetwork from '../Common/xrpl-network'
 import XRPTransaction from './model/xrp-transaction'
 import XRPMemo from './model/xrp-memo'
-import SendMoneyDetails from './model/send-money-details'
+import SendXrpDetails from './model/send-xrp-details'
 
 /**
  * An interface describing XRPClient.
@@ -56,7 +56,7 @@ export default interface XRPClientInterface {
    * @param sendMoneyDetails - a wrapper object containing details for constructing a transaction.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
-  sendWithDetails(sendMoneyDetails: SendMoneyDetails): Promise<string>
+  sendWithDetails(sendMoneyDetails: SendXrpDetails): Promise<string>
 
   /**
    * Check if an address exists on the XRP Ledger.

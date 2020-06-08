@@ -7,7 +7,7 @@ import DefaultXRPClient from './default-xrp-client'
 import XRPClientInterface from './xrp-client-interface'
 import XRPTransaction from './model/xrp-transaction'
 import XRPLNetwork from '../Common/xrpl-network'
-import SendMoneyDetails from './model/send-money-details'
+import SendXrpDetails from './model/send-xrp-details'
 
 /**
  * XRPClient is a client which interacts with the Xpring platform.
@@ -91,7 +91,7 @@ class XRPClient implements XRPClientInterface {
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async sendWithDetails(
-    sendMoneyDetails: SendMoneyDetails,
+    sendMoneyDetails: SendXrpDetails,
   ): Promise<string> {
     return this.decoratedClient.sendWithDetails(sendMoneyDetails)
   }

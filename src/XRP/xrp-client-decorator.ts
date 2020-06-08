@@ -3,7 +3,7 @@ import { BigInteger } from 'big-integer'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import XRPTransaction from './model/xrp-transaction'
-import SendMoneyDetails from './model/send-money-details'
+import SendXrpDetails from './model/send-xrp-details'
 
 /** A decorator interface for XRPClients. */
 export interface XRPClientDecorator {
@@ -49,7 +49,7 @@ export interface XRPClientDecorator {
    * @param sendMoneyDetails - a wrapper object containing details for constructing a transaction.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
-  sendWithDetails(sendMoneyDetails: SendMoneyDetails): Promise<string>
+  sendWithDetails(sendMoneyDetails: SendXrpDetails): Promise<string>
 
   /**
    * Retrieve the latest validated ledger sequence on the XRP Ledger.
