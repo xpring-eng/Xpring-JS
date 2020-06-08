@@ -1,4 +1,14 @@
 import { Memo } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { stringToUint8Array } from '../../Common/utils'
+
+/**
+ * Provides a means of passing a string to a memo that allows for user
+ * specification as to whether or not the string is already a hex string.
+ */
+export interface MemoField {
+  value?: string
+  isHex?: boolean
+}
 
 /*
  * Represents a memo on the XRPLedger.
@@ -18,6 +28,27 @@ export default class XRPMemo {
     const format = memo.getMemoFormat()?.getValue_asU8()
     const type = memo.getMemoType()?.getValue_asU8()
     return new XRPMemo(data, format, type)
+  }
+
+  /**
+   * Converts strings that may or may not be hex (as indicated by the MemoField argument) into the
+   * Uint8Array fields needed for an XRPMemo instance.
+   *
+   * @param data - a MemoField with an optional string which may or may not be converted to a hex string.
+   * @param format - a MemoField with an optional string which may or may not be converted to a hex string.
+   * @param type - a MemoField with an optional string which may or may not be converted to a hex string.
+   * @returns an XRPMemo with each potentially hex-encoded field set to the Uint8Array version of said field.
+   */
+  public static fromMemoFields(
+    data?: MemoField,
+    format?: MemoField,
+    type?: MemoField,
+  ): XRPMemo {
+    return {
+      data: stringToUint8Array(data?.value, data?.isHex),
+      format: stringToUint8Array(format?.value, format?.isHex),
+      type: stringToUint8Array(type?.value, type?.isHex),
+    }
   }
 
   /**
