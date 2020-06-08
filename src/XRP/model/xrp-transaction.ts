@@ -31,13 +31,13 @@ export default class XRPTransaction {
    *
    * @param transaction a Transaction (protobuf object) whose field values will be used
    *                    to construct an XRPTransaction
-   * @param xrplNetwork The XRPL network from which this object was retrieved, defaults to XRPLNetwork.Main (Mainnet).
+   * @param xrplNetwork The XRPL network from which this object was retrieved.
    * @returns an XRPTransaction with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L13
    */
   public static from(
     getTransactionResponse: GetTransactionResponse,
-    xrplNetwork = XRPLNetwork.Main,
+    xrplNetwork: XRPLNetwork,
   ): XRPTransaction | undefined {
     const transaction = getTransactionResponse.getTransaction()
     if (!transaction) {

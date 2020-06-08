@@ -20,13 +20,13 @@ export default class XRPPayment {
    *
    * @param payment a Payment (protobuf object) whose field values will be used
    *                to construct an XRPPayment
-   * @param xrplNetwork The XRPL network from which this object was retrieved, defaults to XRPLNetwork.Main (Mainnet).
+   * @param xrplNetwork The XRPL network from which this object was retrieved.
    * @return an XRPPayment with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L224
    */
   public static from(
     payment: Payment,
-    xrplNetwork = XRPLNetwork.Main,
+    xrplNetwork: XRPLNetwork,
   ): XRPPayment | undefined {
     const paymentAmountValue = payment.getAmount()?.getValue()
     const amount =
