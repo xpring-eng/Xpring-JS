@@ -193,7 +193,7 @@ class DefaultXRPClient implements XRPClientDecorator {
     const lastLedgerSequence = new LastLedgerSequence()
     lastLedgerSequence.setValue(openLedgerSequence + maxLedgerVersionOffset)
 
-    const signingPublicKeyBytes = Utils.toBytes(sender.getPublicKey())
+    const signingPublicKeyBytes = Utils.toBytes(sender.publicKey)
     const signingPublicKey = new SigningPublicKey()
     signingPublicKey.setValue(signingPublicKeyBytes)
 
