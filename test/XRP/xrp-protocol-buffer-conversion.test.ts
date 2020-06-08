@@ -229,57 +229,6 @@ describe('Protocol Buffer Conversion', function (): void {
     )
     assert.equal(
       payment?.destinationXAddress,
-      Utils.encodeXAddress(payment?.destination!, payment?.destinationTag),
-    )
-    assert.deepEqual(
-      payment?.deliverMin,
-      XRPCurrencyAmount.from(
-        testPaymentProtoAllFieldsSet.getDeliverMin()?.getValue()!,
-      ),
-    )
-    assert.deepEqual(
-      payment?.invoiceID,
-      testPaymentProtoAllFieldsSet.getInvoiceId()?.getValue(),
-    )
-    assert.deepEqual(
-      payment?.paths,
-      testPaymentProtoAllFieldsSet
-        .getPathsList()
-        .map((path) => XRPPath.from(path)),
-    )
-    assert.deepEqual(
-      payment?.sendMax,
-      XRPCurrencyAmount.from(
-        testPaymentProtoAllFieldsSet.getSendMax()?.getValue()!,
-      ),
-    )
-  })
-
-  it('Convert Payment with all fields set - Testnet', function (): void {
-    // GIVEN a payment protocol buffer with all fields set.
-    // WHEN the protocol buffer is converted to a native TypeScript type with isTest flag set to true.
-    const payment = XRPPayment.from(
-      testPaymentProtoAllFieldsSet,
-      XRPLNetwork.Test,
-    )
-
-    // THEN the result is as expected.
-    assert.deepEqual(
-      payment?.amount,
-      XRPCurrencyAmount.from(
-        testPaymentProtoAllFieldsSet.getAmount()?.getValue()!,
-      ),
-    )
-    assert.equal(
-      payment?.destination,
-      testPaymentProtoAllFieldsSet.getDestination()?.getValue()?.getAddress(),
-    )
-    assert.equal(
-      payment?.destinationTag,
-      testPaymentProtoAllFieldsSet.getDestinationTag()?.getValue(),
-    )
-    assert.equal(
-      payment?.destinationXAddress,
       Utils.encodeXAddress(
         payment?.destination!,
         payment?.destinationTag,
@@ -334,7 +283,11 @@ describe('Protocol Buffer Conversion', function (): void {
     )
     assert.equal(
       payment?.destinationXAddress,
-      Utils.encodeXAddress(payment?.destination!, payment?.destinationTag),
+      Utils.encodeXAddress(
+        payment?.destination!,
+        payment?.destinationTag,
+        true,
+      ),
     )
     assert.isUndefined(payment?.destinationTag)
     assert.isUndefined(payment?.deliverMin)
@@ -426,7 +379,7 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.equal(transaction?.account, testAddress)
     assert.equal(
       transaction?.accountXAddress,
-      Utils.encodeXAddress(transaction?.account!, undefined),
+      Utils.encodeXAddress(transaction?.account!, undefined, true),
     )
     assert.equal(transaction?.fee, testFee)
     assert.equal(transaction?.sequence, testSequence)
@@ -440,6 +393,10 @@ describe('Protocol Buffer Conversion', function (): void {
     ])
     assert.deepEqual(transaction?.signers, [XRPSigner.from(testSignerProto)!])
     assert.equal(transaction?.sourceTag, testSourceTag)
+    assert.equal(
+      transaction?.sourceXAddress,
+      Utils.encodeXAddress(transaction?.account!, transaction?.sourceTag, true),
+    )
     assert.equal(transaction?.hash, Utils.toHex(testTransactionHash))
     assert.equal(transaction?.timestamp, expectedTimestamp)
     assert.equal(
@@ -467,7 +424,7 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.equal(transaction?.account, testAddress)
     assert.equal(
       transaction?.accountXAddress,
-      Utils.encodeXAddress(transaction?.account!, undefined),
+      Utils.encodeXAddress(transaction?.account!, undefined, true),
     )
     assert.equal(transaction?.fee, testFee)
     assert.equal(transaction?.sequence, testSequence)
@@ -483,6 +440,10 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.isUndefined(transaction?.memos)
     assert.isUndefined(transaction?.signers)
     assert.isUndefined(transaction?.sourceTag)
+    assert.equal(
+      transaction?.sourceXAddress,
+      Utils.encodeXAddress(transaction?.account!, transaction?.sourceTag, true),
+    )
     assert.isUndefined(transaction?.timestamp)
     assert.isUndefined(transaction?.deliveredAmount)
   })
