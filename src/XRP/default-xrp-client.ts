@@ -13,8 +13,12 @@ import {
   Account,
   LastLedgerSequence,
   SigningPublicKey,
+  MemoData,
+  MemoFormat,
+  MemoType,
 } from './Generated/node/org/xrpl/rpc/v1/common_pb'
 import {
+  Memo,
   Payment,
   Transaction,
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -31,6 +35,7 @@ import isNode from '../Common/utils'
 import XRPError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import XRPLNetwork from '../Common/xrpl-network'
+import SendXrpDetails from './model/send-xrp-details'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -140,16 +145,40 @@ class DefaultXRPClient implements XRPClientDecorator {
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
-   * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
+   * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destinationAddress A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    drops: BigInteger | number | string,
+    amount: BigInteger | number | string,
     destinationAddress: string,
     sender: Wallet,
   ): Promise<string> {
+    return this.sendWithDetails({
+      amount,
+      destination: destinationAddress,
+      sender,
+    })
+  }
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination Pay ID, allowing
+   * for additional details to be specified for use with supplementary features of the XRP
+   * ledger.
+   *
+   * @param sendMoneyDetails - a wrapper object containing details for constructing a transaction.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  public async sendWithDetails(
+    sendMoneyDetails: SendXrpDetails,
+  ): Promise<string> {
+    const {
+      amount: drops,
+      sender,
+      destination: destinationAddress,
+      memos,
+    } = sendMoneyDetails
     if (!Utils.isValidXAddress(destinationAddress)) {
       throw XRPError.xAddressRequired
     }
@@ -205,6 +234,31 @@ class DefaultXRPClient implements XRPClientDecorator {
     transaction.setLastLedgerSequence(lastLedgerSequence)
 
     transaction.setSigningPublicKey(signingPublicKey)
+
+    if (memos && memos.length) {
+      memos
+        .map((memo) => {
+          const xrpMemo = new Memo()
+          if (memo.data) {
+            const memoData = new MemoData()
+            memoData.setValue(memo.data)
+            xrpMemo.setMemoData(memoData)
+          }
+          if (memo.format) {
+            const memoFormat = new MemoFormat()
+            memoFormat.setValue(memo.format)
+            xrpMemo.setMemoFormat(memoFormat)
+          }
+          if (memo.type) {
+            const memoType = new MemoType()
+            memoType.setValue(memo.type)
+            xrpMemo.setMemoType(memoType)
+          }
+
+          return xrpMemo
+        })
+        .forEach((memo) => transaction.addMemos(memo))
+    }
 
     const signedTransaction = Signer.signTransaction(transaction, sender)
     if (!signedTransaction) {

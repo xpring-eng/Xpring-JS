@@ -6,6 +6,7 @@ import TransactionStatus from './transaction-status'
 import XRPTransaction from './model/xrp-transaction'
 import { XRPError, XRPLNetwork } from '..'
 import { XRPErrorType } from './xrp-error'
+import SendXrpDetails from './model/send-xrp-details'
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
@@ -35,13 +36,22 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
     destination: string,
     sender: Wallet,
   ): Promise<string> {
-    const ledgerCloseTimeMs = 4 * 1000
-
-    // Submit a transaction hash and wait for a ledger to close.
-    const transactionHash = await this.decoratedClient.send(
+    return this.sendWithDetails({
       amount,
       destination,
       sender,
+    })
+  }
+
+  public async sendWithDetails(
+    sendMoneyDetails: SendXrpDetails,
+  ): Promise<string> {
+    const { sender } = sendMoneyDetails
+    const ledgerCloseTimeMs = 4 * 1000
+
+    // Submit a transaction hash and wait for a ledger to close.
+    const transactionHash = await this.decoratedClient.sendWithDetails(
+      sendMoneyDetails,
     )
     await sleep(ledgerCloseTimeMs)
 
