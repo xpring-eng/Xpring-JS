@@ -155,7 +155,7 @@ export default class XRPTransaction {
 
   /**
    * @param hash The identifying hash of the transaction.
-   * @param account The unique address of the account that initiated the transaction.
+   * @deprecated @param account Deprecated, please use sourceXAddress. The unique address of the account that initiated the transaction.
    * @param accountTransactionID (Optional) Hash value identifying another transaction.
    *                              If provided, this transaction is only valid if the sending account's
    *                              previously-sent transaction matches the provided hash.
@@ -170,8 +170,8 @@ export default class XRPTransaction {
    * @param signers (Optional) Array of objects that represent a multi-signature which authorizes this transaction.
    * @param signingPublicKey Hex representation of the public key that corresponds to the private key used to sign this transaction.
    *                         If an empty string, indicates a multi-signature is present in the Signers field instead.
-   * @param sourceTag (Optional) Arbitrary integer used to identify the reason for this payment or a sender on whose behalf this
-   *                  transaction is made.
+   * @deprecated @param sourceTag Deprecated, please use sourceXAddress. (Optional) Arbitrary integer used to identify the reason for
+   *                              this payment or a sender on whose behalf this transaction is made.
    *                  Conventionally, a refund should specify the initial payment's SourceTag as the refund payment's DestinationTag.
    * @param sourceXAddress: The unique address and source tag of the sender that initiated the transaction, encoded as an X-address.
    *                        See "https://xrpaddress.info"
