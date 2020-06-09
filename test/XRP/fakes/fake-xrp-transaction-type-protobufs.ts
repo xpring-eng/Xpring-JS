@@ -13,6 +13,7 @@ import {
   PaymentChannelClaim,
   PaymentChannelCreate,
   PaymentChannelFund,
+  SetRegularKey,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import {
   ClearFlag,
@@ -45,6 +46,7 @@ import {
   PaymentChannelSignature,
   PublicKey,
   SettleDelay,
+  RegularKey,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
@@ -101,6 +103,9 @@ const testPaymentChannelPublicKey =
 const testSettleDelay = 86400
 const testPublicKey =
   '32D2471DB72B27E3310F355BB33E339BF26F8392D5A93D3BC0FC3B566612DA0F0A'
+
+// SetRegularKey values
+const testRegularKey = 'rAR8rR8sUkBoCZFawhkWzY4Y5YoyuznwD'
 
 // Protobuf objects ======================================================================
 
@@ -339,6 +344,18 @@ const testPaymentChannelFundProtoMandatoryOnly = new PaymentChannelFund()
 testPaymentChannelFundProtoMandatoryOnly.setChannel(testChannelProto)
 testPaymentChannelFundProtoMandatoryOnly.setAmount(testAmountProto)
 
+// SetRegularKey protos
+const testAccountAddressProtoRegularKey = new AccountAddress()
+testAccountAddressProtoRegularKey.setAddress(testRegularKey)
+
+const testRegularKeyProto = new RegularKey()
+testRegularKeyProto.setValue(testAccountAddressProtoRegularKey)
+
+const testSetRegularKeyProtoWithKey = new SetRegularKey()
+testSetRegularKeyProtoWithKey.setRegularKey(testRegularKeyProto)
+
+const testSetRegularKeyProtoNoKey = new SetRegularKey()
+
 // Invalid Protobuf Objects ========================================================================
 
 // Invalid CheckCancel proto (missing checkId)
@@ -408,6 +425,8 @@ export {
   testPaymentChannelCreateProtoMandatoryOnly,
   testPaymentChannelFundProtoAllFields,
   testPaymentChannelFundProtoMandatoryOnly,
+  testSetRegularKeyProtoWithKey,
+  testSetRegularKeyProtoNoKey,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
