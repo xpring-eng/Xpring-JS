@@ -3,7 +3,7 @@ import { assert } from 'chai'
 import bigInt from 'big-integer'
 import XRPClient from '../../src/XRP/xrp-client'
 import TransactionStatus from '../../src/XRP/transaction-status'
-import { XRPLNetwork } from '../../src'
+import { XRPLNetwork } from '../../src/Common/xrpl-network'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute

@@ -1,19 +1,98 @@
+/* eslint-disable max-classes-per-file */
+
 import { Utils } from 'xpring-common-js'
-import PayIDClient from './pay-id-client'
-import XRPLNetwork from '../Common/xrpl-network'
-import PayIDError, { PayIDErrorType } from './pay-id-error'
-import XRPPayIDClientInterface from './xrp-pay-id-client-interface'
+import PayIdClient, { PayIDClient } from './pay-id-client'
+import XrplNetwork, { XRPLNetwork } from '../Common/xrpl-network'
+import PayIdError, { PayIdErrorType } from './pay-id-error'
+import XrpPayIdClientInterface, {
+  XRPPayIDClientInterface,
+} from './xrp-pay-id-client-interface'
 
 /**
  * Provides functionality for XRP in the PayID protocol.
  */
-export default class XRPPayIDClient extends PayIDClient
+export default class XrpPayIdClient extends PayIdClient
+  implements XrpPayIdClientInterface {
+  /**
+   * @param xrplNetwork The XRP Ledger network that this client attaches to.
+   */
+  constructor(public readonly xrplNetwork: XrplNetwork) {
+    super(`xrpl-${xrplNetwork}`)
+  }
+
+  /**
+   * Retrieve the XRP address associated with a PayID.
+   *
+   * Note: Addresses are always in the X-Address format.
+   * @see https://xrpaddress.info/
+   *
+   * @param payId The payID to resolve for an address.
+   * @returns An XRP address representing the given PayID.
+   */
+  async xrpAddressForPayId(payId: string): Promise<string> {
+    const result = await super.addressForPayId(payId)
+
+    const { address } = result
+    if (Utils.isValidXAddress(address)) {
+      return address
+    }
+    const isTest = this.network !== XrplNetwork.Main
+
+    const tag = result.tag ? Number(result.tag) : undefined
+
+    // Ensure if there was a tag attached that it could be parsed to a number.
+    if (result.tag && tag === undefined) {
+      throw new PayIdError(
+        PayIdErrorType.UnexpectedResponse,
+        'The returned tag was in an unexpected format',
+      )
+    }
+
+    const encodedXAddress = Utils.encodeXAddress(address, tag, isTest)
+    if (!encodedXAddress) {
+      throw new PayIdError(
+        PayIdErrorType.UnexpectedResponse,
+        'The returned address was in an unexpected format',
+      )
+    }
+    return encodedXAddress
+  }
+}
+
+/**
+ * Provides functionality for XRP in the PayID protocol.
+ *
+ * @deprecated Use XrpPayIdClient instead.
+ */
+export class XRPPayIDClient extends PayIDClient
   implements XRPPayIDClientInterface {
+  private readonly wrappedXrpPayIdClient: XrpPayIdClient
+
   /**
    * @param xrplNetwork The XRP Ledger network that this client attaches to.
    */
   constructor(public readonly xrplNetwork: XRPLNetwork) {
     super(`xrpl-${xrplNetwork}`)
+
+    switch (xrplNetwork) {
+      case XRPLNetwork.Main: {
+        this.wrappedXrpPayIdClient = new XrpPayIdClient(XrplNetwork.Main)
+        break
+      }
+
+      case XRPLNetwork.Test: {
+        this.wrappedXrpPayIdClient = new XrpPayIdClient(XrplNetwork.Dev)
+        break
+      }
+
+      case XRPLNetwork.Dev: {
+        this.wrappedXrpPayIdClient = new XrpPayIdClient(XrplNetwork.Dev)
+        break
+      }
+
+      default:
+        throw new PayIdError(PayIdErrorType.Unknown, 'Unknown XrplNetwork')
+    }
   }
 
   /**
@@ -26,31 +105,6 @@ export default class XRPPayIDClient extends PayIDClient
    * @returns An XRP address representing the given PayID.
    */
   async xrpAddressForPayID(payID: string): Promise<string> {
-    const result = await super.addressForPayID(payID)
-
-    const { address } = result
-    if (Utils.isValidXAddress(address)) {
-      return address
-    }
-    const isTest = this.network !== XRPLNetwork.Main
-
-    const tag = result.tag ? Number(result.tag) : undefined
-
-    // Ensure if there was a tag attached that it could be parsed to a number.
-    if (result.tag && tag === undefined) {
-      throw new PayIDError(
-        PayIDErrorType.UnexpectedResponse,
-        'The returned tag was in an unexpected format',
-      )
-    }
-
-    const encodedXAddress = Utils.encodeXAddress(address, tag, isTest)
-    if (!encodedXAddress) {
-      throw new PayIDError(
-        PayIDErrorType.UnexpectedResponse,
-        'The returned address was in an unexpected format',
-      )
-    }
-    return encodedXAddress
+    return this.wrappedXrpPayIdClient.xrpAddressForPayId(payID)
   }
 }

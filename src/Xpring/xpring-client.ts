@@ -1,26 +1,64 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
-import XRPPayIDClientInterface from '../PayID/xrp-pay-id-client-interface'
+import XrpPayIdClientInterface, {
+  XRPPayIDClientInterface,
+} from '../PayID/xrp-pay-id-client-interface'
 import XRPClientInterface from '../XRP/xrp-client-interface'
-import XpringError from './xpring-error'
+import XpringError, { XpringErrorType } from './xpring-error'
+import XrplNetwork, { XRPLNetwork } from '../Common/xrpl-network'
+import { XRPPayIDClient } from '../PayID/xrp-pay-id-client'
 
 /**
  * Composes interactions of Xpring services.
  */
 export default class XpringClient {
+  private readonly payIdClient: XRPPayIDClientInterface
+
+  private static isNewPayIdClient(
+    payIdClient: XRPPayIDClientInterface | XrpPayIdClientInterface,
+  ): payIdClient is XrpPayIdClientInterface {
+    return (
+      (payIdClient as XrpPayIdClientInterface).xrpAddressForPayId !== undefined
+    )
+  }
+
   /**
    * Create a new XpringClient.
    *
-   * @param payIDClient A Pay ID Client used to interact with the Pay ID protocol.
+   * @param payIdClient A Pay ID Client used to interact with the Pay ID protocol.
    * @param xrpClient An XRP Client used to interact with the XRP Ledger protocol.
    * @throws A XpringError if the networks of the inputs do not match.
    */
   constructor(
-    private readonly payIDClient: XRPPayIDClientInterface,
+    payIdClient: XRPPayIDClientInterface | XrpPayIdClientInterface,
     private readonly xrpClient: XRPClientInterface,
   ) {
+    let normalizedPayIdClient: XRPPayIDClientInterface
+    if (XpringClient.isNewPayIdClient(payIdClient)) {
+      switch (payIdClient.xrplNetwork) {
+        case XrplNetwork.Dev: {
+          normalizedPayIdClient = new XRPPayIDClient(XRPLNetwork.Dev)
+          break
+        }
+        case XrplNetwork.Main: {
+          normalizedPayIdClient = new XRPPayIDClient(XRPLNetwork.Main)
+          break
+        }
+        case XrplNetwork.Test: {
+          normalizedPayIdClient = new XRPPayIDClient(XRPLNetwork.Test)
+          break
+        }
+        default: {
+          throw new XpringError(XpringErrorType.Unknown, 'Unknown network')
+        }
+      }
+    } else {
+      normalizedPayIdClient = payIdClient
+    }
+    this.payIdClient = normalizedPayIdClient
+
     // Verify that networks match.
-    const payIDNetwork = payIDClient.xrplNetwork
+    const payIDNetwork = normalizedPayIdClient.xrplNetwork
     const xrpNetwork = xrpClient.network
     if (payIDNetwork !== xrpNetwork) {
       throw XpringError.mismatchedNetworks
@@ -41,7 +79,7 @@ export default class XpringClient {
     sender: Wallet,
   ): Promise<string> {
     // Resolve the destination address to an XRP address.
-    const destinationAddress = await this.payIDClient.xrpAddressForPayID(
+    const destinationAddress = await this.payIdClient.xrpAddressForPayID(
       destinationPayID,
     )
 

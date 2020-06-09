@@ -1,5 +1,10 @@
-import { PayIDUtils } from 'xpring-common-js'
-import PayIDError, { PayIDErrorType } from './pay-id-error'
+/* eslint-disable max-classes-per-file */
+import { PayIdUtils } from 'xpring-common-js'
+import PayIdError, {
+  PayIDError,
+  PayIdErrorType,
+  PayIDErrorType,
+} from './pay-id-error'
 import ComplianceType from './compliance-type'
 import {
   Beneficiary,
@@ -25,9 +30,13 @@ interface PayIDComponents {
 /**
  * A client for PayID.
  *
+ * @deprecated Please use PayIdClient instead.
+ *
  * @warning This class is experimental and should not be used in production applications.
  */
-export default class PayIDClient {
+export class PayIDClient {
+  private readonly wrappedPayIdClient: PayIdClient
+
   /**
    * Initialize a new PayID client.
    *
@@ -43,10 +52,9 @@ export default class PayIDClient {
    * @param useHttps Whether to use HTTPS when making PayID requests. Most users should set this to 'true' to avoid
    *                 Man-in-the-Middle attacks. Exposed as an option for testing purposes. Defaults to true.
    */
-  constructor(
-    public readonly network: string,
-    private readonly useHttps: boolean = true,
-  ) {}
+  constructor(network: string, useHttps: boolean = true) {
+    this.wrappedPayIdClient = new PayIdClient(network, useHttps)
+  }
 
   /**
    * Retrieve the address associated with a PayID.
@@ -55,17 +63,152 @@ export default class PayIDClient {
    * @returns An address representing the given PayID.
    */
   async addressForPayID(payID: string): Promise<CryptoAddressDetails> {
-    const payIDComponents = PayIDClient.parsePayID(payID)
+    return this.wrappedPayIdClient.addressForPayId(payID)
+  }
+
+  /**
+   * Generate a new invoice with compliance requests.
+   *
+   * @param payID The Pay ID to request an invoice for.
+   * @param nonce A randomly selected nonce that is unique to this invoice request.
+   */
+  async getInvoice(
+    payID: string,
+    nonce: string,
+  ): Promise<SignatureWrapperInvoice> {
+    return this.wrappedPayIdClient.getInvoice(payID, nonce)
+  }
+
+  /**
+   * Post an invoice with compliance data.
+   *
+   * @param payID The Pay ID compliance data is associated with.
+   * @param publicKeyType The type of public key.
+   * @param publicKeyData An array of public keys which lead back to the root trust certificate.
+   * @param publicKey The public key.
+   * @param signature The signature of the operation.
+   * @param originatorUserLegalName The legal name of the originator.
+   * @param originatorAccountID The account ID of the originator.
+   * @param originatorUserPhysicalAddress The physical address of the originator.
+   * @param originatorInstitutionName The institution name of the originator.
+   * @param valueAmount The value being transferred.
+   * @param valueScale The scale of the value.
+   * @param timestamp The time that the operation occurred.
+   * @param beneficiaryInstitutionName The beneficiary insitution name.
+   * @param beneficiaryUserLegalName The legal name of the receiver at the beneficiary institution. Optional, defaults to undefined.
+   * @param beneficiaryUserPhysicalAddress The phsyical address of the receiver at the beneficiary institution. Optional, defaults to undefined.
+   * @param beneficiaryUserAccountID The account ID of the receiver at the beneficiary institution. Optional, defaults to undefined.
+   */
+  // eslint-disable-next-line class-methods-use-this
+  async postInvoice(
+    payID: string,
+    nonce: string,
+    publicKeyType: string,
+    publicKeyData: Array<string>,
+    publicKey: string,
+    signature: string,
+    originatorUserLegalName: string,
+    originatorAccountID: string,
+    originatorUserPhysicalAddress: string,
+    originatorInstitutionName: string,
+    valueAmount: string,
+    valueScale: number,
+    timestamp: string,
+    beneficiaryInstitutionName: string,
+    beneficiaryUserLegalName: string | undefined = undefined,
+    beneficiaryUserPhysicalAddress: string | undefined = undefined,
+    beneficiaryUserAccountID: string | undefined = undefined,
+  ): Promise<SignatureWrapperInvoice> {
+    return this.wrappedPayIdClient.postInvoice(
+      payID,
+      nonce,
+      publicKeyType,
+      publicKeyData,
+      publicKey,
+      signature,
+      originatorUserLegalName,
+      originatorAccountID,
+      originatorUserPhysicalAddress,
+      originatorInstitutionName,
+      valueAmount,
+      valueScale,
+      timestamp,
+      beneficiaryInstitutionName,
+      beneficiaryUserLegalName,
+      beneficiaryUserPhysicalAddress,
+      beneficiaryUserAccountID,
+    )
+  }
+
+  /**
+   * Request a receipt.
+   *
+   * TODO(keefertaylor): Provide more comprehensive documentation when available.
+   *
+   * @param payID The Pay ID that the request is correllated with.
+   * @param invoiceHash The invoice hash.
+   * @param transactionConfirmation The transaction confirmation.
+   * @returns A void promise that resolves when the operation is complete.
+   */
+  // TODO(keefertaylor): Consider if this method should be static.
+  // eslint-disable-next-line class-methods-use-this
+  async receipt(
+    payID: string,
+    invoiceHash: string,
+    transactionConfirmation: string,
+  ): Promise<void> {
+    return this.wrappedPayIdClient.receipt(
+      payID,
+      invoiceHash,
+      transactionConfirmation,
+    )
+  }
+}
+
+/**
+ * A client for PayID.
+ *
+ * @warning This class is experimental and should not be used in production applications.
+ */
+export default class PayIdClient {
+  /**
+   * Initialize a new PayIdClient.
+   *
+   * Networks in this constructor take the form of an asset and an optional network (<asset>-<network>), for instance:
+   * - xrpl-testnet
+   * - xrpl-mainnet
+   * - eth-rinkeby
+   * - ach
+   *
+   * TODO(keefertaylor): Link a canonical list at payid.org when available.
+   *
+   * @param network The network that addresses will be resolved on.
+   * @param useHttps Whether to cuse HTTPS when making PayID requests. Most users should set this to 'true' to avoid
+   *                 Man-in-the-Middle attacks. Exposed as an option for testing purposes. Defaults to true.
+   */
+  constructor(
+    public readonly network: string,
+    private readonly useHttps: boolean = true,
+  ) {}
+
+  /**
+   * Retrieve the address associated with a PayID.
+   *
+   * @param payId The payID to resolve for an address.
+   * @returns An address representing the given PayID.
+   */
+  async addressForPayId(payId: string): Promise<CryptoAddressDetails> {
+    const payIdComponents = PayIdClient.parsePayId(payId)
     const basePath = this.useHttps
-      ? `https://${payIDComponents.host}`
-      : `http://${payIDComponents.host}`
+      ? `https://${payIdComponents.host}`
+      : `http://${payIdComponents.host}`
 
     // Swagger API adds the leading '/' in path automatically because it is part of the endpoint.
-    const path = payIDComponents.path.substring(1)
+    const path = payIdComponents.path.substring(1)
 
     const api = new DefaultApi(undefined, basePath)
 
-    const options = PayIDClient.makeOptionsWithAcceptTypes(
+    const options = PayIdClient.makeOptionsWithAcceptTypes(
       `application/${this.network}+json`,
     )
 
@@ -94,14 +237,14 @@ export default class PayIDClient {
       }
     } catch (error) {
       if (error.response?.status === 404) {
-        const message = `Could not resolve ${payID} on network ${this.network}`
+        const message = `Could not resolve ${payId} on network ${this.network}`
         return Promise.reject(
-          new PayIDError(PayIDErrorType.MappingNotFound, message),
+          new PayIdError(PayIdErrorType.MappingNotFound, message),
         )
       } else {
-        const message = PayIDClient.messageFromMaybeHTTPError(error)
+        const message = PayIdClient.messageFromMaybeHttpError(error)
         return Promise.reject(
-          new PayIDError(PayIDErrorType.UnexpectedResponse, message),
+          new PayIdError(PayIdErrorType.UnexpectedResponse, message),
         )
       }
     }
@@ -110,19 +253,19 @@ export default class PayIDClient {
   /**
    * Generate a new invoice with compliance requests.
    *
-   * @param payID The Pay ID to request an invoice for.
+   * @param payId The Pay ID to request an invoice for.
    * @param nonce A randomly selected nonce that is unique to this invoice request.
    */
   async getInvoice(
-    payID: string,
+    payId: string,
     nonce: string,
   ): Promise<SignatureWrapperInvoice> {
-    const payIDComponents = PayIDClient.parsePayID(payID)
+    const payIDComponents = PayIdClient.parsePayId(payId)
     const basePath = this.useHttps
       ? `https://${payIDComponents.host}${payIDComponents.path}`
       : `http://${payIDComponents.host}${payIDComponents.path}`
 
-    const options = PayIDClient.makeOptionsWithAcceptTypes(
+    const options = PayIdClient.makeOptionsWithAcceptTypes(
       `application/${this.network}+json`,
     )
 
@@ -133,7 +276,7 @@ export default class PayIDClient {
       return data
     } catch (error) {
       // TODO(keefertaylor): Provide more granular error handling.
-      const message = PayIDClient.messageFromMaybeHTTPError(error)
+      const message = PayIdClient.messageFromMaybeHttpError(error)
       return Promise.reject(
         new PayIDError(PayIDErrorType.UnexpectedResponse, message),
       )
@@ -143,7 +286,7 @@ export default class PayIDClient {
   /**
    * Post an invoice with compliance data.
    *
-   * @param payID The Pay ID compliance data is associated with.
+   * @param payId The Pay ID compliance data is associated with.
    * @param publicKeyType The type of public key.
    * @param publicKeyData An array of public keys which lead back to the root trust certificate.
    * @param publicKey The public key.
@@ -162,7 +305,7 @@ export default class PayIDClient {
    */
   // eslint-disable-next-line class-methods-use-this
   async postInvoice(
-    payID: string,
+    payId: string,
     nonce: string,
     publicKeyType: string,
     publicKeyData: Array<string>,
@@ -220,12 +363,12 @@ export default class PayIDClient {
       signature,
     }
 
-    const payIDComponents = PayIDClient.parsePayID(payID)
+    const payIdComponents = PayIdClient.parsePayId(payId)
     const basePath = this.useHttps
-      ? `https://${payIDComponents.host}${payIDComponents.path}`
-      : `http://${payIDComponents.host}${payIDComponents.path}`
+      ? `https://${payIdComponents.host}${payIdComponents.path}`
+      : `http://${payIdComponents.host}${payIdComponents.path}`
 
-    const options = PayIDClient.makeOptionsWithAcceptTypes(
+    const options = PayIdClient.makeOptionsWithAcceptTypes(
       `application/${this.network}+json`,
     )
     const api = new DefaultApi(undefined, basePath)
@@ -238,9 +381,9 @@ export default class PayIDClient {
       )
       return data
     } catch (error) {
-      const message = PayIDClient.messageFromMaybeHTTPError(error)
+      const message = PayIdClient.messageFromMaybeHttpError(error)
       return Promise.reject(
-        new PayIDError(PayIDErrorType.UnexpectedResponse, message),
+        new PayIdError(PayIdErrorType.UnexpectedResponse, message),
       )
     }
   }
@@ -250,7 +393,7 @@ export default class PayIDClient {
    *
    * TODO(keefertaylor): Provide more comprehensive documentation when available.
    *
-   * @param payID The Pay ID that the request is correllated with.
+   * @param payId The Pay ID that the request is correllated with.
    * @param invoiceHash The invoice hash.
    * @param transactionConfirmation The transaction confirmation.
    * @returns A void promise that resolves when the operation is complete.
@@ -258,11 +401,11 @@ export default class PayIDClient {
   // TODO(keefertaylor): Consider if this method should be static.
   // eslint-disable-next-line class-methods-use-this
   async receipt(
-    payID: string,
+    payId: string,
     invoiceHash: string,
     transactionConfirmation: string,
   ): Promise<void> {
-    const payIDComponents = PayIDClient.parsePayID(payID)
+    const payIDComponents = PayIdClient.parsePayId(payId)
 
     const payload = {
       invoiceHash,
@@ -278,9 +421,9 @@ export default class PayIDClient {
       await api.postPathReceipt(payload)
     } catch (error) {
       // TODO(keefertaylor): Provide more specific error handling here.
-      const message = PayIDClient.messageFromMaybeHTTPError(error)
+      const message = PayIdClient.messageFromMaybeHttpError(error)
       return Promise.reject(
-        new PayIDError(PayIDErrorType.UnexpectedResponse, message),
+        new PayIdError(PayIdErrorType.UnexpectedResponse, message),
       )
     }
   }
@@ -291,7 +434,7 @@ export default class PayIDClient {
    * @param error An error which may be an HTTP error.
    * @returns A sane message for upstream errors.
    */
-  private static messageFromMaybeHTTPError(error: any): string {
+  private static messageFromMaybeHttpError(error: any): string {
     // Try to nicely form an error if the error is the result of an HTTP request, fall back to
     // just printing the error otherwise.
     return error.response?.status
@@ -321,14 +464,14 @@ export default class PayIDClient {
   /**
    * Parse a payID to a host and path.
    */
-  private static parsePayID(payID: string): PayIDComponents {
-    const payIDComponents = PayIDUtils.parsePayID(payID)
-    if (!payIDComponents) {
+  private static parsePayId(payId: string): PayIDComponents {
+    const payIdComponents = PayIdUtils.parsePayID(payId)
+    if (!payIdComponents) {
       throw PayIDError.invalidPayID
     }
     return {
-      host: payIDComponents.host,
-      path: payIDComponents.path,
+      host: payIdComponents.host,
+      path: payIdComponents.path,
     }
   }
 }
