@@ -377,10 +377,6 @@ describe('Protocol Buffer Conversion', function (): void {
 
     // THEN all fields are present and converted correctly.
     assert.equal(transaction?.account, testAddress)
-    assert.equal(
-      transaction?.accountXAddress,
-      Utils.encodeXAddress(transaction?.account!, undefined, true),
-    )
     assert.equal(transaction?.fee, testFee)
     assert.equal(transaction?.sequence, testSequence)
     assert.equal(transaction?.signingPublicKey, testPublicKey)
@@ -422,10 +418,6 @@ describe('Protocol Buffer Conversion', function (): void {
 
     // THEN all fields are present and converted correctly.
     assert.equal(transaction?.account, testAddress)
-    assert.equal(
-      transaction?.accountXAddress,
-      Utils.encodeXAddress(transaction?.account!, undefined, true),
-    )
     assert.equal(transaction?.fee, testFee)
     assert.equal(transaction?.sequence, testSequence)
     assert.deepEqual(transaction?.signingPublicKey, testPublicKey)
