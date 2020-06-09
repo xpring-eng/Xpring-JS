@@ -2,7 +2,7 @@ import { GetTransactionResponse } from './Generated/web/org/xrpl/rpc/v1/get_tran
 import RippledFlags from './rippled-flags'
 
 /** Abstraction around raw Transaction Status for compatibility. */
-// TODO(keefertaylor): This class is now defunt. Refactor and remove.
+// TODO:(keefertaylor) This class is now defunct. Refactor and remove.
 export default class RawTransactionStatus {
   /**
    * Create a RawTransactionStatus from a GetTransactionResponse protocol buffer.
