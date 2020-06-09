@@ -45,10 +45,6 @@ module.exports = {
     // Add rules for Mocha-specific syntax
     'plugin:mocha/recommended',
 
-    // Add Airbnb + TypeScript support
-    'airbnb-base',
-    'airbnb-typescript/base',
-
     // Add rules that specifically require type information using our tsconfig
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
 
