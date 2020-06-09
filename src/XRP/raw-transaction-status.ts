@@ -30,7 +30,10 @@ export default class RawTransactionStatus {
     return new RawTransactionStatus(
       getTransactionResponse.getValidated(),
       getTransactionResponse.getMeta()?.getTransactionResult()?.getResult(),
-      getTransactionResponse.getTransaction()?.getLastLedgerSequence(),
+      getTransactionResponse
+        .getTransaction()
+        ?.getLastLedgerSequence()
+        ?.getValue(),
       isFullPayment,
     )
   }
@@ -39,9 +42,9 @@ export default class RawTransactionStatus {
    * Note: This constructor is exposed for testing purposes. Clients of this code should favor using a static factory method.
    */
   constructor(
-    public isValidated,
-    public transactionStatusCode,
-    public lastLedgerSequence,
-    public isFullPayment,
+    public isValidated: boolean,
+    public transactionStatusCode: string | undefined,
+    public lastLedgerSequence: number | undefined,
+    public isFullPayment: boolean,
   ) {}
 }

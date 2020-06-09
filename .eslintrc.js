@@ -86,6 +86,14 @@ module.exports = {
           'error',
           { argsIgnorePattern: '^_' },
         ],
+
+        // These rules are deprecated, but we have an old config that enables it
+        '@typescript-eslint/camelcase': 'off',
+        '@typescript-eslint/ban-ts-ignore': 'off',
+
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
       },
     },
     {
