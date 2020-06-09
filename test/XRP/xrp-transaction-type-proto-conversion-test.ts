@@ -677,8 +677,14 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
         ?.getValue()
         ?.getAddress(),
     )
-    assert.isUndefined(paymentChannelCreate?.settleDelay)
-    assert.isUndefined(paymentChannelCreate?.publicKey)
+    assert.equal(
+      paymentChannelCreate?.settleDelay,
+      testPaymentChannelCreateProtoAllFields.getSettleDelay()?.getValue(),
+    )
+    assert.equal(
+      paymentChannelCreate?.publicKey,
+      testPaymentChannelCreateProtoAllFields.getPublicKey()?.getValue_asB64(),
+    )
     assert.isUndefined(paymentChannelCreate?.cancelAfter)
     assert.isUndefined(paymentChannelCreate?.destinationTag)
   })
