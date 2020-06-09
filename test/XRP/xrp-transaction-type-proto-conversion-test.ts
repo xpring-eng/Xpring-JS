@@ -628,7 +628,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.deepEqual(
       paymentChannelCreate?.amount,
       XRPCurrencyAmount.from(
-        testPaymentChannelCreateProtoAllFields.getAmount()?.getValue(),
+        testPaymentChannelCreateProtoAllFields.getAmount()?.getValue()!,
       ),
     )
     assert.equal(
@@ -667,7 +667,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.deepEqual(
       paymentChannelCreate?.amount,
       XRPCurrencyAmount.from(
-        testPaymentChannelCreateProtoMandatoryOnly.getAmount()?.getValue(),
+        testPaymentChannelCreateProtoMandatoryOnly.getAmount()?.getValue()!,
       ),
     )
     assert.equal(
