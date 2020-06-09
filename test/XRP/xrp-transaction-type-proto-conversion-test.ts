@@ -11,6 +11,7 @@ import XRPEscrowFinish from '../../src/XRP/model/xrp-escrow-finish'
 import XRPOfferCancel from '../../src/XRP/model/xrp-offer-cancel'
 import XRPOfferCreate from '../../src/XRP/model/xrp-offer-create'
 import XRPPaymentChannelClaim from '../../src/XRP/model/xrp-payment-channel-claim'
+import XRPPaymentChannelCreate from '../../src/XRP/model/xrp-payment-channel-create'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -31,6 +32,8 @@ import {
   testOfferCancelProto,
   testOfferCreateProtoAllFields,
   testOfferCreateProtoMandatoryOnly,
+  testPaymentChannelCreateProtoAllFields,
+  testPaymentChannelCreateProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -42,6 +45,7 @@ import {
   testPaymentChannelClaimProtoAllFields,
   testPaymentChannelClaimProtoMandatoryOnly,
   testInvalidPaymentChannelClaimProto,
+  testInvalidPaymentChannelCreateProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import { XRPCurrencyAmount } from '../../src/XRP/model'
 
@@ -609,5 +613,84 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the result is undefined.
     assert.isUndefined(paymentChannelClaim)
+  })
+
+  // PaymentChannelCreate
+
+  it('Convert PaymentChannelCreate protobuf to XRPPaymentChannelCreate object - all fields', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer with all fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const paymentChannelCreate = XRPPaymentChannelCreate.from(
+      testPaymentChannelCreateProtoAllFields,
+    )
+
+    // THEN the PaymentChannelCreate converted as expected.
+    assert.deepEqual(
+      paymentChannelCreate?.amount,
+      XRPCurrencyAmount.from(
+        testPaymentChannelCreateProtoAllFields.getAmount()?.getValue(),
+      ),
+    )
+    assert.equal(
+      paymentChannelCreate?.destination,
+      testPaymentChannelCreateProtoAllFields
+        .getDestination()
+        ?.getValue()
+        ?.getAddress(),
+    )
+    assert.equal(
+      paymentChannelCreate?.settleDelay,
+      testPaymentChannelCreateProtoAllFields.getSettleDelay()?.getValue(),
+    )
+    assert.equal(
+      paymentChannelCreate?.publicKey,
+      testPaymentChannelCreateProtoAllFields.getPublicKey()?.getValue_asB64(),
+    )
+    assert.equal(
+      paymentChannelCreate?.cancelAfter,
+      testPaymentChannelCreateProtoAllFields.getCancelAfter()?.getValue(),
+    )
+    assert.equal(
+      paymentChannelCreate?.destinationTag,
+      testPaymentChannelCreateProtoAllFields.getDestinationTag()?.getValue(),
+    )
+  })
+
+  it('Convert PaymentChannelCreate protobuf to XRPPaymentChannelCreate object - mandatory fields', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer with only mandatory fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const paymentChannelCreate = XRPPaymentChannelCreate.from(
+      testPaymentChannelCreateProtoMandatoryOnly,
+    )
+
+    // THEN the PaymentChannelCreate converted as expected.
+    assert.deepEqual(
+      paymentChannelCreate?.amount,
+      XRPCurrencyAmount.from(
+        testPaymentChannelCreateProtoMandatoryOnly.getAmount()?.getValue(),
+      ),
+    )
+    assert.equal(
+      paymentChannelCreate?.destination,
+      testPaymentChannelCreateProtoMandatoryOnly
+        .getDestination()
+        ?.getValue()
+        ?.getAddress(),
+    )
+    assert.isUndefined(paymentChannelCreate?.settleDelay)
+    assert.isUndefined(paymentChannelCreate?.publicKey)
+    assert.isUndefined(paymentChannelCreate?.cancelAfter)
+    assert.isUndefined(paymentChannelCreate?.destinationTag)
+  })
+
+  it('Convert PaymentChannelCreate protobuf to XRPPaymentChannelCreate object - missing required field', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer missing a required field.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const paymentChannelCreate = XRPPaymentChannelCreate.from(
+      testInvalidPaymentChannelCreateProto,
+    )
+
+    // THEN the result is undefined.
+    assert.isUndefined(paymentChannelCreate)
   })
 })

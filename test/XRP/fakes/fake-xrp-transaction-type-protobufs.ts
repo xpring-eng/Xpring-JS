@@ -11,6 +11,7 @@ import {
   OfferCancel,
   OfferCreate,
   PaymentChannelClaim,
+  PaymentChannelCreate,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import {
   ClearFlag,
@@ -42,6 +43,7 @@ import {
   Balance,
   PaymentChannelSignature,
   PublicKey,
+  SettleDelay,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
@@ -92,6 +94,11 @@ const testChannel =
 const testPaymentChannelSignature =
   '30440220718D264EF05CAED7C781FF6DE298DCAC68D002562C9BF3A07C1E721B420C0DAB02203A5A4779EF4D2CCC7BC3EF886676D803A9981B928D3B8ACA483B80ECA3CD7B9B'
 const testPaymentChannelPublicKey =
+  '32D2471DB72B27E3310F355BB33E339BF26F8392D5A93D3BC0FC3B566612DA0F0A'
+
+// PaymentChannelCreate values
+const testSettleDelay = 86400
+const testPublicKey =
   '32D2471DB72B27E3310F355BB33E339BF26F8392D5A93D3BC0FC3B566612DA0F0A'
 // Protobuf objects ======================================================================
 
@@ -295,6 +302,28 @@ testPaymentChannelClaimProtoAllFields.setPaymentChannelSignature(
 const testPaymentChannelClaimProtoMandatoryOnly = new PaymentChannelClaim()
 testPaymentChannelClaimProtoMandatoryOnly.setChannel(testChannelProto)
 
+// PaymentChannelCreate protos
+
+const testSettleDelayProto = new SettleDelay()
+testSettleDelayProto.setValue(testSettleDelay)
+
+const testPublicKeyProto = new PublicKey()
+testPublicKeyProto.setValue(testPublicKey)
+
+const testPaymentChannelCreateProtoAllFields = new PaymentChannelCreate()
+testPaymentChannelCreateProtoAllFields.setAmount(testAmountProto)
+testPaymentChannelCreateProtoAllFields.setDestination(testDestinationProto)
+testPaymentChannelCreateProtoAllFields.setSettleDelay(testSettleDelayProto)
+testPaymentChannelCreateProtoAllFields.setPublicKey(testPublicKeyProto)
+testPaymentChannelCreateProtoAllFields.setCancelAfter(testCancelAfterProto)
+testPaymentChannelCreateProtoAllFields.setDestinationTag(
+  testDestinationTagProto,
+)
+
+const testPaymentChannelCreateProtoMandatoryOnly = new PaymentChannelCreate()
+testPaymentChannelCreateProtoMandatoryOnly.setAmount(testAmountProto)
+testPaymentChannelCreateProtoMandatoryOnly.setDestination(testDestinationProto)
+
 // Invalid Protobuf Objects ========================================================================
 
 // Invalid CheckCancel proto (missing checkId)
@@ -330,6 +359,10 @@ testInvalidOfferCreateProto.setTakerPays(testTakerPaysProto)
 // Invalid PaymentChannelClaim proto (missing channel)
 const testInvalidPaymentChannelClaimProto = new PaymentChannelClaim()
 
+// Invalid PaymentChannelCreate proto (missing destination)
+const testInvalidPaymentChannelCreateProto = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProto.setAmount(testAmountProto)
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -352,6 +385,8 @@ export {
   testOfferCreateProtoMandatoryOnly,
   testPaymentChannelClaimProtoAllFields,
   testPaymentChannelClaimProtoMandatoryOnly,
+  testPaymentChannelCreateProtoAllFields,
+  testPaymentChannelCreateProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -361,4 +396,5 @@ export {
   testInvalidOfferCancelProto,
   testInvalidOfferCreateProto,
   testInvalidPaymentChannelClaimProto,
+  testInvalidPaymentChannelCreateProto,
 }
