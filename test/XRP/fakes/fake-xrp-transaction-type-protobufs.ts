@@ -323,8 +323,8 @@ testPaymentChannelCreateProtoAllFields.setDestinationTag(
 const testPaymentChannelCreateProtoMandatoryOnly = new PaymentChannelCreate()
 testPaymentChannelCreateProtoMandatoryOnly.setAmount(testAmountProto)
 testPaymentChannelCreateProtoMandatoryOnly.setDestination(testDestinationProto)
-testPaymentChannelCreateProtoAllFields.setSettleDelay(testSettleDelayProto)
-testPaymentChannelCreateProtoAllFields.setPublicKey(testPublicKeyProto)
+testPaymentChannelCreateProtoMandatoryOnly.setSettleDelay(testSettleDelayProto)
+testPaymentChannelCreateProtoMandatoryOnly.setPublicKey(testPublicKeyProto)
 
 // Invalid Protobuf Objects ========================================================================
 
