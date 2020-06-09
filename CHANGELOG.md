@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A new optional argument `memos?: Array<XRPMemo>` is added to the `send` method of `XpringClient` and `XpringClientInterface` which allows appending memos to a transaction on the XRP ledger.
 
 #### Deprecated
+- `XRPTransaction.account` and `XRPTransaction.sourceTag` are deprecated.
+		Please use the X-address encoded field `sourceXAddress` instead.
 - `XRPPayment.destination` and `XRPPayment.destinationTag` are deprecated.
 		Please use the X-address encoded field `destinationXAddress` instead.
 
