@@ -13,6 +13,7 @@ import XRPOfferCreate from '../../src/XRP/model/xrp-offer-create'
 import XRPPaymentChannelClaim from '../../src/XRP/model/xrp-payment-channel-claim'
 import XRPPaymentChannelCreate from '../../src/XRP/model/xrp-payment-channel-create'
 import XRPPaymentChannelFund from '../../src/XRP/model/xrp-payment-channel-fund'
+import XRPSetRegularKey from '../../src/XRP/model/xrp-set-regular-key'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -37,6 +38,8 @@ import {
   testPaymentChannelCreateProtoMandatoryOnly,
   testPaymentChannelFundProtoAllFields,
   testPaymentChannelFundProtoMandatoryOnly,
+  testSetRegularKeyProtoWithKey,
+  testSetRegularKeyProtoNoKey,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -762,5 +765,28 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the result is undefined.
     assert.isUndefined(paymentChannelFund)
+  })
+
+  // SetRegularKey
+
+  it('Convert SetRegularKey protobuf to XRPSetRegularKey object - key set', function (): void {
+    // GIVEN a SetRegularKey protocol buffer with regularKey set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const setRegularKey = XRPSetRegularKey.from(testSetRegularKeyProtoWithKey)
+
+    // THEN the SetRegularKey converted as expected.
+    assert.equal(
+      setRegularKey?.regularKey,
+      testSetRegularKeyProtoWithKey.getRegularKey()?.getValue()?.getAddress(),
+    )
+  })
+
+  it('Convert SetRegularKey protobuf to XRPSetRegularKey object - no key', function (): void {
+    // GIVEN a SetRegularKey protocol buffer without regularKey set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const setRegularKey = XRPSetRegularKey.from(testSetRegularKeyProtoNoKey)
+
+    // THEN the SetRegularKey converted as expected.
+    assert.isUndefined(setRegularKey?.regularKey)
   })
 })
