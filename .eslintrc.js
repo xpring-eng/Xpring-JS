@@ -91,6 +91,7 @@ module.exports = {
         '@typescript-eslint/camelcase': 'off',
         '@typescript-eslint/ban-ts-ignore': 'off',
 
+        // These rules are actually disabled in @xpring-eng/eslint-config-base/loose at the moment
         '@typescript-eslint/no-unsafe-call': 'off',
         '@typescript-eslint/no-unsafe-member-access': 'off',
         '@typescript-eslint/no-unsafe-assignment': 'off',
