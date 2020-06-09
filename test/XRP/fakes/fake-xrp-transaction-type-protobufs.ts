@@ -12,6 +12,7 @@ import {
   OfferCreate,
   PaymentChannelClaim,
   PaymentChannelCreate,
+  PaymentChannelFund,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import {
   ClearFlag,
@@ -100,6 +101,7 @@ const testPaymentChannelPublicKey =
 const testSettleDelay = 86400
 const testPublicKey =
   '32D2471DB72B27E3310F355BB33E339BF26F8392D5A93D3BC0FC3B566612DA0F0A'
+
 // Protobuf objects ======================================================================
 
 // AccountSet protos
@@ -326,6 +328,17 @@ testPaymentChannelCreateProtoMandatoryOnly.setDestination(testDestinationProto)
 testPaymentChannelCreateProtoMandatoryOnly.setSettleDelay(testSettleDelayProto)
 testPaymentChannelCreateProtoMandatoryOnly.setPublicKey(testPublicKeyProto)
 
+// PaymentChannelFund protos
+
+const testPaymentChannelFundProtoAllFields = new PaymentChannelFund()
+testPaymentChannelFundProtoAllFields.setChannel(testChannelProto)
+testPaymentChannelFundProtoAllFields.setAmount(testAmountProto)
+testPaymentChannelFundProtoAllFields.setExpiration(testExpirationProto)
+
+const testPaymentChannelFundProtoMandatoryOnly = new PaymentChannelFund()
+testPaymentChannelFundProtoMandatoryOnly.setChannel(testChannelProto)
+testPaymentChannelFundProtoMandatoryOnly.setAmount(testAmountProto)
+
 // Invalid Protobuf Objects ========================================================================
 
 // Invalid CheckCancel proto (missing checkId)
@@ -365,6 +378,10 @@ const testInvalidPaymentChannelClaimProto = new PaymentChannelClaim()
 const testInvalidPaymentChannelCreateProto = new PaymentChannelCreate()
 testInvalidPaymentChannelCreateProto.setAmount(testAmountProto)
 
+// Invalid PaymentChannelFund proto (missing amount)
+const testInvalidPaymentChannelFundProto = new PaymentChannelFund()
+testInvalidPaymentChannelFundProto.setChannel(testChannelProto)
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -389,6 +406,8 @@ export {
   testPaymentChannelClaimProtoMandatoryOnly,
   testPaymentChannelCreateProtoAllFields,
   testPaymentChannelCreateProtoMandatoryOnly,
+  testPaymentChannelFundProtoAllFields,
+  testPaymentChannelFundProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -399,4 +418,5 @@ export {
   testInvalidOfferCreateProto,
   testInvalidPaymentChannelClaimProto,
   testInvalidPaymentChannelCreateProto,
+  testInvalidPaymentChannelFundProto,
 }
