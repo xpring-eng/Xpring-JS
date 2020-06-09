@@ -1,5 +1,5 @@
-import { assert } from 'chai'
 import bigInt from 'big-integer'
+import { assert } from 'chai'
 import { FakeWallet } from 'xpring-common-js'
 import FakeXRPClient from '../XRP/fakes/fake-xrp-client'
 import FakeXRPPayIDClient from '../PayID/fakes/fake-xrp-pay-id-client'

@@ -4,6 +4,15 @@ import bigInt from 'big-integer'
 import XRPClient from '../../src/XRP/xrp-client'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { XRPLNetwork } from '../../src/Common/xrpl-network'
+import {
+  expectedNoDataMemo,
+  expectedNoFormatMemo,
+  expectedNoTypeMemo,
+  iForgotToPickUpCarlMemo,
+  noDataMemo,
+  noFormatMemo,
+  noTypeMemo,
+} from './helpers/xrp-test-utils'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -59,11 +68,64 @@ describe('XRPClient Integration Tests', function (): void {
     assert.exists(result)
   })
 
+  it('Send XRP with memo - Web Shim', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const memos = [
+      iForgotToPickUpCarlMemo,
+      noDataMemo,
+      noFormatMemo,
+      noTypeMemo,
+    ]
+    const result = await xrpWebClient.sendWithDetails({
+      amount,
+      destination: recipientAddress,
+      sender: wallet,
+      memos,
+    })
+    assert.exists(result)
+
+    const transaction = await xrpClient.getPayment(result)
+
+    assert.deepEqual(transaction?.memos, [
+      iForgotToPickUpCarlMemo,
+      expectedNoDataMemo,
+      expectedNoFormatMemo,
+      expectedNoTypeMemo,
+    ])
+  })
+
   it('Send XRP - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const result = await xrpClient.send(amount, recipientAddress, wallet)
     assert.exists(result)
+  })
+
+  it('Send XRP with memo - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    const memos = [
+      iForgotToPickUpCarlMemo,
+      noDataMemo,
+      noFormatMemo,
+      noTypeMemo,
+    ]
+    const result = await xrpClient.sendWithDetails({
+      amount,
+      destination: recipientAddress,
+      sender: wallet,
+      memos,
+    })
+    assert.exists(result)
+
+    const transaction = await xrpClient.getPayment(result)
+
+    assert.deepEqual(transaction?.memos, [
+      iForgotToPickUpCarlMemo,
+      expectedNoDataMemo,
+      expectedNoFormatMemo,
+      expectedNoTypeMemo,
+    ])
   })
 
   it('Check if Account Exists - true - Web Shim', async function (): Promise<

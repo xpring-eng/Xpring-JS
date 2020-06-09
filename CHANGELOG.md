@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- A new optional argument `memos?: Array<XRPMemo>` is added to the `send` method of `XpringClient` and `XpringClientInterface` which allows appending memos to a transaction on the XRP ledger.
 - `XrplNetwork` replaces the now deprecated `XRPLNetwork`.
 - `PayIdClient` replaces the now deprecated `PayIDClient`.
 - `PayIdError` replaces the now deprecated `PayIDError`.
