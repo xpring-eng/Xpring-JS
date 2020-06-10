@@ -10,7 +10,6 @@ import {
   testAccountDeleteProtoNoTag,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import XRPLNetwork from '../../src/Common/xrpl-network'
-import { Account } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {
@@ -80,7 +79,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the AccountDelete converted as expected.
     const expectedXAddress = Utils.encodeXAddress(
-      testAccountDeleteProto.getDestination()?.getValue()?.getAddress(),
+      testAccountDeleteProto.getDestination()?.getValue()?.getAddress()!,
       testAccountDeleteProto.getDestinationTag()?.getValue(),
       true,
     )
@@ -97,7 +96,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the AccountDelete converted as expected.
     const expectedXAddress = Utils.encodeXAddress(
-      testAccountDeleteProtoNoTag.getDestination()?.getValue()?.getAddress(),
+      testAccountDeleteProtoNoTag.getDestination()?.getValue()?.getAddress()!,
       testAccountDeleteProtoNoTag.getDestinationTag()?.getValue(),
       true,
     )
