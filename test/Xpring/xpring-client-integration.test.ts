@@ -39,11 +39,12 @@ describe('Xpring Integration Tests', function (): void {
   it('Send XRP TestNet', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    // GIVEN a Pay ID that will resolve.
+    // GIVEN an amount and a PayID that will resolve.
+    const amount = 10
     const payID = 'alice$dev.payid.xpring.money'
 
     // WHEN XRP is sent to the Pay ID.
-    const transactionHash = await xpringClient.send(10, payID, wallet)
+    const transactionHash = await xpringClient.send(amount, payID, wallet)
 
     // THEN a transaction hash is returned.
     assert.exists(transactionHash)

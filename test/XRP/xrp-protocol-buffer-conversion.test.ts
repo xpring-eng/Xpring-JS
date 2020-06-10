@@ -3,18 +3,20 @@
  * having a x?.y?.z! chain is a succinct way of getting the typing correct.
  */
 
-import { assert } from 'chai'
 import bigInt from 'big-integer'
+import { assert } from 'chai'
+
+import { Utils, XRPLNetwork } from '../../src'
 import XRPCurrency from '../../src/XRP/model/xrp-currency'
-import XRPPathElement from '../../src/XRP/model/xrp-path-element'
-import XRPPath from '../../src/XRP/model/xrp-path'
-import XRPIssuedCurrency from '../../src/XRP/model/xrp-issued-currency'
 import XRPCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
-import XRPPayment from '../../src/XRP/model/xrp-payment'
+import XRPIssuedCurrency from '../../src/XRP/model/xrp-issued-currency'
 import XRPMemo from '../../src/XRP/model/xrp-memo'
+import XRPPath from '../../src/XRP/model/xrp-path'
+import XRPPathElement from '../../src/XRP/model/xrp-path-element'
+import XRPPayment from '../../src/XRP/model/xrp-payment'
 import XRPSigner from '../../src/XRP/model/xrp-signer'
 import XRPTransaction from '../../src/XRP/model/xrp-transaction'
-import { Utils, XRPLNetwork } from '../../src'
+
 import {
   testAddress,
   testPublicKey,
@@ -80,15 +82,15 @@ describe('Protocol Buffer Conversion', function (): void {
 
     // THEN the currency converted as expected.
     assert.equal(
-      pathElement?.account,
+      pathElement.account,
       testPathElementProto.getAccount()!.getAddress(),
     )
     assert.deepEqual(
-      pathElement?.currency,
+      pathElement.currency,
       XRPCurrency.from(testPathElementProto.getCurrency()!),
     )
     assert.equal(
-      pathElement?.issuer,
+      pathElement.issuer,
       testPathElementProto.getIssuer()!.getAddress(),
     )
   })
@@ -99,9 +101,9 @@ describe('Protocol Buffer Conversion', function (): void {
     const pathElement = XRPPathElement.from(testEmptyPathElementProto)
 
     // THEN the currency converted as expected.
-    assert.isUndefined(pathElement?.account)
-    assert.isUndefined(pathElement?.currency)
-    assert.isUndefined(pathElement?.issuer)
+    assert.isUndefined(pathElement.account)
+    assert.isUndefined(pathElement.currency)
+    assert.isUndefined(pathElement.issuer)
   })
 
   // Path
@@ -112,7 +114,7 @@ describe('Protocol Buffer Conversion', function (): void {
     const path = XRPPath.from(testEmptyPathProto)
 
     // THEN there are zero paths in the output.
-    assert.equal(path?.pathElements.length, 0)
+    assert.equal(path.pathElements.length, 0)
   })
 
   it('Convert Path protobuf with one path element to XRPPath', function (): void {
@@ -121,7 +123,7 @@ describe('Protocol Buffer Conversion', function (): void {
     const path = XRPPath.from(testPathProtoOneElement)
 
     // THEN there is one path in the output.
-    assert.equal(path?.pathElements.length, 1)
+    assert.equal(path.pathElements.length, 1)
   })
 
   it('Convert Path protobuf with many Paths to XRPPath', function (): void {
@@ -130,7 +132,7 @@ describe('Protocol Buffer Conversion', function (): void {
     const path = XRPPath.from(testPathProtoThreeElements)
 
     // THEN there are multiple paths in the output.
-    assert.equal(path?.pathElements.length, 3)
+    assert.equal(path.pathElements.length, 3)
   })
 
   // IssuedCurrency
@@ -358,7 +360,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // THEN all fields are present and converted correctly.
     assert.equal(
       signer?.account,
-      testSignerProto?.getAccount()?.getValue()?.getAddress(),
+      testSignerProto.getAccount()?.getValue()?.getAddress(),
     )
     assert.deepEqual(
       signer?.signingPublicKey,
@@ -403,7 +405,7 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.equal(
       transaction?.deliveredAmount,
       testGetTransactionResponseProto
-        ?.getMeta()
+        .getMeta()
         ?.getDeliveredAmount()
         ?.getValue()
         ?.getIssuedCurrencyAmount()
