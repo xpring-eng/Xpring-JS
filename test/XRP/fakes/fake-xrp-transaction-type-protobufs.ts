@@ -15,6 +15,7 @@ import {
   PaymentChannelFund,
   SetRegularKey,
   SignerListSet,
+  TrustSet,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import {
   ClearFlag,
@@ -52,6 +53,9 @@ import {
   SignerEntry,
   Account,
   SignerWeight,
+  LimitAmount,
+  QualityIn,
+  QualityOut,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
@@ -115,6 +119,11 @@ const testRegularKey = 'rAR8rR8sUkBoCZFawhkWzY4Y5YoyuznwD'
 // SignerListSet values
 const testSignerQuorum = 3
 const testSignerWeight = 1
+
+// TrustSet values
+const testQualityIn = 5
+const testQualityOut = 2
+
 // Protobuf objects ======================================================================
 
 // AccountSet protos
@@ -389,6 +398,24 @@ const testSignerListSetProto = new SignerListSet()
 testSignerListSetProto.setSignerQuorum(testSignerQuorumProto)
 testSignerListSetProto.setSignerEntriesList(testSignerEntryList)
 
+// TrustSet protos
+const testLimitAmountProto = new LimitAmount()
+testLimitAmountProto.setValue(testCurrencyAmountProtoIssuedCurrency)
+
+const testQualityInProto = new QualityIn()
+testQualityInProto.setValue(testQualityIn)
+
+const testQualityOutProto = new QualityOut()
+testQualityOutProto.setValue(testQualityOut)
+
+const testTrustSetProtoAllFields = new TrustSet()
+testTrustSetProtoAllFields.setLimitAmount(testLimitAmountProto)
+testTrustSetProtoAllFields.setQualityIn(testQualityInProto)
+testTrustSetProtoAllFields.setQualityOut(testQualityOutProto)
+
+const testTrustSetProtoMandatoryOnly = new TrustSet()
+testTrustSetProtoMandatoryOnly.setLimitAmount(testLimitAmountProto)
+
 // Invalid Protobuf Objects ========================================================================
 
 // Invalid CheckCancel proto (missing checkId)
@@ -436,6 +463,11 @@ testInvalidPaymentChannelFundProto.setChannel(testChannelProto)
 const testInvalidSignerListSetProto = new SignerListSet()
 testInvalidSignerListSetProto.setSignerEntriesList(testSignerEntryList)
 
+// Invalid TrustSet proto (missing limitAmount)
+const testInvalidTrustSetProto = new TrustSet()
+testInvalidTrustSetProto.setQualityIn(testQualityInProto)
+testInvalidTrustSetProto.setQualityOut(testQualityOutProto)
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -467,6 +499,8 @@ export {
   testSignerEntry1,
   testSignerEntry2,
   testSignerListSetProto,
+  testTrustSetProtoAllFields,
+  testTrustSetProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -479,4 +513,5 @@ export {
   testInvalidPaymentChannelCreateProto,
   testInvalidPaymentChannelFundProto,
   testInvalidSignerListSetProto,
+  testInvalidTrustSetProto,
 }
