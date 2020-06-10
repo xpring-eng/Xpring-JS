@@ -16,6 +16,9 @@ export default class XRPSignerEntry {
   public static from(signerEntry: SignerEntry): XRPSignerEntry | undefined {
     const account = signerEntry.getAccount()?.getValue()?.getAddress()
     const signerWeight = signerEntry.getSignerWeight()?.getValue()
+    if (!account || !signerWeight) {
+      return undefined
+    }
     return new XRPSignerEntry(account, signerWeight)
   }
 
