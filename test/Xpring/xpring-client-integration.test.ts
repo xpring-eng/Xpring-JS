@@ -1,9 +1,10 @@
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
-import XpringClient from '../../src/Xpring/xpring-client'
-import XRPPayIDClient from '../../src/PayID/xrp-pay-id-client'
-import XRPClient from '../../src/XRP/xrp-client'
+
 import XRPLNetwork from '../../src/Common/xrpl-network'
+import XRPPayIDClient from '../../src/PayID/xrp-pay-id-client'
+import XpringClient from '../../src/Xpring/xpring-client'
+import XRPClient from '../../src/XRP/xrp-client'
 import {
   expectedNoDataMemo,
   expectedNoFormatMemo,
@@ -15,7 +16,8 @@ import {
 } from '../XRP/helpers/xrp-test-utils'
 
 // A timeout for these tests.
-const timeoutMs = 60 * 1000 // 1 minute
+// eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
+const timeoutMs = 60 * 1000
 
 // The network to conduct tests on.
 const network = XRPLNetwork.Test
@@ -50,7 +52,8 @@ describe('Xpring Integration Tests', function (): void {
   it('Send XRP TestNet with memos', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    // GIVEN a Pay ID that will resolve and some memos.
+    // GIVEN an amount, a PayID that will resolve, and some memos.
+    const amount = 10
     const payID = 'alice$dev.payid.xpring.money'
     const memos = [
       iForgotToPickUpCarlMemo,
@@ -61,7 +64,7 @@ describe('Xpring Integration Tests', function (): void {
 
     // WHEN XRP is sent to the Pay ID, including a memo.
     const transactionHash = await xpringClient.sendWithDetails({
-      amount: 10,
+      amount,
       destination: payID,
       sender: wallet,
       memos,
