@@ -150,7 +150,6 @@ describe('Reliable Submission XRP Client', function (): void {
     // WHEN `send` is called THEN the promise is rejected.
     this.reliableSubmissionClient
       .send('1', testAddress, wallet)
-      .then(() => {})
       .catch(() => done())
   })
 

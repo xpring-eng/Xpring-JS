@@ -405,9 +405,7 @@ testInvalidGetAccountTransactionHistoryResponse.setTransactionsList(
 // XRP OBJECTS ===================================================
 
 // test XRPTransaction
-const testXRPTransaction = XRPTransaction.from(
-  testGetTransactionResponseProto,
-)!!
+const testXRPTransaction = XRPTransaction.from(testGetTransactionResponseProto)!
 
 export {
   testCurrencyName,
