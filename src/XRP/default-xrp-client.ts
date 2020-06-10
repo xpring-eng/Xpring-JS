@@ -24,13 +24,13 @@ import {
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
-import { XRPClientDecorator } from './xrp-client-decorator'
+import { XrpClientDecorator } from './xrp-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import XRPTransaction from './model/xrp-transaction'
 import GRPCNetworkClient from './grpc-xrp-network-client'
 import GRPCNetworkClientWeb from './grpc-xrp-network-client.web'
-import { XRPNetworkClient } from './xrp-network-client'
+import { XrpNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XRPError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
@@ -42,7 +42,7 @@ const maxLedgerVersionOffset = 10
 /**
  * DefaultXRPClient is a client which interacts with the Xpring platform.
  */
-class DefaultXRPClient implements XRPClientDecorator {
+class DefaultXRPClient implements XrpClientDecorator {
   /**
    * Create a new DefaultXRPClient.
    *
@@ -67,7 +67,7 @@ class DefaultXRPClient implements XRPClientDecorator {
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
    */
-  public constructor(private readonly networkClient: XRPNetworkClient) {}
+  public constructor(private readonly networkClient: XrpNetworkClient) {}
 
   /**
    * Retrieve the balance for the given address.

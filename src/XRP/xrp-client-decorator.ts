@@ -6,7 +6,7 @@ import XRPTransaction from './model/xrp-transaction'
 import SendXrpDetails from './model/send-xrp-details'
 
 /** A decorator interface for XRPClients. */
-export interface XRPClientDecorator {
+export interface XrpClientDecorator {
   /**
    * Retrieve the balance for the given address.
    *
