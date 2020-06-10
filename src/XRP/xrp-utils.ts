@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js'
+import { BigNumber } from 'bignumber.js'
 import { XRPErrorType, XRPError } from '..'
 
 function dropsToXrp(drops: BigNumber.Value): string {

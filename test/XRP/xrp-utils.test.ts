@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import BigNumber from 'bignumber.js'
+import { BigNumber } from 'bignumber.js'
 import { XRPUtils } from '../../src'
 import 'mocha'
 

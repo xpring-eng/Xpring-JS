@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain --
+ * This rule should never be disabled in production, but for tests,
+ * having a x?.y?.z! chain is a succinct way of getting the typing correct.
+ */
+
 import { assert } from 'chai'
 import bigInt from 'big-integer'
 import XRPCurrency from '../../src/XRP/model/xrp-currency'

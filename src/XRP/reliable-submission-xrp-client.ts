@@ -60,7 +60,7 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
       transactionHash,
     )
     const { lastLedgerSequence } = rawTransactionStatus
-    if (lastLedgerSequence === 0) {
+    if (!lastLedgerSequence) {
       return Promise.reject(
         new Error(
           'The transaction did not have a lastLedgerSequence field so transaction status cannot be reliably determined.',
