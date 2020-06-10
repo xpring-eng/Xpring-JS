@@ -409,7 +409,7 @@ testInvalidGetAccountTransactionHistoryResponse.setTransactionsList(
 const testXRPTransaction = XRPTransaction.from(
   testGetTransactionResponseProto,
   XRPLNetwork.Test,
-)!!
+)!
 
 export {
   testCurrencyName,

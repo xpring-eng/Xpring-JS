@@ -1,5 +1,6 @@
 import { assert } from 'chai'
 
+import { Utils } from 'xpring-common-js'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
 import XRPAccountDelete from '../../src/XRP/model/xrp-account-delete'
 import {
@@ -8,6 +9,9 @@ import {
   testAccountDeleteProto,
   testAccountDeleteProtoNoTag,
 } from './fakes/fake-xrp-transaction-type-protobufs'
+import XRPLNetwork from '../../src/Common/xrpl-network'
+import { Account } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
+import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {
   // AccountSet
@@ -69,29 +73,46 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert AccountDelete protobuf with all fields to XRPAccountDelete object', function (): void {
     // GIVEN an AccountDelete protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountDelete = XRPAccountDelete.from(testAccountDeleteProto)
+    const accountDelete = XRPAccountDelete.from(
+      testAccountDeleteProto,
+      XRPLNetwork.Test,
+    )
 
     // THEN the AccountDelete converted as expected.
-    assert.deepEqual(
-      accountDelete?.destination,
+    const expectedXAddress = Utils.encodeXAddress(
       testAccountDeleteProto.getDestination()?.getValue()?.getAddress(),
+      testAccountDeleteProto.getDestinationTag()?.getValue(),
+      true,
     )
-    assert.deepEqual(
-      accountDelete?.destination,
-      testAccountDeleteProto.getDestination()?.getValue()?.getAddress(),
-    )
+    assert.deepEqual(accountDelete?.destinationXAddress, expectedXAddress)
   })
 
   it('Convert AccountDelete protobuf with no tag to XRPAccountDelete object', function (): void {
     // GIVEN an AccountDelete protocol buffer with only destination field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountDelete = XRPAccountDelete.from(testAccountDeleteProtoNoTag)
+    const accountDelete = XRPAccountDelete.from(
+      testAccountDeleteProtoNoTag,
+      XRPLNetwork.Test,
+    )
 
     // THEN the AccountDelete converted as expected.
-    assert.deepEqual(
-      accountDelete?.destination,
+    const expectedXAddress = Utils.encodeXAddress(
       testAccountDeleteProtoNoTag.getDestination()?.getValue()?.getAddress(),
+      testAccountDeleteProtoNoTag.getDestinationTag()?.getValue(),
+      true,
     )
-    assert.isUndefined(accountDelete?.destinationTag)
+    assert.deepEqual(accountDelete?.destinationXAddress, expectedXAddress)
+  })
+
+  it('Convert AccountDelete protobuf to XRPAccountDelete object - missing destination field', function (): void {
+    // GIVEN an AccountDelete protocol buffer missing the destination field.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const accountDelete = XRPAccountDelete.from(
+      new AccountDelete(),
+      XRPLNetwork.Test,
+    )
+
+    // THEN the result is undefined.
+    assert.isUndefined(accountDelete)
   })
 })

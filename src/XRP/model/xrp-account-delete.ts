@@ -1,7 +1,10 @@
+import { Utils } from 'xpring-common-js'
 import { AccountDelete } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import XRPLNetwork from '../../Common/xrpl-network'
 
 /*
  * Represents an AccountDelete transaction on the XRP Ledger.
+ *
  * An AccountDelete transaction deletes an account and any objects it owns in the XRP Ledger,
  * if possible, sending the account's remaining XRP to a specified destination account.
  *
@@ -18,25 +21,29 @@ export default class XRPAccountDelete {
    */
   public static from(
     accountDelete: AccountDelete,
+    xrplNetwork: XRPLNetwork,
   ): XRPAccountDelete | undefined {
-    // TODO(amiecorso): decide whether the existence of `destination` needs to be policed here
-    //                  via returning undefined or throwing an error
-    // TODO(amiecorso): should this object have an X-address version of this information?
     const destination = accountDelete.getDestination()?.getValue()?.getAddress()
+    if (!destination) {
+      return undefined
+    }
     const destinationTag = accountDelete.getDestinationTag()?.getValue()
 
-    return new XRPAccountDelete(destination, destinationTag)
+    const destinationXAddress = Utils.encodeXAddress(
+      destination,
+      destinationTag,
+      xrplNetwork == XRPLNetwork.Test,
+    )
+    if (!destinationXAddress) {
+      return undefined
+    }
+    return new XRPAccountDelete(destinationXAddress)
   }
 
   /**
-   *
-   * @param destination The address of an account to receive any leftover XRP after deleting the sending account.
-   *                    Must be a funded account in the ledger, and must not be the sending account.
-   * @param destinationTag (Optional) Arbitrary destination tag that identifies a hosted recipient ors
-   *                       other information for the recipient of the deleted account's leftover XRP.
+   * @param destinationXAddress The address and destination tag of an account to receive any leftover XRP after deleting the
+   *                            sending account, encoded as an X-address (see https://xrpaddress.info/).
+   *                            Must be a funded account in the ledger, and must not be the sending account.
    */
-  private constructor(
-    readonly destination?: string,
-    readonly destinationTag?: number,
-  ) {}
+  private constructor(readonly destinationXAddress: string) {}
 }
