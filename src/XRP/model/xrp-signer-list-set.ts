@@ -20,12 +20,12 @@ export default class XRPSignerListSet {
     signerListSet: SignerListSet,
   ): XRPSignerListSet | undefined {
     const signerQuorum = signerListSet.getSignerQuorum()?.getValue()
+    if (!signerQuorum) {
+      return undefined
+    }
     const signerEntries = signerListSet
       .getSignerEntriesList()
       .map((signerEntry) => XRPSignerEntry.from(signerEntry))
-    if (!signerQuorum || !signerEntries) {
-      return undefined
-    }
     return new XRPSignerListSet(signerQuorum, signerEntries)
   }
 

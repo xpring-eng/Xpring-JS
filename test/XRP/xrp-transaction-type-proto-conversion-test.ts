@@ -813,11 +813,11 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
       signerListSet?.signerQuorum,
       testSignerListSetProto.getSignerQuorum()?.getValue(),
     )
-    assert.equal(signerListSet?.signerEntries, expectedSignerEntries)
+    assert.deepEqual(signerListSet?.signerEntries, expectedSignerEntries)
   })
 
   it('Convert SignerListSet protobuf to XRPSignerListSet object - missing signerEntries', function (): void {
-    // GIVEN a SignerListSet protocol buffer without signerEntries set.
+    // GIVEN a SignerListSet protocol buffer without signerQuorum set.
     // WHEN the protocol buffer is converted to a native Typescript type.
     const signerListSet = XRPSignerListSet.from(testInvalidSignerListSetProto)
 

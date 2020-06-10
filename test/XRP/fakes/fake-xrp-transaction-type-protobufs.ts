@@ -434,7 +434,7 @@ testInvalidPaymentChannelFundProto.setChannel(testChannelProto)
 
 // Invalid SignerListSet proto (missing SignerEntries)
 const testInvalidSignerListSetProto = new SignerListSet()
-testInvalidSignerListSetProto.setSignerQuorum(testSignerQuorumProto)
+testInvalidSignerListSetProto.setSignerEntriesList(testSignerEntryList)
 
 export {
   testAccountSetProtoAllFields,
