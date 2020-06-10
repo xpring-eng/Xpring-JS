@@ -1,4 +1,5 @@
 import { assert } from 'chai'
+
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
 import XRPAccountDelete from '../../src/XRP/model/xrp-account-delete'
 import {

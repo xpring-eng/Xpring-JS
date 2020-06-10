@@ -45,10 +45,6 @@ module.exports = {
     // Add rules for Mocha-specific syntax
     'plugin:mocha/recommended',
 
-    // Add Airbnb + TypeScript support
-    'airbnb-base',
-    'airbnb-typescript/base',
-
     // Add rules that specifically require type information using our tsconfig
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
 
@@ -86,6 +82,15 @@ module.exports = {
           'error',
           { argsIgnorePattern: '^_' },
         ],
+
+        // These rules are deprecated, but we have an old config that enables it
+        '@typescript-eslint/camelcase': 'off',
+        '@typescript-eslint/ban-ts-ignore': 'off',
+
+        // These rules are actually disabled in @xpring-eng/eslint-config-base/loose at the moment
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
       },
     },
     {
