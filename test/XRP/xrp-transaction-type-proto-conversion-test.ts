@@ -14,6 +14,8 @@ import XRPPaymentChannelClaim from '../../src/XRP/model/xrp-payment-channel-clai
 import XRPPaymentChannelCreate from '../../src/XRP/model/xrp-payment-channel-create'
 import XRPPaymentChannelFund from '../../src/XRP/model/xrp-payment-channel-fund'
 import XRPSetRegularKey from '../../src/XRP/model/xrp-set-regular-key'
+import XRPSignerEntry from '../../src/XRP/model/xrp-signer-entry'
+import XRPSignerListSet from '../../src/XRP/model/xrp-signer-list-set'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -40,6 +42,7 @@ import {
   testPaymentChannelFundProtoMandatoryOnly,
   testSetRegularKeyProtoWithKey,
   testSetRegularKeyProtoNoKey,
+  testSignerListSetProto,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -53,6 +56,9 @@ import {
   testInvalidPaymentChannelClaimProto,
   testInvalidPaymentChannelCreateProto,
   testInvalidPaymentChannelFundProto,
+  testInvalidSignerListSetProto,
+  testSignerEntry1,
+  testSignerEntry2,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import { XRPCurrencyAmount } from '../../src/XRP/model'
 
@@ -786,7 +792,36 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const setRegularKey = XRPSetRegularKey.from(testSetRegularKeyProtoNoKey)
 
-    // THEN the SetRegularKey converted as expected.
+    // THEN the result is undefined.
     assert.isUndefined(setRegularKey?.regularKey)
+  })
+
+  // SignerListSet
+
+  it('Convert SignerListSet protobuf to XRPSignerListSet object - all fields set', function (): void {
+    // GIVEN a SetRegularKey protocol buffer with all fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const signerListSet = XRPSignerListSet.from(testSignerListSetProto)
+
+    // THEN the SignerListSet converted as expected.
+    const expectedSignerEntries: Array<XRPSignerEntry | undefined> = [
+      XRPSignerEntry.from(testSignerEntry1),
+      XRPSignerEntry.from(testSignerEntry2),
+    ]
+
+    assert.equal(
+      signerListSet?.signerQuorum,
+      testSignerListSetProto.getSignerQuorum()?.getValue(),
+    )
+    assert.equal(signerListSet?.signerEntries, expectedSignerEntries)
+  })
+
+  it('Convert SignerListSet protobuf to XRPSignerListSet object - missing signerEntries', function (): void {
+    // GIVEN a SignerListSet protocol buffer without signerEntries set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const signerListSet = XRPSignerListSet.from(testInvalidSignerListSetProto)
+
+    // THEN the result is undefined.
+    assert.isUndefined(signerListSet)
   })
 })

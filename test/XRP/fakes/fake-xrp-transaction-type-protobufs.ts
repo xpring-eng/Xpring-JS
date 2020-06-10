@@ -14,6 +14,7 @@ import {
   PaymentChannelCreate,
   PaymentChannelFund,
   SetRegularKey,
+  SignerListSet,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import {
   ClearFlag,
@@ -47,6 +48,10 @@ import {
   PublicKey,
   SettleDelay,
   RegularKey,
+  SignerQuorum,
+  SignerEntry,
+  Account,
+  SignerWeight,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
@@ -107,6 +112,9 @@ const testPublicKey =
 // SetRegularKey values
 const testRegularKey = 'rAR8rR8sUkBoCZFawhkWzY4Y5YoyuznwD'
 
+// SignerListSet values
+const testSignerQuorum = 3
+const testSignerWeight = 1
 // Protobuf objects ======================================================================
 
 // AccountSet protos
@@ -310,7 +318,6 @@ const testPaymentChannelClaimProtoMandatoryOnly = new PaymentChannelClaim()
 testPaymentChannelClaimProtoMandatoryOnly.setChannel(testChannelProto)
 
 // PaymentChannelCreate protos
-
 const testSettleDelayProto = new SettleDelay()
 testSettleDelayProto.setValue(testSettleDelay)
 
@@ -334,7 +341,6 @@ testPaymentChannelCreateProtoMandatoryOnly.setSettleDelay(testSettleDelayProto)
 testPaymentChannelCreateProtoMandatoryOnly.setPublicKey(testPublicKeyProto)
 
 // PaymentChannelFund protos
-
 const testPaymentChannelFundProtoAllFields = new PaymentChannelFund()
 testPaymentChannelFundProtoAllFields.setChannel(testChannelProto)
 testPaymentChannelFundProtoAllFields.setAmount(testAmountProto)
@@ -355,6 +361,33 @@ const testSetRegularKeyProtoWithKey = new SetRegularKey()
 testSetRegularKeyProtoWithKey.setRegularKey(testRegularKeyProto)
 
 const testSetRegularKeyProtoNoKey = new SetRegularKey()
+
+// SignerListSet
+const testSignerQuorumProto = new SignerQuorum()
+testSignerQuorumProto.setValue(testSignerQuorum)
+
+const testAccountProto = new Account()
+testAccountProto.setValue(testAccountAddressProto)
+
+const testSignerWeightProto = new SignerWeight()
+testSignerWeightProto.setValue(testSignerWeight)
+
+const testSignerEntry1 = new SignerEntry()
+testSignerEntry1.setAccount(testAccountProto)
+testSignerEntry1.setSignerWeight(testSignerWeightProto)
+
+const testSignerEntry2 = new SignerEntry()
+testSignerEntry2.setAccount(testAccountProto)
+testSignerEntry2.setSignerWeight(testSignerWeightProto)
+
+const testSignerEntryList: Array<SignerEntry> = [
+  testSignerEntry1,
+  testSignerEntry2,
+]
+
+const testSignerListSetProto = new SignerListSet()
+testSignerListSetProto.setSignerQuorum(testSignerQuorumProto)
+testSignerListSetProto.setSignerEntriesList(testSignerEntryList)
 
 // Invalid Protobuf Objects ========================================================================
 
@@ -399,6 +432,10 @@ testInvalidPaymentChannelCreateProto.setAmount(testAmountProto)
 const testInvalidPaymentChannelFundProto = new PaymentChannelFund()
 testInvalidPaymentChannelFundProto.setChannel(testChannelProto)
 
+// Invalid SignerListSet proto (missing SignerEntries)
+const testInvalidSignerListSetProto = new SignerListSet()
+testInvalidSignerListSetProto.setSignerQuorum(testSignerQuorumProto)
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -427,6 +464,9 @@ export {
   testPaymentChannelFundProtoMandatoryOnly,
   testSetRegularKeyProtoWithKey,
   testSetRegularKeyProtoNoKey,
+  testSignerEntry1,
+  testSignerEntry2,
+  testSignerListSetProto,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -438,4 +478,5 @@ export {
   testInvalidPaymentChannelClaimProto,
   testInvalidPaymentChannelCreateProto,
   testInvalidPaymentChannelFundProto,
+  testInvalidSignerListSetProto,
 }
