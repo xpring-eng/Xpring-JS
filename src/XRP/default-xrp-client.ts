@@ -130,7 +130,7 @@ class DefaultXRPClient implements XRPClientDecorator {
       return TransactionStatus.Pending
     }
 
-    return transactionStatus.transactionStatusCode.startsWith('tes')
+    return transactionStatus.transactionStatusCode?.startsWith('tes')
       ? TransactionStatus.Succeeded
       : TransactionStatus.Failed
   }
