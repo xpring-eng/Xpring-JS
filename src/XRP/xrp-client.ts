@@ -32,9 +32,13 @@ class XRPClient implements XRPClientInterface {
 
     const defaultXRPClient = DefaultXRPClient.defaultXRPClientWithEndpoint(
       grpcURL,
+      network,
       forceWeb,
     )
-    this.decoratedClient = new ReliableSubmissionXRPClient(defaultXRPClient)
+    this.decoratedClient = new ReliableSubmissionXRPClient(
+      defaultXRPClient,
+      network,
+    )
   }
 
   /**

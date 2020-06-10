@@ -14,7 +14,7 @@ import XRPPayment from '../../src/XRP/model/xrp-payment'
 import XRPMemo from '../../src/XRP/model/xrp-memo'
 import XRPSigner from '../../src/XRP/model/xrp-signer'
 import XRPTransaction from '../../src/XRP/model/xrp-transaction'
-import { Utils } from '../../src'
+import { Utils, XRPLNetwork } from '../../src'
 import {
   testAddress,
   testPublicKey,
@@ -212,7 +212,10 @@ describe('Protocol Buffer Conversion', function (): void {
   it('Convert Payment with all fields set', function (): void {
     // GIVEN a payment protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const payment = XRPPayment.from(testPaymentProtoAllFieldsSet)
+    const payment = XRPPayment.from(
+      testPaymentProtoAllFieldsSet,
+      XRPLNetwork.Test,
+    )
 
     // THEN the result is as expected.
     assert.deepEqual(
@@ -228,6 +231,14 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.equal(
       payment?.destinationTag,
       testPaymentProtoAllFieldsSet.getDestinationTag()?.getValue(),
+    )
+    assert.equal(
+      payment?.destinationXAddress,
+      Utils.encodeXAddress(
+        payment?.destination!,
+        payment?.destinationTag,
+        true,
+      ),
     )
     assert.deepEqual(
       payment?.deliverMin,
@@ -256,7 +267,10 @@ describe('Protocol Buffer Conversion', function (): void {
   it('Convert Payment with only mandatory fields set', function (): void {
     // GIVEN a payment protocol buffer with only mandatory fields set.
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const payment = XRPPayment.from(testPaymentProtoMandatoryFieldsOnly)
+    const payment = XRPPayment.from(
+      testPaymentProtoMandatoryFieldsOnly,
+      XRPLNetwork.Test,
+    )
 
     // THEN the result is as expected.
     assert.deepEqual(
@@ -272,6 +286,14 @@ describe('Protocol Buffer Conversion', function (): void {
         ?.getValue()
         ?.getAddress(),
     )
+    assert.equal(
+      payment?.destinationXAddress,
+      Utils.encodeXAddress(
+        payment?.destination!,
+        payment?.destinationTag,
+        true,
+      ),
+    )
     assert.isUndefined(payment?.destinationTag)
     assert.isUndefined(payment?.deliverMin)
     assert.isUndefined(payment?.invoiceID)
@@ -282,19 +304,25 @@ describe('Protocol Buffer Conversion', function (): void {
   it('Convert Payment with invalid amount field', function (): void {
     // GIVEN a pyament protocol buffer with an invalid amount field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
-    assert.isUndefined(XRPPayment.from(testInvalidPaymentProtoBadAmount))
+    assert.isUndefined(
+      XRPPayment.from(testInvalidPaymentProtoBadAmount, XRPLNetwork.Test),
+    )
   })
 
   it('Convert Payment with invalid deliverMin field', function (): void {
     // GIVEN a payment protocol buffer with an invalid deliverMin field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
-    assert.isUndefined(XRPPayment.from(testInvalidPaymentProtoBadDeliverMin))
+    assert.isUndefined(
+      XRPPayment.from(testInvalidPaymentProtoBadDeliverMin, XRPLNetwork.Test),
+    )
   })
 
   it('Convert Payment with invalid sendMax field', function (): void {
     // GIVEN a payment protocol buffer with an invalid sendMax field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
-    assert.isUndefined(XRPPayment.from(testInvalidPaymentProtoBadSendMax))
+    assert.isUndefined(
+      XRPPayment.from(testInvalidPaymentProtoBadSendMax, XRPLNetwork.Test),
+    )
   })
 
   // Memo
@@ -347,7 +375,10 @@ describe('Protocol Buffer Conversion', function (): void {
   it('Convert PAYMENT Transaction, all common fields set', function (): void {
     // GIVEN a GetTransactionResponse protobuf containing a Transaction protobuf with all common fields set.
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const transaction = XRPTransaction.from(testGetTransactionResponseProto)
+    const transaction = XRPTransaction.from(
+      testGetTransactionResponseProto,
+      XRPLNetwork.Test,
+    )
 
     // THEN all fields are present and converted correctly.
     assert.equal(transaction?.account, testAddress)
@@ -363,6 +394,10 @@ describe('Protocol Buffer Conversion', function (): void {
     ])
     assert.deepEqual(transaction?.signers, [XRPSigner.from(testSignerProto)!])
     assert.equal(transaction?.sourceTag, testSourceTag)
+    assert.equal(
+      transaction?.sourceXAddress,
+      Utils.encodeXAddress(transaction?.account!, transaction?.sourceTag, true),
+    )
     assert.equal(transaction?.hash, Utils.toHex(testTransactionHash))
     assert.equal(transaction?.timestamp, expectedTimestamp)
     assert.equal(
@@ -383,6 +418,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const transaction = XRPTransaction.from(
       testGetTransactionResponseProtoMandatoryOnly,
+      XRPLNetwork.Test,
     )
 
     // THEN all fields are present and converted correctly.
@@ -401,6 +437,10 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.isUndefined(transaction?.memos)
     assert.isUndefined(transaction?.signers)
     assert.isUndefined(transaction?.sourceTag)
+    assert.equal(
+      transaction?.sourceXAddress,
+      Utils.encodeXAddress(transaction?.account!, transaction?.sourceTag, true),
+    )
     assert.isUndefined(transaction?.timestamp)
     assert.isUndefined(transaction?.deliveredAmount)
   })
@@ -410,6 +450,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const transaction = XRPTransaction.from(
       testInvalidGetTransactionResponseProto,
+      XRPLNetwork.Test,
     )
 
     // THEN the result is undefined
@@ -421,6 +462,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const transaction = XRPTransaction.from(
       testInvalidGetTransactionResponseProtoUnsupportedType,
+      XRPLNetwork.Test,
     )
 
     // THEN the result is undefined
