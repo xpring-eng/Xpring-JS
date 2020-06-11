@@ -37,7 +37,7 @@ import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated
 import XRPTransaction from '../../../src/XRP/model/xrp-transaction'
 import { GetTransactionResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import { Meta } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/meta_pb'
-import XRPLNetwork from '../../../src/Common/xrpl-network'
+import { XRPLNetwork } from '../../../src/Common/xrpl-network'
 
 // primitive test values
 const testCurrencyName = 'currencyName'
@@ -409,7 +409,7 @@ testInvalidGetAccountTransactionHistoryResponse.setTransactionsList(
 const testXRPTransaction = XRPTransaction.from(
   testGetTransactionResponseProto,
   XRPLNetwork.Test,
-)!!
+)!
 
 export {
   testCurrencyName,

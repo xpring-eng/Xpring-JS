@@ -3,7 +3,7 @@ import { BigInteger } from 'big-integer'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import XRPTransaction from './model/xrp-transaction'
-import XRPLNetwork from '../Common/xrpl-network'
+import { XRPLNetwork } from '../Common/xrpl-network'
 import SendXrpDetails from './model/send-xrp-details'
 
 /** A decorator interface for XRPClients. */
