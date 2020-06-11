@@ -905,7 +905,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.deepEqual(
       trustSet?.limitAmount,
       XRPCurrencyAmount.from(
-        testTrustSetProtoAllFields.getLimitAmount()?.getValue()!,
+        testTrustSetProtoAllFields.getLimitAmount()!.getValue()!,
       ),
     )
     assert.equal(
@@ -927,7 +927,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.deepEqual(
       trustSet?.limitAmount,
       XRPCurrencyAmount.from(
-        testTrustSetProtoMandatoryOnly.getLimitAmount()?.getValue()!,
+        testTrustSetProtoMandatoryOnly.getLimitAmount()!.getValue()!,
       ),
     )
     assert.isUndefined(trustSet?.qualityIn)
