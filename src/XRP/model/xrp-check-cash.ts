@@ -3,19 +3,21 @@ import { XRPCurrencyAmount } from '.'
 
 /*
  * Represents a CheckCash transaction on the XRP Ledger.
- * Attempts to redeem a Check object in the ledger to receive up to the amount authorized by the corresponding CheckCreate transaction.
+ *
+ * A CheckCash transaction attempts to redeem a Check object in the ledger to receive up to the amount
+ * authorized by the corresponding CheckCreate transaction.
  *
  * @see: https://xrpl.org/checkcash.html
  */
-export default class XRPCheckCash {
+export default class XrpCheckCash {
   /**
-   * Constructs an XRPCheckCash from a CheckCash protocol buffer.
+   * Constructs an XrpCheckCash from a CheckCash protocol buffer.
    *
-   * @param checkCash a CheckCash (protobuf object) whose field values will be used to construct an XRPCheckCash
-   * @return an XRPCheckCash with its fields set via the analogous protobuf fields.
+   * @param checkCash a CheckCash (protobuf object) whose field values will be used to construct an XrpCheckCash
+   * @return an XrpCheckCash with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L132
    */
-  public static from(checkCash: CheckCash): XRPCheckCash | undefined {
+  public static from(checkCash: CheckCash): XrpCheckCash | undefined {
     const checkId = checkCash.getCheckId()?.getValue_asB64()
     // checkId is required
     if (!checkId) {
@@ -32,7 +34,7 @@ export default class XRPCheckCash {
       ? XRPCurrencyAmount.from(deliverMinCurrencyAmount)
       : undefined
 
-    return new XRPCheckCash(checkId, amount, deliverMin)
+    return new XrpCheckCash(checkId, amount, deliverMin)
   }
 
   /**

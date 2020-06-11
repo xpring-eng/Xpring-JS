@@ -3,6 +3,7 @@
  */
 export enum XpringErrorType {
   MismatchedNetworks,
+  Unknown,
 }
 
 /**
