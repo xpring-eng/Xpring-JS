@@ -2,7 +2,7 @@ import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
-import XRPEscrowCreate from '../../src/XRP/model/xrp-escrow-create'
+import XrpEscrowCreate from '../../src/XRP/model/xrp-escrow-create'
 import XrpEscrowCancel from '../../src/XRP/model/xrp-escrow-cancel'
 import XrpDepositPreauth from '../../src/XRP/model/xrp-deposit-preauth'
 import XrpCheckCreate from '../../src/XRP/model/xrp-check-create'
@@ -361,10 +361,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
   // EscrowCreate
 
-  it('Convert EscrowCreate protobuf to XRPEscrowCreate object - all fields', function (): void {
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - all fields', function (): void {
     // GIVEN an EscrowCreate protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowCreate = XRPEscrowCreate.from(testEscrowCreateProtoAllFields)
+    const escrowCreate = XrpEscrowCreate.from(testEscrowCreateProtoAllFields)
 
     // THEN the EscrowCreate converted as expected.
     assert.deepEqual(
@@ -395,10 +395,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert EscrowCreate protobuf to XRPEscrowCreate object - mandatory fields only', function (): void {
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - mandatory fields only', function (): void {
     // GIVEN an EscrowCreate protocol buffer with only mandatory fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowCreate = XRPEscrowCreate.from(
+    const escrowCreate = XrpEscrowCreate.from(
       testEscrowCreateProtoMandatoryOnly,
     )
 
@@ -422,10 +422,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(escrowCreate?.destinationTag)
   })
 
-  it('Convert EscrowCreate protobuf to XRPEscrowCreate object - missing mandatory field', function (): void {
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - missing mandatory field', function (): void {
     // GIVEN an EscrowCreate protocol buffer that's missing a mandatory field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowCreate = XRPEscrowCreate.from(testInvalidEscrowCreateProto)
+    const escrowCreate = XrpEscrowCreate.from(testInvalidEscrowCreateProto)
 
     // THEN the result is undefined.
     assert.isUndefined(escrowCreate)

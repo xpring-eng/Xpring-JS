@@ -3,19 +3,20 @@ import { XRPCurrencyAmount } from '.'
 
 /*
  * Represents an EscrowCreate transaction on the XRP Ledger.
+ *
  * An EscrowCreate transaction sequesters XRP until the escrow process either finishes or is canceled.
  *
  * @see: https://xrpl.org/escrowcreate.html
  */
-export default class XRPEscrowCreate {
+export default class XrpEscrowCreate {
   /**
-   * Constructs an XRPEscrowCreate from an EscrowCreate protocol buffer.
+   * Constructs an XrpEscrowCreate from an EscrowCreate protocol buffer.
    *
-   * @param escrowCreate an EscrowCreate (protobuf object) whose field values will be used to construct an XRPEscrowCreate
-   * @return an XRPEscrowCreate with its fields set via the analogous protobuf fields.
+   * @param escrowCreate an EscrowCreate (protobuf object) whose field values will be used to construct an XrpEscrowCreate
+   * @return an XrpEscrowCreate with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L178
    */
-  public static from(escrowCreate: EscrowCreate): XRPEscrowCreate | undefined {
+  public static from(escrowCreate: EscrowCreate): XrpEscrowCreate | undefined {
     // amount is a required field
     const amountCurrencyAmountProto = escrowCreate.getAmount()?.getValue()
     if (!amountCurrencyAmountProto) {
@@ -36,7 +37,7 @@ export default class XRPEscrowCreate {
     const condition = escrowCreate.getCondition()?.getValue_asB64()
     const destinationTag = escrowCreate.getDestinationTag()?.getValue()
 
-    return new XRPEscrowCreate(
+    return new XrpEscrowCreate(
       amount,
       destination,
       cancelAfter,
