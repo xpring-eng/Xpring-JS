@@ -2,7 +2,7 @@ import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
-import XRPEscrowCancel from '../../src/XRP/model/xrp-escrow-cancel'
+import XrpEscrowCancel from '../../src/XRP/model/xrp-escrow-cancel'
 import XrpDepositPreauth from '../../src/XRP/model/xrp-deposit-preauth'
 import XrpCheckCreate from '../../src/XRP/model/xrp-check-create'
 import XrpCheckCash from '../../src/XRP/model/xrp-check-cash'
@@ -312,10 +312,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.equal(depositPreauth?.unauthorizeXAddress, expectedXAddress)
   })
 
-  it('Convert EscrowCancel protobuf to XRPEscrowCancel object - valid fields', function (): void {
+  it('Convert EscrowCancel protobuf to XrpEscrowCancel object - valid fields', function (): void {
     // GIVEN an EscrowCancel protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowCancel = XRPEscrowCancel.from(
+    const escrowCancel = XrpEscrowCancel.from(
       testEscrowCancelProto,
       XRPLNetwork.Test,
     )
@@ -333,10 +333,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert EscrowCancel protobuf to XRPEscrowCancel object - missing fields', function (): void {
+  it('Convert EscrowCancel protobuf to XrpEscrowCancel object - missing fields', function (): void {
     // GIVEN an EscrowCancel protocol buffer missing required fields.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowCancel = XRPEscrowCancel.from(
+    const escrowCancel = XrpEscrowCancel.from(
       testInvalidEscrowCancelProto,
       XRPLNetwork.Test,
     )

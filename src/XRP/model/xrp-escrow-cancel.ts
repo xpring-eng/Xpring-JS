@@ -9,18 +9,18 @@ import XRPLNetwork from '../../Common/xrpl-network'
  *
  * @see: https://xrpl.org/escrowcancel.html
  */
-export default class XRPEscrowCancel {
+export default class XrpEscrowCancel {
   /**
-   * Constructs an XRPEscrowCancel from an EscrowCancel protocol buffer.
+   * Constructs an XrpEscrowCancel from an EscrowCancel protocol buffer.
    *
-   * @param escrowCancel an EscrowCancel (protobuf object) whose field values will be used to construct an XRPEscrowCancel
-   * @return an XRPEscrowCancel with its fields set via the analogous protobuf fields.
+   * @param escrowCancel an EscrowCancel (protobuf object) whose field values will be used to construct an XrpEscrowCancel
+   * @return an XrpEscrowCancel with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L170
    */
   public static from(
     escrowCancel: EscrowCancel,
     xrplNetwork: XRPLNetwork,
-  ): XRPEscrowCancel | undefined {
+  ): XrpEscrowCancel | undefined {
     const owner = escrowCancel.getOwner()?.getValue()?.getAddress()
     if (!owner) {
       return undefined
@@ -36,7 +36,7 @@ export default class XRPEscrowCancel {
     if (!ownerXAddress || !offerSequence) {
       return undefined
     }
-    return new XRPEscrowCancel(ownerXAddress, offerSequence)
+    return new XrpEscrowCancel(ownerXAddress, offerSequence)
   }
 
   /**
