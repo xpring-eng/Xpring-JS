@@ -6,6 +6,7 @@
  * @see: https://xrpl.org/transaction-formats.html
  */
 enum XRPTransactionType {
+  AccountSet,
   Payment,
 }
 
