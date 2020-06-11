@@ -2,7 +2,7 @@ import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
-import XRPSetRegularKey from '../../src/XRP/model/xrp-set-regular-key'
+import XrpSetRegularKey from '../../src/XRP/model/xrp-set-regular-key'
 import XrpPaymentChannelFund from '../../src/XRP/model/xrp-payment-channel-fund'
 import XrpPaymentChannelCreate from '../../src/XRP/model/xrp-payment-channel-create'
 import XrpPaymentChannelClaim from '../../src/XRP/model/xrp-payment-channel-claim'
@@ -834,10 +834,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
   // SetRegularKey
 
-  it('Convert SetRegularKey protobuf to XRPSetRegularKey object - key set', function (): void {
+  it('Convert SetRegularKey protobuf to XrpSetRegularKey object - key set', function (): void {
     // GIVEN a SetRegularKey protocol buffer with regularKey set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const setRegularKey = XRPSetRegularKey.from(testSetRegularKeyProtoWithKey)
+    const setRegularKey = XrpSetRegularKey.from(testSetRegularKeyProtoWithKey)
 
     // THEN the SetRegularKey converted as expected.
     assert.equal(
@@ -846,10 +846,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert SetRegularKey protobuf to XRPSetRegularKey object - no key', function (): void {
+  it('Convert SetRegularKey protobuf to XrpSetRegularKey object - no key', function (): void {
     // GIVEN a SetRegularKey protocol buffer without regularKey set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const setRegularKey = XRPSetRegularKey.from(testSetRegularKeyProtoNoKey)
+    const setRegularKey = XrpSetRegularKey.from(testSetRegularKeyProtoNoKey)
 
     // THEN the SetRegularKey converted as expected.
     assert.isUndefined(setRegularKey?.regularKey)
