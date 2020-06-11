@@ -1,6 +1,6 @@
-import XRPPayIDClientInterface from '../../../src/PayID/xrp-pay-id-client-interface'
+import { XRPPayIDClientInterface } from '../../../src/PayID/xrp-pay-id-client-interface'
 import Result from '../../Common/Helpers/result'
-import { XRPLNetwork } from '../../../src'
+import { XRPLNetwork } from '../../../src/Common/xrpl-network'
 
 /**
  * A fake XRPPayIDClient which can return faked values.

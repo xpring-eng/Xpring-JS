@@ -1,12 +1,24 @@
-import { Wallet } from 'xpring-common-js'
-import { assert } from 'chai'
 import bigInt from 'big-integer'
-import XRPClient from '../../src/XRP/xrp-client'
+import { assert } from 'chai'
+import { Wallet } from 'xpring-common-js'
+
+import { XRPLNetwork } from '../../src/Common/xrpl-network'
 import TransactionStatus from '../../src/XRP/transaction-status'
-import { XRPLNetwork } from '../../src'
+import XRPClient from '../../src/XRP/xrp-client'
+
+import {
+  expectedNoDataMemo,
+  expectedNoFormatMemo,
+  expectedNoTypeMemo,
+  iForgotToPickUpCarlMemo,
+  noDataMemo,
+  noFormatMemo,
+  noTypeMemo,
+} from './helpers/xrp-test-utils'
 
 // A timeout for these tests.
-const timeoutMs = 60 * 1000 // 1 minute
+// eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
+const timeoutMs = 60 * 1000
 
 // An address on TestNet that has a balance.
 const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
@@ -59,11 +71,64 @@ describe('XRPClient Integration Tests', function (): void {
     assert.exists(result)
   })
 
+  it('Send XRP with memo - Web Shim', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const memos = [
+      iForgotToPickUpCarlMemo,
+      noDataMemo,
+      noFormatMemo,
+      noTypeMemo,
+    ]
+    const result = await xrpWebClient.sendWithDetails({
+      amount,
+      destination: recipientAddress,
+      sender: wallet,
+      memos,
+    })
+    assert.exists(result)
+
+    const transaction = await xrpClient.getPayment(result)
+
+    assert.deepEqual(transaction?.memos, [
+      iForgotToPickUpCarlMemo,
+      expectedNoDataMemo,
+      expectedNoFormatMemo,
+      expectedNoTypeMemo,
+    ])
+  })
+
   it('Send XRP - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const result = await xrpClient.send(amount, recipientAddress, wallet)
     assert.exists(result)
+  })
+
+  it('Send XRP with memo - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    const memos = [
+      iForgotToPickUpCarlMemo,
+      noDataMemo,
+      noFormatMemo,
+      noTypeMemo,
+    ]
+    const result = await xrpClient.sendWithDetails({
+      amount,
+      destination: recipientAddress,
+      sender: wallet,
+      memos,
+    })
+    assert.exists(result)
+
+    const transaction = await xrpClient.getPayment(result)
+
+    assert.deepEqual(transaction?.memos, [
+      iForgotToPickUpCarlMemo,
+      expectedNoDataMemo,
+      expectedNoFormatMemo,
+      expectedNoTypeMemo,
+    ])
   })
 
   it('Check if Account Exists - true - Web Shim', async function (): Promise<
@@ -90,7 +155,8 @@ describe('XRPClient Integration Tests', function (): void {
   > {
     this.timeout(timeoutMs)
 
-    const coinbaseMainnet = 'XVYUQ3SdUcVnaTNVanDYo1NamrUukPUPeoGMnmvkEExbtrj' // valid address but should NOT show up on testnet
+    // This is a valid address, but it should NOT show up on Testnet, so should resolve to false
+    const coinbaseMainnet = 'XVYUQ3SdUcVnaTNVanDYo1NamrUukPUPeoGMnmvkEExbtrj'
     const doesExist = await xrpClient.accountExists(coinbaseMainnet)
     assert.equal(doesExist, false)
   })
@@ -100,7 +166,7 @@ describe('XRPClient Integration Tests', function (): void {
 
     const payments = await xrpClient.paymentHistory(recipientAddress)
 
-    assert.exists(payments && payments.length > 0)
+    assert.isTrue(payments.length > 0)
   })
 
   it('Get Transaction - rippled', async function (): Promise<void> {

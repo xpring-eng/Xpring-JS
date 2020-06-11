@@ -4,8 +4,10 @@ import { XRPClientDecorator } from './xrp-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
 import XRPTransaction from './model/xrp-transaction'
-import { XRPError } from '..'
-import { XRPErrorType } from './xrp-error'
+import XRPError, { XRPErrorType } from './xrp-error'
+import { XRPLNetwork } from '../Common/xrpl-network'
+
+import SendXrpDetails from './model/send-xrp-details'
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
@@ -15,7 +17,10 @@ async function sleep(milliseconds: number): Promise<void> {
  * An XRPClient which blocks on `send` calls until the transaction has reached a deterministic state.
  */
 class ReliableSubmissionXRPClient implements XRPClientDecorator {
-  public constructor(private readonly decoratedClient: XRPClientDecorator) {}
+  public constructor(
+    private readonly decoratedClient: XRPClientDecorator,
+    readonly network: XRPLNetwork,
+  ) {}
 
   public async getBalance(address: string): Promise<BigInteger> {
     return this.decoratedClient.getBalance(address)
@@ -32,13 +37,22 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
     destination: string,
     sender: Wallet,
   ): Promise<string> {
-    const ledgerCloseTimeMs = 4 * 1000
-
-    // Submit a transaction hash and wait for a ledger to close.
-    const transactionHash = await this.decoratedClient.send(
+    return this.sendWithDetails({
       amount,
       destination,
       sender,
+    })
+  }
+
+  public async sendWithDetails(
+    sendMoneyDetails: SendXrpDetails,
+  ): Promise<string> {
+    const { sender } = sendMoneyDetails
+    const ledgerCloseTimeMs = 4 * 1000
+
+    // Submit a transaction hash and wait for a ledger to close.
+    const transactionHash = await this.decoratedClient.sendWithDetails(
+      sendMoneyDetails,
     )
     await sleep(ledgerCloseTimeMs)
 
@@ -47,7 +61,7 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
       transactionHash,
     )
     const { lastLedgerSequence } = rawTransactionStatus
-    if (lastLedgerSequence === 0) {
+    if (!lastLedgerSequence) {
       return Promise.reject(
         new Error(
           'The transaction did not have a lastLedgerSequence field so transaction status cannot be reliably determined.',
