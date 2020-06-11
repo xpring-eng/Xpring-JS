@@ -6,7 +6,7 @@ import XRPTransactionType from './xrp-transaction-type'
 import XRPPayment from './xrp-payment'
 import XRPMemo from './xrp-memo'
 import { GetTransactionResponse } from '../Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
-import XRPLNetwork from '../../Common/xrpl-network'
+import { XRPLNetwork } from '../../Common/xrpl-network'
 
 /*
  * A transaction on the XRP Ledger.
