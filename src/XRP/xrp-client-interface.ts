@@ -2,8 +2,8 @@ import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import TransactionStatus from './transaction-status'
 import { XRPLNetwork } from '../Common/xrpl-network'
-import XRPTransaction from './model/xrp-transaction'
-import XRPMemo from './model/xrp-memo'
+import { XRPTransaction } from './model/xrp-transaction'
+import { XRPMemo } from './model/xrp-memo'
 import SendXrpDetails from './model/send-xrp-details'
 
 /**
