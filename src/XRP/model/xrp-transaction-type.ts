@@ -11,6 +11,7 @@ enum XRPTransactionType {
   AccountDelete,
   CheckCancel,
   CheckCash,
+  CheckCreate,
 }
 
 export default XRPTransactionType
