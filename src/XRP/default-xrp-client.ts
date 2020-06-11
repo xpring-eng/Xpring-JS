@@ -13,8 +13,12 @@ import {
   Account,
   LastLedgerSequence,
   SigningPublicKey,
+  MemoData,
+  MemoFormat,
+  MemoType,
 } from './Generated/node/org/xrpl/rpc/v1/common_pb'
 import {
+  Memo,
   Payment,
   Transaction,
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -30,6 +34,8 @@ import { XRPNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XRPError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
+import { XRPLNetwork } from '../Common/xrpl-network'
+import SendXrpDetails from './model/send-xrp-details'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -44,15 +50,17 @@ class DefaultXRPClient implements XRPClientDecorator {
    * The DefaultXRPClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcURL The URL of the gRPC instance to connect to.
+   * @param network The network this XRPClient is connecting to.
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public static defaultXRPClientWithEndpoint(
     grpcURL: string,
+    network: XRPLNetwork,
     forceWeb = false,
   ): DefaultXRPClient {
     return isNode() && !forceWeb
-      ? new DefaultXRPClient(new GRPCNetworkClient(grpcURL))
-      : new DefaultXRPClient(new GRPCNetworkClientWeb(grpcURL))
+      ? new DefaultXRPClient(new GRPCNetworkClient(grpcURL), network)
+      : new DefaultXRPClient(new GRPCNetworkClientWeb(grpcURL), network)
   }
 
   /**
@@ -61,8 +69,12 @@ class DefaultXRPClient implements XRPClientDecorator {
    * In general, clients should prefer to call `xrpClientWithEndpoint`. This constructor is provided to improve testability of this class.
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
+   * @param network The network this XRPClient is connecting to.
    */
-  public constructor(private readonly networkClient: XRPNetworkClient) {}
+  public constructor(
+    private readonly networkClient: XRPNetworkClient,
+    readonly network: XRPLNetwork,
+  ) {}
 
   /**
    * Retrieve the balance for the given address.
@@ -125,7 +137,7 @@ class DefaultXRPClient implements XRPClientDecorator {
       return TransactionStatus.Pending
     }
 
-    return transactionStatus.transactionStatusCode.startsWith('tes')
+    return transactionStatus.transactionStatusCode?.startsWith('tes')
       ? TransactionStatus.Succeeded
       : TransactionStatus.Failed
   }
@@ -133,16 +145,40 @@ class DefaultXRPClient implements XRPClientDecorator {
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
-   * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
+   * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destinationAddress A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async send(
-    drops: BigInteger | number | string,
+    amount: BigInteger | number | string,
     destinationAddress: string,
     sender: Wallet,
   ): Promise<string> {
+    return this.sendWithDetails({
+      amount,
+      destination: destinationAddress,
+      sender,
+    })
+  }
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination Pay ID, allowing
+   * for additional details to be specified for use with supplementary features of the XRP
+   * ledger.
+   *
+   * @param sendMoneyDetails - a wrapper object containing details for constructing a transaction.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  public async sendWithDetails(
+    sendMoneyDetails: SendXrpDetails,
+  ): Promise<string> {
+    const {
+      amount: drops,
+      sender,
+      destination: destinationAddress,
+      memos,
+    } = sendMoneyDetails
     if (!Utils.isValidXAddress(destinationAddress)) {
       throw XRPError.xAddressRequired
     }
@@ -186,7 +222,7 @@ class DefaultXRPClient implements XRPClientDecorator {
     const lastLedgerSequence = new LastLedgerSequence()
     lastLedgerSequence.setValue(openLedgerSequence + maxLedgerVersionOffset)
 
-    const signingPublicKeyBytes = Utils.toBytes(sender.getPublicKey())
+    const signingPublicKeyBytes = Utils.toBytes(sender.publicKey)
     const signingPublicKey = new SigningPublicKey()
     signingPublicKey.setValue(signingPublicKeyBytes)
 
@@ -198,6 +234,31 @@ class DefaultXRPClient implements XRPClientDecorator {
     transaction.setLastLedgerSequence(lastLedgerSequence)
 
     transaction.setSigningPublicKey(signingPublicKey)
+
+    if (memos && memos.length) {
+      memos
+        .map((memo) => {
+          const xrpMemo = new Memo()
+          if (memo.data) {
+            const memoData = new MemoData()
+            memoData.setValue(memo.data)
+            xrpMemo.setMemoData(memoData)
+          }
+          if (memo.format) {
+            const memoFormat = new MemoFormat()
+            memoFormat.setValue(memo.format)
+            xrpMemo.setMemoFormat(memoFormat)
+          }
+          if (memo.type) {
+            const memoType = new MemoType()
+            memoType.setValue(memo.type)
+            xrpMemo.setMemoType(memoType)
+          }
+
+          return xrpMemo
+        })
+        .forEach((memo) => transaction.addMemos(memo))
+    }
 
     const signedTransaction = Signer.signTransaction(transaction, sender)
     if (!signedTransaction) {
@@ -366,7 +427,10 @@ class DefaultXRPClient implements XRPClientDecorator {
       const transaction = getTransactionResponse.getTransaction()
       switch (transaction?.getTransactionDataCase()) {
         case Transaction.TransactionDataCase.PAYMENT: {
-          const xrpTransaction = XRPTransaction.from(getTransactionResponse)
+          const xrpTransaction = XRPTransaction.from(
+            getTransactionResponse,
+            this.network,
+          )
           if (!xrpTransaction) {
             throw XRPError.paymentConversionFailure
           } else {
@@ -400,7 +464,7 @@ class DefaultXRPClient implements XRPClientDecorator {
     const getTransactionResponse = await this.networkClient.getTransaction(
       getTransactionRequest,
     )
-    return XRPTransaction.from(getTransactionResponse)
+    return XRPTransaction.from(getTransactionResponse, this.network)
   }
 }
 

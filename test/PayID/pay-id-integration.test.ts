@@ -1,8 +1,8 @@
 import { assert } from 'chai'
-import PayIDError, { PayIDErrorType } from '../../src/PayID/pay-id-error'
-import PayIDClient from '../../src/PayID/pay-id-client'
-import XRPPayIDClient from '../../src/PayID/xrp-pay-id-client'
-import XRPLNetwork from '../../src/Common/xrpl-network'
+import PayIdError, { PayIdErrorType } from '../../src/PayID/pay-id-error'
+import PayIdClient from '../../src/PayID/pay-id-client'
+import XrpPayIdClient from '../../src/PayID/xrp-pay-id-client'
+import XrplNetwork from '../../src/Common/xrpl-network'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -14,11 +14,11 @@ describe('PayID Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID that will resolve on Mainnet.
-    const payIDClient = new XRPPayIDClient(XRPLNetwork.Main)
-    const payID = 'alice$dev.payid.xpring.money'
+    const payIdClient = new XrpPayIdClient(XrplNetwork.Main)
+    const payId = 'alice$dev.payid.xpring.money'
 
     // WHEN it is resolved to an XRP address
-    const xrpAddress = await payIDClient.xrpAddressForPayID(payID)
+    const xrpAddress = await payIdClient.xrpAddressForPayId(payId)
 
     // THEN the address is the expected value.
     assert.equal(xrpAddress, 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn')
@@ -30,11 +30,11 @@ describe('PayID Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID that will resolve on Testnet.
-    const payIDClient = new XRPPayIDClient(XRPLNetwork.Test)
-    const payID = 'alice$dev.payid.xpring.money'
+    const payIdClient = new XrpPayIdClient(XrplNetwork.Test)
+    const payId = 'alice$dev.payid.xpring.money'
 
     // WHEN it is resolved to an XRP address on testnet
-    const xrpAddress = await payIDClient.xrpAddressForPayID(payID)
+    const xrpAddress = await payIdClient.xrpAddressForPayId(payId)
 
     // THEN the address is the expected value.
     assert.equal(xrpAddress, 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS')
@@ -44,20 +44,20 @@ describe('PayID Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID that will not resolve on Devnet.
-    const payID = 'does-not-exist$dev.payid.xpring.money'
-    const network = XRPLNetwork.Dev
-    const payIDClient = new XRPPayIDClient(network)
+    const payId = 'does-not-exist$dev.payid.xpring.money'
+    const network = XrplNetwork.Dev
+    const payIdClient = new XrpPayIdClient(network)
 
     // WHEN it is resolved to an unmapped value.
-    payIDClient.xrpAddressForPayID(payID).catch((error) => {
+    payIdClient.xrpAddressForPayId(payId).catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
-        (error as PayIDError).errorType,
-        PayIDErrorType.MappingNotFound,
+        (error as PayIdError).errorType,
+        PayIdErrorType.MappingNotFound,
       )
 
       const { message } = error
-      assert.include(message, payID)
+      assert.include(message, payId)
       assert.include(message, network)
 
       done()
@@ -70,11 +70,11 @@ describe('PayID Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID that will resolve on Mainnet.
-    const payIDClient = new PayIDClient('btc-testnet')
-    const payID = 'alice$dev.payid.xpring.money'
+    const payIdClient = new PayIdClient('btc-testnet')
+    const payId = 'alice$dev.payid.xpring.money'
 
     // WHEN it is resolved to an XRP address
-    const btcAddress = await payIDClient.addressForPayID(payID)
+    const btcAddress = await payIdClient.addressForPayId(payId)
 
     // THEN the address is the expected value.
     assert.deepEqual(btcAddress, {
@@ -86,11 +86,11 @@ describe('PayID Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID.
-    const payID = 'dino$travel.payid.xpring.money'
-    const payIDClient = new XRPPayIDClient(XRPLNetwork.Test)
+    const payId = 'dino$travel.payid.xpring.money'
+    const payIdClient = new XrpPayIdClient(XrplNetwork.Test)
 
     // WHEN the Pay ID receipt endpoint is hit
-    const invoice = await payIDClient.getInvoice(payID, 'abc123')
+    const invoice = await payIdClient.getInvoice(payId, 'abc123')
 
     // THEN the server returns a result.
     assert.exists(invoice)
@@ -100,12 +100,12 @@ describe('PayID Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID.
-    const payID = 'dino$travel.payid.xpring.money'
-    const payIDClient = new XRPPayIDClient(XRPLNetwork.Test)
+    const payId = 'dino$travel.payid.xpring.money'
+    const payIdClient = new XrpPayIdClient(XrplNetwork.Test)
 
     // WHEN the Pay ID receipt endpoint is hit
-    const invoice = await payIDClient.postInvoice(
-      payID,
+    const invoice = await payIdClient.postInvoice(
+      payId,
       '123456',
       'x509 + sha256',
       [],
@@ -127,12 +127,12 @@ describe('PayID Integration Tests', function (): void {
 
   it('receipt', async function (): Promise<void> {
     // GIVEN a Pay ID.
-    const payID = 'dino$travel.payid.xpring.money'
-    const payIDClient = new XRPPayIDClient(XRPLNetwork.Main)
+    const payId = 'dino$travel.payid.xpring.money'
+    const payIdClient = new XrpPayIdClient(XrplNetwork.Main)
 
     // WHEN the Pay ID receipt endpoint is hit then an error is not thrown.
-    await payIDClient.receipt(
-      payID,
+    await payIdClient.receipt(
+      payId,
       'some_invoice_hash',
       'some_transaction_hash',
     )
