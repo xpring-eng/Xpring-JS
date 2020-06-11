@@ -2,7 +2,7 @@ import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
-import XRPOfferCreate from '../../src/XRP/model/xrp-offer-create'
+import XrpOfferCreate from '../../src/XRP/model/xrp-offer-create'
 import XrpOfferCancel from '../../src/XRP/model/xrp-offer-cancel'
 import XrpEscrowFinish from '../../src/XRP/model/xrp-escrow-finish'
 import XrpEscrowCreate from '../../src/XRP/model/xrp-escrow-create'
@@ -542,10 +542,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
   // OfferCreate
 
-  it('Convert OfferCreate protobuf to XRPOfferCreate object', function (): void {
+  it('Convert OfferCreate protobuf to XrpOfferCreate object', function (): void {
     // GIVEN an OfferCreate protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const offerCreate = XRPOfferCreate.from(testOfferCreateProtoAllFields)
+    const offerCreate = XrpOfferCreate.from(testOfferCreateProtoAllFields)
 
     // THEN the OfferCreate converted as expected.
     assert.equal(
@@ -570,10 +570,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert OfferCreate protobuf to XRPOfferCreate object - mandatory fields', function (): void {
+  it('Convert OfferCreate protobuf to XrpOfferCreate object - mandatory fields', function (): void {
     // GIVEN an OfferCreate protocol buffer with only mandatory fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const offerCreate = XRPOfferCreate.from(testOfferCreateProtoMandatoryOnly)
+    const offerCreate = XrpOfferCreate.from(testOfferCreateProtoMandatoryOnly)
 
     // THEN the OfferCreate converted as expected.
     assert.isUndefined(offerCreate?.expiration)
@@ -592,10 +592,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert OfferCreate protobuf to XRPOfferCreate object - missing required field', function (): void {
+  it('Convert OfferCreate protobuf to XrpOfferCreate object - missing required field', function (): void {
     // GIVEN an OfferCreate protocol buffer missing a required field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const offerCreate = XRPOfferCreate.from(testInvalidOfferCreateProto)
+    const offerCreate = XrpOfferCreate.from(testInvalidOfferCreateProto)
 
     // THEN the result is undefined.
     assert.isUndefined(offerCreate)
