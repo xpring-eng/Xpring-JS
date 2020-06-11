@@ -2,7 +2,7 @@ import bigInt from 'big-integer'
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 
-import { XRPLNetwork } from '../../src'
+import { XRPLNetwork } from '../../src/Common/xrpl-network'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import XRPClient from '../../src/XRP/xrp-client'
 
