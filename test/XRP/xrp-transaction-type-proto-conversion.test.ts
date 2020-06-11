@@ -2,7 +2,7 @@ import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
-import XRPAccountDelete from '../../src/XRP/model/xrp-account-delete'
+import XrpAccountDelete from '../../src/XRP/model/xrp-account-delete'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -69,10 +69,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(accountSet?.tickSize)
   })
 
-  it('Convert AccountDelete protobuf with all fields to XRPAccountDelete object', function (): void {
+  it('Convert AccountDelete protobuf with all fields to XrpAccountDelete object', function (): void {
     // GIVEN an AccountDelete protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountDelete = XRPAccountDelete.from(
+    const accountDelete = XrpAccountDelete.from(
       testAccountDeleteProto,
       XRPLNetwork.Test,
     )
@@ -86,10 +86,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.deepEqual(accountDelete?.destinationXAddress, expectedXAddress)
   })
 
-  it('Convert AccountDelete protobuf with no tag to XRPAccountDelete object', function (): void {
+  it('Convert AccountDelete protobuf with no tag to XrpAccountDelete object', function (): void {
     // GIVEN an AccountDelete protocol buffer with only destination field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountDelete = XRPAccountDelete.from(
+    const accountDelete = XrpAccountDelete.from(
       testAccountDeleteProtoNoTag,
       XRPLNetwork.Test,
     )
@@ -103,10 +103,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.deepEqual(accountDelete?.destinationXAddress, expectedXAddress)
   })
 
-  it('Convert AccountDelete protobuf to XRPAccountDelete object - missing destination field', function (): void {
+  it('Convert AccountDelete protobuf to XrpAccountDelete object - missing destination field', function (): void {
     // GIVEN an AccountDelete protocol buffer missing the destination field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountDelete = XRPAccountDelete.from(
+    const accountDelete = XrpAccountDelete.from(
       new AccountDelete(),
       XRPLNetwork.Test,
     )
