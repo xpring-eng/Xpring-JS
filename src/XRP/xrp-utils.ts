@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js'
-import { XRPErrorType, XRPError } from '..'
+import XRPError, { XRPErrorType } from './xrp-error'
 
 function dropsToXrp(drops: BigNumber.Value): string {
   const dropsRegEx = RegExp(/^-?[0-9]*\.?[0-9]*$/)
