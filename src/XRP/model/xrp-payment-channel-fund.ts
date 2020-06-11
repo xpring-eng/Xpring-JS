@@ -10,17 +10,17 @@ import { XRPCurrencyAmount } from '.'
  *
  * @see: https://xrpl.org/paymentchannelfund.html
  */
-export default class XRPPaymentChannelFund {
+export default class XrpPaymentChannelFund {
   /**
-   * Constructs an XRPPaymentChannelFund from a PaymentChannelFund protocol buffer.
+   * Constructs an XrpPaymentChannelFund from a PaymentChannelFund protocol buffer.
    *
-   * @param paymentChannelFund a PaymentChannelFund (protobuf object) whose field values will be used to construct an XRPPaymentChannelFund
-   * @return an XRPPaymentChannelFund with its fields set via the analogous protobuf fields.
+   * @param paymentChannelFund a PaymentChannelFund (protobuf object) whose field values will be used to construct an XrpPaymentChannelFund
+   * @return an XrpPaymentChannelFund with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L288
    */
   public static from(
     paymentChannelFund: PaymentChannelFund,
-  ): XRPPaymentChannelFund | undefined {
+  ): XrpPaymentChannelFund | undefined {
     const channel = paymentChannelFund.getChannel()?.getValue_asB64()
 
     const amountCurrencyAmount = paymentChannelFund.getAmount()?.getValue()
@@ -36,7 +36,7 @@ export default class XRPPaymentChannelFund {
 
     const expiration = paymentChannelFund.getExpiration()?.getValue()
 
-    return new XRPPaymentChannelFund(channel, amount, expiration)
+    return new XrpPaymentChannelFund(channel, amount, expiration)
   }
 
   /**
@@ -53,8 +53,8 @@ export default class XRPPaymentChannelFund {
    *                    For more information, see the PayChannel ledger object type: https://xrpl.org/paychannel.html
    */
   private constructor(
-    readonly channel?: string,
-    readonly amount?: XRPCurrencyAmount,
+    readonly channel: string,
+    readonly amount: XRPCurrencyAmount,
     readonly expiration?: number,
   ) {}
 }

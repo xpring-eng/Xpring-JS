@@ -5,21 +5,21 @@ import { SignerEntry } from '../Generated/web/org/xrpl/rpc/v1/common_pb'
  *
  * @see: https://xrpl.org/signerlist.html#signerentry-object
  */
-export default class XRPSignerEntry {
+export default class XrpSignerEntry {
   /**
-   * Constructs an XRPSignerEntry from a SignerEntry protocol buffer.
+   * Constructs an XrpSignerEntry from a SignerEntry protocol buffer.
    *
-   * @param signerEntry a SignerEntry (protobuf object) whose field values will be used to construct an XRPSignerEntry
-   * @return an XRPSignerEntry with its fields set via the analogous protobuf fields.
+   * @param signerEntry a SignerEntry (protobuf object) whose field values will be used to construct an XrpSignerEntry
+   * @return an XrpSignerEntry with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/f43aeda49c5362dc83c66507cae2ec71cfa7bfdf/src/ripple/proto/org/xrpl/rpc/v1/common.proto#L471
    */
-  public static from(signerEntry: SignerEntry): XRPSignerEntry | undefined {
+  public static from(signerEntry: SignerEntry): XrpSignerEntry | undefined {
     const account = signerEntry.getAccount()?.getValue()?.getAddress()
     const signerWeight = signerEntry.getSignerWeight()?.getValue()
     if (!account || !signerWeight) {
       return undefined
     }
-    return new XRPSignerEntry(account, signerWeight)
+    return new XrpSignerEntry(account, signerWeight)
   }
 
   /**

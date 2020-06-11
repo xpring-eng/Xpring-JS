@@ -4,21 +4,21 @@ import { XRPCurrencyAmount } from '.'
 /*
  * Represents a PaymentChannelClaim transaction on the XRP Ledger.
  *
- * Claim XRP from a payment channel, adjust the payment channel's expiration, or both.
+ * A PaymentChannelClaim transaction claims XRP from a payment channel, adjusts the payment channel's expiration, or both.
  *
  * @see: https://xrpl.org/paymentchannelclaim.html
  */
-export default class XRPPaymentChannelClaim {
+export default class XrpPaymentChannelClaim {
   /**
-   * Constructs an XRPPaymentChannelClaim from a PaymentChannelClaim protocol buffer.
+   * Constructs an XrpPaymentChannelClaim from a PaymentChannelClaim protocol buffer.
    *
-   * @param paymentChannelClaim a PaymentChannelClaim (protobuf object) whose field values will be used to construct an XRPPaymentChannelClaim
-   * @return an XRPPaymentChannelClaim with its fields set via the analogous protobuf fields.
+   * @param paymentChannelClaim a PaymentChannelClaim (protobuf object) whose field values will be used to construct an XrpPaymentChannelClaim
+   * @return an XrpPaymentChannelClaim with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L258
    */
   public static from(
     paymentChannelClaim: PaymentChannelClaim,
-  ): XRPPaymentChannelClaim | undefined {
+  ): XrpPaymentChannelClaim | undefined {
     const channel = paymentChannelClaim.getChannel()?.getValue_asB64()
     // channel is a required field
     if (!channel) {
@@ -43,7 +43,7 @@ export default class XRPPaymentChannelClaim {
 
     const publicKey = paymentChannelClaim.getPublicKey()?.getValue_asB64()
 
-    return new XRPPaymentChannelClaim(
+    return new XrpPaymentChannelClaim(
       channel,
       balance,
       amount,
@@ -68,7 +68,7 @@ export default class XRPPaymentChannelClaim {
    *                  can check the validity of the signature before trying to apply the transaction to the ledger.)
    */
   private constructor(
-    readonly channel?: string,
+    readonly channel: string,
     readonly balance?: XRPCurrencyAmount,
     readonly amount?: XRPCurrencyAmount,
     readonly signature?: string,
