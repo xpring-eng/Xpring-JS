@@ -2,7 +2,7 @@ import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
-import XRPDepositPreauth from '../../src/XRP/model/xrp-deposit-preauth'
+import XrpDepositPreauth from '../../src/XRP/model/xrp-deposit-preauth'
 import XrpCheckCreate from '../../src/XRP/model/xrp-check-create'
 import XrpCheckCash from '../../src/XRP/model/xrp-check-cash'
 import XrpCheckCancel from '../../src/XRP/model/xrp-check-cancel'
@@ -269,10 +269,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(checkCreate)
   })
 
-  it('Convert DepositPreauth protobuf to XRPDepositPreauth object - authorize set', function (): void {
+  it('Convert DepositPreauth protobuf to XrpDepositPreauth object - authorize set', function (): void {
     // GIVEN a DepositPreauth protocol buffer with authorize field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const depositPreauth = XRPDepositPreauth.from(
+    const depositPreauth = XrpDepositPreauth.from(
       testDepositPreauthProtoSetAuthorize,
       XRPLNetwork.Test,
     )
@@ -289,10 +289,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.equal(depositPreauth?.authorizeXAddress, expectedXAddress)
   })
 
-  it('Convert DepositPreauth protobuf to XRPDepositPreauth object - unauthorize set', function (): void {
+  it('Convert DepositPreauth protobuf to XrpDepositPreauth object - unauthorize set', function (): void {
     // GIVEN a DespoitPreauth protocol buffer with unauthorize field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const depositPreauth = XRPDepositPreauth.from(
+    const depositPreauth = XrpDepositPreauth.from(
       testDepositPreauthProtoSetUnauthorize,
       XRPLNetwork.Test,
     )
