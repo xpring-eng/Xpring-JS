@@ -28,5 +28,5 @@ export default class XRPCheckCancel {
   /**
    * @param checkId The ID of the Check ledger object to cancel, as a 64-character hexadecimal string.
    */
-  private constructor(readonly checkId?: string) {}
+  private constructor(readonly checkId: string) {}
 }
