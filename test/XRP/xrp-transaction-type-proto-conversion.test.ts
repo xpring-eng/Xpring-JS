@@ -205,7 +205,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the CheckCreate converted as expected.
     const expectedXAddress = Utils.encodeXAddress(
-      testCheckCreateProtoAllFields.getDestination()?.getValue()?.getAddress(),
+      testCheckCreateProtoAllFields.getDestination()?.getValue()?.getAddress()!,
       testCheckCreateProtoAllFields.getDestinationTag()?.getValue(),
       true,
     )
@@ -239,7 +239,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
       testCheckCreateProtoMandatoryFields
         .getDestination()
         ?.getValue()
-        ?.getAddress(),
+        ?.getAddress()!,
       testCheckCreateProtoMandatoryFields.getDestinationTag()?.getValue(),
       true,
     )
