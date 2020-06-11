@@ -17,7 +17,7 @@ import XRPPathElement from '../../src/XRP/model/xrp-path-element'
 import XRPPayment from '../../src/XRP/model/xrp-payment'
 import XRPSigner from '../../src/XRP/model/xrp-signer'
 import XRPTransaction from '../../src/XRP/model/xrp-transaction'
-import XRPSignerEntry from '../../src/XRP/model/xrp-signer-entry'
+import XrpSignerEntry from '../../src/XRP/model/xrp-signer-entry'
 import {
   testAddress,
   testPublicKey,
@@ -381,7 +381,7 @@ describe('Protocol Buffer Conversion', function (): void {
   it('Convert SignerEntry with all fields set', function (): void {
     // GIVEN a SignerEntry protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const signerEntry = XRPSignerEntry.from(testSignerEntryProto)
+    const signerEntry = XrpSignerEntry.from(testSignerEntryProto)
 
     // THEN all fields are present and converted correctly.
     assert.equal(
@@ -397,7 +397,7 @@ describe('Protocol Buffer Conversion', function (): void {
   it('Convert SignerEntry with no fields set', function (): void {
     // GIVEN a SignerEntry protocol buffer with no fields set.
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const signerEntry = XRPSignerEntry.from(new SignerEntry())
+    const signerEntry = XrpSignerEntry.from(new SignerEntry())
 
     // THEN the result is undefined.
     assert.isUndefined(signerEntry)

@@ -8,17 +8,17 @@ import XRPSignerEntry from './xrp-signer-entry'
  *
  * @see: https://xrpl.org/signerlistset.html
  */
-export default class XRPSignerListSet {
+export default class XrpSignerListSet {
   /**
-   * Constructs an XRPSignerListSet from a SignerListSet protocol buffer.
+   * Constructs an XrpSignerListSet from a SignerListSet protocol buffer.
    *
-   * @param signerListSet a SignerListSet (protobuf object) whose field values will be used to construct an XRPSignerListSet
-   * @return an XRPSignerListSet with its fields set via the analogous protobuf fields.
+   * @param signerListSet a SignerListSet (protobuf object) whose field values will be used to construct an XrpSignerListSet
+   * @return an XrpSignerListSet with its fields set via the analogous protobuf fields.
    * @see  https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L304
    */
   public static from(
     signerListSet: SignerListSet,
-  ): XRPSignerListSet | undefined {
+  ): XrpSignerListSet | undefined {
     const signerQuorum = signerListSet.getSignerQuorum()?.getValue()
     if (!signerQuorum) {
       return undefined
@@ -26,7 +26,7 @@ export default class XRPSignerListSet {
     const signerEntries = signerListSet
       .getSignerEntriesList()
       .map((signerEntry) => XRPSignerEntry.from(signerEntry))
-    return new XRPSignerListSet(signerQuorum, signerEntries)
+    return new XrpSignerListSet(signerQuorum, signerEntries)
   }
 
   /**
