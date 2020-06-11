@@ -1,8 +1,8 @@
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 
-import XRPLNetwork from '../../src/Common/xrpl-network'
-import XRPPayIDClient from '../../src/PayID/xrp-pay-id-client'
+import { XRPLNetwork } from '../../src/Common/xrpl-network'
+import { XRPPayIDClient } from '../../src/PayID/xrp-pay-id-client'
 import XpringClient from '../../src/Xpring/xpring-client'
 import XRPClient from '../../src/XRP/xrp-client'
 import {
@@ -25,15 +25,15 @@ const network = XRPLNetwork.Test
 // A wallet with some balance on TestNet.
 const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 
-// A PayIDClient under test.
-const payIDClient = new XRPPayIDClient(network)
+// A PayIdClient under test.
+const payIdClient = new XRPPayIDClient(network)
 
 // An XRPClient under test.
 const rippledURL = 'test.xrp.xpring.io:50051'
 const xrpClient = new XRPClient(rippledURL, XRPLNetwork.Test)
 
 // A XpringClient under test.
-const xpringClient = new XpringClient(payIDClient, xrpClient)
+const xpringClient = new XpringClient(payIdClient, xrpClient)
 
 describe('Xpring Integration Tests', function (): void {
   it('Send XRP TestNet', async function (): Promise<void> {
@@ -41,10 +41,10 @@ describe('Xpring Integration Tests', function (): void {
 
     // GIVEN an amount and a PayID that will resolve.
     const amount = 10
-    const payID = 'alice$dev.payid.xpring.money'
+    const payId = 'alice$dev.payid.xpring.money'
 
     // WHEN XRP is sent to the Pay ID.
-    const transactionHash = await xpringClient.send(amount, payID, wallet)
+    const transactionHash = await xpringClient.send(amount, payId, wallet)
 
     // THEN a transaction hash is returned.
     assert.exists(transactionHash)

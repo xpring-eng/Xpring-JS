@@ -4,8 +4,9 @@ import { XRPClientDecorator } from './xrp-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
 import XRPTransaction from './model/xrp-transaction'
-import { XRPError, XRPLNetwork } from '..'
-import { XRPErrorType } from './xrp-error'
+import XRPError, { XRPErrorType } from './xrp-error'
+import { XRPLNetwork } from '../Common/xrpl-network'
+
 import SendXrpDetails from './model/send-xrp-details'
 
 async function sleep(milliseconds: number): Promise<void> {
