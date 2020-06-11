@@ -1,6 +1,6 @@
 import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import XRPTransaction from '../../../src/XRP/model/xrp-transaction'
-import XRPLNetwork from '../../../src/Common/xrpl-network'
+import { XRPLNetwork } from '../../../src/Common/xrpl-network'
 import XRPMemo from '../../../src/XRP/model/xrp-memo'
 
 /**
