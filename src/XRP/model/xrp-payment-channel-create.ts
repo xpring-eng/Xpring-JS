@@ -9,17 +9,17 @@ import { XRPCurrencyAmount } from '.'
  *
  * @see: https://xrpl.org/paymentchannelcreate.html
  */
-export default class XRPPaymentChannelCreate {
+export default class XrpPaymentChannelCreate {
   /**
-   * Constructs an XRPPaymentChannelCreate from a PaymentChannelCreate protocol buffer.
+   * Constructs an XrpPaymentChannelCreate from a PaymentChannelCreate protocol buffer.
    *
-   * @param paymentChannelCreate a PaymentChannelCreate (protobuf object) whose field values will be used to construct an XRPPaymentChannelCreate
-   * @return an XRPPaymentChannelCreate with its fields set via the analogous protobuf fields.
+   * @param paymentChannelCreate a PaymentChannelCreate (protobuf object) whose field values will be used to construct an XrpPaymentChannelCreate
+   * @return an XrpPaymentChannelCreate with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L272
    */
   public static from(
     paymentChannelCreate: PaymentChannelCreate,
-  ): XRPPaymentChannelCreate | undefined {
+  ): XrpPaymentChannelCreate | undefined {
     const amountCurrencyAmount = paymentChannelCreate.getAmount()?.getValue()
     if (!amountCurrencyAmount) {
       return undefined
@@ -40,7 +40,7 @@ export default class XRPPaymentChannelCreate {
     const cancelAfter = paymentChannelCreate.getCancelAfter()?.getValue()
     const destinationTag = paymentChannelCreate.getDestinationTag()?.getValue()
 
-    return new XRPPaymentChannelCreate(
+    return new XrpPaymentChannelCreate(
       amount,
       destination,
       settleDelay,
