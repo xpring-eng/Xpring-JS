@@ -1,15 +1,14 @@
 import bigInt from 'big-integer'
 import { assert } from 'chai'
 import { FakeWallet } from 'xpring-common-js'
-
-import { XRPLNetwork } from '../../src'
-import XpringClient from '../../src/Xpring/xpring-client'
-import XpringError from '../../src/Xpring/xpring-error'
-import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
-import TransactionStatus from '../../src/XRP/transaction-status'
-import FakeXRPPayIDClient from '../PayID/fakes/fake-xrp-pay-id-client'
 import FakeXRPClient from '../XRP/fakes/fake-xrp-client'
+import FakeXRPPayIDClient from '../PayID/fakes/fake-xrp-pay-id-client'
 import { testXRPTransaction } from '../XRP/fakes/fake-xrp-protobufs'
+import TransactionStatus from '../../src/XRP/transaction-status'
+import XpringClient from '../../src/Xpring/xpring-client'
+import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
+import { XRPLNetwork } from '../../src/Common/xrpl-network'
+import XpringError from '../../src/Xpring/xpring-error'
 
 /* Default values for the fake XRP Client. These values must be provided but are not varied in testing. */
 /* eslint-disable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention --
@@ -60,9 +59,9 @@ describe('Xpring Client', function (): void {
     )
 
     const resolvedXRPAddress = 'r123'
-    const payIDClient = new FakeXRPPayIDClient(resolvedXRPAddress)
+    const payIdClient = new FakeXRPPayIDClient(resolvedXRPAddress)
 
-    const xpringClient = new XpringClient(payIDClient, xrpClient)
+    const xpringClient = new XpringClient(payIdClient, xrpClient)
 
     // WHEN XRP is sent to the Pay ID.
     const transactionHash = await xpringClient.send(amount, payID, wallet)
