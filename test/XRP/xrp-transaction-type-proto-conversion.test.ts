@@ -517,13 +517,9 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(escrowFinish)
   })
 
-<<<<<<< HEAD:test/XRP/xrp-transaction-type-proto-conversion-test.ts
   // OfferCancel
 
   it('Convert OfferCancel protobuf to XRPOfferCancel object', function (): void {
-=======
-  it('Convert OfferCancel protobuf to XrpOfferCancel object', function (): void {
->>>>>>> ac/10-offercancel:test/XRP/xrp-transaction-type-proto-conversion.test.ts
     // GIVEN an OfferCancel protocol buffer with offerSequence field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
     const offerCancel = XrpOfferCancel.from(testOfferCancelProto)
