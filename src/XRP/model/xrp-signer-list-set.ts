@@ -37,7 +37,7 @@ export default class XrpSignerListSet {
    *                      nor may the Account submitting the transaction appear in the list.
    */
   private constructor(
-    readonly signerQuorum?: number,
+    readonly signerQuorum: number,
     readonly signerEntries?: Array<XRPSignerEntry | undefined>,
   ) {}
 }
