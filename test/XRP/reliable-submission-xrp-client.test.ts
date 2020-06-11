@@ -6,6 +6,7 @@ import ReliableSubmissionXRPClient from '../../src/XRP/reliable-submission-xrp-c
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { testXRPTransaction } from './fakes/fake-xrp-protobufs'
+import { XRPLNetwork } from '../../src/Common/xrpl-network'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -46,6 +47,7 @@ describe('Reliable Submission XRP Client', function (): void {
     )
     this.reliableSubmissionClient = new ReliableSubmissionXRPClient(
       this.fakeXRPClient,
+      XRPLNetwork.Test,
     )
   })
 
@@ -150,7 +152,6 @@ describe('Reliable Submission XRP Client', function (): void {
     // WHEN `send` is called THEN the promise is rejected.
     this.reliableSubmissionClient
       .send('1', testAddress, wallet)
-      .then(() => {})
       .catch(() => done())
   })
 

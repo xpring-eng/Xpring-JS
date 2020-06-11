@@ -1,5 +1,7 @@
 import { assert } from 'chai'
+
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
+
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,

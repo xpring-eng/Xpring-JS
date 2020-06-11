@@ -4,8 +4,9 @@ import { XrpClientDecorator } from './xrp-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
 import XRPTransaction from './model/xrp-transaction'
-import { XRPError } from '..'
-import { XRPErrorType } from './xrp-error'
+import XRPError, { XRPErrorType } from './xrp-error'
+import { XRPLNetwork } from '../Common/xrpl-network'
+
 import SendXrpDetails from './model/send-xrp-details'
 
 async function sleep(milliseconds: number): Promise<void> {
@@ -16,7 +17,10 @@ async function sleep(milliseconds: number): Promise<void> {
  * An XRPClient which blocks on `send` calls until the transaction has reached a deterministic state.
  */
 export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
-  public constructor(private readonly decoratedClient: XrpClientDecorator) {}
+  public constructor(
+    private readonly decoratedClient: XrpClientDecorator,
+    readonly network: XRPLNetwork,
+  ) {}
 
   public async getBalance(address: string): Promise<BigInteger> {
     return this.decoratedClient.getBalance(address)
@@ -57,7 +61,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
       transactionHash,
     )
     const { lastLedgerSequence } = rawTransactionStatus
-    if (lastLedgerSequence === 0) {
+    if (!lastLedgerSequence) {
       return Promise.reject(
         new Error(
           'The transaction did not have a lastLedgerSequence field so transaction status cannot be reliably determined.',
