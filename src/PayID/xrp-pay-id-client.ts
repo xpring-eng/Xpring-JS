@@ -15,9 +15,11 @@ export default class XrpPayIdClient extends PayIdClient
   implements XrpPayIdClientInterface {
   /**
    * @param xrplNetwork The XRP Ledger network that this client attaches to.
+   * @param useHttps Whether to use HTTPS when making PayID requests. Most users should set this to 'true' to avoid
+   *                 Man-in-the-Middle attacks. Exposed as an option for testing purposes. Defaults to true.
    */
-  constructor(public readonly xrplNetwork: XrplNetwork) {
-    super(`xrpl-${xrplNetwork}`)
+  constructor(public readonly xrplNetwork: XrplNetwork, useHttps = true) {
+    super(`xrpl-${xrplNetwork}`, useHttps)
   }
 
   /**

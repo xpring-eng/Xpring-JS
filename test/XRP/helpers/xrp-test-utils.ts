@@ -1,5 +1,6 @@
 import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import XRPTransaction from '../../../src/XRP/model/xrp-transaction'
+import XRPLNetwork from '../../../src/Common/xrpl-network'
 import XRPMemo from '../../../src/XRP/model/xrp-memo'
 
 /**
@@ -18,7 +19,10 @@ export default class XRPTestUtils {
     const paymentXRPTransactions: Array<XRPTransaction> = []
     const transactions = transactionHistoryResponse.getTransactionsList()
     for (let i = 0; i < transactions.length; i += 1) {
-      const paymentXRPTransaction = XRPTransaction.from(transactions[i])
+      const paymentXRPTransaction = XRPTransaction.from(
+        transactions[i],
+        XRPLNetwork.Test,
+      )
       if (paymentXRPTransaction) {
         paymentXRPTransactions.push(paymentXRPTransaction)
       }
