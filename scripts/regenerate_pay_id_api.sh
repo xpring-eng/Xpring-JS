@@ -33,7 +33,7 @@ echo "Regenerating Swagger API from PayID Open API Spec"
 mkdir -p $TMP_SWAGGER_DIR
 mkdir -p $DESTINATION_FOLDER
 
-npx openapi-generator generate -i $PAY_ID_OPEN_API_SPEC -g $LANG -o $TMP_SWAGGER_DIR
+npx @openapitools/openapi-generator-cli generate -i $PAY_ID_OPEN_API_SPEC -g $LANG -o $TMP_SWAGGER_DIR
 echo "Swagger Generation Complete!"
 
 ##########################################################################
