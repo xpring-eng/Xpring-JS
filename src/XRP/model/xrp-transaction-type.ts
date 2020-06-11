@@ -20,6 +20,7 @@ enum XRPTransactionType {
   OfferCreate,
   PaymentChannelClaim,
   PaymentChannelCreate,
+  PaymentChannelFund,
 }
 
 export default XRPTransactionType
