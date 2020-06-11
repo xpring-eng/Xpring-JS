@@ -6,24 +6,26 @@ import XRPTransactionType from './xrp-transaction-type'
 import XRPPayment from './xrp-payment'
 import XRPMemo from './xrp-memo'
 import { GetTransactionResponse } from '../Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+import XRPLNetwork from '../../Common/xrpl-network'
 
 /*
  * A transaction on the XRP Ledger.
  *
  * @see: https://xrpl.org/transaction-formats.html
  */
-// TODO(amiecorso): Modify this object to use X-Address format.
 export default class XRPTransaction {
   /**
    * Constructs an XRPTransaction from a Transaction.
    *
    * @param transaction a Transaction (protobuf object) whose field values will be used
    *                    to construct an XRPTransaction
+   * @param xrplNetwork The XRPL network from which this object was retrieved.
    * @returns an XRPTransaction with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L13
    */
   public static from(
     getTransactionResponse: GetTransactionResponse,
+    xrplNetwork: XRPLNetwork,
   ): XRPTransaction | undefined {
     const transaction = getTransactionResponse.getTransaction()
     if (!transaction) {
@@ -31,6 +33,9 @@ export default class XRPTransaction {
     }
 
     const account = transaction.getAccount()?.getValue()?.getAddress()
+    if (!account) {
+      return undefined
+    }
 
     const fee = transaction.getFee()?.getDrops()
 
@@ -64,6 +69,12 @@ export default class XRPTransaction {
 
     const sourceTag = transaction.getSourceTag()?.getValue()
 
+    const sourceXAddress = Utils.encodeXAddress(
+      account,
+      sourceTag,
+      xrplNetwork === XRPLNetwork.Test,
+    )
+
     let paymentFields
     let type
     switch (transaction.getTransactionDataCase()) {
@@ -72,7 +83,7 @@ export default class XRPTransaction {
         if (!payment) {
           return undefined
         }
-        paymentFields = payment && XRPPayment.from(payment)
+        paymentFields = payment && XRPPayment.from(payment, xrplNetwork)
         if (!paymentFields) {
           return undefined
         }
@@ -131,6 +142,7 @@ export default class XRPTransaction {
       signers,
       signingPublicKey,
       sourceTag,
+      sourceXAddress,
       transactionSignature,
       type,
       paymentFields,
@@ -142,9 +154,8 @@ export default class XRPTransaction {
   }
 
   /**
-   *
    * @param hash The identifying hash of the transaction.
-   * @param account The unique address of the account that initiated the transaction.
+   * @deprecated @param account Deprecated, please use sourceXAddress. The unique address of the account that initiated the transaction.
    * @param accountTransactionID (Optional) Hash value identifying another transaction.
    *                              If provided, this transaction is only valid if the sending account's
    *                              previously-sent transaction matches the provided hash.
@@ -159,18 +170,20 @@ export default class XRPTransaction {
    * @param signers (Optional) Array of objects that represent a multi-signature which authorizes this transaction.
    * @param signingPublicKey Hex representation of the public key that corresponds to the private key used to sign this transaction.
    *                         If an empty string, indicates a multi-signature is present in the Signers field instead.
-   * @param sourceTag (Optional) Arbitrary integer used to identify the reason for this payment or a sender on whose behalf this
-   *                  transaction is made.
+   * @deprecated @param sourceTag Deprecated, please use sourceXAddress. (Optional) Arbitrary integer used to identify the reason for
+   *                              this payment or a sender on whose behalf this transaction is made.
    *                  Conventionally, a refund should specify the initial payment's SourceTag as the refund payment's DestinationTag.
+   * @param sourceXAddress: The unique address and source tag of the sender that initiated the transaction, encoded as an X-address.
+   *                        See "https://xrpaddress.info"
    * @param transactionSignature The signature that verifies this transaction as originating from the account it says it is from.
    * @param type The type of transaction.
    * @param paymentFields An XRPPayment object representing the additional fields present in a PAYMENT transaction.
-   *                      see "https://xrpl.org/payment.html#payment-fields"
+   *                      See "https://xrpl.org/payment.html#payment-fields"
    * @param deliveredAmount The actual amount delivered by this transaction, in the case of a partial payment.
-   *                        see "https://xrpl.org/partial-payments.html#the-delivered_amount-field"
+   *                        See "https://xrpl.org/partial-payments.html#the-delivered_amount-field"
    * @param timestamp The transaction's timestamp, converted to a unix timestamp.
    * @param validated A boolean indicating whether or not this transaction was found on a validated ledger, and not an open or closed ledger.
-   *                  see "https://xrpl.org/ledgers.html#open-closed-and-validated-ledgers"
+   *                  See "https://xrpl.org/ledgers.html#open-closed-and-validated-ledgers"
    * @param ledgerIndex The index of the ledger on which this transaction was found.
    */
   private constructor(
@@ -185,6 +198,7 @@ export default class XRPTransaction {
     readonly signers?: Array<XRPSigner>,
     readonly signingPublicKey?: Uint8Array,
     readonly sourceTag?: number,
+    readonly sourceXAddress?: string,
     readonly transactionSignature?: Uint8Array,
     readonly type?: XRPTransactionType,
     readonly paymentFields?: XRPPayment,
