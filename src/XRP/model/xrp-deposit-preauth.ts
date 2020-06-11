@@ -1,4 +1,6 @@
+import { Utils } from 'xpring-common-js'
 import { DepositPreauth } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { XRPLNetwork } from '../..'
 
 /*
  * Represents a DepositPreauth transaction on the XRP Ledger.
@@ -18,22 +20,41 @@ export default class XRPDepositPreauth {
    */
   public static from(
     depositPreauth: DepositPreauth,
+    xrplNetwork: XRPLNetwork,
   ): XRPDepositPreauth | undefined {
     const authorize = depositPreauth.getAuthorize()?.getValue()?.getAddress()
     const unauthorize = depositPreauth
       .getUnauthorize()
       ?.getValue()
       ?.getAddress()
-    return new XRPDepositPreauth(authorize, unauthorize)
+
+    let authorizeXAddress
+    let unauthorizeXAddress
+    if (authorize) {
+      authorizeXAddress = Utils.encodeXAddress(
+        authorize,
+        undefined,
+        xrplNetwork == XRPLNetwork.Test || xrplNetwork == XRPLNetwork.Dev,
+      )
+    } else if (unauthorize) {
+      unauthorizeXAddress = Utils.encodeXAddress(
+        unauthorize,
+        undefined,
+        xrplNetwork == XRPLNetwork.Test || xrplNetwork == XRPLNetwork.Dev,
+      )
+    }
+    return new XRPDepositPreauth(authorizeXAddress, unauthorizeXAddress)
   }
 
   /**
    * Note: authorize and unauthorize are mutually exclusive fields: one but not both should be set.
-   * @param authorize (Optional) The XRP Ledger address of the sender to preauthorize.
-   * @param unauthorize (Optional) The XRP Ledger address of a sender whose preauthorization should be revoked.
+   *       Addresses are encoded as X-addresses.  See https://xrpaddress.info/.
+   * @param authorizeXAddress (Optional) The XRP Ledger address of the sender to preauthorize, encoded as an X-address.
+   * @param unauthorizeXAddress (Optional) The XRP Ledger address of a sender whose preauthorization should be revoked,
+   *                            encoded as an X-address.
    */
   private constructor(
-    readonly authorize?: string,
-    readonly unauthorize?: string,
+    readonly authorizeXAddress?: string,
+    readonly unauthorizeXAddress?: string,
   ) {}
 }
