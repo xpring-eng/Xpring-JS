@@ -2,12 +2,12 @@ import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
-import XRPAccountDelete from '../../src/XRP/model/xrp-account-delete'
-import XRPCheckCancel from '../../src/XRP/model/xrp-check-cancel'
-import XRPCheckCash from '../../src/XRP/model/xrp-check-cash'
-import XRPCheckCreate from '../../src/XRP/model/xrp-check-create'
-import XRPDepositPreauth from '../../src/XRP/model/xrp-deposit-preauth'
 import XRPEscrowCancel from '../../src/XRP/model/xrp-escrow-cancel'
+import XrpDepositPreauth from '../../src/XRP/model/xrp-deposit-preauth'
+import XrpCheckCreate from '../../src/XRP/model/xrp-check-create'
+import XrpCheckCash from '../../src/XRP/model/xrp-check-cash'
+import XrpCheckCancel from '../../src/XRP/model/xrp-check-cancel'
+import XrpAccountDelete from '../../src/XRP/model/xrp-account-delete'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -87,10 +87,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(accountSet?.tickSize)
   })
 
-  it('Convert AccountDelete protobuf with all fields to XRPAccountDelete object', function (): void {
+  it('Convert AccountDelete protobuf with all fields to XrpAccountDelete object', function (): void {
     // GIVEN an AccountDelete protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountDelete = XRPAccountDelete.from(
+    const accountDelete = XrpAccountDelete.from(
       testAccountDeleteProto,
       XRPLNetwork.Test,
     )
@@ -104,10 +104,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.deepEqual(accountDelete?.destinationXAddress, expectedXAddress)
   })
 
-  it('Convert AccountDelete protobuf with no tag to XRPAccountDelete object', function (): void {
+  it('Convert AccountDelete protobuf with no tag to XrpAccountDelete object', function (): void {
     // GIVEN an AccountDelete protocol buffer with only destination field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountDelete = XRPAccountDelete.from(
+    const accountDelete = XrpAccountDelete.from(
       testAccountDeleteProtoNoTag,
       XRPLNetwork.Test,
     )
@@ -121,10 +121,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.deepEqual(accountDelete?.destinationXAddress, expectedXAddress)
   })
 
-  it('Convert AccountDelete protobuf to XRPAccountDelete object - missing destination field', function (): void {
+  it('Convert AccountDelete protobuf to XrpAccountDelete object - missing destination field', function (): void {
     // GIVEN an AccountDelete protocol buffer missing the destination field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountDelete = XRPAccountDelete.from(
+    const accountDelete = XrpAccountDelete.from(
       new AccountDelete(),
       XRPLNetwork.Test,
     )
@@ -133,10 +133,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(accountDelete)
   })
 
-  it('Convert CheckCancel protobuf to XRPCheckCancel object', function (): void {
+  it('Convert CheckCancel protobuf to XrpCheckCancel object', function (): void {
     // GIVEN a CheckCancel protocol buffer.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCancel = XRPCheckCancel.from(testCheckCancelProto)
+    const checkCancel = XrpCheckCancel.from(testCheckCancelProto)
 
     // THEN the CheckCancel converted as expected.
     assert.equal(
@@ -148,16 +148,16 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert CheckCancel protobuf with missing checkId', function (): void {
     // GIVEN a CheckCancel protocol buffer without a checkId.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCancel = XRPCheckCancel.from(testInvalidCheckCancelProto)
+    const checkCancel = XrpCheckCancel.from(testInvalidCheckCancelProto)
 
     // THEN the result is undefined.
     assert.isUndefined(checkCancel)
   })
 
-  it('Convert CheckCash protobuf to XRPCheckCash object - amount field set', function (): void {
+  it('Convert CheckCash protobuf to XrpCheckCash object - amount field set', function (): void {
     // GIVEN a valid CheckCash protocol buffer with amount field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCash = XRPCheckCash.from(testCheckCashProtoWithAmount)
+    const checkCash = XrpCheckCash.from(testCheckCashProtoWithAmount)
 
     // THEN the CheckCash converted as expected.
     assert.equal(
@@ -173,10 +173,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(checkCash?.deliverMin)
   })
 
-  it('Convert CheckCash protobuf to XRPCheckCash object - deliverMin field set', function (): void {
+  it('Convert CheckCash protobuf to XrpCheckCash object - deliverMin field set', function (): void {
     // GIVEN a valid CheckCash protocol buffer with deliverMin field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCash = XRPCheckCash.from(testCheckCashProtoWithDeliverMin)
+    const checkCash = XrpCheckCash.from(testCheckCashProtoWithDeliverMin)
 
     // THEN the CheckCash converted as expected.
     assert.equal(
@@ -192,19 +192,19 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert invalid CheckCash protobuf to XRPCheckCash object - missing checkId ', function (): void {
+  it('Convert invalid CheckCash protobuf to XrpCheckCash object - missing checkId ', function (): void {
     // GIVEN an invalid CheckCash protocol buffer missing the checkId field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCash = XRPCheckCash.from(testInvalidCheckCashProto)
+    const checkCash = XrpCheckCash.from(testInvalidCheckCashProto)
 
     // THEN the result is undefined.
     assert.isUndefined(checkCash)
   })
 
-  it('Convert CheckCreate protobuf to XRPCheckCreate object - all fields', function (): void {
+  it('Convert CheckCreate protobuf to XrpCheckCreate object - all fields', function (): void {
     // GIVEN a CheckCreate protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCreate = XRPCheckCreate.from(
+    const checkCreate = XrpCheckCreate.from(
       testCheckCreateProtoAllFields,
       XRPLNetwork.Test,
     )
@@ -232,10 +232,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert CheckCreate protobuf to XRPCheckCreate object - mandatory fields', function (): void {
+  it('Convert CheckCreate protobuf to XrpCheckCreate object - mandatory fields', function (): void {
     // GIVEN a CheckCreate protocol buffer with only mandatory fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCreate = XRPCheckCreate.from(
+    const checkCreate = XrpCheckCreate.from(
       testCheckCreateProtoMandatoryFields,
       XRPLNetwork.Test,
     )
@@ -263,7 +263,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert invalid CheckCreate protobuf to XRPCheckCash object - missing destination ', function (): void {
     // GIVEN an invalid CheckCreate protocol buffer missing the destination field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCreate = XRPCheckCreate.from(
+    const checkCreate = XrpCheckCreate.from(
       testInvalidCheckCreateProto,
       XRPLNetwork.Test,
     )
@@ -272,10 +272,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(checkCreate)
   })
 
-  it('Convert DepositPreauth protobuf to XRPDepositPreauth object - authorize set', function (): void {
+  it('Convert DepositPreauth protobuf to XrpDepositPreauth object - authorize set', function (): void {
     // GIVEN a DepositPreauth protocol buffer with authorize field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const depositPreauth = XRPDepositPreauth.from(
+    const depositPreauth = XrpDepositPreauth.from(
       testDepositPreauthProtoSetAuthorize,
       XRPLNetwork.Test,
     )
@@ -292,10 +292,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.equal(depositPreauth?.authorizeXAddress, expectedXAddress)
   })
 
-  it('Convert DepositPreauth protobuf to XRPDepositPreauth object - unauthorize set', function (): void {
+  it('Convert DepositPreauth protobuf to XrpDepositPreauth object - unauthorize set', function (): void {
     // GIVEN a DespoitPreauth protocol buffer with unauthorize field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const depositPreauth = XRPDepositPreauth.from(
+    const depositPreauth = XrpDepositPreauth.from(
       testDepositPreauthProtoSetUnauthorize,
       XRPLNetwork.Test,
     )

@@ -10,18 +10,18 @@ import { XRPLNetwork } from '../..'
  *
  * @see: https://xrpl.org/depositpreauth.html
  */
-export default class XRPDepositPreauth {
+export default class XrpDepositPreauth {
   /**
-   * Constructs an XRPDepositPreauth from a DepositPreauth protocol buffer.
+   * Constructs an XrpDepositPreauth from a DepositPreauth protocol buffer.
    *
-   * @param depositPreauth a DepositPreauth (protobuf object) whose field values will be used to construct an XRPDepositPreauth
-   * @return an XRPDepositPreauth with its fields set via the analogous protobuf fields.
+   * @param depositPreauth a DepositPreauth (protobuf object) whose field values will be used to construct an XrpDepositPreauth
+   * @return an XrpDepositPreauth with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L159
    */
   public static from(
     depositPreauth: DepositPreauth,
     xrplNetwork: XRPLNetwork,
-  ): XRPDepositPreauth | undefined {
+  ): XrpDepositPreauth | undefined {
     const authorize = depositPreauth.getAuthorize()?.getValue()?.getAddress()
     const unauthorize = depositPreauth
       .getUnauthorize()
@@ -43,7 +43,7 @@ export default class XRPDepositPreauth {
         xrplNetwork == XRPLNetwork.Test || xrplNetwork == XRPLNetwork.Dev,
       )
     }
-    return new XRPDepositPreauth(authorizeXAddress, unauthorizeXAddress)
+    return new XrpDepositPreauth(authorizeXAddress, unauthorizeXAddress)
   }
 
   /**

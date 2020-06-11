@@ -11,18 +11,18 @@ import XRPLNetwork from '../../Common/xrpl-network'
  *
  * @see: https://xrpl.org/checkcreate.html
  */
-export default class XRPCheckCreate {
+export default class XrpCheckCreate {
   /**
-   * Constructs an XRPCheckCreate from a CheckCreate protocol buffer.
+   * Constructs an XrpCheckCreate from a CheckCreate protocol buffer.
    *
-   * @param checkCreate a CheckCreate (protobuf object) whose field values will be used to construct an XRPCheckCreate
-   * @return an XRPCheckCreate with its fields set via the analogous protobuf fields.
+   * @param checkCreate a CheckCreate (protobuf object) whose field values will be used to construct an XrpCheckCreate
+   * @return an XrpCheckCreate with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L145
    */
   public static from(
     checkCreate: CheckCreate,
     xrplNetwork: XRPLNetwork,
-  ): XRPCheckCreate | undefined {
+  ): XrpCheckCreate | undefined {
     const destination = checkCreate.getDestination()?.getValue()?.getAddress()
     if (!destination) {
       return undefined
@@ -48,7 +48,7 @@ export default class XRPCheckCreate {
     }
     const expiration = checkCreate.getExpiration()?.getValue()
     const invoiceId = checkCreate.getInvoiceId()?.getValue_asB64()
-    return new XRPCheckCreate(
+    return new XrpCheckCreate(
       destinationXAddress,
       sendMax,
       expiration,
