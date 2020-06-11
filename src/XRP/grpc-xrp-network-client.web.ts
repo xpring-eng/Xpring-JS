@@ -34,8 +34,6 @@ class XRPGRPCNetworkClient implements XRPNetworkClient {
     if (isNode()) {
       try {
         // This polyfill hack enables XMLHttpRequest on the global node.js state
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-        // @ts-ignore eslint-disable-line
         global.XMLHttpRequest = require('xhr2') // eslint-disable-line
       } catch {
         // Swallow the error here for browsers

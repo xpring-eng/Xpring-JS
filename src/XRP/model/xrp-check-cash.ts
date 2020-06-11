@@ -3,7 +3,9 @@ import { XRPCurrencyAmount } from '.'
 
 /*
  * Represents a CheckCash transaction on the XRP Ledger.
- * Attempts to redeem a Check object in the ledger to receive up to the amount authorized by the corresponding CheckCreate transaction.
+ *
+ * A CheckCash transaction attempts to redeem a Check object in the ledger to receive up to the amount
+ * authorized by the corresponding CheckCreate transaction.
  *
  * @see: https://xrpl.org/checkcash.html
  */
