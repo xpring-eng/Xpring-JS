@@ -1,10 +1,21 @@
 /**
- * Possible networks to resolve
+ * XRP Ledger Networks.
+ *
+ * @deprecated Use XrplNetwork.
  */
-enum XRPLNetwork {
+export enum XRPLNetwork {
   Dev = 'devnet',
   Test = 'testnet',
   Main = 'mainnet',
 }
 
-export default XRPLNetwork
+/**
+ * XRP Ledger Networks.
+ */
+enum XrplNetwork {
+  Dev = 'devnet',
+  Test = 'testnet',
+  Main = 'mainnet',
+}
+
+export default XrplNetwork
