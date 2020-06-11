@@ -9,20 +9,20 @@ import { CheckCancel } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
  *
  * @see: https://xrpl.org/checkcancel.html
  */
-export default class XRPCheckCancel {
+export default class XrpCheckCancel {
   /**
-   * Constructs an XRPCheckCancel from a CheckCancel protocol buffer.
+   * Constructs an XrpCheckCancel from a CheckCancel protocol buffer.
    *
-   * @param checkCancel a CheckCancel (protobuf object) whose field values will be used to construct an XRPCheckCancel
-   * @return an XRPCheckCancel with its fields set via the analogous protobuf fields.
+   * @param checkCancel a CheckCancel (protobuf object) whose field values will be used to construct an XrpCheckCancel
+   * @return an XrpCheckCancel with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L126
    */
-  public static from(checkCancel: CheckCancel): XRPCheckCancel | undefined {
+  public static from(checkCancel: CheckCancel): XrpCheckCancel | undefined {
     const checkId = checkCancel.getCheckId()?.getValue_asB64()
     if (!checkId) {
       return undefined
     }
-    return new XRPCheckCancel(checkId)
+    return new XrpCheckCancel(checkId)
   }
 
   /**
