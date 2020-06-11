@@ -8,15 +8,15 @@ import XRPCurrencyAmount from './xrp-currency-amount'
  *
  * @see: https://xrpl.org/trustset.html
  */
-export default class XRPTrustSet {
+export default class XrpTrustSet {
   /**
-   * Constructs an XRPTrustSet from a TrustSet protocol buffer.
+   * Constructs an XrpTrustSet from a TrustSet protocol buffer.
    *
-   * @param trustSet a TrustSet (protobuf object) whose field values will be used to construct an XRPTrustSet
-   * @return an XRPTrustSet with its fields set via the analogous protobuf fields.
+   * @param trustSet a TrustSet (protobuf object) whose field values will be used to construct an XrpTrustSet
+   * @return an XrpTrustSet with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L312
    */
-  public static from(trustSet: TrustSet): XRPTrustSet | undefined {
+  public static from(trustSet: TrustSet): XrpTrustSet | undefined {
     const limitAmountCurrencyAmount = trustSet.getLimitAmount()?.getValue()
     if (!limitAmountCurrencyAmount) {
       return undefined
@@ -27,7 +27,7 @@ export default class XRPTrustSet {
     }
     const qualityIn = trustSet.getQualityIn()?.getValue()
     const qualityOut = trustSet.getQualityOut()?.getValue()
-    return new XRPTrustSet(limitAmount, qualityIn, qualityOut)
+    return new XrpTrustSet(limitAmount, qualityIn, qualityOut)
   }
 
   /**
@@ -42,7 +42,7 @@ export default class XRPTrustSet {
    *                    A value of 0 is shorthand for treating balances at face value.
    */
   private constructor(
-    readonly limitAmount?: XRPCurrencyAmount,
+    readonly limitAmount: XRPCurrencyAmount,
     readonly qualityIn?: number,
     readonly qualityOut?: number,
   ) {}
