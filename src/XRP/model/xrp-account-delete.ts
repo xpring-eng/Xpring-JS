@@ -10,19 +10,19 @@ import XRPLNetwork from '../../Common/xrpl-network'
  *
  * @see: https://xrpl.org/accountdelete.html
  */
-export default class XRPAccountDelete {
+export default class XrpAccountDelete {
   /**
-   * Constructs an XRPAccountDelete from an AccountDelete protocol buffer.
+   * Constructs an XrpAccountDelete from an AccountDelete protocol buffer.
    *
    * @param accountDelete an AccountDelete (protobuf object) whose field values will be used
-   *                to construct an XRPAccountDelete
-   * @return an XRPAccountDelete with its fields set via the analogous protobuf fields.
+   *                to construct an XrpAccountDelete
+   * @return an XrpAccountDelete with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L118
    */
   public static from(
     accountDelete: AccountDelete,
     xrplNetwork: XRPLNetwork,
-  ): XRPAccountDelete | undefined {
+  ): XrpAccountDelete | undefined {
     const destination = accountDelete.getDestination()?.getValue()?.getAddress()
     if (!destination) {
       return undefined
@@ -37,7 +37,7 @@ export default class XRPAccountDelete {
     if (!destinationXAddress) {
       return undefined
     }
-    return new XRPAccountDelete(destinationXAddress)
+    return new XrpAccountDelete(destinationXAddress)
   }
 
   /**
