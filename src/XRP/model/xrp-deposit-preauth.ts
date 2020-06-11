@@ -1,7 +1,6 @@
 import { Utils } from 'xpring-common-js'
 import { DepositPreauth } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { XRPLNetwork } from '../..'
-
+import XRPLNetwork from '../../Common/xrpl-network'
 /*
  * Represents a DepositPreauth transaction on the XRP Ledger.
 
