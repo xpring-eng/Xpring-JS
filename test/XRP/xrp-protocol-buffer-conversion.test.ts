@@ -6,7 +6,8 @@
 import bigInt from 'big-integer'
 import { assert } from 'chai'
 
-import { Utils, XRPLNetwork } from '../../src'
+import { Utils } from '../../src'
+import { XRPLNetwork } from '../../src/Common/xrpl-network'
 import XRPCurrency from '../../src/XRP/model/xrp-currency'
 import XRPCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
 import XRPIssuedCurrency from '../../src/XRP/model/xrp-issued-currency'

@@ -34,7 +34,7 @@ import { XRPNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XRPError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
-import XRPLNetwork from '../Common/xrpl-network'
+import { XRPLNetwork } from '../Common/xrpl-network'
 import SendXrpDetails from './model/send-xrp-details'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
