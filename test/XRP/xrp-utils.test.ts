@@ -1,7 +1,13 @@
-import { assert } from 'chai'
-import BigNumber from 'bignumber.js'
-import { XRPUtils } from '../../src'
+/* eslint-disable @typescript-eslint/no-magic-numbers --
+ * ESLint isn't smart enough to realize that BigNumber(number) is not really using magic numbers.
+ */
+
 import 'mocha'
+
+import { BigNumber } from 'bignumber.js'
+import { assert } from 'chai'
+
+import { XRPUtils } from '../../src'
 
 describe('xrp-drops-conversion', function (): void {
   // xrpToDrops and dropsToXrp tests
@@ -107,30 +113,30 @@ describe('xrp-drops-conversion', function (): void {
   it('dropsToXrp() - throws with an amount with too many decimal places', function (): void {
     assert.throws(() => {
       XRPUtils.dropsToXrp('1.2')
-    }, /has too many decimal places/)
+    }, /has too many decimal places/u)
 
     assert.throws(() => {
       XRPUtils.dropsToXrp('0.10')
-    }, /has too many decimal places/)
+    }, /has too many decimal places/u)
   })
 
   it('dropsToXrp() - throws with an invalid value', function (): void {
     // GIVEN invalid drops values, WHEN converted to xrp, THEN an error is thrown
     assert.throws(() => {
       XRPUtils.dropsToXrp('FOO')
-    }, /invalid value/)
+    }, /invalid value/u)
 
     assert.throws(() => {
       XRPUtils.dropsToXrp('1e-7')
-    }, /invalid value/)
+    }, /invalid value/u)
 
     assert.throws(() => {
       XRPUtils.dropsToXrp('2,0')
-    }, /invalid value/)
+    }, /invalid value/u)
 
     assert.throws(() => {
       XRPUtils.dropsToXrp('.')
-    }, /dropsToXrp: invalid value '\.', should be a BigNumber or string-encoded number\./)
+    }, /dropsToXrp: invalid value '\.', should be a BigNumber or string-encoded number\./u)
   })
 
   it('dropsToXrp() - throws with an amount more than one decimal point', function (): void {
@@ -138,11 +144,11 @@ describe('xrp-drops-conversion', function (): void {
     // WHEN converted to xrp THEN an error is thrown
     assert.throws(() => {
       XRPUtils.dropsToXrp('1.0.0')
-    }, /dropsToXrp: invalid value '1\.0\.0'/)
+    }, /dropsToXrp: invalid value '1\.0\.0'/u)
 
     assert.throws(() => {
       XRPUtils.dropsToXrp('...')
-    }, /dropsToXrp: invalid value '\.\.\.'/)
+    }, /dropsToXrp: invalid value '\.\.\.'/u)
   })
 
   it('xrpToDrops() - works with a typical amount', function (): void {
@@ -172,7 +178,8 @@ describe('xrp-drops-conversion', function (): void {
     // WHEN converted to drops THEN the conversions are equal to zero
     let drops = XRPUtils.xrpToDrops('0')
     assert.strictEqual(drops, '0', '0 XRP equals 0 drops')
-    drops = XRPUtils.xrpToDrops('-0') // negative zero is equivalent to zero
+    // Negative zero is equivalent to zero
+    drops = XRPUtils.xrpToDrops('-0')
     assert.strictEqual(drops, '0', '-0 XRP equals 0 drops')
     drops = XRPUtils.xrpToDrops('0.000000')
     assert.strictEqual(drops, '0', '0.000000 XRP equals 0 drops')
@@ -237,10 +244,10 @@ describe('xrp-drops-conversion', function (): void {
     // WHEN converted to a drops amount THEN an error is thrown
     assert.throws(() => {
       XRPUtils.xrpToDrops('1.1234567')
-    }, /has too many decimal places/)
+    }, /has too many decimal places/u)
     assert.throws(() => {
       XRPUtils.xrpToDrops('0.0000001')
-    }, /has too many decimal places/)
+    }, /has too many decimal places/u)
   })
 
   it('xrpToDrops() - throws with an invalid value', function (): void {
@@ -248,16 +255,16 @@ describe('xrp-drops-conversion', function (): void {
     // WHEN converted to drops THEN an error is thrown
     assert.throws(() => {
       XRPUtils.xrpToDrops('FOO')
-    }, /invalid value/)
+    }, /invalid value/u)
     assert.throws(() => {
       XRPUtils.xrpToDrops('1e-7')
-    }, /invalid value/)
+    }, /invalid value/u)
     assert.throws(() => {
       XRPUtils.xrpToDrops('2,0')
-    }, /invalid value/)
+    }, /invalid value/u)
     assert.throws(() => {
       XRPUtils.xrpToDrops('.')
-    }, /xrpToDrops: invalid value '\.', should be a BigNumber or string-encoded number\./)
+    }, /xrpToDrops: invalid value '\.', should be a BigNumber or string-encoded number\./u)
   })
 
   it('xrpToDrops() - throws with an amount more than one decimal point', function (): void {
@@ -265,9 +272,9 @@ describe('xrp-drops-conversion', function (): void {
     // WHEN converted to drops THEN an error is thrown
     assert.throws(() => {
       XRPUtils.xrpToDrops('1.0.0')
-    }, /xrpToDrops: invalid value '1\.0\.0'/)
+    }, /xrpToDrops: invalid value '1\.0\.0'/u)
     assert.throws(() => {
       XRPUtils.xrpToDrops('...')
-    }, /xrpToDrops: invalid value '\.\.\.'/)
+    }, /xrpToDrops: invalid value '\.\.\.'/u)
   })
 })
