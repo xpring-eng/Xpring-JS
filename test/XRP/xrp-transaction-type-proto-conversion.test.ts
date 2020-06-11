@@ -2,7 +2,7 @@ import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
-import XRPCheckCreate from '../../src/XRP/model/xrp-check-create'
+import XrpCheckCreate from '../../src/XRP/model/xrp-check-create'
 import XrpCheckCash from '../../src/XRP/model/xrp-check-cash'
 import XrpCheckCancel from '../../src/XRP/model/xrp-check-cancel'
 import XrpAccountDelete from '../../src/XRP/model/xrp-account-delete'
@@ -195,10 +195,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(checkCash)
   })
 
-  it('Convert CheckCreate protobuf to XRPCheckCreate object - all fields', function (): void {
+  it('Convert CheckCreate protobuf to XrpCheckCreate object - all fields', function (): void {
     // GIVEN a CheckCreate protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCreate = XRPCheckCreate.from(
+    const checkCreate = XrpCheckCreate.from(
       testCheckCreateProtoAllFields,
       XRPLNetwork.Test,
     )
@@ -226,10 +226,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert CheckCreate protobuf to XRPCheckCreate object - mandatory fields', function (): void {
+  it('Convert CheckCreate protobuf to XrpCheckCreate object - mandatory fields', function (): void {
     // GIVEN a CheckCreate protocol buffer with only mandatory fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCreate = XRPCheckCreate.from(
+    const checkCreate = XrpCheckCreate.from(
       testCheckCreateProtoMandatoryFields,
       XRPLNetwork.Test,
     )
@@ -257,7 +257,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert invalid CheckCreate protobuf to XRPCheckCash object - missing destination ', function (): void {
     // GIVEN an invalid CheckCreate protocol buffer missing the destination field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCreate = XRPCheckCreate.from(
+    const checkCreate = XrpCheckCreate.from(
       testInvalidCheckCreateProto,
       XRPLNetwork.Test,
     )
