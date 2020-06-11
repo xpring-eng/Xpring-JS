@@ -67,10 +67,10 @@ export default class XrpPaymentChannelCreate {
    *                        such as a hosted recipient at the destination address.
    */
   private constructor(
-    readonly amount?: XRPCurrencyAmount,
-    readonly destination?: string,
-    readonly settleDelay?: number,
-    readonly publicKey?: string,
+    readonly amount: XRPCurrencyAmount,
+    readonly destination: string,
+    readonly settleDelay: number,
+    readonly publicKey: string,
     readonly cancelAfter?: number,
     readonly destinationTag?: number,
   ) {}
