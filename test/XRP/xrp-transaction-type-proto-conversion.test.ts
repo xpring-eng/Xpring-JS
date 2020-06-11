@@ -274,16 +274,19 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const depositPreauth = XRPDepositPreauth.from(
       testDepositPreauthProtoSetAuthorize,
+      XRPLNetwork.Test,
     )
 
     // THEN the DepositPreauth converted as expected.
-    assert.equal(
-      depositPreauth?.authorize,
+    const expectedXAddress = Utils.encodeXAddress(
       testDepositPreauthProtoSetAuthorize
-        .getAuthorize()
-        ?.getValue()
-        ?.getAddress(),
+        .getAuthorize()!
+        .getValue()!
+        .getAddress()!,
+      undefined,
+      true,
     )
+    assert.equal(depositPreauth?.authorizeXAddress, expectedXAddress)
   })
 
   it('Convert DepositPreauth protobuf to XRPDepositPreauth object - unauthorize set', function (): void {
@@ -291,15 +294,18 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const depositPreauth = XRPDepositPreauth.from(
       testDepositPreauthProtoSetUnauthorize,
+      XRPLNetwork.Test,
     )
 
     // THEN the DepositPreauth converted as expected.
-    assert.equal(
-      depositPreauth?.unauthorize,
+    const expectedXAddress = Utils.encodeXAddress(
       testDepositPreauthProtoSetUnauthorize
-        .getUnauthorize()
-        ?.getValue()
-        ?.getAddress(),
+        .getUnauthorize()!
+        .getValue()!
+        .getAddress()!,
+      undefined,
+      true,
     )
+    assert.equal(depositPreauth?.unauthorizeXAddress, expectedXAddress)
   })
 })
