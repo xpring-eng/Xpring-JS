@@ -55,7 +55,7 @@ export default class XrpEscrowFinish {
    */
   private constructor(
     readonly ownerXAddress: string,
-    readonly offerSequence?: number,
+    readonly offerSequence: number,
     readonly condition?: string,
     readonly fulfillment?: string,
   ) {}
