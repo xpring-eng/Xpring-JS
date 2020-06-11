@@ -1,13 +1,14 @@
+import 'mocha'
 import { assert } from 'chai'
-import RippledFlags from '../../src/XRP/rippled-flags'
+
+import { Flags } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { GetTransactionResponse } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import {
   Transaction,
   Payment,
 } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import 'mocha'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
-import { Flags } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
+import RippledFlags from '../../src/XRP/rippled-flags'
 
 describe('raw transaction status', function (): void {
   it('isFullPayment - non payment', function (): void {
@@ -18,7 +19,7 @@ describe('raw transaction status', function (): void {
     const getTxResponse = new GetTransactionResponse()
     getTxResponse.setTransaction(transaction)
 
-    // WHEN the raw transaction status is wrapped into a RawTransactionStatus object.
+    // WHEN the raw transaction status is wrapped in a RawTransactionStatus object.
     const rawTransactionStatus = RawTransactionStatus.fromGetTransactionResponse(
       getTxResponse,
     )
@@ -41,7 +42,7 @@ describe('raw transaction status', function (): void {
     const getTxResponse = new GetTransactionResponse()
     getTxResponse.setTransaction(transaction)
 
-    // WHEN the raw transaction status is wrapped into a RawTransactionStatus object.
+    // WHEN the raw transaction status is wrapped in a RawTransactionStatus object.
     const rawTransactionStatus = RawTransactionStatus.fromGetTransactionResponse(
       getTxResponse,
     )
@@ -60,7 +61,7 @@ describe('raw transaction status', function (): void {
     const getTxResponse = new GetTransactionResponse()
     getTxResponse.setTransaction(transaction)
 
-    // WHEN the raw transaction status is wrapped into a RawTransactionStatus object.
+    // WHEN the raw transaction status is wrapped in a RawTransactionStatus object.
     const rawTransactionStatus = RawTransactionStatus.fromGetTransactionResponse(
       getTxResponse,
     )
