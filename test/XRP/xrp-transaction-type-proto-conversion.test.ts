@@ -198,22 +198,23 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert CheckCreate protobuf to XRPCheckCreate object - all fields', function (): void {
     // GIVEN a CheckCreate protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCreate = XRPCheckCreate.from(testCheckCreateProtoAllFields)
+    const checkCreate = XRPCheckCreate.from(
+      testCheckCreateProtoAllFields,
+      XRPLNetwork.Test,
+    )
 
     // THEN the CheckCreate converted as expected.
-    assert.equal(
-      checkCreate?.destination,
+    const expectedXAddress = Utils.encodeXAddress(
       testCheckCreateProtoAllFields.getDestination()?.getValue()?.getAddress(),
+      testCheckCreateProtoAllFields.getDestinationTag()?.getValue(),
+      true,
     )
+    assert.equal(checkCreate?.destinationXAddress, expectedXAddress)
     assert.deepEqual(
       checkCreate?.sendMax,
       XRPCurrencyAmount.from(
         testCheckCreateProtoAllFields.getSendMax()!.getValue()!,
       ),
-    )
-    assert.equal(
-      checkCreate?.destinationTag,
-      testCheckCreateProtoAllFields.getDestinationTag()?.getValue(),
     )
     assert.equal(
       checkCreate?.expiration,
@@ -228,23 +229,27 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert CheckCreate protobuf to XRPCheckCreate object - mandatory fields', function (): void {
     // GIVEN a CheckCreate protocol buffer with only mandatory fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCreate = XRPCheckCreate.from(testCheckCreateProtoMandatoryFields)
+    const checkCreate = XRPCheckCreate.from(
+      testCheckCreateProtoMandatoryFields,
+      XRPLNetwork.Test,
+    )
 
     // THEN the CheckCreate converted as expected.
-    assert.equal(
-      checkCreate?.destination,
+    const expectedXAddress = Utils.encodeXAddress(
       testCheckCreateProtoMandatoryFields
         .getDestination()
         ?.getValue()
         ?.getAddress(),
+      testCheckCreateProtoMandatoryFields.getDestinationTag()?.getValue(),
+      true,
     )
+    assert.equal(checkCreate?.destinationXAddress, expectedXAddress)
     assert.deepEqual(
       checkCreate?.sendMax,
       XRPCurrencyAmount.from(
         testCheckCreateProtoMandatoryFields.getSendMax()!.getValue()!,
       ),
     )
-    assert.isUndefined(checkCreate?.destinationTag)
     assert.isUndefined(checkCreate?.expiration)
     assert.isUndefined(checkCreate?.invoiceId)
   })
@@ -252,7 +257,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert invalid CheckCreate protobuf to XRPCheckCash object - missing destination ', function (): void {
     // GIVEN an invalid CheckCreate protocol buffer missing the destination field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCreate = XRPCheckCreate.from(testInvalidCheckCreateProto)
+    const checkCreate = XRPCheckCreate.from(
+      testInvalidCheckCreateProto,
+      XRPLNetwork.Test,
+    )
 
     // THEN the result is undefined.
     assert.isUndefined(checkCreate)
