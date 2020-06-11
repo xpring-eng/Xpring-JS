@@ -1,10 +1,12 @@
 import { BigInteger } from 'big-integer'
 import { XRPClientDecorator } from '../../../src/XRP/xrp-client-decorator'
 import TransactionStatus from '../../../src/XRP/transaction-status'
-import { Wallet, XRPLNetwork } from '../../../src/index'
+import { Wallet } from '../../../src/index'
 import RawTransactionStatus from '../../../src/XRP/raw-transaction-status'
 import XRPTransaction from '../../../src/XRP/model/xrp-transaction'
 import Result from '../../Common/Helpers/result'
+import { XRPLNetwork } from '../../../src/Common/xrpl-network'
+import SendXrpDetails from '../../../src/XRP/model/send-xrp-details'
 
 class FakeXRPClient implements XRPClientDecorator {
   public constructor(
@@ -32,6 +34,10 @@ class FakeXRPClient implements XRPClientDecorator {
     _destination: string,
     _sender: Wallet,
   ): Promise<string> {
+    return FakeXRPClient.returnOrThrow(this.sendValue)
+  }
+
+  async sendWithDetails(_sendMoneyDetails: SendXrpDetails): Promise<string> {
     return FakeXRPClient.returnOrThrow(this.sendValue)
   }
 
