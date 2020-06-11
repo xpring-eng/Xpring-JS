@@ -12,6 +12,7 @@ enum XRPTransactionType {
   CheckCancel,
   CheckCash,
   CheckCreate,
+  DepositPreauth,
 }
 
 export default XRPTransactionType
