@@ -315,13 +315,18 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert EscrowCancel protobuf to XRPEscrowCancel object - valid fields', function (): void {
     // GIVEN an EscrowCancel protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowCancel = XRPEscrowCancel.from(testEscrowCancelProto)
+    const escrowCancel = XRPEscrowCancel.from(
+      testEscrowCancelProto,
+      XRPLNetwork.Test,
+    )
 
     // THEN the EscrowCancel converted as expected.
-    assert.equal(
-      escrowCancel?.owner,
-      testEscrowCancelProto.getOwner()?.getValue()?.getAddress(),
+    const expectedXAddress = Utils.encodeXAddress(
+      testEscrowCancelProto.getOwner()!.getValue()!.getAddress()!,
+      undefined,
+      true,
     )
+    assert.equal(escrowCancel?.ownerXAddress, expectedXAddress)
     assert.equal(
       escrowCancel?.offerSequence,
       testEscrowCancelProto.getOfferSequence()?.getValue(),
@@ -331,7 +336,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert EscrowCancel protobuf to XRPEscrowCancel object - missing fields', function (): void {
     // GIVEN an EscrowCancel protocol buffer missing required fields.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowCancel = XRPEscrowCancel.from(testInvalidEscrowCancelProto)
+    const escrowCancel = XRPEscrowCancel.from(
+      testInvalidEscrowCancelProto,
+      XRPLNetwork.Test,
+    )
 
     // THEN the result is undefined.
     assert.isUndefined(escrowCancel)
