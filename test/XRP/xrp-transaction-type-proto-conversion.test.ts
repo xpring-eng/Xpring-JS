@@ -2,7 +2,7 @@ import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
-import XRPPaymentChannelClaim from '../../src/XRP/model/xrp-payment-channel-claim'
+import XrpPaymentChannelClaim from '../../src/XRP/model/xrp-payment-channel-claim'
 import XrpOfferCreate from '../../src/XRP/model/xrp-offer-create'
 import XrpOfferCancel from '../../src/XRP/model/xrp-offer-cancel'
 import XrpEscrowFinish from '../../src/XRP/model/xrp-escrow-finish'
@@ -607,10 +607,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
   // PaymentChannelClaim
 
-  it('Convert PaymentChannelClaim protobuf to XRPPaymentChannelClaim object - all fields', function (): void {
+  it('Convert PaymentChannelClaim protobuf to XrpPaymentChannelClaim object - all fields', function (): void {
     // GIVEN a PaymentChannelClaim protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const paymentChannelClaim = XRPPaymentChannelClaim.from(
+    const paymentChannelClaim = XrpPaymentChannelClaim.from(
       testPaymentChannelClaimProtoAllFields,
     )
 
@@ -643,10 +643,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert PaymentChannelClaim protobuf to XRPPaymentChannelClaim object - mandatory field', function (): void {
+  it('Convert PaymentChannelClaim protobuf to XrpPaymentChannelClaim object - mandatory field', function (): void {
     // GIVEN a PaymentChannelClaim protocol buffer with only mandatory field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const paymentChannelClaim = XRPPaymentChannelClaim.from(
+    const paymentChannelClaim = XrpPaymentChannelClaim.from(
       testPaymentChannelClaimProtoMandatoryOnly,
     )
 
@@ -661,10 +661,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(paymentChannelClaim?.publicKey)
   })
 
-  it('Convert PaymentChannelClaim protobuf to XRPPaymentChannelClaim object - missing mandatory field', function (): void {
+  it('Convert PaymentChannelClaim protobuf to XrpPaymentChannelClaim object - missing mandatory field', function (): void {
     // GIVEN a PaymentChannelClaim protocol buffer missing the mandatory field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const paymentChannelClaim = XRPPaymentChannelClaim.from(
+    const paymentChannelClaim = XrpPaymentChannelClaim.from(
       testInvalidPaymentChannelClaimProto,
     )
 
