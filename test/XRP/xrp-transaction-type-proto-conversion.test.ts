@@ -2,7 +2,7 @@ import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
-import XRPOfferCancel from '../../src/XRP/model/xrp-offer-cancel'
+import XrpOfferCancel from '../../src/XRP/model/xrp-offer-cancel'
 import XrpEscrowFinish from '../../src/XRP/model/xrp-escrow-finish'
 import XrpEscrowCreate from '../../src/XRP/model/xrp-escrow-create'
 import XrpEscrowCancel from '../../src/XRP/model/xrp-escrow-cancel'
@@ -513,10 +513,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(escrowFinish)
   })
 
-  it('Convert OfferCancel protobuf to XRPOfferCancel object', function (): void {
+  it('Convert OfferCancel protobuf to XrpOfferCancel object', function (): void {
     // GIVEN an OfferCancel protocol buffer with offerSequence field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const offerCancel = XRPOfferCancel.from(testOfferCancelProto)
+    const offerCancel = XrpOfferCancel.from(testOfferCancelProto)
 
     // THEN the OfferCancel converted as expected.
     assert.deepEqual(
@@ -525,10 +525,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert OfferCancel protobuf to XRPOfferCancel object - missing required field', function (): void {
+  it('Convert OfferCancel protobuf to XrpOfferCancel object - missing required field', function (): void {
     // GIVEN an OfferCancel protocol buffer missing the offerSequence field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const offerCancel = XRPOfferCancel.from(testInvalidOfferCancelProto)
+    const offerCancel = XrpOfferCancel.from(testInvalidOfferCancelProto)
 
     // THEN the result is undefined.
     assert.isUndefined(offerCancel)
