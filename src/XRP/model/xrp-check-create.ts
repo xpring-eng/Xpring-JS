@@ -3,6 +3,7 @@ import { XRPCurrencyAmount } from '.'
 
 /*
  * Represents a CheckCreate transaction on the XRP Ledger.
+ *
  * A CheckCreate transaction creates a Check object in the ledger, which is a deferred payment that can be cashed
  * by its intended destination.  The sender of this transaction is the sender of the Check.
  *
@@ -27,7 +28,9 @@ export default class XRPCheckCreate {
       return undefined
     }
     const sendMax = XRPCurrencyAmount.from(sendMaxCurrencyAmount)
-
+    if (!sendMax) {
+      return undefined
+    }
     const destinationTag = checkCreate.getDestinationTag()?.getValue()
     const expiration = checkCreate.getExpiration()?.getValue()
     const invoiceId = checkCreate.getInvoiceId()?.getValue_asB64()
@@ -50,8 +53,8 @@ export default class XRPCheckCreate {
    * @param invoiceId (Optional) Arbitrary 256-bit hash representing a specific reason or identifier for this Check.
    */
   private constructor(
-    readonly destination?: string,
-    readonly sendMax?: XRPCurrencyAmount,
+    readonly destination: string,
+    readonly sendMax: XRPCurrencyAmount,
     readonly destinationTag?: number,
     readonly expiration?: number,
     readonly invoiceId?: string,
