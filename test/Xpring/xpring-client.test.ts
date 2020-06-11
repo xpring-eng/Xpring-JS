@@ -1,16 +1,21 @@
-import { assert } from 'chai'
 import bigInt from 'big-integer'
+import { assert } from 'chai'
 import { FakeWallet } from 'xpring-common-js'
-import FakeXRPClient from '../XRP/fakes/fake-xrp-client'
-import FakeXRPPayIDClient from '../PayID/fakes/fake-xrp-pay-id-client'
-import { testXRPTransaction } from '../XRP/fakes/fake-xrp-protobufs'
-import TransactionStatus from '../../src/XRP/transaction-status'
-import XpringClient from '../../src/Xpring/xpring-client'
-import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
+
 import { XRPLNetwork } from '../../src'
+import XpringClient from '../../src/Xpring/xpring-client'
 import XpringError from '../../src/Xpring/xpring-error'
+import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
+import TransactionStatus from '../../src/XRP/transaction-status'
+import FakeXRPPayIDClient from '../PayID/fakes/fake-xrp-pay-id-client'
+import FakeXRPClient from '../XRP/fakes/fake-xrp-client'
+import { testXRPTransaction } from '../XRP/fakes/fake-xrp-protobufs'
 
 /* Default values for the fake XRP Client. These values must be provided but are not varied in testing. */
+/* eslint-disable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention --
+ * The 'magic-numbers' rule isn't smart enough to know this isn't really a magic number, and is just being fed to a wrapper,
+ * and we don't need to use our boolean variable prefix convention because we use a "fake" prefix for all of these variables.
+ */
 const fakeBalance = bigInt(10)
 const fakePaymentStatus = TransactionStatus.Succeeded
 const fakeTransactionHash = 'deadbeefdeadbeefdeadbeef'
@@ -19,22 +24,23 @@ const fakeAccountExistsResult = true
 const fakeRawTransactionStatus = new RawTransactionStatus(
   true,
   'tesSUCCESS',
-  10,
+  fakeLastLedgerSequenceValue,
   true,
 )
 const fakePaymentHistoryValue = []
 const fakeGetPaymentValue = testXRPTransaction
+/* eslint-enable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention */
 
-/** An amount to send. */
+// An amount to send
 const amount = 10
 
-/** A fake wallet. */
+// A fake wallet
 const wallet = new FakeWallet('0123456789abcdef')
 
-/** An Pay ID to resolve. */
+// A PayID to resolve
 const payID = '$xpring.money/georgewashington'
 
-/** Errors to throw */
+// Errors to throw
 const payIDError = new Error('Error from PayID')
 const xrpError = new Error('Error from XRP')
 
@@ -159,10 +165,11 @@ describe('Xpring Client', function (): void {
 
     // WHEN a XpringClient is constructed THEN a mismatched network XpringError is thrown.
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const xpringClient = new XpringClient(payIDClient, xrpClient)
       assert.fail(
-        `Should not have been able to construct an instance of XpringClient but instead created: ${xpringClient}`,
+        `Should not have been able to construct an instance of XpringClient but instead created: ${JSON.stringify(
+          xpringClient,
+        )}`,
       )
     } catch (error) {
       assert.deepEqual(error, XpringError.mismatchedNetworks)
