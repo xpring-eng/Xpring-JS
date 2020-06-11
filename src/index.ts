@@ -8,6 +8,7 @@ export {
 } from 'xpring-common-js'
 export { PaymentRequest, PaymentResult, AccountBalance, IlpClient } from './ILP'
 export { default as PayIdClient, PayIDClient } from './PayID/pay-id-client'
+export { default as SingleNetworkPayIdClient } from './PayID/single-network-pay-id-client'
 export {
   PayIDErrorType,
   PayIdErrorType,

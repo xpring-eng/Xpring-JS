@@ -1,10 +1,10 @@
 import { assert } from 'chai'
 import nock from 'nock'
 import { PayIdUtils } from 'xpring-common-js'
-import PayIdClient from '../../src/PayID/pay-id-client'
 import PayIdError, { PayIdErrorType } from '../../src/PayID/pay-id-error'
 import XrplNetwork from '../../src/Common/xrpl-network'
 import { SignatureWrapperInvoice } from '../../src/PayID/Generated/api'
+import SingleNetworkPayIdClient from '../../src/PayID/single-network-pay-id-client'
 
 // Nonce for getInvoice and postInvoice
 const nonce = '123456'
@@ -28,28 +28,32 @@ const beneficiaryName = 'xpring'
 const invoiceHash = 'some_invoice_hash'
 const transasctionConfirmation = 'some_transaction_confirmation'
 
-describe('PayIdClient', function (): void {
+describe('SingleNetworkPayIdClient', function (): void {
   afterEach(function () {
     // Clean nock after each test.
     nock.cleanAll()
   })
 
   it('xrpAddressForPayId - invalid Pay ID', function (done): void {
-    // GIVEN a PayIDClient and an invalid PayID.
+    // GIVEN a SingleNetworkPayIdClient and an invalid PayID.
     const invalidPayID = 'xpring.money/georgewashington' // Does not start with '$'
-    const payIDClient = new PayIdClient(XrplNetwork.Test)
+    const singleNetworkPayIdClient = new SingleNetworkPayIdClient(
+      XrplNetwork.Test,
+    )
 
     // WHEN an XRPAddress is requested for an invalid pay ID THEN an invalid Pay ID error is thrown.
-    payIDClient.addressForPayId(invalidPayID).catch((error) => {
+    singleNetworkPayIdClient.addressForPayId(invalidPayID).catch((error) => {
       assert.equal((error as PayIdError).errorType, PayIdErrorType.InvalidPayId)
       done()
     })
   })
 
   it('xrpAddressForPayId - successful response - match found', async function () {
-    // GIVEN a PayIdClient, valid PayID and mocked networking to return a match for the PayID.
+    // GIVEN a SingleNetworkPayIdClient, valid PayID and mocked networking to return a match for the PayID.
     const payId = 'georgewashington$xpring.money'
-    const payIdClient = new PayIdClient(XrplNetwork.Test)
+    const singleNetworkPayIdClient = new SingleNetworkPayIdClient(
+      XrplNetwork.Test,
+    )
 
     const payIDComponents = PayIdUtils.parsePayID(payId)
     if (!payIDComponents) {
@@ -69,7 +73,7 @@ describe('PayIdClient', function (): void {
       })
 
     // WHEN an XRP address is requested.
-    const xrpAddress = await payIdClient.addressForPayId(payId)
+    const xrpAddress = await singleNetworkPayIdClient.addressForPayId(payId)
 
     // THEN the address exists.
     // TODO(keefertaylor): Tighten up this condition when proper response parsing is implemented.
@@ -77,9 +81,11 @@ describe('PayIdClient', function (): void {
   })
 
   it('xrpAddressForPayId - successful response - match not found', function (done) {
-    // GIVEN a PayIDClient, valid PayID and mocked networking to return a 404 for the payID.
+    // GIVEN a SingleNetworkPayIdClient, valid PayID and mocked networking to return a 404 for the payID.
     const payId = 'georgewashington$xpring.money'
-    const payIdClient = new PayIdClient(XrplNetwork.Test)
+    const singleNetworkPayIdClient = new SingleNetworkPayIdClient(
+      XrplNetwork.Test,
+    )
     const network = XrplNetwork.Test
 
     const payIdComponents = PayIdUtils.parsePayID(payId)
@@ -89,7 +95,7 @@ describe('PayIdClient', function (): void {
     nock('https://xpring.money').get('/georgewashington').reply(404, {})
 
     // WHEN an XRPAddress is requested.
-    payIdClient.addressForPayId(payId).catch((error) => {
+    singleNetworkPayIdClient.addressForPayId(payId).catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
         (error as PayIdError).errorType,
@@ -105,9 +111,11 @@ describe('PayIdClient', function (): void {
   })
 
   it('xrpAddressForPayId - unknown mime type', function (done) {
-    // GIVEN a PayIDClient and with mocked networking to return a server error.
+    // GIVEN a SingleNetworkPayIdClient and with mocked networking to return a server error.
     const payId = 'georgewashington$xpring.money'
-    const payIdClient = new PayIdClient(XrplNetwork.Test)
+    const singleNetworkPayIdClient = new SingleNetworkPayIdClient(
+      XrplNetwork.Test,
+    )
 
     const serverErrorCode = 415
     const serverError = {
@@ -120,7 +128,7 @@ describe('PayIdClient', function (): void {
       .reply(serverErrorCode, serverError)
 
     // WHEN an XRPAddress is requested for a Pay ID.
-    payIdClient.addressForPayId(payId).catch((error) => {
+    singleNetworkPayIdClient.addressForPayId(payId).catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
         (error as PayIdError).errorType,
@@ -136,9 +144,11 @@ describe('PayIdClient', function (): void {
   })
 
   it('xrpAddressForPayId - failed request', function (done) {
-    // GIVEN a PayIdClient and with mocked networking to return a server error.
+    // GIVEN a SingleNetworkPayIdClient and with mocked networking to return a server error.
     const payId = 'georgewashington$xpring.money'
-    const payIdClient = new PayIdClient(XrplNetwork.Test)
+    const singleNetworkPayIdClient = new SingleNetworkPayIdClient(
+      XrplNetwork.Test,
+    )
 
     const serverErrorCode = 503
     const serverError = {
@@ -151,7 +161,7 @@ describe('PayIdClient', function (): void {
       .reply(serverErrorCode, serverError)
 
     // WHEN an XRPAddress is requested for a Pay ID.
-    payIdClient.addressForPayId(payId).catch((error) => {
+    singleNetworkPayIdClient.addressForPayId(payId).catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
         (error as PayIdError).errorType,
@@ -169,7 +179,9 @@ describe('PayIdClient', function (): void {
   it('xrpAddressForPayId - successful response - unexpected response format', function (done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a match for the PayID.
     const payId = 'georgewashington$xpring.money'
-    const payIdClient = new PayIdClient(XrplNetwork.Test)
+    const singleNetworkPayIdClient = new SingleNetworkPayIdClient(
+      XrplNetwork.Test,
+    )
 
     const payIdComponents = PayIdUtils.parsePayID(payId)
     if (!payIdComponents) {
@@ -181,7 +193,7 @@ describe('PayIdClient', function (): void {
     })
 
     // WHEN an XRPAddress is requested for a Pay ID.
-    payIdClient.addressForPayId(payId).catch((error) => {
+    singleNetworkPayIdClient.addressForPayId(payId).catch((error) => {
       // THEN an unexpected response is thrown.
       assert.equal(
         (error as PayIdError).errorType,
@@ -192,9 +204,11 @@ describe('PayIdClient', function (): void {
   })
 
   it('getInvoice - successful response', async function () {
-    // GIVEN a PayIDClient, valid PayID and mocked networking to return a invoice for the Pay ID.
+    // GIVEN a SingleNetworkPayIdClient, valid PayID and mocked networking to return a invoice for the Pay ID.
     const payId = 'georgewashington$xpring.money'
-    const payIdClient = new PayIdClient(XrplNetwork.Test)
+    const singleNetworkPayIdClient = new SingleNetworkPayIdClient(
+      XrplNetwork.Test,
+    )
 
     const mockResponse = {
       messageType: 'Invoice',
@@ -231,23 +245,25 @@ describe('PayIdClient', function (): void {
       .reply(200, mockResponse)
 
     // WHEN the invoice endpoint is hit.
-    const invoice = await payIdClient.getInvoice(payId, nonce)
+    const invoice = await singleNetworkPayIdClient.getInvoice(payId, nonce)
 
     // THEN the invoice was the mocked response.
     assert.deepEqual(invoice, mockResponse)
   })
 
   it('getInvoice - failure', function (done) {
-    // GIVEN a PayIDClient, valid PayID and mocked networking to return a failure when a invoice is requested.
+    // GIVEN a SingleNetworkPayIdClient, valid PayID and mocked networking to return a failure when a invoice is requested.
     const payId = 'georgewashington$xpring.money'
-    const payIdClient = new PayIdClient(XrplNetwork.Test)
+    const singleNetworkPayIdClient = new SingleNetworkPayIdClient(
+      XrplNetwork.Test,
+    )
 
     nock('https://xpring.money')
       .get(`/georgewashington/invoice?nonce=${nonce}`)
       .reply(503, {})
 
     // WHEN the getInvoice endpoint is hit
-    payIdClient.getInvoice(payId, nonce).catch((error) => {
+    singleNetworkPayIdClient.getInvoice(payId, nonce).catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
         (error as PayIdError).errorType,
@@ -261,9 +277,11 @@ describe('PayIdClient', function (): void {
   // TODO(keefertaylor): Write tests for specific error codes returned by the getInvoice API.
 
   it('postInvoice - successful response', async function () {
-    // GIVEN a PayIDClient, valid PayID and mocked networking to return a invoice for the given Pay ID and compliance data.
+    // GIVEN a SingleNetworkPayIdClient, valid PayID and mocked networking to return a invoice for the given Pay ID and compliance data.
     const payId = 'georgewashington$xpring.money'
-    const payIdClient = new PayIdClient(XrplNetwork.Test)
+    const singleNetworkPayIdClient = new SingleNetworkPayIdClient(
+      XrplNetwork.Test,
+    )
 
     const mockResponse: SignatureWrapperInvoice = {
       messageType: 'Invoice',
@@ -295,7 +313,7 @@ describe('PayIdClient', function (): void {
       .reply(200, mockResponse)
 
     // WHEN the invoice endpoint is hit.
-    const invoice = await payIdClient.postInvoice(
+    const invoice = await singleNetworkPayIdClient.postInvoice(
       payId,
       nonce,
       publicKeyType,
@@ -317,9 +335,11 @@ describe('PayIdClient', function (): void {
   })
 
   it('postInvoice - failure', function (done) {
-    // GIVEN a PayIDClient, valid PayID and mocked networking to return a failure when a invoice is requested.
+    // GIVEN a SingleNetworkPayIdClient, valid PayID and mocked networking to return a failure when a invoice is requested.
     const payId = 'georgewashington$xpring.money'
-    const payIdClient = new PayIdClient(XrplNetwork.Test)
+    const singleNetworkPayIdClient = new SingleNetworkPayIdClient(
+      XrplNetwork.Test,
+    )
 
     nock('https://xpring.money')
       .post(`/georgewashington/invoice`)
@@ -327,7 +347,7 @@ describe('PayIdClient', function (): void {
       .reply(503, {})
 
     // WHEN the postInvoice endpoint
-    payIdClient
+    singleNetworkPayIdClient
       .postInvoice(
         payId,
         nonce,
@@ -360,7 +380,9 @@ describe('PayIdClient', function (): void {
   it('receipt - successful response', async function () {
     // GIVEN a PayID client, valid PayID and mocked networking to return a receipt for the Pay ID.
     const payId = 'georgewashington$xpring.money'
-    const payIdClient = new PayIdClient(XrplNetwork.Test)
+    const singleNetworkPayIdClient = new SingleNetworkPayIdClient(
+      XrplNetwork.Test,
+    )
 
     const payIdComponents = PayIdUtils.parsePayID(payId)
     if (!payIdComponents) {
@@ -371,13 +393,19 @@ describe('PayIdClient', function (): void {
       .reply(200, 'OK')
 
     // WHEN the receipt endpoint is hit then an error is not thrown.
-    await payIdClient.receipt(payId, invoiceHash, transasctionConfirmation)
+    await singleNetworkPayIdClient.receipt(
+      payId,
+      invoiceHash,
+      transasctionConfirmation,
+    )
   })
 
   it('receipt - failure', function (done) {
-    // GIVEN a PayIDClient, valid PayID and mocked networking to return a failure when a receipt is requested.
+    // GIVEN a SingleNetworkPayIdClient, valid PayID and mocked networking to return a failure when a receipt is requested.
     const payId = 'georgewashington$xpring.money'
-    const payIdClient = new PayIdClient(XrplNetwork.Test)
+    const singleNetworkPayIdClient = new SingleNetworkPayIdClient(
+      XrplNetwork.Test,
+    )
 
     const payIdComponents = PayIdUtils.parsePayID(payId)
     if (!payIdComponents) {
@@ -389,7 +417,7 @@ describe('PayIdClient', function (): void {
       .reply(503, {})
 
     // WHEN the receipt endpoint is hit
-    payIdClient
+    singleNetworkPayIdClient
       .receipt(payId, invoiceHash, transasctionConfirmation)
       .catch((error) => {
         // THEN an unexpected response is thrown with the details of the error.

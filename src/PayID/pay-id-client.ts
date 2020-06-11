@@ -30,7 +30,7 @@ interface PayIDComponents {
 /**
  * A client for PayID.
  *
- * @deprecated Please use PayIdClient instead.
+ * @deprecated Please use SingleNetworkPayIdClient instead.
  *
  * @warning This class is experimental and should not be used in production applications.
  */
@@ -169,6 +169,8 @@ export class PayIDClient {
  * A client for PayID.
  *
  * @warning This class is experimental and should not be used in production applications.
+ *
+ * @deprecated Please use SingleNetworkPayIdClient instead.
  */
 export default class PayIdClient {
   /**
