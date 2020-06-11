@@ -11,6 +11,10 @@ import {
   OfferCancel,
   OfferCreate,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+/* eslint-disable @typescript-eslint/no-magic-numbers --
+ * ESLint flags the numbers in the Uint8Array as magic numbers,
+ * but this is a fakes file for testing, so it's fine.
+ */
 import {
   ClearFlag,
   Domain,

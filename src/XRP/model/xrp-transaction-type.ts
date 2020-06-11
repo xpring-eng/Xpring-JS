@@ -7,6 +7,16 @@
  */
 enum XRPTransactionType {
   Payment,
+  AccountSet,
+  AccountDelete,
+  CheckCancel,
+  CheckCash,
+  CheckCreate,
+  DepositPreauth,
+  EscrowCancel,
+  EscrowCreate,
+  EscrowFinish,
+  OfferCancel,
 }
 
 export default XRPTransactionType
