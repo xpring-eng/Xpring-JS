@@ -449,13 +449,18 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert EscrowFinish protobuf to XrpEscrowFinish object - all fields', function (): void {
     // GIVEN an EscrowFinish protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowFinish = XrpEscrowFinish.from(testEscrowFinishProtoAllFields)
+    const escrowFinish = XrpEscrowFinish.from(
+      testEscrowFinishProtoAllFields,
+      XRPLNetwork.Test,
+    )
 
     // THEN the EscrowFinish converted as expected.
-    assert.deepEqual(
-      escrowFinish?.owner,
-      testEscrowFinishProtoAllFields.getOwner()?.getValue()?.getAddress(),
+    const expectedXAddress = Utils.encodeXAddress(
+      testEscrowFinishProtoAllFields.getOwner()!.getValue()!.getAddress()!,
+      undefined,
+      true,
     )
+    assert.deepEqual(escrowFinish?.ownerXAddress, expectedXAddress)
     assert.equal(
       escrowFinish?.offerSequence,
       testEscrowFinishProtoAllFields.getOfferSequence()?.getValue(),
@@ -475,13 +480,16 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const escrowFinish = XrpEscrowFinish.from(
       testEscrowFinishProtoMandatoryOnly,
+      XRPLNetwork.Test,
     )
 
     // THEN the EscrowFinish converted as expected.
-    assert.deepEqual(
-      escrowFinish?.owner,
-      testEscrowFinishProtoMandatoryOnly.getOwner()?.getValue()?.getAddress(),
+    const expectedXAddress = Utils.encodeXAddress(
+      testEscrowFinishProtoMandatoryOnly.getOwner()!.getValue()!.getAddress()!,
+      undefined,
+      true,
     )
+    assert.deepEqual(escrowFinish?.ownerXAddress, expectedXAddress)
     assert.equal(
       escrowFinish?.offerSequence,
       testEscrowFinishProtoMandatoryOnly.getOfferSequence()?.getValue(),
@@ -493,7 +501,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert EscrowFinish protobuf to XrpEscrowFinish object - missing required fields', function (): void {
     // GIVEN an EscrowFinish protocol buffer missing a mandatory field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowFinish = XrpEscrowFinish.from(testInvalidEscrowFinishProto)
+    const escrowFinish = XrpEscrowFinish.from(
+      testInvalidEscrowFinishProto,
+      XRPLNetwork.Test,
+    )
 
     // THEN the result is undefined.
     assert.isUndefined(escrowFinish)
