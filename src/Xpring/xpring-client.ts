@@ -3,7 +3,9 @@ import { BigInteger } from 'big-integer'
 import XrpPayIdClientInterface, {
   XRPPayIDClientInterface,
 } from '../PayID/xrp-pay-id-client-interface'
-import { XRPClientInterface } from '../XRP/xrp-client-interface'
+import XrpClientInterface, {
+  XRPClientInterface,
+} from '../XRP/xrp-client-interface'
 import XpringError, { XpringErrorType } from './xpring-error'
 import XrplNetwork, { XRPLNetwork } from '../Common/xrpl-network'
 import { XRPPayIDClient } from '../PayID/xrp-pay-id-client'
@@ -30,10 +32,9 @@ export default class XpringClient {
    * @param xrpClient An XRP Client used to interact with the XRP Ledger protocol.
    * @throws A XpringError if the networks of the inputs do not match.
    */
-  // TODO(keefertaylor): Support new xrp client.
   constructor(
     payIdClient: XRPPayIDClientInterface | XrpPayIdClientInterface,
-    private readonly xrpClient: XRPClientInterface,
+    private readonly xrpClient: XRPClientInterface | XrpClientInterface,
   ) {
     let normalizedPayIdClient: XRPPayIDClientInterface
     if (XpringClient.isNewPayIdClient(payIdClient)) {
@@ -110,11 +111,13 @@ export default class XpringClient {
     )
 
     // Transact XRP to the resolved address.
-    return this.xrpClient.sendWithDetails({
+    const transactionHash = await this.xrpClient.sendWithDetails({
       amount,
       destination: destinationAddress,
       sender,
       memos,
     })
+
+    return transactionHash
   }
 }
