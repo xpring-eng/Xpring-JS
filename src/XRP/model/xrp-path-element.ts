@@ -62,7 +62,7 @@ export default class XrpPathElement {
   public static from(pathElement: PathElement): XrpPathElement {
     const account = pathElement.getAccount()?.getAddress()
     const currency = pathElement.getCurrency()
-    const xrpCurrency = currency && XRPCurrency.from(currency)
+    const xrpCurrency = currency && XrpCurrency.from(currency)
     const issuer = pathElement.getIssuer()?.getAddress()
     return new XrpPathElement(account, xrpCurrency, issuer)
   }
