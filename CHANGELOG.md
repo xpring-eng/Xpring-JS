@@ -30,9 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PayIDErrorType` is deprecated. Use `PayIdErrorType` instead.
 - `XRPayIDClientInterface` replaces the now deprecated `XrpPayIdClientInterface`.
 - `XRPPayIDClient` replaces the now deprecated `XrpPayIdClient`.
-
-#### Deprecated
-
 - `XRPTransaction.account` and `XRPTransaction.sourceTag` are deprecated.
   Please use the X-address encoded field `sourceXAddress` instead.
 - `XRPPayment.destination` and `XRPPayment.destinationTag` are deprecated.
