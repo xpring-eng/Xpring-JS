@@ -9,7 +9,7 @@ import SendXrpDetails from './model/send-xrp-details'
 /**
  * An interface describing XRPClient.
  */
-export default interface XRPClientInterface {
+export default interface XrpClientInterface {
   /** The XRPL Network of the node that this client is communicating with. */
   network: XRPLNetwork
 

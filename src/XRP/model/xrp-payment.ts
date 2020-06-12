@@ -160,7 +160,7 @@ export default class XrpPayment {
 
     const paths =
       payment.getPathsList()?.length > 0
-        ? payment.getPathsList().map((path) => XRPPath.from(path))
+        ? payment.getPathsList().map((path) => XrpPath.from(path))
         : undefined
 
     // If the sendMax field is set, it must be able to be transformed into an XrpCurrencyAmount.
