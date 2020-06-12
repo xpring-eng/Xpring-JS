@@ -96,11 +96,7 @@ export class PayIDClient {
    * @param timestamp The time that the operation occurred.
    * @param beneficiaryInstitutionName The beneficiary insitution name.
    * @param beneficiaryUserLegalName The legal name of the receiver at the beneficiary institution. Optional, defaults to undefined.
-<<<<<<< HEAD
-   * @param beneficiaryUserPhysicalAddress The phsyical address of the receiver at the beneficiary institution. Optional, defaults to undefined.
-=======
    * @param beneficiaryUserPhysicalAddress The physical address of the receiver at the beneficiary institution. Optional, defaults to undefined.
->>>>>>> master
    * @param beneficiaryUserAccountID The account ID of the receiver at the beneficiary institution. Optional, defaults to undefined.
    */
   // eslint-disable-next-line class-methods-use-this
