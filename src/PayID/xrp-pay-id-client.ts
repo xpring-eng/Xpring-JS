@@ -38,7 +38,7 @@ export default class XrpPayIdClient extends PayIdClient
     if (Utils.isValidXAddress(address)) {
       return address
     }
-    const isTest = this.network !== XrplNetwork.Main
+    const isTest = this.xrplNetwork !== XrplNetwork.Main
 
     const tag = result.tag ? Number(result.tag) : undefined
 

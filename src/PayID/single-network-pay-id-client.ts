@@ -1,40 +1,15 @@
-/* eslint-disable max-classes-per-file */
-import { PayIdUtils } from 'xpring-common-js'
-import PayIdError, {
-  PayIDError,
-  PayIdErrorType,
-  PayIDErrorType,
-} from './pay-id-error'
-import ComplianceType from './compliance-type'
-import {
-  Beneficiary,
-  DefaultApi,
-  SignatureWrapperInvoice,
-  CryptoAddressDetails,
-  Value,
-  Originator,
-  TravelRule,
-  SignatureWrapperCompliance,
-  Compliance,
-} from './Generated/api'
-
-const PAYID_API_VERSION = '1.0'
-
-/* eslint-disable */
-
-interface PayIDComponents {
-  host: string
-  path: string
-}
+import PayIdError, { PayIdErrorType } from './pay-id-error'
+import { SignatureWrapperInvoice, CryptoAddressDetails } from './Generated/api'
+import PayIdClientImpl from './pay-id-client-impl'
 
 /**
- * A client for PayID.
- *
- * @warning This class is experimental and should not be used in production applications.
+ * A client for PayID protocol which resolves addresses on a single network.
  */
 export default class SingleNetworkPayIdClient {
+  private readonly wrappedPayIdClient: PayIdClientImpl
+
   /**
-   * Initialize a new SingleNetworkPayIdClient.
+   * Initialize a new PayIdClient.
    *
    * Networks in this constructor take the form of an asset and an optional network (<asset>-<network>), for instance:
    * - xrpl-testnet
@@ -48,10 +23,9 @@ export default class SingleNetworkPayIdClient {
    * @param useHttps Whether to cuse HTTPS when making PayID requests. Most users should set this to 'true' to avoid
    *                 Man-in-the-Middle attacks. Exposed as an option for testing purposes. Defaults to true.
    */
-  constructor(
-    public readonly network: string,
-    private readonly useHttps: boolean = true,
-  ) {}
+  constructor(network: string, useHttps = true) {
+    this.wrappedPayIdClient = new PayIdClientImpl(network, useHttps)
+  }
 
   /**
    * Retrieve the address associated with a PayID.
@@ -60,57 +34,17 @@ export default class SingleNetworkPayIdClient {
    * @returns An address representing the given PayID.
    */
   async addressForPayId(payId: string): Promise<CryptoAddressDetails> {
-    const payIdComponents = SingleNetworkPayIdClient.parsePayId(payId)
-    const basePath = this.useHttps
-      ? `https://${payIdComponents.host}`
-      : `http://${payIdComponents.host}`
-
-    // Swagger API adds the leading '/' in path automatically because it is part of the endpoint.
-    const path = payIdComponents.path.substring(1)
-
-    const api = new DefaultApi(undefined, basePath)
-
-    const options = SingleNetworkPayIdClient.makeOptionsWithAcceptTypes(
-      `application/${this.network}+json`,
-    )
-
-    try {
-      const { data } = await api.resolvePayID(path, options)
-      // TODO(keefertaylor): make sure the header matches the request.
-      if (data?.addresses) {
-        // With a specific network, exactly one address should be returned by a PayID lookup.
-        if (data.addresses.length === 1) {
-          return data.addresses[0].addressDetails
-        } else {
-          return Promise.reject(
-            new PayIDError(
-              PayIDErrorType.UnexpectedResponse,
-              'Received more addresses than expected',
-            ),
-          )
-        }
-      } else {
-        return Promise.reject(
-          new PayIDError(
-            PayIDErrorType.UnexpectedResponse,
-            'Too many addresses returned',
-          ),
-        )
-      }
-    } catch (error) {
-      if (error.response?.status === 404) {
-        const message = `Could not resolve ${payId} on network ${this.network}`
-        return Promise.reject(
-          new PayIdError(PayIdErrorType.MappingNotFound, message),
-        )
-      } else {
-        const message = SingleNetworkPayIdClient.messageFromMaybeHttpError(
-          error,
-        )
-        return Promise.reject(
-          new PayIdError(PayIdErrorType.UnexpectedResponse, message),
-        )
-      }
+    const addresses = await this.wrappedPayIdClient.addressForPayId(payId)
+    // With a specific network, exactly one address should be returned by a PayID lookup.
+    if (addresses.length === 1) {
+      return addresses[0].addressDetails
+    } else {
+      return Promise.reject(
+        new PayIdError(
+          PayIdErrorType.UnexpectedResponse,
+          'Received more addresses than expected',
+        ),
+      )
     }
   }
 
@@ -124,27 +58,7 @@ export default class SingleNetworkPayIdClient {
     payId: string,
     nonce: string,
   ): Promise<SignatureWrapperInvoice> {
-    const payIDComponents = SingleNetworkPayIdClient.parsePayId(payId)
-    const basePath = this.useHttps
-      ? `https://${payIDComponents.host}${payIDComponents.path}`
-      : `http://${payIDComponents.host}${payIDComponents.path}`
-
-    const options = SingleNetworkPayIdClient.makeOptionsWithAcceptTypes(
-      `application/${this.network}+json`,
-    )
-
-    const api = new DefaultApi(undefined, basePath)
-
-    try {
-      const { data } = await api.getPathInvoice(nonce, options)
-      return data
-    } catch (error) {
-      // TODO(keefertaylor): Provide more granular error handling.
-      const message = SingleNetworkPayIdClient.messageFromMaybeHttpError(error)
-      return Promise.reject(
-        new PayIDError(PayIDErrorType.UnexpectedResponse, message),
-      )
-    }
+    return this.wrappedPayIdClient.getInvoice(payId, nonce)
   }
 
   /**
@@ -167,7 +81,6 @@ export default class SingleNetworkPayIdClient {
    * @param beneficiaryUserPhysicalAddress The physical address of the receiver at the beneficiary institution. Optional, defaults to undefined.
    * @param beneficiaryUserAccountID The account ID of the receiver at the beneficiary institution. Optional, defaults to undefined.
    */
-  // eslint-disable-next-line class-methods-use-this
   async postInvoice(
     payId: string,
     nonce: string,
@@ -187,69 +100,25 @@ export default class SingleNetworkPayIdClient {
     beneficiaryUserPhysicalAddress: string | undefined = undefined,
     beneficiaryUserAccountID: string | undefined = undefined,
   ): Promise<SignatureWrapperInvoice> {
-    const value: Value = {
-      amount: valueAmount,
-      scale: valueScale + '',
-    }
-
-    const originator: Originator = {
-      userLegalName: originatorUserLegalName,
-      accountId: originatorAccountID,
-      userPhysicalAddress: originatorUserPhysicalAddress,
-      institutionName: originatorInstitutionName,
-      value,
-      timestamp,
-    }
-
-    const beneficiary: Beneficiary = {
-      institutionName: beneficiaryInstitutionName,
-      userLegalName: beneficiaryUserLegalName,
-      userPhysicalAddress: beneficiaryUserPhysicalAddress,
-      accountId: beneficiaryUserAccountID,
-    }
-
-    const travelRule: TravelRule = {
-      originator,
-      beneficiary,
-    }
-
-    const compliance: Compliance = {
-      type: ComplianceType.TravelRule,
-      data: travelRule,
-    }
-
-    const signatureWrapper: SignatureWrapperCompliance = {
-      messageType: 'Compliance',
-      message: compliance,
+    return this.wrappedPayIdClient.postInvoice(
+      payId,
+      nonce,
       publicKeyType,
       publicKeyData,
       publicKey,
       signature,
-    }
-
-    const payIdComponents = SingleNetworkPayIdClient.parsePayId(payId)
-    const basePath = this.useHttps
-      ? `https://${payIdComponents.host}${payIdComponents.path}`
-      : `http://${payIdComponents.host}${payIdComponents.path}`
-
-    const options = SingleNetworkPayIdClient.makeOptionsWithAcceptTypes(
-      `application/${this.network}+json`,
+      originatorUserLegalName,
+      originatorAccountID,
+      originatorUserPhysicalAddress,
+      originatorInstitutionName,
+      valueAmount,
+      valueScale,
+      timestamp,
+      beneficiaryInstitutionName,
+      beneficiaryUserLegalName,
+      beneficiaryUserPhysicalAddress,
+      beneficiaryUserAccountID,
     )
-    const api = new DefaultApi(undefined, basePath)
-
-    try {
-      const { data } = await api.postPathInvoice(
-        nonce,
-        signatureWrapper,
-        options,
-      )
-      return data
-    } catch (error) {
-      const message = SingleNetworkPayIdClient.messageFromMaybeHttpError(error)
-      return Promise.reject(
-        new PayIdError(PayIdErrorType.UnexpectedResponse, message),
-      )
-    }
   }
 
   /**
@@ -262,80 +131,15 @@ export default class SingleNetworkPayIdClient {
    * @param transactionConfirmation The transaction confirmation.
    * @returns A void promise that resolves when the operation is complete.
    */
-  // TODO(keefertaylor): Consider if this method should be static.
-  // eslint-disable-next-line class-methods-use-this
   async receipt(
     payId: string,
     invoiceHash: string,
     transactionConfirmation: string,
   ): Promise<void> {
-    const payIDComponents = SingleNetworkPayIdClient.parsePayId(payId)
-
-    const payload = {
+    return this.wrappedPayIdClient.receipt(
+      payId,
       invoiceHash,
       transactionConfirmation,
-    }
-
-    const basePath = this.useHttps
-      ? `https://${payIDComponents.host}${payIDComponents.path}`
-      : `http://${payIDComponents.host}${payIDComponents.path}`
-    const api = new DefaultApi(undefined, basePath)
-
-    try {
-      await api.postPathReceipt(payload)
-    } catch (error) {
-      // TODO(keefertaylor): Provide more specific error handling here.
-      const message = SingleNetworkPayIdClient.messageFromMaybeHttpError(error)
-      return Promise.reject(
-        new PayIdError(PayIdErrorType.UnexpectedResponse, message),
-      )
-    }
-  }
-
-  /**
-   * Try to create a pretty formatted error message given an error which may be an HTTP error.
-   *
-   * @param error An error which may be an HTTP error.
-   * @returns A sane message for upstream errors.
-   */
-  private static messageFromMaybeHttpError(error: any): string {
-    // Try to nicely form an error if the error is the result of an HTTP request, fall back to
-    // just printing the error otherwise.
-    return error.response?.status
-      ? `${error.response?.status}: ${error.response?.data?.message}`
-      : error.message
-  }
-
-  /**
-   * Make a set of options for the API that include a header with `Accept` set to the given value.
-   *
-   * @param acceptType The value for the `Accept` header.
-   * @returns An options object that can be passed to an api.
-   */
-  private static makeOptionsWithAcceptTypes(acceptType: string): object {
-    const headers = {
-      Accept: acceptType,
-      'PayID-Version': PAYID_API_VERSION,
-    }
-
-    const options = {
-      headers,
-    }
-
-    return options
-  }
-
-  /**
-   * Parse a payID to a host and path.
-   */
-  private static parsePayId(payId: string): PayIDComponents {
-    const payIdComponents = PayIdUtils.parsePayID(payId)
-    if (!payIdComponents) {
-      throw PayIDError.invalidPayID
-    }
-    return {
-      host: payIdComponents.host,
-      path: payIdComponents.path,
-    }
+    )
   }
 }
