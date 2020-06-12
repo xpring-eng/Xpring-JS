@@ -290,7 +290,7 @@ export default class XrpTransaction {
         if (!paymentFields) {
           return undefined
         }
-        type = payment && XRPTransactionType.Payment
+        type = payment && XrpTransactionType.Payment
         break
       }
       default:
