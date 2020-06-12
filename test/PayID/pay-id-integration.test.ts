@@ -3,6 +3,7 @@ import PayIdError, { PayIdErrorType } from '../../src/PayID/pay-id-error'
 import PayIdClient from '../../src/PayID/pay-id-client'
 import XrpPayIdClient from '../../src/PayID/xrp-pay-id-client'
 import XrplNetwork from '../../src/Common/xrpl-network'
+import AllNetworksPayIdClient from '../../src/PayID/all-networks-pay-id-client'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute
@@ -136,5 +137,17 @@ describe('PayID Integration Tests', function (): void {
       'some_invoice_hash',
       'some_transaction_hash',
     )
+  })
+
+  it('resolves all addresses', async function (): Promise<void> {
+    // GIVEN a PayID with multiple addresses.
+    const payId = 'alice$dev.payid.xpring.money'
+    const payIdClient = new AllNetworksPayIdClient()
+
+    // WHEN the PayID is resolved to a set of addresses.
+    const addresses = await payIdClient.allAddressesForPayId(payId)
+
+    // THEN multiple results are returned.
+    assert(addresses.length > 1)
   })
 })

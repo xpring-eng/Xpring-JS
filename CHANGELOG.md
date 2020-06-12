@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `XrpPayIdClient` replaces the now deprecated `XRPPayIDClient`.
 - A new value, `Unknown` is added to the `XpringErrorType` enum.
 - A new class, `SingleNetworkPayIdClient`, replaces the functionality in `PayIdClient` and `PayIDClient`.
+- A new class, `AllNetworksPayIdClient`, resolves all possible addresses for a PayId.
 
 ### Deprecated
 
