@@ -1,5 +1,6 @@
 import { BigNumber } from 'bignumber.js'
-import XRPError, { XRPErrorType } from './xrp-error'
+// TODO(keefertaylor): I guess we'll have to dupe these functions. Ugh.
+import { XRPError, XRPErrorType } from './xrp-error'
 
 function dropsToXrp(drops: BigNumber.Value): string {
   const dropsRegEx = RegExp(/^-?[0-9]*\.?[0-9]*$/)
@@ -110,5 +111,8 @@ function xrpToDrops(xrp: BigNumber.Value): string {
     .toString(10)
 }
 
-const XRPUtils = { dropsToXrp, xrpToDrops }
-export default XRPUtils
+/** @deprecated Use XrpUtils */
+export const XRPUtils = { dropsToXrp, xrpToDrops }
+
+const XrpUtils = { dropsToXrp, xrpToDrops }
+export default XrpUtils

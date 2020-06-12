@@ -1,12 +1,14 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
-import { XrpClientDecorator } from './xrp-client-decorator'
+import XrpClientDecorator, { XRPClientDecorator } from './xrp-client-decorator'
 import TransactionStatus from './transaction-status'
-import ReliableSubmissionXRPClient from './reliable-submission-xrp-client'
-import DefaultXRPClient from './default-xrp-client'
-import XRPClientInterface from './xrp-client-interface'
-import { XRPTransaction } from './model/xrp-transaction'
-import { XRPLNetwork } from '../Common/xrpl-network'
+import ReliableSubmissionXrpClient, {
+  ReliableSubmissionXRPClient,
+} from './reliable-submission-xrp-client'
+import DefaultXrpClient, { DefaultXRPClient } from './default-xrp-client'
+import XrpClientInterface, { XRPClientInterface } from './xrp-client-interface'
+import XrpTransaction, { XRPTransaction } from './model/xrp-transaction'
+import XrplNetwork, { XRPLNetwork } from '../Common/xrpl-network'
 import SendXrpDetails from './model/send-xrp-details'
 
 /**
@@ -144,11 +146,11 @@ export class XRPClient implements XRPClientInterface {
 }
 
 /**
- * XRPClient is a client which interacts with the Xpring platform.
+ * XrpClient is a client which interacts with the Xpring platform.
  */
-class XrpClient implements XrpClientInterface {
+export default class XrpClient implements XrpClientInterface {
   /** The XRPL Network of the node that this client is communicating with. */
-  public readonly network: XRPLNetwork
+  public readonly network: XrplNetwork
 
   private readonly decoratedClient: XrpClientDecorator
 
@@ -157,20 +159,20 @@ class XrpClient implements XrpClientInterface {
    *
    * The XRPClient will use gRPC to communicate with the given endpoint.
    *
-   * @param grpcURL The URL of the gRPC instance to connect to.
+   * @param grpcUrl The URL of the gRPC instance to connect to.
    * @param network The network this XRPClient is connecting to.
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
-  public constructor(grpcURL: string, network: XRPLNetwork, forceWeb = false) {
+  public constructor(grpcUrl: string, network: XrplNetwork, forceWeb = false) {
     this.network = network
 
-    const defaultXRPClient = DefaultXRPClient.defaultXRPClientWithEndpoint(
-      grpcURL,
+    const defaultXrpClient = DefaultXrpClient.defaultXRPClientWithEndpoint(
+      grpcUrl,
       network,
       forceWeb,
     )
-    this.decoratedClient = new ReliableSubmissionXRPClient(
-      defaultXRPClient,
+    this.decoratedClient = new ReliableSubmissionXrpClient(
+      defaultXrpClient,
       network,
     )
   }
@@ -266,7 +268,7 @@ class XrpClient implements XrpClientInterface {
    *
    * @param transactionHash The hash of the transaction to retrieve.
    * @throws An error if the transaction hash was invalid.
-   * @returns An {@link XRPTransaction} object representing an XRP Ledger transaction.
+   * @returns An {@link XrpTransaction} object representing an XRP Ledger transaction.
    */
   public async getPayment(
     transactionHash: string,

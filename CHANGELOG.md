@@ -32,6 +32,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `XRPTransactionType` now includes an `AccountSetValue`.
 - `XrpTransactionType` replaces the now deprecated `XRPTransactionType`.
 - `XrpTransaction` replaces the now deprecated `XRPTransaction`.
+- `XrpUtils` replaces the now deprecated `XRPUtils`.
+- `XrpClient` replaces the now deprecated `XRPClient`.
+- `XrpError` replaces the now deprecated `XRPError`.
+- `XrpErrorType` replaces the now deprecated `XRPErrorType`.
 
 ### Deprecated
 
@@ -57,6 +61,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Please use the X-address encoded field `sourceXAddress` instead.
 - `XRPPayment.destination` and `XRPPayment.destinationTag` are deprecated.
   Please use the X-address encoded field `destinationXAddress` instead.
+- `XRPUtils` is deprecated. Use `XrpUtils` instead.
+- `XRPClient` is deprecated. Use `XrpClient` instead.
+- `XRPError` is deprecated. Use `XrpError` instead.
+- `XRPErrorType` is deprecated. Use `XrpErrorType` instead.
 
 ## 4.3.0 - 2020-06-01
 
