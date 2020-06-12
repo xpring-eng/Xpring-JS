@@ -53,9 +53,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `XRPSigner` is deprecated. Use `XrpSigner` instead.
 - `XRPTransactionType` is deprecated. Use `XrpTransactionType` instead.
 - `XRPTransaction` is deprecated. Use `XrpTransaction` instead.
-
-#### Deprecated
-
 - `XRPTransaction.account` and `XRPTransaction.sourceTag` are deprecated.
   Please use the X-address encoded field `sourceXAddress` instead.
 - `XRPPayment.destination` and `XRPPayment.destinationTag` are deprecated.

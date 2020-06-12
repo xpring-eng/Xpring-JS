@@ -16,7 +16,7 @@ export interface XRPPayIDClientInterface {
    *
    * @note The returned value will always be in an X-Address format.
    *
-   * @param payID The payID to resolve for an address.
+   * @param payID The PayID to resolve for an address.
    * @returns An XRP address representing the given PayID.
    */
   xrpAddressForPayID(payID: string): Promise<string>
@@ -33,7 +33,7 @@ export default interface XrpPayIdClientInterface {
    *
    * @note The returned value will always be in an X-Address format.
    *
-   * @param payId The payID to resolve for an address.
+   * @param payId The PayID to resolve for an address.
    * @returns An XRP address representing the given PayID.
    */
   xrpAddressForPayId(payId: string): Promise<string>
