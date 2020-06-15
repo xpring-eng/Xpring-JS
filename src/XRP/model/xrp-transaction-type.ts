@@ -7,6 +7,8 @@
  */
 enum XRPTransactionType {
   Payment,
+  AccountSet,
+  AccountDelete,
 }
 
 export default XRPTransactionType
