@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
-import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
+import XrpAccountSet from '../../src/XRP/model/xrp-account-set'
 import XrpCheckCancel from '../../src/XRP/model/xrp-check-cancel'
 import XrpAccountDelete from '../../src/XRP/model/xrp-account-delete'
 import {
@@ -18,10 +18,10 @@ import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/trans
 describe('Protobuf Conversions - Transaction Types', function (): void {
   // AccountSet
 
-  it('Convert AccountSet protobuf with all fields to XRPAccountSet object', function (): void {
+  it('Convert AccountSet protobuf with all fields to XrpAccountSet object', function (): void {
     // GIVEN an AccountSet protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountSet = XRPAccountSet.from(testAccountSetProtoAllFields)
+    const accountSet = XrpAccountSet.from(testAccountSetProtoAllFields)
 
     // THEN the AccountSet converted as expected.
     assert.deepEqual(
@@ -54,10 +54,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert AccountSet protobuf with one field to XRPAccountSet object', function (): void {
+  it('Convert AccountSet protobuf with one field to XrpAccountSet object', function (): void {
     // GIVEN an AccountSet protocol buffer with only one field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountSet = XRPAccountSet.from(testAccountSetProtoOneFieldSet)
+    const accountSet = XrpAccountSet.from(testAccountSetProtoOneFieldSet)
 
     // THEN the AccountSet converted as expected.
     assert.deepEqual(

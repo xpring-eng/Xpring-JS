@@ -2,20 +2,21 @@ import { AccountSet } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 /*
  * Represents an AccountSet transaction on the XRP Ledger.
+ *
  * An AccountSet transaction modifies the properties of an account in the XRP Ledger.
  *
  * @see: https://xrpl.org/accountset.html
  */
-export default class XRPAccountSet {
+export default class XrpAccountSet {
   /**
-   * Constructs an XRPAccountSet from an AccountSet.
+   * Constructs an XrpAccountSet from an AccountSet.
    *
    * @param accountSet an AccountSet (protobuf object) whose field values will be used
-   *                to construct an XRPAccountSet
-   * @return an XRPAccountSet with its fields set via the analogous protobuf fields.
+   *                to construct an XrpAccountSet
+   * @return an XrpAccountSet with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L100
    */
-  public static from(accountSet: AccountSet): XRPAccountSet | undefined {
+  public static from(accountSet: AccountSet): XrpAccountSet | undefined {
     const clearFlag = accountSet.getClearFlag()?.getValue()
     const domain = accountSet.getDomain()?.getValue()
     const emailHash = accountSet.getEmailHash()?.getValue_asU8()
@@ -24,7 +25,7 @@ export default class XRPAccountSet {
     const transferRate = accountSet.getTransferRate()?.getValue()
     const tickSize = accountSet.getTickSize()?.getValue()
 
-    return new XRPAccountSet(
+    return new XrpAccountSet(
       clearFlag,
       domain,
       emailHash,
