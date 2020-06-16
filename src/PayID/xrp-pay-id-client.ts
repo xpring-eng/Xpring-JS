@@ -28,7 +28,7 @@ export default class XrpPayIdClient extends PayIdClient
    * Note: Addresses are always in the X-Address format.
    * @see https://xrpaddress.info/
    *
-   * @param payId The payID to resolve for an address.
+   * @param payId The PayID to resolve for an address.
    * @returns An XRP address representing the given PayID.
    */
   async xrpAddressForPayId(payId: string): Promise<string> {
@@ -103,7 +103,7 @@ export class XRPPayIDClient extends PayIDClient
    * Note: Addresses are always in the X-Address format.
    * @see https://xrpaddress.info/
    *
-   * @param payID The payID to resolve for an address.
+   * @param payID The PayID to resolve for an address.
    * @returns An XRP address representing the given PayID.
    */
   async xrpAddressForPayID(payID: string): Promise<string> {
