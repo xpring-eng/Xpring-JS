@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { Transaction } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { XRPNetworkClient } from '../../../src/XRP/xrp-network-client'
+import { XrpNetworkClient } from '../../../src/XRP/xrp-network-client'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
@@ -170,7 +170,7 @@ export class FakeXRPNetworkClientResponses {
 /**
  * A fake network client which stubs network interaction.
  */
-export class FakeXRPNetworkClient implements XRPNetworkClient {
+export class FakeXRPNetworkClient implements XrpNetworkClient {
   public constructor(
     private readonly responses: FakeXRPNetworkClientResponses = FakeXRPNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
