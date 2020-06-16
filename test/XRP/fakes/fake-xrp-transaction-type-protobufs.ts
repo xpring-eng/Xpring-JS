@@ -48,7 +48,7 @@ const testTickSize = 7
 const testDestination = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
 const testDestinationTag = 13
 
-// CheckCancel, CheckCash values
+// CheckCancel values
 const testCheckId =
   '49647F0D748DC3FE26BDACBC57F251AADEFFF391403EC9BF87C97F67E9977FB0'
 
