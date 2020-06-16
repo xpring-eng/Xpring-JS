@@ -7,7 +7,7 @@ import { XRPLNetwork } from '../Common/xrpl-network'
 import SendXrpDetails from './model/send-xrp-details'
 
 /** A decorator interface for XRPClients. */
-export interface XRPClientDecorator {
+export interface XrpClientDecorator {
   /**
    * The XRPL network this XRPClient is connecting to.
    */
