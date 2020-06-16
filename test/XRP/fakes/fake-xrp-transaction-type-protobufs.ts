@@ -40,6 +40,7 @@ const testDestinationTag = 13
 // CheckCancel values
 const testCheckId =
   '49647F0D748DC3FE26BDACBC57F251AADEFFF391403EC9BF87C97F67E9977FB0'
+
 // Protobuf objects ======================================================================
 
 // AccountSet protos
