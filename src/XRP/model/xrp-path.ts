@@ -47,7 +47,7 @@ export default class XrpPath {
    * @returns an XrpPath with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L237
    */
-  public static from(path: Path): XRPPath {
+  public static from(path: Path): XrpPath {
     const pathElements = path
       .getElementsList()
       .map((pathElement) => XrpPathElement.from(pathElement))

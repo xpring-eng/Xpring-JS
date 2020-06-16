@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `XrpPayIdClientInterface` replaces the now deprecated `XRPPayIDClientInterface`.
 - `XrpPayIdClient` replaces the now deprecated `XRPPayIDClient`.
 - A new value, `Unknown` is added to the `XpringErrorType` enum.
-- A new field, `memosList` replaces `memos` on `SendXrpDetails` is deprecated.
+- A new field, `memosList` replaces `memos` on `SendXrpDetails`. `memos` is deprecated.
 - `XrpAccountSet` replaces the now deprecated `XRPAccountSet`.
 - `XrpCurrencyAmount` replaces the now deprecated `XRPCurrencyAmount`.
 - `XrpCurrency` replaces the now deprecated `XRPCurrency`.

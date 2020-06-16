@@ -4,7 +4,7 @@ import XrpClientDecorator, { XRPClientDecorator } from './xrp-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
 import XrpTransaction, { XRPTransaction } from './model/xrp-transaction'
-import XrpError, { XRPErrorType, XrpErrorType, XRPError } from './xrp-error'
+import XrpError, { XrpErrorType, XRPError, XRPErrorType } from './xrp-error'
 import XrplNetwork, { XRPLNetwork } from '../Common/xrpl-network'
 
 import SendXrpDetails from './model/send-xrp-details'
