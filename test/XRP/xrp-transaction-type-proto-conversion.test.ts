@@ -2,12 +2,15 @@ import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
 import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
+import XrpCheckCancel from '../../src/XRP/model/xrp-check-cancel'
 import XrpAccountDelete from '../../src/XRP/model/xrp-account-delete'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
   testAccountDeleteProto,
   testAccountDeleteProtoNoTag,
+  testCheckCancelProto,
+  testInvalidCheckCancelProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import XRPLNetwork from '../../src/Common/xrpl-network'
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -113,5 +116,26 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the result is undefined.
     assert.isUndefined(accountDelete)
+  })
+
+  it('Convert CheckCancel protobuf to XrpCheckCancel object', function (): void {
+    // GIVEN a CheckCancel protocol buffer.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const checkCancel = XrpCheckCancel.from(testCheckCancelProto)
+
+    // THEN the CheckCancel converted as expected.
+    assert.equal(
+      checkCancel?.checkId,
+      testCheckCancelProto.getCheckId()?.getValue_asB64(),
+    )
+  })
+
+  it('Convert CheckCancel protobuf with missing checkId', function (): void {
+    // GIVEN a CheckCancel protocol buffer without a checkId.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const checkCancel = XrpCheckCancel.from(testInvalidCheckCancelProto)
+
+    // THEN the result is undefined.
+    assert.isUndefined(checkCancel)
   })
 })
