@@ -1,6 +1,6 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
-import { XRPClientDecorator } from './xrp-client-decorator'
+import { XrpClientDecorator } from './xrp-client-decorator'
 import TransactionStatus from './transaction-status'
 import ReliableSubmissionXRPClient from './reliable-submission-xrp-client'
 import DefaultXRPClient from './default-xrp-client'
@@ -12,11 +12,12 @@ import SendXrpDetails from './model/send-xrp-details'
 /**
  * XRPClient is a client which interacts with the Xpring platform.
  */
+// TODO(keefertaylor): rename me
 class XRPClient implements XRPClientInterface {
   /** The XRPL Network of the node that this client is communicating with. */
   public readonly network: XRPLNetwork
 
-  private readonly decoratedClient: XRPClientDecorator
+  private readonly decoratedClient: XrpClientDecorator
 
   /**
    * Create a new XRPClient.
