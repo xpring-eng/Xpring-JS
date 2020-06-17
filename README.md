@@ -352,7 +352,7 @@ Two classes are used to work with PayID: `PayIdClient` and `XrpPayIdClient`.
 import { PayIdClient } from 'xpring-js'
 
 // Resolve on Bitcoin Mainnet.
-const network = 'btc-testnet'
+const network = 'btc-mainnet'
 const payIdClient = new PayIdClient(network)
 
 const resolvedAddressComponents = await payIdClient.addressForPayId(payId)
