@@ -403,4 +403,52 @@ describe('PayIdClient', function (): void {
   })
 
   // TODO(keefertaylor): Write tests for specific error codes returned by the receipt API.
+
+  it('allAddressesForPayId - invalid Pay ID', function (done): void {
+    // GIVEN an AllNetworksPayIdClient and an invalid PayID.
+    const invalidPayID = 'xpring.money/georgewashington' // Does not start with '$'
+    const payIdClient = new PayIdClient()
+
+    // WHEN addresses are resolved THEN an invalid Pay ID error is thrown.
+    payIdClient.allAddressesForPayId(invalidPayID).catch((error) => {
+      assert.equal((error as PayIdError).errorType, PayIdErrorType.InvalidPayId)
+      done()
+    })
+  })
+
+  it('allAddressesForPayId - successful response - match found', async function () {
+    // GIVEN a AllNetworksPayIdClient, valid PayID and mocked networking to return a set of matches for the PayID.
+    const payId = 'georgewashington$xpring.money'
+    const payIdClient = new PayIdClient()
+
+    const payIdComponents = PayIdUtils.parsePayID(payId)
+    if (!payIdComponents) {
+      throw new Error('Test precondition failed: Could not generate a Pay ID')
+    }
+
+    const addresses = [
+      {
+        addressDetailsType: 'CryptoAddressDetails',
+        addressDetails: {
+          address: 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4',
+        },
+      },
+      {
+        addressDetailsType: 'CryptoAddressDetails',
+        addressDetails: {
+          address: 'XV5sbjUmgPpvXv4ixFWZ5ptAYZ6PD28Sq49uo34VyjnmK5H',
+        },
+      },
+    ]
+
+    nock('https://xpring.money').get('/georgewashington').reply(200, {
+      addresses: addresses,
+    })
+
+    // WHEN all addresses are resolved.
+    const resolvedAddresses = await payIdClient.allAddressesForPayId(payId)
+
+    // THEN the returned data is as expected.
+    assert.deepEqual(addresses, resolvedAddresses)
+  })
 })

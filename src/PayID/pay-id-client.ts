@@ -184,12 +184,12 @@ export default class PayIdClient {
    *
    * TODO(keefertaylor): Link a canonical list at payid.org when available.
    *
-   * @param network The network that addresses will be resolved on.
+   * @deprecated @param network The network that addresses will be resolved on. Defaults to the empty string.
    * @param useHttps Whether to cuse HTTPS when making PayID requests. Most users should set this to 'true' to avoid
    *                 Man-in-the-Middle attacks. Exposed as an option for testing purposes. Defaults to true.
    */
   constructor(
-    public readonly network: string,
+    public readonly network: string = '',
     private readonly useHttps: boolean = true,
   ) {}
 
