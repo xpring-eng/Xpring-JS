@@ -428,6 +428,35 @@ const paymentRequest = new PaymentRequest({
 PaymentResponse payment = ilpClient.sendPayment(paymentRequest, "2S1PZh3fEKnKg");
 ```
 
+## Usage: Xpring
+
+Xpring components compose PayID and XRP components to make complex interactions easy.
+
+```javascript
+import { XpringClient, XrpClient, XrpPayIdClient, XrplNetwork } from 'xpring-js'
+
+const network = XrplNetwork.Test
+
+// Build an XrpClient
+const rippledUrl = 'test.xrp.xpring.io:50051'
+const xrpClient = new XrpClient(rippledUrl, network)
+
+// Build a PayIdClient
+const payIdClient = new XRPPayIDClient(network)
+
+// XpringClient combines functionality from XRP and PayID
+const xpringClient = new XpringClient(payIdClient, xrpClient)
+
+// A wallet with some balance on TestNet.
+const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
+
+// A PayID which will receive the payment.
+const payId = 'alice$dev.payid.xpring.money'
+
+// Send XRP to the given PayID.
+const transactionHash = await xpringClient.send(amount, payId, wallet)
+```
+
 # Contributing
 
 Pull requests are welcome! To get started with building this library and opening pull requests, please see [contributing.md](CONTRIBUTING.md).
