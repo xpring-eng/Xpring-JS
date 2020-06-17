@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## 4.3.1 - 2020-06-16
 
 ### Added
 
@@ -19,7 +19,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `XrpPayIdClientInterface` replaces the now deprecated `XRPPayIDClientInterface`.
 - `XrpPayIdClient` replaces the now deprecated `XRPPayIDClient`.
 - A new value, `Unknown` is added to the `XpringErrorType` enum.
-- A new class, `SingleNetworkPayIdClient`, replaces the functionality in `PayIdClient` and `PayIDClient`.
+- A new field, `memosList` replaces `memos` on `SendXrpDetails`. `memos` is deprecated.
+- `XrpAccountSet` replaces the now deprecated `XRPAccountSet`.
+- `XrpCurrencyAmount` replaces the now deprecated `XRPCurrencyAmount`.
+- `XrpCurrency` replaces the now deprecated `XRPCurrency`.
+- `XrpIssuedCurrency` replaces the now deprecated `XRPIssuedCurrency`.
+- `XrpMemo` replaces the now deprecated `XRPMemo`.
+- `XrpPathElement` replaces the now deprecated `XRPPathElement`.
+- `XrpPath` replaces the now deprecated `XRPPath`.
+- `XrpPayment` replaces the now deprecated `XRPPayment`.
+- `XrpSigner` replaces the now deprecated `XRPSigner`.
+- `XRPTransactionType` now includes an `AccountSetValue`.
+- `XrpTransactionType` replaces the now deprecated `XRPTransactionType`.
+- `XrpTransaction` replaces the now deprecated `XRPTransaction`.
 
 ### Deprecated
 
@@ -30,6 +42,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PayIDErrorType` is deprecated. Use `PayIdErrorType` instead.
 - `XRPayIDClientInterface` replaces the now deprecated `XrpPayIdClientInterface`.
 - `XRPPayIDClient` replaces the now deprecated `XrpPayIdClient`.
+- `memos` on `SendXrpDetails` is deprecated. Use `memoList` instead.
+- `XRPAccountSet` is deprecated. Use `XrpAccountSet` instead.
+- `XRPCurrencyAmount` is deprecated. Use `XrpCurrencyAmount` instead.
+- `XRPCurrency` is deprecated. Use `XrpCurrency` instead.
+- `XRPIssuedCurrency` is deprecated. Use `XrpIssuedCurrency` instead.
+- `XRPMemo` is deprecated. Use `XrpMemo` instead.
+- `XRPPathElement` is deprecated. Use `XrpPathElement` instead.
+- `XRPPath` is deprecated. Use `XrpPath` instead.
+- `XRPPayment` is deprecated. Use `XrpPayment` instead.
+- `XRPSigner` is deprecated. Use `XrpSigner` instead.
+- `XRPTransactionType` is deprecated. Use `XrpTransactionType` instead.
+- `XRPTransaction` is deprecated. Use `XrpTransaction` instead.
 - `XRPTransaction.account` and `XRPTransaction.sourceTag` are deprecated.
   Please use the X-address encoded field `sourceXAddress` instead.
 - `XRPPayment.destination` and `XRPPayment.destinationTag` are deprecated.

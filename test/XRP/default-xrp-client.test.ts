@@ -27,7 +27,7 @@ import {
   testInvalidGetTransactionResponseProtoUnsupportedType,
   testInvalidGetAccountTransactionHistoryResponse,
 } from './fakes/fake-xrp-protobufs'
-import XRPTransaction from '../../src/XRP/model/xrp-transaction'
+import { XRPTransaction } from '../../src/XRP/model/xrp-transaction'
 import XRPError, { XRPErrorType } from '../../src/XRP/xrp-error'
 import { XRPLNetwork } from '../../src/Common/xrpl-network'
 

@@ -1,6 +1,6 @@
 import { BigInteger } from 'big-integer'
 import { Wallet } from 'xpring-common-js'
-import XRPMemo from './xrp-memo'
+import XrpMemo, { XRPMemo } from './xrp-memo'
 
 /**
  * Describes the fine grained details for sending money over the XRP ledger. The
@@ -11,5 +11,11 @@ export default interface SendXrpDetails {
   amount: BigInteger | number | string
   destination: string
   sender: Wallet
+
+  /**
+   * @deprecated Use `memosList` instead.
+   */
   memos?: Array<XRPMemo>
+
+  memoList?: Array<XrpMemo>
 }
