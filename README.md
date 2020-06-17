@@ -355,6 +355,7 @@ import { PayIdClient } from 'xpring-js'
 const network = 'btc-mainnet'
 const payIdClient = new PayIdClient(network)
 
+const payId = 'georgewashington$xpring.money'
 const resolvedAddressComponents = await payIdClient.addressForPayId(payId)
 console.log(resolvedAddressComponents.address)
 ```
