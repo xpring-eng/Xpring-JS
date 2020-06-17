@@ -362,7 +362,7 @@ console.log(resolvedAddressComponents.address)
 
 ### XrpPayIdClient
 
-`XrpPayIdClient` can resolve addresses on the XRP Ledger network. The class always coerces returned addresses into an X-Address.
+`XrpPayIdClient` can resolve addresses on the XRP Ledger network. The class always coerces returned addresses into an X-Address. (See https://xrpaddress.info/)
 
 ```javascript
 import { XrplNetwork, XrpPayIdClient } from 'xpring-js'
