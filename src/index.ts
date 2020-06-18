@@ -23,8 +23,8 @@ export {
   default as XrpPayIdClient,
   XRPPayIDClient,
 } from './PayID/xrp-pay-id-client'
-export { XRPUtils } from './XRP'
-export { RippledFlags, TransactionStatus, XRPClient } from './XRP'
+export { XRPUtils, XrpUtils } from './XRP'
+export { RippledFlags, TransactionStatus, XRPClient, XrpClient } from './XRP'
 export {
   SendXrpDetails,
   XRPCurrencyAmount,
