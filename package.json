@@ -1,6 +1,6 @@
 {
   "name": "xpring-js",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "description": "XpringJS provides a Javascript based SDK for interacting with the Ripple Ledger.",
   "main": "build/index.js",
   "repository": {
