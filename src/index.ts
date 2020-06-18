@@ -26,6 +26,7 @@ export {
 export { XRPUtils, XrpUtils } from './XRP'
 export { RippledFlags, TransactionStatus, XRPClient, XrpClient } from './XRP'
 export {
+  SendXrpDetails,
   XRPCurrencyAmount,
   XRPCurrency,
   XRPIssuedCurrency,
