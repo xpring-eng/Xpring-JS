@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
+import XrpCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
 import XrpCheckCash from '../../src/XRP/model/xrp-check-cash'
 import XrpAccountSet from '../../src/XRP/model/xrp-account-set'
 import XrpCheckCancel from '../../src/XRP/model/xrp-check-cancel'
@@ -11,7 +12,7 @@ import {
   testAccountDeleteProto,
   testAccountDeleteProtoNoTag,
   testCheckCancelProto,
-  testCheckCashProtoWithAmount,
+  testCheckCashProtoWithAmount,ß
   testCheckCashProtoWithDeliverMin,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
@@ -155,7 +156,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
     assert.deepEqual(
       checkCash?.amount,
-      XRPCurrencyAmount.from(
+      XrpCurrencyAmount.from(
         testCheckCashProtoWithAmount.getAmount()!.getValue()!,
       ),
     )
@@ -175,7 +176,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(checkCash?.amount)
     assert.deepEqual(
       checkCash?.deliverMin,
-      XRPCurrencyAmount.from(
+      XrpCurrencyAmount.from(
         testCheckCashProtoWithDeliverMin.getDeliverMin()!.getValue()!,
       ),
     )
