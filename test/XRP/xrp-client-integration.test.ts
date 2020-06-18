@@ -1,6 +1,6 @@
 import bigInt from 'big-integer'
 import { assert } from 'chai'
-import { Wallet } from 'xpring-common-js'
+import { Wallet, Utils } from 'xpring-common-js'
 
 import { XRPLNetwork } from '../../src/Common/xrpl-network'
 import TransactionStatus from '../../src/XRP/transaction-status'
@@ -129,6 +129,29 @@ describe('XRPClient Integration Tests', function (): void {
       expectedNoFormatMemo,
       expectedNoTypeMemo,
     ])
+  })
+
+  it('Send XRP with destination tag - rippled', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    // GIVEN a transaction hash representing a payment with a destination tag.
+    const address = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
+    const tag = 123
+    const taggedAddress = Utils.encodeXAddress(address, tag, true)!
+    const transactionHash = await xrpClient.send(amount, taggedAddress, wallet)
+
+    // WHEN the payment is retrieved.
+    const transaction = await xrpClient.getPayment(transactionHash)
+
+    // THEN the payment has the correct destination.
+    const destinationXAddress = transaction?.paymentFields?.destinationXAddress
+    const destinationAddressComponents = Utils.decodeXAddress(
+      destinationXAddress!,
+    )
+    assert.deepEqual(destinationAddressComponents?.address, address)
+    assert.deepEqual(destinationAddressComponents?.tag, tag)
   })
 
   it('Check if Account Exists - true - Web Shim', async function (): Promise<
