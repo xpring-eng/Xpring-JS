@@ -12,7 +12,7 @@ import {
   testAccountDeleteProto,
   testAccountDeleteProtoNoTag,
   testCheckCancelProto,
-  testCheckCashProtoWithAmount,ß
+  testCheckCashProtoWithAmount,
   testCheckCashProtoWithDeliverMin,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
