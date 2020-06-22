@@ -1,10 +1,11 @@
 import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
+import XrpEscrowCancel from '../../src/XRP/model/xrp-escrow-cancel'
 import XrpDepositPreauth from '../../src/XRP/model/xrp-deposit-preauth'
-import XrpAccountSet from '../../src/XRP/model/xrp-account-set'
 import XrpCheckCreate from '../../src/XRP/model/xrp-check-create'
 import XrpCheckCash from '../../src/XRP/model/xrp-check-cash'
+import XrpAccountSet from '../../src/XRP/model/xrp-account-set'
 import XrpCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
 import XrpCheckCancel from '../../src/XRP/model/xrp-check-cancel'
 import XrpAccountDelete from '../../src/XRP/model/xrp-account-delete'
@@ -23,6 +24,8 @@ import {
   testInvalidCheckCreateProto,
   testDepositPreauthProtoSetAuthorize,
   testDepositPreauthProtoSetUnauthorize,
+  testEscrowCancelProto,
+  testInvalidEscrowCancelProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import { XRPCurrencyAmount } from '../../src/XRP/model'
 import XrplNetwork from '../../src/Common/xrpl-network'
@@ -308,5 +311,38 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
       true,
     )
     assert.equal(depositPreauth?.unauthorizeXAddress, expectedXAddress)
+  })
+
+  it('Convert EscrowCancel protobuf to XrpEscrowCancel object - valid fields', function (): void {
+    // GIVEN an EscrowCancel protocol buffer with all fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const escrowCancel = XrpEscrowCancel.from(
+      testEscrowCancelProto,
+      XrplNetwork.Test,
+    )
+
+    // THEN the EscrowCancel converted as expected.
+    const expectedXAddress = Utils.encodeXAddress(
+      testEscrowCancelProto.getOwner()!.getValue()!.getAddress()!,
+      undefined,
+      true,
+    )
+    assert.equal(escrowCancel?.ownerXAddress, expectedXAddress)
+    assert.equal(
+      escrowCancel?.offerSequence,
+      testEscrowCancelProto.getOfferSequence()?.getValue(),
+    )
+  })
+
+  it('Convert EscrowCancel protobuf to XrpEscrowCancel object - missing fields', function (): void {
+    // GIVEN an EscrowCancel protocol buffer missing required fields.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const escrowCancel = XrpEscrowCancel.from(
+      testInvalidEscrowCancelProto,
+      XrplNetwork.Test,
+    )
+
+    // THEN the result is undefined.
+    assert.isUndefined(escrowCancel)
   })
 })
