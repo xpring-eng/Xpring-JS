@@ -10,6 +10,7 @@ import {
   EscrowFinish,
   OfferCancel,
   OfferCreate,
+  PaymentChannelClaim,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 /* eslint-disable @typescript-eslint/no-magic-numbers --
  * ESLint flags the numbers in the Uint8Array as magic numbers,
@@ -41,6 +42,10 @@ import {
   Fulfillment,
   TakerGets,
   TakerPays,
+  Channel,
+  Balance,
+  PaymentChannelSignature,
+  PublicKey,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
@@ -85,6 +90,13 @@ const testCondition =
 // EscrowFinish values
 const testFulfillment = 'A0028000'
 
+// PaymentChannelClaim values
+const testChannel =
+  'C1AE6DDDEEC05CF2978C0BAD6FE302948E9533691DC749DCDD3B9E5992CA6198'
+const testPaymentChannelSignature =
+  '30440220718D264EF05CAED7C781FF6DE298DCAC68D002562C9BF3A07C1E721B420C0DAB02203A5A4779EF4D2CCC7BC3EF886676D803A9981B928D3B8ACA483B80ECA3CD7B9B'
+const testPaymentChannelPublicKey =
+  '32D2471DB72B27E3310F355BB33E339BF26F8392D5A93D3BC0FC3B566612DA0F0A'
 // Protobuf objects ======================================================================
 
 // AccountSet protos
@@ -246,7 +258,7 @@ testEscrowFinishProtoMandatoryOnly.setOfferSequence(testOfferSequenceProto)
 const testOfferCancelProto = new OfferCancel()
 testOfferCancelProto.setOfferSequence(testOfferSequenceProto)
 
-// OfferCreate proto
+// OfferCreate protos
 const testTakerGetsProto = new TakerGets()
 testTakerGetsProto.setValue(testCurrencyAmountProtoDrops)
 
@@ -262,6 +274,30 @@ testOfferCreateProtoAllFields.setTakerPays(testTakerPaysProto)
 const testOfferCreateProtoMandatoryOnly = new OfferCreate()
 testOfferCreateProtoMandatoryOnly.setTakerGets(testTakerGetsProto)
 testOfferCreateProtoMandatoryOnly.setTakerPays(testTakerPaysProto)
+
+// PaymentChannelClaim protos
+const testChannelProto = new Channel()
+testChannelProto.setValue(testChannel)
+
+const testBalanceProto = new Balance()
+testBalanceProto.setValue(testCurrencyAmountProtoDrops)
+
+const testPaymentChannelSignatureProto = new PaymentChannelSignature()
+testPaymentChannelSignatureProto.setValue(testPaymentChannelSignature)
+
+const testPaymentChannelPublicKeyProto = new PublicKey()
+testPaymentChannelPublicKeyProto.setValue(testPaymentChannelPublicKey)
+
+const testPaymentChannelClaimProtoAllFields = new PaymentChannelClaim()
+testPaymentChannelClaimProtoAllFields.setChannel(testChannelProto)
+testPaymentChannelClaimProtoAllFields.setBalance(testBalanceProto)
+testPaymentChannelClaimProtoAllFields.setAmount(testAmountProto)
+testPaymentChannelClaimProtoAllFields.setPaymentChannelSignature(
+  testPaymentChannelPublicKeyProto,
+)
+
+const testPaymentChannelClaimProtoMandatoryOnly = new PaymentChannelClaim()
+testPaymentChannelClaimProtoMandatoryOnly.setChannel(testChannelProto)
 
 // Invalid Protobuf Objects ========================================================================
 
@@ -295,6 +331,9 @@ const testInvalidOfferCancelProto = new OfferCancel()
 const testInvalidOfferCreateProto = new OfferCreate()
 testInvalidOfferCreateProto.setTakerPays(testTakerPaysProto)
 
+// Invalid PaymentChannelClaim proto (missing channel)
+const testInvalidPaymentChannelClaimProto = new PaymentChannelClaim()
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -315,6 +354,8 @@ export {
   testOfferCancelProto,
   testOfferCreateProtoAllFields,
   testOfferCreateProtoMandatoryOnly,
+  testPaymentChannelClaimProtoAllFields,
+  testPaymentChannelClaimProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -323,4 +364,5 @@ export {
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
   testInvalidOfferCreateProto,
+  testInvalidPaymentChannelClaimProto,
 }

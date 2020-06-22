@@ -31,6 +31,7 @@ enum XrpTransactionType {
   EscrowFinish,
   OfferCancel,
   OfferCreate,
+  PaymentChannelClaim,
 }
 
 export default XrpTransactionType
