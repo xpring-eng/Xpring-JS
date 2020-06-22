@@ -1,10 +1,11 @@
 import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
-import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
 import XrpDepositPreauth from '../../src/XRP/model/xrp-deposit-preauth'
+import XrpAccountSet from '../../src/XRP/model/xrp-account-set'
 import XrpCheckCreate from '../../src/XRP/model/xrp-check-create'
 import XrpCheckCash from '../../src/XRP/model/xrp-check-cash'
+import XrpCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
 import XrpCheckCancel from '../../src/XRP/model/xrp-check-cancel'
 import XrpAccountDelete from '../../src/XRP/model/xrp-account-delete'
 import {
@@ -24,7 +25,7 @@ import {
   testDepositPreauthProtoSetUnauthorize,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import { XRPCurrencyAmount } from '../../src/XRP/model'
-import XRPLNetwork from '../../src/Common/xrpl-network'
+import XrplNetwork from '../../src/Common/xrpl-network'
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {
@@ -33,7 +34,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert AccountSet protobuf with all fields to XRPAccountSet object', function (): void {
     // GIVEN an AccountSet protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountSet = XRPAccountSet.from(testAccountSetProtoAllFields)
+    const accountSet = XrpAccountSet.from(testAccountSetProtoAllFields)
 
     // THEN the AccountSet converted as expected.
     assert.deepEqual(
@@ -69,7 +70,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert AccountSet protobuf with one field to XRPAccountSet object', function (): void {
     // GIVEN an AccountSet protocol buffer with only one field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountSet = XRPAccountSet.from(testAccountSetProtoOneFieldSet)
+    const accountSet = XrpAccountSet.from(testAccountSetProtoOneFieldSet)
 
     // THEN the AccountSet converted as expected.
     assert.deepEqual(
@@ -89,7 +90,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const accountDelete = XrpAccountDelete.from(
       testAccountDeleteProto,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the AccountDelete converted as expected.
@@ -106,7 +107,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const accountDelete = XrpAccountDelete.from(
       testAccountDeleteProtoNoTag,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the AccountDelete converted as expected.
@@ -123,7 +124,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const accountDelete = XrpAccountDelete.from(
       new AccountDelete(),
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the result is undefined.
@@ -163,7 +164,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
     assert.deepEqual(
       checkCash?.amount,
-      XRPCurrencyAmount.from(
+      XrpCurrencyAmount.from(
         testCheckCashProtoWithAmount.getAmount()!.getValue()!,
       ),
     )
@@ -183,7 +184,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(checkCash?.amount)
     assert.deepEqual(
       checkCash?.deliverMin,
-      XRPCurrencyAmount.from(
+      XrpCurrencyAmount.from(
         testCheckCashProtoWithDeliverMin.getDeliverMin()!.getValue()!,
       ),
     )
@@ -203,7 +204,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const checkCreate = XrpCheckCreate.from(
       testCheckCreateProtoAllFields,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the CheckCreate converted as expected.
@@ -234,7 +235,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const checkCreate = XrpCheckCreate.from(
       testCheckCreateProtoMandatoryFields,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the CheckCreate converted as expected.
@@ -262,7 +263,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const checkCreate = XrpCheckCreate.from(
       testInvalidCheckCreateProto,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the result is undefined.
@@ -274,7 +275,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const depositPreauth = XrpDepositPreauth.from(
       testDepositPreauthProtoSetAuthorize,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the DepositPreauth converted as expected.
@@ -294,7 +295,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const depositPreauth = XrpDepositPreauth.from(
       testDepositPreauthProtoSetUnauthorize,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the DepositPreauth converted as expected.
