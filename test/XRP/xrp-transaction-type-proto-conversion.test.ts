@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
+import XrpOfferCreate from '../../src/XRP/model/xrp-offer-create'
 import XrpOfferCancel from '../../src/XRP/model/xrp-offer-cancel'
 import XrpEscrowFinish from '../../src/XRP/model/xrp-escrow-finish'
 import XrpEscrowCreate from '../../src/XRP/model/xrp-escrow-create'
@@ -30,6 +31,8 @@ import {
   testEscrowFinishProtoAllFields,
   testEscrowFinishProtoMandatoryOnly,
   testOfferCancelProto,
+  testOfferCreateProtoAllFields,
+  testOfferCreateProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -37,6 +40,7 @@ import {
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
+  testInvalidOfferCreateProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import XrplNetwork from '../../src/Common/xrpl-network'
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -513,6 +517,8 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(escrowFinish)
   })
 
+  // OfferCancel
+
   it('Convert OfferCancel protobuf to XrpOfferCancel object', function (): void {
     // GIVEN an OfferCancel protocol buffer with offerSequence field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
@@ -532,5 +538,66 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the result is undefined.
     assert.isUndefined(offerCancel)
+  })
+
+  // OfferCreate
+
+  it('Convert OfferCreate protobuf to XrpOfferCreate object', function (): void {
+    // GIVEN an OfferCreate protocol buffer with all fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const offerCreate = XrpOfferCreate.from(testOfferCreateProtoAllFields)
+
+    // THEN the OfferCreate converted as expected.
+    assert.equal(
+      offerCreate?.expiration,
+      testOfferCreateProtoAllFields.getExpiration()?.getValue(),
+    )
+    assert.equal(
+      offerCreate?.offerSequence,
+      testOfferCreateProtoAllFields.getOfferSequence()?.getValue(),
+    )
+    assert.deepEqual(
+      offerCreate?.takerGets,
+      XrpCurrencyAmount.from(
+        testOfferCreateProtoAllFields.getTakerGets()!.getValue()!,
+      ),
+    )
+    assert.deepEqual(
+      offerCreate?.takerPays,
+      XrpCurrencyAmount.from(
+        testOfferCreateProtoAllFields.getTakerPays()!.getValue()!,
+      ),
+    )
+  })
+
+  it('Convert OfferCreate protobuf to XrpOfferCreate object - mandatory fields', function (): void {
+    // GIVEN an OfferCreate protocol buffer with only mandatory fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const offerCreate = XrpOfferCreate.from(testOfferCreateProtoMandatoryOnly)
+
+    // THEN the OfferCreate converted as expected.
+    assert.isUndefined(offerCreate?.expiration)
+    assert.isUndefined(offerCreate?.offerSequence)
+    assert.deepEqual(
+      offerCreate?.takerGets,
+      XrpCurrencyAmount.from(
+        testOfferCreateProtoMandatoryOnly.getTakerGets()!.getValue()!,
+      ),
+    )
+    assert.deepEqual(
+      offerCreate?.takerPays,
+      XrpCurrencyAmount.from(
+        testOfferCreateProtoMandatoryOnly.getTakerPays()!.getValue()!,
+      ),
+    )
+  })
+
+  it('Convert OfferCreate protobuf to XrpOfferCreate object - missing required field', function (): void {
+    // GIVEN an OfferCreate protocol buffer missing a required field.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const offerCreate = XrpOfferCreate.from(testInvalidOfferCreateProto)
+
+    // THEN the result is undefined.
+    assert.isUndefined(offerCreate)
   })
 })
