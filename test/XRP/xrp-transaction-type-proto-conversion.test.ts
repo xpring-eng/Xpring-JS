@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
-import XRPAccountSet from '../../src/XRP/model/xrp-account-set'
+import XrpAccountSet from '../../src/XRP/model/xrp-account-set'
 import XrpCheckCreate from '../../src/XRP/model/xrp-check-create'
 import XrpCheckCash from '../../src/XRP/model/xrp-check-cash'
 import XrpCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
@@ -201,7 +201,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const checkCreate = XrpCheckCreate.from(
       testCheckCreateProtoAllFields,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the CheckCreate converted as expected.
@@ -232,7 +232,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const checkCreate = XrpCheckCreate.from(
       testCheckCreateProtoMandatoryFields,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the CheckCreate converted as expected.
@@ -260,7 +260,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const checkCreate = XrpCheckCreate.from(
       testInvalidCheckCreateProto,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the result is undefined.
