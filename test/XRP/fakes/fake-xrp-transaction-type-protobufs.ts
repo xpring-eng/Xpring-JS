@@ -80,6 +80,7 @@ const testCondition =
 
 // EscrowFinish values
 const testFulfillment = 'A0028000'
+
 // Protobuf objects ======================================================================
 
 // AccountSet protos
