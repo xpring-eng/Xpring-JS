@@ -2,6 +2,7 @@ import {
   AccountSet,
   AccountDelete,
   CheckCancel,
+  CheckCash,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 /* eslint-disable @typescript-eslint/no-magic-numbers --
  * ESLint flags the numbers in the Uint8Array as magic numbers,
@@ -18,8 +19,14 @@ import {
   Destination,
   DestinationTag,
   CheckID,
+  Amount,
+  DeliverMin,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
+import {
+  testCurrencyAmountProtoDrops,
+  testCurrencyAmountProtoIssuedCurrency,
+} from './fake-xrp-protobufs'
 
 // Primitive test values ===============================================================
 
@@ -102,9 +109,29 @@ testCheckIdProto.setValue(testCheckId)
 const testCheckCancelProto = new CheckCancel()
 testCheckCancelProto.setCheckId(testCheckIdProto)
 
+// CheckCash protos
+const testAmountProto = new Amount()
+testAmountProto.setValue(testCurrencyAmountProtoDrops)
+
+const testCheckCashProtoWithAmount = new CheckCash()
+testCheckCashProtoWithAmount.setCheckId(testCheckIdProto)
+testCheckCashProtoWithAmount.setAmount(testAmountProto)
+
+const testDeliverMinProto = new DeliverMin()
+testDeliverMinProto.setValue(testCurrencyAmountProtoIssuedCurrency)
+
+const testCheckCashProtoWithDeliverMin = new CheckCash()
+testCheckCashProtoWithDeliverMin.setCheckId(testCheckIdProto)
+testCheckCashProtoWithDeliverMin.setDeliverMin(testDeliverMinProto)
+
 // Invalid Protobuf Objects ========================================================================
 
+// Invalid CheckCancel proto (missing checkId)
 const testInvalidCheckCancelProto = new CheckCancel()
+
+// Invalid CheckCash proto (missing checkId)
+const testInvalidCheckCashProto = new CheckCash()
+testInvalidCheckCashProto.setAmount(testAmountProto)
 
 export {
   testAccountSetProtoAllFields,
@@ -112,5 +139,8 @@ export {
   testAccountDeleteProto,
   testAccountDeleteProtoNoTag,
   testCheckCancelProto,
+  testCheckCashProtoWithAmount,
+  testCheckCashProtoWithDeliverMin,
   testInvalidCheckCancelProto,
+  testInvalidCheckCashProto,
 }
