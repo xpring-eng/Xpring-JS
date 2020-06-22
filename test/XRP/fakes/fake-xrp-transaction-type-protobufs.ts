@@ -7,6 +7,7 @@ import {
   DepositPreauth,
   EscrowCancel,
   EscrowCreate,
+  EscrowFinish,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 /* eslint-disable @typescript-eslint/no-magic-numbers --
  * ESLint flags the numbers in the Uint8Array as magic numbers,
@@ -35,6 +36,7 @@ import {
   CancelAfter,
   FinishAfter,
   Condition,
+  Fulfillment,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
@@ -75,6 +77,9 @@ const testCancelAfter = 533257958
 const testFinishAfter = 533171558
 const testCondition =
   'A0258020E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855810100'
+
+// EscrowFinish values
+const testFulfillment = 'A0028000'
 
 // Protobuf objects ======================================================================
 
@@ -219,6 +224,20 @@ const testEscrowCreateProtoMandatoryOnly = new EscrowCreate()
 testEscrowCreateProtoMandatoryOnly.setAmount(testAmountProto)
 testEscrowCreateProtoMandatoryOnly.setDestination(testDestinationProto)
 
+// EscrowFinish protos
+const testFulfillmentProto = new Fulfillment()
+testFulfillmentProto.setValue(testFulfillment)
+
+const testEscrowFinishProtoAllFields = new EscrowFinish()
+testEscrowFinishProtoAllFields.setOwner(testOwnerProto)
+testEscrowFinishProtoAllFields.setOfferSequence(testOfferSequenceProto)
+testEscrowFinishProtoAllFields.setCondition(testConditionProto)
+testEscrowFinishProtoAllFields.setFulfillment(testFulfillmentProto)
+
+const testEscrowFinishProtoMandatoryOnly = new EscrowFinish()
+testEscrowFinishProtoMandatoryOnly.setOwner(testOwnerProto)
+testEscrowFinishProtoMandatoryOnly.setOfferSequence(testOfferSequenceProto)
+
 // Invalid Protobuf Objects ========================================================================
 
 // Invalid CheckCancel proto (missing checkId)
@@ -240,6 +259,10 @@ testInvalidEscrowCancelProto.setOfferSequence(testOfferSequenceProto)
 const testInvalidEscrowCreateProto = new EscrowCreate()
 testInvalidEscrowCreateProto.setAmount(testAmountProto)
 
+// Invalid EscrowFinish proto (missing owner)
+const testInvalidEscrowFinishProto = new EscrowFinish()
+testInvalidEscrowFinishProto.setOfferSequence(testOfferSequenceProto)
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -255,9 +278,12 @@ export {
   testEscrowCancelProto,
   testEscrowCreateProtoAllFields,
   testEscrowCreateProtoMandatoryOnly,
+  testEscrowFinishProtoAllFields,
+  testEscrowFinishProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
   testInvalidEscrowCancelProto,
   testInvalidEscrowCreateProto,
+  testInvalidEscrowFinishProto,
 }
