@@ -40,6 +40,7 @@ import {
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
+  testInvalidOfferCreateProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import XrplNetwork from '../../src/Common/xrpl-network'
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
