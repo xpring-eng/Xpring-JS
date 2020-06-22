@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
+import XrpOfferCancel from '../../src/XRP/model/xrp-offer-cancel'
 import XrpEscrowFinish from '../../src/XRP/model/xrp-escrow-finish'
 import XrpEscrowCreate from '../../src/XRP/model/xrp-escrow-create'
 import XrpEscrowCancel from '../../src/XRP/model/xrp-escrow-cancel'
@@ -28,14 +29,15 @@ import {
   testEscrowCreateProtoMandatoryOnly,
   testEscrowFinishProtoAllFields,
   testEscrowFinishProtoMandatoryOnly,
+  testOfferCancelProto,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
   testInvalidEscrowCancelProto,
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
+  testInvalidOfferCancelProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
-import { XRPCurrencyAmount } from '../../src/XRP/model'
 import XrplNetwork from '../../src/Common/xrpl-network'
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
@@ -233,7 +235,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.equal(checkCreate?.destinationXAddress, expectedXAddress)
     assert.deepEqual(
       checkCreate?.sendMax,
-      XRPCurrencyAmount.from(
+      XrpCurrencyAmount.from(
         testCheckCreateProtoAllFields.getSendMax()!.getValue()!,
       ),
     )
@@ -267,7 +269,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.equal(checkCreate?.destinationXAddress, expectedXAddress)
     assert.deepEqual(
       checkCreate?.sendMax,
-      XRPCurrencyAmount.from(
+      XrpCurrencyAmount.from(
         testCheckCreateProtoMandatoryFields.getSendMax()!.getValue()!,
       ),
     )
@@ -385,7 +387,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
     assert.deepEqual(
       escrowCreate?.amount,
-      XRPCurrencyAmount.from(
+      XrpCurrencyAmount.from(
         testEscrowCreateProtoAllFields.getAmount()!.getValue()!,
       ),
     )
@@ -423,7 +425,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
     assert.deepEqual(
       escrowCreate?.amount,
-      XRPCurrencyAmount.from(
+      XrpCurrencyAmount.from(
         testEscrowCreateProtoMandatoryOnly.getAmount()!.getValue()!,
       ),
     )
@@ -509,5 +511,26 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the result is undefined.
     assert.isUndefined(escrowFinish)
+  })
+
+  it('Convert OfferCancel protobuf to XrpOfferCancel object', function (): void {
+    // GIVEN an OfferCancel protocol buffer with offerSequence field set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const offerCancel = XrpOfferCancel.from(testOfferCancelProto)
+
+    // THEN the OfferCancel converted as expected.
+    assert.deepEqual(
+      offerCancel?.offerSequence,
+      testOfferCancelProto.getOfferSequence()?.getValue(),
+    )
+  })
+
+  it('Convert OfferCancel protobuf to XrpOfferCancel object - missing required field', function (): void {
+    // GIVEN an OfferCancel protocol buffer missing the offerSequence field.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const offerCancel = XrpOfferCancel.from(testInvalidOfferCancelProto)
+
+    // THEN the result is undefined.
+    assert.isUndefined(offerCancel)
   })
 })

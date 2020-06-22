@@ -8,6 +8,7 @@ import {
   EscrowCancel,
   EscrowCreate,
   EscrowFinish,
+  OfferCancel,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 /* eslint-disable @typescript-eslint/no-magic-numbers --
  * ESLint flags the numbers in the Uint8Array as magic numbers,
@@ -238,6 +239,10 @@ const testEscrowFinishProtoMandatoryOnly = new EscrowFinish()
 testEscrowFinishProtoMandatoryOnly.setOwner(testOwnerProto)
 testEscrowFinishProtoMandatoryOnly.setOfferSequence(testOfferSequenceProto)
 
+// OfferCancel proto
+const testOfferCancelProto = new OfferCancel()
+testOfferCancelProto.setOfferSequence(testOfferSequenceProto)
+
 // Invalid Protobuf Objects ========================================================================
 
 // Invalid CheckCancel proto (missing checkId)
@@ -263,6 +268,9 @@ testInvalidEscrowCreateProto.setAmount(testAmountProto)
 const testInvalidEscrowFinishProto = new EscrowFinish()
 testInvalidEscrowFinishProto.setOfferSequence(testOfferSequenceProto)
 
+// Invalid OfferCancel proto (missing offerSequence)
+const testInvalidOfferCancelProto = new OfferCancel()
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -280,10 +288,12 @@ export {
   testEscrowCreateProtoMandatoryOnly,
   testEscrowFinishProtoAllFields,
   testEscrowFinishProtoMandatoryOnly,
+  testOfferCancelProto,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
   testInvalidEscrowCancelProto,
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
+  testInvalidOfferCancelProto,
 }
