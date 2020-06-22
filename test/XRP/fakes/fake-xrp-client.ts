@@ -1,5 +1,5 @@
 import { BigInteger } from 'big-integer'
-import { XrpClientDecorator } from '../../../src/XRP/xrp-client-decorator'
+import { XRPClientDecorator } from '../../../src/XRP/xrp-client-decorator'
 import TransactionStatus from '../../../src/XRP/transaction-status'
 import { Wallet } from '../../../src/index'
 import RawTransactionStatus from '../../../src/XRP/raw-transaction-status'
@@ -8,7 +8,7 @@ import Result from '../../Common/Helpers/result'
 import { XRPLNetwork } from '../../../src/Common/xrpl-network'
 import SendXrpDetails from '../../../src/XRP/model/send-xrp-details'
 
-class FakeXRPClient implements XrpClientDecorator {
+class FakeXRPClient implements XRPClientDecorator {
   public constructor(
     public getBalanceValue: Result<BigInteger>,
     public getPaymentStatusValue: Result<TransactionStatus>,

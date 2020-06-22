@@ -75,6 +75,7 @@ const testCancelAfter = 533257958
 const testFinishAfter = 533171558
 const testCondition =
   'A0258020E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855810100'
+
 // Protobuf objects ======================================================================
 
 // AccountSet protos
