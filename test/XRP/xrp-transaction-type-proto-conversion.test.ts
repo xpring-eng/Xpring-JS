@@ -37,7 +37,7 @@ import {
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
-} from './fakes/fake-xrp-transaction-type-protobufs' import { XRPCurrencyAmount } from '../../src/XRP/model'
+} from './fakes/fake-xrp-transaction-type-protobufs'
 import XrplNetwork from '../../src/Common/xrpl-network'
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
@@ -235,7 +235,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.equal(checkCreate?.destinationXAddress, expectedXAddress)
     assert.deepEqual(
       checkCreate?.sendMax,
-      XRPCurrencyAmount.from(
+      XrpCurrencyAmount.from(
         testCheckCreateProtoAllFields.getSendMax()!.getValue()!,
       ),
     )
@@ -269,7 +269,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.equal(checkCreate?.destinationXAddress, expectedXAddress)
     assert.deepEqual(
       checkCreate?.sendMax,
-      XRPCurrencyAmount.from(
+      XrpCurrencyAmount.from(
         testCheckCreateProtoMandatoryFields.getSendMax()!.getValue()!,
       ),
     )
@@ -387,7 +387,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
     assert.deepEqual(
       escrowCreate?.amount,
-      XRPCurrencyAmount.from(
+      XrpCurrencyAmount.from(
         testEscrowCreateProtoAllFields.getAmount()!.getValue()!,
       ),
     )
@@ -425,7 +425,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
     assert.deepEqual(
       escrowCreate?.amount,
-      XRPCurrencyAmount.from(
+      XrpCurrencyAmount.from(
         testEscrowCreateProtoMandatoryOnly.getAmount()!.getValue()!,
       ),
     )
