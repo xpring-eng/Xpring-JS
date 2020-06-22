@@ -6,6 +6,7 @@ import {
   CheckCreate,
   DepositPreauth,
   EscrowCancel,
+  EscrowCreate,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 /* eslint-disable @typescript-eslint/no-magic-numbers --
  * ESLint flags the numbers in the Uint8Array as magic numbers,
@@ -31,6 +32,9 @@ import {
   Unauthorize,
   Owner,
   OfferSequence,
+  CancelAfter,
+  FinishAfter,
+  Condition,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
@@ -65,6 +69,12 @@ const testExpiration = 570113521
 
 // EscrowCancel values
 const testOfferSequence = 23
+
+// EscrowCreate values
+const testCancelAfter = 533257958
+const testFinishAfter = 533171558
+const testCondition =
+  'A0258020E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855810100'
 
 // Protobuf objects ======================================================================
 
@@ -187,6 +197,28 @@ const testEscrowCancelProto = new EscrowCancel()
 testEscrowCancelProto.setOwner(testOwnerProto)
 testEscrowCancelProto.setOfferSequence(testOfferSequenceProto)
 
+// EscrowCreate protos
+const testCancelAfterProto = new CancelAfter()
+testCancelAfterProto.setValue(testCancelAfter)
+
+const testFinishAfterProto = new FinishAfter()
+testFinishAfterProto.setValue(testFinishAfter)
+
+const testConditionProto = new Condition()
+testConditionProto.setValue(testCondition)
+
+const testEscrowCreateProtoAllFields = new EscrowCreate()
+testEscrowCreateProtoAllFields.setAmount(testAmountProto)
+testEscrowCreateProtoAllFields.setDestination(testDestinationProto)
+testEscrowCreateProtoAllFields.setCancelAfter(testCancelAfterProto)
+testEscrowCreateProtoAllFields.setFinishAfter(testFinishAfterProto)
+testEscrowCreateProtoAllFields.setCondition(testConditionProto)
+testEscrowCreateProtoAllFields.setDestinationTag(testDestinationTagProto)
+
+const testEscrowCreateProtoMandatoryOnly = new EscrowCreate()
+testEscrowCreateProtoMandatoryOnly.setAmount(testAmountProto)
+testEscrowCreateProtoMandatoryOnly.setDestination(testDestinationProto)
+
 // Invalid Protobuf Objects ========================================================================
 
 // Invalid CheckCancel proto (missing checkId)
@@ -204,6 +236,10 @@ testInvalidCheckCreateProto.setSendMax(testSendMaxProto)
 const testInvalidEscrowCancelProto = new EscrowCancel()
 testInvalidEscrowCancelProto.setOfferSequence(testOfferSequenceProto)
 
+// Invalid EscrowCreate proto (missing destination)
+const testInvalidEscrowCreateProto = new EscrowCreate()
+testInvalidEscrowCreateProto.setAmount(testAmountProto)
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -217,8 +253,11 @@ export {
   testDepositPreauthProtoSetAuthorize,
   testDepositPreauthProtoSetUnauthorize,
   testEscrowCancelProto,
+  testEscrowCreateProtoAllFields,
+  testEscrowCreateProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
   testInvalidEscrowCancelProto,
+  testInvalidEscrowCreateProto,
 }

@@ -27,6 +27,7 @@ enum XrpTransactionType {
   CheckCreate,
   DepositPreauth,
   EscrowCancel,
+  EscrowCreate,
 }
 
 export default XrpTransactionType
