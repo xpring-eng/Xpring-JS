@@ -262,6 +262,7 @@ testOfferCreateProtoAllFields.setTakerPays(testTakerPaysProto)
 const testOfferCreateProtoMandatoryOnly = new OfferCreate()
 testOfferCreateProtoMandatoryOnly.setTakerGets(testTakerGetsProto)
 testOfferCreateProtoMandatoryOnly.setTakerPays(testTakerPaysProto)
+
 // Invalid Protobuf Objects ========================================================================
 
 // Invalid CheckCancel proto (missing checkId)
