@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
+import XrpDepositPreauth from '../../src/XRP/model/xrp-deposit-preauth'
 import XrpAccountSet from '../../src/XRP/model/xrp-account-set'
 import XrpCheckCreate from '../../src/XRP/model/xrp-check-create'
 import XrpCheckCash from '../../src/XRP/model/xrp-check-cash'
@@ -20,6 +21,8 @@ import {
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
+  testDepositPreauthProtoSetAuthorize,
+  testDepositPreauthProtoSetUnauthorize,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import { XRPCurrencyAmount } from '../../src/XRP/model'
 import XrplNetwork from '../../src/Common/xrpl-network'
@@ -265,5 +268,45 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the result is undefined.
     assert.isUndefined(checkCreate)
+  })
+
+  it('Convert DepositPreauth protobuf to XrpDepositPreauth object - authorize set', function (): void {
+    // GIVEN a DepositPreauth protocol buffer with authorize field set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const depositPreauth = XrpDepositPreauth.from(
+      testDepositPreauthProtoSetAuthorize,
+      XrplNetwork.Test,
+    )
+
+    // THEN the DepositPreauth converted as expected.
+    const expectedXAddress = Utils.encodeXAddress(
+      testDepositPreauthProtoSetAuthorize
+        .getAuthorize()!
+        .getValue()!
+        .getAddress()!,
+      undefined,
+      true,
+    )
+    assert.equal(depositPreauth?.authorizeXAddress, expectedXAddress)
+  })
+
+  it('Convert DepositPreauth protobuf to XrpDepositPreauth object - unauthorize set', function (): void {
+    // GIVEN a DespoitPreauth protocol buffer with unauthorize field set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const depositPreauth = XrpDepositPreauth.from(
+      testDepositPreauthProtoSetUnauthorize,
+      XrplNetwork.Test,
+    )
+
+    // THEN the DepositPreauth converted as expected.
+    const expectedXAddress = Utils.encodeXAddress(
+      testDepositPreauthProtoSetUnauthorize
+        .getUnauthorize()!
+        .getValue()!
+        .getAddress()!,
+      undefined,
+      true,
+    )
+    assert.equal(depositPreauth?.unauthorizeXAddress, expectedXAddress)
   })
 })

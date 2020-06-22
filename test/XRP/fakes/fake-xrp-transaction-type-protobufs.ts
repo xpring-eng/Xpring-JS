@@ -4,6 +4,7 @@ import {
   CheckCancel,
   CheckCash,
   CheckCreate,
+  DepositPreauth,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 /* eslint-disable @typescript-eslint/no-magic-numbers --
  * ESLint flags the numbers in the Uint8Array as magic numbers,
@@ -25,6 +26,9 @@ import {
   Expiration,
   SendMax,
   InvoiceID,
+  Authorize,
+  Unauthorize,
+
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
@@ -154,6 +158,19 @@ const testCheckCreateProtoMandatoryFields = new CheckCreate()
 testCheckCreateProtoMandatoryFields.setDestination(testDestinationProto)
 testCheckCreateProtoMandatoryFields.setSendMax(testSendMaxProto)
 
+// DepositPreauth
+const testAuthorizeProto = new Authorize()
+testAuthorizeProto.setValue(testAccountAddressProto)
+
+const testUnauthorizeProto = new Unauthorize()
+testUnauthorizeProto.setValue(testAccountAddressProto)
+
+const testDepositPreauthProtoSetAuthorize = new DepositPreauth()
+testDepositPreauthProtoSetAuthorize.setAuthorize(testAuthorizeProto)
+
+const testDepositPreauthProtoSetUnauthorize = new DepositPreauth()
+testDepositPreauthProtoSetUnauthorize.setUnauthorize(testUnauthorizeProto)
+
 // Invalid Protobuf Objects ========================================================================
 
 // Invalid CheckCancel proto (missing checkId)
@@ -177,6 +194,8 @@ export {
   testCheckCashProtoWithDeliverMin,
   testCheckCreateProtoAllFields,
   testCheckCreateProtoMandatoryFields,
+  testDepositPreauthProtoSetAuthorize,
+  testDepositPreauthProtoSetUnauthorize,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
