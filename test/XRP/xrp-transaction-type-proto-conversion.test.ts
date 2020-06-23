@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
+import XrpPaymentChannelCreate from '../../src/XRP/model/xrp-payment-channel-create'
 import XrpPaymentChannelClaim from '../../src/XRP/model/xrp-payment-channel-claim'
 import XrpOfferCreate from '../../src/XRP/model/xrp-offer-create'
 import XrpOfferCancel from '../../src/XRP/model/xrp-offer-cancel'
@@ -34,6 +35,8 @@ import {
   testOfferCancelProto,
   testOfferCreateProtoAllFields,
   testOfferCreateProtoMandatoryOnly,
+  testPaymentChannelCreateProtoAllFields,
+  testPaymentChannelCreateProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -45,6 +48,7 @@ import {
   testPaymentChannelClaimProtoAllFields,
   testPaymentChannelClaimProtoMandatoryOnly,
   testInvalidPaymentChannelClaimProto,
+  testInvalidPaymentChannelCreateProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import XrplNetwork from '../../src/Common/xrpl-network'
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -107,6 +111,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   })
 
   // AccountDelete
+
 
   it('Convert AccountDelete protobuf with all fields to XrpAccountDelete object', function (): void {
     // GIVEN an AccountDelete protocol buffer with all fields set.
@@ -225,7 +230,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   })
 
   // CheckCreate
-
+    
   it('Convert CheckCreate protobuf to XrpCheckCreate object - all fields', function (): void {
     // GIVEN a CheckCreate protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
@@ -670,5 +675,96 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the result is undefined.
     assert.isUndefined(paymentChannelClaim)
+  })
+
+  // PaymentChannelCreate
+
+  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - all fields', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer with all fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const paymentChannelCreate = XrpPaymentChannelCreate.from(
+      testPaymentChannelCreateProtoAllFields,
+      XrplNetwork.Test,
+    )
+
+    // THEN the PaymentChannelCreate converted as expected.
+    const expectedXAddress = Utils.encodeXAddress(
+      testPaymentChannelCreateProtoAllFields
+        .getDestination()!
+        .getValue()!
+        .getAddress()!,
+      testPaymentChannelCreateProtoAllFields.getDestinationTag()?.getValue(),
+      true,
+    )
+    assert.deepEqual(
+      paymentChannelCreate?.amount,
+      XrpCurrencyAmount.from(
+        testPaymentChannelCreateProtoAllFields.getAmount()!.getValue()!,
+      ),
+    )
+    assert.equal(paymentChannelCreate?.destinationXAddress, expectedXAddress)
+    assert.equal(
+      paymentChannelCreate?.settleDelay,
+      testPaymentChannelCreateProtoAllFields.getSettleDelay()?.getValue(),
+    )
+    assert.equal(
+      paymentChannelCreate?.publicKey,
+      testPaymentChannelCreateProtoAllFields.getPublicKey()?.getValue_asB64(),
+    )
+    assert.equal(
+      paymentChannelCreate?.cancelAfter,
+      testPaymentChannelCreateProtoAllFields.getCancelAfter()?.getValue(),
+    )
+  })
+
+  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - mandatory fields', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer with only mandatory fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const paymentChannelCreate = XrpPaymentChannelCreate.from(
+      testPaymentChannelCreateProtoMandatoryOnly,
+      XrplNetwork.Test,
+    )
+
+    // THEN the PaymentChannelCreate converted as expected.
+    const expectedXAddress = Utils.encodeXAddress(
+      testPaymentChannelCreateProtoMandatoryOnly
+        .getDestination()!
+        .getValue()!
+        .getAddress()!,
+      testPaymentChannelCreateProtoMandatoryOnly
+        .getDestinationTag()
+        ?.getValue(),
+      true,
+    )
+    assert.deepEqual(
+      paymentChannelCreate?.amount,
+      XrpCurrencyAmount.from(
+        testPaymentChannelCreateProtoMandatoryOnly.getAmount()!.getValue()!,
+      ),
+    )
+    assert.equal(paymentChannelCreate?.destinationXAddress, expectedXAddress)
+    assert.equal(
+      paymentChannelCreate?.settleDelay,
+      testPaymentChannelCreateProtoMandatoryOnly.getSettleDelay()?.getValue(),
+    )
+    assert.equal(
+      paymentChannelCreate?.publicKey,
+      testPaymentChannelCreateProtoMandatoryOnly
+        .getPublicKey()
+        ?.getValue_asB64(),
+    )
+    assert.isUndefined(paymentChannelCreate?.cancelAfter)
+  })
+
+  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - missing required field', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer missing a required field.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const paymentChannelCreate = XrpPaymentChannelCreate.from(
+      testInvalidPaymentChannelCreateProto,
+      XrplNetwork.Test,
+    )
+
+    // THEN the result is undefined.
+    assert.isUndefined(paymentChannelCreate)
   })
 })
