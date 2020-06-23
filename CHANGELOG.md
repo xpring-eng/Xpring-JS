@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+## Removed
+- `PayIDClient` was deprecated for two releases and has been removed. Use `PayIdClient` instead.
+- `PayIDError` was deprecated for two releases and has been removed. Use `PayIdError` instead.
+- `PayIDErrorType` was deprecated for two releases and has been removed. Use `PayIdErrorType` instead.
+- `XRPPayIDClientInterface` was deprecated for two releases and has been removed. Use `XrpPayIdClient` instead.
+- `XRPPayIDClient` was deprecated for two releases and has been removed.  Use `XrpPayIdClient` instead.git
+
 ## 4.3.2 - 2020-06-17
 
 ## Added
@@ -49,8 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PayIDClient` is deprecated. Use `PayIdClient` instead.
 - `PayIDError` is deprecated. Use `PayIdError` instead.
 - `PayIDErrorType` is deprecated. Use `PayIdErrorType` instead.
-- `XRPayIDClientInterface` replaces the now deprecated `XrpPayIdClientInterface`.
-- `XRPPayIDClient` replaces the now deprecated `XrpPayIdClient`.
+- `XRPPayIDClientInterface` is deprecated. Use `XrpPayIdClientInterface` instead.
+- `XRPPayIDClient` is deprecated. Use `XrpPayIdClient` instead.
 - `memos` on `SendXrpDetails` is deprecated. Use `memoList` instead.
 - `XRPAccountSet` is deprecated. Use `XrpAccountSet` instead.
 - `XRPCurrencyAmount` is deprecated. Use `XrpCurrencyAmount` instead.
