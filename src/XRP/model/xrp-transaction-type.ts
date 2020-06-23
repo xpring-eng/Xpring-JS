@@ -34,6 +34,7 @@ enum XrpTransactionType {
   PaymentChannelClaim,
   PaymentChannelCreate,
   PaymentChannelFund,
+  SetRegularKey,
 }
 
 export default XrpTransactionType
