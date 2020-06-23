@@ -136,7 +136,7 @@ export default class PayIdClient {
   }
 
   /**
-   * Retrieve the all addresses associated with a PayId.
+   * Retrieve all addresses associated with a PayId.
    *
    * @param payId The PayID to resolve.
    */
