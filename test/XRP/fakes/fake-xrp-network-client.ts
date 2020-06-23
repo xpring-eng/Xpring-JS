@@ -35,7 +35,7 @@ import {
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import Result from '../../Common/Helpers/result'
 import { testGetAccountTransactionHistoryResponse } from './fake-xrp-protobufs'
-import XRPError, { XRPErrorType } from '../../../src/XRP/xrp-error'
+import { XRPError, XRPErrorType } from '../../../src/XRP/xrp-error'
 
 /**
  * A list of responses the fake network client will give.

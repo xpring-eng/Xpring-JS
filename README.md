@@ -342,9 +342,28 @@ console.log(decodedClassicAddress.tag) // 12345
 
 ## Usage: PayID
 
-### Resolving All Addresses
+Two classes are used to work with PayID: `PayIdClient` and `XrpPayIdClient`.
 
-Clients can resolve all addresses for a PayID.
+### PayIdClient
+
+`PayIdClient` can resolve addresses on arbitrary cryptocurrency networks.
+
+#### Single Address Resolution
+
+```javascript
+// Resolve on Bitcoin Mainnet.
+const network = 'btc-mainnet'
+const payId = 'georgewashington$xpring.money'
+
+const payIdClient = new PayIdClient()
+
+const resolvedAddressComponents = await payIdClient.addressForPayId(payId, network)
+console.log(resolvedAddressComponents.address)
+```
+
+#### All Addresses
+
+`PayIdClient` can retrieve all available addresses.
 
 ```javascript
 import { PayIdClient } from 'xpring-js'
@@ -353,6 +372,20 @@ const payId = 'georgewashington$xpring.money'
 
 const payIdClient = new PayIdClient()
 const allAddress = await payIdClient.allAddressesForPayId(payId)
+```
+
+### XrpPayIdClient
+
+`XrpPayIdClient` can resolve addresses on the XRP Ledger network. The class always coerces returned addresses into an X-Address. (See https://xrpaddress.info/)
+
+```javascript
+import { XrplNetwork, XrpPayIdClient } from 'xpring-js'
+
+// Use XrplNetwork.Main for Mainnet.
+const xrpPayIdClient = new XrpPayIdClient(XrplNetwork.Test)
+
+const payId = 'georgewashington$xpring.money'
+const resolvedXAddress = await xrpPayIdClient.xrpAddressForPayId()
 ```
 
 ## Usage: ILP
@@ -408,6 +441,35 @@ const paymentRequest = new PaymentRequest({
   })
 
 PaymentResponse payment = ilpClient.sendPayment(paymentRequest, "2S1PZh3fEKnKg");
+```
+
+## Usage: Xpring
+
+Xpring components compose PayID and XRP components to make complex interactions easy.
+
+```javascript
+import { XpringClient, XrpClient, XrpPayIdClient, XrplNetwork } from 'xpring-js'
+
+const network = XrplNetwork.Test
+
+// Build an XrpClient
+const rippledUrl = 'test.xrp.xpring.io:50051'
+const xrpClient = new XrpClient(rippledUrl, network)
+
+// Build a PayIdClient
+const payIdClient = new XRPPayIDClient(network)
+
+// XpringClient combines functionality from XRP and PayID
+const xpringClient = new XpringClient(payIdClient, xrpClient)
+
+// A wallet with some balance on TestNet.
+const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
+
+// A PayID which will receive the payment.
+const payId = 'alice$dev.payid.xpring.money'
+
+// Send XRP to the given PayID.
+const transactionHash = await xpringClient.send(amount, payId, wallet)
 ```
 
 # Contributing

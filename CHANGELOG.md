@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 4.3.2 - 2020-06-17
+
+## Added
+
+- `SendXrpDetails` is exported for external use.
+
 ## 4.3.1 - 2020-06-16
 
 ### Added
@@ -34,6 +40,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `XrpTransaction` replaces the now deprecated `XRPTransaction`.
 - A new method, `cryptoAddressForPayId`, replaces the now deprecated `addressForPayId` method in `PayIdClient`.
 - A new method, `allAddressesForPayId`, is added to `PayIdClient`.
+- `XrpUtils` replaces the now deprecated `XRPUtils`.
+- `XrpClient` replaces the now deprecated `XRPClient`.
+- `XrpError` replaces the now deprecated `XRPError`.
+- `XrpErrorType` replaces the now deprecated `XRPErrorType`.
 
 ### Deprecated
 
@@ -61,6 +71,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Please use the X-address encoded field `destinationXAddress` instead.
 - The `network` parameter passed to the constructor of `PayIdClient` is deprecated. Clients should favor calling the new `cryptoAddressForPayId` method which allows them to specify the network at request time.
 - The `addressForPayId` on `PayIdClient` is deprecated. Use `cryptoAddressForPayId` instead.
+- `XRPUtils` is deprecated. Use `XrpUtils` instead.
+- `XRPClient` is deprecated. Use `XrpClient` instead.
+- `XRPError` is deprecated. Use `XrpError` instead.
+- `XRPErrorType` is deprecated. Use `XrpErrorType` instead.
 
 ## 4.3.0 - 2020-06-01
 
