@@ -119,6 +119,7 @@ const testRegularKey = 'rAR8rR8sUkBoCZFawhkWzY4Y5YoyuznwD'
 // SignerListSet values
 const testSignerQuorum = 3
 const testSignerWeight = 1
+
 // Protobuf objects ======================================================================
 
 // AccountSet protos

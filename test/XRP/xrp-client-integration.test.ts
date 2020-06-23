@@ -4,7 +4,7 @@ import { Wallet } from 'xpring-common-js'
 
 import { XRPLNetwork } from '../../src/Common/xrpl-network'
 import TransactionStatus from '../../src/XRP/transaction-status'
-import XRPClient from '../../src/XRP/xrp-client'
+import { XRPClient } from '../../src/XRP/xrp-client'
 
 import {
   expectedNoDataMemo,
