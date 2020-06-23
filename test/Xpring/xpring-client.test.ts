@@ -7,7 +7,7 @@ import { testXRPTransaction } from '../XRP/fakes/fake-xrp-protobufs'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import XpringClient from '../../src/Xpring/xpring-client'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
-import XrplNetwork, { XRPLNetwork } from '../../src/Common/xrpl-network'
+import XrplNetwork from '../../src/Common/xrpl-network'
 import XpringError from '../../src/Xpring/xpring-error'
 
 /* Default values for the fake XRP Client. These values must be provided but are not varied in testing. */
@@ -158,7 +158,7 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const payIDClient = new FakeXrpPayIdClient(payIDError, XrplNetwork.Main)
 

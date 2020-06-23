@@ -5,7 +5,7 @@ import { Wallet } from '../../../src/index'
 import RawTransactionStatus from '../../../src/XRP/raw-transaction-status'
 import { XRPTransaction } from '../../../src/XRP/model/xrp-transaction'
 import Result from '../../Common/Helpers/result'
-import { XRPLNetwork } from '../../../src/Common/xrpl-network'
+import XrplNetwork from '../../../src/Common/xrpl-network'
 import SendXrpDetails from '../../../src/XRP/model/send-xrp-details'
 
 class FakeXRPClient implements XRPClientDecorator {
@@ -18,7 +18,7 @@ class FakeXRPClient implements XRPClientDecorator {
     public accountExistsValue: Result<boolean>,
     public paymentHistoryValue: Result<Array<XRPTransaction>>,
     public getPaymentValue: Result<XRPTransaction>,
-    public readonly network: XRPLNetwork = XRPLNetwork.Test,
+    public readonly network: XrplNetwork = XrplNetwork.Test,
   ) {}
 
   async getBalance(_address: string): Promise<BigInteger> {

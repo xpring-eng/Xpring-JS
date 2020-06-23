@@ -6,7 +6,7 @@ import { ReliableSubmissionXRPClient } from '../../src/XRP/reliable-submission-x
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { testXRPTransaction } from './fakes/fake-xrp-protobufs'
-import { XRPLNetwork } from '../../src/Common/xrpl-network'
+import XrplNetwork from '../../src/Common/xrpl-network'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -47,7 +47,7 @@ describe('Reliable Submission XRP Client', function (): void {
     )
     this.reliableSubmissionClient = new ReliableSubmissionXRPClient(
       this.fakeXRPClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
   })
 

@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 
-import XrplNetwork, { XRPLNetwork } from '../../src/Common/xrpl-network'
+import XrplNetwork from '../../src/Common/xrpl-network'
 import XrpPayIdClient from '../../src/PayID/xrp-pay-id-client'
 import XpringClient from '../../src/Xpring/xpring-client'
 import { XRPClient } from '../../src/XRP/xrp-client'
@@ -30,7 +30,7 @@ const payIdClient = new XrpPayIdClient(network)
 
 // An XRPClient under test.
 const rippledURL = 'test.xrp.xpring.io:50051'
-const xrpClient = new XRPClient(rippledURL, XRPLNetwork.Test)
+const xrpClient = new XRPClient(rippledURL, XrplNetwork.Test)
 
 // A XpringClient under test.
 const xpringClient = new XpringClient(payIdClient, xrpClient)

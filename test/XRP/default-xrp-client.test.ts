@@ -29,7 +29,7 @@ import {
 } from './fakes/fake-xrp-protobufs'
 import { XRPTransaction } from '../../src/XRP/model/xrp-transaction'
 import { XRPError, XRPErrorType } from '../../src/XRP/xrp-error'
-import { XRPLNetwork } from '../../src/Common/xrpl-network'
+import XrplNetwork from '../../src/Common/xrpl-network'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -82,7 +82,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN a DefaultXRPClient.
     const xrpClient = new DefaultXRPClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN the balance for an account is requested.
@@ -96,7 +96,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN an XRPClient and a classic address
     const xrpClient = new DefaultXRPClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
 
@@ -111,7 +111,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN an XRPClient which wraps an erroring network client.
     const xrpClient = new DefaultXRPClient(
       fakeErroringNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN a balance is requested THEN an error is propagated.
@@ -132,7 +132,7 @@ describe('Default XRP Client', function (): void {
     const fakeNetworkClient = new FakeXRPNetworkClient(
       fakeNetworkClientResponses,
     )
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN a balance is requested THEN an error is propagated.
     xrpClient.getBalance(testAddress).catch((error) => {
@@ -167,7 +167,7 @@ describe('Default XRP Client', function (): void {
       )
       const xrpClient = new DefaultXRPClient(
         fakeNetworkClient,
-        XRPLNetwork.Test,
+        XrplNetwork.Test,
       )
 
       // WHEN the transaction status is retrieved.
@@ -198,7 +198,7 @@ describe('Default XRP Client', function (): void {
     const fakeNetworkClient = new FakeXRPNetworkClient(
       transactionStatusResponses,
     )
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN the transaction status is retrieved.
     const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
@@ -230,7 +230,7 @@ describe('Default XRP Client', function (): void {
       )
       const xrpClient = new DefaultXRPClient(
         fakeNetworkClient,
-        XRPLNetwork.Test,
+        XrplNetwork.Test,
       )
 
       // WHEN the transaction status is retrieved.
@@ -261,7 +261,7 @@ describe('Default XRP Client', function (): void {
     const fakeNetworkClient = new FakeXRPNetworkClient(
       transactionStatusResponses,
     )
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN the transaction status is retrieved.
     const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
@@ -281,7 +281,7 @@ describe('Default XRP Client', function (): void {
     const fakeNetworkClient = new FakeXRPNetworkClient(
       transactionStatusResponses,
     )
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN the transaction status is retrieved THEN an error is thrown.
     xrpClient.getPaymentStatus(transactionHash).catch((error) => {
@@ -294,7 +294,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN an XRPClient, a wallet, and a BigInteger denominated amount and a memo.
     const xrpClient = new DefaultXRPClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -322,7 +322,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN an XRPClient, a wallet, and a BigInteger denomonated amount.
     const xrpClient = new DefaultXRPClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -348,7 +348,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN an XRPClient, a wallet, and a number denominated amount.
     const xrpClient = new DefaultXRPClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -374,7 +374,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN an XRPClient, a wallet, and a numeric string denominated amount.
     const xrpClient = new DefaultXRPClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -400,7 +400,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN an XRPClient, a wallet and an amount that is invalid.
     const xrpClient = new DefaultXRPClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -425,7 +425,7 @@ describe('Default XRP Client', function (): void {
     )
     const xrpClient = new DefaultXRPClient(
       feeFailingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -446,7 +446,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN an XRPClient, a wallet, and a classic address as the destination.
     const xrpClient = new DefaultXRPClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
@@ -471,7 +471,7 @@ describe('Default XRP Client', function (): void {
     )
     const xrpClient = new DefaultXRPClient(
       feeFailingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -496,7 +496,7 @@ describe('Default XRP Client', function (): void {
     )
     const xrpClient = new DefaultXRPClient(
       feeFailingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -513,7 +513,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN a DefaultXRPClient.
     const xrpClient = new DefaultXRPClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN the account does exist
@@ -537,7 +537,7 @@ describe('Default XRP Client', function (): void {
     )
     const xrpClient = new DefaultXRPClient(
       fakeErroringNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN Account existence is checked
@@ -561,7 +561,7 @@ describe('Default XRP Client', function (): void {
     )
     const xrpClient = new DefaultXRPClient(
       fakeErroringNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN Account existence is checked
@@ -577,7 +577,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN a DefaultXRPClient and a classic address
     const xrpClient = new DefaultXRPClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
 
@@ -592,7 +592,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN a DefaultXRPClient.
     const xrpClient = new DefaultXRPClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN the payment history for an address is requested.
@@ -609,7 +609,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN an XRPClient and a classic address
     const xrpClient = new DefaultXRPClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
 
@@ -624,7 +624,7 @@ describe('Default XRP Client', function (): void {
     // GIVEN an XRPClient which wraps an erroring network client.
     const xrpClient = new DefaultXRPClient(
       fakeErroringNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN the payment history is requested THEN an error is propagated.
@@ -662,7 +662,7 @@ describe('Default XRP Client', function (): void {
 
     const xrpClient = new DefaultXRPClient(
       heteroHistoryNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN the transactionHistory is requested.
@@ -690,7 +690,7 @@ describe('Default XRP Client', function (): void {
     )
     const xrpClient = new DefaultXRPClient(
       invalidHistoryNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN the transactionHistory is requested THEN a conversion error is thrown.
@@ -712,7 +712,7 @@ describe('Default XRP Client', function (): void {
       testGetTransactionResponseProto,
     )
     const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN a transaction is requested.
     const transaction = await xrpClient.getPayment(transactionHash)
@@ -737,7 +737,7 @@ describe('Default XRP Client', function (): void {
       notFoundError,
     )
     const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN a transaction is requested, THEN the error is re-thrown.
     xrpClient.getPayment(transactionHash).catch((error) => {
@@ -758,7 +758,7 @@ describe('Default XRP Client', function (): void {
       testInvalidGetTransactionResponseProto,
     )
     const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN a transaction is requested.
     const transaction = await xrpClient.getPayment(transactionHash)
@@ -778,7 +778,7 @@ describe('Default XRP Client', function (): void {
       testInvalidGetTransactionResponseProtoUnsupportedType,
     )
     const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN a transaction is requested.
     const transaction = await xrpClient.getPayment(transactionHash)
