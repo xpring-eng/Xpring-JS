@@ -104,6 +104,7 @@ const testPaymentChannelPublicKey =
 const testSettleDelay = 86400
 const testPublicKey =
   '32D2471DB72B27E3310F355BB33E339BF26F8392D5A93D3BC0FC3B566612DA0F0A'
+
 // Protobuf objects ======================================================================
 
 // AccountSet protos
@@ -368,6 +369,7 @@ const testInvalidPaymentChannelClaimProto = new PaymentChannelClaim()
 // Invalid PaymentChannelCreate proto (missing destination)
 const testInvalidPaymentChannelCreateProto = new PaymentChannelCreate()
 testInvalidPaymentChannelCreateProto.setAmount(testAmountProto)
+
 
 export {
   testAccountSetProtoAllFields,
