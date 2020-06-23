@@ -1,8 +1,8 @@
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 
-import { XRPLNetwork } from '../../src/Common/xrpl-network'
-import { XRPPayIDClient } from '../../src/PayID/xrp-pay-id-client'
+import XrplNetwork, { XRPLNetwork } from '../../src/Common/xrpl-network'
+import XrpPayIdClient from '../../src/PayID/xrp-pay-id-client'
 import XpringClient from '../../src/Xpring/xpring-client'
 import { XRPClient } from '../../src/XRP/xrp-client'
 import {
@@ -20,13 +20,13 @@ import {
 const timeoutMs = 60 * 1000
 
 // The network to conduct tests on.
-const network = XRPLNetwork.Test
+const network = XrplNetwork.Test
 
 // A wallet with some balance on TestNet.
 const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 
 // A PayIdClient under test.
-const payIdClient = new XRPPayIDClient(network)
+const payIdClient = new XrpPayIdClient(network)
 
 // An XRPClient under test.
 const rippledURL = 'test.xrp.xpring.io:50051'
