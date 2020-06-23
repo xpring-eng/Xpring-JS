@@ -6,7 +6,7 @@ import { Utils, Wallet } from 'xpring-common-js'
 import { StatusCode as grpcStatusCode } from 'grpc-web'
 import FakeGRPCError from './fakes/fake-grpc-error'
 import XRPTestUtils, { iForgotToPickUpCarlMemo } from './helpers/xrp-test-utils'
-import DefaultXRPClient from '../../src/XRP/default-xrp-client'
+import { DefaultXRPClient } from '../../src/XRP/default-xrp-client'
 import {
   FakeXRPNetworkClient,
   FakeXRPNetworkClientResponses,
@@ -28,7 +28,7 @@ import {
   testInvalidGetAccountTransactionHistoryResponse,
 } from './fakes/fake-xrp-protobufs'
 import { XRPTransaction } from '../../src/XRP/model/xrp-transaction'
-import XRPError, { XRPErrorType } from '../../src/XRP/xrp-error'
+import { XRPError, XRPErrorType } from '../../src/XRP/xrp-error'
 import { XRPLNetwork } from '../../src/Common/xrpl-network'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'

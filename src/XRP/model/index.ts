@@ -18,3 +18,4 @@ export {
 } from './xrp-transaction-type'
 export { default as XrpTransaction, XRPTransaction } from './xrp-transaction'
 export { default as XrpAccountSet, XRPAccountSet } from './xrp-account-set'
+export { default as SendXrpDetails } from './send-xrp-details'
