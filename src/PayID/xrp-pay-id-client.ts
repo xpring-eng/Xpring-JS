@@ -1,12 +1,10 @@
 /* eslint-disable max-classes-per-file */
 
 import { Utils } from 'xpring-common-js'
-import PayIdClient, { PayIDClient } from './pay-id-client'
-import XrplNetwork, { XRPLNetwork } from '../Common/xrpl-network'
+import PayIdClient from './pay-id-client'
+import XrplNetwork from '../Common/xrpl-network'
 import PayIdError, { PayIdErrorType } from './pay-id-error'
-import XrpPayIdClientInterface, {
-  XRPPayIDClientInterface,
-} from './xrp-pay-id-client-interface'
+import XrpPayIdClientInterface from './xrp-pay-id-client-interface'
 
 /**
  * Provides functionality for XRP in the PayID protocol.
@@ -58,55 +56,5 @@ export default class XrpPayIdClient extends PayIdClient
       )
     }
     return encodedXAddress
-  }
-}
-
-/**
- * Provides functionality for XRP in the PayID protocol.
- *
- * @deprecated Use XrpPayIdClient instead.
- */
-export class XRPPayIDClient extends PayIDClient
-  implements XRPPayIDClientInterface {
-  private readonly wrappedXrpPayIdClient: XrpPayIdClient
-
-  /**
-   * @param xrplNetwork The XRP Ledger network that this client attaches to.
-   */
-  constructor(public readonly xrplNetwork: XRPLNetwork) {
-    super(`xrpl-${xrplNetwork}`)
-
-    switch (xrplNetwork) {
-      case XRPLNetwork.Main: {
-        this.wrappedXrpPayIdClient = new XrpPayIdClient(XrplNetwork.Main)
-        break
-      }
-
-      case XRPLNetwork.Test: {
-        this.wrappedXrpPayIdClient = new XrpPayIdClient(XrplNetwork.Dev)
-        break
-      }
-
-      case XRPLNetwork.Dev: {
-        this.wrappedXrpPayIdClient = new XrpPayIdClient(XrplNetwork.Dev)
-        break
-      }
-
-      default:
-        throw new PayIdError(PayIdErrorType.Unknown, 'Unknown XrplNetwork')
-    }
-  }
-
-  /**
-   * Retrieve the XRP address associated with a PayID.
-   *
-   * Note: Addresses are always in the X-Address format.
-   * @see https://xrpaddress.info/
-   *
-   * @param payID The PayID to resolve for an address.
-   * @returns An XRP address representing the given PayID.
-   */
-  async xrpAddressForPayID(payID: string): Promise<string> {
-    return this.wrappedXrpPayIdClient.xrpAddressForPayId(payID)
   }
 }
