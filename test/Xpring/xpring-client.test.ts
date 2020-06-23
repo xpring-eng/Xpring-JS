@@ -37,7 +37,7 @@ const amount = 10
 const wallet = new FakeWallet('0123456789abcdef')
 
 // A PayID to resolve
-const payID = '$xpring.money/georgewashington'
+const payID = 'georgewashington$xpring.money'
 
 // Errors to throw
 const payIDError = new Error('Error from PayID')
