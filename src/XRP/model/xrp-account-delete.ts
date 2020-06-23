@@ -1,6 +1,6 @@
 import { Utils } from 'xpring-common-js'
 import { AccountDelete } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import XRPLNetwork from '../../Common/xrpl-network'
+import XrplNetwork from '../../Common/xrpl-network'
 
 /*
  * Represents an AccountDelete transaction on the XRP Ledger.
@@ -21,7 +21,7 @@ export default class XrpAccountDelete {
    */
   public static from(
     accountDelete: AccountDelete,
-    xrplNetwork: XRPLNetwork,
+    xrplNetwork: XrplNetwork,
   ): XrpAccountDelete | undefined {
     const destination = accountDelete.getDestination()?.getValue()?.getAddress()
     if (!destination) {
@@ -32,7 +32,7 @@ export default class XrpAccountDelete {
     const destinationXAddress = Utils.encodeXAddress(
       destination,
       destinationTag,
-      xrplNetwork == XRPLNetwork.Test,
+      xrplNetwork == XrplNetwork.Test,
     )
     if (!destinationXAddress) {
       return undefined
