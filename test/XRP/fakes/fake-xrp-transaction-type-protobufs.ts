@@ -12,6 +12,7 @@ import {
   OfferCreate,
   PaymentChannelClaim,
   PaymentChannelCreate,
+  PaymentChannelFund,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 /* eslint-disable @typescript-eslint/no-magic-numbers --
  * ESLint flags the numbers in the Uint8Array as magic numbers,
@@ -331,6 +332,17 @@ testPaymentChannelCreateProtoMandatoryOnly.setDestination(testDestinationProto)
 testPaymentChannelCreateProtoMandatoryOnly.setSettleDelay(testSettleDelayProto)
 testPaymentChannelCreateProtoMandatoryOnly.setPublicKey(testPublicKeyProto)
 
+// PaymentChannelFund protos
+
+const testPaymentChannelFundProtoAllFields = new PaymentChannelFund()
+testPaymentChannelFundProtoAllFields.setChannel(testChannelProto)
+testPaymentChannelFundProtoAllFields.setAmount(testAmountProto)
+testPaymentChannelFundProtoAllFields.setExpiration(testExpirationProto)
+
+const testPaymentChannelFundProtoMandatoryOnly = new PaymentChannelFund()
+testPaymentChannelFundProtoMandatoryOnly.setChannel(testChannelProto)
+testPaymentChannelFundProtoMandatoryOnly.setAmount(testAmountProto)
+
 // Invalid Protobuf Objects ========================================================================
 
 // Invalid CheckCancel proto (missing checkId)
@@ -370,6 +382,9 @@ const testInvalidPaymentChannelClaimProto = new PaymentChannelClaim()
 const testInvalidPaymentChannelCreateProto = new PaymentChannelCreate()
 testInvalidPaymentChannelCreateProto.setAmount(testAmountProto)
 
+// Invalid PaymentChannelFund proto (missing amount)
+const testInvalidPaymentChannelFundProto = new PaymentChannelFund()
+testInvalidPaymentChannelFundProto.setChannel(testChannelProto)
 
 export {
   testAccountSetProtoAllFields,
@@ -395,6 +410,8 @@ export {
   testPaymentChannelClaimProtoMandatoryOnly,
   testPaymentChannelCreateProtoAllFields,
   testPaymentChannelCreateProtoMandatoryOnly,
+  testPaymentChannelFundProtoAllFields,
+  testPaymentChannelFundProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -405,4 +422,5 @@ export {
   testInvalidOfferCreateProto,
   testInvalidPaymentChannelClaimProto,
   testInvalidPaymentChannelCreateProto,
+  testInvalidPaymentChannelFundProto,
 }

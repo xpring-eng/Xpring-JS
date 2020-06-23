@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
+import XrpPaymentChannelFund from '../../src/XRP/model/xrp-payment-channel-fund'
 import XrpPaymentChannelCreate from '../../src/XRP/model/xrp-payment-channel-create'
 import XrpPaymentChannelClaim from '../../src/XRP/model/xrp-payment-channel-claim'
 import XrpOfferCreate from '../../src/XRP/model/xrp-offer-create'
@@ -37,6 +38,8 @@ import {
   testOfferCreateProtoMandatoryOnly,
   testPaymentChannelCreateProtoAllFields,
   testPaymentChannelCreateProtoMandatoryOnly,
+  testPaymentChannelFundProtoAllFields,
+  testPaymentChannelFundProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -49,6 +52,7 @@ import {
   testPaymentChannelClaimProtoMandatoryOnly,
   testInvalidPaymentChannelClaimProto,
   testInvalidPaymentChannelCreateProto,
+  testInvalidPaymentChannelFundProto,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import XrplNetwork from '../../src/Common/xrpl-network'
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -111,7 +115,6 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   })
 
   // AccountDelete
-
 
   it('Convert AccountDelete protobuf with all fields to XrpAccountDelete object', function (): void {
     // GIVEN an AccountDelete protocol buffer with all fields set.
@@ -230,7 +233,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   })
 
   // CheckCreate
-    
+
   it('Convert CheckCreate protobuf to XrpCheckCreate object - all fields', function (): void {
     // GIVEN a CheckCreate protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
@@ -766,5 +769,63 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
     // THEN the result is undefined.
     assert.isUndefined(paymentChannelCreate)
+  })
+
+  // PaymentChannelFund
+
+  it('Convert PaymentChannelFund protobuf to XrpPaymentChannelFund object - all fields', function (): void {
+    // GIVEN a PaymentChannelFund protocol buffer with all fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const paymentChannelFund = XrpPaymentChannelFund.from(
+      testPaymentChannelFundProtoAllFields,
+    )
+
+    // THEN the PaymentChannelFund converted as expected.
+    assert.equal(
+      paymentChannelFund?.channel,
+      testPaymentChannelFundProtoAllFields.getChannel()?.getValue(),
+    )
+    assert.deepEqual(
+      paymentChannelFund?.amount,
+      XrpCurrencyAmount.from(
+        testPaymentChannelFundProtoAllFields.getAmount()!.getValue()!,
+      ),
+    )
+    assert.equal(
+      paymentChannelFund?.expiration,
+      testPaymentChannelFundProtoAllFields.getExpiration()?.getValue(),
+    )
+  })
+
+  it('Convert PaymentChannelFund protobuf to XrpPaymentChannelFund object - mandatory fields', function (): void {
+    // GIVEN a PaymentChannelFund protocol buffer with only mandatory fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const paymentChannelFund = XrpPaymentChannelFund.from(
+      testPaymentChannelFundProtoMandatoryOnly,
+    )
+
+    // THEN the PaymentChannelFund converted as expected.
+    assert.equal(
+      paymentChannelFund?.channel,
+      testPaymentChannelFundProtoMandatoryOnly.getChannel()?.getValue(),
+    )
+    assert.deepEqual(
+      paymentChannelFund?.amount,
+      XrpCurrencyAmount.from(
+        testPaymentChannelFundProtoMandatoryOnly.getAmount()!.getValue()!,
+      ),
+    )
+    assert.isUndefined(paymentChannelFund?.expiration)
+  })
+
+  it('Convert PaymentChannelFund protobuf to XrpPaymentChannelFund object - missing mandatory fields', function (): void {
+    // GIVEN a PaymentChannelFund protocol buffer missing a mandatory field.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const paymentChannelFund = XrpPaymentChannelFund.from(
+      testInvalidPaymentChannelFundProto,
+    )
+
+    // THEN the result is undefined.
+    assert.isUndefined(paymentChannelFund)
   })
 })
