@@ -13,7 +13,7 @@ describe('PayIdClient', function (): void {
 
   it('xrpAddressForPayId - invalid Pay ID', function (done): void {
     // GIVEN a PayIDClient and an invalid PayID.
-    const invalidPayID = 'xpring.money/georgewashington' // Does not start with '$'
+    const invalidPayID = 'xpring.money/georgewashington' // Does not contain '$'
     const payIDClient = new PayIdClient(XrplNetwork.Test)
 
     // WHEN an XRPAddress is requested for an invalid pay ID THEN an invalid Pay ID error is thrown.
@@ -170,7 +170,7 @@ describe('PayIdClient', function (): void {
 
   it('allAddressesForPayId - invalid Pay ID', function (done): void {
     // GIVEN an PayIdClient and an invalid PayID.
-    const invalidPayID = 'xpring.money/georgewashington' // Does not start with '$'
+    const invalidPayID = 'xpring.money/georgewashington' // Does not contain '$'
     const payIdClient = new PayIdClient()
 
     // WHEN all addresses are resolved THEN an invalid Pay ID error is thrown.
