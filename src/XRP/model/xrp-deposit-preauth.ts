@@ -1,6 +1,6 @@
 import { Utils } from 'xpring-common-js'
 import { DepositPreauth } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import XRPLNetwork from '../../Common/xrpl-network'
+import XrplNetwork from '../../Common/xrpl-network'
 /*
  * Represents a DepositPreauth transaction on the XRP Ledger.
 
@@ -19,7 +19,7 @@ export default class XrpDepositPreauth {
    */
   public static from(
     depositPreauth: DepositPreauth,
-    xrplNetwork: XRPLNetwork,
+    xrplNetwork: XrplNetwork,
   ): XrpDepositPreauth | undefined {
     const authorize = depositPreauth.getAuthorize()?.getValue()?.getAddress()
     const unauthorize = depositPreauth
@@ -33,13 +33,13 @@ export default class XrpDepositPreauth {
       authorizeXAddress = Utils.encodeXAddress(
         authorize,
         undefined,
-        xrplNetwork == XRPLNetwork.Test || xrplNetwork == XRPLNetwork.Dev,
+        xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
       )
     } else if (unauthorize) {
       unauthorizeXAddress = Utils.encodeXAddress(
         unauthorize,
         undefined,
-        xrplNetwork == XRPLNetwork.Test || xrplNetwork == XRPLNetwork.Dev,
+        xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
       )
     }
     return new XrpDepositPreauth(authorizeXAddress, unauthorizeXAddress)
