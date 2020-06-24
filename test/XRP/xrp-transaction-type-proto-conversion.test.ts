@@ -1,6 +1,9 @@
 import { assert } from 'chai'
 
 import { Utils } from 'xpring-common-js'
+import XrpTrustSet from '../../src/XRP/model/xrp-trust-set'
+import XRPSignerEntry from '../../src/XRP/model/xrp-signer-entry'
+import XrpSignerListSet from '../../src/XRP/model/xrp-signer-list-set'
 import XrpSetRegularKey from '../../src/XRP/model/xrp-set-regular-key'
 import XrpPaymentChannelFund from '../../src/XRP/model/xrp-payment-channel-fund'
 import XrpPaymentChannelCreate from '../../src/XRP/model/xrp-payment-channel-create'
@@ -43,6 +46,9 @@ import {
   testPaymentChannelFundProtoMandatoryOnly,
   testSetRegularKeyProtoWithKey,
   testSetRegularKeyProtoNoKey,
+  testSignerListSetProto,
+  testTrustSetProtoAllFields,
+  testTrustSetProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -56,6 +62,10 @@ import {
   testInvalidPaymentChannelClaimProto,
   testInvalidPaymentChannelCreateProto,
   testInvalidPaymentChannelFundProto,
+  testInvalidSignerListSetProto,
+  testInvalidTrustSetProto,
+  testSignerEntry1,
+  testSignerEntry2,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 import XrplNetwork from '../../src/Common/xrpl-network'
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -351,7 +361,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   })
 
   // Escrow Cancel
-
+    
   it('Convert EscrowCancel protobuf to XrpEscrowCancel object - valid fields', function (): void {
     // GIVEN an EscrowCancel protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
@@ -851,7 +861,85 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type.
     const setRegularKey = XrpSetRegularKey.from(testSetRegularKeyProtoNoKey)
 
-    // THEN the SetRegularKey converted as expected.
+    // THEN the result is undefined.
     assert.isUndefined(setRegularKey?.regularKey)
+  })
+
+  // SignerListSet
+
+  it('Convert SignerListSet protobuf to XrpSignerListSet object - all fields set', function (): void {
+    // GIVEN a SetRegularKey protocol buffer with all fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const signerListSet = XrpSignerListSet.from(testSignerListSetProto)
+
+    // THEN the SignerListSet converted as expected.
+    const expectedSignerEntries: Array<XRPSignerEntry | undefined> = [
+      XRPSignerEntry.from(testSignerEntry1),
+      XRPSignerEntry.from(testSignerEntry2),
+    ]
+
+    assert.equal(
+      signerListSet?.signerQuorum,
+      testSignerListSetProto.getSignerQuorum()?.getValue(),
+    )
+    assert.deepEqual(signerListSet?.signerEntries, expectedSignerEntries)
+  })
+
+  it('Convert SignerListSet protobuf to XrpSignerListSet object - missing signerEntries', function (): void {
+    // GIVEN a SignerListSet protocol buffer without signerQuorum set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const signerListSet = XrpSignerListSet.from(testInvalidSignerListSetProto)
+
+    // THEN the result is undefined.
+    assert.isUndefined(signerListSet)
+  })
+
+  // TrustSet
+
+  it('Convert TrustSet protobuf to XrpTrustSet object - all fields set', function (): void {
+    // GIVEN a TrustSet protocol buffer with all fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const trustSet = XrpTrustSet.from(testTrustSetProtoAllFields)
+
+    // THEN the TrustSet converted as expected.
+    assert.deepEqual(
+      trustSet?.limitAmount,
+      XrpCurrencyAmount.from(
+        testTrustSetProtoAllFields.getLimitAmount()!.getValue()!,
+      ),
+    )
+    assert.equal(
+      trustSet?.qualityIn,
+      testTrustSetProtoAllFields.getQualityIn()?.getValue(),
+    )
+    assert.equal(
+      trustSet?.qualityOut,
+      testTrustSetProtoAllFields.getQualityOut()?.getValue(),
+    )
+  })
+
+  it('Convert TrustSet protobuf to XrpTrustSet object - mandatory fields set', function (): void {
+    // GIVEN a TrustSet protocol buffer with only mandatory fields set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const trustSet = XrpTrustSet.from(testTrustSetProtoMandatoryOnly)
+
+    // THEN the TrustSet converted as expected.
+    assert.deepEqual(
+      trustSet?.limitAmount,
+      XrpCurrencyAmount.from(
+        testTrustSetProtoMandatoryOnly.getLimitAmount()!.getValue()!,
+      ),
+    )
+    assert.isUndefined(trustSet?.qualityIn)
+    assert.isUndefined(trustSet?.qualityOut)
+  })
+
+  it('Convert TrustSet protobuf to XrpTrustSet object - missing mandatory field', function (): void {
+    // GIVEN a TrustSet protocol buffer missing mandatory limitAmount field.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const trustSet = XrpTrustSet.from(testInvalidTrustSetProto)
+
+    // THEN the result is undefined
+    assert.isUndefined(trustSet)
   })
 })
