@@ -93,7 +93,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Get Account Balance - classic address', function (done): void {
-    // GIVEN an XRPClient and a classic address
+    // GIVEN a DefaultXrpClient and a classic address
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
@@ -108,7 +108,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Get Account Balance - error', function (done): void {
-    // GIVEN an XRPClient which wraps an erroring network client.
+    // GIVEN a DefaultXrpClient which wraps an erroring network client.
     const xrpClient = new DefaultXrpClient(
       fakeErroringNetworkClient,
       XrplNetwork.Test,
@@ -123,7 +123,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Get Account Balance - malformed response, no balance', function (done): void {
-    // GIVEN an XRPClient which wraps a network client with a malformed response.
+    // GIVEN a DefaultXrpClient which wraps a network client with a malformed response.
     const accountInfoResponse = FakeXRPNetworkClientResponses.defaultAccountInfoResponse()
     accountInfoResponse.getAccountData()!.setBalance(undefined)
     const fakeNetworkClientResponses = new FakeXRPNetworkClientResponses(
@@ -150,7 +150,7 @@ describe('Default XRP Client', function (): void {
     // Iterate over different types of transaction status codes which represent failures.
     /* eslint-disable no-await-in-loop */
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
-      // GIVEN an XRPClient which will return an unvalidated transaction with a failure code.
+      // GIVEN a DefaultXrpClient which will return an unvalidated transaction with a failure code.
       const transactionStatusCodeFailure = transactionStatusFailureCodes[i]
       const transactionStatusResponse = makeGetTransactionResponse(
         false,
@@ -184,7 +184,7 @@ describe('Default XRP Client', function (): void {
   it('Get Payment Status - Unvalidated Transaction and Success Code', async function (): Promise<
     void
   > {
-    // GIVEN an XRPClient which will return an unvalidated transaction with a success code.
+    // GIVEN a DefaultXrpClient which will return an unvalidated transaction with a success code.
     const transactionStatusResponse = makeGetTransactionResponse(
       false,
       transactionStatusCodeSuccess,
@@ -213,7 +213,7 @@ describe('Default XRP Client', function (): void {
     // Iterate over different types of transaction status codes which represent failures.
     /* eslint-disable no-await-in-loop */
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
-      // GIVEN a XRPClient which will return an validated transaction with a failure code.
+      // GIVEN a DefaultXrpClient which will return an validated transaction with a failure code.
       const transactionStatusCodeFailure = transactionStatusFailureCodes[i]
       const transactionStatusResponse = makeGetTransactionResponse(
         true,
@@ -247,7 +247,7 @@ describe('Default XRP Client', function (): void {
   it('Get Payment Status - Validated Transaction and Success Code', async function (): Promise<
     void
   > {
-    // GIVEN an XRPClient which will return an validated transaction with a success code.
+    // GIVEN a DefaultXrpClient which will return an validated transaction with a success code.
     const transactionStatusResponse = makeGetTransactionResponse(
       true,
       transactionStatusCodeSuccess,
@@ -271,7 +271,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Get Transaction Status - Node Error', function (done): void {
-    // GIVEN an XRPClient which will error when a transaction status is requested.
+    // GIVEN a DefaultXrpClient which will error when a transaction status is requested.
     const transactionStatusResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
       FakeXRPNetworkClientResponses.defaultFeeResponse(),
@@ -291,7 +291,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - success with memo and BigInteger', async function () {
-    // GIVEN an XRPClient, a wallet, and a BigInteger denominated amount and a memo.
+    // GIVEN a DefaultXrpClient, a wallet, and a BigInteger denominated amount and a memo.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
@@ -319,7 +319,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - success with BigInteger', async function () {
-    // GIVEN an XRPClient, a wallet, and a BigInteger denomonated amount.
+    // GIVEN a DefaultXrpClient, a wallet, and a BigInteger denomonated amount.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
@@ -345,7 +345,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - success with number', async function () {
-    // GIVEN an XRPClient, a wallet, and a number denominated amount.
+    // GIVEN a DefaultXrpClient, a wallet, and a number denominated amount.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
@@ -371,7 +371,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - success with string', async function () {
-    // GIVEN an XRPClient, a wallet, and a numeric string denominated amount.
+    // GIVEN a DefaultXrpClient, a wallet, and a numeric string denominated amount.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
@@ -397,7 +397,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - failure with invalid string', function (done) {
-    // GIVEN an XRPClient, a wallet and an amount that is invalid.
+    // GIVEN a DefaultXrpClient, a wallet and an amount that is invalid.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
@@ -414,7 +414,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - get fee failure', function (done) {
-    // GIVEN an XRPClient which will fail to retrieve a fee.
+    // GIVEN a DefaultXrpClient which will fail to retrieve a fee.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
       FakeXRPNetworkClientResponses.defaultError,
@@ -443,7 +443,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - failure with classic address', function (done) {
-    // GIVEN an XRPClient, a wallet, and a classic address as the destination.
+    // GIVEN a DefaultXrpClient, a wallet, and a classic address as the destination.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
@@ -460,7 +460,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - get account info failure', function (done) {
-    // GIVEN an XRPClient which will fail to retrieve account info.
+    // GIVEN a DefaultXrpClient which will fail to retrieve account info.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultError,
       FakeXRPNetworkClientResponses.defaultFeeResponse(),
@@ -485,7 +485,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - submission failure', function (done) {
-    // GIVEN an XRPClient which will to submit a transaction.
+    // GIVEN a DefaultXrpClient which will to submit a transaction.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
       FakeXRPNetworkClientResponses.defaultFeeResponse(),
@@ -606,7 +606,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Payment History - classic address', function (done): void {
-    // GIVEN an XRPClient and a classic address
+    // GIVEN a DefaultXrpClient and a classic address
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
@@ -621,7 +621,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Payment History - network failure', function (done): void {
-    // GIVEN an XRPClient which wraps an erroring network client.
+    // GIVEN a DefaultXrpClient which wraps an erroring network client.
     const xrpClient = new DefaultXrpClient(
       fakeErroringNetworkClient,
       XrplNetwork.Test,
@@ -637,7 +637,7 @@ describe('Default XRP Client', function (): void {
   it('Payment History - non-payment transactions', async function (): Promise<
     void
   > {
-    // GIVEN an XRPClient client which will return a transaction history which contains non-payment transactions
+    // GIVEN a DefaultXrpClient client which will return a transaction history which contains non-payment transactions
 
     // Generate expected transactions from the default response, which only contains payments.
     const nonPaymentTransactionResponse = new GetTransactionResponse()
@@ -677,7 +677,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Payment History - invalid Payment', function (done) {
-    // GIVEN an XRPClient client which will return a transaction history which contains a malformed payment.
+    // GIVEN a DefaultXrpClient client which will return a transaction history which contains a malformed payment.
     const invalidHistoryNetworkResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
       FakeXRPNetworkClientResponses.defaultFeeResponse(),

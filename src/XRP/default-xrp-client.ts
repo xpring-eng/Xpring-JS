@@ -50,7 +50,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * The DefaultXrpClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcUrl The URL of the gRPC instance to connect to.
-   * @param network The network this XRPClient is connecting to.
+   * @param network The network this XrpClient is connecting to.
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public static defaultXrpClientWithEndpoint(

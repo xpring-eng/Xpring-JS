@@ -4,7 +4,7 @@ import XrplNetwork from '../../../src/Common/xrpl-network'
 import XrpMemo from '../../../src/XRP/model/xrp-memo'
 
 /**
- * Convenience class for utility functions used in test cases for XRPClient infrastructure.
+ * Convenience class for utility functions used in test cases for XrpClient infrastructure.
  */
 export default class XRPTestUtils {
   /**
