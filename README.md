@@ -170,7 +170,7 @@ wallet.verify(message, signature) // true
 
 ### XrpClient
 
-`XrpClient` is a gateway into the XRP Ledger. `XrpClient` is initialized with a single parameter, which is the URL of the remote adapter (see: ‘Server Side Component’ section above).
+`XrpClient` is a gateway into the XRP Ledger. `XrpClient` is initialized with a URL for a remote rippled node and an enum indicating the network the remote node runs on (see: ‘Server Side Component’ section above).
 
 ```javascript
 const { XrpClient, XrplNetwork } = require('xpring-js')
