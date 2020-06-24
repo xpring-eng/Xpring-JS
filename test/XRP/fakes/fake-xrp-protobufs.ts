@@ -24,6 +24,8 @@ import {
   LastLedgerSequence,
   SourceTag,
   DeliveredAmount,
+  SignerEntry,
+  SignerWeight,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
   Payment,
@@ -67,6 +69,7 @@ const testTimestamp = 0
 const expectedTimestamp = 946684800
 const testIsValidated = true
 const testLedgerIndex = 1000
+const testSignerWeight = 1
 
 // VALID OBJECTS ===============================================
 
@@ -327,6 +330,20 @@ testGetAccountTransactionHistoryResponse.setTransactionsList(
   transactionResponseList,
 )
 
+// SignerEntry protos
+const testAccountAddressProto = new AccountAddress()
+testAccountAddressProto.setAddress(testAddress)
+
+const testSignerEntryAccountProto = new Account()
+testSignerEntryAccountProto.setValue(testAccountAddressProto)
+
+const testSignerWeightProto = new SignerWeight()
+testSignerWeightProto.setValue(testSignerWeight)
+
+const testSignerEntryProto = new SignerEntry()
+testSignerEntryProto.setAccount(testSignerEntryAccountProto)
+testSignerEntryProto.setSignerWeight(testSignerWeightProto)
+
 // INVALID OBJECTS =============================================
 
 // Invalid IssuedCurrencyAmount proto
@@ -451,6 +468,7 @@ export {
   testMemoProtoAllFields,
   testEmptyMemoProto,
   testSignerProto,
+  testSignerEntryProto,
   testTransactionPaymentAllFields,
   testTransactionPaymentMandatoryFields,
   testGetTransactionResponseProto,

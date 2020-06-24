@@ -7,17 +7,17 @@ import bigInt from 'big-integer'
 import { assert } from 'chai'
 
 import { Utils } from '../../src'
-import { XRPLNetwork } from '../../src/Common/xrpl-network'
-import { XRPCurrency } from '../../src/XRP/model/xrp-currency'
-import { XRPCurrencyAmount } from '../../src/XRP/model/xrp-currency-amount'
-import { XRPIssuedCurrency } from '../../src/XRP/model/xrp-issued-currency'
-import { XRPMemo } from '../../src/XRP/model/xrp-memo'
-import { XRPPath } from '../../src/XRP/model/xrp-path'
-import { XRPPathElement } from '../../src/XRP/model/xrp-path-element'
-import { XRPPayment } from '../../src/XRP/model/xrp-payment'
-import { XRPSigner } from '../../src/XRP/model/xrp-signer'
-import { XRPTransaction } from '../../src/XRP/model/xrp-transaction'
-
+import XRPLNetwork from '../../src/Common/xrpl-network'
+import XRPCurrency from '../../src/XRP/model/xrp-currency'
+import XRPCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
+import XRPIssuedCurrency from '../../src/XRP/model/xrp-issued-currency'
+import XRPMemo from '../../src/XRP/model/xrp-memo'
+import XRPPath from '../../src/XRP/model/xrp-path'
+import XRPPathElement from '../../src/XRP/model/xrp-path-element'
+import XRPPayment from '../../src/XRP/model/xrp-payment'
+import XRPSigner from '../../src/XRP/model/xrp-signer'
+import XRPTransaction from '../../src/XRP/model/xrp-transaction'
+import XrpSignerEntry from '../../src/XRP/model/xrp-signer-entry'
 import {
   testAddress,
   testPublicKey,
@@ -49,6 +49,7 @@ import {
   testMemoProtoAllFields,
   testEmptyMemoProto,
   testSignerProto,
+  testSignerEntryProto,
   testGetTransactionResponseProto,
   testGetTransactionResponseProtoMandatoryOnly,
   testInvalidIssuedCurrencyProto,
@@ -59,6 +60,7 @@ import {
   testInvalidGetTransactionResponseProto,
   testInvalidGetTransactionResponseProtoUnsupportedType,
 } from './fakes/fake-xrp-protobufs'
+import { SignerEntry } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 
 // TODO(amiecorso): Refactor tests to separate files.
 describe('Protocol Buffer Conversion', function (): void {
@@ -353,6 +355,7 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   // Signer
+
   it('Convert Signer with all fields set', function (): void {
     // GIVEN a Signer protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native TypeScript type.
@@ -371,6 +374,33 @@ describe('Protocol Buffer Conversion', function (): void {
       signer?.transactionSignature,
       testSignerProto.getTransactionSignature()?.getValue_asU8(),
     )
+  })
+
+  // SignerEntry
+
+  it('Convert SignerEntry with all fields set', function (): void {
+    // GIVEN a SignerEntry protocol buffer with all fields set.
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const signerEntry = XrpSignerEntry.from(testSignerEntryProto)
+
+    // THEN all fields are present and converted correctly.
+    assert.equal(
+      signerEntry?.account,
+      testSignerEntryProto?.getAccount()?.getValue()?.getAddress(),
+    )
+    assert.equal(
+      signerEntry?.signerWeight,
+      testSignerEntryProto.getSignerWeight()?.getValue(),
+    )
+  })
+
+  it('Convert SignerEntry with no fields set', function (): void {
+    // GIVEN a SignerEntry protocol buffer with no fields set.
+    // WHEN the protocol buffer is converted to a native TypeScript type.
+    const signerEntry = XrpSignerEntry.from(new SignerEntry())
+
+    // THEN the result is undefined.
+    assert.isUndefined(signerEntry)
   })
 
   // Transaction
