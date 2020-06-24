@@ -107,7 +107,7 @@ export default class PayIdClient {
       }
     } catch (error) {
       if (error.response?.status === 404) {
-        const message = `Could not resolve ${payId} on network ${this.network}`
+        const message = `Could not resolve ${payId} on network ${network}`
         return Promise.reject(
           new PayIdError(PayIdErrorType.MappingNotFound, message),
         )
