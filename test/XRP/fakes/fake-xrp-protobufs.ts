@@ -36,7 +36,7 @@ import {
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
-import { XRPTransaction } from '../../../src/XRP/model/xrp-transaction'
+import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
 import { GetTransactionResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import { Meta } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/meta_pb'
 import XrplNetwork from '../../../src/Common/xrpl-network'
@@ -422,8 +422,8 @@ testInvalidGetAccountTransactionHistoryResponse.setTransactionsList(
 
 // XRP OBJECTS ===================================================
 
-// test XRPTransaction
-const testXRPTransaction = XRPTransaction.from(
+// test XrpTransaction
+const testXrpTransaction = XrpTransaction.from(
   testGetTransactionResponseProto,
   XrplNetwork.Test,
 )!
@@ -473,7 +473,7 @@ export {
   testTransactionPaymentMandatoryFields,
   testGetTransactionResponseProto,
   testCheckCashTransaction,
-  testXRPTransaction,
+  testXrpTransaction,
   testGetAccountTransactionHistoryResponse,
   testGetTransactionResponseProtoMandatoryOnly,
   testInvalidIssuedCurrencyProto,

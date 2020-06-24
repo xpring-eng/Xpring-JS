@@ -1,14 +1,14 @@
 import { BigInteger } from 'big-integer'
-import { XRPClientDecorator } from '../../../src/XRP/xrp-client-decorator'
+import XrpClientDecorator from '../../../src/XRP/xrp-client-decorator'
 import TransactionStatus from '../../../src/XRP/transaction-status'
 import { Wallet } from '../../../src/index'
 import RawTransactionStatus from '../../../src/XRP/raw-transaction-status'
-import { XRPTransaction } from '../../../src/XRP/model/xrp-transaction'
+import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
 import Result from '../../Common/Helpers/result'
 import XrplNetwork from '../../../src/Common/xrpl-network'
 import SendXrpDetails from '../../../src/XRP/model/send-xrp-details'
 
-class FakeXRPClient implements XRPClientDecorator {
+class FakeXRPClient implements XrpClientDecorator {
   public constructor(
     public getBalanceValue: Result<BigInteger>,
     public getPaymentStatusValue: Result<TransactionStatus>,
@@ -16,8 +16,8 @@ class FakeXRPClient implements XRPClientDecorator {
     public getLatestValidatedLedgerSequenceValue: Result<number>,
     public getRawTransactionStatusValue: Result<RawTransactionStatus>,
     public accountExistsValue: Result<boolean>,
-    public paymentHistoryValue: Result<Array<XRPTransaction>>,
-    public getPaymentValue: Result<XRPTransaction>,
+    public paymentHistoryValue: Result<Array<XrpTransaction>>,
+    public getPaymentValue: Result<XrpTransaction>,
     public readonly network: XrplNetwork = XrplNetwork.Test,
   ) {}
 
@@ -57,13 +57,13 @@ class FakeXRPClient implements XRPClientDecorator {
     return FakeXRPClient.returnOrThrow(this.accountExistsValue)
   }
 
-  async paymentHistory(_address: string): Promise<Array<XRPTransaction>> {
+  async paymentHistory(_address: string): Promise<Array<XrpTransaction>> {
     return FakeXRPClient.returnOrThrow(this.paymentHistoryValue)
   }
 
   async getPayment(
     _transactionHash: string,
-  ): Promise<XRPTransaction | undefined> {
+  ): Promise<XrpTransaction | undefined> {
     return FakeXRPClient.returnOrThrow(this.getPaymentValue)
   }
 
