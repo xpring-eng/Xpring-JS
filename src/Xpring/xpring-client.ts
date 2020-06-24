@@ -4,9 +4,7 @@ import XrpPayIdClientInterface from '../PayID/xrp-pay-id-client-interface'
 import XrpClientInterface, {
   XRPClientInterface,
 } from '../XRP/xrp-client-interface'
-import XpringError, { XpringErrorType } from './xpring-error'
-import XrplNetwork from '../Common/xrpl-network'
-import XrpPayIdClient from '../PayID/xrp-pay-id-client'
+import XpringError from './xpring-error'
 import SendXrpDetails from '../XRP/model/send-xrp-details'
 
 /**
@@ -14,12 +12,6 @@ import SendXrpDetails from '../XRP/model/send-xrp-details'
  */
 export default class XpringClient {
   private readonly payIdClient: XrpPayIdClientInterface
-
-  private static isNewPayIdClient(
-    payIdClient: XrpPayIdClientInterface | XrpPayIdClientInterface,
-  ): payIdClient is XrpPayIdClientInterface {
-    return payIdClient.xrpAddressForPayId !== undefined
-  }
 
   /**
    * Create a new XpringClient.
@@ -29,37 +21,15 @@ export default class XpringClient {
    * @throws A XpringError if the networks of the inputs do not match.
    */
   constructor(
-    payIdClient: XrpPayIdClientInterface | XrpPayIdClientInterface,
+    payIdClient: XrpPayIdClientInterface,
     private readonly xrpClient: XRPClientInterface | XrpClientInterface,
   ) {
-    let normalizedPayIdClient: XrpPayIdClientInterface
-    if (XpringClient.isNewPayIdClient(payIdClient)) {
-      switch (payIdClient.xrplNetwork) {
-        case XrplNetwork.Dev: {
-          normalizedPayIdClient = new XrpPayIdClient(XrplNetwork.Dev)
-          break
-        }
-        case XrplNetwork.Main: {
-          normalizedPayIdClient = new XrpPayIdClient(XrplNetwork.Main)
-          break
-        }
-        case XrplNetwork.Test: {
-          normalizedPayIdClient = new XrpPayIdClient(XrplNetwork.Test)
-          break
-        }
-        default: {
-          throw new XpringError(XpringErrorType.Unknown, 'Unknown network')
-        }
-      }
-    } else {
-      normalizedPayIdClient = payIdClient
-    }
-    this.payIdClient = normalizedPayIdClient
+    this.payIdClient = payIdClient
 
     // Verify that networks match.
-    const payIDNetwork = normalizedPayIdClient.xrplNetwork
+    const payIdNetwork = payIdClient.xrplNetwork
     const xrpNetwork = xrpClient.network
-    if (payIDNetwork !== xrpNetwork) {
+    if (payIdNetwork !== xrpNetwork) {
       throw XpringError.mismatchedNetworks
     }
   }
