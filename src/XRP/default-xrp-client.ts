@@ -41,7 +41,7 @@ import SendXrpDetails from './model/send-xrp-details'
 const maxLedgerVersionOffset = 10
 
 /**
- * DefaultXrpClient is a client which interacts with the Xpring platform.
+ * DefaultXrpClient is a client which interacts with the XRP Ledger.
  */
 export default class DefaultXrpClient implements XrpClientDecorator {
   /**
