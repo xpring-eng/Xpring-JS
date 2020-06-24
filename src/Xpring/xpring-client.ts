@@ -1,9 +1,7 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import XrpPayIdClientInterface from '../PayID/xrp-pay-id-client-interface'
-import XrpClientInterface, {
-  XRPClientInterface,
-} from '../XRP/xrp-client-interface'
+import XrpClientInterface from '../XRP/xrp-client-interface'
 import XpringError from './xpring-error'
 import SendXrpDetails from '../XRP/model/send-xrp-details'
 
@@ -22,7 +20,7 @@ export default class XpringClient {
    */
   constructor(
     payIdClient: XrpPayIdClientInterface,
-    private readonly xrpClient: XRPClientInterface | XrpClientInterface,
+    private readonly xrpClient: XrpClientInterface | XrpClientInterface,
   ) {
     this.payIdClient = payIdClient
 
@@ -69,7 +67,7 @@ export default class XpringClient {
       amount,
       destination: destinationPayID,
       sender,
-      memos,
+      memoList,
     } = sendMoneyDetails
     // Resolve the destination address to an XRP address.
     const destinationAddress = await this.payIdClient.xrpAddressForPayId(
@@ -81,7 +79,7 @@ export default class XpringClient {
       amount,
       destination: destinationAddress,
       sender,
-      memos,
+      memoList,
     })
 
     return transactionHash
