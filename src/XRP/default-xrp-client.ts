@@ -54,13 +54,13 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
   public static defaultXrpClientWithEndpoint(
-    grpcURL: string,
+    grpcUrl: string,
     network: XrplNetwork,
     forceWeb = false,
   ): DefaultXrpClient {
     return isNode() && !forceWeb
-      ? new DefaultXrpClient(new GrpcNetworkClient(grpcURL), network)
-      : new DefaultXrpClient(new GrpcNetworkClientWeb(grpcURL), network)
+      ? new DefaultXrpClient(new GrpcNetworkClient(grpcUrl), network)
+      : new DefaultXrpClient(new GrpcNetworkClientWeb(grpcUrl), network)
   }
 
   /**
