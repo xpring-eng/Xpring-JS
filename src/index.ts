@@ -1,6 +1,5 @@
 export {
   ClassicAddress,
-  PayIDUtils,
   PayIdUtils,
   Wallet,
   WalletGenerationResult,
