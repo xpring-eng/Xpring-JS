@@ -5,7 +5,7 @@ import PayIdError, {
   PayIdErrorType,
   PayIDErrorType,
 } from './pay-id-error'
-import { DefaultApi, CryptoAddressDetails } from './Generated/api'
+import { Address, DefaultApi, CryptoAddressDetails } from './Generated/api'
 
 const PAYID_API_VERSION = '1.0'
 
