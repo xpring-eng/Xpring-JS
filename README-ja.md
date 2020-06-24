@@ -113,7 +113,7 @@ console.log(wallet.getPrivateKey()); // 0090802A50AA84EFB6CDB225F17C27616EA94048
 
 #### 署名/検証
 
-ウォレットは、任意の16進数のメッセージに署名して検証することもできます。一般的に、ユーザーはこれらの低レベルAPIは使用せずに、 `XRPClient`上の暗号化機能を実行しなければなりません。
+ウォレットは、任意の16進数のメッセージに署名して検証することもできます。一般的に、ユーザーはこれらの低レベルAPIは使用せずに、 `XrpClient`上の暗号化機能を実行しなければなりません。
 
 ```javascript
 const { Wallet } = require("xpringkit-js");
@@ -127,26 +127,26 @@ const signature = wallet.sign(message);
 wallet.verify(message, signature); // true
 ```
 
-### XRPClient
+### XrpClient
 
-「XRPClient」はXRPレジャーへのゲートウェイです。 「XRPClient」は、リモートアダプターのURLである単一のパラメーターで初期化されます（上記の「サーバー側コンポーネント」セクションを参照）。
+「XrpClient」はXRPレジャーへのゲートウェイです。 「XrpClient」は、リモートアダプターのURLである単一のパラメーターで初期化されます（上記の「サーバー側コンポーネント」セクションを参照）。
 
 ```javascript
-const { XRPClient } = require("xpring-js");
+const { XrpClient } = require("xpring-js");
 
 const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
-const xrpClient = new XRPClient(remoteURL, true)
+const xrpClient = new XrpClient(remoteURL, true)
 ```
 
 #### 口座残高の取得
 
-「XRPClient」は、レジャーのアカウントの残高を確認できます。
+「XrpClient」は、レジャーのアカウントの残高を確認できます。
 
 ```javascript
-const { XRPClient } = require("xpring-js");
+const { XrpClient } = require("xpring-js");
 
 const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
-const xrpClient = new XRPClient(remoteURL, true);
+const xrpClient = new XrpClient(remoteURL, true);
 
 const address = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
 
@@ -156,13 +156,13 @@ console.log(balance); // Logs a balance in drops of XRP
 
 #### XRPの送信
 
-「XRPClient」は、レジャー上の他のアカウント宛にXRPを送信できます。
+「XrpClient」は、レジャー上の他のアカウント宛にXRPを送信できます。
 
 ```javascript
-const { Wallet, XRPAmount, XRPClient } = require("xpring-js");
+const { Wallet, XrpClient } = require("xpring-js");
 
 const remoteURL = "test.xrp.xpring.io:50051"; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
-const xrpClient = new XRPClient(remoteURL, true)
+const xrpClient = new XrpClient(remoteURL, true)
 
 // Amount of XRP to send
 const amount = BigInt("10")
