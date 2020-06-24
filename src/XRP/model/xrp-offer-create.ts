@@ -1,5 +1,5 @@
 import { OfferCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { XRPCurrencyAmount } from '.'
+import XrpCurrencyAmount from './xrp-currency-amount'
 
 /*
  * Represents an OfferCreate transaction on the XRP Ledger.
@@ -25,7 +25,7 @@ export default class XrpOfferCreate {
     if (!takerGetsCurrencyAmount) {
       return undefined
     }
-    const takerGets = XRPCurrencyAmount.from(takerGetsCurrencyAmount)
+    const takerGets = XrpCurrencyAmount.from(takerGetsCurrencyAmount)
     if (!takerGets) {
       return undefined
     }
@@ -34,7 +34,7 @@ export default class XrpOfferCreate {
     if (!takerPaysCurrencyAmount) {
       return undefined
     }
-    const takerPays = XRPCurrencyAmount.from(takerPaysCurrencyAmount)
+    const takerPays = XrpCurrencyAmount.from(takerPaysCurrencyAmount)
     if (!takerPays) {
       return undefined
     }
@@ -51,8 +51,8 @@ export default class XrpOfferCreate {
    * @param offerSequence (Optional) An offer to delete first, specified in the same way as OfferCancel.
    */
   private constructor(
-    readonly takerGets: XRPCurrencyAmount,
-    readonly takerPays: XRPCurrencyAmount,
+    readonly takerGets: XrpCurrencyAmount,
+    readonly takerPays: XrpCurrencyAmount,
     readonly expiration?: number,
     readonly offerSequence?: number,
   ) {}

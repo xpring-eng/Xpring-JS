@@ -1,6 +1,6 @@
 import { Utils } from 'xpring-common-js'
 import { CheckCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { XRPCurrencyAmount } from '.'
+import XrpCurrencyAmount from './xrp-currency-amount'
 import XRPLNetwork from '../../Common/xrpl-network'
 
 /*
@@ -42,7 +42,7 @@ export default class XrpCheckCreate {
     if (!sendMaxCurrencyAmount) {
       return undefined
     }
-    const sendMax = XRPCurrencyAmount.from(sendMaxCurrencyAmount)
+    const sendMax = XrpCurrencyAmount.from(sendMaxCurrencyAmount)
     if (!sendMax) {
       return undefined
     }
@@ -67,7 +67,7 @@ export default class XrpCheckCreate {
    */
   private constructor(
     readonly destinationXAddress: string,
-    readonly sendMax: XRPCurrencyAmount,
+    readonly sendMax: XrpCurrencyAmount,
     readonly expiration?: number,
     readonly invoiceId?: string,
   ) {}

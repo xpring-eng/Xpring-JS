@@ -1,6 +1,6 @@
 import { Utils } from 'xpring-common-js'
 import { EscrowCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { XRPCurrencyAmount } from '.'
+import XrpCurrencyAmount from './xrp-currency-amount'
 import XrplNetwork from '../../Common/xrpl-network'
 
 /*
