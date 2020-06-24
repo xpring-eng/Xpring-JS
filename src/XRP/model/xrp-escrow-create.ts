@@ -27,7 +27,7 @@ export default class XrpEscrowCreate {
     if (!amountCurrencyAmountProto) {
       return undefined
     }
-    const amount = XRPCurrencyAmount.from(amountCurrencyAmountProto)
+    const amount = XrpCurrencyAmount.from(amountCurrencyAmountProto)
     if (!amount) {
       return undefined
     }
@@ -74,7 +74,7 @@ export default class XrpEscrowCreate {
    *                   The funds can only be delivered to the recipient if this condition is fulfilled.
    */
   private constructor(
-    readonly amount: XRPCurrencyAmount,
+    readonly amount: XrpCurrencyAmount,
     readonly destinationXAddress: string,
     readonly cancelAfter?: number,
     readonly finishAfter?: number,
