@@ -3,7 +3,7 @@ import { assert } from 'chai'
 import { FakeWallet } from 'xpring-common-js'
 import FakeXRPClient from '../XRP/fakes/fake-xrp-client'
 import FakeXrpPayIdClient from '../PayID/fakes/fake-xrp-pay-id-client'
-import { testXRPTransaction } from '../XRP/fakes/fake-xrp-protobufs'
+import { testXrpTransaction } from '../XRP/fakes/fake-xrp-protobufs'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import XpringClient from '../../src/Xpring/xpring-client'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
@@ -27,7 +27,7 @@ const fakeRawTransactionStatus = new RawTransactionStatus(
   true,
 )
 const fakePaymentHistoryValue = []
-const fakeGetPaymentValue = testXRPTransaction
+const fakeGetPaymentValue = testXrpTransaction
 /* eslint-enable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention */
 
 // An amount to send
