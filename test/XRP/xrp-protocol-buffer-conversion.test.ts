@@ -235,7 +235,7 @@ describe('Protocol Buffer Conversion', function (): void {
           .getDestination()!
           .getValue()!
           .getAddress()!,
-        testPaymentProtoAllFieldsSet.getDestinationTag().getValue(),
+        testPaymentProtoAllFieldsSet.getDestinationTag()?.getValue(),
         true,
       ),
     )
@@ -420,8 +420,8 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.equal(
       transaction?.sourceXAddress,
       Utils.encodeXAddress(
-        transactionProto.getAccount()!.getValue()!.getAddress()!,
-        transactionProto.getSourceTag()?.getValue(),
+        transactionProto!.getAccount()!.getValue()!.getAddress()!,
+        transactionProto!.getSourceTag()?.getValue(),
         true,
       ),
     )
@@ -467,8 +467,8 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.equal(
       transaction?.sourceXAddress,
       Utils.encodeXAddress(
-        transactionProto.getAccount()!.getValue()!.getAddress()!,
-        transactionProto.getSourceTag()?.getValue(),
+        transactionProto!.getAccount()!.getValue()!.getAddress()!,
+        transactionProto!.getSourceTag()?.getValue(),
         true,
       ),
     )
