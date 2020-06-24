@@ -81,4 +81,16 @@ describe('PayID Integration Tests', function (): void {
       address: '2NF9H32iwQcVcoAiiBmAtjpGmQfsmU5L6SR',
     })
   })
+
+  it('resolves all addresses', async function (): Promise<void> {
+    // GIVEN a PayID with multiple addresses.
+    const payId = 'alice$dev.payid.xpring.money'
+    const payIdClient = new PayIdClient()
+
+    // WHEN the PayID is resolved to a set of addresses.
+    const addresses = await payIdClient.allAddressesForPayId(payId)
+
+    // THEN multiple results are returned.
+    assert(addresses.length > 1)
+  })
 })
