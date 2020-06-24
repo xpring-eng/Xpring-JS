@@ -50,10 +50,10 @@ main.xrp.xpring.io:50051
 If you are using Xpring-JS from within a browser, use the following addresses to bootstrap your application:
 
 ```
-#Testnet
+# Testnet
 https://envoy.test.xrp.xpring.io
 
-#Mainnet
+# Mainnet
 https://envoy.main.xrp.xpring.io
 ```
 
@@ -371,7 +371,7 @@ import { PayIdClient } from 'xpring-js'
 const payId = 'georgewashington$xpring.money'
 
 const payIdClient = new PayIdClient()
-const allAddress = await payIdClient.allAddressesForPayId(payId)
+const allAddresses = await payIdClient.allAddressesForPayId(payId)
 ```
 
 ### XrpPayIdClient
