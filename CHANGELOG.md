@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PayIDClient` was deprecated for two releases and has been removed. Use `PayIdClient` instead.
 - `PayIDError` was deprecated for two releases and has been removed. Use `PayIdError` instead.
 - `PayIDErrorType` was deprecated for two releases and has been removed. Use `PayIdErrorType` instead.
-- `XRPPayIDClientInterface` was deprecated for two releases and has been removed. Use `XrpPayIdClient` instead.
+- `XRPPayIDClientInterface` was deprecated for two releases and has been removed. Use `XrpPayIdClientInterface` instead.
 - `XRPPayIDClient` was deprecated for two releases and has been removed.  Use `XrpPayIdClient` instead.
 - `XRPLNetwork` was deprecated for two releases and has been removed.  Use `XrplNetwork` instead.
 - `memos` on `SendXrpDetails` was deprecated for two releases and has been removed. Use `memoList` instead.
@@ -68,6 +68,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `XRPTransactionType` now includes an `AccountSetValue`.
 - `XrpTransactionType` replaces the now deprecated `XRPTransactionType`.
 - `XrpTransaction` replaces the now deprecated `XRPTransaction`.
+- A new method, `cryptoAddressForPayId`, replaces the now deprecated `addressForPayId` method in `PayIdClient`.
+- A new method, `allAddressesForPayId`, is added to `PayIdClient`.
 - `XrpUtils` replaces the now deprecated `XRPUtils`.
 - `XrpClient` replaces the now deprecated `XRPClient`.
 - `XrpError` replaces the now deprecated `XRPError`.
@@ -97,6 +99,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Please use the X-address encoded field `sourceXAddress` instead.
 - `XRPPayment.destination` and `XRPPayment.destinationTag` are deprecated.
   Please use the X-address encoded field `destinationXAddress` instead.
+- The `network` parameter passed to the constructor of `PayIdClient` is deprecated. Clients should favor calling the new `cryptoAddressForPayId` method which allows them to specify the network at request time.
+- The `addressForPayId` on `PayIdClient` is deprecated. Use `cryptoAddressForPayId` instead.
 - `XRPUtils` is deprecated. Use `XrpUtils` instead.
 - `XRPClient` is deprecated. Use `XrpClient` instead.
 - `XRPError` is deprecated. Use `XrpError` instead.

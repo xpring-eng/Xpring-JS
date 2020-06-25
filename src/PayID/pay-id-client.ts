@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { PayIdUtils } from 'xpring-common-js'
 import PayIdError, { PayIdErrorType } from './pay-id-error'
-import { DefaultApi, CryptoAddressDetails } from './Generated/api'
+import { Address, DefaultApi, CryptoAddressDetails } from './Generated/api'
 
 const PAYID_API_VERSION = '1.0'
 
@@ -29,22 +29,55 @@ export default class PayIdClient {
    *
    * TODO(keefertaylor): Link a canonical list at payid.org when available.
    *
-   * @param network The network that addresses will be resolved on.
    * @param useHttps Whether to cuse HTTPS when making PayID requests. Most users should set this to 'true' to avoid
    *                 Man-in-the-Middle attacks. Exposed as an option for testing purposes. Defaults to true.
    */
-  constructor(
-    public readonly network: string,
-    private readonly useHttps: boolean = true,
-  ) {}
+  constructor(private readonly useHttps: boolean = true) {}
 
   /**
-   * Retrieve the address associated with a PayID.
+   * Retrieve the crypto address associated with a PayID.
    *
-   * @param payId The payID to resolve for an address.
-   * @returns An address representing the given PayID.
+   * @param payId The PayID to resolve.
+   * @param network The network to resolve on.
    */
-  async addressForPayId(payId: string): Promise<CryptoAddressDetails> {
+  async cryptoAddressForPayId(
+    payId: string,
+    network: string,
+  ): Promise<CryptoAddressDetails> {
+    const addresses = await this.addressesForPayIdAndNetwork(payId, network)
+
+    // With a specific network, exactly one address should be returned by a PayID lookup.
+    if (addresses.length === 1) {
+      return addresses[0].addressDetails
+    } else {
+      return Promise.reject(
+        new PayIdError(
+          PayIdErrorType.UnexpectedResponse,
+          'Received more addresses than expected',
+        ),
+      )
+    }
+  }
+
+  /**
+   * Retrieve all addresses associated with a PayId.
+   *
+   * @param payId The PayID to resolve.
+   */
+  async allAddressesForPayId(payId: string): Promise<Array<Address>> {
+    return this.addressesForPayIdAndNetwork(payId, 'payid')
+  }
+
+  /**
+   * Return an array of {@link Address}es that match the inputs.
+   *
+   * @param payId The PayID to resolve.
+   * @param network The network to resolve on.
+   */
+  private async addressesForPayIdAndNetwork(
+    payId: string,
+    network: string,
+  ): Promise<Array<Address>> {
     const payIdComponents = PayIdClient.parsePayId(payId)
     const basePath = this.useHttps
       ? `https://${payIdComponents.host}`
@@ -56,24 +89,14 @@ export default class PayIdClient {
     const api = new DefaultApi(undefined, basePath)
 
     const options = PayIdClient.makeOptionsWithAcceptTypes(
-      `application/${this.network}+json`,
+      `application/${network}+json`,
     )
 
     try {
       const { data } = await api.resolvePayID(path, options)
       // TODO(keefertaylor): make sure the header matches the request.
       if (data?.addresses) {
-        // With a specific network, exactly one address should be returned by a PayID lookup.
-        if (data.addresses.length === 1) {
-          return data.addresses[0].addressDetails
-        } else {
-          return Promise.reject(
-            new PayIdError(
-              PayIdErrorType.UnexpectedResponse,
-              'Received more addresses than expected',
-            ),
-          )
-        }
+        return data.addresses
       } else {
         return Promise.reject(
           new PayIdError(
@@ -84,7 +107,7 @@ export default class PayIdClient {
       }
     } catch (error) {
       if (error.response?.status === 404) {
-        const message = `Could not resolve ${payId} on network ${this.network}`
+        const message = `Could not resolve ${payId} on network ${network}`
         return Promise.reject(
           new PayIdError(PayIdErrorType.MappingNotFound, message),
         )

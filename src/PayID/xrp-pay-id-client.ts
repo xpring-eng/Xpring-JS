@@ -17,7 +17,7 @@ export default class XrpPayIdClient extends PayIdClient
    *                 Man-in-the-Middle attacks. Exposed as an option for testing purposes. Defaults to true.
    */
   constructor(public readonly xrplNetwork: XrplNetwork, useHttps = true) {
-    super(`xrpl-${xrplNetwork}`, useHttps)
+    super(useHttps)
   }
 
   /**
@@ -30,13 +30,16 @@ export default class XrpPayIdClient extends PayIdClient
    * @returns An XRP address representing the given PayID.
    */
   async xrpAddressForPayId(payId: string): Promise<string> {
-    const result = await super.addressForPayId(payId)
+    const result = await super.cryptoAddressForPayId(
+      payId,
+      `xrpl-${this.xrplNetwork}`,
+    )
 
     const { address } = result
     if (Utils.isValidXAddress(address)) {
       return address
     }
-    const isTest = this.network !== XrplNetwork.Main
+    const isTest = this.xrplNetwork !== XrplNetwork.Main
 
     const tag = result.tag ? Number(result.tag) : undefined
 

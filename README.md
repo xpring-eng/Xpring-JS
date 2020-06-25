@@ -348,16 +348,30 @@ Two classes are used to work with PayID: `PayIdClient` and `XrpPayIdClient`.
 
 `PayIdClient` can resolve addresses on arbitrary cryptocurrency networks.
 
+#### Single Address Resolution
+
+```javascript
+// Resolve on Bitcoin Mainnet.
+const network = 'btc-mainnet'
+const payId = 'georgewashington$xpring.money'
+
+const payIdClient = new PayIdClient()
+
+const resolvedAddressComponents = await payIdClient.addressForPayId(payId, network)
+console.log(resolvedAddressComponents.address)
+```
+
+#### All Addresses
+
+`PayIdClient` can retrieve all available addresses.
+
 ```javascript
 import { PayIdClient } from 'xpring-js'
 
-// Resolve on Bitcoin Mainnet.
-const network = 'btc-mainnet'
-const payIdClient = new PayIdClient(network)
-
 const payId = 'georgewashington$xpring.money'
-const resolvedAddressComponents = await payIdClient.addressForPayId(payId)
-console.log(resolvedAddressComponents.address)
+
+const payIdClient = new PayIdClient()
+const allAddress = await payIdClient.allAddressesForPayId(payId)
 ```
 
 ### XrpPayIdClient

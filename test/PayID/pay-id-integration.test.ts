@@ -69,16 +69,29 @@ describe('PayID Integration Tests', function (): void {
   > {
     this.timeout(timeoutMs)
 
-    // GIVEN a Pay ID that will resolve on Mainnet.
-    const payIdClient = new PayIdClient('btc-testnet')
+    // GIVEN a Pay ID that will resolve on BTC testnet.
+    const payIdClient = new PayIdClient()
     const payId = 'alice$dev.payid.xpring.money'
+    const network = 'btc-testnet'
 
     // WHEN it is resolved to an XRP address
-    const btcAddress = await payIdClient.addressForPayId(payId)
+    const btcAddress = await payIdClient.cryptoAddressForPayId(payId, network)
 
     // THEN the address is the expected value.
     assert.deepEqual(btcAddress, {
       address: '2NF9H32iwQcVcoAiiBmAtjpGmQfsmU5L6SR',
     })
+  })
+
+  it('resolves all addresses', async function (): Promise<void> {
+    // GIVEN a PayID with multiple addresses.
+    const payId = 'alice$dev.payid.xpring.money'
+    const payIdClient = new PayIdClient()
+
+    // WHEN the PayID is resolved to a set of addresses.
+    const addresses = await payIdClient.allAddressesForPayId(payId)
+
+    // THEN multiple results are returned.
+    assert(addresses.length > 1)
   })
 })
