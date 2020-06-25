@@ -116,4 +116,3 @@ export default interface XrpClientDecorator {
    */
   getPayment(transactionHash: string): Promise<XrpTransaction | undefined>
 }
-

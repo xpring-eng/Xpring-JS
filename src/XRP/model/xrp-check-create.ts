@@ -1,7 +1,7 @@
 import { Utils } from 'xpring-common-js'
 import { CheckCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount from './xrp-currency-amount'
-import XRPLNetwork from '../../Common/xrpl-network'
+import XrplNetwork from '../../Common/xrpl-network'
 
 /*
  * Represents a CheckCreate transaction on the XRP Ledger.
@@ -21,7 +21,7 @@ export default class XrpCheckCreate {
    */
   public static from(
     checkCreate: CheckCreate,
-    xrplNetwork: XRPLNetwork,
+    xrplNetwork: XrplNetwork,
   ): XrpCheckCreate | undefined {
     const destination = checkCreate.getDestination()?.getValue()?.getAddress()
     if (!destination) {
@@ -32,7 +32,7 @@ export default class XrpCheckCreate {
     const destinationXAddress = Utils.encodeXAddress(
       destination,
       destinationTag,
-      xrplNetwork == XRPLNetwork.Test || xrplNetwork == XRPLNetwork.Dev,
+      xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
     )
     if (!destinationXAddress) {
       return undefined

@@ -144,4 +144,3 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     return this.decoratedClient.getPayment(transactionHash)
   }
 }
-
