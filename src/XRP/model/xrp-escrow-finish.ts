@@ -1,6 +1,6 @@
 import { Utils } from 'xpring-common-js'
 import { EscrowFinish } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import XRPLNetwork from '../../Common/xrpl-network'
+import XrplNetwork from '../../Common/xrpl-network'
 
 /*
  * Represents an EscrowFinish transaction on the XRP Ledger.
@@ -19,7 +19,7 @@ export default class XrpEscrowFinish {
    */
   public static from(
     escrowFinish: EscrowFinish,
-    xrplNetwork: XRPLNetwork,
+    xrplNetwork: XrplNetwork,
   ): XrpEscrowFinish | undefined {
     const owner = escrowFinish.getOwner()?.getValue()?.getAddress()
     if (!owner) {
@@ -28,7 +28,7 @@ export default class XrpEscrowFinish {
     const ownerXAddress = Utils.encodeXAddress(
       owner,
       undefined,
-      xrplNetwork == XRPLNetwork.Test || xrplNetwork == XRPLNetwork.Dev,
+      xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
     )
 
     const offerSequence = escrowFinish.getOfferSequence()?.getValue()

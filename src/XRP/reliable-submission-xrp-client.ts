@@ -5,7 +5,7 @@ import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
 import XrpTransaction, { XRPTransaction } from './model/xrp-transaction'
 import XrpError, { XrpErrorType, XRPError, XRPErrorType } from './xrp-error'
-import XrplNetwork, { XRPLNetwork } from '../Common/xrpl-network'
+import XrplNetwork from '../Common/xrpl-network'
 
 import SendXrpDetails from './model/send-xrp-details'
 
@@ -153,7 +153,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
 export class ReliableSubmissionXRPClient implements XRPClientDecorator {
   public constructor(
     private readonly decoratedClient: XRPClientDecorator,
-    readonly network: XRPLNetwork,
+    readonly network: XrplNetwork,
   ) {}
 
   public async getBalance(address: string): Promise<BigInteger> {

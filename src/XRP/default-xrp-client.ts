@@ -34,7 +34,7 @@ import { XrpNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XrpError, { XRPError } from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
-import XrplNetwork, { XRPLNetwork } from '../Common/xrpl-network'
+import XrplNetwork from '../Common/xrpl-network'
 import SendXrpDetails from './model/send-xrp-details'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
@@ -485,7 +485,7 @@ export class DefaultXRPClient implements XRPClientDecorator {
    */
   public static defaultXRPClientWithEndpoint(
     grpcURL: string,
-    network: XRPLNetwork,
+    network: XrplNetwork,
     forceWeb = false,
   ): DefaultXRPClient {
     return isNode() && !forceWeb
@@ -503,7 +503,7 @@ export class DefaultXRPClient implements XRPClientDecorator {
    */
   public constructor(
     private readonly networkClient: XrpNetworkClient,
-    readonly network: XRPLNetwork,
+    readonly network: XrplNetwork,
   ) {}
 
   /**

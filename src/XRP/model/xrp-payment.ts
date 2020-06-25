@@ -2,7 +2,7 @@ import { Utils } from 'xpring-common-js'
 import { Payment } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount, { XRPCurrencyAmount } from './xrp-currency-amount'
 import XrpPath, { XRPPath } from './xrp-path'
-import XrplNetwork, { XRPLNetwork } from '../../Common/xrpl-network'
+import XrplNetwork from '../../Common/xrpl-network'
 
 /**
  * Represents a payment on the XRP Ledger.
@@ -22,7 +22,7 @@ export class XRPPayment {
    */
   public static from(
     payment: Payment,
-    xrplNetwork: XRPLNetwork,
+    xrplNetwork: XrplNetwork,
   ): XRPPayment | undefined {
     const paymentAmountValue = payment.getAmount()?.getValue()
     const amount =
@@ -41,7 +41,7 @@ export class XRPPayment {
     const destinationXAddress = Utils.encodeXAddress(
       destination,
       destinationTag,
-      xrplNetwork === XRPLNetwork.Test,
+      xrplNetwork === XrplNetwork.Test,
     )
     // An X-address should always be able to be encoded.
     if (!destinationXAddress) {
