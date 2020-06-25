@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `XrpTransaction.account` and `XrpTransaction.sourceTag` were deprecated for two releases and have been removed.
   Use the X-address encoded field `sourceXAddress` instead.
 - `XrpPayment.destination` and `XrpPayment.destinationTag` were deprecated for two releases and have been removed.
-  Please use the X-address encoded field `destinationXAddress` instead.
+  Use the X-address encoded field `destinationXAddress` instead.
 
 ## 4.3.2 - 2020-06-17
 
