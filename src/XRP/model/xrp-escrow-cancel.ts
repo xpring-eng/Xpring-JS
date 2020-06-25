@@ -1,6 +1,6 @@
 import { Utils } from 'xpring-common-js'
 import { EscrowCancel } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import XRPLNetwork from '../../Common/xrpl-network'
+import XrplNetwork from '../../Common/xrpl-network'
 
 /*
  * Represents an EscrowCancel transaction on the XRP Ledger.
@@ -19,7 +19,7 @@ export default class XrpEscrowCancel {
    */
   public static from(
     escrowCancel: EscrowCancel,
-    xrplNetwork: XRPLNetwork,
+    xrplNetwork: XrplNetwork,
   ): XrpEscrowCancel | undefined {
     const owner = escrowCancel.getOwner()?.getValue()?.getAddress()
     if (!owner) {
@@ -28,7 +28,7 @@ export default class XrpEscrowCancel {
     const ownerXAddress = Utils.encodeXAddress(
       owner,
       undefined,
-      xrplNetwork == XRPLNetwork.Test || xrplNetwork == XRPLNetwork.Dev,
+      xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
     )
     const offerSequence = escrowCancel.getOfferSequence()?.getValue()
 

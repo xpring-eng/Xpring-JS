@@ -8,7 +8,7 @@ import ReliableSubmissionXrpClient, {
 import DefaultXrpClient, { DefaultXRPClient } from './default-xrp-client'
 import XrpClientInterface, { XRPClientInterface } from './xrp-client-interface'
 import XrpTransaction, { XRPTransaction } from './model/xrp-transaction'
-import XrplNetwork, { XRPLNetwork } from '../Common/xrpl-network'
+import XrplNetwork from '../Common/xrpl-network'
 import SendXrpDetails from './model/send-xrp-details'
 
 /**
@@ -18,7 +18,7 @@ import SendXrpDetails from './model/send-xrp-details'
  */
 export class XRPClient implements XRPClientInterface {
   /** The XRPL Network of the node that this client is communicating with. */
-  public readonly network: XRPLNetwork
+  public readonly network: XrplNetwork
 
   private readonly decoratedClient: XRPClientDecorator
 
@@ -31,7 +31,7 @@ export class XRPClient implements XRPClientInterface {
    * @param network The network this XRPClient is connecting to.
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
-  public constructor(grpcURL: string, network: XRPLNetwork, forceWeb = false) {
+  public constructor(grpcURL: string, network: XrplNetwork, forceWeb = false) {
     this.network = network
 
     const defaultXRPClient = DefaultXRPClient.defaultXRPClientWithEndpoint(

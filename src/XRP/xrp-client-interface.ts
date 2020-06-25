@@ -1,7 +1,7 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import TransactionStatus from './transaction-status'
-import XrplNetwork, { XRPLNetwork } from '../Common/xrpl-network'
+import XrplNetwork from '../Common/xrpl-network'
 import XrpTransaction, { XRPTransaction } from './model/xrp-transaction'
 import XrpMemo, { XRPMemo } from './model/xrp-memo'
 import SendXrpDetails from './model/send-xrp-details'
@@ -98,7 +98,7 @@ export default interface XrpClientInterface {
  */
 export interface XRPClientInterface {
   /** The XRPL Network of the node that this client is communicating with. */
-  network: XRPLNetwork
+  network: XrplNetwork
 
   /**
    * Retrieve the balance for the given address.

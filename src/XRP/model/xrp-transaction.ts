@@ -6,7 +6,7 @@ import XrpTransactionType, { XRPTransactionType } from './xrp-transaction-type'
 import XrpPayment, { XRPPayment } from './xrp-payment'
 import XrpMemo, { XRPMemo } from './xrp-memo'
 import { GetTransactionResponse } from '../Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
-import XrplNetwork, { XRPLNetwork } from '../../Common/xrpl-network'
+import XrplNetwork from '../../Common/xrpl-network'
 
 /**
  * A transaction on the XRP Ledger.
@@ -27,7 +27,7 @@ export class XRPTransaction {
    */
   public static from(
     getTransactionResponse: GetTransactionResponse,
-    xrplNetwork: XRPLNetwork,
+    xrplNetwork: XrplNetwork,
   ): XRPTransaction | undefined {
     const transaction = getTransactionResponse.getTransaction()
     if (!transaction) {
@@ -74,7 +74,7 @@ export class XRPTransaction {
     const sourceXAddress = Utils.encodeXAddress(
       account,
       sourceTag,
-      xrplNetwork === XRPLNetwork.Test,
+      xrplNetwork === XrplNetwork.Test,
     )
 
     let paymentFields

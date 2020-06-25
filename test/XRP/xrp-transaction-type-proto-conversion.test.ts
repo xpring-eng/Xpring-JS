@@ -361,7 +361,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   })
 
   // Escrow Cancel
-    
+
   it('Convert EscrowCancel protobuf to XrpEscrowCancel object - valid fields', function (): void {
     // GIVEN an EscrowCancel protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.

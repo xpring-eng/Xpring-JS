@@ -1,7 +1,7 @@
 import { Utils } from 'xpring-common-js'
 import { PaymentChannelCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { XRPCurrencyAmount } from '.'
-import XRPLNetwork from '../../Common/xrpl-network'
+import XrplNetwork from '../../Common/xrpl-network'
 
 /*
  * Represents a PaymentChannelCreate transaction on the XRP Ledger.
@@ -21,7 +21,7 @@ export default class XrpPaymentChannelCreate {
    */
   public static from(
     paymentChannelCreate: PaymentChannelCreate,
-    xrplNetwork: XRPLNetwork,
+    xrplNetwork: XrplNetwork,
   ): XrpPaymentChannelCreate | undefined {
     const amountCurrencyAmount = paymentChannelCreate.getAmount()?.getValue()
     if (!amountCurrencyAmount) {
@@ -40,7 +40,7 @@ export default class XrpPaymentChannelCreate {
     const destinationXAddress = Utils.encodeXAddress(
       destination,
       destinationTag,
-      xrplNetwork == XRPLNetwork.Test || xrplNetwork == XRPLNetwork.Dev,
+      xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
     )
 
     const settleDelay = paymentChannelCreate.getSettleDelay()?.getValue()
