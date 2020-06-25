@@ -7,13 +7,13 @@ import 'mocha'
 import { BigNumber } from 'bignumber.js'
 import { assert } from 'chai'
 
-import { XRPUtils } from '../../src'
+import { XrpUtils } from '../../src'
 
 describe('xrp-drops-conversion', function (): void {
   // xrpToDrops and dropsToXrp tests
   it('dropsToXrp() - works with a typical amount', function (): void {
     // GIVEN a typical, valid drops value, WHEN converted to xrp
-    const xrp = XRPUtils.dropsToXrp('2000000')
+    const xrp = XrpUtils.dropsToXrp('2000000')
 
     // THEN the conversion is as expected
     assert.strictEqual(xrp, '2', '2 million drops equals 2 XRP')
@@ -22,43 +22,43 @@ describe('xrp-drops-conversion', function (): void {
   it('dropsToXrp() - works with fractions', function (): void {
     // GIVEN drops amounts that convert to fractional xrp amounts
     // WHEN converted to xrp THEN the conversion is as expected
-    let xrp = XRPUtils.dropsToXrp('3456789')
+    let xrp = XrpUtils.dropsToXrp('3456789')
     assert.strictEqual(xrp, '3.456789', '3,456,789 drops equals 3.456789 XRP')
 
-    xrp = XRPUtils.dropsToXrp('3400000')
+    xrp = XrpUtils.dropsToXrp('3400000')
     assert.strictEqual(xrp, '3.4', '3,400,000 drops equals 3.4 XRP')
 
-    xrp = XRPUtils.dropsToXrp('1')
+    xrp = XrpUtils.dropsToXrp('1')
     assert.strictEqual(xrp, '0.000001', '1 drop equals 0.000001 XRP')
 
-    xrp = XRPUtils.dropsToXrp('1.0')
+    xrp = XrpUtils.dropsToXrp('1.0')
     assert.strictEqual(xrp, '0.000001', '1.0 drops equals 0.000001 XRP')
 
-    xrp = XRPUtils.dropsToXrp('1.00')
+    xrp = XrpUtils.dropsToXrp('1.00')
     assert.strictEqual(xrp, '0.000001', '1.00 drops equals 0.000001 XRP')
   })
 
   it('dropsToXrp() - works with zero', function (): void {
     // GIVEN several equivalent representations of zero
     // WHEN converted to xrp, THEN the result is zero
-    let xrp = XRPUtils.dropsToXrp('0')
+    let xrp = XrpUtils.dropsToXrp('0')
     assert.strictEqual(xrp, '0', '0 drops equals 0 XRP')
 
     // negative zero is equivalent to zero
-    xrp = XRPUtils.dropsToXrp('-0')
+    xrp = XrpUtils.dropsToXrp('-0')
     assert.strictEqual(xrp, '0', '-0 drops equals 0 XRP')
 
-    xrp = XRPUtils.dropsToXrp('0.00')
+    xrp = XrpUtils.dropsToXrp('0.00')
     assert.strictEqual(xrp, '0', '0.00 drops equals 0 XRP')
 
-    xrp = XRPUtils.dropsToXrp('000000000')
+    xrp = XrpUtils.dropsToXrp('000000000')
     assert.strictEqual(xrp, '0', '000000000 drops equals 0 XRP')
   })
 
   it('dropsToXrp() - works with a negative value', function (): void {
     // GIVEN a negative drops amount
     // WHEN converted to xrp
-    const xrp = XRPUtils.dropsToXrp('-2000000')
+    const xrp = XrpUtils.dropsToXrp('-2000000')
 
     // THEN the conversion is also negative
     assert.strictEqual(xrp, '-2', '-2 million drops equals -2 XRP')
@@ -67,30 +67,30 @@ describe('xrp-drops-conversion', function (): void {
   it('dropsToXrp() - works with a value ending with a decimal point', function (): void {
     // GIVEN a positive or negative drops amount that ends with a decimal point
     // WHEN converted to xrp THEN the conversion is successful and correct
-    let xrp = XRPUtils.dropsToXrp('2000000.')
+    let xrp = XrpUtils.dropsToXrp('2000000.')
     assert.strictEqual(xrp, '2', '2000000. drops equals 2 XRP')
 
-    xrp = XRPUtils.dropsToXrp('-2000000.')
+    xrp = XrpUtils.dropsToXrp('-2000000.')
     assert.strictEqual(xrp, '-2', '-2000000. drops equals -2 XRP')
   })
 
   it('dropsToXrp() - works with BigNumber objects', function (): void {
     // GIVEN drops amounts represented as BigNumber objects
     // WHEN converted to xrp THEN the conversions are correct and successful
-    let xrp = XRPUtils.dropsToXrp(new BigNumber(2000000))
+    let xrp = XrpUtils.dropsToXrp(new BigNumber(2000000))
     assert.strictEqual(xrp, '2', '(BigNumber) 2 million drops equals 2 XRP')
 
-    xrp = XRPUtils.dropsToXrp(new BigNumber(-2000000))
+    xrp = XrpUtils.dropsToXrp(new BigNumber(-2000000))
     assert.strictEqual(xrp, '-2', '(BigNumber) -2 million drops equals -2 XRP')
 
-    xrp = XRPUtils.dropsToXrp(new BigNumber(2345678))
+    xrp = XrpUtils.dropsToXrp(new BigNumber(2345678))
     assert.strictEqual(
       xrp,
       '2.345678',
       '(BigNumber) 2,345,678 drops equals 2.345678 XRP',
     )
 
-    xrp = XRPUtils.dropsToXrp(new BigNumber(-2345678))
+    xrp = XrpUtils.dropsToXrp(new BigNumber(-2345678))
     assert.strictEqual(
       xrp,
       '-2.345678',
@@ -103,39 +103,39 @@ describe('xrp-drops-conversion', function (): void {
 
     // GIVEN a drops amount represented as a positive or negative number
     // WHEN converted to xrp THEN the conversion is correct and successful
-    let xrp = XRPUtils.dropsToXrp(2000000)
+    let xrp = XrpUtils.dropsToXrp(2000000)
     assert.strictEqual(xrp, '2', '(number) 2 million drops equals 2 XRP')
 
-    xrp = XRPUtils.dropsToXrp(-2000000)
+    xrp = XrpUtils.dropsToXrp(-2000000)
     assert.strictEqual(xrp, '-2', '(number) -2 million drops equals -2 XRP')
   })
 
   it('dropsToXrp() - throws with an amount with too many decimal places', function (): void {
     assert.throws(() => {
-      XRPUtils.dropsToXrp('1.2')
+      XrpUtils.dropsToXrp('1.2')
     }, /has too many decimal places/u)
 
     assert.throws(() => {
-      XRPUtils.dropsToXrp('0.10')
+      XrpUtils.dropsToXrp('0.10')
     }, /has too many decimal places/u)
   })
 
   it('dropsToXrp() - throws with an invalid value', function (): void {
     // GIVEN invalid drops values, WHEN converted to xrp, THEN an error is thrown
     assert.throws(() => {
-      XRPUtils.dropsToXrp('FOO')
+      XrpUtils.dropsToXrp('FOO')
     }, /invalid value/u)
 
     assert.throws(() => {
-      XRPUtils.dropsToXrp('1e-7')
+      XrpUtils.dropsToXrp('1e-7')
     }, /invalid value/u)
 
     assert.throws(() => {
-      XRPUtils.dropsToXrp('2,0')
+      XrpUtils.dropsToXrp('2,0')
     }, /invalid value/u)
 
     assert.throws(() => {
-      XRPUtils.dropsToXrp('.')
+      XrpUtils.dropsToXrp('.')
     }, /dropsToXrp: invalid value '\.', should be a BigNumber or string-encoded number\./u)
   })
 
@@ -143,18 +143,18 @@ describe('xrp-drops-conversion', function (): void {
     // GIVEN invalid drops values that contain more than one decimal point
     // WHEN converted to xrp THEN an error is thrown
     assert.throws(() => {
-      XRPUtils.dropsToXrp('1.0.0')
+      XrpUtils.dropsToXrp('1.0.0')
     }, /dropsToXrp: invalid value '1\.0\.0'/u)
 
     assert.throws(() => {
-      XRPUtils.dropsToXrp('...')
+      XrpUtils.dropsToXrp('...')
     }, /dropsToXrp: invalid value '\.\.\.'/u)
   })
 
   it('xrpToDrops() - works with a typical amount', function (): void {
     // GIVEN an xrp amoun that is typical and valid
     // WHEN converted to drops
-    const drops = XRPUtils.xrpToDrops('2')
+    const drops = XrpUtils.xrpToDrops('2')
 
     // THEN the conversion is successful and correct
     assert.strictEqual(drops, '2000000', '2 XRP equals 2 million drops')
@@ -163,56 +163,56 @@ describe('xrp-drops-conversion', function (): void {
   it('xrpToDrops() - works with fractions', function (): void {
     // GIVEN xrp amounts that are fractional
     // WHEN converted to drops THEN the conversions are successful and correct
-    let drops = XRPUtils.xrpToDrops('3.456789')
+    let drops = XrpUtils.xrpToDrops('3.456789')
     assert.strictEqual(drops, '3456789', '3.456789 XRP equals 3,456,789 drops')
-    drops = XRPUtils.xrpToDrops('3.400000')
+    drops = XrpUtils.xrpToDrops('3.400000')
     assert.strictEqual(drops, '3400000', '3.400000 XRP equals 3,400,000 drops')
-    drops = XRPUtils.xrpToDrops('0.000001')
+    drops = XrpUtils.xrpToDrops('0.000001')
     assert.strictEqual(drops, '1', '0.000001 XRP equals 1 drop')
-    drops = XRPUtils.xrpToDrops('0.0000010')
+    drops = XrpUtils.xrpToDrops('0.0000010')
     assert.strictEqual(drops, '1', '0.0000010 XRP equals 1 drop')
   })
 
   it('xrpToDrops() - works with zero', function (): void {
     // GIVEN xrp amounts that are various equivalent representations of zero
     // WHEN converted to drops THEN the conversions are equal to zero
-    let drops = XRPUtils.xrpToDrops('0')
+    let drops = XrpUtils.xrpToDrops('0')
     assert.strictEqual(drops, '0', '0 XRP equals 0 drops')
     // Negative zero is equivalent to zero
-    drops = XRPUtils.xrpToDrops('-0')
+    drops = XrpUtils.xrpToDrops('-0')
     assert.strictEqual(drops, '0', '-0 XRP equals 0 drops')
-    drops = XRPUtils.xrpToDrops('0.000000')
+    drops = XrpUtils.xrpToDrops('0.000000')
     assert.strictEqual(drops, '0', '0.000000 XRP equals 0 drops')
-    drops = XRPUtils.xrpToDrops('0.0000000')
+    drops = XrpUtils.xrpToDrops('0.0000000')
     assert.strictEqual(drops, '0', '0.0000000 XRP equals 0 drops')
   })
 
   it('xrpToDrops() - works with a negative value', function (): void {
     // GIVEN a negative xrp amount
     // WHEN converted to drops THEN the conversion is also negative
-    const drops = XRPUtils.xrpToDrops('-2')
+    const drops = XrpUtils.xrpToDrops('-2')
     assert.strictEqual(drops, '-2000000', '-2 XRP equals -2 million drops')
   })
 
   it('xrpToDrops() - works with a value ending with a decimal point', function (): void {
     // GIVEN an xrp amount that ends with a decimal point
     // WHEN converted to drops THEN the conversion is correct and successful
-    let drops = XRPUtils.xrpToDrops('2.')
+    let drops = XrpUtils.xrpToDrops('2.')
     assert.strictEqual(drops, '2000000', '2. XRP equals 2000000 drops')
-    drops = XRPUtils.xrpToDrops('-2.')
+    drops = XrpUtils.xrpToDrops('-2.')
     assert.strictEqual(drops, '-2000000', '-2. XRP equals -2000000 drops')
   })
 
   it('xrpToDrops() - works with BigNumber objects', function (): void {
     // GIVEN an xrp amount represented as a BigNumber object
     // WHEN converted to drops THEN the conversion is correct and successful
-    let drops = XRPUtils.xrpToDrops(new BigNumber(2))
+    let drops = XrpUtils.xrpToDrops(new BigNumber(2))
     assert.strictEqual(
       drops,
       '2000000',
       '(BigNumber) 2 XRP equals 2 million drops',
     )
-    drops = XRPUtils.xrpToDrops(new BigNumber(-2))
+    drops = XrpUtils.xrpToDrops(new BigNumber(-2))
     assert.strictEqual(
       drops,
       '-2000000',
@@ -225,13 +225,13 @@ describe('xrp-drops-conversion', function (): void {
 
     // GIVEN an xrp amounts represented as a number (positive and negative)
     // WHEN converted to drops THEN the conversions are successful and correct
-    let drops = XRPUtils.xrpToDrops(2)
+    let drops = XrpUtils.xrpToDrops(2)
     assert.strictEqual(
       drops,
       '2000000',
       '(number) 2 XRP equals 2 million drops',
     )
-    drops = XRPUtils.xrpToDrops(-2)
+    drops = XrpUtils.xrpToDrops(-2)
     assert.strictEqual(
       drops,
       '-2000000',
@@ -243,10 +243,10 @@ describe('xrp-drops-conversion', function (): void {
     // GIVEN an xrp amount with too many decimal places
     // WHEN converted to a drops amount THEN an error is thrown
     assert.throws(() => {
-      XRPUtils.xrpToDrops('1.1234567')
+      XrpUtils.xrpToDrops('1.1234567')
     }, /has too many decimal places/u)
     assert.throws(() => {
-      XRPUtils.xrpToDrops('0.0000001')
+      XrpUtils.xrpToDrops('0.0000001')
     }, /has too many decimal places/u)
   })
 
@@ -254,16 +254,16 @@ describe('xrp-drops-conversion', function (): void {
     // GIVEN xrp amounts represented as various invalid values
     // WHEN converted to drops THEN an error is thrown
     assert.throws(() => {
-      XRPUtils.xrpToDrops('FOO')
+      XrpUtils.xrpToDrops('FOO')
     }, /invalid value/u)
     assert.throws(() => {
-      XRPUtils.xrpToDrops('1e-7')
+      XrpUtils.xrpToDrops('1e-7')
     }, /invalid value/u)
     assert.throws(() => {
-      XRPUtils.xrpToDrops('2,0')
+      XrpUtils.xrpToDrops('2,0')
     }, /invalid value/u)
     assert.throws(() => {
-      XRPUtils.xrpToDrops('.')
+      XrpUtils.xrpToDrops('.')
     }, /xrpToDrops: invalid value '\.', should be a BigNumber or string-encoded number\./u)
   })
 
@@ -271,10 +271,10 @@ describe('xrp-drops-conversion', function (): void {
     // GIVEN an xrp amount with more than one decimal point, or all decimal points
     // WHEN converted to drops THEN an error is thrown
     assert.throws(() => {
-      XRPUtils.xrpToDrops('1.0.0')
+      XrpUtils.xrpToDrops('1.0.0')
     }, /xrpToDrops: invalid value '1\.0\.0'/u)
     assert.throws(() => {
-      XRPUtils.xrpToDrops('...')
+      XrpUtils.xrpToDrops('...')
     }, /xrpToDrops: invalid value '\.\.\.'/u)
   })
 })

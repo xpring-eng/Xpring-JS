@@ -1,5 +1,5 @@
 import { CheckCash } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { XRPCurrencyAmount } from '.'
+import XrpCurrencyAmount from './xrp-currency-amount'
 
 /*
  * Represents a CheckCash transaction on the XRP Ledger.
@@ -26,12 +26,12 @@ export default class XrpCheckCash {
 
     const amountCurrencyAmount = checkCash.getAmount()?.getValue()
     const amount = amountCurrencyAmount
-      ? XRPCurrencyAmount.from(amountCurrencyAmount)
+      ? XrpCurrencyAmount.from(amountCurrencyAmount)
       : undefined
 
     const deliverMinCurrencyAmount = checkCash.getDeliverMin()?.getValue()
     const deliverMin = deliverMinCurrencyAmount
-      ? XRPCurrencyAmount.from(deliverMinCurrencyAmount)
+      ? XrpCurrencyAmount.from(deliverMinCurrencyAmount)
       : undefined
 
     return new XrpCheckCash(checkId, amount, deliverMin)
@@ -48,7 +48,7 @@ export default class XrpCheckCash {
    */
   private constructor(
     readonly checkId: string,
-    readonly amount?: XRPCurrencyAmount,
-    readonly deliverMin?: XRPCurrencyAmount,
+    readonly amount?: XrpCurrencyAmount,
+    readonly deliverMin?: XrpCurrencyAmount,
   ) {}
 }
