@@ -1,6 +1,6 @@
 import { Utils } from 'xpring-common-js'
 import { PaymentChannelCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { XRPCurrencyAmount } from '.'
+import XrpCurrencyAmount from './xrp-currency-amount'
 import XrplNetwork from '../../Common/xrpl-network'
 
 /*
@@ -27,7 +27,7 @@ export default class XrpPaymentChannelCreate {
     if (!amountCurrencyAmount) {
       return undefined
     }
-    const amount = XRPCurrencyAmount.from(amountCurrencyAmount)
+    const amount = XrpCurrencyAmount.from(amountCurrencyAmount)
     const destination = paymentChannelCreate
       .getDestination()
       ?.getValue()
@@ -78,7 +78,7 @@ export default class XrpPaymentChannelCreate {
    *                    This value is immutable; the channel can be closed earlier than this time but cannot remain open after this time.)
    */
   private constructor(
-    readonly amount: XRPCurrencyAmount,
+    readonly amount: XrpCurrencyAmount,
     readonly destinationXAddress: string,
     readonly settleDelay: number,
     readonly publicKey: string,

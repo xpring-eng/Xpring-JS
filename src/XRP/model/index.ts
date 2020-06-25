@@ -1,21 +1,12 @@
-export {
-  default as XrpCurrencyAmount,
-  XRPCurrencyAmount,
-} from './xrp-currency-amount'
-export { default as XrpCurrency, XRPCurrency } from './xrp-currency'
-export {
-  default as XrpIssuedCurrency,
-  XRPIssuedCurrency,
-} from './xrp-issued-currency'
-export { default as XrpMemo, XRPMemo } from './xrp-memo'
-export { default as XrpPathElement, XRPPathElement } from './xrp-path-element'
-export { default as XrpPath, XRPPath } from './xrp-path'
-export { default as XrpPayment, XRPPayment } from './xrp-payment'
-export { default as XrpSigner, XRPSigner } from './xrp-signer'
-export {
-  default as XrpTransactionType,
-  XRPTransactionType,
-} from './xrp-transaction-type'
-export { default as XrpTransaction, XRPTransaction } from './xrp-transaction'
+export { default as XrpCurrencyAmount } from './xrp-currency-amount'
+export { default as XrpCurrency } from './xrp-currency'
+export { default as XrpIssuedCurrency } from './xrp-issued-currency'
+export { default as XrpMemo } from './xrp-memo'
+export { default as XrpPathElement } from './xrp-path-element'
+export { default as XrpPath } from './xrp-path'
+export { default as XrpPayment } from './xrp-payment'
+export { default as XrpSigner } from './xrp-signer'
+export { default as XrpTransactionType } from './xrp-transaction-type'
+export { default as XrpTransaction } from './xrp-transaction'
 export { default as XrpAccountSet } from './xrp-account-set'
 export { default as SendXrpDetails } from './send-xrp-details'

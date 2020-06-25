@@ -1,5 +1,5 @@
 import { PaymentChannelFund } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { XRPCurrencyAmount } from '.'
+import XrpCurrencyAmount from './xrp-currency-amount'
 
 /*
  * Represents a PaymentChannelFund transaction on the XRP Ledger.
@@ -27,7 +27,7 @@ export default class XrpPaymentChannelFund {
     if (!amountCurrencyAmount) {
       return undefined
     }
-    const amount = XRPCurrencyAmount.from(amountCurrencyAmount)
+    const amount = XrpCurrencyAmount.from(amountCurrencyAmount)
 
     // channel and amount are required fields
     if (!channel || !amount) {
@@ -54,7 +54,7 @@ export default class XrpPaymentChannelFund {
    */
   private constructor(
     readonly channel: string,
-    readonly amount: XRPCurrencyAmount,
+    readonly amount: XrpCurrencyAmount,
     readonly expiration?: number,
   ) {}
 }

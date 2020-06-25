@@ -1,5 +1,5 @@
 import { TrustSet } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import XRPCurrencyAmount from './xrp-currency-amount'
+import XrpCurrencyAmount from './xrp-currency-amount'
 
 /*
  * Represents a TrustSet transaction on the XRP Ledger.
@@ -21,7 +21,7 @@ export default class XrpTrustSet {
     if (!limitAmountCurrencyAmount) {
       return undefined
     }
-    const limitAmount = XRPCurrencyAmount.from(limitAmountCurrencyAmount)
+    const limitAmount = XrpCurrencyAmount.from(limitAmountCurrencyAmount)
     if (!limitAmount) {
       return undefined
     }
@@ -31,7 +31,7 @@ export default class XrpTrustSet {
   }
 
   /**
-   * @param limitAmount Object defining the trust line to create or modify, in the format of an XRPCurrencyAmount.
+   * @param limitAmount Object defining the trust line to create or modify, in the format of an XrpCurrencyAmount.
    *                    limitAmount.currency: The currency this trust line applies to, as a three-letter ISO 4217 Currency Code,
    *                                           or a 160-bit hex value according to currency format. "XRP" is invalid.
    *                    limitAmount.value: Quoted decimal representation of the limit to set on this trust line.
@@ -42,7 +42,7 @@ export default class XrpTrustSet {
    *                    A value of 0 is shorthand for treating balances at face value.
    */
   private constructor(
-    readonly limitAmount: XRPCurrencyAmount,
+    readonly limitAmount: XrpCurrencyAmount,
     readonly qualityIn?: number,
     readonly qualityOut?: number,
   ) {}

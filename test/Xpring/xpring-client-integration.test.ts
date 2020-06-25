@@ -4,7 +4,7 @@ import { Wallet } from 'xpring-common-js'
 import XrplNetwork from '../../src/Common/xrpl-network'
 import XrpPayIdClient from '../../src/PayID/xrp-pay-id-client'
 import XpringClient from '../../src/Xpring/xpring-client'
-import { XRPClient } from '../../src/XRP/xrp-client'
+import XrpClient from '../../src/XRP/xrp-client'
 import {
   expectedNoDataMemo,
   expectedNoFormatMemo,
@@ -28,9 +28,9 @@ const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 // A PayIdClient under test.
 const payIdClient = new XrpPayIdClient(network)
 
-// An XRPClient under test.
-const rippledURL = 'test.xrp.xpring.io:50051'
-const xrpClient = new XRPClient(rippledURL, XrplNetwork.Test)
+// An XrpClient under test.
+const rippledUrl = 'test.xrp.xpring.io:50051'
+const xrpClient = new XrpClient(rippledUrl, XrplNetwork.Test)
 
 // A XpringClient under test.
 const xpringClient = new XpringClient(payIdClient, xrpClient)
@@ -56,7 +56,7 @@ describe('Xpring Integration Tests', function (): void {
     // GIVEN an amount, a PayID that will resolve, and some memos.
     const amount = 10
     const payID = 'alice$dev.payid.xpring.money'
-    const memos = [
+    const memoList = [
       iForgotToPickUpCarlMemo,
       noDataMemo,
       noFormatMemo,
@@ -68,7 +68,7 @@ describe('Xpring Integration Tests', function (): void {
       amount,
       destination: payID,
       sender: wallet,
-      memos,
+      memoList,
     })
 
     // THEN a transaction hash is returned and the memos are present.
