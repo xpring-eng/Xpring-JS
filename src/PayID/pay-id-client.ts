@@ -14,8 +14,6 @@ interface PayIDComponents {
 
 /**
  * A client for PayID.
- *
- * @warning This class is experimental and should not be used in production applications.
  */
 export default class PayIdClient {
   /**
