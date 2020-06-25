@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 5.0.0 - 2020-06-25
+
+This new release contains production ready classes for [PayID](https://payid.org).
+
 ## Removed
 - `PayIDClient` was deprecated for two releases and has been removed. Use `PayIdClient` instead.
 - `PayIDError` was deprecated for two releases and has been removed. Use `PayIdError` instead.
@@ -14,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `XRPPayIDClientInterface` was deprecated for two releases and has been removed. Use `XrpPayIdClientInterface` instead.
 - `XRPPayIDClient` was deprecated for two releases and has been removed.  Use `XrpPayIdClient` instead.
 - `XRPLNetwork` was deprecated for two releases and has been removed.  Use `XrplNetwork` instead.
+
 ## 4.3.2 - 2020-06-17
 
 ## Added
