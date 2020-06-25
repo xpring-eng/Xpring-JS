@@ -14,7 +14,7 @@ export default class XpringError extends Error {
    * Input entities given to a Xpring component were attached to different networks.
    *
    * For instance, this error may be thrown if a XpringClient was constructed with
-   * a PayIDClient attached to Testnet and an XRPClient attached to Mainnet.
+   * a PayIDClient attached to Testnet and an XrpClient attached to Mainnet.
    */
   public static mismatchedNetworks = new XpringError(
     XpringErrorType.MismatchedNetworks,

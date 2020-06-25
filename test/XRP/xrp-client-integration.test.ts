@@ -2,9 +2,9 @@ import bigInt from 'big-integer'
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 
-import { XRPLNetwork } from '../../src/Common/xrpl-network'
+import XrplNetwork from '../../src/Common/xrpl-network'
 import TransactionStatus from '../../src/XRP/transaction-status'
-import { XRPClient } from '../../src/XRP/xrp-client'
+import XrpClient from '../../src/XRP/xrp-client'
 
 import {
   expectedNoDataMemo,
@@ -26,18 +26,18 @@ const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
 // A wallet with some balance on TestNet.
 const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 
-// An XRPClient that makes requests. Ssends the requests to an HTTP envoy emulating how the browser would behave.
-const grpcWebURL = 'https://envoy.test.xrp.xpring.io'
-const xrpWebClient = new XRPClient(grpcWebURL, XRPLNetwork.Test, true)
+// An XrpClient that makes requests. Ssends the requests to an HTTP envoy emulating how the browser would behave.
+const grpcWebUrl = 'https://envoy.test.xrp.xpring.io'
+const xrpWebClient = new XrpClient(grpcWebUrl, XrplNetwork.Test, true)
 
-// An XRPClient that makes requests. Uses rippled's gRPC implementation.
-const rippledURL = 'test.xrp.xpring.io:50051'
-const xrpClient = new XRPClient(rippledURL, XRPLNetwork.Test)
+// An XrpClient that makes requests. Uses rippled's gRPC implementation.
+const rippledUrl = 'test.xrp.xpring.io:50051'
+const xrpClient = new XrpClient(rippledUrl, XrplNetwork.Test)
 
 // Some amount of XRP to send.
 const amount = bigInt('1')
 
-describe('XRPClient Integration Tests', function (): void {
+describe('XrpClient Integration Tests', function (): void {
   it('Get Transaction Status - Web Shim', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
@@ -74,7 +74,7 @@ describe('XRPClient Integration Tests', function (): void {
   it('Send XRP with memo - Web Shim', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const memos = [
+    const memoList = [
       iForgotToPickUpCarlMemo,
       noDataMemo,
       noFormatMemo,
@@ -84,7 +84,7 @@ describe('XRPClient Integration Tests', function (): void {
       amount,
       destination: recipientAddress,
       sender: wallet,
-      memos,
+      memoList,
     })
     assert.exists(result)
 
@@ -107,7 +107,7 @@ describe('XRPClient Integration Tests', function (): void {
 
   it('Send XRP with memo - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
-    const memos = [
+    const memoList = [
       iForgotToPickUpCarlMemo,
       noDataMemo,
       noFormatMemo,
@@ -117,7 +117,7 @@ describe('XRPClient Integration Tests', function (): void {
       amount,
       destination: recipientAddress,
       sender: wallet,
-      memos,
+      memoList,
     })
     assert.exists(result)
 

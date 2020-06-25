@@ -1,5 +1,5 @@
 import { SignerListSet } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import XRPSignerEntry from './xrp-signer-entry'
+import XrpSignerEntry from './xrp-signer-entry'
 /*
  * Represents a SignerListSet transaction on the XRP Ledger.
  *
@@ -25,7 +25,7 @@ export default class XrpSignerListSet {
     }
     const signerEntries = signerListSet
       .getSignerEntriesList()
-      .map((signerEntry) => XRPSignerEntry.from(signerEntry))
+      .map((signerEntry) => XrpSignerEntry.from(signerEntry))
     return new XrpSignerListSet(signerQuorum, signerEntries)
   }
 
@@ -38,6 +38,6 @@ export default class XrpSignerListSet {
    */
   private constructor(
     readonly signerQuorum: number,
-    readonly signerEntries?: Array<XRPSignerEntry | undefined>,
+    readonly signerEntries?: Array<XrpSignerEntry | undefined>,
   ) {}
 }

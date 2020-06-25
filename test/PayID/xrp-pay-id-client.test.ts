@@ -12,7 +12,7 @@ describe('XRP Pay ID Client', function (): void {
   })
 
   it('xrpAddressForPayId - successful response - x address', async function () {
-    // GIVEN a PayID client, valid PayID and mocked networking to return an X-Address for the PayID.
+    // GIVEN an XrpPayIdClient, valid PayID and mocked networking to return an X-Address for the PayID.
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new XrpPayIdClient(XrplNetwork.Test)
 
@@ -43,7 +43,7 @@ describe('XRP Pay ID Client', function (): void {
   })
 
   it('xrpAddressForPayId - successful response - classic address with no tag', async function () {
-    // GIVEN a PayID client, valid PayID and mocked networking to return a classic address for the PayID.
+    // GIVEN an XrpPayIdClient, valid PayID and mocked networking to return a classic address for the PayID.
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new XrpPayIdClient(XrplNetwork.Test)
 
@@ -75,7 +75,7 @@ describe('XRP Pay ID Client', function (): void {
   })
 
   it('xrpAddressForPayId - successful response - classic address with tag', async function () {
-    // GIVEN a PayID client, valid PayID and mocked networking to return a classic address and tag for the PayID.
+    // GIVEN an XrpPayIdClient, valid PayID and mocked networking to return a classic address and tag for the PayID.
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new XrpPayIdClient(XrplNetwork.Test)
 
@@ -109,7 +109,7 @@ describe('XRP Pay ID Client', function (): void {
   })
 
   it('xrpAddressForPayId - successful response - multiple classic addresses returned', function (done) {
-    // GIVEN a PayID client, valid PayID and mocked networking to return multiple addresses for the PayID.
+    // GIVEN an XrpPayIdClient, valid PayID and mocked networking to return multiple addresses for the PayID.
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new XrpPayIdClient(XrplNetwork.Test)
 

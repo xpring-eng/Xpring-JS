@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+## 5.0.0 - 2020-06-25
+
+This new release contains production ready classes for [PayID](https://payid.org).
+
+This release also provides idiomatic capitalization. Previously, classes that were 'PayID' are now named as 'PayId' and classes which were named as 'XRP' are now named 'Xrp'.
+
+## Removed
+- `PayIDClient` was deprecated for two releases and has been removed. Use `PayIdClient` instead.
+- `PayIDError` was deprecated for two releases and has been removed. Use `PayIdError` instead.
+- `PayIDErrorType` was deprecated for two releases and has been removed. Use `PayIdErrorType` instead.
+- `XRPPayIDClientInterface` was deprecated for two releases and has been removed. Use `XrpPayIdClientInterface` instead.
+- `XRPPayIDClient` was deprecated for two releases and has been removed.  Use `XrpPayIdClient` instead.
+- `XRPLNetwork` was deprecated for two releases and has been removed.  Use `XrplNetwork` instead.
+- `memos` on `SendXrpDetails` was deprecated for two releases and has been removed. Use `memoList` instead.
+- `XRPAccountSet` was deprecated for two releases and has been removed. Use `XrpAccountSet` instead.
+- `XRPCurrencyAmount` was deprecated for two releases and has been removed. Use `XrpCurrencyAmount` instead.
+- `XRPCurrency` was deprecated for two releases and has been removed. Use `XrpCurrency` instead.
+- `XRPIssuedCurrency` was deprecated for two releases and has been removed. Use `XrpIssuedCurrency` instead.
+- `XRPMemo` was deprecated for two releases and has been removed. Use `XrpMemo` instead.
+- `XRPPathElement` was deprecated for two releases and has been removed. Use `XrpPathElement` instead.
+- `XRPPath` was deprecated for two releases and has been removed. Use `XrpPath` instead.
+- `XRPPayment` was deprecated for two releases and has been removed. Use `XrpPayment` instead.
+- `XRPSigner` was deprecated for two releases and has been removed. Use `XrpSigner` instead.
+- `XRPTransactionType` was deprecated for two releases and has been removed. Use `XrpTransactionType` instead.
+- `XRPTransaction` was deprecated for two releases and has been removed. Use `XrpTransaction` instead.
+- `XRPUtils` was deprecated for two releases and has been removed. Use `XrpUtils` instead.
+- `XRPClient` was deprecated for two releases and has been removed. Use `XrpClient` instead.
+- `XRPError` was deprecated for two releases and has been removed. Use `XrpError` instead.
+- `XRPErrorType` was deprecated for two releases and has been removed. Use `XrpErrorType` instead.
+- `XrpTransaction.account` and `XrpTransaction.sourceTag` were deprecated for two releases and have been removed.
+  Use the X-address encoded field `sourceXAddress` instead.
+- `XrpPayment.destination` and `XrpPayment.destinationTag` were deprecated for two releases and have been removed.
+  Use the X-address encoded field `destinationXAddress` instead.
+
 ## 4.3.2 - 2020-06-17
 
 ## Added
@@ -51,8 +87,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PayIDClient` is deprecated. Use `PayIdClient` instead.
 - `PayIDError` is deprecated. Use `PayIdError` instead.
 - `PayIDErrorType` is deprecated. Use `PayIdErrorType` instead.
-- `XRPayIDClientInterface` replaces the now deprecated `XrpPayIdClientInterface`.
-- `XRPPayIDClient` replaces the now deprecated `XrpPayIdClient`.
+- `XRPPayIDClientInterface` is deprecated. Use `XrpPayIdClientInterface` instead.
+- `XRPPayIDClient` is deprecated. Use `XrpPayIdClient` instead.
 - `memos` on `SendXrpDetails` is deprecated. Use `memoList` instead.
 - `XRPAccountSet` is deprecated. Use `XrpAccountSet` instead.
 - `XRPCurrencyAmount` is deprecated. Use `XrpCurrencyAmount` instead.

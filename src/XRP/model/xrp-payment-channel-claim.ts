@@ -1,5 +1,5 @@
 import { PaymentChannelClaim } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { XRPCurrencyAmount } from '.'
+import XrpCurrencyAmount from './xrp-currency-amount'
 
 /*
  * Represents a PaymentChannelClaim transaction on the XRP Ledger.
@@ -28,13 +28,13 @@ export default class XrpPaymentChannelClaim {
     const balanceCurrencyAmount = paymentChannelClaim.getBalance()?.getValue()
     let balance
     if (balanceCurrencyAmount) {
-      balance = XRPCurrencyAmount.from(balanceCurrencyAmount)
+      balance = XrpCurrencyAmount.from(balanceCurrencyAmount)
     }
 
     const amountCurrencyAmount = paymentChannelClaim.getAmount()?.getValue()
     let amount
     if (amountCurrencyAmount) {
-      amount = XRPCurrencyAmount.from(amountCurrencyAmount)
+      amount = XrpCurrencyAmount.from(amountCurrencyAmount)
     }
 
     const signature = paymentChannelClaim
@@ -69,8 +69,8 @@ export default class XrpPaymentChannelClaim {
    */
   private constructor(
     readonly channel: string,
-    readonly balance?: XRPCurrencyAmount,
-    readonly amount?: XRPCurrencyAmount,
+    readonly balance?: XrpCurrencyAmount,
+    readonly amount?: XrpCurrencyAmount,
     readonly signature?: string,
     readonly publicKey?: string,
   ) {}

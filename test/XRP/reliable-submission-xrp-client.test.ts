@@ -1,12 +1,12 @@
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 import bigInt from 'big-integer'
-import FakeXRPClient from './fakes/fake-xrp-client'
-import { ReliableSubmissionXRPClient } from '../../src/XRP/reliable-submission-xrp-client'
+import FakeXrpClient from './fakes/fake-xrp-client'
+import ReliableSubmissionXrpClient from '../../src/XRP/reliable-submission-xrp-client'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import TransactionStatus from '../../src/XRP/transaction-status'
-import { testXRPTransaction } from './fakes/fake-xrp-protobufs'
-import { XRPLNetwork } from '../../src/Common/xrpl-network'
+import { testXrpTransaction } from './fakes/fake-xrp-protobufs'
+import XrplNetwork from '../../src/Common/xrpl-network'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -30,12 +30,12 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
   fakedRawTransactionStatusLastLedgerSequenceValue,
   fakedFullPaymentValue,
 )
-const fakedTransactionHistoryValue = [testXRPTransaction]
-const fakedGetPaymentValue = testXRPTransaction
+const fakedTransactionHistoryValue = [testXrpTransaction]
+const fakedGetPaymentValue = testXrpTransaction
 
 describe('Reliable Submission XRP Client', function (): void {
   beforeEach(function () {
-    this.fakeXRPClient = new FakeXRPClient(
+    this.fakeXrpClient = new FakeXrpClient(
       fakedGetBalanceValue,
       fakedTransactionStatusValue,
       fakedSendValue,
@@ -45,14 +45,14 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedTransactionHistoryValue,
       fakedGetPaymentValue,
     )
-    this.reliableSubmissionClient = new ReliableSubmissionXRPClient(
-      this.fakeXRPClient,
-      XRPLNetwork.Test,
+    this.reliableSubmissionClient = new ReliableSubmissionXrpClient(
+      this.fakeXrpClient,
+      XrplNetwork.Test,
     )
   })
 
   it('Get Account Balance - Response Not Modified', async function () {
-    // GIVEN a `ReliableSubmissionXRPClient` decorating a `FakeXRPClient` WHEN a balance is retrieved.
+    // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` WHEN a balance is retrieved.
     const returnedValue = await this.reliableSubmissionClient.getBalance(
       testAddress,
     )
@@ -62,7 +62,7 @@ describe('Reliable Submission XRP Client', function (): void {
   })
 
   it('Get Payment Status - Response Not Modified', async function () {
-    // GIVEN a `ReliableSubmissionXRPClient` decorating a `FakeXRPClient` WHEN a transaction status is retrieved.
+    // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` WHEN a transaction status is retrieved.
     const returnedValue = await this.reliableSubmissionClient.getPaymentStatus(
       testAddress,
     )
@@ -72,7 +72,7 @@ describe('Reliable Submission XRP Client', function (): void {
   })
 
   it('Get Latest Ledger Sequence - Response Not Modified', async function () {
-    // GIVEN a `ReliableSubmissionXRPClient` decorating a `FakeXRPClient` WHEN the latest ledger sequence is retrieved.
+    // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` WHEN the latest ledger sequence is retrieved.
     const returnedValue = await this.reliableSubmissionClient.getLatestValidatedLedgerSequence(
       testAddress,
     )
@@ -82,7 +82,7 @@ describe('Reliable Submission XRP Client', function (): void {
   })
 
   it('Get Raw Transaction Status - Response Not Modified', async function () {
-    // GIVEN a `ReliableSubmissionXRPClient` decorating a `FakeXRPClient` WHEN a raw transaction status is retrieved.
+    // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` WHEN a raw transaction status is retrieved.
     const returnedValue = await this.reliableSubmissionClient.getRawTransactionStatus(
       testAddress,
     )
@@ -99,7 +99,7 @@ describe('Reliable Submission XRP Client', function (): void {
     setTimeout(() => {
       const latestLedgerSequence =
         fakedRawTransactionStatusLastLedgerSequenceValue + 1
-      this.fakeXRPClient.latestLedgerSequence = latestLedgerSequence
+      this.fakeXrpClient.latestLedgerSequence = latestLedgerSequence
     }, 200)
     const { wallet } = Wallet.generateRandomWallet()!
 
@@ -139,14 +139,14 @@ describe('Reliable Submission XRP Client', function (): void {
     // Increase timeout because the poll interview is 4s.
     this.timeout(5000)
 
-    // GIVEN a `ReliableSubmissionXRPClient` decorating a `FakeXRPClient` which will return a transaction that did not have a last ledger sequence attached.
+    // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` which will return a transaction that did not have a last ledger sequence attached.
     const malformedRawTransactionStatus = new RawTransactionStatus(
       fakedRawTransactionStatusValidatedValue,
       fakedRawTransactionStatusTransactionStatusCode,
       0,
       fakedFullPaymentValue,
     )
-    this.fakeXRPClient.getRawTransactionStatusValue = malformedRawTransactionStatus
+    this.fakeXrpClient.getRawTransactionStatusValue = malformedRawTransactionStatus
     const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN `send` is called THEN the promise is rejected.
@@ -156,7 +156,7 @@ describe('Reliable Submission XRP Client', function (): void {
   })
 
   it('Payment History - Response Not Modified', async function () {
-    // GIVEN a `ReliableSubmissionXRPClient` decorating a `FakeXRPClient` WHEN transaction history is retrieved.
+    // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` WHEN transaction history is retrieved.
     const returnedValue = await this.reliableSubmissionClient.paymentHistory(
       testAddress,
     )

@@ -1,7 +1,7 @@
 import { Utils } from 'xpring-common-js'
 import { EscrowCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { XRPCurrencyAmount } from '.'
-import XRPLNetwork from '../../Common/xrpl-network'
+import XrpCurrencyAmount from './xrp-currency-amount'
+import XrplNetwork from '../../Common/xrpl-network'
 
 /*
  * Represents an EscrowCreate transaction on the XRP Ledger.
@@ -20,14 +20,14 @@ export default class XrpEscrowCreate {
    */
   public static from(
     escrowCreate: EscrowCreate,
-    xrplNetwork: XRPLNetwork,
+    xrplNetwork: XrplNetwork,
   ): XrpEscrowCreate | undefined {
     // amount is a required field
     const amountCurrencyAmountProto = escrowCreate.getAmount()?.getValue()
     if (!amountCurrencyAmountProto) {
       return undefined
     }
-    const amount = XRPCurrencyAmount.from(amountCurrencyAmountProto)
+    const amount = XrpCurrencyAmount.from(amountCurrencyAmountProto)
     if (!amount) {
       return undefined
     }
@@ -40,7 +40,7 @@ export default class XrpEscrowCreate {
     const destinationXAddress = Utils.encodeXAddress(
       destination,
       destinationTag,
-      xrplNetwork == XRPLNetwork.Test || xrplNetwork == XRPLNetwork.Dev,
+      xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
     )
     // destinationXAddress is a required field
     if (!destinationXAddress) {
@@ -74,7 +74,7 @@ export default class XrpEscrowCreate {
    *                   The funds can only be delivered to the recipient if this condition is fulfilled.
    */
   private constructor(
-    readonly amount: XRPCurrencyAmount,
+    readonly amount: XrpCurrencyAmount,
     readonly destinationXAddress: string,
     readonly cancelAfter?: number,
     readonly finishAfter?: number,

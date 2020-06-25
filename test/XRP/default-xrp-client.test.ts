@@ -6,7 +6,7 @@ import { Utils, Wallet } from 'xpring-common-js'
 import { StatusCode as grpcStatusCode } from 'grpc-web'
 import FakeGRPCError from './fakes/fake-grpc-error'
 import XRPTestUtils, { iForgotToPickUpCarlMemo } from './helpers/xrp-test-utils'
-import { DefaultXRPClient } from '../../src/XRP/default-xrp-client'
+import DefaultXrpClient from '../../src/XRP/default-xrp-client'
 import {
   FakeXRPNetworkClient,
   FakeXRPNetworkClientResponses,
@@ -27,9 +27,9 @@ import {
   testInvalidGetTransactionResponseProtoUnsupportedType,
   testInvalidGetAccountTransactionHistoryResponse,
 } from './fakes/fake-xrp-protobufs'
-import { XRPTransaction } from '../../src/XRP/model/xrp-transaction'
-import { XRPError, XRPErrorType } from '../../src/XRP/xrp-error'
-import { XRPLNetwork } from '../../src/Common/xrpl-network'
+import XrpTransaction from '../../src/XRP/model/xrp-transaction'
+import XrpError, { XrpErrorType } from '../../src/XRP/xrp-error'
+import XrplNetwork from '../../src/Common/xrpl-network'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -79,10 +79,10 @@ describe('Default XRP Client', function (): void {
   it('Get Account Balance - successful response', async function (): Promise<
     void
   > {
-    // GIVEN a DefaultXRPClient.
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient.
+    const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN the balance for an account is requested.
@@ -93,25 +93,25 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Get Account Balance - classic address', function (done): void {
-    // GIVEN an XRPClient and a classic address
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient and a classic address
+    const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
 
     // WHEN the balance for an account is requested THEN an error to use X-Addresses is thrown.
     xrpClient.getBalance(classicAddress).catch((error) => {
-      assert.equal((error as XRPError).errorType, XRPErrorType.XAddressRequired)
+      assert.equal((error as XrpError).errorType, XrpErrorType.XAddressRequired)
       done()
     })
   })
 
   it('Get Account Balance - error', function (done): void {
-    // GIVEN an XRPClient which wraps an erroring network client.
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient which wraps an erroring network client.
+    const xrpClient = new DefaultXrpClient(
       fakeErroringNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN a balance is requested THEN an error is propagated.
@@ -123,7 +123,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Get Account Balance - malformed response, no balance', function (done): void {
-    // GIVEN an XRPClient which wraps a network client with a malformed response.
+    // GIVEN a DefaultXrpClient which wraps a network client with a malformed response.
     const accountInfoResponse = FakeXRPNetworkClientResponses.defaultAccountInfoResponse()
     accountInfoResponse.getAccountData()!.setBalance(undefined)
     const fakeNetworkClientResponses = new FakeXRPNetworkClientResponses(
@@ -132,13 +132,13 @@ describe('Default XRP Client', function (): void {
     const fakeNetworkClient = new FakeXRPNetworkClient(
       fakeNetworkClientResponses,
     )
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXrpClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN a balance is requested THEN an error is propagated.
     xrpClient.getBalance(testAddress).catch((error) => {
       assert.equal(
-        (error as XRPError).errorType,
-        XRPErrorType.MalformedResponse,
+        (error as XrpError).errorType,
+        XrpErrorType.MalformedResponse,
       )
       done()
     })
@@ -150,7 +150,7 @@ describe('Default XRP Client', function (): void {
     // Iterate over different types of transaction status codes which represent failures.
     /* eslint-disable no-await-in-loop */
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
-      // GIVEN an XRPClient which will return an unvalidated transaction with a failure code.
+      // GIVEN a DefaultXrpClient which will return an unvalidated transaction with a failure code.
       const transactionStatusCodeFailure = transactionStatusFailureCodes[i]
       const transactionStatusResponse = makeGetTransactionResponse(
         false,
@@ -165,9 +165,9 @@ describe('Default XRP Client', function (): void {
       const fakeNetworkClient = new FakeXRPNetworkClient(
         transactionStatusResponses,
       )
-      const xrpClient = new DefaultXRPClient(
+      const xrpClient = new DefaultXrpClient(
         fakeNetworkClient,
-        XRPLNetwork.Test,
+        XrplNetwork.Test,
       )
 
       // WHEN the transaction status is retrieved.
@@ -184,7 +184,7 @@ describe('Default XRP Client', function (): void {
   it('Get Payment Status - Unvalidated Transaction and Success Code', async function (): Promise<
     void
   > {
-    // GIVEN an XRPClient which will return an unvalidated transaction with a success code.
+    // GIVEN a DefaultXrpClient which will return an unvalidated transaction with a success code.
     const transactionStatusResponse = makeGetTransactionResponse(
       false,
       transactionStatusCodeSuccess,
@@ -198,7 +198,7 @@ describe('Default XRP Client', function (): void {
     const fakeNetworkClient = new FakeXRPNetworkClient(
       transactionStatusResponses,
     )
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXrpClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN the transaction status is retrieved.
     const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
@@ -213,7 +213,7 @@ describe('Default XRP Client', function (): void {
     // Iterate over different types of transaction status codes which represent failures.
     /* eslint-disable no-await-in-loop */
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
-      // GIVEN a XRPClient which will return an validated transaction with a failure code.
+      // GIVEN a DefaultXrpClient which will return an validated transaction with a failure code.
       const transactionStatusCodeFailure = transactionStatusFailureCodes[i]
       const transactionStatusResponse = makeGetTransactionResponse(
         true,
@@ -228,9 +228,9 @@ describe('Default XRP Client', function (): void {
       const fakeNetworkClient = new FakeXRPNetworkClient(
         transactionStatusResponses,
       )
-      const xrpClient = new DefaultXRPClient(
+      const xrpClient = new DefaultXrpClient(
         fakeNetworkClient,
-        XRPLNetwork.Test,
+        XrplNetwork.Test,
       )
 
       // WHEN the transaction status is retrieved.
@@ -247,7 +247,7 @@ describe('Default XRP Client', function (): void {
   it('Get Payment Status - Validated Transaction and Success Code', async function (): Promise<
     void
   > {
-    // GIVEN an XRPClient which will return an validated transaction with a success code.
+    // GIVEN a DefaultXrpClient which will return an validated transaction with a success code.
     const transactionStatusResponse = makeGetTransactionResponse(
       true,
       transactionStatusCodeSuccess,
@@ -261,7 +261,7 @@ describe('Default XRP Client', function (): void {
     const fakeNetworkClient = new FakeXRPNetworkClient(
       transactionStatusResponses,
     )
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXrpClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN the transaction status is retrieved.
     const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
@@ -271,7 +271,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Get Transaction Status - Node Error', function (done): void {
-    // GIVEN an XRPClient which will error when a transaction status is requested.
+    // GIVEN a DefaultXrpClient which will error when a transaction status is requested.
     const transactionStatusResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
       FakeXRPNetworkClientResponses.defaultFeeResponse(),
@@ -281,7 +281,7 @@ describe('Default XRP Client', function (): void {
     const fakeNetworkClient = new FakeXRPNetworkClient(
       transactionStatusResponses,
     )
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXrpClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN the transaction status is retrieved THEN an error is thrown.
     xrpClient.getPaymentStatus(transactionHash).catch((error) => {
@@ -291,22 +291,22 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - success with memo and BigInteger', async function () {
-    // GIVEN an XRPClient, a wallet, and a BigInteger denominated amount and a memo.
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient, a wallet, and a BigInteger denominated amount and a memo.
+    const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
-    const memos = [iForgotToPickUpCarlMemo]
+    const memoList = [iForgotToPickUpCarlMemo]
 
     // WHEN the account makes a transaction with a memo.
     const transactionHash = await xrpClient.sendWithDetails({
       amount,
       destination: destinationAddress,
       sender: wallet,
-      memos,
+      memoList,
     })
 
     // THEN the transaction hash exists and finds the transaction with the memo.
@@ -319,10 +319,10 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - success with BigInteger', async function () {
-    // GIVEN an XRPClient, a wallet, and a BigInteger denomonated amount.
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient, a wallet, and a BigInteger denomonated amount.
+    const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -345,10 +345,10 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - success with number', async function () {
-    // GIVEN an XRPClient, a wallet, and a number denominated amount.
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient, a wallet, and a number denominated amount.
+    const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -371,10 +371,10 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - success with string', async function () {
-    // GIVEN an XRPClient, a wallet, and a numeric string denominated amount.
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient, a wallet, and a numeric string denominated amount.
+    const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -397,10 +397,10 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - failure with invalid string', function (done) {
-    // GIVEN an XRPClient, a wallet and an amount that is invalid.
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient, a wallet and an amount that is invalid.
+    const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -414,7 +414,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - get fee failure', function (done) {
-    // GIVEN an XRPClient which will fail to retrieve a fee.
+    // GIVEN a DefaultXrpClient which will fail to retrieve a fee.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
       FakeXRPNetworkClientResponses.defaultError,
@@ -423,9 +423,9 @@ describe('Default XRP Client', function (): void {
     const feeFailingNetworkClient = new FakeXRPNetworkClient(
       feeFailureResponses,
     )
-    const xrpClient = new DefaultXRPClient(
+    const xrpClient = new DefaultXrpClient(
       feeFailingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -443,10 +443,10 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - failure with classic address', function (done) {
-    // GIVEN an XRPClient, a wallet, and a classic address as the destination.
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient, a wallet, and a classic address as the destination.
+    const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
@@ -454,13 +454,13 @@ describe('Default XRP Client', function (): void {
 
     // WHEN the account makes a transaction THEN an error is thrown.
     xrpClient.send(amount, destinationAddress, wallet).catch((error) => {
-      assert.equal((error as XRPError).errorType, XRPErrorType.XAddressRequired)
+      assert.equal((error as XrpError).errorType, XrpErrorType.XAddressRequired)
       done()
     })
   })
 
   it('Send XRP Transaction - get account info failure', function (done) {
-    // GIVEN an XRPClient which will fail to retrieve account info.
+    // GIVEN a DefaultXrpClient which will fail to retrieve account info.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultError,
       FakeXRPNetworkClientResponses.defaultFeeResponse(),
@@ -469,9 +469,9 @@ describe('Default XRP Client', function (): void {
     const feeFailingNetworkClient = new FakeXRPNetworkClient(
       feeFailureResponses,
     )
-    const xrpClient = new DefaultXRPClient(
+    const xrpClient = new DefaultXrpClient(
       feeFailingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -485,7 +485,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - submission failure', function (done) {
-    // GIVEN an XRPClient which will to submit a transaction.
+    // GIVEN a DefaultXrpClient which will to submit a transaction.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
       FakeXRPNetworkClientResponses.defaultFeeResponse(),
@@ -494,9 +494,9 @@ describe('Default XRP Client', function (): void {
     const feeFailingNetworkClient = new FakeXRPNetworkClient(
       feeFailureResponses,
     )
-    const xrpClient = new DefaultXRPClient(
+    const xrpClient = new DefaultXrpClient(
       feeFailingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const { wallet } = Wallet.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -510,10 +510,10 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Check if account exists - successful network request', async function () {
-    // GIVEN a DefaultXRPClient.
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient.
+    const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN the account does exist
@@ -524,7 +524,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Check if account exists - failing network request w/ NOT_FOUND error', async function () {
-    // GIVEN a DefaultXRPClient with a network client that will report accounts as not found
+    // GIVEN a DefaultXrpClient with a network client that will report accounts as not found
     const notFoundError = new FakeGRPCError(
       'FakeGRPCError: account not found',
       grpcStatusCode.NOT_FOUND,
@@ -535,9 +535,9 @@ describe('Default XRP Client', function (): void {
     const fakeErroringNetworkClient = new FakeXRPNetworkClient(
       fakeNetworkClientResponses,
     )
-    const xrpClient = new DefaultXRPClient(
+    const xrpClient = new DefaultXrpClient(
       fakeErroringNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN Account existence is checked
@@ -548,7 +548,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Check if account exists - failing network request w/ CANCELLED error', function (done) {
-    // GIVEN a DefaultXRPClient with a network client that reports grpc operation as cancelled
+    // GIVEN a DefaultXrpClient with a network client that reports grpc operation as cancelled
     const cancelledError = new FakeGRPCError(
       'FakeGRPCError: operation was cancelled',
       grpcStatusCode.CANCELLED,
@@ -559,9 +559,9 @@ describe('Default XRP Client', function (): void {
     const fakeErroringNetworkClient = new FakeXRPNetworkClient(
       fakeNetworkClientResponses,
     )
-    const xrpClient = new DefaultXRPClient(
+    const xrpClient = new DefaultXrpClient(
       fakeErroringNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN Account existence is checked
@@ -574,31 +574,31 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Check if account exists - error with classic address', function (done) {
-    // GIVEN a DefaultXRPClient and a classic address
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient and a classic address
+    const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
 
     // WHEN accountExists is called using a classic address THEN an error to use X-Addresses is thrown.
     xrpClient.accountExists(classicAddress).catch((error) => {
-      assert.equal((error as XRPError).errorType, XRPErrorType.XAddressRequired)
+      assert.equal((error as XrpError).errorType, XrpErrorType.XAddressRequired)
       done()
     })
   })
 
   it('Payment History - successful response', async function (): Promise<void> {
-    // GIVEN a DefaultXRPClient.
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient.
+    const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN the payment history for an address is requested.
     const paymentHistory = await xrpClient.paymentHistory(testAddress)
 
-    const expectedPaymentHistory: Array<XRPTransaction> = XRPTestUtils.transactionHistoryToPaymentsList(
+    const expectedPaymentHistory: Array<XrpTransaction> = XRPTestUtils.transactionHistoryToPaymentsList(
       testGetAccountTransactionHistoryResponse,
     )
     // THEN the payment history is returned as expected
@@ -606,25 +606,25 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Payment History - classic address', function (done): void {
-    // GIVEN an XRPClient and a classic address
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient and a classic address
+    const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
     const classicAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
 
     // WHEN the payment history for an account is requested THEN an error to use X-Addresses is thrown.
     xrpClient.paymentHistory(classicAddress).catch((error) => {
-      assert.equal((error as XRPError).errorType, XRPErrorType.XAddressRequired)
+      assert.equal((error as XrpError).errorType, XrpErrorType.XAddressRequired)
       done()
     })
   })
 
   it('Payment History - network failure', function (done): void {
-    // GIVEN an XRPClient which wraps an erroring network client.
-    const xrpClient = new DefaultXRPClient(
+    // GIVEN a DefaultXrpClient which wraps an erroring network client.
+    const xrpClient = new DefaultXrpClient(
       fakeErroringNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN the payment history is requested THEN an error is propagated.
@@ -637,7 +637,7 @@ describe('Default XRP Client', function (): void {
   it('Payment History - non-payment transactions', async function (): Promise<
     void
   > {
-    // GIVEN an XRPClient client which will return a transaction history which contains non-payment transactions
+    // GIVEN a DefaultXrpClient client which will return a transaction history which contains non-payment transactions
 
     // Generate expected transactions from the default response, which only contains payments.
     const nonPaymentTransactionResponse = new GetTransactionResponse()
@@ -660,16 +660,16 @@ describe('Default XRP Client', function (): void {
       heteroHistoryNetworkResponses,
     )
 
-    const xrpClient = new DefaultXRPClient(
+    const xrpClient = new DefaultXrpClient(
       heteroHistoryNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN the transactionHistory is requested.
     const transactionHistory = await xrpClient.paymentHistory(testAddress)
 
     // THEN the returned transactions are conversions of the inputs with non-payment transactions filtered.
-    const expectedTransactionHistory: Array<XRPTransaction> = XRPTestUtils.transactionHistoryToPaymentsList(
+    const expectedTransactionHistory: Array<XrpTransaction> = XRPTestUtils.transactionHistoryToPaymentsList(
       testGetAccountTransactionHistoryResponse,
     )
 
@@ -677,7 +677,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Payment History - invalid Payment', function (done) {
-    // GIVEN an XRPClient client which will return a transaction history which contains a malformed payment.
+    // GIVEN a DefaultXrpClient client which will return a transaction history which contains a malformed payment.
     const invalidHistoryNetworkResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
       FakeXRPNetworkClientResponses.defaultFeeResponse(),
@@ -688,23 +688,23 @@ describe('Default XRP Client', function (): void {
     const invalidHistoryNetworkClient = new FakeXRPNetworkClient(
       invalidHistoryNetworkResponses,
     )
-    const xrpClient = new DefaultXRPClient(
+    const xrpClient = new DefaultXrpClient(
       invalidHistoryNetworkClient,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // WHEN the transactionHistory is requested THEN a conversion error is thrown.
     xrpClient.paymentHistory(testAddress).catch((error) => {
       assert.equal(
-        (error as XRPError).errorType,
-        XRPErrorType.PaymentConversionFailure,
+        (error as XrpError).errorType,
+        XrpErrorType.PaymentConversionFailure,
       )
       done()
     })
   })
 
   it('Get Payment - successful response', async function (): Promise<void> {
-    // GIVEN a DefaultXRPClient with mocked networking that will succeed for getTransaction.
+    // GIVEN a DefaultXrpClient with mocked networking that will succeed for getTransaction.
     const fakeNetworkResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
       FakeXRPNetworkClientResponses.defaultFeeResponse(),
@@ -712,7 +712,7 @@ describe('Default XRP Client', function (): void {
       testGetTransactionResponseProto,
     )
     const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXrpClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN a transaction is requested.
     const transaction = await xrpClient.getPayment(transactionHash)
@@ -720,12 +720,12 @@ describe('Default XRP Client', function (): void {
     // THEN the returned transaction is as expected.
     assert.deepEqual(
       transaction,
-      XRPTransaction.from(testGetTransactionResponseProto, xrpClient.network),
+      XrpTransaction.from(testGetTransactionResponseProto, xrpClient.network),
     )
   })
 
   it('Get Payment - failing network request with NOT_FOUND error', function (done) {
-    // GIVEN a DefaultXRPClient with mocked networking that will fail to retrieve a transaction w/ NOT_FOUND error code.
+    // GIVEN a DefaultXrpClient with mocked networking that will fail to retrieve a transaction w/ NOT_FOUND error code.
     const notFoundError = new FakeGRPCError(
       'FakeGRPCError: account not found',
       grpcStatusCode.NOT_FOUND,
@@ -737,7 +737,7 @@ describe('Default XRP Client', function (): void {
       notFoundError,
     )
     const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXrpClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN a transaction is requested, THEN the error is re-thrown.
     xrpClient.getPayment(transactionHash).catch((error) => {
@@ -750,7 +750,7 @@ describe('Default XRP Client', function (): void {
   it('Get Payment - malformed payment transaction', async function (): Promise<
     void
   > {
-    // GIVEN a DefaultXRPClient with mocked networking that will return a malformed payment transaction.
+    // GIVEN a DefaultXrpClient with mocked networking that will return a malformed payment transaction.
     const fakeNetworkResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
       FakeXRPNetworkClientResponses.defaultFeeResponse(),
@@ -758,7 +758,7 @@ describe('Default XRP Client', function (): void {
       testInvalidGetTransactionResponseProto,
     )
     const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXrpClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN a transaction is requested.
     const transaction = await xrpClient.getPayment(transactionHash)
@@ -770,7 +770,7 @@ describe('Default XRP Client', function (): void {
   it('Get Payment - unsupported transaction type', async function (): Promise<
     void
   > {
-    // GIVEN a DefaultXRPClient with mocked networking that will return an unsupported transaction type.
+    // GIVEN a DefaultXrpClient with mocked networking that will return an unsupported transaction type.
     const fakeNetworkResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
       FakeXRPNetworkClientResponses.defaultFeeResponse(),
@@ -778,7 +778,7 @@ describe('Default XRP Client', function (): void {
       testInvalidGetTransactionResponseProtoUnsupportedType,
     )
     const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
-    const xrpClient = new DefaultXRPClient(fakeNetworkClient, XRPLNetwork.Test)
+    const xrpClient = new DefaultXrpClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN a transaction is requested.
     const transaction = await xrpClient.getPayment(transactionHash)
