@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PayIDClient` was deprecated for two releases and has been removed. Use `PayIdClient` instead.
 - `PayIDError` was deprecated for two releases and has been removed. Use `PayIdError` instead.
 - `PayIDErrorType` was deprecated for two releases and has been removed. Use `PayIdErrorType` instead.
-- `XRPPayIDClientInterface` was deprecated for two releases and has been removed. Use `XrpPayIdClient` instead.
+- `XRPPayIDClientInterface` was deprecated for two releases and has been removed. Use `XrpPayIdClientInterface` instead.
 - `XRPPayIDClient` was deprecated for two releases and has been removed.  Use `XrpPayIdClient` instead.
 - `XRPLNetwork` was deprecated for two releases and has been removed.  Use `XrplNetwork` instead.
 ## 4.3.2 - 2020-06-17
