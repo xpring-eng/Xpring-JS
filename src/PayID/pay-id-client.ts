@@ -1,10 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { PayIdUtils } from 'xpring-common-js'
-import PayIdError, {
-  PayIDError,
-  PayIdErrorType,
-  PayIDErrorType,
-} from './pay-id-error'
+import PayIdError, { PayIdErrorType } from './pay-id-error'
 import { Address, DefaultApi, CryptoAddressDetails } from './Generated/api'
 
 const PAYID_API_VERSION = '1.0'
@@ -14,46 +10,6 @@ const PAYID_API_VERSION = '1.0'
 interface PayIDComponents {
   host: string
   path: string
-}
-
-/**
- * A client for PayID.
- *
- * @deprecated Please use PayIdClient instead.
- *
- * @warning This class is experimental and should not be used in production applications.
- */
-export class PayIDClient {
-  private readonly wrappedPayIdClient: PayIdClient
-
-  /**
-   * Initialize a new PayID client.
-   *
-   * Networks in this constructor take the form of an asset and an optional network (<asset>-<network>), for instance:
-   * - xrpl-testnet
-   * - xrpl-mainnet
-   * - eth-rinkeby
-   * - ach
-   *
-   * TODO(keefertaylor): Link a canonical list at payid.org when available.
-   *
-   * @param network The network that addresses will be resolved on.
-   * @param useHttps Whether to use HTTPS when making PayID requests. Most users should set this to 'true' to avoid
-   *                 Man-in-the-Middle attacks. Exposed as an option for testing purposes. Defaults to true.
-   */
-  constructor(network: string, useHttps: boolean = true) {
-    this.wrappedPayIdClient = new PayIdClient(network, useHttps)
-  }
-
-  /**
-   * Retrieve the address associated with a PayID.
-   *
-   * @param payID The payID to resolve for an address.
-   * @returns An address representing the given PayID.
-   */
-  async addressForPayID(payID: string): Promise<CryptoAddressDetails> {
-    return this.wrappedPayIdClient.addressForPayId(payID)
-  }
 }
 
 /**
@@ -73,42 +29,10 @@ export default class PayIdClient {
    *
    * TODO(keefertaylor): Link a canonical list at payid.org when available.
    *
-   * @deprecated @param network The network that addresses will be resolved on. Defaults to the empty string. This parameter is
-   *                            deprecated and will be removed in the future.
    * @param useHttps Whether to cuse HTTPS when making PayID requests. Most users should set this to 'true' to avoid
    *                 Man-in-the-Middle attacks. Exposed as an option for testing purposes. Defaults to true.
    */
-  constructor(
-    public readonly network: string = '',
-    private readonly useHttps: boolean = true,
-  ) {}
-
-  /**
-   * Retrieve the address associated with a PayID.
-   *
-   * @deprecated Please use `cryptoAddressForPayId` instead.
-   *
-   * @param payId The payID to resolve for an address.
-   * @returns An address representing the given PayID.
-   */
-  async addressForPayId(payId: string): Promise<CryptoAddressDetails> {
-    const addresses = await this.addressesForPayIdAndNetwork(
-      payId,
-      this.network,
-    )
-
-    // With a specific network, exactly one address should be returned by a PayID lookup.
-    if (addresses.length === 1) {
-      return addresses[0].addressDetails
-    } else {
-      return Promise.reject(
-        new PayIdError(
-          PayIdErrorType.UnexpectedResponse,
-          'Received more addresses than expected',
-        ),
-      )
-    }
-  }
+  constructor(private readonly useHttps: boolean = true) {}
 
   /**
    * Retrieve the crypto address associated with a PayID.
@@ -175,15 +99,15 @@ export default class PayIdClient {
         return data.addresses
       } else {
         return Promise.reject(
-          new PayIDError(
-            PayIDErrorType.UnexpectedResponse,
+          new PayIdError(
+            PayIdErrorType.UnexpectedResponse,
             'Too many addresses returned',
           ),
         )
       }
     } catch (error) {
       if (error.response?.status === 404) {
-        const message = `Could not resolve ${payId} on network ${this.network}`
+        const message = `Could not resolve ${payId} on network ${network}`
         return Promise.reject(
           new PayIdError(PayIdErrorType.MappingNotFound, message),
         )
@@ -235,7 +159,7 @@ export default class PayIdClient {
   private static parsePayId(payId: string): PayIDComponents {
     const payIdComponents = PayIdUtils.parsePayID(payId)
     if (!payIdComponents) {
-      throw PayIDError.invalidPayID
+      throw PayIdError.invalidPayId
     }
     return {
       host: payIdComponents.host,

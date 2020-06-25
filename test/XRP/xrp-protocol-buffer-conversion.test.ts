@@ -7,7 +7,7 @@ import bigInt from 'big-integer'
 import { assert } from 'chai'
 
 import { Utils } from '../../src'
-import XRPLNetwork from '../../src/Common/xrpl-network'
+import XrplNetwork from '../../src/Common/xrpl-network'
 import XRPCurrency from '../../src/XRP/model/xrp-currency'
 import XRPCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
 import XRPIssuedCurrency from '../../src/XRP/model/xrp-issued-currency'
@@ -219,7 +219,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const payment = XRPPayment.from(
       testPaymentProtoAllFieldsSet,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the result is as expected.
@@ -274,7 +274,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const payment = XRPPayment.from(
       testPaymentProtoMandatoryFieldsOnly,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the result is as expected.
@@ -310,7 +310,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // GIVEN a pyament protocol buffer with an invalid amount field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
     assert.isUndefined(
-      XRPPayment.from(testInvalidPaymentProtoBadAmount, XRPLNetwork.Test),
+      XRPPayment.from(testInvalidPaymentProtoBadAmount, XrplNetwork.Test),
     )
   })
 
@@ -318,7 +318,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // GIVEN a payment protocol buffer with an invalid deliverMin field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
     assert.isUndefined(
-      XRPPayment.from(testInvalidPaymentProtoBadDeliverMin, XRPLNetwork.Test),
+      XRPPayment.from(testInvalidPaymentProtoBadDeliverMin, XrplNetwork.Test),
     )
   })
 
@@ -326,7 +326,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // GIVEN a payment protocol buffer with an invalid sendMax field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
     assert.isUndefined(
-      XRPPayment.from(testInvalidPaymentProtoBadSendMax, XRPLNetwork.Test),
+      XRPPayment.from(testInvalidPaymentProtoBadSendMax, XrplNetwork.Test),
     )
   })
 
@@ -410,7 +410,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const transaction = XRPTransaction.from(
       testGetTransactionResponseProto,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN all fields are present and converted correctly.
@@ -451,7 +451,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const transaction = XRPTransaction.from(
       testGetTransactionResponseProtoMandatoryOnly,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN all fields are present and converted correctly.
@@ -483,7 +483,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const transaction = XRPTransaction.from(
       testInvalidGetTransactionResponseProto,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the result is undefined
@@ -495,7 +495,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const transaction = XRPTransaction.from(
       testInvalidGetTransactionResponseProtoUnsupportedType,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
 
     // THEN the result is undefined

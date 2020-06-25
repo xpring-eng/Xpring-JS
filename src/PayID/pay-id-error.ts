@@ -2,19 +2,6 @@
 
 /**
  * Types of errors that originate from PayID.
- *
- * @deprecated Use PayIdErrorType instead.
- */
-export enum PayIDErrorType {
-  InvalidPayID,
-  MappingNotFound,
-  UnexpectedResponse,
-  Unimplemented,
-  Unknown,
-}
-
-/**
- * Types of errors that originate from PayID.
  */
 export enum PayIdErrorType {
   InvalidPayId,
@@ -22,37 +9,6 @@ export enum PayIdErrorType {
   UnexpectedResponse,
   Unimplemented,
   Unknown,
-}
-
-/**
- * Represents errors thrown by PayID components of the Xpring SDK.
- *
- * @deprecated Use PayIdError instead.
- */
-export class PayIDError extends Error {
-  /**
-   * Default errors.
-   */
-  public static unimplemented = new PayIDError(
-    PayIDErrorType.Unimplemented,
-    'Unimplemented',
-  )
-
-  public static invalidPayID = new PayIDError(
-    PayIDErrorType.InvalidPayID,
-    'Invalid payment pointer',
-  )
-
-  /**
-   * @param errorType The type of error.
-   * @param message The error message.
-   */
-  public constructor(
-    public readonly errorType: PayIDErrorType,
-    message: string | undefined = undefined,
-  ) {
-    super(message)
-  }
 }
 
 /**
