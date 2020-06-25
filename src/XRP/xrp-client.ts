@@ -10,7 +10,7 @@ import XrplNetwork from '../Common/xrpl-network'
 import SendXrpDetails from './model/send-xrp-details'
 
 /**
- * XrpClient is a client which interacts with the Xpring platform.
+ * XrpClient is a client which interacts with the XRP Ledger.
  */
 export default class XrpClient implements XrpClientInterface {
   /** The XRPL Network of the node that this client is communicating with. */

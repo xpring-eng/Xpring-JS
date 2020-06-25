@@ -29,8 +29,8 @@ const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 const payIdClient = new XrpPayIdClient(network)
 
 // An XrpClient under test.
-const rippledURL = 'test.xrp.xpring.io:50051'
-const xrpClient = new XrpClient(rippledURL, XrplNetwork.Test)
+const rippledUrl = 'test.xrp.xpring.io:50051'
+const xrpClient = new XrpClient(rippledUrl, XrplNetwork.Test)
 
 // A XpringClient under test.
 const xpringClient = new XpringClient(payIdClient, xrpClient)

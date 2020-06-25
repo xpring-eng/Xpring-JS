@@ -20,7 +20,7 @@ export default class XpringClient {
    */
   constructor(
     payIdClient: XrpPayIdClientInterface,
-    private readonly xrpClient: XrpClientInterface | XrpClientInterface,
+    private readonly xrpClient: XrpClientInterface,
   ) {
     this.payIdClient = payIdClient
 

@@ -27,12 +27,12 @@ const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
 const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 
 // An XrpClient that makes requests. Ssends the requests to an HTTP envoy emulating how the browser would behave.
-const grpcWebURL = 'https://envoy.test.xrp.xpring.io'
-const xrpWebClient = new XrpClient(grpcWebURL, XrplNetwork.Test, true)
+const grpcWebUrl = 'https://envoy.test.xrp.xpring.io'
+const xrpWebClient = new XrpClient(grpcWebUrl, XrplNetwork.Test, true)
 
 // An XrpClient that makes requests. Uses rippled's gRPC implementation.
-const rippledURL = 'test.xrp.xpring.io:50051'
-const xrpClient = new XrpClient(rippledURL, XrplNetwork.Test)
+const rippledUrl = 'test.xrp.xpring.io:50051'
+const xrpClient = new XrpClient(rippledUrl, XrplNetwork.Test)
 
 // Some amount of XRP to send.
 const amount = bigInt('1')
