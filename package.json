@@ -43,7 +43,7 @@
     "grpc-tools": "1.9.0",
     "grpc_tools_node_protoc_ts": "^3.0.0",
     "mocha": "^8.0.1",
-    "nock": "^12.0.2",
+    "nock": "^13.0.0",
     "nyc": "15.1.0",
     "prettier": "^2.0.4",
     "source-map-support": "0.5.19",
