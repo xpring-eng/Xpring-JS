@@ -1,5 +1,4 @@
 import * as grpc from '@grpc/grpc-js'
-import { ServiceClient } from '@grpc/grpc-js/build/src/make-client'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
@@ -29,20 +28,20 @@ import { XrpNetworkClient } from './xrp-network-client'
  * A GRPC Based network client.
  */
 export default class GrpcXrpNetworkClient implements XrpNetworkClient {
-  private readonly grpcClient: ServiceClient
+  private readonly grpcClient: XRPLedgerGrpcPb.XRPLedgerAPIServiceClient
 
   public constructor(grpcURL: string) {
     if (!isNode())
       throw new Error('Use gRPC-Web Network Client on the browser!')
 
     const XRPLedgerAPIServiceClient = grpc.makeClientConstructor(
-      XRPLedgerGrpcPb['org.xrpl.rpc.v1.XRPLedgerAPIService'], // eslint-disable-line import/namespace
+      XRPLedgerGrpcPb['org.xrpl.rpc.v1.XRPLedgerAPIService'],
       'XRPLedgerAPIService',
     )
-    this.grpcClient = new XRPLedgerAPIServiceClient(
+    this.grpcClient = (new XRPLedgerAPIServiceClient(
       grpcURL,
       grpc.credentials.createInsecure(),
-    )
+    ) as unknown) as XRPLedgerGrpcPb.XRPLedgerAPIServiceClient
   }
 
   public async getAccountInfo(

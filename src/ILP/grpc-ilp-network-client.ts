@@ -1,5 +1,4 @@
 import * as grpc from '@grpc/grpc-js'
-import { ServiceClient } from '@grpc/grpc-js/build/src/make-client'
 import { GetBalanceResponse } from './Generated/node/get_balance_response_pb'
 import { GetBalanceRequest } from './Generated/node/get_balance_request_pb'
 import { SendPaymentRequest } from './Generated/node/send_payment_request_pb'
@@ -11,31 +10,31 @@ import IlpCredentials from './auth/ilp-credentials'
 import isNode from '../Common/utils'
 
 class GrpcIlpNetworkClient implements IlpNetworkClient {
-  private readonly balanceClient: ServiceClient
+  private readonly balanceClient: BalanceGrpcPb.BalanceServiceClient
 
-  private readonly paymentClient: ServiceClient
+  private readonly paymentClient: ILPGrpcPb.IlpOverHttpServiceClient
 
   public constructor(grpcURL: string) {
     if (!isNode())
       throw new Error('Use ILP-gRPC-Web Network Client on the browser!')
 
     const BalanceServiceClient = grpc.makeClientConstructor(
-      BalanceGrpcPb['org.interledger.stream.proto.BalanceService'], // eslint-disable-line import/namespace
+      BalanceGrpcPb['org.interledger.stream.proto.BalanceService'],
       'BalanceService',
     )
-    this.balanceClient = new BalanceServiceClient(
+    this.balanceClient = (new BalanceServiceClient(
       grpcURL,
       grpc.credentials.createSsl(),
-    )
+    ) as unknown) as BalanceGrpcPb.BalanceServiceClient
 
     const IlpOverHttpServiceClient = grpc.makeClientConstructor(
-      ILPGrpcPb['org.interledger.stream.proto.IlpOverHttpService'], // eslint-disable-line import/namespace
+      ILPGrpcPb['org.interledger.stream.proto.IlpOverHttpService'],
       'IlpOverHttpService',
     )
-    this.paymentClient = new IlpOverHttpServiceClient(
+    this.paymentClient = (new IlpOverHttpServiceClient(
       grpcURL,
       grpc.credentials.createSsl(),
-    )
+    ) as unknown) as ILPGrpcPb.IlpOverHttpServiceClient
   }
 
   getBalance(
