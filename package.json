@@ -51,7 +51,7 @@
     "typescript": "^3.9.3"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.0.3",
+    "@grpc/grpc-js": "^1.1.1",
     "axios": "^0.19.2",
     "big-integer": "^1.6.48",
     "bignumber.js": "^9.0.0",
