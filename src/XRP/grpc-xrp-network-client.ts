@@ -23,12 +23,12 @@ import {
   GetTransactionResponse,
 } from './Generated/node/org/xrpl/rpc/v1/get_transaction_pb'
 import isNode from '../Common/utils'
-import { XRPNetworkClient } from './xrp-network-client'
+import { XrpNetworkClient } from './xrp-network-client'
 
 /**
  * A GRPC Based network client.
  */
-class GRPCXRPNetworkClient implements XRPNetworkClient {
+export default class GrpcXrpNetworkClient implements XrpNetworkClient {
   private readonly grpcClient: ServiceClient
 
   public constructor(grpcURL: string) {
@@ -36,7 +36,7 @@ class GRPCXRPNetworkClient implements XRPNetworkClient {
       throw new Error('Use gRPC-Web Network Client on the browser!')
 
     const XRPLedgerAPIServiceClient = grpc.makeClientConstructor(
-      XRPLedgerGrpcPb['org.xrpl.rpc.v1.XRPLedgerAPIService'],
+      XRPLedgerGrpcPb['org.xrpl.rpc.v1.XRPLedgerAPIService'], // eslint-disable-line import/namespace
       'XRPLedgerAPIService',
     )
     this.grpcClient = new XRPLedgerAPIServiceClient(
@@ -142,5 +142,3 @@ class GRPCXRPNetworkClient implements XRPNetworkClient {
   }
   /* eslint-enable class-methods-use-this */
 }
-
-export default GRPCXRPNetworkClient

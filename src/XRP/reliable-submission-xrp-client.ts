@@ -1,21 +1,26 @@
 import { Utils, Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
-import { XRPClientDecorator } from './xrp-client-decorator'
+import XrpClientDecorator from './xrp-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
-import XRPTransaction from './model/xrp-transaction'
-import { XRPError } from '..'
-import { XRPErrorType } from './xrp-error'
+import XrpTransaction from './model/xrp-transaction'
+import XrpError, { XrpErrorType } from './xrp-error'
+import XrplNetwork from '../Common/xrpl-network'
+
+import SendXrpDetails from './model/send-xrp-details'
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
 }
 
 /**
- * An XRPClient which blocks on `send` calls until the transaction has reached a deterministic state.
+ * An XrpClient which blocks on `send` calls until the transaction has reached a deterministic state.
  */
-class ReliableSubmissionXRPClient implements XRPClientDecorator {
-  public constructor(private readonly decoratedClient: XRPClientDecorator) {}
+export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
+  public constructor(
+    private readonly decoratedClient: XrpClientDecorator,
+    readonly network: XrplNetwork,
+  ) {}
 
   public async getBalance(address: string): Promise<BigInteger> {
     return this.decoratedClient.getBalance(address)
@@ -32,13 +37,22 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
     destination: string,
     sender: Wallet,
   ): Promise<string> {
-    const ledgerCloseTimeMs = 4 * 1000
-
-    // Submit a transaction hash and wait for a ledger to close.
-    const transactionHash = await this.decoratedClient.send(
+    return this.sendWithDetails({
       amount,
       destination,
       sender,
+    })
+  }
+
+  public async sendWithDetails(
+    sendMoneyDetails: SendXrpDetails,
+  ): Promise<string> {
+    const { sender } = sendMoneyDetails
+    const ledgerCloseTimeMs = 4 * 1000
+
+    // Submit a transaction hash and wait for a ledger to close.
+    const transactionHash = await this.decoratedClient.sendWithDetails(
+      sendMoneyDetails,
     )
     await sleep(ledgerCloseTimeMs)
 
@@ -47,7 +61,7 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
       transactionHash,
     )
     const { lastLedgerSequence } = rawTransactionStatus
-    if (lastLedgerSequence === 0) {
+    if (!lastLedgerSequence) {
       return Promise.reject(
         new Error(
           'The transaction did not have a lastLedgerSequence field so transaction status cannot be reliably determined.',
@@ -67,8 +81,8 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
     // This logic is brittle and should be replaced when we have an RPC that can give us this data.
     const classicAddress = Utils.decodeXAddress(sender.getAddress())
     if (!classicAddress) {
-      throw new XRPError(
-        XRPErrorType.Unknown,
+      throw new XrpError(
+        XrpErrorType.Unknown,
         'The source wallet reported an address which could not be decoded to a classic address',
       )
     }
@@ -120,15 +134,13 @@ class ReliableSubmissionXRPClient implements XRPClientDecorator {
     return this.decoratedClient.accountExists(address)
   }
 
-  public async paymentHistory(address: string): Promise<Array<XRPTransaction>> {
+  public async paymentHistory(address: string): Promise<Array<XrpTransaction>> {
     return this.decoratedClient.paymentHistory(address)
   }
 
   public async getPayment(
     transactionHash: string,
-  ): Promise<XRPTransaction | undefined> {
+  ): Promise<XrpTransaction | undefined> {
     return this.decoratedClient.getPayment(transactionHash)
   }
 }
-
-export default ReliableSubmissionXRPClient

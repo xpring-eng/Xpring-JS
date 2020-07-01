@@ -20,7 +20,7 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
       throw new Error('Use ILP-gRPC-Web Network Client on the browser!')
 
     const BalanceServiceClient = grpc.makeClientConstructor(
-      BalanceGrpcPb['org.interledger.stream.proto.BalanceService'],
+      BalanceGrpcPb['org.interledger.stream.proto.BalanceService'], // eslint-disable-line import/namespace
       'BalanceService',
     )
     this.balanceClient = new BalanceServiceClient(
@@ -29,7 +29,7 @@ class GrpcIlpNetworkClient implements IlpNetworkClient {
     )
 
     const IlpOverHttpServiceClient = grpc.makeClientConstructor(
-      ILPGrpcPb['org.interledger.stream.proto.IlpOverHttpService'],
+      ILPGrpcPb['org.interledger.stream.proto.IlpOverHttpService'], // eslint-disable-line import/namespace
       'IlpOverHttpService',
     )
     this.paymentClient = new IlpOverHttpServiceClient(

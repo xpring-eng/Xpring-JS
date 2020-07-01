@@ -1,28 +1,30 @@
 import { CurrencyAmount } from '../Generated/web/org/xrpl/rpc/v1/amount_pb'
-import XRPIssuedCurrency from './xrp-issued-currency'
+import XrpIssuedCurrency from './xrp-issued-currency'
 
-// An amount of currency on the XRP Ledger
-// @see: https://xrpl.org/basic-data-types.html#specifying-currency-amounts
-export default class XRPCurrencyAmount {
+/**
+ * An amount of currency on the XRP Ledger
+ * @see: https://xrpl.org/basic-data-types.html#specifying-currency-amounts
+ */
+export default class XrpCurrencyAmount {
   /**
-   * Constructs an XRPCurrencyAmount from a CurrencyAmount.
+   * Constructs an XrpCurrencyAmount from a CurrencyAmount.
    *
    * @param currencyAmount a CurrencyAmount (protobuf object) whose field values will be used
-   *                       to construct an XRPCurrencyAmount
-   * @returns an XRPCurrencyAmount with its fields set via the analogous protobuf fields.
+   *                       to construct an XrpCurrencyAmount
+   * @returns an XrpCurrencyAmount with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/amount.proto#L10
    */
   public static from(
     currencyAmount: CurrencyAmount,
-  ): XRPCurrencyAmount | undefined {
+  ): XrpCurrencyAmount | undefined {
     switch (currencyAmount.getAmountCase()) {
       // Mutually exclusive: either drops or issuedCurrency is set in an XRPCurrencyAmount
       case CurrencyAmount.AmountCase.ISSUED_CURRENCY_AMOUNT: {
         const issuedCurrencyAmount = currencyAmount.getIssuedCurrencyAmount()
         if (issuedCurrencyAmount) {
-          const issuedCurrency = XRPIssuedCurrency.from(issuedCurrencyAmount)
+          const issuedCurrency = XrpIssuedCurrency.from(issuedCurrencyAmount)
           if (issuedCurrency) {
-            return new XRPCurrencyAmount(undefined, issuedCurrency)
+            return new XrpCurrencyAmount(undefined, issuedCurrency)
           }
         }
         return undefined
@@ -30,7 +32,7 @@ export default class XRPCurrencyAmount {
       case CurrencyAmount.AmountCase.XRP_AMOUNT: {
         const drops = currencyAmount.getXrpAmount()?.getDrops()
         if (drops) {
-          return new XRPCurrencyAmount(drops, undefined)
+          return new XrpCurrencyAmount(drops, undefined)
         }
         return undefined
       }
@@ -47,6 +49,6 @@ export default class XRPCurrencyAmount {
    */
   private constructor(
     readonly drops?: string,
-    readonly issuedCurrency?: XRPIssuedCurrency,
+    readonly issuedCurrency?: XrpIssuedCurrency,
   ) {}
 }
