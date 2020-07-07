@@ -37,6 +37,7 @@ describe('PayIdClient', function (): void {
     if (!payIDComponents) {
       throw new Error('Test precondition failed: Could not generate a Pay ID')
     }
+    const address = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
     nock('https://xpring.money')
       .get('/georgewashington')
       .reply(200, {
@@ -44,21 +45,21 @@ describe('PayIdClient', function (): void {
           {
             addressDetailsType: 'CryptoAddressDetails',
             addressDetails: {
-              address: 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4',
+              address,
             },
           },
         ],
       })
 
     // WHEN an XRP address is requested.
-    const xrpAddress = await payIdClient.cryptoAddressForPayId(
+    const xrpAddressDetails = await payIdClient.cryptoAddressForPayId(
       payId,
       'xrpl-testnet',
     )
 
     // THEN the address exists.
-    // TODO(keefertaylor): Tighten up this condition when proper response parsing is implemented.
-    assert.exists(xrpAddress)
+    assert.equal(xrpAddressDetails.address, address)
+    assert.equal(xrpAddressDetails.tag, undefined)
   })
 
   it('xrpAddressForPayId - successful response - match not found', function (done) {
