@@ -86,13 +86,22 @@ export default class PayIdClient {
 
     const api = new DefaultApi(undefined, basePath)
 
-    const options = PayIdClient.makeOptionsWithAcceptTypes(
-      `application/${network}+json`,
-    )
+    const accept = `application/${network}+json`
+    const options = PayIdClient.makeOptionsWithAcceptTypes(accept)
 
     try {
-      const { data } = await api.resolvePayID(path, options)
-      // TODO(keefertaylor): make sure the header matches the request.
+      const result = await api.resolvePayID(path, options)
+
+      // Ensure the retrieved result matched the requested type.
+      const contentType = result.headers['content-type']
+      if (!contentType.includes(accept)) {
+        throw new PayIdError(
+          PayIdErrorType.UnexpectedResponse,
+          'Received bad Content-Type',
+        )
+      }
+
+      const data = result.data
       if (data?.addresses) {
         return data.addresses
       } else {
