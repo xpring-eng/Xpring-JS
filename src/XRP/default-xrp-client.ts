@@ -16,7 +16,7 @@ import {
   MemoData,
   MemoFormat,
   MemoType,
-} from './Generated/node/org/xrpl/rpc/v1/common_pb'
+} from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
   Memo,
   Payment,

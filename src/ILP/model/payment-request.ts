@@ -1,5 +1,4 @@
 import { BigInteger } from 'big-integer'
-import { SendPaymentRequest } from '../Generated/node/send_payment_request_pb'
 
 /**
  * A request object that can be used to send a payment request to a connector
@@ -37,20 +36,6 @@ export class PaymentRequest {
     this.amount = options.amount
     this.destinationPaymentPointer = options.destinationPaymentPointer
     this.senderAccountId = options.senderAccountId
-  }
-
-  /**
-   * Constructs a PaymentRequest (non-proto) from this SendPaymentRequest
-   *
-   * @return A SendPaymentRequest populated with the analogous fields in
-   *          a PaymentRequest
-   */
-  public toProto(): SendPaymentRequest {
-    const protoRequest: SendPaymentRequest = new SendPaymentRequest()
-    protoRequest.setAmount(this.amount.toJSNumber())
-    protoRequest.setDestinationPaymentPointer(this.destinationPaymentPointer)
-    protoRequest.setAccountId(this.senderAccountId)
-    return protoRequest
   }
 }
 

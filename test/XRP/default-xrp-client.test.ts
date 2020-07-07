@@ -12,11 +12,11 @@ import {
   FakeXRPNetworkClientResponses,
 } from './fakes/fake-xrp-network-client'
 import 'mocha'
-import { GetTransactionResponse } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/get_transaction_pb'
+import { GetTransactionResponse } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import {
   Meta,
   TransactionResult,
-} from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/meta_pb'
+} from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/meta_pb'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { Transaction } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import {
