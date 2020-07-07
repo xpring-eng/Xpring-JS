@@ -28,7 +28,7 @@ import {
   Meta,
   TransactionResult,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/meta_pb'
-import { Balance } from '../../../src/XRP/Generated/node/org/xrpl/rpc/v1/common_pb'
+import { Balance } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
   GetAccountTransactionHistoryRequest,
   GetAccountTransactionHistoryResponse,

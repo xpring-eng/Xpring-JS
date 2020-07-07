@@ -83,6 +83,9 @@ module.exports = {
           { argsIgnorePattern: '^_' },
         ],
 
+        // Allow us to import computed values for GRPC package definitions
+        'import/namespace': [2, { allowComputed: true }],
+
         // These rules are deprecated, but we have an old config that enables it
         '@typescript-eslint/camelcase': 'off',
         '@typescript-eslint/ban-ts-ignore': 'off',

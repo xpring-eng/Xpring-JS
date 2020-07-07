@@ -51,11 +51,11 @@
     "typescript": "^3.9.3"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.1.1",
     "axios": "^0.19.2",
     "big-integer": "^1.6.48",
     "bignumber.js": "^9.0.0",
     "google-protobuf": "^3.12.2",
-    "grpc": "^1.24.2",
     "grpc-web": "1.2.0",
     "xhr2": "0.2.0",
     "xpring-common-js": "5.1.1"
