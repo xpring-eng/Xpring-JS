@@ -5,50 +5,37 @@ stages:
   image: node:12
   stage: test
   before_script:
-    # install packages
-    - apt-get update
-    - apt-get install -y apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common
-    - wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -
-    - add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
-    - apt update
-    - apt install -y adoptopenjdk-8-hotspot
-    # install maven
-    - wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz -P /tmp
-    - tar xf /tmp/apache-maven-*.tar.gz -C /tmp
-    - ln -s /tmp/apache-maven-3.6.3/bin/mvn /usr/bin/mvn
-    # install protoc
-    # See: https://circleci.com/orbs/registry/orb/izumin5210/protobuf
+    # Install protoc
     - version=3.7.1
     - archive=protoc-$version-linux-x86_64
     - curl -O -L https://github.com/protocolbuffers/protobuf/releases/download/v$version/$archive.zip
     - unzip -d '/usr/local' $archive.zip 'bin/*' 'include/*'
     - rm -rf $archive.zip
-    # install protoc-gen
+
+    # Update Java
+    - apt-get update
+    - wget https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/pool/main/a/adoptopenjdk-14-hotspot/adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb
+    - apt install ./adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb
+
+    # Install Protoc Plugin
     - curl -L https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64 --output protoc-gen-grpc-web
     - mv protoc-gen-grpc-web /usr/local/bin/
     - chmod +x /usr/local/bin/protoc-gen-grpc-web
-    # install npm deps
-    # TODO(keefertaylor): re-enable caching
-    - npm i --progress=false nyc codecov
-    - npm i --no-audit --progress=false
-    # pull in submodules
+
+    # Update submodules
     - git submodule update --init --recursive
+
+    # Install global tooling
+    # TODO(keefertaylor): We should be able to run these with npx
+    - sudo npm -g i nyc codecov
+
+    # Install Deps
+    - npm i
 
 compile typescript:
   stage: test
   extends: .test
   script:
-    #    - which protoc
-    # - npx protoc
-    - ./scripts/regenerate_protos.sh
-    - ls
-    - ls ./src/ILP/
-    - ls ./src/ILP/Generated/
-    - ls ./src/ILP/Generated/node
-    - cat ./src/ILP/Generated/node/send_payment_request_pb.js
-    - cat ./src/ILP/Generated/node/send_payment_request.ts
-    - md5sum ./node_modules/.bin/protoc-gen-ts
-    - md5sum ./node_modules/grpc-tools/bin/protoc
     - npm run build
 
 run tests:
