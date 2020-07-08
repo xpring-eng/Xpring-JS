@@ -29,7 +29,7 @@ stages:
     # TODO(keefertaylor): We should be able to run these with npx and not have to do a global install.
     - npm -g --cache .npm --prefer-offline --no-audit --progress=false i nyc codecov
 
-    # Install Deps
+    # Install deps
     - npm i --cache .npm --prefer-offline --no-audit --progress=false
 
 compile typescript:
