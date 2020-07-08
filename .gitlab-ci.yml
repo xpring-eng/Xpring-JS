@@ -39,7 +39,7 @@ compile typescript:
     - ls ./src/ILP/Generated/
     - ls ./src/ILP/Generated/node
     - cat ./src/ILP/Generated/node/send_payment_request_pb.js
-    - cat ./src/ILP/Generated/node/send_payment_request_pb.d.ts
+    - cat ./src/ILP/Generated/node/send_payment_request_pb.ts
     - npm run build
 
 run tests:
