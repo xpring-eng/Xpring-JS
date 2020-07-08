@@ -34,8 +34,12 @@ compile typescript:
     #    - which protoc
     # - npx protoc
     - ./scripts/regenerate_protos.sh
-    - cat ./src/ILP/Generated/node/send_payment_request_pb.d.ts
+    - ls
+    - ls ./src/ILP/
+    - ls ./src/ILP/Generated/
+    - ls ./src/ILP/Generated/node
     - cat ./src/ILP/Generated/node/send_payment_request_pb.js
+    - cat ./src/ILP/Generated/node/send_payment_request_pb.d.ts
     - npm run build
 
 run tests:
