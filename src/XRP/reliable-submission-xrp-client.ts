@@ -143,4 +143,8 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
   ): Promise<XrpTransaction | undefined> {
     return this.decoratedClient.getPayment(transactionHash)
   }
+
+  enableDepositAuth(wallet: Wallet): Promise<string> {
+    return this.decoratedClient.enableDepositAuth(wallet)
+  }
 }
