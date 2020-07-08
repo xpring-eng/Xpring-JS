@@ -21,8 +21,9 @@ stages:
     - mv protoc-gen-grpc-web /usr/local/bin/
     - chmod +x /usr/local/bin/protoc-gen-grpc-web
     # install npm deps
-    - npm i --cache .npm --prefer-offline --no-audit --progress=false nyc codecov protoc grpc-tools
-    - npm i --cache .npm --prefer-offline --no-audit --progress=false
+    # TODO(keefertaylor): re-enable caching
+    - npm i --progress=false nyc codecov protoc grpc-tools
+    - npm i --no-audit --progress=false
     # pull in submodules
     - git submodule update --init --recursive
 
