@@ -21,7 +21,7 @@ stages:
     - version=3.7.1
     - archive=protoc-$version-linux-x86_64
     - curl -O -L https://github.com/protocolbuffers/protobuf/releases/download/v$version/$archive.zip
-    - sudo unzip -d '/usr/local' $archive.zip 'bin/*' 'include/*'
+    - unzip -d '/usr/local' $archive.zip 'bin/*' 'include/*'
     - rm -rf $archive.zip
     # install protoc-gen
     - curl -L https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64 --output protoc-gen-grpc-web
