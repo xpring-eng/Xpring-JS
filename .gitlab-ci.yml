@@ -31,7 +31,7 @@ compile typescript:
   extends: .test
   script:
     #    - which protoc
-    - npx protoc
+    # - npx protoc
     - npm run build
 
 run tests:
