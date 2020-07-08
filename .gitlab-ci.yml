@@ -38,7 +38,11 @@ compile typescript:
   stage: test
   extends: .test
   script:
-    - ls src/ILP/Generated/node/
+    - ls ./
+    - ls ./src/
+    - ls ./src/ILP/
+    - ls ./src/ILP/Generated/
+    - ls ./src/ILP/Generated/node/
     - npm run build
 
 run tests:
