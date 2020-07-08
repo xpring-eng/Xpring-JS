@@ -46,8 +46,6 @@
     "nock": "^13.0.0",
     "nyc": "15.1.0",
     "prettier": "^2.0.4",
-    "protoc": "^1.0.4",
-    "protoc-gen-ts": "^0.2.0",
     "source-map-support": "0.5.19",
     "ts-node": "^8.6.2",
     "typescript": "^3.9.3"
