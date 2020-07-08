@@ -15,7 +15,7 @@ stages:
     # Update Java
     - apt-get update
     - wget https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/pool/main/a/adoptopenjdk-14-hotspot/adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb
-    - apt install ./adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb
+    - apt install -y ./adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb
 
     # Install Protoc Plugin
     - curl -L https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64 --output protoc-gen-grpc-web
@@ -44,6 +44,7 @@ run tests:
   script:
     - ./node_modules/nyc/bin/nyc.js npm test
 
+# TODO(keefertaylor): Move this to the test phase as it is doing the same steps.
 code coverage:
   stage: test
   extends: .test
