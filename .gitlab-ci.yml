@@ -27,15 +27,18 @@ stages:
 
     # Install global tooling
     # TODO(keefertaylor): We should be able to run these with npx
+    # TODO(keefertaylor): Enable caching, no-progress
     - npm -g i nyc codecov
 
     # Install Deps
+    # TODO(keefertaylor): Enable caching, no-progress
     - npm i
 
 compile typescript:
   stage: test
   extends: .test
   script:
+    - ls src/ILP/Generated/node/
     - npm run build
 
 run tests:
