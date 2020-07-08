@@ -40,6 +40,7 @@ compile typescript:
     - ls ./src/ILP/Generated/node
     - cat ./src/ILP/Generated/node/send_payment_request_pb.js
     - cat ./src/ILP/Generated/node/send_payment_request.ts
+    - md5 ./node_modules/.bin/protoc-gen-ts
     - npm run build
 
 run tests:
