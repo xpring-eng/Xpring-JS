@@ -38,6 +38,7 @@ compile typescript:
   stage: test
   extends: .test
   script:
+    - ./scripts/regenerate_protos.sh
     - ls ./
     - ls ./src/
     - ls ./src/ILP/
