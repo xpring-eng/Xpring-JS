@@ -38,7 +38,7 @@ echo "generated node"
 
 
 # Generate node typescript declaration files.
-$PWD/node_modules/grpc-tools/bin/protoc \
+npx protoc \
     --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts \
     --ts_out=generate_package_definition:$XRP_OUT_DIR_NODE \
     -I $PROTO_PATH \
@@ -75,7 +75,7 @@ npx grpc_tools_node_protoc \
     $PWD/hermes-ilp/protocol-buffers/proto/*.proto
 
 # Generate node typescript declaration files.
-$PWD/node_modules/grpc-tools/bin/protoc \
+npx protoc \
     --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts \
     --ts_out=generate_package_definition:$ILP_OUT_DIR_NODE \
     -I $PWD/hermes-ilp/protocol-buffers/proto \
