@@ -5,8 +5,25 @@
  *
  * @see: https://xrpl.org/transaction-formats.html
  */
-enum XRPTransactionType {
+enum XrpTransactionType {
   Payment,
+  AccountSet,
+  AccountDelete,
+  CheckCancel,
+  CheckCash,
+  CheckCreate,
+  DepositPreauth,
+  EscrowCancel,
+  EscrowCreate,
+  EscrowFinish,
+  OfferCancel,
+  OfferCreate,
+  PaymentChannelClaim,
+  PaymentChannelCreate,
+  PaymentChannelFund,
+  SetRegularKey,
+  SignerListSet,
+  TrustSet,
 }
 
-export default XRPTransactionType
+export default XrpTransactionType

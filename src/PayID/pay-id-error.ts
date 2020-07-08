@@ -1,8 +1,10 @@
+/* eslint-disable max-classes-per-file */
+
 /**
  * Types of errors that originate from PayID.
  */
-export enum PayIDErrorType {
-  InvalidPayID,
+export enum PayIdErrorType {
+  InvalidPayId,
   MappingNotFound,
   UnexpectedResponse,
   Unimplemented,
@@ -12,17 +14,17 @@ export enum PayIDErrorType {
 /**
  * Represents errors thrown by PayID components of the Xpring SDK.
  */
-export default class PayIDError extends Error {
+export default class PayIdError extends Error {
   /**
    * Default errors.
    */
-  public static unimplemented = new PayIDError(
-    PayIDErrorType.Unimplemented,
+  public static unimplemented = new PayIdError(
+    PayIdErrorType.Unimplemented,
     'Unimplemented',
   )
 
-  public static invalidPayID = new PayIDError(
-    PayIDErrorType.InvalidPayID,
+  public static invalidPayId = new PayIdError(
+    PayIdErrorType.InvalidPayId,
     'Invalid payment pointer',
   )
 
@@ -31,7 +33,7 @@ export default class PayIDError extends Error {
    * @param message The error message.
    */
   public constructor(
-    public readonly errorType: PayIDErrorType,
+    public readonly errorType: PayIdErrorType,
     message: string | undefined = undefined,
   ) {
     super(message)

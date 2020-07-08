@@ -1,16 +1,20 @@
-import { assert } from 'chai'
 import bigInt from 'big-integer'
+import { assert } from 'chai'
 import { FakeWallet } from 'xpring-common-js'
-import FakeXRPClient from '../XRP/fakes/fake-xrp-client'
-import FakeXRPPayIDClient from '../PayID/fakes/fake-xrp-pay-id-client'
-import { testXRPTransaction } from '../XRP/fakes/fake-xrp-protobufs'
+import FakeXrpClient from '../XRP/fakes/fake-xrp-client'
+import FakeXrpPayIdClient from '../PayID/fakes/fake-xrp-pay-id-client'
+import { testXrpTransaction } from '../XRP/fakes/fake-xrp-protobufs'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import XpringClient from '../../src/Xpring/xpring-client'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
-import { XRPLNetwork } from '../../src'
+import XrplNetwork from '../../src/Common/xrpl-network'
 import XpringError from '../../src/Xpring/xpring-error'
 
 /* Default values for the fake XRP Client. These values must be provided but are not varied in testing. */
+/* eslint-disable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention --
+ * The 'magic-numbers' rule isn't smart enough to know this isn't really a magic number, and is just being fed to a wrapper,
+ * and we don't need to use our boolean variable prefix convention because we use a "fake" prefix for all of these variables.
+ */
 const fakeBalance = bigInt(10)
 const fakePaymentStatus = TransactionStatus.Succeeded
 const fakeTransactionHash = 'deadbeefdeadbeefdeadbeef'
@@ -19,30 +23,31 @@ const fakeAccountExistsResult = true
 const fakeRawTransactionStatus = new RawTransactionStatus(
   true,
   'tesSUCCESS',
-  10,
+  fakeLastLedgerSequenceValue,
   true,
 )
 const fakePaymentHistoryValue = []
-const fakeGetPaymentValue = testXRPTransaction
+const fakeGetPaymentValue = testXrpTransaction
+/* eslint-enable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention */
 
-/** An amount to send. */
+// An amount to send
 const amount = 10
 
-/** A fake wallet. */
+// A fake wallet
 const wallet = new FakeWallet('0123456789abcdef')
 
-/** An Pay ID to resolve. */
-const payID = '$xpring.money/georgewashington'
+// A PayID to resolve
+const payID = 'georgewashington$xpring.money'
 
-/** Errors to throw */
+// Errors to throw
 const payIDError = new Error('Error from PayID')
 const xrpError = new Error('Error from XRP')
 
 describe('Xpring Client', function (): void {
   it('send - success', async function (): Promise<void> {
-    // GIVEN a XpringClient composed of a fake PayIDClient and a fake XRPClient which will both succeed.
+    // GIVEN a XpringClient composed of a fake PayIDClient and a fake XrpClient which will both succeed.
     const expectedTransactionHash = fakeTransactionHash
-    const xrpClient = new FakeXRPClient(
+    const xrpClient = new FakeXrpClient(
       fakeBalance,
       fakePaymentStatus,
       expectedTransactionHash,
@@ -54,9 +59,9 @@ describe('Xpring Client', function (): void {
     )
 
     const resolvedXRPAddress = 'r123'
-    const payIDClient = new FakeXRPPayIDClient(resolvedXRPAddress)
+    const payIdClient = new FakeXrpPayIdClient(resolvedXRPAddress)
 
-    const xpringClient = new XpringClient(payIDClient, xrpClient)
+    const xpringClient = new XpringClient(payIdClient, xrpClient)
 
     // WHEN XRP is sent to the Pay ID.
     const transactionHash = await xpringClient.send(amount, payID, wallet)
@@ -68,7 +73,7 @@ describe('Xpring Client', function (): void {
   it('send - failure in PayID', function (done): void {
     // GIVEN a XpringClient composed of a PayIDClient which will throw an error.
     const expectedTransactionHash = 'deadbeefdeadbeefdeadbeef'
-    const xrpClient = new FakeXRPClient(
+    const xrpClient = new FakeXrpClient(
       fakeBalance,
       fakePaymentStatus,
       expectedTransactionHash,
@@ -79,7 +84,7 @@ describe('Xpring Client', function (): void {
       fakeGetPaymentValue,
     )
 
-    const payIDClient = new FakeXRPPayIDClient(payIDError)
+    const payIDClient = new FakeXrpPayIdClient(payIDError)
 
     const xpringClient = new XpringClient(payIDClient, xrpClient)
 
@@ -92,8 +97,8 @@ describe('Xpring Client', function (): void {
   })
 
   it('send - failure in XRP', function (done): void {
-    // GIVEN a XpringClient composed of an XRPClient which will throw an error.
-    const xrpClient = new FakeXRPClient(
+    // GIVEN a XpringClient composed of an XrpClient which will throw an error.
+    const xrpClient = new FakeXrpClient(
       fakeBalance,
       fakePaymentStatus,
       xrpError,
@@ -105,7 +110,7 @@ describe('Xpring Client', function (): void {
     )
 
     const resolvedXRPAddress = 'r123'
-    const payIDClient = new FakeXRPPayIDClient(resolvedXRPAddress)
+    const payIDClient = new FakeXrpPayIdClient(resolvedXRPAddress)
 
     const xpringClient = new XpringClient(payIDClient, xrpClient)
 
@@ -118,8 +123,8 @@ describe('Xpring Client', function (): void {
   })
 
   it('send - failure in both', function (done): void {
-    // GIVEN a XpringClient composed of an XRPClient and a PayID client which both throw errors.
-    const xrpClient = new FakeXRPClient(
+    // GIVEN a XpringClient composed of an XrpClient and a PayID client which both throw errors.
+    const xrpClient = new FakeXrpClient(
       fakeBalance,
       fakePaymentStatus,
       xrpError,
@@ -130,7 +135,7 @@ describe('Xpring Client', function (): void {
       fakeGetPaymentValue,
     )
 
-    const payIDClient = new FakeXRPPayIDClient(payIDError)
+    const payIDClient = new FakeXrpPayIdClient(payIDError)
 
     const xpringClient = new XpringClient(payIDClient, xrpClient)
 
@@ -143,8 +148,8 @@ describe('Xpring Client', function (): void {
   })
 
   it('Constructor - XpringError thrown for mismatched networks', function (): void {
-    // GIVEN a PayIDClient and an XRPClient on different networks.
-    const xrpClient = new FakeXRPClient(
+    // GIVEN a PayIDClient and an XrpClient on different networks.
+    const xrpClient = new FakeXrpClient(
       fakeBalance,
       fakePaymentStatus,
       fakeTransactionHash,
@@ -153,16 +158,17 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
-      XRPLNetwork.Test,
+      XrplNetwork.Test,
     )
-    const payIDClient = new FakeXRPPayIDClient(payIDError, XRPLNetwork.Main)
+    const payIDClient = new FakeXrpPayIdClient(payIDError, XrplNetwork.Main)
 
     // WHEN a XpringClient is constructed THEN a mismatched network XpringError is thrown.
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const xpringClient = new XpringClient(payIDClient, xrpClient)
       assert.fail(
-        `Should not have been able to construct an instance of XpringClient but instead created: ${xpringClient}`,
+        `Should not have been able to construct an instance of XpringClient but instead created: ${JSON.stringify(
+          xpringClient,
+        )}`,
       )
     } catch (error) {
       assert.deepEqual(error, XpringError.mismatchedNetworks)

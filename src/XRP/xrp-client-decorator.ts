@@ -2,10 +2,17 @@ import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
-import XRPTransaction from './model/xrp-transaction'
+import XrpTransaction from './model/xrp-transaction'
+import XrplNetwork from '../Common/xrpl-network'
+import SendXrpDetails from './model/send-xrp-details'
 
-/** A decorator interface for XRPClients. */
-export interface XRPClientDecorator {
+/** A decorator interface for XrpClients. */
+export default interface XrpClientDecorator {
+  /**
+   * The XRPL network this XrpClient is connecting to.
+   */
+  network: XrplNetwork
+
   /**
    * Retrieve the balance for the given address.
    *
@@ -29,7 +36,7 @@ export interface XRPClientDecorator {
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
-   * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
+   * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
@@ -39,6 +46,16 @@ export interface XRPClientDecorator {
     destination: string,
     sender: Wallet,
   ): Promise<string>
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination Pay ID, allowing
+   * for additional details to be specified for use with supplementary features of the XRP
+   * ledger.
+   *
+   * @param sendMoneyDetails - a wrapper object containing details for constructing a transaction.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  sendWithDetails(sendMoneyDetails: SendXrpDetails): Promise<string>
 
   /**
    * Retrieve the latest validated ledger sequence on the XRP Ledger.
@@ -85,7 +102,7 @@ export interface XRPClientDecorator {
    * @throws An error if there was a problem communicating with the XRP Ledger.
    * @returns An array of transactions associated with the account.
    */
-  paymentHistory(address: string): Promise<Array<XRPTransaction>>
+  paymentHistory(address: string): Promise<Array<XrpTransaction>>
 
   /**
    * Retrieve the payment transaction corresponding to the given transaction hash.
@@ -95,7 +112,7 @@ export interface XRPClientDecorator {
    *
    * @param transactionHash The hash of the transaction to retrieve.
    * @throws An error if the transaction hash was invalid.
-   * @returns An {@link XRPTransaction} object representing an XRP Ledger transaction.
+   * @returns An {@link XrpTransaction} object representing an XRP Ledger transaction.
    */
-  getPayment(transactionHash: string): Promise<XRPTransaction | undefined>
+  getPayment(transactionHash: string): Promise<XrpTransaction | undefined>
 }

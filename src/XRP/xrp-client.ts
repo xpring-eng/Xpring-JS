@@ -1,39 +1,44 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
-import { XRPClientDecorator } from './xrp-client-decorator'
+import XrpClientDecorator from './xrp-client-decorator'
 import TransactionStatus from './transaction-status'
-import ReliableSubmissionXRPClient from './reliable-submission-xrp-client'
-import DefaultXRPClient from './default-xrp-client'
-import XRPClientInterface from './xrp-client-interface'
-import XRPTransaction from './model/xrp-transaction'
-import XRPLNetwork from '../Common/xrpl-network'
+import ReliableSubmissionXrpClient from './reliable-submission-xrp-client'
+import DefaultXrpClient from './default-xrp-client'
+import XrpClientInterface from './xrp-client-interface'
+import XrpTransaction from './model/xrp-transaction'
+import XrplNetwork from '../Common/xrpl-network'
+import SendXrpDetails from './model/send-xrp-details'
 
 /**
- * XRPClient is a client which interacts with the Xpring platform.
+ * XrpClient is a client which interacts with the XRP Ledger.
  */
-class XRPClient implements XRPClientInterface {
+export default class XrpClient implements XrpClientInterface {
   /** The XRPL Network of the node that this client is communicating with. */
-  public readonly network: XRPLNetwork
+  public readonly network: XrplNetwork
 
-  private readonly decoratedClient: XRPClientDecorator
+  private readonly decoratedClient: XrpClientDecorator
 
   /**
-   * Create a new XRPClient.
+   * Create a new XrpClient.
    *
-   * The XRPClient will use gRPC to communicate with the given endpoint.
+   * The XrpClient will use gRPC to communicate with the given endpoint.
    *
-   * @param grpcURL The URL of the gRPC instance to connect to.
-   * @param network The network this XRPClient is connecting to.
+   * @param grpcUrl The URL of the gRPC instance to connect to.
+   * @param network The network this XrpClient is connecting to.
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
-  public constructor(grpcURL: string, network: XRPLNetwork, forceWeb = false) {
+  public constructor(grpcUrl: string, network: XrplNetwork, forceWeb = false) {
     this.network = network
 
-    const defaultXRPClient = DefaultXRPClient.defaultXRPClientWithEndpoint(
-      grpcURL,
+    const defaultXrpClient = DefaultXrpClient.defaultXrpClientWithEndpoint(
+      grpcUrl,
+      network,
       forceWeb,
     )
-    this.decoratedClient = new ReliableSubmissionXRPClient(defaultXRPClient)
+    this.decoratedClient = new ReliableSubmissionXrpClient(
+      defaultXrpClient,
+      network,
+    )
   }
 
   /**
@@ -64,7 +69,7 @@ class XRPClient implements XRPClientInterface {
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
-   * @param drops A `BigInteger`, number or numeric string representing the number of drops to send.
+   * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
@@ -74,7 +79,25 @@ class XRPClient implements XRPClientInterface {
     destination: string,
     sender: Wallet,
   ): Promise<string> {
-    return this.decoratedClient.send(amount, destination, sender)
+    return this.sendWithDetails({
+      amount,
+      destination,
+      sender,
+    })
+  }
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination Pay ID, allowing
+   * for additional details to be specified for use with supplementary features of the XRP
+   * ledger.
+   *
+   * @param sendMoneyDetails - a wrapper object containing details for constructing a transaction.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  public async sendWithDetails(
+    sendMoneyDetails: SendXrpDetails,
+  ): Promise<string> {
+    return this.decoratedClient.sendWithDetails(sendMoneyDetails)
   }
 
   /**
@@ -97,7 +120,7 @@ class XRPClient implements XRPClientInterface {
    * @throws: An error if there was a problem communicating with the XRP Ledger.
    * @return: An array of transactions associated with the account.
    */
-  public async paymentHistory(address: string): Promise<Array<XRPTransaction>> {
+  public async paymentHistory(address: string): Promise<Array<XrpTransaction>> {
     return this.decoratedClient.paymentHistory(address)
   }
 
@@ -109,13 +132,11 @@ class XRPClient implements XRPClientInterface {
    *
    * @param transactionHash The hash of the transaction to retrieve.
    * @throws An error if the transaction hash was invalid.
-   * @returns An {@link XRPTransaction} object representing an XRP Ledger transaction.
+   * @returns An {@link XrpTransaction} object representing an XRP Ledger transaction.
    */
   public async getPayment(
     transactionHash: string,
-  ): Promise<XRPTransaction | undefined> {
+  ): Promise<XrpTransaction | undefined> {
     return this.decoratedClient.getPayment(transactionHash)
   }
 }
-
-export default XRPClient

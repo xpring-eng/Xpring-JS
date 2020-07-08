@@ -24,6 +24,8 @@ import {
   LastLedgerSequence,
   SourceTag,
   DeliveredAmount,
+  SignerEntry,
+  SignerWeight,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
   Payment,
@@ -34,15 +36,16 @@ import {
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
 import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
-import XRPTransaction from '../../../src/XRP/model/xrp-transaction'
+import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
 import { GetTransactionResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import { Meta } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/meta_pb'
+import XrplNetwork from '../../../src/Common/xrpl-network'
 
 // primitive test values
 const testCurrencyName = 'currencyName'
 const testCurrencyCode = new Uint8Array([1, 2, 3])
-const testAddress = 'XVfC9CTCJh6GN2x8bnrw3LtdbqiVCUFyQVMzRrMGUZpokKH'
-const testAddress2 = 'XV5sbjUmgPpvXv4ixFWZ5ptAYZ6PD28Sq49uo34VyjnmK5H'
+const testAddress = 'rsKouRxYLWGseFwXSAo57qXjcGiNqR55wr'
+const testAddress2 = 'rPuNV4oA6f3SrKA4pLEpdVZW6QLvn3UJxK'
 const testIssuedCurrencyValue = '100'
 const testInvalidIssuedCurrencyValue = 'xrp' // non-numeric
 const testPublicKey = new Uint8Array([1, 2, 3])
@@ -66,6 +69,7 @@ const testTimestamp = 0
 const expectedTimestamp = 946684800
 const testIsValidated = true
 const testLedgerIndex = 1000
+const testSignerWeight = 1
 
 // VALID OBJECTS ===============================================
 
@@ -326,6 +330,20 @@ testGetAccountTransactionHistoryResponse.setTransactionsList(
   transactionResponseList,
 )
 
+// SignerEntry protos
+const testAccountAddressProto = new AccountAddress()
+testAccountAddressProto.setAddress(testAddress)
+
+const testSignerEntryAccountProto = new Account()
+testSignerEntryAccountProto.setValue(testAccountAddressProto)
+
+const testSignerWeightProto = new SignerWeight()
+testSignerWeightProto.setValue(testSignerWeight)
+
+const testSignerEntryProto = new SignerEntry()
+testSignerEntryProto.setAccount(testSignerEntryAccountProto)
+testSignerEntryProto.setSignerWeight(testSignerWeightProto)
+
 // INVALID OBJECTS =============================================
 
 // Invalid IssuedCurrencyAmount proto
@@ -404,10 +422,11 @@ testInvalidGetAccountTransactionHistoryResponse.setTransactionsList(
 
 // XRP OBJECTS ===================================================
 
-// test XRPTransaction
-const testXRPTransaction = XRPTransaction.from(
+// test XrpTransaction
+const testXrpTransaction = XrpTransaction.from(
   testGetTransactionResponseProto,
-)!!
+  XrplNetwork.Test,
+)!
 
 export {
   testCurrencyName,
@@ -449,11 +468,12 @@ export {
   testMemoProtoAllFields,
   testEmptyMemoProto,
   testSignerProto,
+  testSignerEntryProto,
   testTransactionPaymentAllFields,
   testTransactionPaymentMandatoryFields,
   testGetTransactionResponseProto,
   testCheckCashTransaction,
-  testXRPTransaction,
+  testXrpTransaction,
   testGetAccountTransactionHistoryResponse,
   testGetTransactionResponseProtoMandatoryOnly,
   testInvalidIssuedCurrencyProto,

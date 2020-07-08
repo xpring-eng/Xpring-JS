@@ -20,7 +20,7 @@
     "files.trimFinalNewlines": true,
     "files.trimTrailingWhitespace": true,
 
-    "mocha.files.glob": "test/**/*-test.ts",
+    "mocha.files.glob": "test/**/*.test.ts",
     "mocha.requires": [
         "ts-node/register"
     ],

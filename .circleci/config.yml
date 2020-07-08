@@ -7,7 +7,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: circleci/node:10.4.0
+      - image: circleci/node:12.18.0
 
     working_directory: ~/repo
 
@@ -23,37 +23,25 @@ jobs:
 
       # Taken from: https://linuxize.com/post/install-java-on-debian-10/
       - run:
-          name: "Install Java"
+          name: 'Install Java'
           command: |
             sudo apt update
-            sudo apt install apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common
-            wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -
-            sudo add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
-            sudo apt update
-            sudo apt install adoptopenjdk-8-hotspot
-
-      # Manually install maven because the version we need doesn't seem to be in a Debian package manager.
-      # TODO(keefertaylor): Find a package repository that contains this.
-      - run:
-          name: "Install Maven"
-          command: |
-            wget https://downloads.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz -P /tmp
-            sudo tar xf /tmp/apache-maven-*.tar.gz -C /tmp
-            sudo ln -s /tmp/apache-maven-3.6.3/bin/mvn /usr/bin/mvn
+            wget https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/pool/main/a/adoptopenjdk-14-hotspot/adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb
+            sudo apt install ./adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb 
 
       - run:
-          name: "Install protoc plugin"
+          name: 'Install protoc plugin'
           command: |
             curl -L https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64 --output protoc-gen-grpc-web
             sudo mv protoc-gen-grpc-web /usr/local/bin/
             chmod +x /usr/local/bin/protoc-gen-grpc-web
 
       - run:
-          name: "Pull submodules"
+          name: 'Pull submodules'
           command: git submodule update --init --recursive
 
       - run:
-          name: "Install dependencies"
+          name: 'Install dependencies'
           command: |
             sudo npm -g i nyc codecov
             npm i
@@ -65,12 +53,12 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run:
-          name: "Compile Typescript"
+          name: 'Compile Typescript'
           command: |
             npm run build
 
       - run:
-          name: "Run Tests"
+          name: 'Run Tests'
           command: |
             nyc npm test
 
