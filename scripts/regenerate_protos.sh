@@ -25,6 +25,8 @@ $PWD/node_modules/grpc-tools/bin/protoc \
     --proto_path $PROTO_PATH \
     $PROTO_SRC_FILES
 
+echo "generated web"
+
 # Generate node code.
 npx grpc_tools_node_protoc \
     --js_out=import_style=commonjs,binary:$XRP_OUT_DIR_NODE \
@@ -32,12 +34,18 @@ npx grpc_tools_node_protoc \
     -I $PROTO_PATH \
     $PROTO_SRC_FILES
 
+echo "generated node"
+
+
 # Generate node typescript declaration files.
 npx protoc \
     --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts \
     --ts_out=generate_package_definition:$XRP_OUT_DIR_NODE \
     -I $PROTO_PATH \
     $PROTO_SRC_FILES
+
+echo "generated ts"
+
 
 ##########################################################################
 # Generate Protocol Buffers from hermes-ilp.

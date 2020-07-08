@@ -30,7 +30,7 @@ compile typescript:
   stage: test
   extends: .test
   script:
-    - which protoc
+    #    - which protoc
     - npx protoc
     - npm run build
 
