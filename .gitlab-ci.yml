@@ -26,7 +26,7 @@ stages:
     - git submodule update --init --recursive
 
     # Install global tooling
-    # TODO(keefertaylor): We should be able to run these with npx
+    # TODO(keefertaylor): We should be able to run these with npx and not have to do a global install.
     # TODO(keefertaylor): Enable caching, no-progress
     - npm -g i nyc codecov
 
@@ -38,12 +38,6 @@ compile typescript:
   stage: test
   extends: .test
   script:
-    - ./scripts/regenerate_protos.sh
-    - ls ./
-    - ls ./src/
-    - ls ./src/ILP/
-    - ls ./src/ILP/Generated/
-    - ls ./src/ILP/Generated/node/
     - npm run build
 
 run tests:
@@ -58,5 +52,5 @@ code coverage:
   extends: .test
   script:
     - mkdir .nyc_output
-    - ./node_modules/nyc/bin/nyc.js report --reporter=text-lcov
-    - ./node_modules/codecov/bin/codecov
+    - nyc report --reporter=text-lcov > .nyc_output/coverage.json
+    - codecov
