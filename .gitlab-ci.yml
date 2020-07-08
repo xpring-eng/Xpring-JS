@@ -27,7 +27,7 @@ stages:
 
     # Install global tooling
     # TODO(keefertaylor): We should be able to run these with npx
-    - sudo npm -g i nyc codecov
+    - npm -g i nyc codecov
 
     # Install Deps
     - npm i
