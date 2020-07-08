@@ -41,6 +41,7 @@ compile typescript:
     - cat ./src/ILP/Generated/node/send_payment_request_pb.js
     - cat ./src/ILP/Generated/node/send_payment_request.ts
     - md5sum ./node_modules/.bin/protoc-gen-ts
+    - md5sum ./node_modules/grpc-tools/bin/protoc
     - npm run build
 
 run tests:
