@@ -440,6 +440,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
+
     const fee = await this.getMinimumFee()
     const accountData = await this.getAccountData(classicAddress.address)
     const openLedgerSequence = await this.getOpenLedgerSequence()
