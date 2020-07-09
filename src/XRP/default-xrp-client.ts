@@ -183,17 +183,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
       throw XrpError.xAddressRequired
     }
 
-    const classicAddress = Utils.decodeXAddress(sender.getAddress())
-    if (!classicAddress) {
-      throw XrpError.xAddressRequired
-    }
-
     const normalizedDrops = drops.toString()
-
-    const fee = await this.getMinimumFee()
-    const accountData = await this.getAccountData(classicAddress.address)
-    const openLedgerSequence = await this.getOpenLedgerSequence()
-
     const xrpDropsAmount = new XRPDropsAmount()
     xrpDropsAmount.setDrops(normalizedDrops)
 
@@ -209,31 +199,12 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     const destination = new Destination()
     destination.setValue(destinationAccountAddress)
 
-    const senderAccountAddress = new AccountAddress()
-    senderAccountAddress.setAddress(sender.getAddress())
-
-    const account = new Account()
-    account.setValue(senderAccountAddress)
-
     const payment = new Payment()
     payment.setDestination(destination)
     payment.setAmount(amount)
 
-    const lastLedgerSequence = new LastLedgerSequence()
-    lastLedgerSequence.setValue(openLedgerSequence + maxLedgerVersionOffset)
-
-    const signingPublicKeyBytes = Utils.toBytes(sender.publicKey)
-    const signingPublicKey = new SigningPublicKey()
-    signingPublicKey.setValue(signingPublicKeyBytes)
-
-    const transaction = new Transaction()
-    transaction.setAccount(account)
-    transaction.setFee(fee)
-    transaction.setSequence(accountData.getSequence())
+    const transaction = await this.prepareBaseTransaction(sender)
     transaction.setPayment(payment)
-    transaction.setLastLedgerSequence(lastLedgerSequence)
-
-    transaction.setSigningPublicKey(signingPublicKey)
 
     if (memoList && memoList.length) {
       memoList
@@ -260,19 +231,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
         .forEach((memo) => transaction.addMemos(memo))
     }
 
-    const signedTransaction = Signer.signTransaction(transaction, sender)
-    if (!signedTransaction) {
-      throw XrpError.malformedResponse
-    }
-
-    const submitTransactionRequest = this.networkClient.SubmitTransactionRequest()
-    submitTransactionRequest.setSignedTransaction(signedTransaction)
-
-    const response = await this.networkClient.submitTransaction(
-      submitTransactionRequest,
-    )
-
-    return Utils.toHex(response.getHash_asU8())
+    return this.submitTransaction(sender, transaction)
   }
 
   public async getOpenLedgerSequence(): Promise<number> {
@@ -465,5 +424,71 @@ export default class DefaultXrpClient implements XrpClientDecorator {
       getTransactionRequest,
     )
     return XrpTransaction.from(getTransactionResponse, this.network)
+  }
+
+  /**
+   * Populates the required fields common to all transaction types.
+   * @see https://xrpl.org/transaction-common-fields.html
+   *
+   * Note: The returned Transaction object must still be assigned transaction-specific details.
+   *
+   * @param wallet The wallet that will sign and submit this transaction.
+   * @returns A promise which resolves to a Transaction protobuf with the required common fields populated.
+   */
+  private async prepareBaseTransaction(wallet: Wallet): Promise<Transaction> {
+    const classicAddress = Utils.decodeXAddress(wallet.getAddress())
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+    const fee = await this.getMinimumFee()
+    const accountData = await this.getAccountData(classicAddress.address)
+    const openLedgerSequence = await this.getOpenLedgerSequence()
+
+    const senderAccountAddress = new AccountAddress()
+    senderAccountAddress.setAddress(wallet.getAddress())
+
+    const account = new Account()
+    account.setValue(senderAccountAddress)
+
+    const lastLedgerSequence = new LastLedgerSequence()
+    lastLedgerSequence.setValue(openLedgerSequence + maxLedgerVersionOffset)
+
+    const signingPublicKeyBytes = Utils.toBytes(wallet.publicKey)
+    const signingPublicKey = new SigningPublicKey()
+    signingPublicKey.setValue(signingPublicKeyBytes)
+
+    const transaction = new Transaction()
+    transaction.setAccount(account)
+    transaction.setFee(fee)
+    transaction.setSequence(accountData.getSequence())
+    transaction.setLastLedgerSequence(lastLedgerSequence)
+    transaction.setSigningPublicKey(signingPublicKey)
+
+    return transaction
+  }
+
+  /**
+   * Signs the provided Transaction object using the provided Wallet and submits to the XRPL network.
+   *
+   * @param wallet The wallet that will sign and submit this transaction.
+   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   */
+  private async submitTransaction(
+    wallet: Wallet,
+    transaction: Transaction,
+  ): Promise<string> {
+    const signedTransaction = Signer.signTransaction(transaction, wallet)
+    if (!signedTransaction) {
+      throw XrpError.malformedResponse
+    }
+
+    const submitTransactionRequest = this.networkClient.SubmitTransactionRequest()
+    submitTransactionRequest.setSignedTransaction(signedTransaction)
+
+    const response = await this.networkClient.submitTransaction(
+      submitTransactionRequest,
+    )
+
+    return Utils.toHex(response.getHash_asU8())
   }
 }
