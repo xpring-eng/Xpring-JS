@@ -71,8 +71,13 @@ export default class XrpGrpcNetworkClient implements XrpNetworkClient {
   public async getTransaction(
     request: GetTransactionRequest,
   ): Promise<GetTransactionResponse> {
+    console.log('Querying TX')
+
     return new Promise((resolve, reject): void => {
       this.grpcClient.getTransaction(request, {}, (error, response): void => {
+        console.log(`Res: ${response.toString()}`)
+        console.log(`Err: ${error?.message}`)
+
         if (error != null || response == null) {
           reject(error)
           return
@@ -85,11 +90,17 @@ export default class XrpGrpcNetworkClient implements XrpNetworkClient {
   public async submitTransaction(
     request: SubmitTransactionRequest,
   ): Promise<SubmitTransactionResponse> {
+    console.log('Submitting TX')
+
     return new Promise((resolve, reject): void => {
       this.grpcClient.submitTransaction(
         request,
         {},
         (error, response): void => {
+          console.log(`Res: ${response.toString()}`)
+          console.log('Executing additional code')
+          console.log(`Err: ${error?.message}`)
+
           if (error != null || response == null) {
             reject(error)
             return
