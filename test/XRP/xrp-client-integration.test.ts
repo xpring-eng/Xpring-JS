@@ -52,7 +52,7 @@ const transactionStatusToString = (input: TransactionStatus) => {
 
 describe('XrpClient Integration Tests', function (): void {
   it('Get Transaction Status - Web Shim', async function (): Promise<void> {
-    this.timeout(1 * 15 * 1000) // 15 min
+    this.timeout(1 * 15 * 10000) // 15 min
 
     const repetitions = 100
     for (let i = 0; i < repetitions; i++) {
