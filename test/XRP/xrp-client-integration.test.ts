@@ -182,4 +182,12 @@ describe('XrpClient Integration Tests', function (): void {
 
     assert.exists(transaction)
   })
+
+  it('Enable Deposit Auth - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const transactionHash = await xrpClient.enableDepositAuth(wallet)
+
+    assert.exists(transactionHash)
+  })
 })
