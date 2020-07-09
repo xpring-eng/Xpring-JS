@@ -5,7 +5,7 @@ import { PaymentRequest } from '../../src/ILP/model/payment-request'
 import IlpError, { IlpErrorType } from '../../src/ILP/ilp-error'
 
 // A timeout for these tests.
-const timeoutMs = 60 * 1000 // 1 minute
+const timeoutMs = 60 * 3000 // 3 minutes
 
 // A ILP Client that makes requests.
 const ILPAddress = 'stg.grpcng.wallet.xpring.io'

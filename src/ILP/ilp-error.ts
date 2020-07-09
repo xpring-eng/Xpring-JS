@@ -74,6 +74,8 @@ export default class IlpError extends Error {
    * @return A {@link IlpError} that has been translated from a gRPC error, or which should be rethrown
    */
   public static from(error: grpcWebError | IlpError): IlpError {
+    console.log(error.message)
+
     if ('code' in error) {
       switch (error.code) {
         case grpcStatusCode.NOT_FOUND:
