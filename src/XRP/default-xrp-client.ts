@@ -16,8 +16,10 @@ import {
   MemoData,
   MemoFormat,
   MemoType,
+  SetFlag,
 } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
+  AccountSet,
   Memo,
   Payment,
   Transaction,
@@ -465,5 +467,28 @@ export default class DefaultXrpClient implements XrpClientDecorator {
       getTransactionRequest,
     )
     return XrpTransaction.from(getTransactionResponse, this.network)
+  }
+
+  /**
+   * Enable Deposit Authorization for this XRPL account.
+   * @see https://xrpl.org/depositauth.html
+   *
+   * @param wallet The wallet associated with the XRPL account enabling Deposit Authorization and that will sign the request.
+   * @returns A promise which resolves to a string representing the hash of the submitted AccountSet transaction.
+   */
+  enableDepositAuth(wallet: Wallet): Promise<string> {
+    const classicAddress = Utils.decodeXAddress(wallet.getAddress())
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    // 9 for enabling Deposit Auth: https://xrpl.org/accountset.html#accountset-flags
+    const setFlag = new SetFlag()
+    setFlag.setValue(9)
+
+    const accountSet = new AccountSet()
+    accountSet.setSetFlag(setFlag)
+
+    // QUESTION: factor out generic txn preparation w/ common fields?
   }
 }
