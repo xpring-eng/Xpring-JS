@@ -786,4 +786,27 @@ describe('Default XRP Client', function (): void {
     // THEN the result is undefined
     assert.isUndefined(transaction)
   })
+
+  it('Enable Deposit Auth - successful response', async function (): Promise<
+    void
+  > {
+    // GIVEN a DefaultXrpClient with mocked networking that will return a successful hash for submitTransaction
+    const xrpClient = new DefaultXrpClient(
+      fakeSucceedingNetworkClient,
+      XrplNetwork.Test,
+    )
+
+    const { wallet } = Wallet.generateRandomWallet()!
+
+    // WHEN enableDepositauth is called
+    const transactionHash = await xrpClient.enableDepositAuth(wallet)
+
+    // THEN a transaction hash exists and is the expected hash
+    const expectedTransactionHash = Utils.toHex(
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
+    )
+
+    assert.exists(transactionHash)
+    assert.strictEqual(transactionHash, expectedTransactionHash)
+  })
 })
