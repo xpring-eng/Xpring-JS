@@ -45,7 +45,7 @@ run tests:
     - ./node_modules/nyc/bin/nyc.js npm test
 
 # TODO(keefertaylor): Move this to the test phase as it is basically doing the same steps.
-code coverage:
+codecov:
   stage: test
   extends: .test
   script:
