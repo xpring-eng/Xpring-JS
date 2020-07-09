@@ -231,7 +231,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
         .forEach((memo) => transaction.addMemos(memo))
     }
 
-    return this.submitTransaction(sender, transaction)
+    return this.signAndSubmitTransaction(sender, transaction)
   }
 
   public async getOpenLedgerSequence(): Promise<number> {
@@ -474,7 +474,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @param wallet The wallet that will sign and submit this transaction.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
-  private async submitTransaction(
+  private async signAndSubmitTransaction(
     wallet: Wallet,
     transaction: Transaction,
   ): Promise<string> {
