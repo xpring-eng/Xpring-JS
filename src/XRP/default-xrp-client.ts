@@ -480,7 +480,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   ): Promise<string> {
     const signedTransaction = Signer.signTransaction(transaction, wallet)
     if (!signedTransaction) {
-      throw XrpError.malformedResponse
+      throw XrpError.signingError
     }
 
     const submitTransactionRequest = this.networkClient.SubmitTransactionRequest()
