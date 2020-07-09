@@ -26,7 +26,7 @@ stages:
     - git submodule update --init --recursive
 
     # Install global tooling
-    # TODO(keefertaylor): We should be able to run these with npx and not have to do a global install.
+    # TODO(keefertaylor): Should be able to run these with npx and not have to do a global install.
     - npm -g --cache .npm --prefer-offline --no-audit --progress=false i nyc codecov
 
     # Install deps
