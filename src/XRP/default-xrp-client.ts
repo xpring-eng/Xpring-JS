@@ -438,7 +438,6 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @returns A promise which resolves to a string representing the hash of the submitted AccountSet transaction.
    */
   public async enableDepositAuth(wallet: Wallet): Promise<string> {
-    // 9 is the flag for enabling Deposit Auth: https://xrpl.org/accountset.html#accountset-flags
     const setFlag = new SetFlag()
     setFlag.setValue(AccountSetFlag.asfDepositAuth)
 
