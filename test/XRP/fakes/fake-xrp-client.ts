@@ -12,7 +12,7 @@ class FakeXrpClient implements XrpClientDecorator {
   public constructor(
     public getBalanceValue: Result<BigInteger>,
     public getPaymentStatusValue: Result<TransactionStatus>,
-    public sendValue: Result<string>,
+    public transactionHash: Result<string>,
     public getLatestValidatedLedgerSequenceValue: Result<number>,
     public getRawTransactionStatusValue: Result<RawTransactionStatus>,
     public accountExistsValue: Result<boolean>,
@@ -34,11 +34,11 @@ class FakeXrpClient implements XrpClientDecorator {
     _destination: string,
     _sender: Wallet,
   ): Promise<string> {
-    return FakeXrpClient.returnOrThrow(this.sendValue)
+    return FakeXrpClient.returnOrThrow(this.transactionHash)
   }
 
   async sendWithDetails(_sendMoneyDetails: SendXrpDetails): Promise<string> {
-    return FakeXrpClient.returnOrThrow(this.sendValue)
+    return FakeXrpClient.returnOrThrow(this.transactionHash)
   }
 
   async getLatestValidatedLedgerSequence(_address: string): Promise<number> {
@@ -68,11 +68,7 @@ class FakeXrpClient implements XrpClientDecorator {
   }
 
   async enableDepositAuth(_wallet: Wallet): Promise<string> {
-    // NOTE: all we need to do here is return a valid transaction hash, which we already have in the field this.sendValue
-    // Is it worth adding a parameter to the constructor to pass a different transaction hash that would be intended to
-    // represent an AccountSet transaction hash?  Or does it matter?  Maybe another solution would be to give `this.sendValue`
-    // a more generic name to indicate that it's just a transaction hash for use wherever needed.
-    return FakeXrpClient.returnOrThrow(this.sendValue)
+    return FakeXrpClient.returnOrThrow(this.transactionHash)
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
