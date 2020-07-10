@@ -431,6 +431,8 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @see https://xrpl.org/transaction-common-fields.html
    *
    * Note: The returned Transaction object must still be assigned transaction-specific details.
+   * Some transaction types require a different fee (or no fee), in which case the fee should be overwritten appropriately
+   * when constructing the transaction-specific details. (See https://xrpl.org/transaction-cost.html)
    *
    * @param wallet The wallet that will sign and submit this transaction.
    * @returns A promise which resolves to a Transaction protobuf with the required common fields populated.
