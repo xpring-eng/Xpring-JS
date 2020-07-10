@@ -469,14 +469,15 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   }
 
   /**
-   * Signs the provided Transaction object using the provided Wallet and submits to the XRPL network.
+   * Signs the provided transaction using the wallet and submits to the XRPL network.
    *
+   * @param transaction The transaction to be signed and submitted.
    * @param wallet The wallet that will sign and submit this transaction.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   private async signAndSubmitTransaction(
-    wallet: Wallet,
     transaction: Transaction,
+    wallet: Wallet,
   ): Promise<string> {
     const signedTransaction = Signer.signTransaction(transaction, wallet)
     if (!signedTransaction) {
