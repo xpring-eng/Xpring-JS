@@ -38,6 +38,7 @@ import XrpError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import XrplNetwork from '../Common/xrpl-network'
 import SendXrpDetails from './model/send-xrp-details'
+import { AccountSetFlag } from './model/account-set-flag'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -439,7 +440,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   public async enableDepositAuth(wallet: Wallet): Promise<string> {
     // 9 is the flag for enabling Deposit Auth: https://xrpl.org/accountset.html#accountset-flags
     const setFlag = new SetFlag()
-    setFlag.setValue(9)
+    setFlag.setValue(AccountSetFlag.asfDepositAuth)
 
     const accountSet = new AccountSet()
     accountSet.setSetFlag(setFlag)
