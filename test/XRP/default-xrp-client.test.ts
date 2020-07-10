@@ -4,7 +4,7 @@ import { assert } from 'chai'
 import bigInt from 'big-integer'
 import { Utils, Wallet } from 'xpring-common-js'
 import { StatusCode as grpcStatusCode } from 'grpc-web'
-import FakeGRPCError from './fakes/fake-grpc-error'
+import FakeGRPCError from '../Common/Fakes/fake-grpc-error'
 import XRPTestUtils, { iForgotToPickUpCarlMemo } from './helpers/xrp-test-utils'
 import DefaultXrpClient from '../../src/XRP/default-xrp-client'
 import {
@@ -526,8 +526,8 @@ describe('Default XRP Client', function (): void {
   it('Check if account exists - failing network request w/ NOT_FOUND error', async function () {
     // GIVEN a DefaultXrpClient with a network client that will report accounts as not found
     const notFoundError = new FakeGRPCError(
-      'FakeGRPCError: account not found',
       grpcStatusCode.NOT_FOUND,
+      'FakeGRPCError: account not found',
     )
     const fakeNetworkClientResponses = new FakeXRPNetworkClientResponses(
       notFoundError, // getAccountInfoResponse
@@ -550,8 +550,8 @@ describe('Default XRP Client', function (): void {
   it('Check if account exists - failing network request w/ CANCELLED error', function (done) {
     // GIVEN a DefaultXrpClient with a network client that reports grpc operation as cancelled
     const cancelledError = new FakeGRPCError(
-      'FakeGRPCError: operation was cancelled',
       grpcStatusCode.CANCELLED,
+      'FakeGRPCError: operation was cancelled',
     )
     const fakeNetworkClientResponses = new FakeXRPNetworkClientResponses(
       cancelledError, // getAccountInfoResponse
@@ -727,8 +727,8 @@ describe('Default XRP Client', function (): void {
   it('Get Payment - failing network request with NOT_FOUND error', function (done) {
     // GIVEN a DefaultXrpClient with mocked networking that will fail to retrieve a transaction w/ NOT_FOUND error code.
     const notFoundError = new FakeGRPCError(
-      'FakeGRPCError: account not found',
       grpcStatusCode.NOT_FOUND,
+      'FakeGRPCError: account not found',
     )
     const fakeNetworkResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),

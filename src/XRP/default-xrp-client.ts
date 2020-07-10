@@ -233,7 +233,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
         .forEach((memo) => transaction.addMemos(memo))
     }
 
-    return this.submitTransaction(sender, transaction)
+    return this.signAndSubmitTransaction(transaction, sender)
   }
 
   public async getOpenLedgerSequence(): Promise<number> {
@@ -454,6 +454,8 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @see https://xrpl.org/transaction-common-fields.html
    *
    * Note: The returned Transaction object must still be assigned transaction-specific details.
+   * Some transaction types require a different fee (or no fee), in which case the fee should be overwritten appropriately
+   * when constructing the transaction-specific details. (See https://xrpl.org/transaction-cost.html)
    *
    * @param wallet The wallet that will sign and submit this transaction.
    * @returns A promise which resolves to a Transaction protobuf with the required common fields populated.
@@ -492,18 +494,19 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   }
 
   /**
-   * Signs the provided Transaction object using the provided Wallet and submits to the XRPL network.
+   * Signs the provided transaction using the wallet and submits to the XRPL network.
    *
+   * @param transaction The transaction to be signed and submitted.
    * @param wallet The wallet that will sign and submit this transaction.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
-  private async submitTransaction(
-    wallet: Wallet,
+  private async signAndSubmitTransaction(
     transaction: Transaction,
+    wallet: Wallet,
   ): Promise<string> {
     const signedTransaction = Signer.signTransaction(transaction, wallet)
     if (!signedTransaction) {
-      throw XrpError.malformedResponse
+      throw XrpError.signingError
     }
 
     const submitTransactionRequest = this.networkClient.SubmitTransactionRequest()
