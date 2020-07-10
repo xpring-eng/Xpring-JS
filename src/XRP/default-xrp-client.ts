@@ -446,7 +446,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     const transaction = await this.prepareBaseTransaction(wallet)
     transaction.setAccountSet(accountSet)
 
-    return this.submitTransaction(wallet, transaction)
+    return this.signAndSubmitTransaction(transaction, wallet)
   }
 
   /**
