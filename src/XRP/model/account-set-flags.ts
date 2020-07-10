@@ -3,7 +3,7 @@
  *
  * @see https://xrpl.org/accountset.html#accountset-flags
  */
-export enum AccountSetFlags {
+export enum AccountSetFlag {
   asfRequireDest = 1,
   asfRequireAuth = 2,
   asfDisallowXRP = 3,
