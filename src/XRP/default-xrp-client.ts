@@ -231,7 +231,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
         .forEach((memo) => transaction.addMemos(memo))
     }
 
-    return this.signAndSubmitTransaction(sender, transaction)
+    return this.signAndSubmitTransaction(transaction, sender)
   }
 
   public async getOpenLedgerSequence(): Promise<number> {
