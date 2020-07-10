@@ -430,6 +430,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
 
   /**
    * Enable Deposit Authorization for this XRPL account.
+   *
    * @see https://xrpl.org/depositauth.html
    *
    * @param wallet The wallet associated with the XRPL account enabling Deposit Authorization and that will sign the request.
@@ -451,6 +452,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
 
   /**
    * Populates the required fields common to all transaction types.
+   *
    * @see https://xrpl.org/transaction-common-fields.html
    *
    * Note: The returned Transaction object must still be assigned transaction-specific details.
