@@ -4,6 +4,18 @@
 
 _Read this in other languages: [日本語](README-ja.md)._
 
+# PayID-DNS extension
+
+This version of Xpring-JS will attempt to look up PayID information in a DNS TXT record before reverting to http/s protocol.
+
+For example requesting PayID `richard$payid.link` for `xrpl-mainnet` will first attempt to retreive a TXT record at `xrpl-mainnet.richard._payid.payid.link`. 
+
+If a JSON payload is available on that TXT record it will be processed using [PayID-Sign](https://github.com/codetsunami/payid-sign) to check authenticity, and, if verified, will be returned in place of the regular PayID http/s lookup.
+
+This provides an alternative to running a http/s server for seldom changed crypto addresses while maintaining the benefits of PayID as a universal cryptocurrency address-book. It also provides a DDoS resistant way to ensure a PayID is always available.
+
+To generate a JSON payload for your own DNS TXT record PayID please use the tool here: [PayID-Sign Commandline Tool](https://github.com/codetsunami/payid-sign-cmdline)
+
 # Xpring-JS
 
 Xpring-JS is the JavaScript client side library of the Xpring SDK.

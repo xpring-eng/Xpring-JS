@@ -1,5 +1,5 @@
 {
-  "name": "xpring-js",
+  "name": "xpring-js-dns",
   "version": "5.0.0",
   "description": "XpringJS provides a Javascript based SDK for interacting with the Ripple Ledger.",
   "main": "build/index.js",
@@ -51,6 +51,7 @@
     "typescript": "^3.9.3"
   },
   "dependencies": {
+    "payid-sign": ">=1.0.2",
     "@grpc/grpc-js": "^1.1.1",
     "axios": "^0.19.2",
     "big-integer": "^1.6.48",
