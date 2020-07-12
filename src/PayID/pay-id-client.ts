@@ -79,7 +79,11 @@ export default class PayIdClient {
     return new Promise((resolve, reject) => {
         dns.resolveTxt(domain, (err: any | null, addresses: string[][]) => {
             if(err) reject(err)
-            resolve(addresses[0].join(''))
+            try {
+                resolve(addresses[0].join(''))
+            } catch (error) {
+                reject('no txt record')
+            }
         })
     })
   }
