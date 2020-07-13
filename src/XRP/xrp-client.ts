@@ -145,7 +145,8 @@ export default class XrpClient implements XrpClientInterface {
    * @see https://xrpl.org/depositauth.html
    *
    * @param wallet The wallet associated with the XRPL account enabling Deposit Authorization and that will sign the request.
-   * @returns A promise which resolves to a string representing the hash of the submitted AccountSet transaction.
+   * @returns A promise which resolves to a Tuple<string, TransactionStatus> representing the hash of the submitted AccountSet transaction
+   *          and the status of the transaction.
    */
   enableDepositAuth(wallet: Wallet): Promise<[string, TransactionStatus]> {
     return this.decoratedClient.enableDepositAuth(wallet)
