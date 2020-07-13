@@ -97,5 +97,5 @@ export default interface XrpClientInterface {
    * @param wallet The wallet associated with the XRPL account enabling Deposit Authorization and that will sign the request.
    * @returns A promise which resolves to a string representing the hash of the submitted AccountSet transaction.
    */
-  enableDepositAuth(wallet: Wallet): Promise<string>
+  enableDepositAuth(wallet: Wallet): Promise<[string, TransactionStatus]>
 }
