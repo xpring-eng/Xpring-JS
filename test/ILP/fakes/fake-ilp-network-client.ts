@@ -4,7 +4,7 @@ import { GetBalanceResponse } from '../../../src/ILP/Generated/web/get_balance_r
 import { SendPaymentResponse } from '../../../src/ILP/Generated/web/send_payment_response_pb'
 import { GetBalanceRequest } from '../../../src/ILP/Generated/web/get_balance_request_pb'
 import { SendPaymentRequest } from '../../../src/ILP/Generated/web/send_payment_request_pb'
-import FakeGRPCError from './fake-grpc-error'
+import FakeGRPCError from '../../Common/Fakes/fake-grpc-error'
 import IlpError from '../../../src/ILP/ilp-error'
 
 /**
