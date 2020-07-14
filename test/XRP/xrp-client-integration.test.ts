@@ -5,6 +5,7 @@ import { Wallet } from 'xpring-common-js'
 import XrplNetwork from '../../src/Common/xrpl-network'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import XrpClient from '../../src/XRP/xrp-client'
+import GrpcNetworkClient from '../../src/XRP/grpc-xrp-network-client'
 
 import {
   expectedNoDataMemo,
@@ -15,6 +16,8 @@ import {
   noFormatMemo,
   noTypeMemo,
 } from './helpers/xrp-test-utils'
+import { LedgerSpecifier } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger_pb'
+import { XrpError, RippledFlags } from '../../src/XRP'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -186,8 +189,36 @@ describe('XrpClient Integration Tests', function (): void {
   it('Enable Deposit Auth - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const transactionHash = await xrpClient.enableDepositAuth(wallet)
+    const result = await xrpClient.enableDepositAuth(wallet)
+    const transactionHash = result[0]
+    const transactionStatus = result[1]
+
+    // get the account data and check the flag bitmap
+    const networkClient = new GrpcNetworkClient(rippledUrl)
+    const account = networkClient.AccountAddress()
+    account.setAddress(wallet.getAddress())
+
+    const request = networkClient.GetAccountInfoRequest()
+    request.setAccount(account)
+
+    const ledger = new LedgerSpecifier()
+    ledger.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
+    request.setLedger(ledger)
+
+    const accountInfo = await this.networkClient.getAccountInfo(request)
+    if (!accountInfo) {
+      throw XrpError.malformedResponse
+    }
+
+    const accountData = accountInfo.getAccountData()
+    if (!accountData) {
+      throw XrpError.malformedResponse
+    }
+
+    const flags = accountData.getFlags()
 
     assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.Succeeded)
+    assert.isTrue(RippledFlags.checkFlag(RippledFlags.ISF_DEPOSIT_AUTH, flags))
   })
 })
