@@ -3,7 +3,7 @@ export {
   PayIdUtils,
   Wallet,
   WalletGenerationResult,
-  Utils,
+  XrpUtils,
 } from 'xpring-common-js'
 export { PaymentRequest, PaymentResult, AccountBalance, IlpClient } from './ILP'
 export { default as PayIdClient } from './PayID/pay-id-client'
