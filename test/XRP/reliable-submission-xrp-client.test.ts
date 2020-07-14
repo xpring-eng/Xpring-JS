@@ -184,12 +184,11 @@ describe('Reliable Submission XRP Client', function (): void {
     const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN enableDepositAuth is called
-    const {
-      transactionHash,
-    } = await this.reliableSubmissionClient.enableDepositAuth(wallet)
+    const result = await this.reliableSubmissionClient.enableDepositAuth(wallet)
+    const transactionHash = result[0]
 
     // THEN the function returns
-    assert.deepEqual(transactionHash, fakedSendValue)
+    assert.deepEqual(transactionHash, fakedEnableDepositAuthValue[0])
   })
 
   it('Enable Deposit Auth - Returns when the transaction is validated', async function () {
@@ -203,9 +202,8 @@ describe('Reliable Submission XRP Client', function (): void {
     const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN enableDepositAuth is called
-    const {
-      transactionHash,
-    } = await this.reliableSubmissionClient.enableDepositAuth(wallet)
+    const result = await this.reliableSubmissionClient.enableDepositAuth(wallet)
+    const transactionHash = result[0]
 
     // THEN the function returns
     assert.deepEqual(transactionHash, fakedEnableDepositAuthValue[0])

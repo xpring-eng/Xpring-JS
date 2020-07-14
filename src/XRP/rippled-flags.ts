@@ -8,6 +8,8 @@
 class RippledFlags {
   static TF_PARTIAL_PAYMENT = 1 << 17
 
+  // https://xrpl.org/accountroot.html#accountroot-flags
+  static ISF_DEPOSIT_AUTH = 1 << 24
   /**
    * Check if the given flag is set in the given set of bit-flags.
    *
