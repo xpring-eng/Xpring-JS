@@ -1,6 +1,6 @@
 import bigInt from 'big-integer'
 import { assert } from 'chai'
-import { Wallet } from 'xpring-common-js'
+import { Wallet, XrpUtils } from 'xpring-common-js'
 
 import XrplNetwork from '../../src/Common/xrpl-network'
 import TransactionStatus from '../../src/XRP/transaction-status'
@@ -196,7 +196,8 @@ describe('XrpClient Integration Tests', function (): void {
     // get the account data and check the flag bitmap
     const networkClient = new GrpcNetworkClient(rippledUrl)
     const account = networkClient.AccountAddress()
-    account.setAddress(wallet.getAddress())
+    const classicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
+    account.setAddress(classicAddress!.address)
 
     const request = networkClient.GetAccountInfoRequest()
     request.setAccount(account)
@@ -205,7 +206,7 @@ describe('XrpClient Integration Tests', function (): void {
     ledger.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
     request.setLedger(ledger)
 
-    const accountInfo = await this.networkClient.getAccountInfo(request)
+    const accountInfo = await networkClient.getAccountInfo(request)
     if (!accountInfo) {
       throw XrpError.malformedResponse
     }
@@ -215,10 +216,10 @@ describe('XrpClient Integration Tests', function (): void {
       throw XrpError.malformedResponse
     }
 
-    const flags = accountData.getFlags()
+    const flags = accountData.getFlags()?.getValue()
 
     assert.exists(transactionHash)
     assert.equal(transactionStatus, TransactionStatus.Succeeded)
-    assert.isTrue(RippledFlags.checkFlag(RippledFlags.ISF_DEPOSIT_AUTH, flags))
+    assert.isTrue(RippledFlags.checkFlag(RippledFlags.ISF_DEPOSIT_AUTH, flags!))
   })
 })
