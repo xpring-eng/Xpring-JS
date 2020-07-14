@@ -799,7 +799,8 @@ describe('Default XRP Client', function (): void {
     const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN enableDepositAuth is called
-    const transactionHash = await xrpClient.enableDepositAuth(wallet)
+    const result = await xrpClient.enableDepositAuth(wallet)
+    const transactionHash = result[0]
 
     // THEN a transaction hash exists and is the expected hash
     const expectedTransactionHash = Utils.toHex(
