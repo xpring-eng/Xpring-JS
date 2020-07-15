@@ -17,23 +17,29 @@ describe('XRP Pay ID Client', function (): void {
     const payIdClient = new XrpPayIdClient(XrplNetwork.Test)
 
     const xAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
-
+    const replyHeaders = {
+      'content-type': 'application/xrpl-testnet+json',
+    }
     const payIdComponents = PayIdUtils.parsePayID(payId)
     if (!payIdComponents) {
       throw new Error('Test precondition failed: Could not generate a Pay ID')
     }
     nock('https://xpring.money')
       .get('/georgewashington')
-      .reply(200, {
-        addresses: [
-          {
-            addressDetailsType: 'CryptoAddressDetails',
-            addressDetails: {
-              address: xAddress,
+      .reply(
+        200,
+        {
+          addresses: [
+            {
+              addressDetailsType: 'CryptoAddressDetails',
+              addressDetails: {
+                address: xAddress,
+              },
             },
-          },
-        ],
-      })
+          ],
+        },
+        replyHeaders,
+      )
 
     // WHEN an XRP address is requested.
     const xrpAddress = await payIdClient.xrpAddressForPayId(payId)
@@ -54,18 +60,26 @@ describe('XRP Pay ID Client', function (): void {
     if (!payIdComponents) {
       throw new Error('Test precondition failed: Could not generate a Pay ID')
     }
+
+    const replyHeaders = {
+      'content-type': 'application/xrpl-testnet+json',
+    }
     nock('https://xpring.money')
       .get('/georgewashington')
-      .reply(200, {
-        addresses: [
-          {
-            addressDetailsType: 'CryptoAddressDetails',
-            addressDetails: {
-              address: classicAddress,
+      .reply(
+        200,
+        {
+          addresses: [
+            {
+              addressDetailsType: 'CryptoAddressDetails',
+              addressDetails: {
+                address: classicAddress,
+              },
             },
-          },
-        ],
-      })
+          ],
+        },
+        replyHeaders,
+      )
 
     // WHEN an XRP address is requested.
     const xrpAddress = await payIdClient.xrpAddressForPayId(payId)
@@ -82,6 +96,9 @@ describe('XRP Pay ID Client', function (): void {
     const classicAddress = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
     const tag = 12345
     const xAddress = Utils.encodeXAddress(classicAddress, tag, true)
+    const replyHeaders = {
+      'content-type': 'application/xrpl-testnet+json',
+    }
 
     const payIdComponents = PayIdUtils.parsePayID(payId)
     if (!payIdComponents) {
@@ -89,17 +106,21 @@ describe('XRP Pay ID Client', function (): void {
     }
     nock('https://xpring.money')
       .get('/georgewashington')
-      .reply(200, {
-        addresses: [
-          {
-            addressDetailsType: 'CryptoAddressDetails',
-            addressDetails: {
-              address: classicAddress,
-              tag,
+      .reply(
+        200,
+        {
+          addresses: [
+            {
+              addressDetailsType: 'CryptoAddressDetails',
+              addressDetails: {
+                address: classicAddress,
+                tag,
+              },
             },
-          },
-        ],
-      })
+          ],
+        },
+        replyHeaders,
+      )
 
     // WHEN an XRP address is requested.
     const xrpAddress = await payIdClient.xrpAddressForPayId(payId)
@@ -114,6 +135,9 @@ describe('XRP Pay ID Client', function (): void {
     const payIdClient = new XrpPayIdClient(XrplNetwork.Test)
 
     const classicAddress = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
+    const replyHeaders = {
+      'content-type': 'application/xrpl-testnet+json',
+    }
 
     const payIdComponents = PayIdUtils.parsePayID(payId)
     if (!payIdComponents) {
@@ -121,22 +145,26 @@ describe('XRP Pay ID Client', function (): void {
     }
     nock('https://xpring.money')
       .get('/georgewashington')
-      .reply(200, {
-        addresses: [
-          {
-            addressDetailsType: 'CryptoAddressDetails',
-            addressDetails: {
-              address: classicAddress,
+      .reply(
+        200,
+        {
+          addresses: [
+            {
+              addressDetailsType: 'CryptoAddressDetails',
+              addressDetails: {
+                address: classicAddress,
+              },
             },
-          },
-          {
-            addressDetailsType: 'CryptoAddressDetails',
-            addressDetails: {
-              address: classicAddress,
+            {
+              addressDetailsType: 'CryptoAddressDetails',
+              addressDetails: {
+                address: classicAddress,
+              },
             },
-          },
-        ],
-      })
+          ],
+        },
+        replyHeaders,
+      )
 
     // WHEN an XRP address is requested
     payIdClient.xrpAddressForPayId(payId).catch((error) => {
