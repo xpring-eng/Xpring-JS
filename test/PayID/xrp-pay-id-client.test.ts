@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import nock from 'nock'
-import { PayIdUtils, Utils } from 'xpring-common-js'
+import { PayIdUtils, XrpUtils } from 'xpring-common-js'
 import XrplNetwork from '../../src/Common/xrpl-network'
 import XrpPayIdClient from '../../src/PayID/xrp-pay-id-client'
 import PayIdError, { PayIdErrorType } from '../../src/PayID/pay-id-error'
@@ -48,7 +48,7 @@ describe('XRP Pay ID Client', function (): void {
     const payIdClient = new XrpPayIdClient(XrplNetwork.Test)
 
     const classicAddress = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
-    const xAddress = Utils.encodeXAddress(classicAddress, undefined, true)
+    const xAddress = XrpUtils.encodeXAddress(classicAddress, undefined, true)
 
     const payIdComponents = PayIdUtils.parsePayID(payId)
     if (!payIdComponents) {
@@ -81,7 +81,7 @@ describe('XRP Pay ID Client', function (): void {
 
     const classicAddress = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
     const tag = 12345
-    const xAddress = Utils.encodeXAddress(classicAddress, tag, true)
+    const xAddress = XrpUtils.encodeXAddress(classicAddress, tag, true)
 
     const payIdComponents = PayIdUtils.parsePayID(payId)
     if (!payIdComponents) {

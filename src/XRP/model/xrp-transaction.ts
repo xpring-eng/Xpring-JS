@@ -1,4 +1,4 @@
-import { Utils } from 'xpring-common-js'
+import { XrpUtils, Utils } from 'xpring-common-js'
 import { Transaction } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import RippledFlags from '../rippled-flags'
 import XrpSigner from './xrp-signer'
@@ -69,7 +69,7 @@ export default class XrpTransaction {
 
     const sourceTag = transaction.getSourceTag()?.getValue()
 
-    const sourceXAddress = Utils.encodeXAddress(
+    const sourceXAddress = XrpUtils.encodeXAddress(
       account,
       sourceTag,
       xrplNetwork === XrplNetwork.Test,
