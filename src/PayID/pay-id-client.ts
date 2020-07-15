@@ -19,21 +19,15 @@ export default class PayIdClient {
   /**
    * Initialize a new PayIdClient.
    *
-   * Networks in this constructor take the form of an asset and an optional network (<asset>-<network>), for instance:
-   * - xrpl-testnet
-   * - xrpl-mainnet
-   * - eth-rinkeby
-   * - ach
-   *
-   * TODO(keefertaylor): Link a canonical list at payid.org when available.
-   *
    * @param useHttps Whether to cuse HTTPS when making PayID requests. Most users should set this to 'true' to avoid
    *                 Man-in-the-Middle attacks. Exposed as an option for testing purposes. Defaults to true.
    */
   constructor(private readonly useHttps: boolean = true) {}
 
   /**
-   * Retrieve the crypto address associated with a PayID.
+   * Retrieve the crypto address associated with a PayID on the given network.
+   *
+   * @see https://docs.payid.org/payid-headers
    *
    * @param payId The PayID to resolve.
    * @param network The network to resolve on.
