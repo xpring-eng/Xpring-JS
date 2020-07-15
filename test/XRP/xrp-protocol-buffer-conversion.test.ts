@@ -6,7 +6,7 @@
 import bigInt from 'big-integer'
 import { assert } from 'chai'
 
-import { Utils } from '../../src'
+import { XrpUtils, Utils } from '../../src'
 import XrplNetwork from '../../src/Common/xrpl-network'
 import XrpCurrency from '../../src/XRP/model/xrp-currency'
 import XrpCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
@@ -230,7 +230,7 @@ describe('Protocol Buffer Conversion', function (): void {
 
     assert.equal(
       payment?.destinationXAddress,
-      Utils.encodeXAddress(
+      XrpUtils.encodeXAddress(
         testPaymentProtoAllFieldsSet
           .getDestination()!
           .getValue()!
@@ -281,7 +281,7 @@ describe('Protocol Buffer Conversion', function (): void {
 
     assert.equal(
       payment?.destinationXAddress,
-      Utils.encodeXAddress(
+      XrpUtils.encodeXAddress(
         testPaymentProtoMandatoryFieldsOnly
           ?.getDestination()!
           .getValue()!
@@ -419,7 +419,7 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.deepEqual(transaction?.signers, [XrpSigner.from(testSignerProto)!])
     assert.equal(
       transaction?.sourceXAddress,
-      Utils.encodeXAddress(
+      XrpUtils.encodeXAddress(
         transactionProto!.getAccount()!.getValue()!.getAddress()!,
         transactionProto!.getSourceTag()?.getValue(),
         true,
@@ -466,7 +466,7 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.isUndefined(transaction?.signers)
     assert.equal(
       transaction?.sourceXAddress,
-      Utils.encodeXAddress(
+      XrpUtils.encodeXAddress(
         transactionProto!.getAccount()!.getValue()!.getAddress()!,
         transactionProto!.getSourceTag()?.getValue(),
         true,

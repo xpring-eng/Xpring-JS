@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 
-import { Utils } from 'xpring-common-js'
+import { XrpUtils } from 'xpring-common-js'
 import XrpTrustSet from '../../src/XRP/model/xrp-trust-set'
 import XRPSignerEntry from '../../src/XRP/model/xrp-signer-entry'
 import XrpSignerListSet from '../../src/XRP/model/xrp-signer-list-set'
@@ -138,7 +138,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the AccountDelete converted as expected.
-    const expectedXAddress = Utils.encodeXAddress(
+    const expectedXAddress = XrpUtils.encodeXAddress(
       testAccountDeleteProto.getDestination()!.getValue()!.getAddress()!,
       testAccountDeleteProto.getDestinationTag()?.getValue(),
       true,
@@ -155,7 +155,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the AccountDelete converted as expected.
-    const expectedXAddress = Utils.encodeXAddress(
+    const expectedXAddress = XrpUtils.encodeXAddress(
       testAccountDeleteProtoNoTag.getDestination()!.getValue()!.getAddress()!,
       testAccountDeleteProtoNoTag.getDestinationTag()?.getValue(),
       true,
@@ -256,7 +256,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the CheckCreate converted as expected.
-    const expectedXAddress = Utils.encodeXAddress(
+    const expectedXAddress = XrpUtils.encodeXAddress(
       testCheckCreateProtoAllFields.getDestination()!.getValue()!.getAddress()!,
       testCheckCreateProtoAllFields.getDestinationTag()?.getValue(),
       true,
@@ -287,7 +287,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the CheckCreate converted as expected.
-    const expectedXAddress = Utils.encodeXAddress(
+    const expectedXAddress = XrpUtils.encodeXAddress(
       testCheckCreateProtoMandatoryFields
         .getDestination()!
         .getValue()!
@@ -329,7 +329,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the DepositPreauth converted as expected.
-    const expectedXAddress = Utils.encodeXAddress(
+    const expectedXAddress = XrpUtils.encodeXAddress(
       testDepositPreauthProtoSetAuthorize
         .getAuthorize()!
         .getValue()!
@@ -349,7 +349,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the DepositPreauth converted as expected.
-    const expectedXAddress = Utils.encodeXAddress(
+    const expectedXAddress = XrpUtils.encodeXAddress(
       testDepositPreauthProtoSetUnauthorize
         .getUnauthorize()!
         .getValue()!
@@ -371,7 +371,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the EscrowCancel converted as expected.
-    const expectedXAddress = Utils.encodeXAddress(
+    const expectedXAddress = XrpUtils.encodeXAddress(
       testEscrowCancelProto.getOwner()!.getValue()!.getAddress()!,
       undefined,
       true,
@@ -406,7 +406,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the EscrowCreate converted as expected.
-    const expectedXAddress = Utils.encodeXAddress(
+    const expectedXAddress = XrpUtils.encodeXAddress(
       testEscrowCreateProtoAllFields
         .getDestination()!
         .getValue()!
@@ -444,7 +444,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the EscrowCreate converted as expected.
-    const expectedXAddress = Utils.encodeXAddress(
+    const expectedXAddress = XrpUtils.encodeXAddress(
       testEscrowCreateProtoMandatoryOnly
         .getDestination()!
         .getValue()!
@@ -487,7 +487,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the EscrowFinish converted as expected.
-    const expectedXAddress = Utils.encodeXAddress(
+    const expectedXAddress = XrpUtils.encodeXAddress(
       testEscrowFinishProtoAllFields.getOwner()!.getValue()!.getAddress()!,
       undefined,
       true,
@@ -516,7 +516,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the EscrowFinish converted as expected.
-    const expectedXAddress = Utils.encodeXAddress(
+    const expectedXAddress = XrpUtils.encodeXAddress(
       testEscrowFinishProtoMandatoryOnly.getOwner()!.getValue()!.getAddress()!,
       undefined,
       true,
@@ -704,7 +704,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the PaymentChannelCreate converted as expected.
-    const expectedXAddress = Utils.encodeXAddress(
+    const expectedXAddress = XrpUtils.encodeXAddress(
       testPaymentChannelCreateProtoAllFields
         .getDestination()!
         .getValue()!
@@ -742,7 +742,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the PaymentChannelCreate converted as expected.
-    const expectedXAddress = Utils.encodeXAddress(
+    const expectedXAddress = XrpUtils.encodeXAddress(
       testPaymentChannelCreateProtoMandatoryOnly
         .getDestination()!
         .getValue()!
