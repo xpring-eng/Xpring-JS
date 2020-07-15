@@ -192,7 +192,7 @@ describe('PayIdClient', function (): void {
 
     const payIDComponents = PayIdUtils.parsePayID(payId)
     if (!payIDComponents) {
-      throw new Error('Test precondition failed: Could not generate a Pay ID')
+      throw new Error('Test precondition failed: Could not generate a PayID')
     }
     const address = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
     const replyHeaders = {
