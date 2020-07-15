@@ -1,5 +1,5 @@
 /**
- * Convenience class for creating more specific Error objects to mock gRPC error responses.
+ * Convenience class for creating more specific Error objects to mimick gRPC error responses.
  */
 export default class FakeGRPCError extends Error {
   /**
@@ -8,7 +8,10 @@ export default class FakeGRPCError extends Error {
    * @param message The text details of the error.
    * @param code The gRPC status code.
    */
-  constructor(public readonly code: number) {
-    super('')
+  constructor(
+    public readonly code: number,
+    public readonly message: string = '',
+  ) {
+    super(message)
   }
 }

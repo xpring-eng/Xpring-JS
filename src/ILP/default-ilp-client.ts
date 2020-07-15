@@ -73,7 +73,12 @@ class DefaultIlpClient implements IlpClientDecorator {
     paymentRequest: PaymentRequest,
     accessToken?: string,
   ): Promise<PaymentResult> {
-    const request = paymentRequest.toProto()
+    const request = this.networkClient.SendPaymentRequest()
+    request.setAmount(paymentRequest.amount.toJSNumber())
+    request.setDestinationPaymentPointer(
+      paymentRequest.destinationPaymentPointer,
+    )
+    request.setAccountId(paymentRequest.senderAccountId)
     return this.networkClient
       .send(request, accessToken)
       .catch((error) => {
