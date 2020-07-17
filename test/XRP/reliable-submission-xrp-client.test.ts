@@ -36,6 +36,7 @@ const fakedGetPaymentValue = testXrpTransaction
 const fakedEnableDepositAuthValue = new TransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
+  true,
 )
 
 describe('Reliable Submission XRP Client', function (): void {

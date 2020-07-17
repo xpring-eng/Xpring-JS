@@ -32,6 +32,7 @@ const fakeGetPaymentValue = testXrpTransaction
 const fakedEnableDepositAuthValue = new TransactionResult(
   fakeTransactionHash,
   TransactionStatus.Succeeded,
+  true,
 )
 /* eslint-enable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention */
 
