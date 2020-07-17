@@ -17,7 +17,8 @@ import {
   noTypeMemo,
 } from './helpers/xrp-test-utils'
 import { LedgerSpecifier } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger_pb'
-import { XrpError, RippledFlags } from '../../src/XRP'
+import { XrpError } from '../../src/XRP'
+import { AccountRootFlags } from '../../src/XRP/model'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -220,6 +221,8 @@ describe('XrpClient Integration Tests', function (): void {
 
     assert.exists(transactionHash)
     assert.equal(transactionStatus, TransactionStatus.Succeeded)
-    assert.isTrue(RippledFlags.checkFlag(RippledFlags.ISF_DEPOSIT_AUTH, flags!))
+    assert.isTrue(
+      AccountRootFlags.checkFlag(AccountRootFlags.LSF_DEPOSIT_AUTH, flags!),
+    )
   })
 })
