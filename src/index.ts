@@ -14,13 +14,11 @@ export { default as XpringClient } from './Xpring/xpring-client'
 export { default as XrpError } from './XRP/xrp-error'
 export { default as IlpError, IlpErrorType } from './ILP/ilp-error'
 export { default as XrpPayIdClient } from './PayID/xrp-pay-id-client'
+export { TransactionStatus, XrpClient, XrpUtils as XrpXrpUtils } from './XRP'
 export {
-  RippledFlags,
-  TransactionStatus,
-  XrpClient,
-  XrpUtils as XrpXrpUtils,
-} from './XRP'
-export {
+  AccountSetFlag,
+  AccountRootFlags,
+  PaymentFlags,
   SendXrpDetails,
   XrpCurrencyAmount,
   XrpCurrency,
