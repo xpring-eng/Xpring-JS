@@ -52,7 +52,7 @@ const transactionStatusToString = (input: TransactionStatus) => {
 
 describe('XrpClient Integration Tests', function (): void {
   it('Get Transaction Status - Web Shim', async function (): Promise<void> {
-    this.timeout(1 * 15 * 10000) // 15 min
+    this.timeout(1 * 15 * 100000) // 15 min
 
     const repetitions = 100
     for (let i = 0; i < repetitions; i++) {
@@ -76,6 +76,7 @@ describe('XrpClient Integration Tests', function (): void {
       if (transactionStatus === TransactionStatus.Succeeded) {
         console.log('Test passed.')
       } else {
+        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         console.log(
           `Test Failed! Actual status: ${transactionStatusToString(
             transactionStatus,
@@ -85,6 +86,7 @@ describe('XrpClient Integration Tests', function (): void {
       //      assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
 
       console.log(`END TEST CASE ${i}`)
+      console.log('\n\n\n\n')
     }
   })
 

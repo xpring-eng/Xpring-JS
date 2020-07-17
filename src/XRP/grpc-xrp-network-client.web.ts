@@ -75,7 +75,7 @@ export default class XrpGrpcNetworkClient implements XrpNetworkClient {
 
     return new Promise((resolve, reject): void => {
       this.grpcClient.getTransaction(request, {}, (error, response): void => {
-        console.log(`Res: ${response.toString()}`)
+        console.log(`Res: ${response?.toString()}`)
         console.log(`Err: ${error?.message}`)
 
         if (error != null || response == null) {
@@ -97,8 +97,7 @@ export default class XrpGrpcNetworkClient implements XrpNetworkClient {
         request,
         {},
         (error, response): void => {
-          console.log(`Res: ${response.toString()}`)
-          console.log('Executing additional code')
+          console.log(`Res: ${response?.toString()}`)
           console.log(`Err: ${error?.message}`)
 
           if (error != null || response == null) {

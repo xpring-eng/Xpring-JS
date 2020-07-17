@@ -92,6 +92,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     let latestLedgerSequence = await this.getLatestValidatedLedgerSequence(
       sourceClassicAddress,
     )
+    console.log(`Last ledger sequence for transaction ${lastLedgerSequence}`)
 
     // Poll until the transaction is validated, or until the lastLedgerSequence has been passed.
     /*
@@ -105,6 +106,8 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
       latestLedgerSequence <= lastLedgerSequence &&
       !rawTransactionStatus.isValidated
     ) {
+      console.log(`Current ledger sequence: ${latestLedgerSequence}`)
+
       await sleep(ledgerCloseTimeMs)
 
       // Update latestLedgerSequence and rawTransactionStatus

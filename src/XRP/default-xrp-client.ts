@@ -128,8 +128,17 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   public async getPaymentStatus(
     transactionHash: string,
   ): Promise<TransactionStatus> {
+    console.log('Querying status for hash ' + transactionHash)
+
     const transactionStatus = await this.getRawTransactionStatus(
       transactionHash,
+    )
+
+    console.log(
+      `validated: ${transactionStatus.isValidated ? 'true' : 'false'}`,
+    )
+    console.log(
+      `statusCode: '${transactionStatus.transactionStatusCode ?? 'MISSING'}`,
     )
 
     // Return pending if the transaction is not validated.
@@ -326,7 +335,21 @@ export default class DefaultXrpClient implements XrpClientDecorator {
 
     const getTxResponse = await this.networkClient.getTransaction(getTxRequest)
 
-    return RawTransactionStatus.fromGetTransactionResponse(getTxResponse)
+    console.log(`querying for ${transactionHash}`)
+    try {
+      const rawStatus = RawTransactionStatus.fromGetTransactionResponse(
+        getTxResponse,
+      )
+      console.log(`Validated: ${rawStatus.isValidated ? 'true' : 'false'}`)
+
+      return rawStatus
+    } catch (exception) {
+      console.log(`\\n\n\n>>>>>`)
+      console.log(`\\n\n\nHIT EDGE CASE!!`)
+      console.log(`\\n\n\n>>>>>`)
+
+      return new RawTransactionStatus(false, 'NOT FOUND', undefined, true)
+    }
   }
 
   private async getMinimumFee(): Promise<XRPDropsAmount> {
