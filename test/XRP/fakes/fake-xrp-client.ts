@@ -7,6 +7,7 @@ import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
 import Result from '../../Common/Helpers/result'
 import XrplNetwork from '../../../src/Common/xrpl-network'
 import SendXrpDetails from '../../../src/XRP/model/send-xrp-details'
+import TransactionResult from '../../../src/XRP/model/transaction-result'
 
 class FakeXrpClient implements XrpClientDecorator {
   public constructor(
@@ -18,7 +19,7 @@ class FakeXrpClient implements XrpClientDecorator {
     public accountExistsValue: Result<boolean>,
     public paymentHistoryValue: Result<Array<XrpTransaction>>,
     public getPaymentValue: Result<XrpTransaction>,
-    public enableDepositAuthValue: Result<[string, TransactionStatus]>,
+    public enableDepositAuthValue: Result<TransactionResult>,
     public readonly network: XrplNetwork = XrplNetwork.Test,
   ) {}
 
@@ -68,9 +69,7 @@ class FakeXrpClient implements XrpClientDecorator {
     return FakeXrpClient.returnOrThrow(this.getPaymentValue)
   }
 
-  async enableDepositAuth(
-    _wallet: Wallet,
-  ): Promise<[string, TransactionStatus]> {
+  async enableDepositAuth(_wallet: Wallet): Promise<TransactionResult> {
     return FakeXrpClient.returnOrThrow(this.enableDepositAuthValue)
   }
 

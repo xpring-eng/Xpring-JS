@@ -7,7 +7,7 @@ import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { testXrpTransaction } from './fakes/fake-xrp-protobufs'
 import XrplNetwork from '../../src/Common/xrpl-network'
-import Result from '../Common/Helpers/result'
+import TransactionResult from '../../src/XRP/model/transaction-result'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -33,10 +33,10 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
 )
 const fakedTransactionHistoryValue = [testXrpTransaction]
 const fakedGetPaymentValue = testXrpTransaction
-const fakedEnableDepositAuthValue: Result<[string, TransactionStatus]> = [
+const fakedEnableDepositAuthValue = new TransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
-]
+)
 
 describe('Reliable Submission XRP Client', function (): void {
   beforeEach(function () {

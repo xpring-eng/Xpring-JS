@@ -9,7 +9,7 @@ import XpringClient from '../../src/Xpring/xpring-client'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import XrplNetwork from '../../src/Common/xrpl-network'
 import XpringError from '../../src/Xpring/xpring-error'
-import Result from '../Common/Helpers/result'
+import TransactionResult from '../../src/XRP/model/transaction-result'
 
 /* Default values for the fake XRP Client. These values must be provided but are not varied in testing. */
 /* eslint-disable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention --
@@ -29,10 +29,10 @@ const fakeRawTransactionStatus = new RawTransactionStatus(
 )
 const fakePaymentHistoryValue = []
 const fakeGetPaymentValue = testXrpTransaction
-const fakedEnableDepositAuthValue: Result<[string, TransactionStatus]> = [
+const fakedEnableDepositAuthValue = new TransactionResult(
   fakeTransactionHash,
   TransactionStatus.Succeeded,
-]
+)
 /* eslint-enable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention */
 
 // An amount to send
