@@ -5,6 +5,7 @@ import XrplNetwork from '../Common/xrpl-network'
 import XrpTransaction from './model/xrp-transaction'
 import XrpMemo from './model/xrp-memo'
 import SendXrpDetails from './model/send-xrp-details'
+import TransactionResult from './model/transaction-result'
 
 /**
  * An interface describing XrpClient.
@@ -95,8 +96,8 @@ export default interface XrpClientInterface {
    * @see https://xrpl.org/depositauth.html
    *
    * @param wallet The wallet associated with the XRPL account enabling Deposit Authorization and that will sign the request.
-   * @returns A promise which resolves to a Tuple<string, TransactionStatus> representing the hash of the submitted AccountSet transaction
-   *          and the status of the transaction.
+   * @returns A promise which resolves to a TransactionResult object that contains the hash of the submitted AccountSet transaction
+   *          and the final status of the transaction..
    */
-  enableDepositAuth(wallet: Wallet): Promise<[string, TransactionStatus]>
+  enableDepositAuth(wallet: Wallet): Promise<TransactionResult>
 }

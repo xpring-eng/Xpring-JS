@@ -8,6 +8,7 @@ import XrpError, { XrpErrorType } from './xrp-error'
 import XrplNetwork from '../Common/xrpl-network'
 
 import SendXrpDetails from './model/send-xrp-details'
+import TransactionResult from './model/transaction-result'
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
@@ -83,9 +84,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     return this.decoratedClient.getPayment(transactionHash)
   }
 
-  public async enableDepositAuth(
-    wallet: Wallet,
-  ): Promise<[string, TransactionStatus]> {
+  public async enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
     const result = await this.decoratedClient.enableDepositAuth(wallet)
     const transactionHash = result[0]
 
@@ -96,14 +95,14 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
 
     // Return pending if the transaction is not validated.
     if (!rawTransactionStatus.isValidated) {
-      return [transactionHash, TransactionStatus.Pending]
+      return new TransactionResult(transactionHash, TransactionStatus.Pending)
     } else {
       const transactionStatus = rawTransactionStatus.transactionStatusCode?.startsWith(
         'tes',
       )
         ? TransactionStatus.Succeeded
         : TransactionStatus.Failed
-      return [transactionHash, transactionStatus]
+      return new TransactionResult(transactionHash, transactionStatus)
     }
   }
 
