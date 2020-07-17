@@ -1,5 +1,5 @@
 import { GetTransactionResponse } from './Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
-import RippledFlags from './rippled-flags'
+import PaymentFlags from './model/payment-flags'
 
 /** Abstraction around raw Transaction Status for compatibility. */
 // TODO:(keefertaylor) This class is now defunct. Refactor and remove.
@@ -20,8 +20,8 @@ export default class RawTransactionStatus {
     const isPayment = transaction.hasPayment()
     const flags = transaction.getFlags()?.getValue() ?? 0
 
-    const isPartialPayment = RippledFlags.checkFlag(
-      RippledFlags.TF_PARTIAL_PAYMENT,
+    const isPartialPayment = PaymentFlags.checkFlag(
+      PaymentFlags.TF_PARTIAL_PAYMENT,
       flags,
     )
 

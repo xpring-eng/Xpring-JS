@@ -1,6 +1,6 @@
 import { XrpUtils, Utils } from 'xpring-common-js'
 import { Transaction } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import RippledFlags from '../rippled-flags'
+import PaymentFlags from './payment-flags'
 import XrpSigner from './xrp-signer'
 import XrpTransactionType from './xrp-transaction-type'
 import XrpPayment from './xrp-payment'
@@ -184,7 +184,7 @@ export default class XrpTransaction {
     readonly hash: string,
     readonly accountTransactionID?: Uint8Array,
     readonly fee?: string,
-    readonly flags?: RippledFlags,
+    readonly flags?: PaymentFlags,
     readonly lastLedgerSequence?: number,
     readonly memos?: Array<XrpMemo>,
     readonly sequence?: number,
