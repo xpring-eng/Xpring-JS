@@ -94,16 +94,17 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
       wallet,
     )
 
-    let transactionStatus: TransactionStatus
     // Return pending if the transaction is not validated.
     if (!rawTransactionStatus.isValidated) {
-      transactionStatus = TransactionStatus.Pending
+      return [transactionHash, TransactionStatus.Pending]
     } else {
-      rawTransactionStatus.transactionStatusCode?.startsWith('tes')
-        ? (transactionStatus = TransactionStatus.Succeeded)
-        : (transactionStatus = TransactionStatus.Failed)
+      const transactionStatus = rawTransactionStatus.transactionStatusCode?.startsWith(
+        'tes',
+      )
+        ? TransactionStatus.Succeeded
+        : TransactionStatus.Failed
+      return [transactionHash, transactionStatus]
     }
-    return [transactionHash, transactionStatus]
   }
 
   private async awaitFinalTransactionResult(
