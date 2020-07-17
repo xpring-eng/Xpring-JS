@@ -191,8 +191,8 @@ describe('XrpClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     const result = await xrpClient.enableDepositAuth(wallet)
-    const transactionHash = result[0]
-    const transactionStatus = result[1]
+    const transactionHash = result.hash
+    const transactionStatus = result.status
 
     // get the account data and check the flag bitmap
     const networkClient = new GrpcNetworkClient(rippledUrl)
