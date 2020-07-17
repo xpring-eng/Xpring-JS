@@ -436,8 +436,8 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @see https://xrpl.org/depositauth.html
    *
    * @param wallet The wallet associated with the XRPL account enabling Deposit Authorization and that will sign the request.
-   * @returns A promise which resolves to a TransactionResult object that contains the hash of the submitted AccountSet transaction
-   *          and the final status of the transaction.
+   * @returns A promise which resolves to a TransactionResult object that contains the hash of the submitted AccountSet transaction,
+   *          the preliminary status, and whether the transaction has been included in a validated ledger yet.
    */
   public async enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
     const setFlag = new SetFlag()
@@ -453,8 +453,15 @@ export default class DefaultXrpClient implements XrpClientDecorator {
       transaction,
       wallet,
     )
+    const rawStatus = await this.getRawTransactionStatus(transactionHash)
+    const isValidated = rawStatus.isValidated
     const transactionStatus = await this.getPaymentStatus(transactionHash)
-    return new TransactionResult(transactionHash, transactionStatus)
+
+    return new TransactionResult(
+      transactionHash,
+      transactionStatus,
+      isValidated,
+    )
   }
 
   /**

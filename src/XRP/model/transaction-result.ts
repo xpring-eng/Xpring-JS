@@ -1,25 +1,27 @@
 import TransactionStatus from '../transaction-status'
 
 /**
- * Represents the outcome of submitting an XRPL transaction. The hash is the identifying hash of the transaction.
- * The status is the final result of the transaction.
- *
- * Note: This class is intended to be used with reliable submission logic, and the status represents the final
- * outcome of the transaction after inclusion in a validated ledger, or after the expiration of the transaction's
- * lastLedgerSequence.  For example, a successful status indicates that the transaction was applied in a validated
- * ledger with a successful result code, as opposed to success only on an open ledger in a local rippled environment.
+ * Represents the outcome of submitting an XRPL transaction.
  */
 export default class TransactionResult {
   hash: string
   status: TransactionStatus
+  validated: boolean
 
   /**
    *
    * @param hash The identifying hash of the transaction.
    * @param status The final result of the transaction.
+   * @param validated Whether this transaction (and status) are included in a validated ledger.
+   *                  The transaction status is only final if this field is true.
    */
-  public constructor(hash: string, status: TransactionStatus) {
+  public constructor(
+    hash: string,
+    status: TransactionStatus,
+    validated: boolean,
+  ) {
     this.hash = hash
     this.status = status
+    this.validated = validated
   }
 }
