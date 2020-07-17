@@ -404,7 +404,7 @@ const grpcUrl = 'hermes-grpc-test.xpring.dev' // Testnet Hermes URL
 const ilpClient = new IlpClient(grpcUrl)
 ```
 
-#### Retreiving a Balance
+#### Retrieving a Balance
 
 An `IlpClient` can check the balance of an account on a connector.
 
