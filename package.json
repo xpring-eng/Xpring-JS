@@ -58,7 +58,7 @@
     "google-protobuf": "^3.12.2",
     "grpc-web": "1.2.0",
     "xhr2": "0.2.0",
-    "xpring-common-js": "5.1.1"
+    "xpring-common-js": "6.0.0"
   },
   "nyc": {
     "extension": [
