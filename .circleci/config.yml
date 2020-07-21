@@ -27,7 +27,7 @@ jobs:
           command: |
             sudo apt update
             wget https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/pool/main/a/adoptopenjdk-14-hotspot/adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb
-            sudo apt install ./adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb 
+            sudo apt install ./adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb
 
       - run:
           name: 'Install protoc plugin'
@@ -56,6 +56,10 @@ jobs:
           name: 'Compile Typescript'
           command: |
             npm run build
+
+      - run:
+          name: 'Webpack'
+          command: npm run webpack
 
       - run:
           name: 'Run Tests'
