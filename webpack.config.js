@@ -15,10 +15,14 @@ module.exports = {
       {
         test: /\.ts$/,
         exclude: /(node_modules)/,
-        loader: 'ts-loader',
-        options: {
-          compilerOptions: {
-            outDir: './dist',
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/typescript', '@babel/preset-env'],
+            plugins: [
+              '@babel/plugin-transform-runtime',
+              '@babel/plugin-proposal-class-properties',
+            ],
           },
         },
       },
