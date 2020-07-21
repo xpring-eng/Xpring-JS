@@ -22,7 +22,8 @@
     "lint": "eslint . --ext .ts --fix",
     "lintNoFix": "eslint . --ext .ts",
     "test": "nyc mocha",
-    "prepublishOnly": "npm run test && npm run build"
+    "prepublishOnly": "npm run test && npm run build",
+    "webpack": "npm run clean && ./scripts/regenerate_protos.sh && ./scripts/regenerate_pay_id_api.sh && npm run lint && tsc --noEmit && webpack && copyfiles -u 3 './src/XRP/Generated/**/*' ./build/XRP/Generated && copyfiles -u 3 './src/ILP/Generated/**/*' ./build/ILP/Generated"
   },
   "homepage": "https://github.com/xpring-eng/Xpring-JS#readme",
   "devDependencies": {
