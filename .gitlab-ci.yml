@@ -25,10 +25,6 @@ stages:
     # Update submodules
     - git submodule update --init --recursive
 
-    # Install global tooling
-    # TODO(keefertaylor): Should be able to run these with npx and not have to do a global install.
-    - npm -g --cache .npm --prefer-offline --no-audit --progress=false i nyc codecov
-
     # Install deps
     - npm i --cache .npm --prefer-offline --no-audit --progress=false
 
@@ -42,13 +38,7 @@ run tests:
   stage: test
   extends: .test
   script:
-    - ./node_modules/nyc/bin/nyc.js npm test
-
-# TODO(keefertaylor): Move this to the test phase as it is basically doing the same steps.
-codecov:
-  stage: test
-  extends: .test
-  script:
+    - npm test
     - mkdir .nyc_output
     - nyc report --reporter=text-lcov > .nyc_output/coverage.json
     - codecov
