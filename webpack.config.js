@@ -33,10 +33,8 @@ module.exports = {
   },
   // Some libraries import Node modules but don't use them in the browser.
   // Tell webpack to provide empty mocks for them so importing them works.
-  // (From create-react-app's webpack.config.js)
   node: {
     module: 'empty',
-    dgram: 'empty',
     dns: 'mock',
     fs: 'empty',
     http2: 'empty',
