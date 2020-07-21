@@ -28,6 +28,7 @@
   "homepage": "https://github.com/xpring-eng/Xpring-JS#readme",
   "devDependencies": {
     "@babel/core": "^7.10.5",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-transform-runtime": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
     "@babel/preset-typescript": "^7.10.4",
@@ -60,7 +61,6 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@grpc/grpc-js": "^1.1.1",
     "axios": "^0.19.2",
     "big-integer": "^1.6.48",
