@@ -1,6 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path')
 
+const moduleFileExtensions = ['js', 'web.ts', 'ts']
+
 module.exports = {
   target: 'web',
   mode: 'production',
@@ -10,6 +12,7 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
+        exclude: /(node_modules)/,
         loader: 'ts-loader',
         options: {
           compilerOptions: {
@@ -20,12 +23,18 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: moduleFileExtensions.map((ext) => `.${ext}`),
   },
   // Some libraries import Node modules but don't use them in the browser.
   // Tell webpack to provide empty mocks for them so importing them works.
   node: {
+    module: 'empty',
+    dgram: 'empty',
+    dns: 'mock',
     fs: 'empty',
+    http2: 'empty',
+    net: 'empty',
+    tls: 'empty',
     child_process: 'empty',
   },
   output: {
