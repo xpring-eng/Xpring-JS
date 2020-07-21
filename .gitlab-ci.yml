@@ -41,4 +41,4 @@ run tests:
     - npm test
     - mkdir -p .nyc_output
     - npx nyc report --reporter=text-lcov > .nyc_output/coverage.json
-    - codecov
+    - npx ncodecov
