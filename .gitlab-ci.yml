@@ -39,6 +39,6 @@ run tests:
   extends: .test
   script:
     - npm test
-    - mkdir .nyc_output
+    - mkdir -p .nyc_output
     - nyc report --reporter=text-lcov > .nyc_output/coverage.json
     - codecov
