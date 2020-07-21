@@ -1,6 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path')
 
+// webpack considers .web.ts and .ts to be different extensions
+// We use both for web vs node implementations of some clients.
 const moduleFileExtensions = ['js', 'web.ts', 'ts']
 
 module.exports = {
@@ -27,6 +29,7 @@ module.exports = {
   },
   // Some libraries import Node modules but don't use them in the browser.
   // Tell webpack to provide empty mocks for them so importing them works.
+  // (From create-react-app's webpack.config.js)
   node: {
     module: 'empty',
     dgram: 'empty',
