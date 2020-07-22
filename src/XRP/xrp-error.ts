@@ -39,6 +39,14 @@ export default class XrpError extends Error {
   )
 
   /**
+   * There was a problem signing the transaction.
+   */
+  static signingError = new XrpError(
+    XrpErrorType.SigningError,
+    'There was an error signing the transaction',
+  )
+
+  /**
    * @param errorType The type of error.
    * @param message The error message.
    */
