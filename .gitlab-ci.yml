@@ -42,3 +42,9 @@ run tests:
     - mkdir -p .nyc_output
     - npx nyc report --reporter=text-lcov > .nyc_output/coverage.json
     - npx codecov
+
+run webpack:
+  stage: test
+  extends: .test
+  script:
+    - npx webpack
