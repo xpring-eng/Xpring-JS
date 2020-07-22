@@ -38,7 +38,7 @@ run tests:
   stage: test
   extends: .test
   script:
-    - npm test
+    - npx nyc npm test
     - mkdir -p coverage
     - npx nyc report --reporter=text-lcov > coverage/coverage.json
     - cat coverage/coverage.json
