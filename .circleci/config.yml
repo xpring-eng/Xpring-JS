@@ -65,10 +65,3 @@ jobs:
           name: 'Run Tests'
           command: |
             nyc npm test
-
-      - run:
-          name: Code Coverage
-          command: |
-            mkdir coverage
-            nyc report --reporter=text-lcov > coverage/coverage.json
-            codecov
