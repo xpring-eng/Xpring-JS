@@ -27,7 +27,7 @@
   "homepage": "https://github.com/xpring-eng/Xpring-JS#readme",
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^1.0.13-4.3.1",
-    "@types/chai": "4.2.11",
+    "@types/chai": "4.2.12",
     "@types/google-protobuf": "3.7.2",
     "@types/mocha": "8.0.0",
     "@types/node": "^14.0.1",
