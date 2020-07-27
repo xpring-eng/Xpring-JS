@@ -47,4 +47,4 @@ run webpack:
   stage: test
   extends: .test
   script:
-    - npx webpack
+    - npm run webpack
