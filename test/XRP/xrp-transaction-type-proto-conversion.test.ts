@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 
-import { Utils } from 'xpring-common-js'
+import { Utils, XrplNetwork } from 'xpring-common-js'
 import XrpTrustSet from '../../src/XRP/model/xrp-trust-set'
 import XRPSignerEntry from '../../src/XRP/model/xrp-signer-entry'
 import XrpSignerListSet from '../../src/XRP/model/xrp-signer-list-set'
@@ -67,7 +67,7 @@ import {
   testSignerEntry1,
   testSignerEntry2,
 } from './fakes/fake-xrp-transaction-type-protobufs'
-import { XrplNetwork }  from 'xpring-common-js'
+
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {

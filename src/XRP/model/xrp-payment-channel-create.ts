@@ -1,7 +1,6 @@
-import { Utils } from 'xpring-common-js'
+import { Utils, XrplNetwork } from 'xpring-common-js'
 import { PaymentChannelCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount from './xrp-currency-amount'
-import { XrplNetwork }  from 'xpring-common-js'
 
 /*
  * Represents a PaymentChannelCreate transaction on the XRP Ledger.
@@ -83,5 +82,5 @@ export default class XrpPaymentChannelCreate {
     readonly settleDelay: number,
     readonly publicKey: string,
     readonly cancelAfter?: number,
-  ) { }
+  ) {}
 }

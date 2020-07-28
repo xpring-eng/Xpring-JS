@@ -1,6 +1,5 @@
-import { Utils } from 'xpring-common-js'
+import { Utils, XrplNetwork } from 'xpring-common-js'
 import { AccountDelete } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { XrplNetwork }  from 'xpring-common-js'
 
 /*
  * Represents an AccountDelete transaction on the XRP Ledger.
@@ -45,5 +44,5 @@ export default class XrpAccountDelete {
    *                            sending account, encoded as an X-address (see https://xrpaddress.info/).
    *                            Must be a funded account in the ledger, and must not be the sending account.
    */
-  private constructor(readonly destinationXAddress: string) { }
+  private constructor(readonly destinationXAddress: string) {}
 }

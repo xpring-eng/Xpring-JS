@@ -1,4 +1,4 @@
-import { XrplNetwork }  from 'xpring-common-js'
+import { XrplNetwork } from 'xpring-common-js'
 
 export default interface XrpPayIdClientInterface {
   /**

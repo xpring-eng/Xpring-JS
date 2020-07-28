@@ -1,11 +1,10 @@
-import { Utils, Wallet } from 'xpring-common-js'
+import { Utils, Wallet, XrplNetwork } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import XrpClientDecorator from './xrp-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
 import XrpTransaction from './model/xrp-transaction'
 import XrpError, { XrpErrorType } from './xrp-error'
-import { XrplNetwork }  from 'xpring-common-js'
 
 import SendXrpDetails from './model/send-xrp-details'
 
@@ -20,7 +19,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
   public constructor(
     private readonly decoratedClient: XrpClientDecorator,
     readonly network: XrplNetwork,
-  ) { }
+  ) {}
 
   public async getBalance(address: string): Promise<BigInteger> {
     return this.decoratedClient.getBalance(address)
