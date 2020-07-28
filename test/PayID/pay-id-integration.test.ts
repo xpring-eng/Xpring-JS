@@ -50,7 +50,7 @@ describe('PayID Integration Tests', function (): void {
 
     // WHEN it is resolved to an unmapped value.
     payIdClient.xrpAddressForPayId(payId).catch((error) => {
-      console.log('error: ' + error)
+      console.log(`error:  ${error}`)
 
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
