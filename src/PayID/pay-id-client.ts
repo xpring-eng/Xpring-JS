@@ -109,6 +109,11 @@ export default class PayIdClient {
         )
       }
     } catch (error) {
+      console.log("ERROR CAUGHT:")
+      console.log(error.message)
+      console.log(error)
+      console.log(JSON.stringify(error))
+
       if (error.response?.status === 404) {
         const message = `Could not resolve ${payId} on network ${network}`
         return Promise.reject(
