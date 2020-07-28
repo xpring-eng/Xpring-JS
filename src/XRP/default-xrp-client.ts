@@ -34,7 +34,7 @@ import { XrpNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XrpError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
-import XrplNetwork from '../Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 import SendXrpDetails from './model/send-xrp-details'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
@@ -74,7 +74,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   public constructor(
     private readonly networkClient: XrpNetworkClient,
     readonly network: XrplNetwork,
-  ) {}
+  ) { }
 
   /**
    * Retrieve the balance for the given address.

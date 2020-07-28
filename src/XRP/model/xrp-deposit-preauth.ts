@@ -1,6 +1,6 @@
 import { Utils } from 'xpring-common-js'
 import { DepositPreauth } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import XrplNetwork from '../../Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 /*
  * Represents a DepositPreauth transaction on the XRP Ledger.
 
@@ -55,5 +55,5 @@ export default class XrpDepositPreauth {
   private constructor(
     readonly authorizeXAddress?: string,
     readonly unauthorizeXAddress?: string,
-  ) {}
+  ) { }
 }

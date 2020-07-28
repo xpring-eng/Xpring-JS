@@ -1,7 +1,7 @@
 import { Wallet } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import TransactionStatus from './transaction-status'
-import XrplNetwork from '../Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 import XrpTransaction from './model/xrp-transaction'
 import XrpMemo from './model/xrp-memo'
 import SendXrpDetails from './model/send-xrp-details'

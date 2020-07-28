@@ -7,7 +7,7 @@ import { testXrpTransaction } from '../XRP/fakes/fake-xrp-protobufs'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import XpringClient from '../../src/Xpring/xpring-client'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
-import XrplNetwork from '../../src/Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 import XpringError from '../../src/Xpring/xpring-error'
 
 /* Default values for the fake XRP Client. These values must be provided but are not varied in testing. */

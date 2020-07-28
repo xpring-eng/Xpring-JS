@@ -67,7 +67,7 @@ import {
   testSignerEntry1,
   testSignerEntry2,
 } from './fakes/fake-xrp-transaction-type-protobufs'
-import XrplNetwork from '../../src/Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {

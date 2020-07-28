@@ -29,7 +29,7 @@ import {
 } from './fakes/fake-xrp-protobufs'
 import XrpTransaction from '../../src/XRP/model/xrp-transaction'
 import XrpError, { XrpErrorType } from '../../src/XRP/xrp-error'
-import XrplNetwork from '../../src/Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 

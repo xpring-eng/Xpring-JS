@@ -5,7 +5,7 @@ import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
 import XrpTransaction from './model/xrp-transaction'
 import XrpError, { XrpErrorType } from './xrp-error'
-import XrplNetwork from '../Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 
 import SendXrpDetails from './model/send-xrp-details'
 
@@ -20,7 +20,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
   public constructor(
     private readonly decoratedClient: XrpClientDecorator,
     readonly network: XrplNetwork,
-  ) {}
+  ) { }
 
   public async getBalance(address: string): Promise<BigInteger> {
     return this.decoratedClient.getBalance(address)

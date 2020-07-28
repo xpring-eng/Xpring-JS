@@ -6,7 +6,7 @@ import XrpTransactionType from './xrp-transaction-type'
 import XrpPayment from './xrp-payment'
 import XrpMemo from './xrp-memo'
 import { GetTransactionResponse } from '../Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
-import XrplNetwork from '../../Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 
 /**
  * A transaction on the XRP Ledger.
@@ -198,5 +198,5 @@ export default class XrpTransaction {
     readonly deliveredAmount?: string,
     readonly validated?: boolean,
     readonly ledgerIndex?: number,
-  ) {}
+  ) { }
 }

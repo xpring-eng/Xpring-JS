@@ -6,7 +6,7 @@ import ReliableSubmissionXrpClient from './reliable-submission-xrp-client'
 import DefaultXrpClient from './default-xrp-client'
 import XrpClientInterface from './xrp-client-interface'
 import XrpTransaction from './model/xrp-transaction'
-import XrplNetwork from '../Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 import SendXrpDetails from './model/send-xrp-details'
 
 /**

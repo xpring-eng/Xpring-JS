@@ -2,7 +2,7 @@
 
 import { Utils } from 'xpring-common-js'
 import PayIdClient from './pay-id-client'
-import XrplNetwork from '../Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 import PayIdError, { PayIdErrorType } from './pay-id-error'
 import XrpPayIdClientInterface from './xrp-pay-id-client-interface'
 

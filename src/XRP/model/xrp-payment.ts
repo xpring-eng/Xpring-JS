@@ -2,7 +2,7 @@ import { Utils } from 'xpring-common-js'
 import { Payment } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount from './xrp-currency-amount'
 import XrpPath from './xrp-path'
-import XrplNetwork from '../../Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 
 /**
  * Represents a payment on the XRP Ledger.
@@ -95,5 +95,5 @@ export default class XrpPayment {
     readonly invoiceID?: Uint8Array,
     readonly paths?: Array<XrpPath | undefined>,
     readonly sendMax?: XrpCurrencyAmount,
-  ) {}
+  ) { }
 }

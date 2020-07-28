@@ -1,11 +1,11 @@
 import { Utils } from 'xpring-common-js'
 import { PaymentChannelCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount from './xrp-currency-amount'
-import XrplNetwork from '../../Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 
 /*
  * Represents a PaymentChannelCreate transaction on the XRP Ledger.
-
+ *
  * A PaymentChannelCreate transaction creates a unidirectional channel and funds it with XRP.
  * The address sending this transaction becomes the "source address" of the payment channel.
  *
@@ -83,5 +83,5 @@ export default class XrpPaymentChannelCreate {
     readonly settleDelay: number,
     readonly publicKey: string,
     readonly cancelAfter?: number,
-  ) {}
+  ) { }
 }

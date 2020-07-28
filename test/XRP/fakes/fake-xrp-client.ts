@@ -5,7 +5,7 @@ import { Wallet } from '../../../src/index'
 import RawTransactionStatus from '../../../src/XRP/raw-transaction-status'
 import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
 import Result from '../../Common/Helpers/result'
-import XrplNetwork from '../../../src/Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 import SendXrpDetails from '../../../src/XRP/model/send-xrp-details'
 
 class FakeXrpClient implements XrpClientDecorator {
@@ -19,7 +19,7 @@ class FakeXrpClient implements XrpClientDecorator {
     public paymentHistoryValue: Result<Array<XrpTransaction>>,
     public getPaymentValue: Result<XrpTransaction>,
     public readonly network: XrplNetwork = XrplNetwork.Test,
-  ) {}
+  ) { }
 
   async getBalance(_address: string): Promise<BigInteger> {
     return FakeXrpClient.returnOrThrow(this.getBalanceValue)

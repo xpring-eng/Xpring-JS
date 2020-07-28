@@ -39,7 +39,7 @@ import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated
 import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
 import { GetTransactionResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import { Meta } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/meta_pb'
-import XrplNetwork from '../../../src/Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 
 // primitive test values
 const testCurrencyName = 'currencyName'

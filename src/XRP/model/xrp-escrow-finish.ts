@@ -1,6 +1,6 @@
 import { Utils } from 'xpring-common-js'
 import { EscrowFinish } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import XrplNetwork from '../../Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 
 /*
  * Represents an EscrowFinish transaction on the XRP Ledger.
@@ -58,5 +58,5 @@ export default class XrpEscrowFinish {
     readonly offerSequence: number,
     readonly condition?: string,
     readonly fulfillment?: string,
-  ) {}
+  ) { }
 }

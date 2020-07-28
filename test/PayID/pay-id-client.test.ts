@@ -3,7 +3,7 @@ import nock from 'nock'
 import { PayIdUtils } from 'xpring-common-js'
 import PayIdClient from '../../src/PayID/pay-id-client'
 import PayIdError, { PayIdErrorType } from '../../src/PayID/pay-id-error'
-import XrplNetwork from '../../src/Common/xrpl-network'
+import XrplNetwork from 'xpring-common-js'
 
 describe('PayIdClient', function (): void {
   afterEach(function () {
