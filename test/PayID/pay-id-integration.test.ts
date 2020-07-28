@@ -15,7 +15,7 @@ describe('PayID Integration Tests', function (): void {
 
     // GIVEN a Pay ID that will resolve on Mainnet.
     const payIdClient = new XrpPayIdClient(XrplNetwork.Main)
-    const payId = 'alice$dev.payid.xpring.money'
+    const payId = 'alice$payid.ci'
 
     // WHEN it is resolved to an XRP address
     const xrpAddress = await payIdClient.xrpAddressForPayId(payId)
@@ -31,7 +31,7 @@ describe('PayID Integration Tests', function (): void {
 
     // GIVEN a Pay ID that will resolve on Testnet.
     const payIdClient = new XrpPayIdClient(XrplNetwork.Test)
-    const payId = 'alice$dev.payid.xpring.money'
+    const payId = 'alice$xpring.ci'
 
     // WHEN it is resolved to an XRP address on testnet
     const xrpAddress = await payIdClient.xrpAddressForPayId(payId)
