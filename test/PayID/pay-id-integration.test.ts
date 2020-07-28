@@ -15,7 +15,7 @@ describe('PayID Integration Tests', function (): void {
 
     // GIVEN a Pay ID that will resolve on Mainnet.
     const payIdClient = new XrpPayIdClient(XrplNetwork.Main, false)
-    const payId = 'alice$payid.ci'
+    const payId = 'alice$payid.ci:8080'
 
     // WHEN it is resolved to an XRP address
     const xrpAddress = await payIdClient.xrpAddressForPayId(payId)
@@ -31,7 +31,7 @@ describe('PayID Integration Tests', function (): void {
 
     // GIVEN a Pay ID that will resolve on Testnet.
     const payIdClient = new XrpPayIdClient(XrplNetwork.Test, false)
-    const payId = 'alice$xpring.ci'
+    const payId = 'alice$xpring.ci:8080'
 
     // WHEN it is resolved to an XRP address on testnet
     const xrpAddress = await payIdClient.xrpAddressForPayId(payId)
@@ -44,7 +44,7 @@ describe('PayID Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a Pay ID that will not resolve on Devnet.
-    const payId = 'does-not-exist$xpring.ci'
+    const payId = 'does-not-exist$xpring.ci:8080'
     const network = XrplNetwork.Dev
     const payIdClient = new XrpPayIdClient(network, false)
 
@@ -73,7 +73,7 @@ describe('PayID Integration Tests', function (): void {
 
     // GIVEN a Pay ID that will resolve on BTC testnet.
     const payIdClient = new PayIdClient(false)
-    const payId = 'alice$xpring.ci'
+    const payId = 'alice$xpring.ci:8080'
     const network = 'btc-testnet'
 
     // WHEN it is resolved to an XRP address
@@ -87,7 +87,7 @@ describe('PayID Integration Tests', function (): void {
 
   it('resolves all addresses', async function (): Promise<void> {
     // GIVEN a PayID with multiple addresses.
-    const payId = 'alice$xpring.ci'
+    const payId = 'alice$xpring.ci:8080'
     const payIdClient = new PayIdClient(false)
 
     // WHEN the PayID is resolved to a set of addresses.
