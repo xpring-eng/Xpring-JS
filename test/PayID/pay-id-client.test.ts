@@ -11,7 +11,7 @@ describe('PayIdClient', function (): void {
     nock.cleanAll()
   })
 
-  it('xrpAddressForPayId - invalid Pay ID', function (done): void {
+  it('cryptoAddressForPayId - invalid Pay ID', function (done): void {
     // GIVEN a PayIDClient and an invalid PayID.
     const invalidPayID = 'xpring.money/georgewashington' // Does not contain '$'
     const payIDClient = new PayIdClient()
@@ -28,7 +28,7 @@ describe('PayIdClient', function (): void {
       })
   })
 
-  it('xrpAddressForPayId - successful response - match found', async function () {
+  it('cryptoAddressForPayId - successful response - match found', async function () {
     // GIVEN a PayIdClient, valid PayID and mocked networking to return a match for the PayID.
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new PayIdClient()
@@ -37,31 +37,40 @@ describe('PayIdClient', function (): void {
     if (!payIDComponents) {
       throw new Error('Test precondition failed: Could not generate a Pay ID')
     }
+    const address = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
+    const replyHeaders = {
+      'content-type': 'application/xrpl-testnet+json',
+    }
+
     nock('https://xpring.money')
       .get('/georgewashington')
-      .reply(200, {
-        addresses: [
-          {
-            addressDetailsType: 'CryptoAddressDetails',
-            addressDetails: {
-              address: 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4',
+      .reply(
+        200,
+        {
+          addresses: [
+            {
+              addressDetailsType: 'CryptoAddressDetails',
+              addressDetails: {
+                address,
+              },
             },
-          },
-        ],
-      })
+          ],
+        },
+        replyHeaders,
+      )
 
     // WHEN an XRP address is requested.
-    const xrpAddress = await payIdClient.cryptoAddressForPayId(
+    const xrpAddressDetails = await payIdClient.cryptoAddressForPayId(
       payId,
       'xrpl-testnet',
     )
 
     // THEN the address exists.
-    // TODO(keefertaylor): Tighten up this condition when proper response parsing is implemented.
-    assert.exists(xrpAddress)
+    assert.equal(xrpAddressDetails.address, address)
+    assert.equal(xrpAddressDetails.tag, undefined)
   })
 
-  it('xrpAddressForPayId - successful response - match not found', function (done) {
+  it('cryptoAddressForPayId - successful response - match not found', function (done) {
     // GIVEN a PayIdClient, valid PayID and mocked networking to return a 404 for the payID.
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new PayIdClient()
@@ -89,7 +98,7 @@ describe('PayIdClient', function (): void {
     })
   })
 
-  it('xrpAddressForPayId - unknown mime type', function (done) {
+  it('cryptoAddressForPayId - unknown mime type', function (done) {
     // GIVEN a PayIdClient and with mocked networking to return a server error.
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new PayIdClient()
@@ -120,7 +129,7 @@ describe('PayIdClient', function (): void {
     })
   })
 
-  it('xrpAddressForPayId - failed request', function (done) {
+  it('cryptoAddressForPayId - failed request', function (done) {
     // GIVEN a PayIdClient and with mocked networking to return a server error.
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new PayIdClient()
@@ -151,7 +160,7 @@ describe('PayIdClient', function (): void {
     })
   })
 
-  it('xrpAddressForPayId - successful response - unexpected response format', function (done) {
+  it('cryptoAddressForPayId - successful response - unexpected response format', function (done) {
     // GIVEN a PayID client, valid PayID and mocked networking to return a match for the PayID.
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new PayIdClient()
@@ -166,6 +175,48 @@ describe('PayIdClient', function (): void {
     })
 
     // WHEN an XRPAddress is requested for a Pay ID.
+    payIdClient.cryptoAddressForPayId(payId, 'xrpl-testnet').catch((error) => {
+      // THEN an unexpected response is thrown.
+      assert.equal(
+        (error as PayIdError).errorType,
+        PayIdErrorType.UnexpectedResponse,
+      )
+      done()
+    })
+  })
+
+  it('cryptoAddressForPayId - successful response - mismatched headers', function (done) {
+    // GIVEN mocked networking to return a match for the PayID on the wrong network.
+    const payId = 'georgewashington$xpring.money'
+    const payIdClient = new PayIdClient()
+
+    const payIDComponents = PayIdUtils.parsePayID(payId)
+    if (!payIDComponents) {
+      throw new Error('Test precondition failed: Could not generate a PayID')
+    }
+    const address = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
+    const replyHeaders = {
+      'content-type': 'application/btc-testnet+json',
+    }
+
+    nock('https://xpring.money')
+      .get('/georgewashington')
+      .reply(
+        200,
+        {
+          addresses: [
+            {
+              addressDetailsType: 'CryptoAddressDetails',
+              addressDetails: {
+                address,
+              },
+            },
+          ],
+        },
+        replyHeaders,
+      )
+
+    // WHEN an address is requested for the PayID.
     payIdClient.cryptoAddressForPayId(payId, 'xrpl-testnet').catch((error) => {
       // THEN an unexpected response is thrown.
       assert.equal(
@@ -198,6 +249,10 @@ describe('PayIdClient', function (): void {
       throw new Error('Test precondition failed: Could not generate a Pay ID')
     }
 
+    const replyHeaders = {
+      'content-type': 'application/payid+json',
+    }
+
     const addresses = [
       {
         addressDetailsType: 'CryptoAddressDetails',
@@ -213,9 +268,13 @@ describe('PayIdClient', function (): void {
       },
     ]
 
-    nock('https://xpring.money').get('/georgewashington').reply(200, {
-      addresses: addresses,
-    })
+    nock('https://xpring.money').get('/georgewashington').reply(
+      200,
+      {
+        addresses: addresses,
+      },
+      replyHeaders,
+    )
 
     // WHEN all addresses are resolved.
     const resolvedAddresses = await payIdClient.allAddressesForPayId(payId)
