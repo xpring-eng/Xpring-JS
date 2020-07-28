@@ -22,7 +22,7 @@ export default class PayIdClient {
    * @param useHttps Whether to cuse HTTPS when making PayID requests. Most users should set this to 'true' to avoid
    *                 Man-in-the-Middle attacks. Exposed as an option for testing purposes. Defaults to true.
    */
-  constructor(private readonly useHttps: boolean = true) {}
+  constructor(private readonly useHttps: boolean = true) { }
 
   /**
    * Retrieve the crypto address associated with a PayID on the given network.
@@ -37,6 +37,8 @@ export default class PayIdClient {
     network: string,
   ): Promise<CryptoAddressDetails> {
     const addresses = await this.addressesForPayIdAndNetwork(payId, network)
+
+    console.log("Got addresses: " + addresses)
 
     // With a specific network, exactly one address should be returned by a PayID lookup.
     if (addresses.length === 1) {
