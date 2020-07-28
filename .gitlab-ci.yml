@@ -4,6 +4,9 @@ stages:
 .test:
   image: node:12
   stage: test
+  variables:
+    # Seed the PayID Database.
+    DB_SEED: "true"
   before_script:
     # Install protoc
     - version=3.7.1
