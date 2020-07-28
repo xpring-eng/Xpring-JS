@@ -36,6 +36,12 @@ compile typescript:
 
 run tests:
   stage: test
+  services:
+  - name: postgres:12-alpine
+    alias: postgres
+  - name: xpring/payid:latest
+    alias: payid.ci
+    entrypoint: ['sh', '-xc', 'until nc -z postgres 5432; do sleep 5; done; PUBLIC_API_PORT=80 node payid/build/src/index.js']
   extends: .test
   script:
     - npm test
