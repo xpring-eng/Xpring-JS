@@ -6,7 +6,19 @@ stages:
   stage: test
   variables:
     # Seed the PayID Database.
+    POSTGRES_USER: citest_user
+    POSTGRES_PASSWORD: citest_pass
+    POSTGRES_DB: citest_db
+    POSTGRES_HOST_AUTH_METHOD: trust
+    DB_USERNAME: citest_user
+    DB_NAME: citest_db
+    DB_PASSWORD: citest_pass
+    DB_HOSTNAME: postgres
     DB_SEED: "true"
+    PAYID_SERVER: payid.ci
+    PAYID_DOMAIN: payid.ci
+    PAYID_PRIVATE_API_URL: http://payid.ci:8081
+    REACT_APP_DOMAIN: http://localhost:3001/
   before_script:
     # Install protoc
     - version=3.7.1
