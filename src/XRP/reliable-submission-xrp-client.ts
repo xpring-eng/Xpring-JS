@@ -5,7 +5,7 @@ import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
 import XrpTransaction from './model/xrp-transaction'
 import XrpError, { XrpErrorType } from './xrp-error'
-import XrplNetwork from 'xpring-common-js'
+import { XrplNetwork }  from 'xpring-common-js'
 
 import SendXrpDetails from './model/send-xrp-details'
 

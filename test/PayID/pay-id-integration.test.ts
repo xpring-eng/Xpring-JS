@@ -2,7 +2,7 @@ import { assert } from 'chai'
 import PayIdError, { PayIdErrorType } from '../../src/PayID/pay-id-error'
 import PayIdClient from '../../src/PayID/pay-id-client'
 import XrpPayIdClient from '../../src/PayID/xrp-pay-id-client'
-import XrplNetwork from 'xpring-common-js'
+import { XrplNetwork }  from 'xpring-common-js'
 
 // A timeout for these tests.
 const timeoutMs = 60 * 1000 // 1 minute

@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import nock from 'nock'
 import { PayIdUtils, Utils } from 'xpring-common-js'
-import XrplNetwork from 'xpring-common-js'
+import { XrplNetwork }  from 'xpring-common-js'
 import XrpPayIdClient from '../../src/PayID/xrp-pay-id-client'
 import PayIdError, { PayIdErrorType } from '../../src/PayID/pay-id-error'
 

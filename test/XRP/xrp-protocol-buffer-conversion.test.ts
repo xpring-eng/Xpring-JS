@@ -7,7 +7,7 @@ import bigInt from 'big-integer'
 import { assert } from 'chai'
 
 import { Utils } from '../../src'
-import XrplNetwork from 'xpring-common-js'
+import { XrplNetwork }  from 'xpring-common-js'
 import XrpCurrency from '../../src/XRP/model/xrp-currency'
 import XrpCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
 import XrpIssuedCurrency from '../../src/XRP/model/xrp-issued-currency'

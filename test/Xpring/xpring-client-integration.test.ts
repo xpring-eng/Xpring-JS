@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import { Wallet } from 'xpring-common-js'
 
-import XrplNetwork from 'xpring-common-js'
+import { XrplNetwork }  from 'xpring-common-js'
 import XrpPayIdClient from '../../src/PayID/xrp-pay-id-client'
 import XpringClient from '../../src/Xpring/xpring-client'
 import XrpClient from '../../src/XRP/xrp-client'

@@ -1,7 +1,7 @@
 import { Utils } from 'xpring-common-js'
 import { EscrowCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount from './xrp-currency-amount'
-import XrplNetwork from 'xpring-common-js'
+import { XrplNetwork }  from 'xpring-common-js'
 
 /*
  * Represents an EscrowCreate transaction on the XRP Ledger.

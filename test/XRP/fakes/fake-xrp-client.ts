@@ -5,7 +5,7 @@ import { Wallet } from '../../../src/index'
 import RawTransactionStatus from '../../../src/XRP/raw-transaction-status'
 import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
 import Result from '../../Common/Helpers/result'
-import XrplNetwork from 'xpring-common-js'
+import { XrplNetwork }  from 'xpring-common-js'
 import SendXrpDetails from '../../../src/XRP/model/send-xrp-details'
 
 class FakeXrpClient implements XrpClientDecorator {

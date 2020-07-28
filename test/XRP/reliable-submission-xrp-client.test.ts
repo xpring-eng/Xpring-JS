@@ -6,7 +6,7 @@ import ReliableSubmissionXrpClient from '../../src/XRP/reliable-submission-xrp-c
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { testXrpTransaction } from './fakes/fake-xrp-protobufs'
-import XrplNetwork from 'xpring-common-js'
+import { XrplNetwork }  from 'xpring-common-js'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 

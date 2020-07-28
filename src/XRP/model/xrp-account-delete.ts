@@ -1,6 +1,6 @@
 import { Utils } from 'xpring-common-js'
 import { AccountDelete } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import XrplNetwork from 'xpring-common-js'
+import { XrplNetwork }  from 'xpring-common-js'
 
 /*
  * Represents an AccountDelete transaction on the XRP Ledger.
