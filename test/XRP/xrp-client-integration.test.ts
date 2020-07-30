@@ -42,6 +42,9 @@ const xrpClient = new XrpClient(rippledUrl, XrplNetwork.Test)
 const amount = bigInt('1')
 
 describe('XrpClient Integration Tests', function (): void {
+  // Retry integration tests on failure.
+  this.retries(3)
+
   it('Get Transaction Status - Web Shim', async function (): Promise<void> {
     this.timeout(timeoutMs)
 

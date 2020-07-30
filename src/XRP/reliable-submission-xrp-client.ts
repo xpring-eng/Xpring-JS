@@ -1,4 +1,5 @@
-import { XrpUtils, Wallet } from 'xpring-common-js'
+import { Wallet } from 'xpring-common-js'
+import XrpUtils from './xrp-utils'
 import { BigInteger } from 'big-integer'
 import XrpClientDecorator from './xrp-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'

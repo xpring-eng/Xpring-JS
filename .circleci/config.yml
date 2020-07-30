@@ -27,7 +27,7 @@ jobs:
           command: |
             sudo apt update
             wget https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/pool/main/a/adoptopenjdk-14-hotspot/adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb
-            sudo apt install ./adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb 
+            sudo apt install ./adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb
 
       - run:
           name: 'Install protoc plugin'
@@ -61,10 +61,3 @@ jobs:
           name: 'Run Tests'
           command: |
             nyc npm test
-
-      - run:
-          name: Code Coverage
-          command: |
-            mkdir coverage
-            nyc report --reporter=text-lcov > coverage/coverage.json
-            codecov
