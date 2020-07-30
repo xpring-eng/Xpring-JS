@@ -1,4 +1,5 @@
-import { XrpUtils, Utils } from 'xpring-common-js'
+import { Utils } from 'xpring-common-js'
+import XrpUtils from '../xrp-utils'
 import { Transaction } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import RippledFlags from '../rippled-flags'
 import XrpSigner from './xrp-signer'
