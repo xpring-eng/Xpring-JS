@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 
-import { XrpUtils } from 'xpring-common-js'
+import XrpUtils from '../../src/XRP/xrp-utils'
 import XrpTrustSet from '../../src/XRP/model/xrp-trust-set'
 import XRPSignerEntry from '../../src/XRP/model/xrp-signer-entry'
 import XrpSignerListSet from '../../src/XRP/model/xrp-signer-list-set'

@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-syntax */
-import { Signer, XrpUtils, Utils, Wallet } from 'xpring-common-js'
+import { Signer, Utils, Wallet } from 'xpring-common-js'
+import XrpUtils from './xrp-utils'
 import bigInt, { BigInteger } from 'big-integer'
 import { StatusCode as grpcStatusCode } from 'grpc-web'
 import {
