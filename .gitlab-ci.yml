@@ -1,0 +1,44 @@
+stages:
+  - test
+
+.test:
+  image: node:12
+  stage: test
+  before_script:
+    # Install protoc
+    - version=3.7.1
+    - archive=protoc-$version-linux-x86_64
+    - curl -O -L https://github.com/protocolbuffers/protobuf/releases/download/v$version/$archive.zip
+    - unzip -d '/usr/local' $archive.zip 'bin/*' 'include/*'
+    - rm -rf $archive.zip
+
+    # Update java
+    - apt-get update
+    - wget https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/pool/main/a/adoptopenjdk-14-hotspot/adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb
+    - apt install -y ./adoptopenjdk-14-hotspot_14.0.0+36-2_amd64.deb
+
+    # Install protoc plugin for grpc web
+    - curl -L https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64 --output protoc-gen-grpc-web
+    - mv protoc-gen-grpc-web /usr/local/bin/
+    - chmod +x /usr/local/bin/protoc-gen-grpc-web
+
+    # Update submodules
+    - git submodule update --init --recursive
+
+    # Install deps
+    - npm i --cache .npm --prefer-offline --no-audit --progress=false
+
+compile typescript:
+  stage: test
+  extends: .test
+  script:
+    - npm run build
+
+run tests:
+  stage: test
+  extends: .test
+  script:
+    - npm test
+    - mkdir -p .nyc_output
+    - npx nyc report --reporter=text-lcov > .nyc_output/coverage.json
+    - npx codecov
