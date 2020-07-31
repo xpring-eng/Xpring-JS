@@ -192,8 +192,11 @@ describe('XrpClient Integration Tests', function (): void {
 
   it('Enable Deposit Auth - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
-
+    // GIVEN an existing testnet account
+    // WHEN enableDepositAuth is called
     const result = await xrpClient.enableDepositAuth(wallet)
+
+    // THEN the transaction was successfully submitted and the correct flag was set on the account.
     const transactionHash = result.hash
     const transactionStatus = result.status
 
