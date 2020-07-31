@@ -7,6 +7,7 @@ import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { testXrpTransaction } from './fakes/fake-xrp-protobufs'
 import XrplNetwork from '../../src/Common/xrpl-network'
+import TransactionResult from '../../src/XRP/model/transaction-result'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -32,6 +33,11 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
 )
 const fakedTransactionHistoryValue = [testXrpTransaction]
 const fakedGetPaymentValue = testXrpTransaction
+const fakedEnableDepositAuthValue = new TransactionResult(
+  transactionHash,
+  TransactionStatus.Succeeded,
+  true,
+)
 
 describe('Reliable Submission XRP Client', function (): void {
   beforeEach(function () {
@@ -44,6 +50,7 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedAccountExistsValue,
       fakedTransactionHistoryValue,
       fakedGetPaymentValue,
+      fakedEnableDepositAuthValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXrpClient(
       this.fakeXrpClient,
@@ -163,5 +170,61 @@ describe('Reliable Submission XRP Client', function (): void {
 
     // THEN the result is returned unaltered.
     assert.deepEqual(returnedValue, fakedTransactionHistoryValue)
+  })
+
+  it('Enable Deposit Auth - Returns when the latestLedgerSequence is too low', async function () {
+    // Increase timeout because `setTimeout` is only accurate to 1500ms.
+    this.timeout(5000)
+
+    // GIVEN A ledger sequence number that will increment in 200ms.
+    setTimeout(() => {
+      const latestLedgerSequence =
+        fakedRawTransactionStatusLastLedgerSequenceValue + 1
+      this.fakeXrpClient.latestLedgerSequence = latestLedgerSequence
+    }, 200)
+    const { wallet } = Wallet.generateRandomWallet()!
+
+    // WHEN enableDepositAuth is called
+    const result = await this.reliableSubmissionClient.enableDepositAuth(wallet)
+    const transactionHash = result[0]
+
+    // THEN the function returns
+    assert.deepEqual(transactionHash, fakedEnableDepositAuthValue[0])
+  })
+
+  it('Enable Deposit Auth - Returns when the transaction is validated', async function () {
+    // Increase timeout because `setTimeout` is only accurate to 1500ms.
+    this.timeout(5000)
+
+    // GIVEN A transaction that will validate itself in 200ms.
+    setTimeout(() => {
+      fakedRawTransactionStatusValue.isValidated = true
+    }, 200)
+    const { wallet } = Wallet.generateRandomWallet()!
+
+    // WHEN enableDepositAuth is called
+    const result = await this.reliableSubmissionClient.enableDepositAuth(wallet)
+    const transactionHash = result[0]
+
+    // THEN the function returns
+    assert.deepEqual(transactionHash, fakedEnableDepositAuthValue[0])
+  })
+
+  it("Enable Deposit Auth - Throws when transaction doesn't have a last ledger sequence", function (done) {
+    // Increase timeout because the poll interview is 4s.
+    this.timeout(5000)
+
+    // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` which will return a transaction that did not have a last ledger sequence attached.
+    const malformedRawTransactionStatus = new RawTransactionStatus(
+      fakedRawTransactionStatusValidatedValue,
+      fakedRawTransactionStatusTransactionStatusCode,
+      0,
+      fakedFullPaymentValue,
+    )
+    this.fakeXrpClient.getRawTransactionStatusValue = malformedRawTransactionStatus
+    const { wallet } = Wallet.generateRandomWallet()!
+
+    // WHEN `enableDepositAuth` is called THEN the promise is rejected.
+    this.reliableSubmissionClient.enableDepositAuth(wallet).catch(() => done())
   })
 })

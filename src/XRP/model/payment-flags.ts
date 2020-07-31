@@ -1,11 +1,13 @@
 /* eslint-disable no-bitwise */
 
 /**
- * Flags used in rippled transactions.
+ * Flags used in payment transactions.
  *
- * @note These are only flags which are utilized in Xpring SDK. For a complete list of flags, see: https://xrpl.org/transaction-common-fields.html#flags-field.
+ * @note These are only flags which are utilized in Xpring SDK.
+ * For the full list of payment flags, @see https://xrpl.org/payment.html#payment-flags
+ *
  */
-class RippledFlags {
+class PaymentFlags {
   static TF_PARTIAL_PAYMENT = 1 << 17
 
   /**
@@ -19,4 +21,4 @@ class RippledFlags {
   }
 }
 
-export default RippledFlags
+export default PaymentFlags

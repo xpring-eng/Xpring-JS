@@ -1,10 +1,11 @@
 import bigInt from 'big-integer'
 import { assert } from 'chai'
-import { Wallet } from 'xpring-common-js'
+import { Wallet, XrpUtils } from 'xpring-common-js'
 
 import XrplNetwork from '../../src/Common/xrpl-network'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import XrpClient from '../../src/XRP/xrp-client'
+import GrpcNetworkClient from '../../src/XRP/grpc-xrp-network-client'
 
 import {
   expectedNoDataMemo,
@@ -15,6 +16,9 @@ import {
   noFormatMemo,
   noTypeMemo,
 } from './helpers/xrp-test-utils'
+import { LedgerSpecifier } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger_pb'
+import { XrpError } from '../../src/XRP'
+import { AccountRootFlags } from '../../src/XRP/model'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -189,8 +193,39 @@ describe('XrpClient Integration Tests', function (): void {
   it('Enable Deposit Auth - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const transactionHash = await xrpClient.enableDepositAuth(wallet)
+    const result = await xrpClient.enableDepositAuth(wallet)
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+
+    // get the account data and check the flag bitmap
+    const networkClient = new GrpcNetworkClient(rippledUrl)
+    const account = networkClient.AccountAddress()
+    const classicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
+    account.setAddress(classicAddress!.address)
+
+    const request = networkClient.GetAccountInfoRequest()
+    request.setAccount(account)
+
+    const ledger = new LedgerSpecifier()
+    ledger.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
+    request.setLedger(ledger)
+
+    const accountInfo = await networkClient.getAccountInfo(request)
+    if (!accountInfo) {
+      throw XrpError.malformedResponse
+    }
+
+    const accountData = accountInfo.getAccountData()
+    if (!accountData) {
+      throw XrpError.malformedResponse
+    }
+
+    const flags = accountData.getFlags()?.getValue()
 
     assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.Succeeded)
+    assert.isTrue(
+      AccountRootFlags.checkFlag(AccountRootFlags.LSF_DEPOSIT_AUTH, flags!),
+    )
   })
 })
