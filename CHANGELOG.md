@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ## Added
-- A new method `enableDepositAuth` is added to `XRPClient` which enables Deposit Authorization for the specified XRPL account.
+- A new method `enableDepositAuth` is added to `XrpClient` which enables Deposit Authorization for the specified XRPL account.
 (See https://xrpl.org/depositauth.html)
 
 ## 5.0.1 - 2020-07-15
