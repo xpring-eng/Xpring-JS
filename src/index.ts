@@ -9,10 +9,6 @@ export {
 
 /** Common Functionality. */
 export { default as XrplNetwork } from './Common/xrpl-network'
-export { default as XpringClient } from './Xpring/xpring-client'
-export { default as XrpError } from './XRP/xrp-error'
-export { default as IlpError, IlpErrorType } from './ILP/ilp-error'
-export { default as XrpPayIdClient } from './PayID/xrp-pay-id-client'
 
 /** XRP Functionality. */
 export { TransactionStatus, XrpClient, XrpUtils } from './XRP'
