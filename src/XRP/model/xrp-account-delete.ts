@@ -1,4 +1,4 @@
-import { Utils } from 'xpring-common-js'
+import XrpUtils from '../xrp-utils'
 import { AccountDelete } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrplNetwork from '../../Common/xrpl-network'
 
@@ -29,7 +29,7 @@ export default class XrpAccountDelete {
     }
     const destinationTag = accountDelete.getDestinationTag()?.getValue()
 
-    const destinationXAddress = Utils.encodeXAddress(
+    const destinationXAddress = XrpUtils.encodeXAddress(
       destination,
       destinationTag,
       xrplNetwork == XrplNetwork.Test,
