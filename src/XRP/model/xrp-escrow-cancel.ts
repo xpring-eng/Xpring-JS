@@ -1,4 +1,5 @@
-import { Utils, XrplNetwork } from 'xpring-common-js'
+import { XrplNetwork } from 'xpring-common-js'
+import XrpUtils from '../xrp-utils'
 import { EscrowCancel } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 /*
@@ -24,7 +25,7 @@ export default class XrpEscrowCancel {
     if (!owner) {
       return undefined
     }
-    const ownerXAddress = Utils.encodeXAddress(
+    const ownerXAddress = XrpUtils.encodeXAddress(
       owner,
       undefined,
       xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,

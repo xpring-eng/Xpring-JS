@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-syntax */
-import { Signer, Utils, Wallet } from 'xpring-common-js'
+import { Signer, Utils, Wallet, XrplNetwork } from 'xpring-common-js'
+import XrpUtils from './xrp-utils'
 import bigInt, { BigInteger } from 'big-integer'
 import { StatusCode as grpcStatusCode } from 'grpc-web'
 import {
@@ -34,7 +35,6 @@ import { XrpNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XrpError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
-import { XrplNetwork } from 'xpring-common-js'
 import SendXrpDetails from './model/send-xrp-details'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
@@ -83,7 +83,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @returns A `BigInteger` representing the number of drops of XRP in the account.
    */
   public async getBalance(address: string): Promise<BigInteger> {
-    const classicAddress = Utils.decodeXAddress(address)
+    const classicAddress = XrpUtils.decodeXAddress(address)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
@@ -179,7 +179,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
       destination: destinationAddress,
       memoList,
     } = sendMoneyDetails
-    if (!Utils.isValidXAddress(destinationAddress)) {
+    if (!XrpUtils.isValidXAddress(destinationAddress)) {
       throw XrpError.xAddressRequired
     }
 
@@ -335,7 +335,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @returns A boolean if the account is on the ledger.
    */
   public async accountExists(address: string): Promise<boolean> {
-    const classicAddress = Utils.decodeXAddress(address)
+    const classicAddress = XrpUtils.decodeXAddress(address)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
@@ -361,7 +361,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @return: An array of transactions associated with the account.
    */
   public async paymentHistory(address: string): Promise<Array<XrpTransaction>> {
-    const classicAddress = Utils.decodeXAddress(address)
+    const classicAddress = XrpUtils.decodeXAddress(address)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
@@ -438,7 +438,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @returns A promise which resolves to a Transaction protobuf with the required common fields populated.
    */
   private async prepareBaseTransaction(wallet: Wallet): Promise<Transaction> {
-    const classicAddress = Utils.decodeXAddress(wallet.getAddress())
+    const classicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }

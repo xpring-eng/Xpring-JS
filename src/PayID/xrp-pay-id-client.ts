@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
-import { Utils, XrplNetwork } from 'xpring-common-js'
+import { XrplNetwork } from 'xpring-common-js'
+import XrpUtils from '../XRP/xrp-utils'
 import PayIdClient from './pay-id-client'
 import PayIdError, { PayIdErrorType } from './pay-id-error'
 import XrpPayIdClientInterface from './xrp-pay-id-client-interface'
@@ -35,7 +36,7 @@ export default class XrpPayIdClient extends PayIdClient
     )
 
     const { address } = result
-    if (Utils.isValidXAddress(address)) {
+    if (XrpUtils.isValidXAddress(address)) {
       return address
     }
     const isTest = this.xrplNetwork !== XrplNetwork.Main
@@ -50,7 +51,7 @@ export default class XrpPayIdClient extends PayIdClient
       )
     }
 
-    const encodedXAddress = Utils.encodeXAddress(address, tag, isTest)
+    const encodedXAddress = XrpUtils.encodeXAddress(address, tag, isTest)
     if (!encodedXAddress) {
       throw new PayIdError(
         PayIdErrorType.UnexpectedResponse,

@@ -1,4 +1,5 @@
-import { Utils, XrplNetwork } from 'xpring-common-js'
+import { XrplNetwork } from 'xpring-common-js'
+import XrpUtils from '../xrp-utils'
 import { Payment } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount from './xrp-currency-amount'
 import XrpPath from './xrp-path'
@@ -35,7 +36,7 @@ export default class XrpPayment {
 
     const destinationTag = payment.getDestinationTag()?.getValue()
 
-    const destinationXAddress = Utils.encodeXAddress(
+    const destinationXAddress = XrpUtils.encodeXAddress(
       destination,
       destinationTag,
       xrplNetwork === XrplNetwork.Test,

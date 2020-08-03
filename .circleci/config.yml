@@ -58,6 +58,10 @@ jobs:
             npm run build
 
       - run:
+          name: 'Webpack'
+          command: npm run webpack
+
+      - run:
           name: 'Run Tests'
           command: |
             nyc npm test

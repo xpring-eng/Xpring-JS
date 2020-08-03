@@ -38,7 +38,14 @@ run tests:
   stage: test
   extends: .test
   script:
-    - npm test
-    - mkdir -p .nyc_output
-    - npx nyc report --reporter=text-lcov > .nyc_output/coverage.json
+    - npx nyc npm test
+    - mkdir -p coverage
+    - npx nyc report --reporter=text-lcov > coverage/coverage.json
+    - cat coverage/coverage.json
     - npx codecov
+
+run webpack:
+  stage: test
+  extends: .test
+  script:
+    - npm run webpack

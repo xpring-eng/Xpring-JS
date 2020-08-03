@@ -1,4 +1,5 @@
-import { Utils, Wallet, XrplNetwork } from 'xpring-common-js'
+import { Wallet, XrplNetwork } from 'xpring-common-js'
+import XrpUtils from './xrp-utils'
 import { BigInteger } from 'big-integer'
 import XrpClientDecorator from './xrp-client-decorator'
 import RawTransactionStatus from './raw-transaction-status'
@@ -78,7 +79,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     // 2) Occur after the transaction has settled which is an unlikely enough case that we ignore it.
     //
     // This logic is brittle and should be replaced when we have an RPC that can give us this data.
-    const classicAddress = Utils.decodeXAddress(sender.getAddress())
+    const classicAddress = XrpUtils.decodeXAddress(sender.getAddress())
     if (!classicAddress) {
       throw new XrpError(
         XrpErrorType.Unknown,

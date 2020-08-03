@@ -1,4 +1,5 @@
-import { Utils, XrplNetwork } from 'xpring-common-js'
+import { XrplNetwork } from 'xpring-common-js'
+import XrpUtils from '../xrp-utils'
 import { DepositPreauth } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 /*
@@ -30,13 +31,13 @@ export default class XrpDepositPreauth {
     let authorizeXAddress
     let unauthorizeXAddress
     if (authorize) {
-      authorizeXAddress = Utils.encodeXAddress(
+      authorizeXAddress = XrpUtils.encodeXAddress(
         authorize,
         undefined,
         xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
       )
     } else if (unauthorize) {
-      unauthorizeXAddress = Utils.encodeXAddress(
+      unauthorizeXAddress = XrpUtils.encodeXAddress(
         unauthorize,
         undefined,
         xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
