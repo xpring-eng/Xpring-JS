@@ -1,6 +1,6 @@
 import XrpPayIdClientInterface from '../../../src/PayID/xrp-pay-id-client-interface'
 import Result from '../../Common/Helpers/result'
-import XrplNetwork from '../../../src/Common/xrpl-network'
+import { XrplNetwork } from 'xpring-common-js'
 
 /**
  * A fake XrpPayIdClient which can return faked values.

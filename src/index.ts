@@ -5,10 +5,8 @@ export {
   Wallet,
   WalletGenerationResult,
   Utils,
+  XrplNetwork,
 } from 'xpring-common-js'
-
-/** Common Functionality. */
-export { default as XrplNetwork } from './Common/xrpl-network'
 
 /** XRP Functionality. */
 export { RippledFlags, TransactionStatus, XrpClient, XrpUtils } from './XRP'

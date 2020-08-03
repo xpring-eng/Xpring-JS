@@ -1,4 +1,4 @@
-import { Utils } from 'xpring-common-js'
+import { Utils, XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { Transaction } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import RippledFlags from '../rippled-flags'
@@ -7,7 +7,6 @@ import XrpTransactionType from './xrp-transaction-type'
 import XrpPayment from './xrp-payment'
 import XrpMemo from './xrp-memo'
 import { GetTransactionResponse } from '../Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
-import XrplNetwork from '../../Common/xrpl-network'
 
 /**
  * A transaction on the XRP Ledger.

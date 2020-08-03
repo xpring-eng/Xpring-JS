@@ -1,8 +1,8 @@
+import { XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { Payment } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount from './xrp-currency-amount'
 import XrpPath from './xrp-path'
-import XrplNetwork from '../../Common/xrpl-network'
 
 /**
  * Represents a payment on the XRP Ledger.

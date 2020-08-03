@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import { Signer, Utils, Wallet } from 'xpring-common-js'
+import { Signer, Utils, Wallet, XrplNetwork } from 'xpring-common-js'
 import XrpUtils from './xrp-utils'
 import bigInt, { BigInteger } from 'big-integer'
 import { StatusCode as grpcStatusCode } from 'grpc-web'
@@ -35,7 +35,6 @@ import { XrpNetworkClient } from './xrp-network-client'
 import isNode from '../Common/utils'
 import XrpError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
-import XrplNetwork from '../Common/xrpl-network'
 import SendXrpDetails from './model/send-xrp-details'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
