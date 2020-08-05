@@ -53,7 +53,8 @@ This release also provides idiomatic capitalization. Previously, classes that we
 
 ## Added
 
-- `SendXrpDetails` is exported for external use on `XrpClient` and `XpringClient`
+- `SendXrpDetails` is exported for external use on `XrpClient` and `XpringClient`, allowing for memo data to be attached
+to the transaction when sending XRP.
 
 ## 4.3.1 - 2020-06-16
 
