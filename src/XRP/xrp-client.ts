@@ -91,13 +91,13 @@ export default class XrpClient implements XrpClientInterface {
    * for additional details to be specified for use with supplementary features of the XRP
    * ledger.
    *
-   * @param sendMoneyDetails - a wrapper object containing details for constructing a transaction.
+   * @param sendXrpDetails - a wrapper object containing details for constructing a transaction.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async sendWithDetails(
-    sendMoneyDetails: SendXrpDetails,
+    sendXrpDetails: SendXrpDetails,
   ): Promise<string> {
-    return this.decoratedClient.sendWithDetails(sendMoneyDetails)
+    return this.decoratedClient.sendWithDetails(sendXrpDetails)
   }
 
   /**

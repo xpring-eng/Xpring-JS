@@ -45,14 +45,14 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
   }
 
   public async sendWithDetails(
-    sendMoneyDetails: SendXrpDetails,
+    sendXrpDetails: SendXrpDetails,
   ): Promise<string> {
-    const { sender } = sendMoneyDetails
+    const { sender } = sendXrpDetails
     const ledgerCloseTimeMs = 4 * 1000
 
     // Submit a transaction hash and wait for a ledger to close.
     const transactionHash = await this.decoratedClient.sendWithDetails(
-      sendMoneyDetails,
+      sendXrpDetails,
     )
     await sleep(ledgerCloseTimeMs)
 
