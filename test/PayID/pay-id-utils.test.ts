@@ -5,7 +5,7 @@ import 'mocha'
 
 describe('PayIdUtils', function (): void {
   it('parse PayID - valid', function (): void {
-    // GIVEN a Pay ID with a host and a path.
+    // GIVEN a PayID with a host and a path.
     const host = 'xpring.money'
     const path = 'georgewashington'
     const rawPayID = `${path}$${host}`
@@ -19,7 +19,7 @@ describe('PayIdUtils', function (): void {
   })
 
   it('parse PayID - valid multiple dollar signs', function (): void {
-    // GIVEN a Pay ID with more than one '$'.
+    // GIVEN a PayID with more than one '$'.
     const host = 'xpring.money'
     const path = 'george$$$washington$'
     const rawPayID = `${path}$${host}`
@@ -33,7 +33,7 @@ describe('PayIdUtils', function (): void {
   })
 
   it('parse PayID - invalid multiple dollar signs (ends with $)', function (): void {
-    // GIVEN a Pay ID in which the host ends with a $.
+    // GIVEN a PayID in which the host ends with a $.
     const host = 'xpring.money$'
     const path = 'george$$$washington$'
     const rawPayID = `${path}$${host}`
@@ -41,23 +41,23 @@ describe('PayIdUtils', function (): void {
     // WHEN it is parsed to components.
     const payIDComponents = PayIdUtils.parsePayID(rawPayID)
 
-    // THEN the Pay ID failed to parse.
+    // THEN the PayID failed to parse.
     assert.isUndefined(payIDComponents)
   })
 
   it('parse PayID - no dollar signs', function (): void {
-    // GIVEN a Pay ID that contains no dollar signs
+    // GIVEN a PayID that contains no dollar signs
     const rawPayID = `georgewashington@xpring.money`
 
     // WHEN it is parsed to components.
     const payIDComponents = PayIdUtils.parsePayID(rawPayID)
 
-    // THEN the Pay ID failed to parse.
+    // THEN the PayID failed to parse.
     assert.isUndefined(payIDComponents)
   })
 
   it('parse PayID - empty host', function (): void {
-    // GIVEN a Pay ID with an empty host.
+    // GIVEN a PayID with an empty host.
     const host = ''
     const path = 'georgewashington'
     const rawPayID = `${path}$${host}`
@@ -65,12 +65,12 @@ describe('PayIdUtils', function (): void {
     // WHEN it is parsed to components.
     const payIDComponents = PayIdUtils.parsePayID(rawPayID)
 
-    // THEN the Pay ID failed to parse.
+    // THEN the PayID failed to parse.
     assert.isUndefined(payIDComponents)
   })
 
   it('parse PayID - empty path', function (): void {
-    // GIVEN a Pay ID with an empty path.
+    // GIVEN a PayID with an empty path.
     const host = 'xpring.money'
     const path = ''
     const rawPayID = `${path}$${host}`
@@ -78,12 +78,12 @@ describe('PayIdUtils', function (): void {
     // WHEN it is parsed to components.
     const payIDComponents = PayIdUtils.parsePayID(rawPayID)
 
-    // THEN the Pay ID failed to parse.
+    // THEN the PayID failed to parse.
     assert.isUndefined(payIDComponents)
   })
 
   it('parse PayID - non-ascii characters', function (): void {
-    // GIVEN a Pay ID with non-ascii characters.
+    // GIVEN a PayID with non-ascii characters.
     const rawPayID = 'ZA̡͊͠͝LGΌIS̯͈͕̹̘̱ͮ$TO͇̹̺ͅƝ̴ȳ̳TH̘Ë͖́̉ ͠P̯͍̭O̚N̐Y̡'
 
     // WHEN it is parsed to components THEN the result is undefined

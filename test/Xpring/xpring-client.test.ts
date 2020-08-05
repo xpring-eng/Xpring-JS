@@ -63,7 +63,7 @@ describe('Xpring Client', function (): void {
 
     const xpringClient = new XpringClient(payIdClient, xrpClient)
 
-    // WHEN XRP is sent to the Pay ID.
+    // WHEN XRP is sent to the PayID.
     const transactionHash = await xpringClient.send(amount, payID, wallet)
 
     // THEN the returned hash is correct and no error was thrown.
@@ -88,7 +88,7 @@ describe('Xpring Client', function (): void {
 
     const xpringClient = new XpringClient(payIDClient, xrpClient)
 
-    // WHEN XRP is sent to the Pay ID.
+    // WHEN XRP is sent to the PayID.
     xpringClient.send(amount, payID, wallet).catch((error) => {
       // THEN an the error thrown is from PayID.
       assert.equal(error, payIDError)
@@ -114,7 +114,7 @@ describe('Xpring Client', function (): void {
 
     const xpringClient = new XpringClient(payIDClient, xrpClient)
 
-    // WHEN XRP is sent to the Pay ID.
+    // WHEN XRP is sent to the PayID.
     xpringClient.send(amount, payID, wallet).catch((error) => {
       // THEN an the error thrown is from XRP.
       assert.equal(error, xrpError)
@@ -139,7 +139,7 @@ describe('Xpring Client', function (): void {
 
     const xpringClient = new XpringClient(payIDClient, xrpClient)
 
-    // WHEN XRP is sent to the Pay ID.
+    // WHEN XRP is sent to the PayID.
     xpringClient.send(amount, payID, wallet).catch((error) => {
       // THEN an the error thrown is from PayID.
       assert.equal(error, payIDError)
