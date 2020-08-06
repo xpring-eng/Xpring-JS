@@ -46,12 +46,12 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
   }
 
   public async sendWithDetails(
-    sendMoneyDetails: SendXrpDetails,
+    sendXrpDetails: SendXrpDetails,
   ): Promise<string> {
-    const { sender } = sendMoneyDetails
+    const { sender } = sendXrpDetails
 
     const transactionHash = await this.decoratedClient.sendWithDetails(
-      sendMoneyDetails,
+      sendXrpDetails,
     )
     await this.awaitFinalTransactionResult(transactionHash, sender)
 

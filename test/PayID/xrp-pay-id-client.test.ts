@@ -6,7 +6,7 @@ import XrpUtils from '../../src/XRP/xrp-utils'
 import XrpPayIdClient from '../../src/PayID/xrp-pay-id-client'
 import PayIdError, { PayIdErrorType } from '../../src/PayID/pay-id-error'
 
-describe('XRP Pay ID Client', function (): void {
+describe('XRP PayID Client', function (): void {
   afterEach(function () {
     // Clean nock after each test.
     nock.cleanAll()

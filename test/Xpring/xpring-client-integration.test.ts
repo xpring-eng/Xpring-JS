@@ -42,7 +42,7 @@ describe('Xpring Integration Tests', function (): void {
     const amount = 10
     const payId = 'alice$dev.payid.xpring.money'
 
-    // WHEN XRP is sent to the Pay ID.
+    // WHEN XRP is sent to the PayID.
     const transactionHash = await xpringClient.send(amount, payId, wallet)
 
     // THEN a transaction hash is returned.
@@ -62,7 +62,7 @@ describe('Xpring Integration Tests', function (): void {
       noTypeMemo,
     ]
 
-    // WHEN XRP is sent to the Pay ID, including a memo.
+    // WHEN XRP is sent to the PayID, including a memo.
     const transactionHash = await xpringClient.sendWithDetails({
       amount,
       destination: payID,

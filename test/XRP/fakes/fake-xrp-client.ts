@@ -39,7 +39,7 @@ class FakeXrpClient implements XrpClientDecorator {
     return FakeXrpClient.returnOrThrow(this.transactionHash)
   }
 
-  async sendWithDetails(_sendMoneyDetails: SendXrpDetails): Promise<string> {
+  async sendWithDetails(_sendXrpDetails: SendXrpDetails): Promise<string> {
     return FakeXrpClient.returnOrThrow(this.transactionHash)
   }
 

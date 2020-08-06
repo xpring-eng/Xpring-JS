@@ -14,7 +14,7 @@ export default class XpringClient {
   /**
    * Create a new XpringClient.
    *
-   * @param payIdClient A Pay ID Client used to interact with the Pay ID protocol.
+   * @param payIdClient A PayID Client used to interact with the PayID protocol.
    * @param xrpClient An XRP Client used to interact with the XRP Ledger protocol.
    * @throws A XpringError if the networks of the inputs do not match.
    */
@@ -33,10 +33,10 @@ export default class XpringClient {
   }
 
   /**
-   * Send the given amount of XRP from the source wallet to the destination Pay ID.
+   * Send the given amount of XRP from the source wallet to the destination PayID.
    *
    * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
-   * @param destinationPayID A destination Pay ID to send the drops to.
+   * @param destinationPayID A destination PayID to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
@@ -53,22 +53,22 @@ export default class XpringClient {
   }
 
   /**
-   * Send the given amount of XRP from the source wallet to the destination Pay ID, allowing
+   * Send the given amount of XRP from the source wallet to the destination PayID, allowing
    * for additional details to be specified for use with supplementary features of the XRP
    * ledger.
    *
-   * @param sendMoneyDetails - a wrapper object containing details for constructing a transaction.
+   * @param sendXrpDetails - a wrapper object containing details for constructing a transaction.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async sendWithDetails(
-    sendMoneyDetails: SendXrpDetails,
+    sendXrpDetails: SendXrpDetails,
   ): Promise<string> {
     const {
       amount,
       destination: destinationPayID,
       sender,
       memoList,
-    } = sendMoneyDetails
+    } = sendXrpDetails
     // Resolve the destination address to an XRP address.
     const destinationAddress = await this.payIdClient.xrpAddressForPayId(
       destinationPayID,

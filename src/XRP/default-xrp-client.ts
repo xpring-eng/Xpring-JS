@@ -167,22 +167,21 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   }
 
   /**
-   * Send the given amount of XRP from the source wallet to the destination Pay ID, allowing
-   * for additional details to be specified for use with supplementary features of the XRP
-   * ledger.
+   * Send the given amount of XRP from the source wallet to the destination address, allowing
+   * for additional details to be specified for use with supplementary features of the XRP ledger.
    *
-   * @param sendMoneyDetails - a wrapper object containing details for constructing a transaction.
+   * @param sendXrpDetails - a wrapper object containing details for constructing a transaction.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
   public async sendWithDetails(
-    sendMoneyDetails: SendXrpDetails,
+    sendXrpDetails: SendXrpDetails,
   ): Promise<string> {
     const {
       amount: drops,
       sender,
       destination: destinationAddress,
       memoList,
-    } = sendMoneyDetails
+    } = sendXrpDetails
     if (!XrpUtils.isValidXAddress(destinationAddress)) {
       throw XrpError.xAddressRequired
     }

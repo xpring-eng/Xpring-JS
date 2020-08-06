@@ -10,12 +10,12 @@ describe('PayIdClient', function (): void {
     nock.cleanAll()
   })
 
-  it('cryptoAddressForPayId - invalid Pay ID', function (done): void {
+  it('cryptoAddressForPayId - invalid PayID', function (done): void {
     // GIVEN a PayIDClient and an invalid PayID.
     const invalidPayID = 'xpring.money/georgewashington' // Does not contain '$'
     const payIDClient = new PayIdClient()
 
-    // WHEN an XRPAddress is requested for an invalid pay ID THEN an invalid Pay ID error is thrown.
+    // WHEN an XRPAddress is requested for an invalid pay ID THEN an invalid PayID error is thrown.
     payIDClient
       .cryptoAddressForPayId(invalidPayID, XrplNetwork.Test)
       .catch((error) => {
@@ -34,7 +34,7 @@ describe('PayIdClient', function (): void {
 
     const payIDComponents = PayIdUtils.parsePayID(payId)
     if (!payIDComponents) {
-      throw new Error('Test precondition failed: Could not generate a Pay ID')
+      throw new Error('Test precondition failed: Could not generate a PayID')
     }
     const address = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
     const replyHeaders = {
@@ -77,7 +77,7 @@ describe('PayIdClient', function (): void {
 
     const payIdComponents = PayIdUtils.parsePayID(payId)
     if (!payIdComponents) {
-      throw new Error('Test precondition failed: Could not parse Pay ID')
+      throw new Error('Test precondition failed: Could not parse PayID')
     }
     nock('https://xpring.money').get('/georgewashington').reply(404, {})
 
@@ -112,7 +112,7 @@ describe('PayIdClient', function (): void {
       .get('/georgewashington')
       .reply(serverErrorCode, serverError)
 
-    // WHEN an XRPAddress is requested for a Pay ID.
+    // WHEN an XRPAddress is requested for a PayID.
     payIdClient.cryptoAddressForPayId(payId, 'xrpl-testnet').catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
@@ -143,7 +143,7 @@ describe('PayIdClient', function (): void {
       .get('/georgewashington')
       .reply(serverErrorCode, serverError)
 
-    // WHEN an XRPAddress is requested for a Pay ID.
+    // WHEN an XRPAddress is requested for a PayID.
     payIdClient.cryptoAddressForPayId(payId, `xrpl-network`).catch((error) => {
       // THEN an unexpected response is thrown with the details of the error.
       assert.equal(
@@ -166,14 +166,14 @@ describe('PayIdClient', function (): void {
 
     const payIdComponents = PayIdUtils.parsePayID(payId)
     if (!payIdComponents) {
-      throw new Error('Test precondition failed: Could not parse Pay ID')
+      throw new Error('Test precondition failed: Could not parse PayID')
     }
     // Field isn't named `address` in response.
     nock('https://xpring.money').get('/georgewashington').reply(200, {
       incorrectFieldName: 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4',
     })
 
-    // WHEN an XRPAddress is requested for a Pay ID.
+    // WHEN an XRPAddress is requested for a PayID.
     payIdClient.cryptoAddressForPayId(payId, 'xrpl-testnet').catch((error) => {
       // THEN an unexpected response is thrown.
       assert.equal(
@@ -226,12 +226,12 @@ describe('PayIdClient', function (): void {
     })
   })
 
-  it('allAddressesForPayId - invalid Pay ID', function (done): void {
+  it('allAddressesForPayId - invalid PayID', function (done): void {
     // GIVEN an PayIdClient and an invalid PayID.
     const invalidPayID = 'xpring.money/georgewashington' // Does not contain '$'
     const payIdClient = new PayIdClient()
 
-    // WHEN all addresses are resolved THEN an invalid Pay ID error is thrown.
+    // WHEN all addresses are resolved THEN an invalid PayID error is thrown.
     payIdClient.allAddressesForPayId(invalidPayID).catch((error) => {
       assert.equal((error as PayIdError).errorType, PayIdErrorType.InvalidPayId)
       done()
@@ -245,7 +245,7 @@ describe('PayIdClient', function (): void {
 
     const payIdComponents = PayIdUtils.parsePayID(payId)
     if (!payIdComponents) {
-      throw new Error('Test precondition failed: Could not generate a Pay ID')
+      throw new Error('Test precondition failed: Could not generate a PayID')
     }
 
     const replyHeaders = {
@@ -289,7 +289,7 @@ describe('PayIdClient', function (): void {
 
     const payIdComponents = PayIdUtils.parsePayID(payId)
     if (!payIdComponents) {
-      throw new Error('Test precondition failed: Could not parse Pay ID')
+      throw new Error('Test precondition failed: Could not parse PayID')
     }
     nock('https://xpring.money').get('/georgewashington').reply(404, {})
 
