@@ -13,7 +13,7 @@ describe('PayID Integration Tests', function (): void {
   > {
     this.timeout(timeoutMs)
 
-    // GIVEN a Pay ID that will resolve on Mainnet.
+    // GIVEN a PayID that will resolve on Mainnet.
     const payIdClient = new XrpPayIdClient(XrplNetwork.Main)
     const payId = 'alice$dev.payid.xpring.money'
 
@@ -29,7 +29,7 @@ describe('PayID Integration Tests', function (): void {
   > {
     this.timeout(timeoutMs)
 
-    // GIVEN a Pay ID that will resolve on Testnet.
+    // GIVEN a PayID that will resolve on Testnet.
     const payIdClient = new XrpPayIdClient(XrplNetwork.Test)
     const payId = 'alice$dev.payid.xpring.money'
 
@@ -43,7 +43,7 @@ describe('PayID Integration Tests', function (): void {
   it('Resolve PayID to XRP - unknown PayID - devnet', function (done) {
     this.timeout(timeoutMs)
 
-    // GIVEN a Pay ID that will not resolve on Devnet.
+    // GIVEN a PayID that will not resolve on Devnet.
     const payId = 'does-not-exist$dev.payid.xpring.money'
     const network = XrplNetwork.Dev
     const payIdClient = new XrpPayIdClient(network)
@@ -69,7 +69,7 @@ describe('PayID Integration Tests', function (): void {
   > {
     this.timeout(timeoutMs)
 
-    // GIVEN a Pay ID that will resolve on BTC testnet.
+    // GIVEN a PayID that will resolve on BTC testnet.
     const payIdClient = new PayIdClient()
     const payId = 'alice$dev.payid.xpring.money'
     const network = 'btc-testnet'

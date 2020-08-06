@@ -53,7 +53,8 @@ This release also provides idiomatic capitalization. Previously, classes that we
 
 ## Added
 
-- `SendXrpDetails` is exported for external use.
+- `SendXrpDetails` is exported for external use on `XrpClient` and `XpringClient`, allowing for memo data to be attached
+to the transaction when sending XRP.
 
 ## 4.3.1 - 2020-06-16
 
@@ -61,7 +62,6 @@ This release also provides idiomatic capitalization. Previously, classes that we
 
 - `XRPPayment` and `XRPTransaction` now contain X-address representations of their address and tag fields.
   (See https://xrpaddress.info/)
-- A new optional argument `memos?: Array<XRPMemo>` is added to the `send` method of `XpringClient` and `XpringClientInterface` which allows appending memos to a transaction on the XRP ledger.
 - `XrplNetwork` replaces the now deprecated `XRPLNetwork`.
 - `PayIdClient` replaces the now deprecated `PayIDClient`.
 - `PayIdError` replaces the now deprecated `PayIDError`.

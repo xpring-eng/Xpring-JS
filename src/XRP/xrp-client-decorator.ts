@@ -48,14 +48,14 @@ export default interface XrpClientDecorator {
   ): Promise<string>
 
   /**
-   * Send the given amount of XRP from the source wallet to the destination Pay ID, allowing
+   * Send the given amount of XRP from the source wallet to the destination PayID, allowing
    * for additional details to be specified for use with supplementary features of the XRP
    * ledger.
    *
-   * @param sendMoneyDetails - a wrapper object containing details for constructing a transaction.
+   * @param sendXrpDetails - a wrapper object containing details for constructing a transaction.
    * @returns A promise which resolves to a string representing the hash of the submitted transaction.
    */
-  sendWithDetails(sendMoneyDetails: SendXrpDetails): Promise<string>
+  sendWithDetails(sendXrpDetails: SendXrpDetails): Promise<string>
 
   /**
    * Retrieve the latest validated ledger sequence on the XRP Ledger.
