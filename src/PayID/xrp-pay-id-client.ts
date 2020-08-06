@@ -1,8 +1,8 @@
 /* eslint-disable max-classes-per-file */
 
+import { XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../XRP/xrp-utils'
 import PayIdClient from './pay-id-client'
-import XrplNetwork from '../Common/xrpl-network'
 import PayIdError, { PayIdErrorType } from './pay-id-error'
 import XrpPayIdClientInterface from './xrp-pay-id-client-interface'
 

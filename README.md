@@ -33,6 +33,8 @@ Xpring-JS is available as an NPM package. Simply install with:
 $ npm i xpring-js
 ```
 
+Xpring-JS can be used on the web with `webpack`, as it uses some Node modules. The sample `webpack.config.js` can be used as a starting point for web applications.
+
 ### rippled Node
 
 Xpring SDK needs to communicate with a rippled node which has gRPC enabled. Consult the [rippled documentation](https://github.com/ripple/rippled#build-from-source) for details on how to build your own node.
@@ -378,7 +380,10 @@ const payId = 'georgewashington$xpring.money'
 
 const payIdClient = new PayIdClient()
 
-const resolvedAddressComponents = await payIdClient.addressForPayId(payId, network)
+const resolvedAddressComponents = await payIdClient.addressForPayId(
+  payId,
+  network,
+)
 console.log(resolvedAddressComponents.address)
 ```
 

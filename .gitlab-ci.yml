@@ -43,3 +43,9 @@ run tests:
     - npx nyc report --reporter=text-lcov > coverage/coverage.json
     - cat coverage/coverage.json
     - npx codecov
+
+run webpack:
+  stage: test
+  extends: .test
+  script:
+    - npm run webpack

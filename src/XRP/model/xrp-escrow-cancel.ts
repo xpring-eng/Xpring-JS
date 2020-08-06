@@ -1,6 +1,6 @@
+import { XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { EscrowCancel } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import XrplNetwork from '../../Common/xrpl-network'
 
 /*
  * Represents an EscrowCancel transaction on the XRP Ledger.
