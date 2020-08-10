@@ -4,12 +4,11 @@ import TransactionStatus from '../transaction-status'
  * Represents the outcome of submitting an XRPL transaction.
  */
 export default class TransactionResult {
-  hash: string
-  status: TransactionStatus
-  validated: boolean
+  public readonly hash: string
+  public readonly status: TransactionStatus
+  public readonly validated: boolean
 
   /**
-   *
    * @param hash The identifying hash of the transaction.
    * @param status The final result of the transaction.
    * @param validated Whether this transaction (and status) are included in a validated ledger.
