@@ -93,6 +93,13 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
       wallet,
     )
 
+    return this.determineFinalResult(transactionHash, rawTransactionStatus)
+  }
+
+  private determineFinalResult(
+    transactionHash: string,
+    rawTransactionStatus: RawTransactionStatus,
+  ): TransactionResult {
     // Return pending if the transaction is not validated.
     if (!rawTransactionStatus.isValidated) {
       return new TransactionResult(
