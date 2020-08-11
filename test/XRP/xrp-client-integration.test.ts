@@ -56,7 +56,7 @@ describe('XrpClient Integration Tests', function (): void {
       transactionHash,
     )
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
-  })q
+  })
 
   it('Get Transaction Status - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
