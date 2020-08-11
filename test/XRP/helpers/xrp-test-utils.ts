@@ -40,10 +40,13 @@ export default class XRPTestUtils {
   /**
    * Generates a random wallet and funds using the XRPL Testnet faucet.
    */
-  static async randomWalletFromFaucet(): Promise<Wallet> {
+  static async randomWalletFromFaucet(): Promise<Wallet | undefined> {
     const timeoutInSeconds = 20
 
     const wallet = Wallet.generateRandomWallet()?.wallet
+    if (!wallet) {
+      return
+    }
     const address = wallet.getAddress()
 
     const rippledUrl = 'test.xrp.xpring.io:50051'
