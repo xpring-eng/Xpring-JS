@@ -1,6 +1,7 @@
 import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
 import { Wallet, XrplNetwork } from 'xpring-common-js'
+import { XrpUtils } from '../../../src/XRP'
 import XrpMemo from '../../../src/XRP/model/xrp-memo'
 import bigInt from 'big-integer'
 import XrpClient from '../../../src/XRP/xrp-client'
@@ -49,6 +50,11 @@ export default class XRPTestUtils {
     }
     const address = wallet.getAddress()
 
+    const classicAddress = XrpUtils.decodeXAddress(address)?.address
+    if (!classicAddress) {
+      return
+    }
+
     const rippledUrl = 'test.xrp.xpring.io:50051'
     const xrpClient = new XrpClient(rippledUrl, XrplNetwork.Test)
 
@@ -61,7 +67,7 @@ export default class XRPTestUtils {
     }
     // Ask the faucet to send funds to the given address
     const faucetURL = 'https://faucet.altnet.rippletest.net/accounts'
-    await axios.post(faucetURL, { destination: address })
+    await axios.post(faucetURL, { destination: classicAddress })
 
     // Wait for the faucet to fund our account or until timeout
     // Waits one second checks if balance has changed
