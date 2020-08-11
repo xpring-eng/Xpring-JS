@@ -43,7 +43,7 @@ export default class XRPTestUtils {
   static async randomWalletFromFaucet(): Promise<Wallet> {
     const timeoutInSeconds = 20
 
-    const wallet = Wallet.generateRandomWallet().wallet
+    const wallet = Wallet.generateRandomWallet()?.wallet
     const address = wallet.getAddress()
 
     const rippledUrl = 'test.xrp.xpring.io:50051'
