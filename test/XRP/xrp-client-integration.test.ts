@@ -21,9 +21,6 @@ const timeoutMs = 60 * 1000
 // An address on TestNet that has a balance.
 const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
 
-// A wallet with some balance on TestNet.
-//const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
-
 // An XrpClient that makes requests. Ssends the requests to an HTTP envoy emulating how the browser would behave.
 const grpcWebUrl = 'https://envoy.test.xrp.xpring.io'
 const xrpWebClient = new XrpClient(grpcWebUrl, XrplNetwork.Test, true)
@@ -39,6 +36,7 @@ describe('XrpClient Integration Tests', function (): void {
   // Retry integration tests on failure.
   this.retries(3)
 
+  // A Wallet with some balance on Testnet.
   let wallet
   before(async function () {
     wallet = await XRPTestUtils.randomWalletFromFaucet()
