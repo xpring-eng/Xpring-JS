@@ -1,7 +1,7 @@
 import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
 import { Wallet, XrplNetwork } from 'xpring-common-js'
-import { XrpUtils } from '../../../src/XRP'
+import { XrpUtils, XrpError, XrpErrorType } from '../../../src/XRP'
 import XrpMemo from '../../../src/XRP/model/xrp-memo'
 import bigInt from 'big-integer'
 import XrpClient from '../../../src/XRP/xrp-client'
@@ -39,20 +39,26 @@ export default class XRPTestUtils {
   }
 
   /**
-   * Generates a random wallet and funds using the XRPL Testnet faucet.
+   * Generates a random wallet and funds it using the XRPL Testnet faucet.
    */
   static async randomWalletFromFaucet(): Promise<Wallet | undefined> {
     const timeoutInSeconds = 20
 
     const wallet = Wallet.generateRandomWallet()?.wallet
     if (!wallet) {
-      return
+      throw new XrpError(
+        XrpErrorType.Unknown,
+        'Could not generate a random wallet.',
+      )
     }
     const address = wallet.getAddress()
 
     const classicAddress = XrpUtils.decodeXAddress(address)?.address
     if (!classicAddress) {
-      return
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        `Could not decode XAddress ${address}.`,
+      )
     }
 
     const rippledUrl = 'test.xrp.xpring.io:50051'
