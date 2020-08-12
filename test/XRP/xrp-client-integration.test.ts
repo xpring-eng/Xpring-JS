@@ -1,6 +1,6 @@
 import bigInt from 'big-integer'
 import { assert } from 'chai'
-import { Wallet, XrplNetwork, XrpUtils } from 'xpring-common-js'
+import { XrplNetwork, XrpUtils } from 'xpring-common-js'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import XrpClient from '../../src/XRP/xrp-client'
 import GrpcNetworkClient from '../../src/XRP/grpc-xrp-network-client'

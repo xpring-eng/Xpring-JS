@@ -19,7 +19,7 @@ describe('xrp-drops-conversion', function (): void {
 
     // WHEN the wallet is examined
     // THEN it exists
-    assert.isDefined(wallet)
+    assert.isNotNull(wallet)
 
     // AND it has a non-zero balance
     const xrpClient = new XrpClient(
