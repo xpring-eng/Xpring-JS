@@ -7,9 +7,29 @@ import 'mocha'
 import { BigNumber } from 'bignumber.js'
 import { assert } from 'chai'
 
-import { XrpUtils } from '../../src'
+import { XrpUtils, XrplNetwork, XrpClient } from '../../src'
+import XrpTestUtils from '../XRP/helpers/xrp-test-utils'
+import bigInt from 'big-integer'
 
 describe('xrp-drops-conversion', function (): void {
+  // randomWalletFromFaucet
+  it('randomWalletFromFaucet - success', async function (): Promise<void> {
+    // GIVEN a new, randomly generated wallet that is funded by the Testnet faucet
+    const wallet = await XrpTestUtils.randomWalletFromFaucet()
+
+    // WHEN the wallet is examined
+    // THEN it exists
+    assert.isDefined(wallet)
+
+    // AND it has a non-zero balance
+    const xrpClient = new XrpClient(
+      'test.xrp.xpring.io:50051',
+      XrplNetwork.Test,
+    )
+    const balance = await xrpClient.getBalance(wallet.getAddress())
+    assert.isTrue(balance > bigInt('0'))
+  })
+
   // xrpToDrops and dropsToXrp tests
   it('dropsToXrp() - works with a typical amount', function (): void {
     // GIVEN a typical, valid drops value, WHEN converted to xrp
