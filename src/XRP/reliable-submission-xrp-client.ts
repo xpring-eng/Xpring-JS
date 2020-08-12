@@ -8,6 +8,7 @@ import XrpTransaction from './model/xrp-transaction'
 import XrpError, { XrpErrorType } from './xrp-error'
 
 import SendXrpDetails from './model/send-xrp-details'
+import TransactionResult from './model/transaction-result'
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
@@ -48,12 +49,78 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     sendXrpDetails: SendXrpDetails,
   ): Promise<string> {
     const { sender } = sendXrpDetails
-    const ledgerCloseTimeMs = 4 * 1000
 
-    // Submit a transaction hash and wait for a ledger to close.
     const transactionHash = await this.decoratedClient.sendWithDetails(
       sendXrpDetails,
     )
+    await this.awaitFinalTransactionResult(transactionHash, sender)
+
+    return transactionHash
+  }
+
+  public async getLatestValidatedLedgerSequence(
+    address: string,
+  ): Promise<number> {
+    return this.decoratedClient.getLatestValidatedLedgerSequence(address)
+  }
+
+  public async getRawTransactionStatus(
+    transactionHash: string,
+  ): Promise<RawTransactionStatus> {
+    return this.decoratedClient.getRawTransactionStatus(transactionHash)
+  }
+
+  public async accountExists(address: string): Promise<boolean> {
+    return this.decoratedClient.accountExists(address)
+  }
+
+  public async paymentHistory(address: string): Promise<Array<XrpTransaction>> {
+    return this.decoratedClient.paymentHistory(address)
+  }
+
+  public async getPayment(
+    transactionHash: string,
+  ): Promise<XrpTransaction | undefined> {
+    return this.decoratedClient.getPayment(transactionHash)
+  }
+
+  public async enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
+    const result = await this.decoratedClient.enableDepositAuth(wallet)
+    const transactionHash = result.hash
+
+    const rawTransactionStatus = await this.awaitFinalTransactionResult(
+      transactionHash,
+      wallet,
+    )
+    const finalStatus = this.determineFinalResult(rawTransactionStatus)
+    return new TransactionResult(
+      transactionHash,
+      finalStatus,
+      rawTransactionStatus.isValidated,
+    )
+  }
+
+  private determineFinalResult(
+    rawTransactionStatus: RawTransactionStatus,
+  ): TransactionStatus {
+    // Return pending if the transaction is not validated.
+    if (!rawTransactionStatus.isValidated) {
+      return TransactionStatus.Pending
+    } else {
+      const transactionStatus = rawTransactionStatus.transactionStatusCode?.startsWith(
+        'tes',
+      )
+        ? TransactionStatus.Succeeded
+        : TransactionStatus.Failed
+      return transactionStatus
+    }
+  }
+
+  private async awaitFinalTransactionResult(
+    transactionHash: string,
+    sender: Wallet,
+  ): Promise<RawTransactionStatus> {
+    const ledgerCloseTimeMs = 4 * 1000
     await sleep(ledgerCloseTimeMs)
 
     // Get transaction status.
@@ -115,32 +182,6 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     }
     /* eslint-enable no-await-in-loop */
 
-    return transactionHash
-  }
-
-  public async getLatestValidatedLedgerSequence(
-    address: string,
-  ): Promise<number> {
-    return this.decoratedClient.getLatestValidatedLedgerSequence(address)
-  }
-
-  public async getRawTransactionStatus(
-    transactionHash: string,
-  ): Promise<RawTransactionStatus> {
-    return this.decoratedClient.getRawTransactionStatus(transactionHash)
-  }
-
-  public async accountExists(address: string): Promise<boolean> {
-    return this.decoratedClient.accountExists(address)
-  }
-
-  public async paymentHistory(address: string): Promise<Array<XrpTransaction>> {
-    return this.decoratedClient.paymentHistory(address)
-  }
-
-  public async getPayment(
-    transactionHash: string,
-  ): Promise<XrpTransaction | undefined> {
-    return this.decoratedClient.getPayment(transactionHash)
+    return rawTransactionStatus
   }
 }

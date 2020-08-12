@@ -17,8 +17,10 @@ import {
   MemoData,
   MemoFormat,
   MemoType,
+  SetFlag,
 } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
+  AccountSet,
   Memo,
   Payment,
   Transaction,
@@ -36,6 +38,8 @@ import isNode from '../Common/utils'
 import XrpError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import SendXrpDetails from './model/send-xrp-details'
+import { AccountSetFlag } from './model/account-set-flag'
+import TransactionResult from './model/transaction-result'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -426,7 +430,42 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   }
 
   /**
+   * Enable Deposit Authorization for this XRPL account.
+   *
+   * @see https://xrpl.org/depositauth.html
+   *
+   * @param wallet The wallet associated with the XRPL account enabling Deposit Authorization and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that contains the hash of the submitted AccountSet transaction,
+   *          the preliminary status, and whether the transaction has been included in a validated ledger yet.
+   */
+  public async enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
+    const setFlag = new SetFlag()
+    setFlag.setValue(AccountSetFlag.asfDepositAuth)
+
+    const accountSet = new AccountSet()
+    accountSet.setSetFlag(setFlag)
+
+    const transaction = await this.prepareBaseTransaction(wallet)
+    transaction.setAccountSet(accountSet)
+
+    const transactionHash = await this.signAndSubmitTransaction(
+      transaction,
+      wallet,
+    )
+    const rawStatus = await this.getRawTransactionStatus(transactionHash)
+    const isValidated = rawStatus.isValidated
+    const transactionStatus = await this.getPaymentStatus(transactionHash)
+
+    return new TransactionResult(
+      transactionHash,
+      transactionStatus,
+      isValidated,
+    )
+  }
+
+  /**
    * Populates the required fields common to all transaction types.
+   *
    * @see https://xrpl.org/transaction-common-fields.html
    *
    * Note: The returned Transaction object must still be assigned transaction-specific details.

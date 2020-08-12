@@ -17,6 +17,8 @@ Xpring-JS provides the following features:
   - Address validation
   - Account balance retrieval
   - Sending XRP payments
+  - Retrieval of payment transactions and account payment history
+  - Enabling of Deposit Authorization for an XRPL account
 - Interledger (ILP):
   - Account balance retrieval
   - Send ILP Payments
@@ -285,6 +287,25 @@ const transactionHash = await xrpClient.send(amount, destinationAddress, senderW
 
 **Note:** The above example will yield an "Account not found." error because
 the randomly generated wallet contains no XRP.
+
+### Enabling Deposit Authorization
+
+```javascript
+const { Wallet, XrpClient, XrplNetwork } = require("xpring-js");
+
+const remoteURL = test.xrp.xpring.io:50051; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
+const xrpClient = new XrpClient(remoteURL, XrplNetwork.Test);
+
+// Wallet for which to enable Deposit Authorization
+const seedWallet = Wallet.generateWalletFromSeed(
+  'snRiAJGeKCkPVddbjB3zRwiYDBm1M',
+)
+
+const transactionResult = await xrpClient.enableDepositAuth(seedWallet);
+const transactionHash = transactionResult.hash;
+const transactionStatus = transactionResult.status;
+const validated = transactionResult.validated;
+```
 
 ### Utilities
 

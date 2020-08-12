@@ -484,7 +484,7 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Send XRP Transaction - submission failure', function (done) {
-    // GIVEN a DefaultXrpClient which will to submit a transaction.
+    // GIVEN a DefaultXrpClient which will fail to submit a transaction.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
       FakeXRPNetworkClientResponses.defaultFeeResponse(),
@@ -784,5 +784,50 @@ describe('Default XRP Client', function (): void {
 
     // THEN the result is undefined
     assert.isUndefined(transaction)
+  })
+
+  it('Enable Deposit Auth - successful response', async function (): Promise<
+    void
+  > {
+    // GIVEN a DefaultXrpClient with mocked networking that will return a successful hash for submitTransaction
+    const xrpClient = new DefaultXrpClient(
+      fakeSucceedingNetworkClient,
+      XrplNetwork.Test,
+    )
+
+    const { wallet } = Wallet.generateRandomWallet()!
+
+    // WHEN enableDepositAuth is called
+    const result = await xrpClient.enableDepositAuth(wallet)
+    const transactionHash = result.hash
+
+    // THEN a transaction hash exists and is the expected hash
+    const expectedTransactionHash = Utils.toHex(
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
+    )
+
+    assert.exists(transactionHash)
+    assert.strictEqual(transactionHash, expectedTransactionHash)
+  })
+
+  it('Enable Deposit Auth - submission failure', function (done): void {
+    // GIVEN a DefaultXrpClient which will fail to submit a transaction.
+    const failureResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultError,
+    )
+    const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
+    const xrpClient = new DefaultXrpClient(
+      failingNetworkClient,
+      XrplNetwork.Test,
+    )
+    const { wallet } = Wallet.generateRandomWallet()!
+
+    // WHEN enableDepositAuth is attempted THEN an error is propagated.
+    xrpClient.enableDepositAuth(wallet).catch((error) => {
+      assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
+      done()
+    })
   })
 })

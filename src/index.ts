@@ -9,8 +9,11 @@ export {
 } from 'xpring-common-js'
 
 /** XRP Functionality. */
-export { RippledFlags, TransactionStatus, XrpClient, XrpUtils } from './XRP'
+export { TransactionStatus, XrpClient, XrpUtils } from './XRP'
 export {
+  AccountSetFlag,
+  AccountRootFlags,
+  PaymentFlags,
   SendXrpDetails,
   XrpCurrencyAmount,
   XrpCurrency,

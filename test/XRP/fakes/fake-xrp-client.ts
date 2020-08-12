@@ -7,17 +7,19 @@ import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
 import Result from '../../Common/Helpers/result'
 import { XrplNetwork } from 'xpring-common-js'
 import SendXrpDetails from '../../../src/XRP/model/send-xrp-details'
+import TransactionResult from '../../../src/XRP/model/transaction-result'
 
 class FakeXrpClient implements XrpClientDecorator {
   public constructor(
     public getBalanceValue: Result<BigInteger>,
     public getPaymentStatusValue: Result<TransactionStatus>,
-    public sendValue: Result<string>,
+    public transactionHash: Result<string>,
     public getLatestValidatedLedgerSequenceValue: Result<number>,
     public getRawTransactionStatusValue: Result<RawTransactionStatus>,
     public accountExistsValue: Result<boolean>,
     public paymentHistoryValue: Result<Array<XrpTransaction>>,
     public getPaymentValue: Result<XrpTransaction>,
+    public enableDepositAuthValue: Result<TransactionResult>,
     public readonly network: XrplNetwork = XrplNetwork.Test,
   ) {}
 
@@ -34,11 +36,11 @@ class FakeXrpClient implements XrpClientDecorator {
     _destination: string,
     _sender: Wallet,
   ): Promise<string> {
-    return FakeXrpClient.returnOrThrow(this.sendValue)
+    return FakeXrpClient.returnOrThrow(this.transactionHash)
   }
 
   async sendWithDetails(_sendXrpDetails: SendXrpDetails): Promise<string> {
-    return FakeXrpClient.returnOrThrow(this.sendValue)
+    return FakeXrpClient.returnOrThrow(this.transactionHash)
   }
 
   async getLatestValidatedLedgerSequence(_address: string): Promise<number> {
@@ -65,6 +67,10 @@ class FakeXrpClient implements XrpClientDecorator {
     _transactionHash: string,
   ): Promise<XrpTransaction | undefined> {
     return FakeXrpClient.returnOrThrow(this.getPaymentValue)
+  }
+
+  async enableDepositAuth(_wallet: Wallet): Promise<TransactionResult> {
+    return FakeXrpClient.returnOrThrow(this.enableDepositAuthValue)
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await

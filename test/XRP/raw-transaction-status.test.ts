@@ -8,7 +8,7 @@ import {
   Payment,
 } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
-import RippledFlags from '../../src/XRP/rippled-flags'
+import PaymentFlags from '../../src/XRP/model/payment-flags'
 
 describe('raw transaction status', function (): void {
   it('isFullPayment - non payment', function (): void {
@@ -33,7 +33,7 @@ describe('raw transaction status', function (): void {
     const payment = new Payment()
 
     const flags = new Flags()
-    flags.setValue(RippledFlags.TF_PARTIAL_PAYMENT)
+    flags.setValue(PaymentFlags.TF_PARTIAL_PAYMENT)
 
     const transaction = new Transaction()
     transaction.setPayment(payment)
