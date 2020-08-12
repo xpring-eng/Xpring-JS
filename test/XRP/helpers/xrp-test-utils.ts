@@ -11,9 +11,8 @@ import axios from 'axios'
  * Convenience class for utility functions used in test cases for XrpClient infrastructure.
  */
 export default class XRPTestUtils {
-  static sleep = async (milliseconds: number): Promise<void> => {
-    return new Promise((resolve) => setTimeout(resolve, milliseconds))
-  }
+  static sleep = async (milliseconds: number): Promise<void> =>
+    new Promise((resolve) => setTimeout(resolve, milliseconds))
 
   /**
    * Converts a GetAccountTransactionHistoryResponse protocol buffer object into an array of XrpTransaction objects,
@@ -41,7 +40,7 @@ export default class XRPTestUtils {
   /**
    * Generates a random wallet and funds it using the XRPL Testnet faucet.
    */
-  static async randomWalletFromFaucet(): Promise<Wallet | undefined> {
+  static async randomWalletFromFaucet(): Promise<Wallet> {
     const timeoutInSeconds = 20
 
     const wallet = Wallet.generateRandomWallet()?.wallet
