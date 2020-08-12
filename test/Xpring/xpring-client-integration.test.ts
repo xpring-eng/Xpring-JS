@@ -1,10 +1,10 @@
 import { assert } from 'chai'
-import { Wallet, XrplNetwork } from 'xpring-common-js'
+import { XrplNetwork } from 'xpring-common-js'
 
 import XrpPayIdClient from '../../src/PayID/xrp-pay-id-client'
 import XpringClient from '../../src/Xpring/xpring-client'
 import XrpClient from '../../src/XRP/xrp-client'
-import {
+import XRPTestUtils, {
   expectedNoDataMemo,
   expectedNoFormatMemo,
   expectedNoTypeMemo,
@@ -21,9 +21,6 @@ const timeoutMs = 60 * 1000
 // The network to conduct tests on.
 const network = XrplNetwork.Test
 
-// A wallet with some balance on TestNet.
-const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
-
 // A PayIdClient under test.
 const payIdClient = new XrpPayIdClient(network)
 
@@ -35,6 +32,12 @@ const xrpClient = new XrpClient(rippledUrl, XrplNetwork.Test)
 const xpringClient = new XpringClient(payIdClient, xrpClient)
 
 describe('Xpring Integration Tests', function (): void {
+  // A Wallet with some balance on Testnet.
+  let wallet
+  before(async function () {
+    wallet = await XRPTestUtils.randomWalletFromFaucet()
+  })
+
   it('Send XRP TestNet', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
