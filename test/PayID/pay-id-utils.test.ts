@@ -11,7 +11,7 @@ describe('PayIdUtils', function (): void {
     const rawPayID = `${path}$${host}`
 
     // WHEN it is parsed to components.
-    const payIDComponents = PayIdUtils.parsePayID(rawPayID)
+    const payIDComponents = PayIdUtils.parsePayId(rawPayID)
 
     // THEN the host and path are set correctly.
     assert.equal(payIDComponents?.host, host)
@@ -25,7 +25,7 @@ describe('PayIdUtils', function (): void {
     const rawPayID = `${path}$${host}`
 
     // WHEN it is parsed to components.
-    const payIDComponents = PayIdUtils.parsePayID(rawPayID)
+    const payIDComponents = PayIdUtils.parsePayId(rawPayID)
 
     // THEN the host and path are set correctly.
     assert.equal(payIDComponents?.host, host)
@@ -39,7 +39,7 @@ describe('PayIdUtils', function (): void {
     const rawPayID = `${path}$${host}`
 
     // WHEN it is parsed to components.
-    const payIDComponents = PayIdUtils.parsePayID(rawPayID)
+    const payIDComponents = PayIdUtils.parsePayId(rawPayID)
 
     // THEN the PayID failed to parse.
     assert.isUndefined(payIDComponents)
@@ -50,7 +50,7 @@ describe('PayIdUtils', function (): void {
     const rawPayID = `georgewashington@xpring.money`
 
     // WHEN it is parsed to components.
-    const payIDComponents = PayIdUtils.parsePayID(rawPayID)
+    const payIDComponents = PayIdUtils.parsePayId(rawPayID)
 
     // THEN the PayID failed to parse.
     assert.isUndefined(payIDComponents)
@@ -63,7 +63,7 @@ describe('PayIdUtils', function (): void {
     const rawPayID = `${path}$${host}`
 
     // WHEN it is parsed to components.
-    const payIDComponents = PayIdUtils.parsePayID(rawPayID)
+    const payIDComponents = PayIdUtils.parsePayId(rawPayID)
 
     // THEN the PayID failed to parse.
     assert.isUndefined(payIDComponents)
@@ -76,7 +76,7 @@ describe('PayIdUtils', function (): void {
     const rawPayID = `${path}$${host}`
 
     // WHEN it is parsed to components.
-    const payIDComponents = PayIdUtils.parsePayID(rawPayID)
+    const payIDComponents = PayIdUtils.parsePayId(rawPayID)
 
     // THEN the PayID failed to parse.
     assert.isUndefined(payIDComponents)
@@ -87,6 +87,6 @@ describe('PayIdUtils', function (): void {
     const rawPayID = 'ZA̡͊͠͝LGΌIS̯͈͕̹̘̱ͮ$TO͇̹̺ͅƝ̴ȳ̳TH̘Ë͖́̉ ͠P̯͍̭O̚N̐Y̡'
 
     // WHEN it is parsed to components THEN the result is undefined
-    assert.isUndefined(PayIdUtils.parsePayID(rawPayID))
+    assert.isUndefined(PayIdUtils.parsePayId(rawPayID))
   })
 })

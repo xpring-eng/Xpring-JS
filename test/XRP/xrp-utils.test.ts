@@ -26,7 +26,7 @@ describe('xrp-drops-conversion', function (): void {
       'test.xrp.xpring.io:50051',
       XrplNetwork.Test,
     )
-    const balance = await xrpClient.getBalance(wallet!.getAddress())
+    const balance = await xrpClient.getBalance(wallet.getAddress())
     assert.isTrue(balance > bigInt('0'))
   })
 

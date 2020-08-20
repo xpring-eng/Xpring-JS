@@ -158,7 +158,7 @@ export default class PayIdClient {
    * Parse a payID to a host and path.
    */
   private static parsePayId(payId: string): PayIDComponents {
-    const payIdComponents = PayIdUtils.parsePayID(payId)
+    const payIdComponents = PayIdUtils.parsePayId(payId)
     if (!payIdComponents) {
       throw PayIdError.invalidPayId
     }
