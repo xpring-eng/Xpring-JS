@@ -2,6 +2,8 @@
 import { PayIdUtils } from 'xpring-common-js'
 import PayIdError, { PayIdErrorType } from './pay-id-error'
 import { Address, DefaultApi, CryptoAddressDetails } from './Generated/api'
+import * as PayIDSign from 'payid-sign'
+import * as dns from 'dns'
 
 const PAYID_API_VERSION = '1.0'
 
@@ -61,12 +63,32 @@ export default class PayIdClient {
   }
 
   /**
+   * Look up a DNS txt record and return as a promise
+   *
+   * @param domain the domain name to look up for example arthur._payid.mydomain.com
+   */
+  private async lookupDnsTxt(
+    domain:string
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+        dns.resolveTxt(domain, (err: any | null, addresses: string[][]) => {
+            if(err) reject(err)
+            try {
+                resolve(addresses[0].join(''))
+            } catch (error) {
+                reject('no txt record')
+            }
+        })
+    })
+  }
+
+  /**
    * Return an array of {@link Address}es that match the inputs.
    *
    * @param payId The PayID to resolve.
    * @param network The network to resolve on.
    */
-  private async addressesForPayIdAndNetwork(
+  public async addressesForPayIdAndNetwork(
     payId: string,
     network: string,
   ): Promise<Array<Address>> {
@@ -77,6 +99,24 @@ export default class PayIdClient {
 
     // Swagger API adds the leading '/' in path automatically because it is part of the endpoint.
     const path = payIdComponents.path.substring(1)
+
+    // First check if there is a DNS entry for this PayID, and use it preferentially if there is
+    const identifier = path.replace(/\+.+$/,'')
+    const domain = network + "." + identifier + "._payid." + payIdComponents.host
+    try {
+        const payload = await this.lookupDnsTxt(domain);
+        // execution to here is a DNS hit so process the DNS txt payload
+        if (PayIDSign.verify_signed_payid( identifier + '$' + payIdComponents.host, payload )) {
+            // if the DNS payload is not verified we will fall through to regular protocol,
+            // however if it is verified we will now return based on the DNS payload
+            var ret = JSON.parse(payload)
+            delete ret['signature'] 
+            delete ret['publicKey']
+            return [ret]
+        } 
+    } catch (error) {
+        // this is a DNS miss, so continue executing along the normal path
+    }
 
     const api = new DefaultApi(undefined, basePath)
 
