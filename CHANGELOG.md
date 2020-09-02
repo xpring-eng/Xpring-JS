@@ -7,11 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 5.1.1 - 2020-09-01
+
+This release contains updated dependencies for stability and security.
+
 ## 5.1.0 - 2020-08-17
 
 ### Added
+
 - A new method `enableDepositAuth` is added to `XrpClient` which enables Deposit Authorization for the specified XRPL account.
-(See https://xrpl.org/depositauth.html)
+  (See https://xrpl.org/depositauth.html)
 
 ## 5.0.2 - 2020-08-01
 
@@ -28,12 +33,13 @@ This new release contains production ready classes for [PayID](https://payid.org
 This release also provides idiomatic capitalization. Previously, classes that were 'PayID' are now named as 'PayId' and classes which were named as 'XRP' are now named 'Xrp'.
 
 ## Removed
+
 - `PayIDClient` was deprecated for two releases and has been removed. Use `PayIdClient` instead.
 - `PayIDError` was deprecated for two releases and has been removed. Use `PayIdError` instead.
 - `PayIDErrorType` was deprecated for two releases and has been removed. Use `PayIdErrorType` instead.
 - `XRPPayIDClientInterface` was deprecated for two releases and has been removed. Use `XrpPayIdClientInterface` instead.
-- `XRPPayIDClient` was deprecated for two releases and has been removed.  Use `XrpPayIdClient` instead.
-- `XRPLNetwork` was deprecated for two releases and has been removed.  Use `XrplNetwork` instead.
+- `XRPPayIDClient` was deprecated for two releases and has been removed. Use `XrpPayIdClient` instead.
+- `XRPLNetwork` was deprecated for two releases and has been removed. Use `XrplNetwork` instead.
 - `memos` on `SendXrpDetails` was deprecated for two releases and has been removed. Use `memoList` instead.
 - `XRPAccountSet` was deprecated for two releases and has been removed. Use `XrpAccountSet` instead.
 - `XRPCurrencyAmount` was deprecated for two releases and has been removed. Use `XrpCurrencyAmount` instead.
@@ -60,7 +66,7 @@ This release also provides idiomatic capitalization. Previously, classes that we
 ## Added
 
 - `SendXrpDetails` is exported for external use on `XrpClient` and `XpringClient`, allowing for memo data to be attached
-to the transaction when sending XRP.
+  to the transaction when sending XRP.
 
 ## 4.3.1 - 2020-06-16
 
