@@ -5,9 +5,6 @@ import XrpPayIdClient from '../../src/PayID/xrp-pay-id-client'
 import XpringClient from '../../src/Xpring/xpring-client'
 import XrpClient from '../../src/XRP/xrp-client'
 import XRPTestUtils, {
-  expectedNoDataMemo,
-  expectedNoFormatMemo,
-  expectedNoTypeMemo,
   iForgotToPickUpCarlMemo,
   noDataMemo,
   noFormatMemo,
@@ -80,9 +77,9 @@ describe('Xpring Integration Tests', function (): void {
 
     assert.deepEqual(transaction?.memos, [
       iForgotToPickUpCarlMemo,
-      expectedNoDataMemo,
-      expectedNoFormatMemo,
-      expectedNoTypeMemo,
+      noDataMemo,
+      noFormatMemo,
+      noTypeMemo,
     ])
   })
 })
