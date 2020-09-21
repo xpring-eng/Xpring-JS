@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { Payment } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrency from './xrp-currency'
 
@@ -19,8 +20,33 @@ export default class XrpPathElement {
   public static from(pathElement: PathElement): XrpPathElement {
     const account = pathElement.getAccount()?.getAddress()
     const currency = pathElement.getCurrency()
+    if (account && currency) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Path element protobuf contains both `account` and `currency` fields.',
+      )
+    }
+
     const xrpCurrency = currency && XrpCurrency.from(currency)
     const issuer = pathElement.getIssuer()?.getAddress()
+    if (account && issuer) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Path element protobuf contains both `account` and `issuer` fields.',
+      )
+    }
+    if (xrpCurrency && xrpCurrency.name == 'XRP' && issuer) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Path element protobuf contains `issuer` field when `currency` is XRP.',
+      )
+    }
+    if (!account && !xrpCurrency && !issuer) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Path element protobuf does not contain any field.',
+      )
+    }
     return new XrpPathElement(account, xrpCurrency, issuer)
   }
 
