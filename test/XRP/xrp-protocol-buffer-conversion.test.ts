@@ -7,7 +7,7 @@ import bigInt from 'big-integer'
 import { assert } from 'chai'
 
 import { Utils, XrplNetwork } from 'xpring-common-js'
-import { XrpUtils } from '../../src'
+import { XrpError, XrpUtils } from '../../src'
 import XrpCurrency from '../../src/XRP/model/xrp-currency'
 import XrpCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
 import XrpIssuedCurrency from '../../src/XRP/model/xrp-issued-currency'
@@ -50,6 +50,8 @@ import {
   testSignerEntryProto,
   testGetTransactionResponseProto,
   testGetTransactionResponseProtoMandatoryOnly,
+  testInvalidCurrencyProtoNoName,
+  testInvalidCurrencyProtoNoCode,
   testInvalidIssuedCurrencyProto,
   testInvalidCurrencyAmountProto,
   testInvalidPaymentProtoBadAmount,
@@ -72,6 +74,30 @@ describe('Protocol Buffer Conversion', function (): void {
     // THEN the currency converted as expected.
     assert.deepEqual(currency.code, testCurrencyProto.getCode())
     assert.deepEqual(currency.name, testCurrencyProto.getName())
+  })
+
+  it('Convert Currency protobuf missing required field name', function (): void {
+    // GIVEN a Currency protocol buffer missing a name.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpCurrency.from(testInvalidCurrencyProtoNoName)
+      },
+      XrpError,
+      'Currency protobuf missing required field `name`.',
+    )
+  })
+
+  it('Convert Currency protobuf missing required field code', function (): void {
+    // GIVEN a Currency protocol buffer missing a code.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpCurrency.from(testInvalidCurrencyProtoNoCode)
+      },
+      XrpError,
+      'Currency protobuf missing required field `code`.',
+    )
   })
 
   // PathElement
