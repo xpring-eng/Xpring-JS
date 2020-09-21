@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { Currency } from '../Generated/web/org/xrpl/rpc/v1/amount_pb'
 
 /**
@@ -14,12 +15,26 @@ export default class XrpCurrency {
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/amount.proto#L41
    */
   public static from(currency: Currency): XrpCurrency {
-    return new XrpCurrency(currency.getName(), currency.getCode_asU8())
+    const currencyName = currency.getName()
+    const currencyCode = currency.getCode_asB64()
+    if (!currencyName) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Currency protobuf missing required field `name`.',
+      )
+    }
+    if (!currencyCode) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Currency protobuf missing required field `code`.',
+      )
+    }
+    return new XrpCurrency(currencyName, currencyCode)
   }
 
   /**
    * @param name 3 character ASCII code
    * @param code 160 bit currency code. 20 bytes
    */
-  private constructor(readonly name: string, readonly code: Uint8Array) {}
+  private constructor(readonly name: string, readonly code: string) {}
 }
