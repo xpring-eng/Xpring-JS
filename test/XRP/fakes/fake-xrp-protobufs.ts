@@ -86,7 +86,6 @@ const testAccountAddressIssuer = new AccountAddress()
 testAccountAddressIssuer.setAddress(testAddress2)
 
 // PathElement protos
-// Valid PathElements
 const testAccountPathElementProto = new Payment.PathElement()
 testAccountPathElementProto.setAccount(accountAddressProto)
 
@@ -103,7 +102,7 @@ testPathProtoOneElement.addElements(testAccountPathElementProto)
 const testPathProtoThreeElements = new Payment.Path()
 testPathProtoThreeElements.setElementsList([
   testAccountPathElementProto,
-  testAccountPathElementProto,
+  testCurrencyIssuerPathElementProto,
   testAccountPathElementProto,
 ])
 
