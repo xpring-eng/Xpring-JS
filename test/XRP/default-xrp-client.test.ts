@@ -831,7 +831,7 @@ describe('Default XRP Client', function (): void {
     })
   })
 
-  it('Authorize Deposit Preauth - successful response', async function (): Promise<
+  it('Authorize DepositPreauth - successful response', async function (): Promise<
     void
   > {
     // GIVEN a DefaultXrpClient with mocked networking that will return a successful hash for submitTransaction.
@@ -840,9 +840,9 @@ describe('Default XRP Client', function (): void {
       XrplNetwork.Test,
     )
 
-    const { wallet } = Wallet.generateRandomWallet()!
     const xAddressToAuthorize =
       'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
+    const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN authorizeDepositPreauth is called.
     const result = await xrpClient.authorizeDepositPreauth(
@@ -858,5 +858,31 @@ describe('Default XRP Client', function (): void {
 
     assert.exists(transactionHash)
     assert.strictEqual(transactionHash, expectedTransactionHash)
+  })
+
+  it('Authorize DepositPreauth - submission failure', function (done): void {
+    // GIVEN a DefaultXrpClient which will fail to submit a transaction.
+    const failureResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultError,
+    )
+    const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
+    const xrpClient = new DefaultXrpClient(
+      failingNetworkClient,
+      XrplNetwork.Test,
+    )
+
+    const xAddressToAuthorize =
+      'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
+    const { wallet } = Wallet.generateRandomWallet()!
+
+    // WHEN authorizeDepositPreauth is attempted THEN an error is propagated.
+    xrpClient
+      .authorizeDepositPreauth(xAddressToAuthorize, wallet)
+      .catch((error) => {
+        assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
+        done()
+      })
   })
 })
