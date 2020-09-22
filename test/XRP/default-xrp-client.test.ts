@@ -914,13 +914,12 @@ describe('Default XRP Client', function (): void {
       XrplNetwork.Test,
     )
 
-    const xAddressToUnauthorize =
-      'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
+    const senderXAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN unauthorizeDepositPreauth is called.
     const result = await xrpClient.unauthorizeDepositPreauth(
-      xAddressToUnauthorize,
+      senderXAddress,
       wallet,
     )
     const transactionHash = result.hash
@@ -947,15 +946,33 @@ describe('Default XRP Client', function (): void {
       XrplNetwork.Test,
     )
 
-    const xAddressToUnauthorize =
-      'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
+    const senderXAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN unauthorizeDepositPreauth is attempted THEN an error is propagated.
     xrpClient
-      .unauthorizeDepositPreauth(xAddressToUnauthorize, wallet)
+      .unauthorizeDepositPreauth(senderXAddress, wallet)
       .catch((error) => {
         assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
+        done()
+      })
+  })
+
+  it('Unauthorize DepositPreauth - malformed sender address', function (done): void {
+    // GIVEN a DefaultXrpClient with mocked networking
+    const xrpClient = new DefaultXrpClient(
+      fakeSucceedingNetworkClient,
+      XrplNetwork.Test,
+    )
+
+    const senderXAddress = 'notanxaddress'
+    const { wallet } = Wallet.generateRandomWallet()!
+
+    // WHEN unauthorizeDepositPreauth is attempted THEN an error is propagated.
+    xrpClient
+      .unauthorizeDepositPreauth(senderXAddress, wallet)
+      .catch((error) => {
+        assert.deepEqual(error, XrpError.xAddressRequired)
         done()
       })
   })
