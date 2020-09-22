@@ -26,8 +26,6 @@ export default class XrpPathElement {
         'PathElement protobuf should not contain both `account` and `currency` fields.',
       )
     }
-
-    const xrpCurrency = currency && XrpCurrency.from(currency)
     const issuer = pathElement.getIssuer()?.getAddress()
     if (account && issuer) {
       throw new XrpError(
@@ -36,6 +34,7 @@ export default class XrpPathElement {
       )
     }
     // TODO check that `issuer` is omitted if the `currency` is XRP
+    const xrpCurrency = currency && XrpCurrency.from(currency)
     if (!account && !xrpCurrency && !issuer) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
