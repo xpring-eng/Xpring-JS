@@ -11,8 +11,8 @@ module.exports = {
   // Warn if test exceed 75ms duration
   slow: 75,
 
-  // Fail if tests exceed 10000ms
-  timeout: 10000,
+  // Fail if tests exceed 20000ms (20 sec)
+  timeout: 20000,
 
   // Check for global variable leaks
   'check-leaks': true,
