@@ -24,7 +24,7 @@ export default class XrpIssuedCurrency {
     if (!currency) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'Issued currency protobuf does not contain valid `currency` field.',
+        'IssuedCurrency protobuf does not contain `currency` field.',
       )
     }
     const xrpCurrency = XrpCurrency.from(currency)
@@ -35,7 +35,7 @@ export default class XrpIssuedCurrency {
     } catch {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'Issued currency protobuf does not contain valid `value` field.',
+        'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
       )
     }
 
@@ -43,7 +43,7 @@ export default class XrpIssuedCurrency {
     if (!issuer) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'Issued currency protobuf does not contain valid `issuer` field.',
+        'IssuedCurrency protobuf does not contain `issuer` field.',
       )
     }
     return new XrpIssuedCurrency(xrpCurrency, value, issuer)

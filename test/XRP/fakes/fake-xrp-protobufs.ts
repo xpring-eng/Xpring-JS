@@ -347,23 +347,23 @@ testSignerEntryProto.setSignerWeight(testSignerWeightProto)
 // INVALID OBJECTS =============================================
 
 // Invalid IssuedCurrencyAmount protos
-const testInvalidValueIssuedCurrencyProto = new IssuedCurrencyAmount()
-testInvalidValueIssuedCurrencyProto.setCurrency(testCurrencyProto)
-testInvalidValueIssuedCurrencyProto.setIssuer(accountAddressProto)
-testInvalidValueIssuedCurrencyProto.setValue(testInvalidIssuedCurrencyValue)
+const testInvalidIssuedCurrencyProtoBadValue = new IssuedCurrencyAmount()
+testInvalidIssuedCurrencyProtoBadValue.setCurrency(testCurrencyProto)
+testInvalidIssuedCurrencyProtoBadValue.setIssuer(accountAddressProto)
+testInvalidIssuedCurrencyProtoBadValue.setValue(testInvalidIssuedCurrencyValue)
 
-const testInvalidCurrencyIssuedCurrencyProto = new IssuedCurrencyAmount()
-testInvalidValueIssuedCurrencyProto.setIssuer(accountAddressProto)
-testInvalidCurrencyIssuedCurrencyProto.setValue(testIssuedCurrencyValue)
+const testInvalidIssuedCurrencyProtoBadCurrency = new IssuedCurrencyAmount()
+testInvalidIssuedCurrencyProtoBadCurrency.setIssuer(accountAddressProto)
+testInvalidIssuedCurrencyProtoBadCurrency.setValue(testIssuedCurrencyValue)
 
-const testInvalidIssuerIssuedCurrencyProto = new IssuedCurrencyAmount()
-testInvalidIssuerIssuedCurrencyProto.setValue(testIssuedCurrencyValue)
-testInvalidIssuerIssuedCurrencyProto.setCurrency(testCurrencyProto)
+const testInvalidIssuedCurrencyProtoBadIssuer = new IssuedCurrencyAmount()
+testInvalidIssuedCurrencyProtoBadIssuer.setValue(testIssuedCurrencyValue)
+testInvalidIssuedCurrencyProtoBadIssuer.setCurrency(testCurrencyProto)
 
 // Invalid CurrencyAmount proto
 const testInvalidCurrencyAmountProto = new CurrencyAmount()
 testInvalidCurrencyAmountProto.setIssuedCurrencyAmount(
-  testInvalidValueIssuedCurrencyProto,
+  testInvalidIssuedCurrencyProtoBadValue,
 )
 
 // Invalid Amount proto
@@ -484,9 +484,9 @@ export {
   testXrpTransaction,
   testGetAccountTransactionHistoryResponse,
   testGetTransactionResponseProtoMandatoryOnly,
-  testInvalidValueIssuedCurrencyProto,
-  testInvalidCurrencyIssuedCurrencyProto,
-  testInvalidIssuerIssuedCurrencyProto,
+  testInvalidIssuedCurrencyProtoBadValue,
+  testInvalidIssuedCurrencyProtoBadCurrency,
+  testInvalidIssuedCurrencyProtoBadIssuer,
   testInvalidCurrencyAmountProto,
   testInvalidPaymentProtoBadAmount,
   testInvalidPaymentProtoBadDeliverMin,

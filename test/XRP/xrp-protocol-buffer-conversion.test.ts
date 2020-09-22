@@ -50,9 +50,9 @@ import {
   testSignerEntryProto,
   testGetTransactionResponseProto,
   testGetTransactionResponseProtoMandatoryOnly,
-  testInvalidValueIssuedCurrencyProto,
-  testInvalidIssuerIssuedCurrencyProto,
-  testInvalidCurrencyIssuedCurrencyProto,
+  testInvalidIssuedCurrencyProtoBadValue,
+  testInvalidIssuedCurrencyProtoBadIssuer,
+  testInvalidIssuedCurrencyProtoBadCurrency,
   testInvalidCurrencyAmountProto,
   testInvalidPaymentProtoBadAmount,
   testInvalidPaymentProtoBadDeliverMin,
@@ -161,38 +161,38 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert IssuedCurrency with bad value', function (): void {
-    // GIVEN an issued currency protocol buffer with a non numeric value
+    // GIVEN an issued currency protocol buffer with an invalid value field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(
       () => {
-        XrpIssuedCurrency.from(testInvalidValueIssuedCurrencyProto)
+        XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadValue)
       },
       XrpError,
-      'Issued currency protobuf does not contain valid `value` field.',
+      'IssuedCurrency protobuf does not contain valid `value` field.',
     )
   })
 
   it('Convert IssuedCurrency with bad issuer', function (): void {
-    // GIVEN an issued currency protocol buffer with a non numeric value
+    // GIVEN an issued currency protocol buffer with a missing issuer field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(
       () => {
-        XrpIssuedCurrency.from(testInvalidIssuerIssuedCurrencyProto)
+        XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadIssuer)
       },
       XrpError,
-      'Issued currency protobuf does not contain valid `issuer` field.',
+      'IssuedCurrency protobuf does not contain valid `issuer` field.',
     )
   })
 
   it('Convert IssuedCurrency with bad currency', function (): void {
-    // GIVEN an issued currency protocol buffer with a non numeric value
+    // GIVEN an issued currency protocol buffer with a missing currency field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(
       () => {
-        XrpIssuedCurrency.from(testInvalidCurrencyIssuedCurrencyProto)
+        XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadCurrency)
       },
       XrpError,
-      'Issued currency protobuf does not contain valid `currency` field.',
+      'IssuedCurrency protobuf does not contain valid `currency` field.',
     )
   })
 
@@ -234,7 +234,7 @@ describe('Protocol Buffer Conversion', function (): void {
         XrpCurrencyAmount.from(testInvalidCurrencyAmountProto)
       },
       XrpError,
-      'Issued currency protobuf does not contain valid `value` field.',
+      'IssuedCurrency protobuf does not contain valid `value` field.',
     )
   })
 
@@ -332,7 +332,7 @@ describe('Protocol Buffer Conversion', function (): void {
         XrpPayment.from(testInvalidPaymentProtoBadAmount, XrplNetwork.Test)
       },
       XrpError,
-      'Issued currency protobuf does not contain valid `value` field.',
+      'IssuedCurrency protobuf does not contain valid `value` field.',
     )
   })
 
@@ -344,7 +344,7 @@ describe('Protocol Buffer Conversion', function (): void {
         XrpPayment.from(testInvalidPaymentProtoBadDeliverMin, XrplNetwork.Test)
       },
       XrpError,
-      'Issued currency protobuf does not contain valid `value` field.',
+      'IssuedCurrency protobuf does not contain valid `value` field.',
     )
   })
 
@@ -356,7 +356,7 @@ describe('Protocol Buffer Conversion', function (): void {
         XrpPayment.from(testInvalidPaymentProtoBadSendMax, XrplNetwork.Test)
       },
       XrpError,
-      'Issued currency protobuf does not contain valid `value` field.',
+      'IssuedCurrency protobuf does not contain valid `value` field.',
     )
   })
 
@@ -527,7 +527,7 @@ describe('Protocol Buffer Conversion', function (): void {
         )
       },
       XrpError,
-      'Issued currency protobuf does not contain valid `value` field.',
+      'IssuedCurrency protobuf does not contain valid `value` field.',
     )
   })
 
