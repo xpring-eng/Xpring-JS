@@ -7,7 +7,7 @@ import bigInt from 'big-integer'
 import { assert } from 'chai'
 
 import { Utils, XrplNetwork } from 'xpring-common-js'
-import { XrpUtils } from '../../src'
+import { XrpError, XrpUtils } from '../../src'
 import XrpCurrency from '../../src/XRP/model/xrp-currency'
 import XrpCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
 import XrpIssuedCurrency from '../../src/XRP/model/xrp-issued-currency'
@@ -34,7 +34,7 @@ import {
   testIsValidated,
   testLedgerIndex,
   testCurrencyProto,
-  testPathElementProto,
+  testPathElementAccount,
   testEmptyPathElementProto,
   testEmptyPathProto,
   testPathProtoOneElement,
@@ -76,35 +76,36 @@ describe('Protocol Buffer Conversion', function (): void {
 
   // PathElement
 
-  it('Convert PathElement protobuf with all fields set to XrpPathElement', function (): void {
+  it('Convert PathElement protobuf with account field set to XrpPathElement', function (): void {
     // GIVEN a PathElement protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const pathElement = XrpPathElement.from(testPathElementProto)
+    const pathElement = XrpPathElement.from(testPathElementAccount)
 
     // THEN the currency converted as expected.
     assert.equal(
       pathElement.account,
-      testPathElementProto.getAccount()!.getAddress(),
+      testPathElementAccount.getAccount()!.getAddress(),
     )
     assert.deepEqual(
       pathElement.currency,
-      XrpCurrency.from(testPathElementProto.getCurrency()!),
+      XrpCurrency.from(testPathElementAccount.getCurrency()!),
     )
     assert.equal(
       pathElement.issuer,
-      testPathElementProto.getIssuer()!.getAddress(),
+      testPathElementAccount.getIssuer()!.getAddress(),
     )
   })
 
   it('Convert PathElement protobuf with no fields set to XrpPathElement', function (): void {
     // GIVEN a PathElement protocol buffer with no fields set.
-    // WHEN the protocol buffer is converted to a native TypeScript type.
-    const pathElement = XrpPathElement.from(testEmptyPathElementProto)
-
-    // THEN the currency converted as expected.
-    assert.isUndefined(pathElement.account)
-    assert.isUndefined(pathElement.currency)
-    assert.isUndefined(pathElement.issuer)
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpPathElement.from(testEmptyPathElementProto)
+      },
+      XrpError,
+      'Path element protobuf does not contain any field.',
+    )
   })
 
   // Path

@@ -78,6 +78,10 @@ const testCurrencyProto: Currency = new Currency()
 testCurrencyProto.setCode(testCurrencyCode)
 testCurrencyProto.setName(testCurrencyName)
 
+const testCurrencyProtoXRP: Currency = new Currency()
+testCurrencyProtoXRP.setName('XRP') // Fix once I know how to actually make XRP
+testCurrencyProto.setCode(testCurrencyCode)
+
 // AccountAddress protos
 const accountAddressProto = new AccountAddress()
 accountAddressProto.setAddress(testAddress)
@@ -86,10 +90,23 @@ const testAccountAddressIssuer = new AccountAddress()
 testAccountAddressIssuer.setAddress(testAddress2)
 
 // PathElement protos
-const testPathElementProto = new Payment.PathElement()
-testPathElementProto.setCurrency(testCurrencyProto)
-testPathElementProto.setAccount(accountAddressProto)
-testPathElementProto.setIssuer(testAccountAddressIssuer)
+// Valid PathElements
+const testPathElementAccount = new Payment.PathElement()
+testPathElementAccount.setAccount(accountAddressProto)
+
+//Invalid PathElements
+// TODO move to where the other invalid objects are
+const testPathElementXRPCurrencyIssuer = new Payment.PathElement()
+testPathElementXRPCurrencyIssuer.setCurrency(testCurrencyProtoXRP)
+testPathElementXRPCurrencyIssuer.setIssuer(testAccountAddressIssuer)
+
+const testPathElementAccountCurrency = new Payment.PathElement()
+testPathElementAccountCurrency.setCurrency(testCurrencyProto)
+testPathElementAccountCurrency.setAccount(accountAddressProto)
+
+const testPathElementAccountIssuer = new Payment.PathElement()
+testPathElementAccountIssuer.setIssuer(testAccountAddressIssuer)
+testPathElementAccountIssuer.setAccount(accountAddressProto)
 
 const testEmptyPathElementProto = new Payment.PathElement()
 
@@ -97,13 +114,13 @@ const testEmptyPathElementProto = new Payment.PathElement()
 const testEmptyPathProto = new Payment.Path()
 
 const testPathProtoOneElement = new Payment.Path()
-testPathProtoOneElement.addElements(testPathElementProto)
+testPathProtoOneElement.addElements(testPathElementAccount)
 
 const testPathProtoThreeElements = new Payment.Path()
 testPathProtoThreeElements.setElementsList([
-  testPathElementProto,
-  testPathElementProto,
-  testPathElementProto,
+  testPathElementAccount,
+  testPathElementAccount,
+  testPathElementAccount,
 ])
 
 // ... for Payment protos
@@ -455,7 +472,11 @@ export {
   testIsValidated,
   testLedgerIndex,
   testCurrencyProto,
-  testPathElementProto,
+  testAccountAddressIssuer,
+  testPathElementAccount,
+  testPathElementXRPCurrencyIssuer,
+  testPathElementAccountCurrency,
+  testPathElementAccountIssuer,
   testEmptyPathElementProto,
   testEmptyPathProto,
   testPathProtoOneElement,
