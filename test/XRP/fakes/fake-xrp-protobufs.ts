@@ -366,6 +366,11 @@ testInvalidCurrencyAmountProto.setIssuedCurrencyAmount(
   testInvalidIssuedCurrencyProtoBadValue,
 )
 
+const testInvalidCurrencyAmountProtoEmpty = new CurrencyAmount()
+
+const testInvalidCurrencyAmountProtoBadDrops = new CurrencyAmount()
+testInvalidCurrencyAmountProtoBadDrops.setXrpAmount(undefined)
+
 // Invalid Amount proto
 const invalidAmountProto = new Amount()
 invalidAmountProto.setValue(testInvalidCurrencyAmountProto)
@@ -488,6 +493,8 @@ export {
   testInvalidIssuedCurrencyProtoBadCurrency,
   testInvalidIssuedCurrencyProtoBadIssuer,
   testInvalidCurrencyAmountProto,
+  testInvalidCurrencyAmountProtoEmpty,
+  testInvalidCurrencyAmountProtoBadDrops,
   testInvalidPaymentProtoBadAmount,
   testInvalidPaymentProtoBadDeliverMin,
   testInvalidPaymentProtoBadSendMax,

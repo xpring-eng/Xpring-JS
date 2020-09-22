@@ -54,6 +54,7 @@ import {
   testInvalidIssuedCurrencyProtoBadIssuer,
   testInvalidIssuedCurrencyProtoBadCurrency,
   testInvalidCurrencyAmountProto,
+  testInvalidCurrencyAmountProtoEmpty,
   testInvalidPaymentProtoBadAmount,
   testInvalidPaymentProtoBadDeliverMin,
   testInvalidPaymentProtoBadSendMax,
@@ -235,6 +236,18 @@ describe('Protocol Buffer Conversion', function (): void {
       },
       XrpError,
       'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
+    )
+  })
+
+  it('Convert CurrencyAmount with nothing set', function (): void {
+    // GIVEN a currency amount protocol buffer with nothing set
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpCurrencyAmount.from(testInvalidCurrencyAmountProtoEmpty)
+      },
+      XrpError,
+      'CurrencyAmount protobuf does not have an amount set.',
     )
   })
 
