@@ -35,12 +35,7 @@ export default class XrpPathElement {
         'Path element protobuf contains both `account` and `issuer` fields.',
       )
     }
-    if (xrpCurrency && xrpCurrency.name == 'XRP' && issuer) {
-      throw new XrpError(
-        XrpErrorType.MalformedProtobuf,
-        'Path element protobuf contains `issuer` field when `currency` is XRP.',
-      )
-    }
+    // TODO check that `issuer` is omitted if the `currency` is XRP
     if (!account && !xrpCurrency && !issuer) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
