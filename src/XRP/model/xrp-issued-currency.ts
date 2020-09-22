@@ -27,7 +27,6 @@ export default class XrpIssuedCurrency {
         'IssuedCurrency protobuf does not contain `currency` field.',
       )
     }
-    const xrpCurrency = XrpCurrency.from(currency)
 
     let value
     try {
@@ -46,7 +45,7 @@ export default class XrpIssuedCurrency {
         'IssuedCurrency protobuf does not contain `issuer` field.',
       )
     }
-    return new XrpIssuedCurrency(xrpCurrency, value, issuer)
+    return new XrpIssuedCurrency(XrpCurrency.from(currency), value, issuer)
   }
 
   /**
