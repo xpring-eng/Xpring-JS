@@ -32,7 +32,7 @@ describe('PayIdClient', function (): void {
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new PayIdClient()
 
-    const payIDComponents = PayIdUtils.parsePayID(payId)
+    const payIDComponents = PayIdUtils.parsePayId(payId)
     if (!payIDComponents) {
       throw new Error('Test precondition failed: Could not generate a PayID')
     }
@@ -75,7 +75,7 @@ describe('PayIdClient', function (): void {
     const payIdClient = new PayIdClient()
     const network = XrplNetwork.Test
 
-    const payIdComponents = PayIdUtils.parsePayID(payId)
+    const payIdComponents = PayIdUtils.parsePayId(payId)
     if (!payIdComponents) {
       throw new Error('Test precondition failed: Could not parse PayID')
     }
@@ -164,7 +164,7 @@ describe('PayIdClient', function (): void {
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new PayIdClient()
 
-    const payIdComponents = PayIdUtils.parsePayID(payId)
+    const payIdComponents = PayIdUtils.parsePayId(payId)
     if (!payIdComponents) {
       throw new Error('Test precondition failed: Could not parse PayID')
     }
@@ -189,7 +189,7 @@ describe('PayIdClient', function (): void {
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new PayIdClient()
 
-    const payIDComponents = PayIdUtils.parsePayID(payId)
+    const payIDComponents = PayIdUtils.parsePayId(payId)
     if (!payIDComponents) {
       throw new Error('Test precondition failed: Could not generate a PayID')
     }
@@ -243,7 +243,7 @@ describe('PayIdClient', function (): void {
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new PayIdClient()
 
-    const payIdComponents = PayIdUtils.parsePayID(payId)
+    const payIdComponents = PayIdUtils.parsePayId(payId)
     if (!payIdComponents) {
       throw new Error('Test precondition failed: Could not generate a PayID')
     }
@@ -287,7 +287,7 @@ describe('PayIdClient', function (): void {
     const payId = 'georgewashington$xpring.money'
     const payIdClient = new PayIdClient()
 
-    const payIdComponents = PayIdUtils.parsePayID(payId)
+    const payIdComponents = PayIdUtils.parsePayId(payId)
     if (!payIdComponents) {
       throw new Error('Test precondition failed: Could not parse PayID')
     }
