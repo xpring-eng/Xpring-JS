@@ -168,7 +168,7 @@ describe('Protocol Buffer Conversion', function (): void {
         XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadValue)
       },
       XrpError,
-      'IssuedCurrency protobuf does not contain valid `value` field.',
+      'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
     )
   })
 
@@ -180,7 +180,7 @@ describe('Protocol Buffer Conversion', function (): void {
         XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadIssuer)
       },
       XrpError,
-      'IssuedCurrency protobuf does not contain valid `issuer` field.',
+      'IssuedCurrency protobuf does not contain `issuer` field.',
     )
   })
 
@@ -192,7 +192,7 @@ describe('Protocol Buffer Conversion', function (): void {
         XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadCurrency)
       },
       XrpError,
-      'IssuedCurrency protobuf does not contain valid `currency` field.',
+      'IssuedCurrency protobuf does not contain `currency` field.',
     )
   })
 
@@ -234,7 +234,7 @@ describe('Protocol Buffer Conversion', function (): void {
         XrpCurrencyAmount.from(testInvalidCurrencyAmountProto)
       },
       XrpError,
-      'IssuedCurrency protobuf does not contain valid `value` field.',
+      'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
     )
   })
 
@@ -332,7 +332,7 @@ describe('Protocol Buffer Conversion', function (): void {
         XrpPayment.from(testInvalidPaymentProtoBadAmount, XrplNetwork.Test)
       },
       XrpError,
-      'IssuedCurrency protobuf does not contain valid `value` field.',
+      'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
     )
   })
 
@@ -344,7 +344,7 @@ describe('Protocol Buffer Conversion', function (): void {
         XrpPayment.from(testInvalidPaymentProtoBadDeliverMin, XrplNetwork.Test)
       },
       XrpError,
-      'IssuedCurrency protobuf does not contain valid `value` field.',
+      'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
     )
   })
 
@@ -356,7 +356,7 @@ describe('Protocol Buffer Conversion', function (): void {
         XrpPayment.from(testInvalidPaymentProtoBadSendMax, XrplNetwork.Test)
       },
       XrpError,
-      'IssuedCurrency protobuf does not contain valid `value` field.',
+      'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
     )
   })
 
@@ -527,7 +527,7 @@ describe('Protocol Buffer Conversion', function (): void {
         )
       },
       XrpError,
-      'IssuedCurrency protobuf does not contain valid `value` field.',
+      'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
     )
   })
 
