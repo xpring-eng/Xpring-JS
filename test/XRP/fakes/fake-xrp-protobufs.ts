@@ -346,16 +346,24 @@ testSignerEntryProto.setSignerWeight(testSignerWeightProto)
 
 // INVALID OBJECTS =============================================
 
-// Invalid IssuedCurrencyAmount proto
-const testInvalidIssuedCurrencyProto = new IssuedCurrencyAmount()
-testInvalidIssuedCurrencyProto.setCurrency(testCurrencyProto)
-testInvalidIssuedCurrencyProto.setIssuer(accountAddressProto)
-testInvalidIssuedCurrencyProto.setValue(testInvalidIssuedCurrencyValue)
+// Invalid IssuedCurrencyAmount protos
+const testInvalidValueIssuedCurrencyProto = new IssuedCurrencyAmount()
+testInvalidValueIssuedCurrencyProto.setCurrency(testCurrencyProto)
+testInvalidValueIssuedCurrencyProto.setIssuer(accountAddressProto)
+testInvalidValueIssuedCurrencyProto.setValue(testInvalidIssuedCurrencyValue)
+
+const testInvalidCurrencyIssuedCurrencyProto = new IssuedCurrencyAmount()
+testInvalidValueIssuedCurrencyProto.setIssuer(accountAddressProto)
+testInvalidCurrencyIssuedCurrencyProto.setValue(testIssuedCurrencyValue)
+
+const testInvalidIssuerIssuedCurrencyProto = new IssuedCurrencyAmount()
+testInvalidIssuerIssuedCurrencyProto.setValue(testIssuedCurrencyValue)
+testInvalidIssuerIssuedCurrencyProto.setCurrency(testCurrencyProto)
 
 // Invalid CurrencyAmount proto
 const testInvalidCurrencyAmountProto = new CurrencyAmount()
 testInvalidCurrencyAmountProto.setIssuedCurrencyAmount(
-  testInvalidIssuedCurrencyProto,
+  testInvalidValueIssuedCurrencyProto,
 )
 
 // Invalid Amount proto
@@ -476,7 +484,9 @@ export {
   testXrpTransaction,
   testGetAccountTransactionHistoryResponse,
   testGetTransactionResponseProtoMandatoryOnly,
-  testInvalidIssuedCurrencyProto,
+  testInvalidValueIssuedCurrencyProto,
+  testInvalidCurrencyIssuedCurrencyProto,
+  testInvalidIssuerIssuedCurrencyProto,
   testInvalidCurrencyAmountProto,
   testInvalidPaymentProtoBadAmount,
   testInvalidPaymentProtoBadDeliverMin,

@@ -50,7 +50,9 @@ import {
   testSignerEntryProto,
   testGetTransactionResponseProto,
   testGetTransactionResponseProtoMandatoryOnly,
-  testInvalidIssuedCurrencyProto,
+  testInvalidValueIssuedCurrencyProto,
+  testInvalidIssuerIssuedCurrencyProto,
+  testInvalidCurrencyIssuedCurrencyProto,
   testInvalidCurrencyAmountProto,
   testInvalidPaymentProtoBadAmount,
   testInvalidPaymentProtoBadDeliverMin,
@@ -163,10 +165,34 @@ describe('Protocol Buffer Conversion', function (): void {
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(
       () => {
-        XrpIssuedCurrency.from(testInvalidIssuedCurrencyProto)
+        XrpIssuedCurrency.from(testInvalidValueIssuedCurrencyProto)
       },
       XrpError,
       'Issued currency protobuf does not contain valid `value` field.',
+    )
+  })
+
+  it('Convert IssuedCurrency with bad issuer', function (): void {
+    // GIVEN an issued currency protocol buffer with a non numeric value
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpIssuedCurrency.from(testInvalidIssuerIssuedCurrencyProto)
+      },
+      XrpError,
+      'Issued currency protobuf does not contain valid `issuer` field.',
+    )
+  })
+
+  it('Convert IssuedCurrency with bad currency', function (): void {
+    // GIVEN an issued currency protocol buffer with a non numeric value
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpIssuedCurrency.from(testInvalidCurrencyIssuedCurrencyProto)
+      },
+      XrpError,
+      'Issued currency protobuf does not contain valid `currency` field.',
     )
   })
 
