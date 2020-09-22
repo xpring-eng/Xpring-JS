@@ -33,10 +33,11 @@ export default class XrpError extends Error {
 
   /**
    * Encountered a protocol buffer formatted in contradiction to the logic of the XRPL.
+   * @see xrpl.org for XRPL documentation.
    */
   static malformedProtobuf = new XrpError(
     XrpErrorType.MalformedProtobuf,
-    'Encountered a protocol buffer formatted in contradiction to the XRPL business logic',
+    'Encountered a protocol buffer in unexpected format.  See xrpl.org for XRPL documentation.',
   )
 
   /**
