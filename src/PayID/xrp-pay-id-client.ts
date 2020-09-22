@@ -9,7 +9,8 @@ import XrpPayIdClientInterface from './xrp-pay-id-client-interface'
 /**
  * Provides functionality for XRP in the PayID protocol.
  */
-export default class XrpPayIdClient extends PayIdClient
+export default class XrpPayIdClient
+  extends PayIdClient
   implements XrpPayIdClientInterface {
   /**
    * @param xrplNetwork The XRP Ledger network that this client attaches to.
