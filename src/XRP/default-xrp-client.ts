@@ -18,12 +18,14 @@ import {
   MemoFormat,
   MemoType,
   SetFlag,
+  Authorize,
 } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
   AccountSet,
   Memo,
   Payment,
   Transaction,
+  DepositPreauth,
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
@@ -454,6 +456,47 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     )
 
     return await this.getTransactionResult(transactionHash)
+  }
+
+  /**
+   * TODO: Doc and stuff
+   * @param wallet The wallet associated with the XRPL account enabling DepositPreauth and that will sign the request.
+   */
+  public async authorizeDepositPreauth(
+    xAddressToAuthorize: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const classicAddress = XrpUtils.decodeXAddress(xAddressToAuthorize)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const senderAccountAddress = new AccountAddress()
+    senderAccountAddress.setAddress(xAddressToAuthorize)
+
+    const authorize = new Authorize()
+    authorize.setValue(senderAccountAddress)
+
+    const depositPreauth = new DepositPreauth()
+    depositPreauth.setAuthorize(authorize)
+
+    const transaction = await this.prepareBaseTransaction(wallet)
+    transaction.setDepositPreauth(depositPreauth)
+
+    const transactionHash = await this.signAndSubmitTransaction(
+      transaction,
+      wallet,
+    )
+
+    const rawStatus = await this.getRawTransactionStatus(transactionHash)
+    const isValidated = rawStatus.isValidated
+    const transactionStatus = await this.getPaymentStatus(transactionHash)
+
+    return new TransactionResult(
+      transactionHash,
+      transactionStatus,
+      isValidated,
+    )
   }
 
   /**
