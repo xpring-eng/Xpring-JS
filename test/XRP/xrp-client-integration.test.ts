@@ -6,9 +6,6 @@ import XrpClient from '../../src/XRP/xrp-client'
 import GrpcNetworkClient from '../../src/XRP/grpc-xrp-network-client'
 
 import XRPTestUtils, {
-  expectedNoDataMemo,
-  expectedNoFormatMemo,
-  expectedNoTypeMemo,
   iForgotToPickUpCarlMemo,
   noDataMemo,
   noFormatMemo,
@@ -100,9 +97,9 @@ describe('XrpClient Integration Tests', function (): void {
 
     assert.deepEqual(transaction?.memos, [
       iForgotToPickUpCarlMemo,
-      expectedNoDataMemo,
-      expectedNoFormatMemo,
-      expectedNoTypeMemo,
+      noDataMemo,
+      noFormatMemo,
+      noTypeMemo,
     ])
   })
 
@@ -133,9 +130,9 @@ describe('XrpClient Integration Tests', function (): void {
 
     assert.deepEqual(transaction?.memos, [
       iForgotToPickUpCarlMemo,
-      expectedNoDataMemo,
-      expectedNoFormatMemo,
-      expectedNoTypeMemo,
+      noDataMemo,
+      noFormatMemo,
+      noTypeMemo,
     ])
   })
 
