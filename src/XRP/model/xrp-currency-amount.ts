@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { CurrencyAmount } from '../Generated/web/org/xrpl/rpc/v1/amount_pb'
 import XrpIssuedCurrency from './xrp-issued-currency'
 
@@ -27,17 +28,26 @@ export default class XrpCurrencyAmount {
             return new XrpCurrencyAmount(undefined, issuedCurrency)
           }
         }
-        return undefined
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          'Currency amount protobuf does not have a defined amount of issued currency.',
+        )
       }
       case CurrencyAmount.AmountCase.XRP_AMOUNT: {
         const drops = currencyAmount.getXrpAmount()?.getDrops()
         if (drops) {
           return new XrpCurrencyAmount(drops, undefined)
         }
-        return undefined
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          'Currency amount protobuf does not have a defined amount of XRP.',
+        )
       }
       default:
-        return undefined
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          'Currency amount protobuf does not have an amount set.',
+        )
     }
   }
 
