@@ -452,15 +452,8 @@ export default class DefaultXrpClient implements XrpClientDecorator {
       transaction,
       wallet,
     )
-    const rawStatus = await this.getRawTransactionStatus(transactionHash)
-    const isValidated = rawStatus.isValidated
-    const transactionStatus = await this.getPaymentStatus(transactionHash)
 
-    return new TransactionResult(
-      transactionHash,
-      transactionStatus,
-      isValidated,
-    )
+    return await this.getTransactionResult(transactionHash)
   }
 
   /**
@@ -532,5 +525,25 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     )
 
     return Utils.toHex(response.getHash_asU8())
+  }
+
+  /**
+   * Returns a detailed TransactionResult for a given XRPL transaction hash.
+   *
+   * @param transactionHash The transaction hash to populate a TransactionResult for.
+   * @returns A Promise which resolves to a TransactionResult associated with the given transaction hash.
+   */
+  private async getTransactionResult(
+    transactionHash: string,
+  ): Promise<TransactionResult> {
+    const rawStatus = await this.getRawTransactionStatus(transactionHash)
+    const isValidated = rawStatus.isValidated
+    const transactionStatus = await this.getPaymentStatus(transactionHash)
+
+    return new TransactionResult(
+      transactionHash,
+      transactionStatus,
+      isValidated,
+    )
   }
 }
