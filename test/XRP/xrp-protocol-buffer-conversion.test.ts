@@ -50,7 +50,9 @@ import {
   testSignerEntryProto,
   testGetTransactionResponseProto,
   testGetTransactionResponseProtoMandatoryOnly,
-  testInvalidIssuedCurrencyProto,
+  testInvalidIssuedCurrencyProtoBadValue,
+  testInvalidIssuedCurrencyProtoBadIssuer,
+  testInvalidIssuedCurrencyProtoBadCurrency,
   testInvalidCurrencyAmountProto,
   testInvalidPaymentProtoBadAmount,
   testInvalidPaymentProtoBadDeliverMin,
@@ -159,14 +161,39 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert IssuedCurrency with bad value', function (): void {
-    // GIVEN an issued currency protocol buffer with a non numeric value
-    // WHEN the protocol buffer is converted to a native TypeScript type.
-    const issuedCurrency = XrpIssuedCurrency.from(
-      testInvalidIssuedCurrencyProto,
+    // GIVEN an issued currency protocol buffer with an invalid value field
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadValue)
+      },
+      XrpError,
+      'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
     )
+  })
 
-    // THEN the result is undefined
-    assert.isUndefined(issuedCurrency)
+  it('Convert IssuedCurrency with bad issuer', function (): void {
+    // GIVEN an issued currency protocol buffer with a missing issuer field
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadIssuer)
+      },
+      XrpError,
+      'IssuedCurrency protobuf does not contain `issuer` field.',
+    )
+  })
+
+  it('Convert IssuedCurrency with bad currency', function (): void {
+    // GIVEN an issued currency protocol buffer with a missing currency field
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadCurrency)
+      },
+      XrpError,
+      'IssuedCurrency protobuf does not contain `currency` field.',
+    )
   })
 
   // CurrencyAmount tests
@@ -201,13 +228,14 @@ describe('Protocol Buffer Conversion', function (): void {
 
   it('Convert CurrencyAmount with bad inputs', function (): void {
     // GIVEN a currency amount protocol buffer with no amounts
-    // WHEN the protocol buffer is converted to a native TypeScript type.
-    const currencyAmount = XrpCurrencyAmount.from(
-      testInvalidCurrencyAmountProto,
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpCurrencyAmount.from(testInvalidCurrencyAmountProto)
+      },
+      XrpError,
+      'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
     )
-
-    // THEN the result is empty
-    assert.isUndefined(currencyAmount)
   })
 
   // Payment
@@ -298,13 +326,13 @@ describe('Protocol Buffer Conversion', function (): void {
 
   it('Convert Payment with invalid amount field', function (): void {
     // GIVEN a pyament protocol buffer with an invalid amount field
-    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown
     assert.throws(
       () => {
         XrpPayment.from(testInvalidPaymentProtoBadAmount, XrplNetwork.Test)
       },
       XrpError,
-      'Currency amount protobuf does not have a defined amount of issued currency.',
+      'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
     )
   })
 
@@ -316,15 +344,19 @@ describe('Protocol Buffer Conversion', function (): void {
         XrpPayment.from(testInvalidPaymentProtoBadDeliverMin, XrplNetwork.Test)
       },
       XrpError,
-      'Currency amount protobuf does not have a defined amount of issued currency.',
+      'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
     )
   })
 
   it('Convert Payment with invalid sendMax field', function (): void {
     // GIVEN a payment protocol buffer with an invalid sendMax field
-    // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
-    assert.isUndefined(
-      XrpPayment.from(testInvalidPaymentProtoBadSendMax, XrplNetwork.Test),
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown
+    assert.throws(
+      () => {
+        XrpPayment.from(testInvalidPaymentProtoBadSendMax, XrplNetwork.Test)
+      },
+      XrpError,
+      'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
     )
   })
 
@@ -486,14 +518,17 @@ describe('Protocol Buffer Conversion', function (): void {
 
   it('Convert PAYMENT Transaction with bad payment fields', function (): void {
     // GIVEN a GetTransactionResponse protocol buffer with Transaction payment fields which are incorrect
-    // WHEN the protocol buffer is converted to a native TypeScript type.
-    const transaction = XrpTransaction.from(
-      testInvalidGetTransactionResponseProto,
-      XrplNetwork.Test,
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpTransaction.from(
+          testInvalidGetTransactionResponseProto,
+          XrplNetwork.Test,
+        )
+      },
+      XrpError,
+      'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
     )
-
-    // THEN the result is undefined
-    assert.isUndefined(transaction)
   })
 
   it('Convert unsupported transaction type', function (): void {

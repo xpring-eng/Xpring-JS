@@ -766,7 +766,7 @@ describe('Default XRP Client', function (): void {
     } catch (e) {
       assert(
         e.message.includes(
-          'Currency amount protobuf does not have a defined amount of issued currency.',
+          'Issued currency protobuf does not contain valid `value` field.',
         ),
       )
     }
