@@ -497,24 +497,24 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   }
 
   /**
-   * Disables DepositPreauth and unauthorizes an XRPL account to deposit to this XRPL account.
+   * Disables DepositPreauth and unauthorizes an XRPL account to send to this XRPL account.
    *
    * @set https://xrpl.org/depositpreauth.html
    *
-   * @param xAddressToUnauthorize The X-Address of the account to unauthorize DepositPreauth for.
+   * @param senderXAddress The X-Address of the sender to unauthorize.
    * @param wallet The wallet associated with the XRPL account disabling DepositPreauth and that will sign the request.
    */
   public async unauthorizeDepositPreauth(
-    xAddressToUnauthorize: string,
+    senderXAddress: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    const classicAddress = XrpUtils.decodeXAddress(xAddressToUnauthorize)
+    const classicAddress = XrpUtils.decodeXAddress(senderXAddress)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
 
     const senderAccountAddress = new AccountAddress()
-    senderAccountAddress.setAddress(xAddressToUnauthorize)
+    senderAccountAddress.setAddress(senderXAddress)
 
     const unauthorize = new Unauthorize()
     unauthorize.setValue(senderAccountAddress)
