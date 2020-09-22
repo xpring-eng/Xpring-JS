@@ -759,11 +759,17 @@ describe('Default XRP Client', function (): void {
     const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
     const xrpClient = new DefaultXrpClient(fakeNetworkClient, XrplNetwork.Test)
 
-    // WHEN a transaction is requested.
-    const transaction = await xrpClient.getPayment(transactionHash)
-
-    // THEN the result is undefined
-    assert.isUndefined(transaction)
+    // WHEN a transaction is requested THEN an error is thrown.
+    try {
+      await xrpClient.getPayment(transactionHash)
+      assert.fail('No error thrown.')
+    } catch (e) {
+      assert(
+        e.message.includes(
+          'Currency amount protobuf does not have a defined amount of issued currency.',
+        ),
+      )
+    }
   })
 
   it('Get Payment - unsupported transaction type', async function (): Promise<

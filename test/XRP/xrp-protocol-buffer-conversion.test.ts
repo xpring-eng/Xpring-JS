@@ -7,7 +7,7 @@ import bigInt from 'big-integer'
 import { assert } from 'chai'
 
 import { Utils, XrplNetwork } from 'xpring-common-js'
-import { XrpUtils } from '../../src'
+import { XrpError, XrpUtils } from '../../src'
 import XrpCurrency from '../../src/XRP/model/xrp-currency'
 import XrpCurrencyAmount from '../../src/XRP/model/xrp-currency-amount'
 import XrpIssuedCurrency from '../../src/XRP/model/xrp-issued-currency'
@@ -298,17 +298,25 @@ describe('Protocol Buffer Conversion', function (): void {
 
   it('Convert Payment with invalid amount field', function (): void {
     // GIVEN a pyament protocol buffer with an invalid amount field
-    // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
-    assert.isUndefined(
-      XrpPayment.from(testInvalidPaymentProtoBadAmount, XrplNetwork.Test),
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpPayment.from(testInvalidPaymentProtoBadAmount, XrplNetwork.Test)
+      },
+      XrpError,
+      'Currency amount protobuf does not have a defined amount of issued currency.',
     )
   })
 
   it('Convert Payment with invalid deliverMin field', function (): void {
     // GIVEN a payment protocol buffer with an invalid deliverMin field
-    // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
-    assert.isUndefined(
-      XrpPayment.from(testInvalidPaymentProtoBadDeliverMin, XrplNetwork.Test),
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown
+    assert.throws(
+      () => {
+        XrpPayment.from(testInvalidPaymentProtoBadDeliverMin, XrplNetwork.Test)
+      },
+      XrpError,
+      'Currency amount protobuf does not have a defined amount of issued currency.',
     )
   })
 
