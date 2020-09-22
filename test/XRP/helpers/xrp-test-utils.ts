@@ -1,6 +1,6 @@
 import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
-import { Wallet, XrplNetwork } from 'xpring-common-js'
+import { WalletFactory, Wallet, XrplNetwork } from 'xpring-common-js'
 import { XrpUtils, XrpError, XrpErrorType } from '../../../src/XRP'
 import XrpMemo from '../../../src/XRP/model/xrp-memo'
 import bigInt from 'big-integer'
@@ -41,9 +41,10 @@ export default class XRPTestUtils {
    * Generates a random wallet and funds it using the XRPL Testnet faucet.
    */
   static async randomWalletFromFaucet(): Promise<Wallet> {
-    const timeoutInSeconds = 20
+    const timeoutInSeconds = 40
 
-    const wallet = Wallet.generateRandomWallet()?.wallet
+    const walletFactory = new WalletFactory(XrplNetwork.Test)
+    const wallet = (await walletFactory.generateRandomWallet())!.wallet
     if (!wallet) {
       throw new XrpError(
         XrpErrorType.Unknown,
