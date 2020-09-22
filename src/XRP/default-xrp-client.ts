@@ -501,7 +501,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    *
    * @set https://xrpl.org/depositpreauth.html
    *
-   * @param xAddressToAuthorize The X-Address of the account to unauthorize DepositPreauth for.
+   * @param xAddressToUnauthorize The X-Address of the account to unauthorize DepositPreauth for.
    * @param wallet The wallet associated with the XRPL account disabling DepositPreauth and that will sign the request.
    */
   public async unauthorizeDepositPreauth(
@@ -520,7 +520,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     unauthorize.setValue(senderAccountAddress)
 
     const depositPreauth = new DepositPreauth()
-    depositPreauth.setAuthorize(unauthorize)
+    depositPreauth.setUnauthorize(unauthorize)
 
     const transaction = await this.prepareBaseTransaction(wallet)
     transaction.setDepositPreauth(depositPreauth)
