@@ -34,11 +34,8 @@ import {
   testIsValidated,
   testLedgerIndex,
   testCurrencyProto,
-  testAccountPathElementProto,
-  testAccountIssuerPathElementProto,
-  testAccountCurrencyPathElementProto,
-  testCurrencyIssuerPathElementProto,
-  testEmptyPathElementProto,
+  testPathElementProtoWithAccount,
+  testPathElementProtoWithCurrencyIssuer,
   testEmptyPathProto,
   testPathProtoOneElement,
   testPathProtoThreeElements,
@@ -55,6 +52,9 @@ import {
   testGetTransactionResponseProtoMandatoryOnly,
   testInvalidIssuedCurrencyProto,
   testInvalidCurrencyAmountProto,
+  testInvalidPathElementWithAccountIssuer,
+  testInvalidPathElementWithAccountCurrency,
+  testInvalidPathElementProtoEmpty,
   testInvalidPaymentProtoBadAmount,
   testInvalidPaymentProtoBadDeliverMin,
   testInvalidPaymentProtoBadSendMax,
@@ -80,57 +80,59 @@ describe('Protocol Buffer Conversion', function (): void {
   // PathElement
 
   it('Convert PathElement protobuf with one valid field set to XrpPathElement', function (): void {
-    // GIVEN a PathElement protocol buffer with all fields set.
+    // GIVEN a PathElement protocol buffer with account field set.
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const pathElement = XrpPathElement.from(testAccountPathElementProto)
+    const pathElement = XrpPathElement.from(testPathElementProtoWithAccount)
 
     // THEN the currency converted as expected.
     assert.equal(
       pathElement.account,
-      testAccountPathElementProto.getAccount()!.getAddress(),
+      testPathElementProtoWithAccount.getAccount()!.getAddress(),
     )
     assert.equal(pathElement.currency, undefined)
     assert.equal(pathElement.issuer, undefined)
   })
 
   it('Convert PathElement protobuf with two valid fields set to XrpPathElement', function (): void {
-    // GIVEN a PathElement protocol buffer with all fields set.
+    // GIVEN a PathElement protocol buffer with currency and issuer fields set.
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const pathElement = XrpPathElement.from(testCurrencyIssuerPathElementProto)
+    const pathElement = XrpPathElement.from(
+      testPathElementProtoWithCurrencyIssuer,
+    )
 
     // THEN the currency converted as expected.
     assert.equal(pathElement.account, undefined)
     assert.deepEqual(
       pathElement.currency,
-      XrpCurrency.from(testCurrencyIssuerPathElementProto.getCurrency()!),
+      XrpCurrency.from(testPathElementProtoWithCurrencyIssuer.getCurrency()!),
     )
     assert.equal(
       pathElement.issuer,
-      testCurrencyIssuerPathElementProto.getIssuer()!.getAddress(),
+      testPathElementProtoWithCurrencyIssuer.getIssuer()!.getAddress(),
     )
   })
 
   it('Convert PathElement protobuf with mutually exclusive fields set to XrpPathElement', function (): void {
-    // GIVEN a PathElement protocol buffer with no fields set.
+    // GIVEN a PathElement protocol buffer with account and currency fields set.
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(
       () => {
-        XrpPathElement.from(testAccountCurrencyPathElementProto)
+        XrpPathElement.from(testInvalidPathElementWithAccountCurrency)
       },
       XrpError,
-      'Path element protobuf contains both `account` and `currency` fields.',
+      'PathElement protobuf should not contain both `account` and `currency` fields.',
     )
   })
 
   it('Convert PathElement protobuf with different mutually exclusive fields set to XrpPathElement', function (): void {
-    // GIVEN a PathElement protocol buffer with no fields set.
+    // GIVEN a PathElement protocol buffer with account and issuer fields set.
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(
       () => {
-        XrpPathElement.from(testAccountIssuerPathElementProto)
+        XrpPathElement.from(testInvalidPathElementWithAccountIssuer)
       },
       XrpError,
-      'Path element protobuf contains both `account` and `issuer` fields.',
+      'PathElement protobuf should not contain both `account` and `issuer` fields.',
     )
   })
 
@@ -139,10 +141,10 @@ describe('Protocol Buffer Conversion', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(
       () => {
-        XrpPathElement.from(testEmptyPathElementProto)
+        XrpPathElement.from(testInvalidPathElementProtoEmpty)
       },
       XrpError,
-      'Path element protobuf does not contain any field.',
+      'PathElement protobuf is missing all fields.',
     )
   })
 

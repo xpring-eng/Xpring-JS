@@ -23,7 +23,7 @@ export default class XrpPathElement {
     if (account && currency) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'Path element protobuf contains both `account` and `currency` fields.',
+        'PathElement protobuf should not contain both `account` and `currency` fields.',
       )
     }
 
@@ -32,14 +32,14 @@ export default class XrpPathElement {
     if (account && issuer) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'Path element protobuf contains both `account` and `issuer` fields.',
+        'PathElement protobuf should not contain both `account` and `issuer` fields.',
       )
     }
     // TODO check that `issuer` is omitted if the `currency` is XRP
     if (!account && !xrpCurrency && !issuer) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'Path element protobuf does not contain any field.',
+        'PathElement protobuf is missing all fields.',
       )
     }
     return new XrpPathElement(account, xrpCurrency, issuer)
