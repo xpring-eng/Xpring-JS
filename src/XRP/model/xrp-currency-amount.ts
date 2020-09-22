@@ -30,7 +30,7 @@ export default class XrpCurrencyAmount {
         }
         throw new XrpError(
           XrpErrorType.MalformedProtobuf,
-          'Currency amount protobuf does not have a defined amount of issued currency.',
+          'CurrencyAmount protobuf does not have a defined amount of issued currency.',
         )
       }
       case CurrencyAmount.AmountCase.XRP_AMOUNT: {
@@ -40,13 +40,13 @@ export default class XrpCurrencyAmount {
         }
         throw new XrpError(
           XrpErrorType.MalformedProtobuf,
-          'Currency amount protobuf does not have a defined amount of XRP.',
+          'CurrencyAmount protobuf does not have a defined amount of XRP.',
         )
       }
       default:
         throw new XrpError(
           XrpErrorType.MalformedProtobuf,
-          'Currency amount protobuf does not have an amount set.',
+          'CurrencyAmount protobuf does not have an amount set.',
         )
     }
   }

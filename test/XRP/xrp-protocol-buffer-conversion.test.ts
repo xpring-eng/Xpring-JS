@@ -141,11 +141,11 @@ describe('Protocol Buffer Conversion', function (): void {
   // IssuedCurrency
 
   it('Convert IssuedCurrency to XrpIssuedCurrency', function (): void {
-    // GIVEN an issued currency protocol buffer,
+    // GIVEN an IssuedCurrency protocol buffer,
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const issuedCurrency = XrpIssuedCurrency.from(testIssuedCurrencyProto)
 
-    // THEN the issued currency converted as expected.
+    // THEN the IssuedCurrency converted as expected.
     assert.deepEqual(
       issuedCurrency?.currency,
       XrpCurrency.from(testIssuedCurrencyProto.getCurrency()!),
@@ -161,7 +161,7 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert IssuedCurrency with bad value', function (): void {
-    // GIVEN an issued currency protocol buffer with an invalid value field
+    // GIVEN an IssuedCurrency protocol buffer with an invalid value field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(
       () => {
@@ -173,7 +173,7 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert IssuedCurrency with bad issuer', function (): void {
-    // GIVEN an issued currency protocol buffer with a missing issuer field
+    // GIVEN an IssuedCurrency protocol buffer with a missing issuer field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(
       () => {
@@ -185,7 +185,7 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert IssuedCurrency with bad currency', function (): void {
-    // GIVEN an issued currency protocol buffer with a missing currency field
+    // GIVEN an IssuedCurrency protocol buffer with a missing currency field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(
       () => {
