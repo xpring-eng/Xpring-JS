@@ -477,15 +477,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
       wallet,
     )
 
-    const rawStatus = await this.getRawTransactionStatus(transactionHash)
-    const isValidated = rawStatus.isValidated
-    const transactionStatus = await this.getPaymentStatus(transactionHash)
-
-    return new TransactionResult(
-      transactionHash,
-      transactionStatus,
-      isValidated,
-    )
+    return await this.getTransactionResult(transactionHash)
   }
 
   /**
