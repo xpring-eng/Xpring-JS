@@ -53,7 +53,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     const transactionHash = await this.decoratedClient.sendWithDetails(
       sendXrpDetails,
     )
-    await this.awaitFinalTransactionResult(transactionHash, sender)
+    await this.awaitFinalTransactionStatus(transactionHash, sender)
 
     return transactionHash
   }
@@ -86,18 +86,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
 
   public async enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
     const result = await this.decoratedClient.enableDepositAuth(wallet)
-    const transactionHash = result.hash
-
-    const rawTransactionStatus = await this.awaitFinalTransactionResult(
-      transactionHash,
-      wallet,
-    )
-    const finalStatus = this.determineFinalResult(rawTransactionStatus)
-    return new TransactionResult(
-      transactionHash,
-      finalStatus,
-      rawTransactionStatus.isValidated,
-    )
+    return await this.awaitFinalTransactionResult(result.hash, wallet)
   }
 
   public async authorizeDepositPreauth(
@@ -108,9 +97,21 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
       senderXAddress,
       wallet,
     )
-    const transactionHash = result.hash
 
-    const rawTransactionStatus = await this.awaitFinalTransactionResult(
+    return await this.awaitFinalTransactionResult(result.hash, wallet)
+  }
+
+  /**
+   * Waits for a transaction to complete and returns a TransactionResult.
+   *
+   * @param transactionHash The transaction to wait for.
+   * @param wallet The wallet sending the transaction.
+   */
+  private async awaitFinalTransactionResult(
+    transactionHash: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const rawTransactionStatus = await this.awaitFinalTransactionStatus(
       transactionHash,
       wallet,
     )
@@ -138,7 +139,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     }
   }
 
-  private async awaitFinalTransactionResult(
+  private async awaitFinalTransactionStatus(
     transactionHash: string,
     sender: Wallet,
   ): Promise<RawTransactionStatus> {
