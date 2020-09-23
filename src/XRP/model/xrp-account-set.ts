@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { AccountSet } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 /*
@@ -19,11 +20,37 @@ export default class XrpAccountSet {
   public static from(accountSet: AccountSet): XrpAccountSet | undefined {
     const clearFlag = accountSet.getClearFlag()?.getValue()
     const domain = accountSet.getDomain()?.getValue()
+    if (domain?.toLowerCase() != domain) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'AccountSet protobuf field `domain` is not lowercase.',
+      )
+    }
     const emailHash = accountSet.getEmailHash()?.getValue_asU8()
     const messageKey = accountSet.getMessageKey()?.getValue_asU8()
     const setFlag = accountSet.getSetFlag()?.getValue()
     const transferRate = accountSet.getTransferRate()?.getValue()
+    if (transferRate) {
+      if (transferRate > 2000000000) {
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          'AccountSet protobuf field `transferRate` is above 2000000000.',
+        )
+      }
+      if (transferRate < 1000000000 && transferRate != 0) {
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          'AccountSet protobuf field `transferRate` is below 1000000000.',
+        )
+      }
+    }
     const tickSize = accountSet.getTickSize()?.getValue()
+    if (tickSize && (tickSize < 3 || tickSize > 15) && tickSize != 0) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'AccountSet protobuf field `tickSize` not between 3 and 15, inclusive, or 0.',
+      )
+    }
 
     return new XrpAccountSet(
       clearFlag,
