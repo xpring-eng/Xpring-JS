@@ -20,6 +20,7 @@ export default class XrpAccountSet {
   public static from(accountSet: AccountSet): XrpAccountSet | undefined {
     const clearFlag = accountSet.getClearFlag()?.getValue()
     const domain = accountSet.getDomain()?.getValue()
+    // domain must be lowercase
     if (domain?.toLowerCase() != domain) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
@@ -30,6 +31,8 @@ export default class XrpAccountSet {
     const messageKey = accountSet.getMessageKey()?.getValue_asU8()
     const setFlag = accountSet.getSetFlag()?.getValue()
     const transferRate = accountSet.getTransferRate()?.getValue()
+    // transferRate cannot be more than 2000000000 or less than 1000000000,
+    // except for the special case 0 meaning no fee.
     if (transferRate) {
       if (transferRate > 2000000000) {
         throw new XrpError(
@@ -45,6 +48,7 @@ export default class XrpAccountSet {
       }
     }
     const tickSize = accountSet.getTickSize()?.getValue()
+    // Valid values for tickSize are 3 to 15 inclusive, or 0 to disable.
     if (tickSize && (tickSize < 3 || tickSize > 15) && tickSize != 0) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
