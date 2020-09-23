@@ -448,7 +448,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   }
 
   /**
-   * Enables DepositPreauth and authorizes an XRPL account to deposit to this XRPL account.
+   * Enables DepositPreauth and authorizes an XRPL account to send to this XRPL account.
    *
    * @set https://xrpl.org/depositpreauth.html
    *
