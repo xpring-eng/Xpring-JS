@@ -840,12 +840,13 @@ describe('Default XRP Client', function (): void {
       XrplNetwork.Test,
     )
 
-    const senderXAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
+    const xAddressToAuthorize =
+      'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN authorizeSendingAccount is called.
     const result = await xrpClient.authorizeSendingAccount(
-      senderXAddress,
+      xAddressToAuthorize,
       wallet,
     )
     const transactionHash = result.hash
@@ -872,14 +873,17 @@ describe('Default XRP Client', function (): void {
       XrplNetwork.Test,
     )
 
-    const senderXAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
+    const xAddressToAuthorize =
+      'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN authorizeSendingAccount is attempted THEN an error is propagated.
-    xrpClient.authorizeSendingAccount(senderXAddress, wallet).catch((error) => {
-      assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
-      done()
-    })
+    xrpClient
+      .authorizeSendingAccount(xAddressToAuthorize, wallet)
+      .catch((error) => {
+        assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
+        done()
+      })
   })
 
   it('Authorize DepositPreauth - failure with malformed sender X-Address', function (done): void {
@@ -889,13 +893,15 @@ describe('Default XRP Client', function (): void {
       XrplNetwork.Test,
     )
 
-    const senderXAddress = 'notanxaddress'
+    const xAddressToAuthorize = 'notanxaddress'
     const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN authorizeSendingAccount is attempted THEN an error is propagated.
-    xrpClient.authorizeSendingAccount(senderXAddress, wallet).catch((error) => {
-      assert.deepEqual(error, XrpError.xAddressRequired)
-      done()
-    })
+    xrpClient
+      .authorizeSendingAccount(xAddressToAuthorize, wallet)
+      .catch((error) => {
+        assert.deepEqual(error, XrpError.xAddressRequired)
+        done()
+      })
   })
 })
