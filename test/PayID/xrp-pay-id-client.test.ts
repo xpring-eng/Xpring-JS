@@ -21,7 +21,7 @@ describe('XRP PayID Client', function (): void {
     const replyHeaders = {
       'content-type': 'application/xrpl-testnet+json',
     }
-    const payIdComponents = PayIdUtils.parsePayID(payId)
+    const payIdComponents = PayIdUtils.parsePayId(payId)
     if (!payIdComponents) {
       throw new Error('Test precondition failed: Could not generate a Pay ID')
     }
@@ -57,7 +57,7 @@ describe('XRP PayID Client', function (): void {
     const classicAddress = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
     const xAddress = XrpUtils.encodeXAddress(classicAddress, undefined, true)
 
-    const payIdComponents = PayIdUtils.parsePayID(payId)
+    const payIdComponents = PayIdUtils.parsePayId(payId)
     if (!payIdComponents) {
       throw new Error('Test precondition failed: Could not generate a Pay ID')
     }
@@ -101,7 +101,7 @@ describe('XRP PayID Client', function (): void {
       'content-type': 'application/xrpl-testnet+json',
     }
 
-    const payIdComponents = PayIdUtils.parsePayID(payId)
+    const payIdComponents = PayIdUtils.parsePayId(payId)
     if (!payIdComponents) {
       throw new Error('Test precondition failed: Could not generate a Pay ID')
     }
@@ -140,7 +140,7 @@ describe('XRP PayID Client', function (): void {
       'content-type': 'application/xrpl-testnet+json',
     }
 
-    const payIdComponents = PayIdUtils.parsePayID(payId)
+    const payIdComponents = PayIdUtils.parsePayId(payId)
     if (!payIdComponents) {
       throw new Error('Test precondition failed: Could not generate a Pay ID')
     }
