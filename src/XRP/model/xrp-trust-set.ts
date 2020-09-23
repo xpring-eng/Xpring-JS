@@ -17,7 +17,7 @@ export default class XrpTrustSet {
    * @return an XrpTrustSet with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L312
    */
-  public static from(trustSet: TrustSet): XrpTrustSet | undefined {
+  public static from(trustSet: TrustSet): XrpTrustSet {
     const limitAmountCurrencyAmount = trustSet.getLimitAmount()?.getValue()
     // limitAmountCurrencyAmount is required
     if (!limitAmountCurrencyAmount) {
@@ -27,39 +27,10 @@ export default class XrpTrustSet {
       )
     }
     const limitAmount = XrpCurrencyAmount.from(limitAmountCurrencyAmount)
-    // limitAmount is required
-    if (!limitAmount) {
-      throw new XrpError(
-        XrpErrorType.MalformedProtobuf,
-        'TrustSet protobuf field `LimitAmount` cannot be converted to XrpCurrencyAmount.',
-      )
-    }
     if (!limitAmount.issuedCurrency) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'TrustSet protobuf does not use issued currency.',
-      )
-    }
-    const limitAmountIssuedCurrency = limitAmount.issuedCurrency
-    // limitAmount.currency is required
-    if (!limitAmountIssuedCurrency.currency) {
-      throw new XrpError(
-        XrpErrorType.MalformedProtobuf,
-        'TrustSet protobuf field `LimitAmount` does not have a currency.',
-      )
-    }
-    // limitAmount.issuer is required
-    if (!limitAmountIssuedCurrency.issuer) {
-      throw new XrpError(
-        XrpErrorType.MalformedProtobuf,
-        'TrustSet protobuf field `LimitAmount` does not have an issuer.',
-      )
-    }
-    // limitAmount.value is required
-    if (!limitAmountIssuedCurrency.value) {
-      throw new XrpError(
-        XrpErrorType.MalformedProtobuf,
-        'TrustSet protobuf field `LimitAmount` does not have a value.',
       )
     }
     const qualityIn = trustSet.getQualityIn()?.getValue()
