@@ -952,7 +952,7 @@ describe('Default XRP Client', function (): void {
       })
   })
 
-  it('Unauthorize DepositPreauth - malformed sender address', function (done): void {
+  it('Unauthorize DepositPreauth - failure with malformed sender X-Address', function (done): void {
     // GIVEN a DefaultXrpClient with mocked networking
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
