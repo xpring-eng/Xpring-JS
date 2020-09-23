@@ -764,11 +764,7 @@ describe('Default XRP Client', function (): void {
       await xrpClient.getPayment(transactionHash)
       assert.fail('No error thrown.')
     } catch (e) {
-      assert(
-        e.message.includes(
-          'Issued currency protobuf does not contain valid `value` field.',
-        ),
-      )
+      assert(e.message.includes('IssuedCurrency protobuf'))
     }
   })
 

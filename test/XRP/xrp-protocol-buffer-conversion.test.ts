@@ -217,13 +217,9 @@ describe('Protocol Buffer Conversion', function (): void {
   it('Convert CurrencyAmount with bad inputs', function (): void {
     // GIVEN a currency amount protocol buffer with no amounts
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
-    assert.throws(
-      () => {
-        XrpCurrencyAmount.from(testInvalidCurrencyAmountProto)
-      },
-      XrpError,
-      'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
-    )
+    assert.throws(() => {
+      XrpCurrencyAmount.from(testInvalidCurrencyAmountProto)
+    }, XrpError)
   })
 
   // Payment
