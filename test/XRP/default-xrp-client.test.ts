@@ -914,12 +914,13 @@ describe('Default XRP Client', function (): void {
       XrplNetwork.Test,
     )
 
-    const senderXAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
+    const xAddressToUnauthorize =
+      'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const { wallet } = Wallet.generateRandomWallet()!
 
-    // WHEN unauthorizeDepositPreauth is called.
-    const result = await xrpClient.unauthorizeDepositPreauth(
-      senderXAddress,
+    // WHEN unauthorizeSendingAccount is called.
+    const result = await xrpClient.unauthorizeSendingAccount(
+      xAddressToUnauthorize,
       wallet,
     )
     const transactionHash = result.hash
@@ -946,12 +947,13 @@ describe('Default XRP Client', function (): void {
       XrplNetwork.Test,
     )
 
-    const senderXAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
+    const xAddressToUnauthorize =
+      'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const { wallet } = Wallet.generateRandomWallet()!
 
-    // WHEN unauthorizeDepositPreauth is attempted THEN an error is propagated.
+    // WHEN unauthorizeSendingAccount is attempted THEN an error is propagated.
     xrpClient
-      .unauthorizeDepositPreauth(senderXAddress, wallet)
+      .unauthorizeSendingAccount(xAddressToUnauthorize, wallet)
       .catch((error) => {
         assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
         done()
@@ -965,12 +967,12 @@ describe('Default XRP Client', function (): void {
       XrplNetwork.Test,
     )
 
-    const senderXAddress = 'notanxaddress'
+    const xAddressToUnauthorize = 'notanxaddress'
     const { wallet } = Wallet.generateRandomWallet()!
 
-    // WHEN unauthorizeDepositPreauth is attempted THEN an error is propagated.
+    // WHEN unauthorizeSendingAccount is attempted THEN an error is propagated.
     xrpClient
-      .unauthorizeDepositPreauth(senderXAddress, wallet)
+      .unauthorizeSendingAccount(xAddressToUnauthorize, wallet)
       .catch((error) => {
         assert.deepEqual(error, XrpError.xAddressRequired)
         done()

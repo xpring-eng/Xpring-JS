@@ -490,23 +490,23 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    *
    * @set https://xrpl.org/depositpreauth.html
    *
-   * @param senderXAddress The X-Address of the sender to unauthorize.
+   * @param xAddressToUnauthorize The X-Address of the sender to unauthorize.
    * @param wallet The wallet associated with the XRPL account disabling DepositPreauth and that will sign the request.
    */
-  public async unauthorizeDepositPreauth(
-    senderXAddress: string,
+  public async unauthorizeSendingAccount(
+    xAddressToUnauthorize: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    const classicAddress = XrpUtils.decodeXAddress(senderXAddress)
+    const classicAddress = XrpUtils.decodeXAddress(xAddressToUnauthorize)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
 
-    const senderAccountAddress = new AccountAddress()
-    senderAccountAddress.setAddress(senderXAddress)
+    const accountAddressToUnauthorize = new AccountAddress()
+    accountAddressToUnauthorize.setAddress(xAddressToUnauthorize)
 
     const unauthorize = new Unauthorize()
-    unauthorize.setValue(senderAccountAddress)
+    unauthorize.setValue(accountAddressToUnauthorize)
 
     const depositPreauth = new DepositPreauth()
     depositPreauth.setUnauthorize(unauthorize)
@@ -544,11 +544,11 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     const accountData = await this.getAccountData(classicAddress.address)
     const openLedgerSequence = await this.getOpenLedgerSequence()
 
-    const senderAccountAddress = new AccountAddress()
-    senderAccountAddress.setAddress(wallet.getAddress())
+    const accountAddressToUnauthorize = new AccountAddress()
+    accountAddressToUnauthorize.setAddress(wallet.getAddress())
 
     const account = new Account()
-    account.setValue(senderAccountAddress)
+    account.setValue(accountAddressToUnauthorize)
 
     const lastLedgerSequence = new LastLedgerSequence()
     lastLedgerSequence.setValue(openLedgerSequence + maxLedgerVersionOffset)
