@@ -346,6 +346,13 @@ testSignerEntryProto.setSignerWeight(testSignerWeightProto)
 
 // INVALID OBJECTS =============================================
 
+// Invalid Currency proto
+const testInvalidCurrencyProtoNoName = new Currency()
+testInvalidCurrencyProtoNoName.setCode(testCurrencyCode)
+
+const testInvalidCurrencyProtoNoCode = new Currency()
+testInvalidCurrencyProtoNoCode.setName(testCurrencyName)
+
 // Invalid IssuedCurrencyAmount protos
 const testInvalidIssuedCurrencyProtoBadValue = new IssuedCurrencyAmount()
 testInvalidIssuedCurrencyProtoBadValue.setCurrency(testCurrencyProto)
@@ -484,6 +491,8 @@ export {
   testXrpTransaction,
   testGetAccountTransactionHistoryResponse,
   testGetTransactionResponseProtoMandatoryOnly,
+  testInvalidCurrencyProtoNoName,
+  testInvalidCurrencyProtoNoCode,
   testInvalidIssuedCurrencyProtoBadValue,
   testInvalidIssuedCurrencyProtoBadCurrency,
   testInvalidIssuedCurrencyProtoBadIssuer,
