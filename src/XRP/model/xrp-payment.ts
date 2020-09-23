@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { Payment } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -26,12 +27,20 @@ export default class XrpPayment {
     const amount =
       paymentAmountValue && XrpCurrencyAmount.from(paymentAmountValue)
     if (!amount) {
-      return undefined // amount is required
+      // amount is required
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Payment protobuf is missing required `amount` field.',
+      )
     }
 
     const destination = payment.getDestination()?.getValue()?.getAddress()
     if (!destination) {
-      return undefined // destination is required
+      // destination is required
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Payment protobuf is missing required `destination` field.',
+      )
     }
 
     const destinationTag = payment.getDestinationTag()?.getValue()
@@ -43,7 +52,10 @@ export default class XrpPayment {
     )
     // An X-address should always be able to be encoded.
     if (!destinationXAddress) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Payment protobuf destination cannot be encoded into an X-address.',
+      )
     }
 
     // If the deliverMin field is set, it must be able to be transformed into a XrpCurrencyAmount.
@@ -51,7 +63,10 @@ export default class XrpPayment {
     const deliverMin =
       paymentDeliverMinValue && XrpCurrencyAmount.from(paymentDeliverMinValue)
     if (paymentDeliverMinValue && !deliverMin) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Payment protobuf `deliverMin` field cannot be transformed into an XrpCurrencyAmount.',
+      )
     }
 
     const invoiceID = payment.getInvoiceId()?.getValue_asU8()
@@ -66,7 +81,10 @@ export default class XrpPayment {
     const sendMax =
       paymentSendMaxValue && XrpCurrencyAmount.from(paymentSendMaxValue)
     if (paymentSendMaxValue && !sendMax) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Payment protobuf `sendMax` field cannot be transformed into an XrpCurrencyAmount.',
+      )
     }
 
     return new XrpPayment(
@@ -89,8 +107,8 @@ export default class XrpPayment {
    * @param sendMax (Optional) Highest amount of source currency this transaction is allowed to cost.
    */
   private constructor(
-    readonly amount?: XrpCurrencyAmount,
-    readonly destinationXAddress?: string,
+    readonly amount: XrpCurrencyAmount,
+    readonly destinationXAddress: string,
     readonly deliverMin?: XrpCurrencyAmount,
     readonly invoiceID?: Uint8Array,
     readonly paths?: Array<XrpPath | undefined>,
