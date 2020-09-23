@@ -44,10 +44,19 @@ export default class XrpMemo {
     format?: MemoField,
     type?: MemoField,
   ): XrpMemo {
+    const memoData = data
+      ? stringToUint8Array(data.value, data.isHex)
+      : stringToUint8Array('', false)
+    const memoFormat = format
+      ? stringToUint8Array(format.value, format.isHex)
+      : stringToUint8Array('', false)
+    const memoType = type
+      ? stringToUint8Array(type.value, type.isHex)
+      : stringToUint8Array('', false)
     return {
-      data: stringToUint8Array(data?.value, data?.isHex),
-      format: stringToUint8Array(format?.value, format?.isHex),
-      type: stringToUint8Array(type?.value, type?.isHex),
+      data: memoData,
+      format: memoFormat,
+      type: memoType,
     }
   }
 
