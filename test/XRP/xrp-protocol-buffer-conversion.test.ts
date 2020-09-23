@@ -50,6 +50,8 @@ import {
   testSignerEntryProto,
   testGetTransactionResponseProto,
   testGetTransactionResponseProtoMandatoryOnly,
+  testInvalidCurrencyProtoNoName,
+  testInvalidCurrencyProtoNoCode,
   testInvalidIssuedCurrencyProto,
   testInvalidCurrencyAmountProto,
   testInvalidPathElementWithAccountIssuer,
@@ -73,8 +75,32 @@ describe('Protocol Buffer Conversion', function (): void {
     const currency = XrpCurrency.from(testCurrencyProto)
 
     // THEN the currency converted as expected.
-    assert.deepEqual(currency.code, testCurrencyProto.getCode())
+    assert.deepEqual(currency.code, testCurrencyProto.getCode_asB64())
     assert.deepEqual(currency.name, testCurrencyProto.getName())
+  })
+
+  it('Convert Currency protobuf missing required field name', function (): void {
+    // GIVEN a Currency protocol buffer missing a name.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpCurrency.from(testInvalidCurrencyProtoNoName)
+      },
+      XrpError,
+      'Currency protobuf missing required field `name`.',
+    )
+  })
+
+  it('Convert Currency protobuf missing required field code', function (): void {
+    // GIVEN a Currency protocol buffer missing a code.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(
+      () => {
+        XrpCurrency.from(testInvalidCurrencyProtoNoCode)
+      },
+      XrpError,
+      'Currency protobuf missing required field `code`.',
+    )
   })
 
   // PathElement
