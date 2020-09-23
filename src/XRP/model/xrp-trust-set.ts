@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { TrustSet } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount from './xrp-currency-amount'
 
@@ -18,12 +19,48 @@ export default class XrpTrustSet {
    */
   public static from(trustSet: TrustSet): XrpTrustSet | undefined {
     const limitAmountCurrencyAmount = trustSet.getLimitAmount()?.getValue()
+    // limitAmountCurrencyAmount is required
     if (!limitAmountCurrencyAmount) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'TrustSet protobuf missing required field `LimitAmount`.',
+      )
     }
     const limitAmount = XrpCurrencyAmount.from(limitAmountCurrencyAmount)
+    // limitAmount is required
     if (!limitAmount) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'TrustSet protobuf field `LimitAmount` cannot be converted to XrpCurrencyAmount.',
+      )
+    }
+    if (!limitAmount.issuedCurrency) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'TrustSet protobuf does not use issued currency.',
+      )
+    }
+    const limitAmountIssuedCurrency = limitAmount.issuedCurrency
+    // limitAmount.currency is required
+    if (!limitAmountIssuedCurrency.currency) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'TrustSet protobuf field `LimitAmount` does not have a currency.',
+      )
+    }
+    // limitAmount.issuer is required
+    if (!limitAmountIssuedCurrency.issuer) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'TrustSet protobuf field `LimitAmount` does not have an issuer.',
+      )
+    }
+    // limitAmount.value is required
+    if (!limitAmountIssuedCurrency.value) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'TrustSet protobuf field `LimitAmount` does not have a value.',
+      )
     }
     const qualityIn = trustSet.getQualityIn()?.getValue()
     const qualityOut = trustSet.getQualityOut()?.getValue()
