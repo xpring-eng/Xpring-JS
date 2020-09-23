@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 
 import { XrplNetwork } from 'xpring-common-js'
-import XrpUtils from '../../src/XRP/xrp-utils'
+import { XrpError, XrpUtils } from '../../src'
 import XrpTrustSet from '../../src/XRP/model/xrp-trust-set'
 import XRPSignerEntry from '../../src/XRP/model/xrp-signer-entry'
 import XrpSignerListSet from '../../src/XRP/model/xrp-signer-list-set'
@@ -937,10 +937,9 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
   it('Convert TrustSet protobuf to XrpTrustSet object - missing mandatory field', function (): void {
     // GIVEN a TrustSet protocol buffer missing mandatory limitAmount field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const trustSet = XrpTrustSet.from(testInvalidTrustSetProto)
-
-    // THEN the result is undefined
-    assert.isUndefined(trustSet)
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpTrustSet.from(testInvalidTrustSetProto)
+    }, XrpError)
   })
 })
