@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { DepositPreauth } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -27,6 +28,13 @@ export default class XrpDepositPreauth {
       .getUnauthorize()
       ?.getValue()
       ?.getAddress()
+    // You must provide either Authorize or Unauthorize, but not both.
+    if (authorize && unauthorize) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'DepositPreauth protobuf provides both `Authorize` and `Unauthorize` fields.',
+      )
+    }
 
     let authorizeXAddress
     let unauthorizeXAddress
@@ -41,6 +49,11 @@ export default class XrpDepositPreauth {
         unauthorize,
         undefined,
         xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
+      )
+    } else {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'DepositPreauth protobuf provides neither `Authorize` nor `Unauthorize` fields.',
       )
     }
     return new XrpDepositPreauth(authorizeXAddress, unauthorizeXAddress)
