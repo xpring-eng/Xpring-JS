@@ -72,7 +72,7 @@ describe('Protocol Buffer Conversion', function (): void {
     const currency = XrpCurrency.from(testCurrencyProto)
 
     // THEN the currency converted as expected.
-    assert.deepEqual(currency.code, testCurrencyProto.getCode())
+    assert.deepEqual(currency.code, testCurrencyProto.getCode_asB64())
     assert.deepEqual(currency.name, testCurrencyProto.getName())
   })
 
