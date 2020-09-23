@@ -433,6 +433,9 @@ testInvalidCheckCashProto.setAmount(testAmountProto)
 const testInvalidCheckCreateProto = new CheckCreate()
 testInvalidCheckCreateProto.setSendMax(testSendMaxProto)
 
+// Invalid DepositPreauth photo (neither authorize nor unauthorize)
+const testInvalidDepositPreauthProtoNoAuthUnauth = new DepositPreauth()
+
 // Invalid EscrowCancel proto (missing owner)
 const testInvalidEscrowCancelProto = new EscrowCancel()
 testInvalidEscrowCancelProto.setOfferSequence(testOfferSequenceProto)
@@ -508,6 +511,7 @@ export {
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
+  testInvalidDepositPreauthProtoNoAuthUnauth,
   testInvalidEscrowCancelProto,
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,

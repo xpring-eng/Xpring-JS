@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 
 import { XrplNetwork } from 'xpring-common-js'
-import XrpUtils from '../../src/XRP/xrp-utils'
+import { XrpError, XrpUtils } from '../../src'
 import XrpTrustSet from '../../src/XRP/model/xrp-trust-set'
 import XRPSignerEntry from '../../src/XRP/model/xrp-signer-entry'
 import XrpSignerListSet from '../../src/XRP/model/xrp-signer-list-set'
@@ -52,6 +52,7 @@ import {
   testTrustSetProtoMandatoryOnly,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
+  testInvalidDepositPreauthProtoNoAuthUnauth,
   testInvalidCheckCreateProto,
   testInvalidEscrowCancelProto,
   testInvalidEscrowCreateProto,
@@ -359,6 +360,17 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
       true,
     )
     assert.equal(depositPreauth?.unauthorizeXAddress, expectedXAddress)
+  })
+
+  it('Convert DepositPreauth protobuf to XrpDepositPreauth object - neither authorize nor unauthorize', function (): void {
+    // GIVEN a DespoitPreauth protocol buffer neither authorize nor unauthorize field set.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpDepositPreauth.from(
+        testInvalidDepositPreauthProtoNoAuthUnauth,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
   })
 
   // Escrow Cancel
