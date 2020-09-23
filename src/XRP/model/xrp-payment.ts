@@ -33,6 +33,7 @@ export default class XrpPayment {
         'Payment protobuf is missing required `amount` field.',
       )
     }
+    // TODO For non-XRP amounts, the nested field names in `amount` MUST be lower-case.
 
     const destination = payment.getDestination()?.getValue()?.getAddress()
     if (!destination) {
@@ -68,9 +69,11 @@ export default class XrpPayment {
         'Payment protobuf `deliverMin` field cannot be transformed into an XrpCurrencyAmount.',
       )
     }
+    // TODO For non-XRP amounts, the nested field names in the deliverMin field are lower-case.
 
     const invoiceID = payment.getInvoiceId()?.getValue_asU8()
 
+    // TODO `paths` must be omitted for XRP-to-XRP transactions.
     const paths =
       payment.getPathsList()?.length > 0
         ? payment.getPathsList().map((path) => XrpPath.from(path))
@@ -86,6 +89,8 @@ export default class XrpPayment {
         'Payment protobuf `sendMax` field cannot be transformed into an XrpCurrencyAmount.',
       )
     }
+    // TODO for XRP-to-XRP payments the sendMax field must be omitted
+    // TODO for non-XRP amounts the nested field names in the SendMax field MUST be lower-case
 
     return new XrpPayment(
       amount,
