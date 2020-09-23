@@ -843,8 +843,8 @@ describe('Default XRP Client', function (): void {
     const senderXAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const { wallet } = Wallet.generateRandomWallet()!
 
-    // WHEN authorizeDepositPreauth is called.
-    const result = await xrpClient.authorizeDepositPreauth(
+    // WHEN authorizeSendingAccount is called.
+    const result = await xrpClient.authorizeSendingAccount(
       senderXAddress,
       wallet,
     )
@@ -875,8 +875,8 @@ describe('Default XRP Client', function (): void {
     const senderXAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const { wallet } = Wallet.generateRandomWallet()!
 
-    // WHEN authorizeDepositPreauth is attempted THEN an error is propagated.
-    xrpClient.authorizeDepositPreauth(senderXAddress, wallet).catch((error) => {
+    // WHEN authorizeSendingAccount is attempted THEN an error is propagated.
+    xrpClient.authorizeSendingAccount(senderXAddress, wallet).catch((error) => {
       assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
       done()
     })
@@ -892,8 +892,8 @@ describe('Default XRP Client', function (): void {
     const senderXAddress = 'notanxaddress'
     const { wallet } = Wallet.generateRandomWallet()!
 
-    // WHEN authorizeDepositPreauth is attempted THEN an error is propagated.
-    xrpClient.authorizeDepositPreauth(senderXAddress, wallet).catch((error) => {
+    // WHEN authorizeSendingAccount is attempted THEN an error is propagated.
+    xrpClient.authorizeSendingAccount(senderXAddress, wallet).catch((error) => {
       assert.deepEqual(error, XrpError.xAddressRequired)
       done()
     })
