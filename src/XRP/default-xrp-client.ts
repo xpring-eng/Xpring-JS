@@ -452,20 +452,20 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    *
    * @set https://xrpl.org/depositpreauth.html
    *
-   * @param xAddressToAuthorize The X-Address of the account to enable DepositPreauth for.
+   * @param senderXAddress The X-Address of the sender to enable DepositPreauth for.
    * @param wallet The wallet associated with the XRPL account enabling DepositPreauth and that will sign the request.
    */
   public async authorizeDepositPreauth(
-    xAddressToAuthorize: string,
+    senderXAddress: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    const classicAddress = XrpUtils.decodeXAddress(xAddressToAuthorize)
+    const classicAddress = XrpUtils.decodeXAddress(senderXAddress)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
 
     const senderAccountAddress = new AccountAddress()
-    senderAccountAddress.setAddress(xAddressToAuthorize)
+    senderAccountAddress.setAddress(senderXAddress)
 
     const authorize = new Authorize()
     authorize.setValue(senderAccountAddress)
