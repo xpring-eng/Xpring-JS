@@ -4,6 +4,7 @@
 export enum XrpErrorType {
   InvalidInput,
   PaymentConversionFailure,
+  MalformedProtobuf,
   MalformedResponse,
   SigningError,
   Unknown,
@@ -28,6 +29,15 @@ export default class XrpError extends Error {
   static paymentConversionFailure = new XrpError(
     XrpErrorType.PaymentConversionFailure,
     'Could not convert payment transaction: (transaction). Please file a bug at https://github.com/xpring-eng/Xpring-JS/issues',
+  )
+
+  /**
+   * Encountered a protocol buffer formatted in contradiction to the logic of the XRPL.
+   * @see xrpl.org for XRPL documentation.
+   */
+  static malformedProtobuf = new XrpError(
+    XrpErrorType.MalformedProtobuf,
+    'Encountered a protocol buffer in unexpected format.  See xrpl.org for XRPL documentation.',
   )
 
   /**
