@@ -50,6 +50,10 @@ import {
   testSignerListSetProto,
   testTrustSetProtoAllFields,
   testTrustSetProtoMandatoryOnly,
+  testInvalidAccountSetProtoBadDomain,
+  testInvalidAccountSetProtoBadLowTransferRate,
+  testInvalidAccountSetProtoBadHighTransferRate,
+  testInvalidAccountSetProtoBadTickSize,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -70,6 +74,7 @@ import {
 } from './fakes/fake-xrp-transaction-type-protobufs'
 
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import { XrpError } from '../../src'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {
   // AccountSet
@@ -126,6 +131,38 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(accountSet?.setFlag)
     assert.isUndefined(accountSet?.transferRate)
     assert.isUndefined(accountSet?.tickSize)
+  })
+
+  it('Convert AccountSet protobuf with invalid domain field to XrpAccountSet object', function (): void {
+    // GIVEN an AccountSet protocol buffer with invalid domain field set.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountSet.from(testInvalidAccountSetProtoBadDomain)
+    }, XrpError)
+  })
+
+  it('Convert AccountSet protobuf with invalid low transferRate field to XrpAccountSet object', function (): void {
+    // GIVEN an AccountSet protocol buffer with invalid transferRate field set.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountSet.from(testInvalidAccountSetProtoBadLowTransferRate)
+    }, XrpError)
+  })
+
+  it('Convert AccountSet protobuf with invalid high transferRate field to XrpAccountSet object', function (): void {
+    // GIVEN an AccountSet protocol buffer with invalid transferRate field set.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountSet.from(testInvalidAccountSetProtoBadHighTransferRate)
+    }, XrpError)
+  })
+
+  it('Convert AccountSet protobuf with invalid tickSize field to XrpAccountSet object', function (): void {
+    // GIVEN an AccountSet protocol buffer with invalid tickSize field set.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountSet.from(testInvalidAccountSetProtoBadTickSize)
+    }, XrpError)
   })
 
   // AccountDelete

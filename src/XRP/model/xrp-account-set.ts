@@ -51,7 +51,6 @@ export default class XrpAccountSet {
         'AccountSet protobuf field `tickSize` not between 3 and 15, inclusive, or 0.',
       )
     }
-
     return new XrpAccountSet(
       clearFlag,
       domain,

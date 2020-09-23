@@ -77,7 +77,10 @@ const testEmailHash = new Uint8Array([8, 9, 10])
 const testMessageKey = new Uint8Array([11, 12, 13])
 const testSetFlag = 4
 const testTransferRate = 1234567890
+const testInvalidLowTransferRate = 11
+const testInvalidHighTransferRate = 9876543210
 const testTickSize = 7
+const testInvalidTickSize = 27
 
 // AccountDelete values
 const testDestination = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
@@ -131,7 +134,6 @@ const testQualityOut = 2
 // Protobuf objects ======================================================================
 
 // AccountSet protos
-
 const testClearFlagProto = new ClearFlag()
 testClearFlagProto.setValue(testClearFlag)
 
@@ -422,6 +424,38 @@ testTrustSetProtoMandatoryOnly.setLimitAmount(testLimitAmountProto)
 
 // Invalid Protobuf Objects ========================================================================
 
+// Invalid AccountSet proto (bad domain)
+const testInvalidDomainProto = new Domain()
+testInvalidDomainProto.setValue(testDomain.toUpperCase())
+
+const testInvalidAccountSetProtoBadDomain = new AccountSet()
+testInvalidAccountSetProtoBadDomain.setDomain(testInvalidDomainProto)
+
+// Invalid AccountSet proto (invalid transferRate (too low))
+const testInvalidLowTransferRateProto = new TransferRate()
+testInvalidLowTransferRateProto.setValue(testInvalidLowTransferRate)
+
+const testInvalidAccountSetProtoBadLowTransferRate = new AccountSet()
+testInvalidAccountSetProtoBadLowTransferRate.setTransferRate(
+  testInvalidLowTransferRateProto,
+)
+
+// Invalid AccountSet proto (invalid transferRate (too high))
+const testInvalidHighTransferRateProto = new TransferRate()
+testInvalidHighTransferRateProto.setValue(testInvalidHighTransferRate)
+
+const testInvalidAccountSetProtoBadHighTransferRate = new AccountSet()
+testInvalidAccountSetProtoBadHighTransferRate.setTransferRate(
+  testInvalidHighTransferRateProto,
+)
+
+// Invalid AccountSet proto (invalid tickSize)
+const testInvalidTickSizeProto = new TickSize()
+testInvalidTickSizeProto.setValue(testInvalidTickSize)
+
+const testInvalidAccountSetProtoBadTickSize = new AccountSet()
+testInvalidAccountSetProtoBadTickSize.setTickSize(testInvalidTickSizeProto)
+
 // Invalid CheckCancel proto (missing checkId)
 const testInvalidCheckCancelProto = new CheckCancel()
 
@@ -505,6 +539,10 @@ export {
   testSignerListSetProto,
   testTrustSetProtoAllFields,
   testTrustSetProtoMandatoryOnly,
+  testInvalidAccountSetProtoBadDomain,
+  testInvalidAccountSetProtoBadLowTransferRate,
+  testInvalidAccountSetProtoBadHighTransferRate,
+  testInvalidAccountSetProtoBadTickSize,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
