@@ -100,6 +100,28 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     )
   }
 
+  public async authorizeDepositPreauth(
+    senderXAddress: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const result = await this.decoratedClient.authorizeDepositPreauth(
+      senderXAddress,
+      wallet,
+    )
+    const transactionHash = result.hash
+
+    const rawTransactionStatus = await this.awaitFinalTransactionResult(
+      transactionHash,
+      wallet,
+    )
+    const finalStatus = this.determineFinalResult(rawTransactionStatus)
+    return new TransactionResult(
+      transactionHash,
+      finalStatus,
+      rawTransactionStatus.isValidated,
+    )
+  }
+
   private determineFinalResult(
     rawTransactionStatus: RawTransactionStatus,
   ): TransactionStatus {
