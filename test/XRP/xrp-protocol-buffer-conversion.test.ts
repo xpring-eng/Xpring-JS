@@ -60,6 +60,9 @@ import {
   testInvalidPaymentProtoBadAmount,
   testInvalidPaymentProtoBadDeliverMin,
   testInvalidPaymentProtoBadSendMax,
+  testInvalidSignerProtoNoAccount,
+  testInvalidSignerProtoNoPublicKey,
+  testInvalidSignerProtoNoTxnSignature,
   testInvalidGetTransactionResponseProto,
   testInvalidGetTransactionResponseProtoUnsupportedType,
 } from './fakes/fake-xrp-protobufs'
@@ -401,7 +404,7 @@ describe('Protocol Buffer Conversion', function (): void {
 
   // Signer
 
-  it('Convert Signer with all fields set', function (): void {
+  it('Convert Signer protobuf with all fields set', function (): void {
     // GIVEN a Signer protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const signer = XrpSigner.from(testSignerProto)
@@ -419,6 +422,30 @@ describe('Protocol Buffer Conversion', function (): void {
       signer?.transactionSignature,
       testSignerProto.getTransactionSignature()?.getValue_asU8(),
     )
+  })
+
+  it('Convert Signer protobuf missing required field account', function (): void {
+    // GIVEN a Signer protocol buffer missing an account.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpSigner.from(testInvalidSignerProtoNoAccount)
+    }, XrpError)
+  })
+
+  it('Convert Signer protobuf missing required field SigningPubKey', function (): void {
+    // GIVEN a Signer protocol buffer missing a public key.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpSigner.from(testInvalidSignerProtoNoPublicKey)
+    }, XrpError)
+  })
+
+  it('Convert Signer protobuf missing required field TxnSignature', function (): void {
+    // GIVEN a Signer protocol buffer missing a transaction signature.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpSigner.from(testInvalidSignerProtoNoTxnSignature)
+    }, XrpError)
   })
 
   // SignerEntry
