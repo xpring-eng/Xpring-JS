@@ -86,24 +86,24 @@ const testAccountAddressIssuer = new AccountAddress()
 testAccountAddressIssuer.setAddress(testAddress2)
 
 // PathElement protos
-const testPathElementProto = new Payment.PathElement()
-testPathElementProto.setCurrency(testCurrencyProto)
-testPathElementProto.setAccount(accountAddressProto)
-testPathElementProto.setIssuer(testAccountAddressIssuer)
+const testPathElementProtoWithAccount = new Payment.PathElement()
+testPathElementProtoWithAccount.setAccount(accountAddressProto)
 
-const testEmptyPathElementProto = new Payment.PathElement()
+const testPathElementProtoWithCurrencyIssuer = new Payment.PathElement()
+testPathElementProtoWithCurrencyIssuer.setCurrency(testCurrencyProto)
+testPathElementProtoWithCurrencyIssuer.setIssuer(testAccountAddressIssuer)
 
 // Path protos
 const testEmptyPathProto = new Payment.Path()
 
 const testPathProtoOneElement = new Payment.Path()
-testPathProtoOneElement.addElements(testPathElementProto)
+testPathProtoOneElement.addElements(testPathElementProtoWithAccount)
 
 const testPathProtoThreeElements = new Payment.Path()
 testPathProtoThreeElements.setElementsList([
-  testPathElementProto,
-  testPathElementProto,
-  testPathElementProto,
+  testPathElementProtoWithAccount,
+  testPathElementProtoWithCurrencyIssuer,
+  testPathElementProtoWithAccount,
 ])
 
 // ... for Payment protos
@@ -346,6 +346,17 @@ testSignerEntryProto.setSignerWeight(testSignerWeightProto)
 
 // INVALID OBJECTS =============================================
 
+// Invalid PathElement protos
+const testInvalidPathElementWithAccountCurrency = new Payment.PathElement()
+testInvalidPathElementWithAccountCurrency.setCurrency(testCurrencyProto)
+testInvalidPathElementWithAccountCurrency.setAccount(accountAddressProto)
+
+const testInvalidPathElementWithAccountIssuer = new Payment.PathElement()
+testInvalidPathElementWithAccountIssuer.setIssuer(testAccountAddressIssuer)
+testInvalidPathElementWithAccountIssuer.setAccount(accountAddressProto)
+
+const testInvalidPathElementProtoEmpty = new Payment.PathElement()
+
 // Invalid Currency proto
 const testInvalidCurrencyProtoNoName = new Currency()
 testInvalidCurrencyProtoNoName.setCode(testCurrencyCode)
@@ -470,8 +481,9 @@ export {
   testIsValidated,
   testLedgerIndex,
   testCurrencyProto,
-  testPathElementProto,
-  testEmptyPathElementProto,
+  testAccountAddressIssuer,
+  testPathElementProtoWithAccount,
+  testPathElementProtoWithCurrencyIssuer,
   testEmptyPathProto,
   testPathProtoOneElement,
   testPathProtoThreeElements,
@@ -497,6 +509,9 @@ export {
   testInvalidIssuedCurrencyProtoBadCurrency,
   testInvalidIssuedCurrencyProtoBadIssuer,
   testInvalidCurrencyAmountProto,
+  testInvalidPathElementWithAccountCurrency,
+  testInvalidPathElementWithAccountIssuer,
+  testInvalidPathElementProtoEmpty,
   testInvalidPaymentProtoBadAmount,
   testInvalidPaymentProtoBadDeliverMin,
   testInvalidPaymentProtoBadSendMax,
