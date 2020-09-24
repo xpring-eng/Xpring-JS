@@ -235,7 +235,7 @@ describe('Protocol Buffer Conversion', function (): void {
   // CurrencyAmount tests
 
   it('Convert CurrencyAmount with drops', function (): void {
-    // GIVEN a currency amount protocol buffer with an XRP amount.
+    // GIVEN a CurrencyAmount protocol buffer with an XRP amount.
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const currencyAmount = XrpCurrencyAmount.from(testCurrencyAmountProtoDrops)
 
@@ -248,7 +248,7 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert CurrencyAmount with Issued Currency', function (): void {
-    // GIVEN a currency amount protocol buffer with an issued currency amount.
+    // GIVEN a CurrencyAmount protocol buffer with an issued currency amount.
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const currencyAmount = XrpCurrencyAmount.from(
       testCurrencyAmountProtoIssuedCurrency,
@@ -263,7 +263,7 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert CurrencyAmount with bad inputs', function (): void {
-    // GIVEN a currency amount protocol buffer with no amounts
+    // GIVEN a CurrencyAmount protocol buffer with no amounts
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
       XrpCurrencyAmount.from(testInvalidCurrencyAmountProto)
@@ -271,7 +271,7 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert CurrencyAmount with nothing set', function (): void {
-    // GIVEN a currency amount protocol buffer with nothing set
+    // GIVEN a CurrencyAmount protocol buffer with nothing set
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
       XrpCurrencyAmount.from(testInvalidCurrencyAmountProtoEmpty)
