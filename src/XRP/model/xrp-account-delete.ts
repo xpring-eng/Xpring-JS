@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { AccountDelete } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -22,10 +23,13 @@ export default class XrpAccountDelete {
   public static from(
     accountDelete: AccountDelete,
     xrplNetwork: XrplNetwork,
-  ): XrpAccountDelete | undefined {
+  ): XrpAccountDelete {
     const destination = accountDelete.getDestination()?.getValue()?.getAddress()
     if (!destination) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'AccountDelete protobuf is missing `destination` field.',
+      )
     }
     const destinationTag = accountDelete.getDestinationTag()?.getValue()
 
@@ -35,7 +39,10 @@ export default class XrpAccountDelete {
       xrplNetwork == XrplNetwork.Test,
     )
     if (!destinationXAddress) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Cannot construct XAddress from AccountDelete protobuf `destination` and `destinationTag` fields.',
+      )
     }
     return new XrpAccountDelete(destinationXAddress)
   }
