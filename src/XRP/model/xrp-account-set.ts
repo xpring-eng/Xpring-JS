@@ -33,23 +33,29 @@ export default class XrpAccountSet {
     const transferRate = accountSet.getTransferRate()?.getValue()
     // transferRate cannot be more than 2000000000 or less than 1000000000,
     // except for the special case 0 meaning no fee.
+    const maxTransferRate = 2000000000
+    const minTransferRate = 1000000000
+    const specialCaseTransferRate = 0
     if (transferRate) {
-      if (transferRate > 2000000000) {
+      if (transferRate > maxTransferRate) {
         throw new XrpError(
           XrpErrorType.MalformedProtobuf,
-          'AccountSet protobuf field `transferRate` is above 2000000000.',
+          `AccountSet protobuf field \`transferRate\` is above ${maxTransferRate}.`,
         )
       }
-      if (transferRate < 1000000000 && transferRate != 0) {
+      if (
+        transferRate < minTransferRate &&
+        transferRate != specialCaseTransferRate
+      ) {
         throw new XrpError(
           XrpErrorType.MalformedProtobuf,
-          'AccountSet protobuf field `transferRate` is below 1000000000.',
+          `AccountSet protobuf field \`transferRate\` is below ${minTransferRate}.`,
         )
       }
     }
     const tickSize = accountSet.getTickSize()?.getValue()
     // Valid values for tickSize are 3 to 15 inclusive, or 0 to disable.
-    if (tickSize && (tickSize < 3 || tickSize > 15) && tickSize != 0) {
+    if (tickSize && !this.isValidTickSize(tickSize)) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'AccountSet protobuf field `tickSize` not between 3 and 15, inclusive, or 0.',
@@ -64,6 +70,18 @@ export default class XrpAccountSet {
       transferRate,
       tickSize,
     )
+  }
+
+  private static isValidTickSize(tickSize: number) {
+    const minTickSize = 3
+    const maxTickSize = 15
+    const disableTickSize = 0
+    if (minTickSize <= tickSize && tickSize <= maxTickSize) {
+      return true
+    } else if (tickSize == disableTickSize) {
+      return true
+    }
+    return false
   }
 
   /**
