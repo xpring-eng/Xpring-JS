@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 
 import { XrplNetwork } from 'xpring-common-js'
-import XrpUtils from '../../src/XRP/xrp-utils'
+import { XrpError, XrpUtils } from '../../src'
 import XrpTrustSet from '../../src/XRP/model/xrp-trust-set'
 import XRPSignerEntry from '../../src/XRP/model/xrp-signer-entry'
 import XrpSignerListSet from '../../src/XRP/model/xrp-signer-list-set'
@@ -53,6 +53,8 @@ import {
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
+  testInvalidCheckCreateProtoBadDestination,
+  testInvalidCheckCreateProtoNoSendMax,
   testInvalidEscrowCancelProto,
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
@@ -307,16 +309,34 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(checkCreate?.invoiceId)
   })
 
-  it('Convert invalid CheckCreate protobuf to XrpCheckCash object - missing destination ', function (): void {
+  it('Convert invalid CheckCreate protobuf to XrpCheckCreate object - missing destination', function (): void {
     // GIVEN an invalid CheckCreate protocol buffer missing the destination field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCreate = XrpCheckCreate.from(
-      testInvalidCheckCreateProto,
-      XrplNetwork.Test,
-    )
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpCheckCreate.from(testInvalidCheckCreateProto, XrplNetwork.Test)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(checkCreate)
+  it('Convert invalid CheckCreate protobuf to XrpCheckCreate object - bad destination', function (): void {
+    // GIVEN an invalid CheckCreate protocol buffer with a bad destination field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpCheckCreate.from(
+        testInvalidCheckCreateProtoBadDestination,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert invalid CheckCreate protobuf to XrpCheckCreate object - no SendMax', function (): void {
+    // GIVEN an invalid CheckCreate protocol buffer missing the SendMax field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpCheckCreate.from(
+        testInvalidCheckCreateProtoNoSendMax,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
   })
 
   // DepositPreauth
