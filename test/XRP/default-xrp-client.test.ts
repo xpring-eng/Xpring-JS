@@ -696,7 +696,7 @@ describe('Default XRP Client', function (): void {
     xrpClient.paymentHistory(testAddress).catch((error) => {
       assert.equal(
         (error as XrpError).errorType,
-        XrpErrorType.PaymentConversionFailure,
+        XrpErrorType.MalformedProtobuf,
       )
       done()
     })
