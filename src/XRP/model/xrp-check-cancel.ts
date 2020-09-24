@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { CheckCancel } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 /*
@@ -20,7 +21,10 @@ export default class XrpCheckCancel {
   public static from(checkCancel: CheckCancel): XrpCheckCancel | undefined {
     const checkId = checkCancel.getCheckId()?.getValue_asB64()
     if (!checkId) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'CheckCancel protobuf is missing `CheckID` field.',
+      )
     }
     return new XrpCheckCancel(checkId)
   }
