@@ -22,7 +22,7 @@ export default class XrpDepositPreauth {
   public static from(
     depositPreauth: DepositPreauth,
     xrplNetwork: XrplNetwork,
-  ): XrpDepositPreauth | undefined {
+  ): XrpDepositPreauth {
     const authorize = depositPreauth.getAuthorize()?.getValue()?.getAddress()
     const unauthorize = depositPreauth
       .getUnauthorize()
