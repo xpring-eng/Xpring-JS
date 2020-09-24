@@ -450,7 +450,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   /**
    * Enables DepositPreauth and authorizes an XRPL account to send to this XRPL account.
    *
-   * @set https://xrpl.org/depositpreauth.html
+   * @see https://xrpl.org/depositpreauth.html
    *
    * @param xAddressToAuthorize The X-Address of the sender to enable DepositPreauth for.
    * @param wallet The wallet associated with the XRPL account enabling DepositPreauth and that will sign the request.
