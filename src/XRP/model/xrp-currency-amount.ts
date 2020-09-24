@@ -16,37 +16,22 @@ export default class XrpCurrencyAmount {
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/amount.proto#L10
    */
   public static from(currencyAmount: CurrencyAmount): XrpCurrencyAmount {
-    switch (currencyAmount.getAmountCase()) {
-      // Mutually exclusive: either drops or issuedCurrency is set in an XRPCurrencyAmount
-      case CurrencyAmount.AmountCase.ISSUED_CURRENCY_AMOUNT: {
-        const issuedCurrencyAmount = currencyAmount.getIssuedCurrencyAmount()
-        if (issuedCurrencyAmount) {
-          const issuedCurrency = XrpIssuedCurrency.from(issuedCurrencyAmount)
-          if (issuedCurrency) {
-            return new XrpCurrencyAmount(undefined, issuedCurrency)
-          }
-        }
-        throw new XrpError(
-          XrpErrorType.MalformedProtobuf,
-          'CurrencyAmount protobuf does not have a defined amount of issued currency.',
-        )
-      }
-      case CurrencyAmount.AmountCase.XRP_AMOUNT: {
-        const drops = currencyAmount.getXrpAmount()?.getDrops()
-        if (drops) {
-          return new XrpCurrencyAmount(drops, undefined)
-        }
-        throw new XrpError(
-          XrpErrorType.MalformedProtobuf,
-          'CurrencyAmount protobuf does not have a defined amount of XRP.',
-        )
-      }
-      default:
-        throw new XrpError(
-          XrpErrorType.MalformedProtobuf,
-          'CurrencyAmount protobuf does not have an amount set.',
-        )
+    // Mutually exclusive: either drops or issuedCurrency is set in an XRPCurrencyAmount
+    const issuedCurrencyAmount = currencyAmount.getIssuedCurrencyAmount()
+    const xrpAmount = currencyAmount.getXrpAmount()
+    if (issuedCurrencyAmount && !xrpAmount) {
+      const issuedCurrency = XrpIssuedCurrency.from(issuedCurrencyAmount)
+      return new XrpCurrencyAmount(undefined, issuedCurrency)
     }
+    if (xrpAmount && !issuedCurrencyAmount) {
+      const drops = xrpAmount.getDrops()
+      return new XrpCurrencyAmount(drops, undefined)
+    }
+
+    throw new XrpError(
+      XrpErrorType.MalformedProtobuf,
+      'CurrencyAmount protobuf does not have an amount set.',
+    )
   }
 
   /**
