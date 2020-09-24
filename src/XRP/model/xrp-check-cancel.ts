@@ -18,7 +18,7 @@ export default class XrpCheckCancel {
    * @return an XrpCheckCancel with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L126
    */
-  public static from(checkCancel: CheckCancel): XrpCheckCancel | undefined {
+  public static from(checkCancel: CheckCancel): XrpCheckCancel {
     const checkId = checkCancel.getCheckId()?.getValue_asB64()
     if (!checkId) {
       throw new XrpError(
