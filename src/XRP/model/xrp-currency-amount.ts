@@ -22,9 +22,7 @@ export default class XrpCurrencyAmount {
         const issuedCurrencyAmount = currencyAmount.getIssuedCurrencyAmount()
         if (issuedCurrencyAmount) {
           const issuedCurrency = XrpIssuedCurrency.from(issuedCurrencyAmount)
-          if (issuedCurrency) {
-            return new XrpCurrencyAmount(undefined, issuedCurrency)
-          }
+          return new XrpCurrencyAmount(undefined, issuedCurrency)
         }
         throw new XrpError(
           XrpErrorType.MalformedProtobuf,
