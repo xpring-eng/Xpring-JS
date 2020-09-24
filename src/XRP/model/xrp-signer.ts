@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { Signer } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 /*
@@ -15,10 +16,28 @@ export default class XrpSigner {
    */
   public static from(signer: Signer): XrpSigner | undefined {
     const account = signer.getAccount()?.getValue()?.getAddress()
+    if (!account) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Signer protobuf is missing `account` field.',
+      )
+    }
     const signingPublicKey = signer.getSigningPublicKey()?.getValue_asU8()
+    if (!signingPublicKey) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Signer protobuf is missing `SigningPublicKey` field.',
+      )
+    }
     const transactionSignature = signer
       .getTransactionSignature()
       ?.getValue_asU8()
+    if (!transactionSignature) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Signer protobuf is missing `TnxSignature` field.',
+      )
+    }
     return new XrpSigner(account, signingPublicKey, transactionSignature)
   }
 
