@@ -50,9 +50,11 @@ import {
   testSignerEntryProto,
   testGetTransactionResponseProto,
   testGetTransactionResponseProtoMandatoryOnly,
+  testInvalidIssuedCurrencyProtoBadValue,
+  testInvalidIssuedCurrencyProtoBadIssuer,
+  testInvalidIssuedCurrencyProtoBadCurrency,
   testInvalidCurrencyProtoNoName,
   testInvalidCurrencyProtoNoCode,
-  testInvalidIssuedCurrencyProto,
   testInvalidCurrencyAmountProto,
   testInvalidPathElementWithAccountIssuer,
   testInvalidPathElementWithAccountCurrency,
@@ -82,25 +84,17 @@ describe('Protocol Buffer Conversion', function (): void {
   it('Convert Currency protobuf missing required field name', function (): void {
     // GIVEN a Currency protocol buffer missing a name.
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
-    assert.throws(
-      () => {
-        XrpCurrency.from(testInvalidCurrencyProtoNoName)
-      },
-      XrpError,
-      'Currency protobuf missing required field `name`.',
-    )
+    assert.throws(() => {
+      XrpCurrency.from(testInvalidCurrencyProtoNoName)
+    }, XrpError)
   })
 
   it('Convert Currency protobuf missing required field code', function (): void {
     // GIVEN a Currency protocol buffer missing a code.
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
-    assert.throws(
-      () => {
-        XrpCurrency.from(testInvalidCurrencyProtoNoCode)
-      },
-      XrpError,
-      'Currency protobuf missing required field `code`.',
-    )
+    assert.throws(() => {
+      XrpCurrency.from(testInvalidCurrencyProtoNoCode)
+    }, XrpError)
   })
 
   // PathElement
@@ -214,14 +208,27 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert IssuedCurrency with bad value', function (): void {
-    // GIVEN an issued currency protocol buffer with a non numeric value
-    // WHEN the protocol buffer is converted to a native TypeScript type.
-    const issuedCurrency = XrpIssuedCurrency.from(
-      testInvalidIssuedCurrencyProto,
-    )
+    // GIVEN an issued currency protocol buffer with an invalid value field
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadValue)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined
-    assert.isUndefined(issuedCurrency)
+  it('Convert IssuedCurrency with bad issuer', function (): void {
+    // GIVEN an issued currency protocol buffer with a missing issuer field
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadIssuer)
+    }, XrpError)
+  })
+
+  it('Convert IssuedCurrency with bad currency', function (): void {
+    // GIVEN an issued currency protocol buffer with a missing currency field
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadCurrency)
+    }, XrpError)
   })
 
   // CurrencyAmount tests
@@ -256,13 +263,10 @@ describe('Protocol Buffer Conversion', function (): void {
 
   it('Convert CurrencyAmount with bad inputs', function (): void {
     // GIVEN a currency amount protocol buffer with no amounts
-    // WHEN the protocol buffer is converted to a native TypeScript type.
-    const currencyAmount = XrpCurrencyAmount.from(
-      testInvalidCurrencyAmountProto,
-    )
-
-    // THEN the result is empty
-    assert.isUndefined(currencyAmount)
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpCurrencyAmount.from(testInvalidCurrencyAmountProto)
+    }, XrpError)
   })
 
   // Payment
@@ -353,26 +357,26 @@ describe('Protocol Buffer Conversion', function (): void {
 
   it('Convert Payment with invalid amount field', function (): void {
     // GIVEN a pyament protocol buffer with an invalid amount field
-    // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
-    assert.isUndefined(
-      XrpPayment.from(testInvalidPaymentProtoBadAmount, XrplNetwork.Test),
-    )
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown
+    assert.throws(() => {
+      XrpPayment.from(testInvalidPaymentProtoBadAmount, XrplNetwork.Test)
+    }, XrpError)
   })
 
   it('Convert Payment with invalid deliverMin field', function (): void {
     // GIVEN a payment protocol buffer with an invalid deliverMin field
-    // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
-    assert.isUndefined(
-      XrpPayment.from(testInvalidPaymentProtoBadDeliverMin, XrplNetwork.Test),
-    )
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown
+    assert.throws(() => {
+      XrpPayment.from(testInvalidPaymentProtoBadDeliverMin, XrplNetwork.Test)
+    }, XrpError)
   })
 
   it('Convert Payment with invalid sendMax field', function (): void {
     // GIVEN a payment protocol buffer with an invalid sendMax field
-    // WHEN the protocol buffer is converted to a native TypeScript type THEN the result is undefined
-    assert.isUndefined(
-      XrpPayment.from(testInvalidPaymentProtoBadSendMax, XrplNetwork.Test),
-    )
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown
+    assert.throws(() => {
+      XrpPayment.from(testInvalidPaymentProtoBadSendMax, XrplNetwork.Test)
+    }, XrpError)
   })
 
   // Memo
@@ -533,14 +537,13 @@ describe('Protocol Buffer Conversion', function (): void {
 
   it('Convert PAYMENT Transaction with bad payment fields', function (): void {
     // GIVEN a GetTransactionResponse protocol buffer with Transaction payment fields which are incorrect
-    // WHEN the protocol buffer is converted to a native TypeScript type.
-    const transaction = XrpTransaction.from(
-      testInvalidGetTransactionResponseProto,
-      XrplNetwork.Test,
-    )
-
-    // THEN the result is undefined
-    assert.isUndefined(transaction)
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpTransaction.from(
+        testInvalidGetTransactionResponseProto,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
   })
 
   it('Convert unsupported transaction type', function (): void {
