@@ -82,6 +82,7 @@ const testTickSize = 7
 // AccountDelete values
 const testDestination = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
 const testDestinationTag = 13
+const testInvalidDestination = 'badDestination'
 
 // CheckCancel values
 const testCheckId =
@@ -422,6 +423,16 @@ testTrustSetProtoMandatoryOnly.setLimitAmount(testLimitAmountProto)
 
 // Invalid Protobuf Objects ========================================================================
 
+// Invalid AccountDelete proto (bad destination)
+const testInvalidAccountAddressProto = new AccountAddress()
+testInvalidAccountAddressProto.setAddress(testInvalidDestination)
+
+const testInvalidDestinationProto = new Destination()
+testInvalidDestinationProto.setValue(testInvalidAccountAddressProto)
+
+const testInvalidAccountDeleteProto = new AccountDelete()
+testInvalidAccountDeleteProto.setDestination(testInvalidDestinationProto)
+
 // Invalid CheckCancel proto (missing checkId)
 const testInvalidCheckCancelProto = new CheckCancel()
 
@@ -505,6 +516,7 @@ export {
   testSignerListSetProto,
   testTrustSetProtoAllFields,
   testTrustSetProtoMandatoryOnly,
+  testInvalidAccountDeleteProto,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
