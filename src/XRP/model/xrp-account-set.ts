@@ -17,7 +17,7 @@ export default class XrpAccountSet {
    * @return an XrpAccountSet with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L100
    */
-  public static from(accountSet: AccountSet): XrpAccountSet | undefined {
+  public static from(accountSet: AccountSet): XrpAccountSet {
     const clearFlag = accountSet.getClearFlag()?.getValue()
     const domain = accountSet.getDomain()?.getValue()
     // domain must be lowercase
