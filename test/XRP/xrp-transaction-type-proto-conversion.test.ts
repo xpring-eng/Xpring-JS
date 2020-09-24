@@ -65,6 +65,7 @@ import {
   testInvalidPaymentChannelFundProto,
   testInvalidSignerListSetProto,
   testInvalidTrustSetProto,
+  testInvalidTrustSetProtoXRP,
   testSignerEntry1,
   testSignerEntry2,
 } from './fakes/fake-xrp-transaction-type-protobufs'
@@ -940,6 +941,14 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(() => {
       XrpTrustSet.from(testInvalidTrustSetProto)
+    }, XrpError)
+  })
+
+  it('Convert TrustSet protobuf to XrpTrustSet object - uses XRP', function (): void {
+    // GIVEN a TrustSet protocol buffer using XRP.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpTrustSet.from(testInvalidTrustSetProtoXRP)
     }, XrpError)
   })
 })

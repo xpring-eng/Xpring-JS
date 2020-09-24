@@ -472,6 +472,13 @@ const testInvalidTrustSetProto = new TrustSet()
 testInvalidTrustSetProto.setQualityIn(testQualityInProto)
 testInvalidTrustSetProto.setQualityOut(testQualityOutProto)
 
+// Invalid TrustSet proto (limitAmount uses XRP)
+const testInvalidLimitAmountProto = new LimitAmount()
+testInvalidLimitAmountProto.setValue(testCurrencyAmountProtoDrops)
+
+const testInvalidTrustSetProtoXRP = new TrustSet()
+testInvalidTrustSetProtoXRP.setLimitAmount(testInvalidLimitAmountProto)
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -518,4 +525,5 @@ export {
   testInvalidPaymentChannelFundProto,
   testInvalidSignerListSetProto,
   testInvalidTrustSetProto,
+  testInvalidTrustSetProtoXRP,
 }
