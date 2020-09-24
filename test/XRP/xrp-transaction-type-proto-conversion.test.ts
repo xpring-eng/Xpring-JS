@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 
 import { XrplNetwork } from 'xpring-common-js'
-import XrpUtils from '../../src/XRP/xrp-utils'
+import { XrpError, XrpUtils } from '../../src'
 import XrpTrustSet from '../../src/XRP/model/xrp-trust-set'
 import XRPSignerEntry from '../../src/XRP/model/xrp-signer-entry'
 import XrpSignerListSet from '../../src/XRP/model/xrp-signer-list-set'
@@ -166,14 +166,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
   it('Convert AccountDelete protobuf to XrpAccountDelete object - missing destination field', function (): void {
     // GIVEN an AccountDelete protocol buffer missing the destination field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountDelete = XrpAccountDelete.from(
-      new AccountDelete(),
-      XrplNetwork.Test,
-    )
-
-    // THEN the result is undefined.
-    assert.isUndefined(accountDelete)
+    // WHEN the protocol buffer is converted to a native Typescript type THEN the result is undefined.
+    assert.throws(() => {
+      XrpAccountDelete.from(new AccountDelete(), XrplNetwork.Test)
+    }, XrpError)
   })
 
   it('Convert CheckCancel protobuf to XrpCheckCancel object', function (): void {
