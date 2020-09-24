@@ -28,35 +28,29 @@ export default class XrpDepositPreauth {
       .getUnauthorize()
       ?.getValue()
       ?.getAddress()
-    // You must provide either Authorize or Unauthorize, but not both.
-    if (authorize && unauthorize) {
-      throw new XrpError(
-        XrpErrorType.MalformedProtobuf,
-        'DepositPreauth protobuf provides both `Authorize` and `Unauthorize` fields.',
-      )
-    }
 
-    let authorizeXAddress
-    let unauthorizeXAddress
     if (authorize) {
-      authorizeXAddress = XrpUtils.encodeXAddress(
+      const authorizeXAddress = XrpUtils.encodeXAddress(
         authorize,
         undefined,
         xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
       )
-    } else if (unauthorize) {
-      unauthorizeXAddress = XrpUtils.encodeXAddress(
+      return new XrpDepositPreauth(authorizeXAddress, undefined)
+    }
+
+    if (unauthorize) {
+      const unauthorizeXAddress = XrpUtils.encodeXAddress(
         unauthorize,
         undefined,
         xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
       )
-    } else {
-      throw new XrpError(
-        XrpErrorType.MalformedProtobuf,
-        'DepositPreauth protobuf provides neither `Authorize` nor `Unauthorize` fields.',
-      )
+      return new XrpDepositPreauth(undefined, unauthorizeXAddress)
     }
-    return new XrpDepositPreauth(authorizeXAddress, unauthorizeXAddress)
+
+    throw new XrpError(
+      XrpErrorType.MalformedProtobuf,
+      'DepositPreauth protobuf provides neither `Authorize` nor `Unauthorize` fields.',
+    )
   }
 
   /**
