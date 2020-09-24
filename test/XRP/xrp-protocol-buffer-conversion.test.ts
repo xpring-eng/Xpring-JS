@@ -56,6 +56,7 @@ import {
   testInvalidCurrencyProtoNoName,
   testInvalidCurrencyProtoNoCode,
   testInvalidCurrencyAmountProto,
+  testInvalidCurrencyAmountProtoEmpty,
   testInvalidPathElementWithAccountIssuer,
   testInvalidPathElementWithAccountCurrency,
   testInvalidPathElementProtoEmpty,
@@ -188,11 +189,11 @@ describe('Protocol Buffer Conversion', function (): void {
   // IssuedCurrency
 
   it('Convert IssuedCurrency to XrpIssuedCurrency', function (): void {
-    // GIVEN an issued currency protocol buffer,
+    // GIVEN an IssuedCurrency protocol buffer,
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const issuedCurrency = XrpIssuedCurrency.from(testIssuedCurrencyProto)
 
-    // THEN the issued currency converted as expected.
+    // THEN the IssuedCurrency converted as expected.
     assert.deepEqual(
       issuedCurrency?.currency,
       XrpCurrency.from(testIssuedCurrencyProto.getCurrency()!),
@@ -208,7 +209,7 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert IssuedCurrency with bad value', function (): void {
-    // GIVEN an issued currency protocol buffer with an invalid value field
+    // GIVEN an IssuedCurrency protocol buffer with an invalid value field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
       XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadValue)
@@ -216,7 +217,7 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert IssuedCurrency with bad issuer', function (): void {
-    // GIVEN an issued currency protocol buffer with a missing issuer field
+    // GIVEN an IssuedCurrency protocol buffer with a missing issuer field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
       XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadIssuer)
@@ -224,7 +225,7 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert IssuedCurrency with bad currency', function (): void {
-    // GIVEN an issued currency protocol buffer with a missing currency field
+    // GIVEN an IssuedCurrency protocol buffer with a missing currency field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
       XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadCurrency)
@@ -234,7 +235,7 @@ describe('Protocol Buffer Conversion', function (): void {
   // CurrencyAmount tests
 
   it('Convert CurrencyAmount with drops', function (): void {
-    // GIVEN a currency amount protocol buffer with an XRP amount.
+    // GIVEN a CurrencyAmount protocol buffer with an XRP amount.
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const currencyAmount = XrpCurrencyAmount.from(testCurrencyAmountProtoDrops)
 
@@ -247,7 +248,7 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert CurrencyAmount with Issued Currency', function (): void {
-    // GIVEN a currency amount protocol buffer with an issued currency amount.
+    // GIVEN a CurrencyAmount protocol buffer with an issued currency amount.
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const currencyAmount = XrpCurrencyAmount.from(
       testCurrencyAmountProtoIssuedCurrency,
@@ -262,10 +263,18 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert CurrencyAmount with bad inputs', function (): void {
-    // GIVEN a currency amount protocol buffer with no amounts
+    // GIVEN a CurrencyAmount protocol buffer with no amounts
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
       XrpCurrencyAmount.from(testInvalidCurrencyAmountProto)
+    }, XrpError)
+  })
+
+  it('Convert CurrencyAmount with nothing set', function (): void {
+    // GIVEN a CurrencyAmount protocol buffer with nothing set
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpCurrencyAmount.from(testInvalidCurrencyAmountProtoEmpty)
     }, XrpError)
   })
 
