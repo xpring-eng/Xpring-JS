@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { EscrowCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -21,20 +22,23 @@ export default class XrpEscrowCreate {
   public static from(
     escrowCreate: EscrowCreate,
     xrplNetwork: XrplNetwork,
-  ): XrpEscrowCreate | undefined {
+  ): XrpEscrowCreate {
     // amount is a required field
     const amountCurrencyAmountProto = escrowCreate.getAmount()?.getValue()
     if (!amountCurrencyAmountProto) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'EscrowCreate protobuf is missing required `amount` field.',
+      )
     }
     const amount = XrpCurrencyAmount.from(amountCurrencyAmountProto)
-    if (!amount) {
-      return undefined
-    }
 
     const destination = escrowCreate.getDestination()?.getValue()?.getAddress()
     if (!destination) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'EscrowCreate protobuf is missing required `destination` field.',
+      )
     }
     const destinationTag = escrowCreate.getDestinationTag()?.getValue()
     const destinationXAddress = XrpUtils.encodeXAddress(
@@ -44,7 +48,10 @@ export default class XrpEscrowCreate {
     )
     // destinationXAddress is a required field
     if (!destinationXAddress) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Cannot construct XAddress from EscrowCreate protobuf `destination` and `destinationTag` fields.',
+      )
     }
 
     const cancelAfter = escrowCreate.getCancelAfter()?.getValue()
