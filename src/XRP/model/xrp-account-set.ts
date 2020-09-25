@@ -76,9 +76,10 @@ export default class XrpAccountSet {
     const minTickSize = 3
     const maxTickSize = 15
     const disableTickSize = 0
-    if (minTickSize <= tickSize && tickSize <= maxTickSize) {
-      return true
-    } else if (tickSize == disableTickSize) {
+    if (
+      (minTickSize <= tickSize && tickSize <= maxTickSize) ||
+      tickSize == disableTickSize
+    ) {
       return true
     }
     return false
