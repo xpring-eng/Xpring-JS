@@ -96,11 +96,12 @@ const testExpiration = 570113521
 const testOfferSequence = 23
 
 // EscrowCreate values
+const testInvalidDestination = 'badDestination'
 const testCancelAfter = 533257958
 const testFinishAfter = 533171558
+const testFinishAfterEarly = 533341558
 const testCondition =
   'A0258020E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855810100'
-const testInvalidDestination = 'badDestination'
 
 // EscrowFinish values
 const testFulfillment = 'A0028000'
@@ -442,6 +443,7 @@ testInvalidEscrowCancelProto.setOfferSequence(testOfferSequenceProto)
 // Invalid EscrowCreate proto (missing destination)
 const testInvalidEscrowCreateProtoNoDestination = new EscrowCreate()
 testInvalidEscrowCreateProtoNoDestination.setAmount(testAmountProto)
+testInvalidEscrowCreateProtoNoDestination.setFinishAfter(testFinishAfterProto)
 
 // Invalid EscrowCreate proto (bad destination)
 const testInvalidAccountAddressProto = new AccountAddress()
@@ -455,10 +457,50 @@ testInvalidEscrowCreateProtoBadDestination.setAmount(testAmountProto)
 testInvalidEscrowCreateProtoBadDestination.setDestination(
   testInvalidDestinationProto,
 )
+testInvalidEscrowCreateProtoBadDestination.setFinishAfter(testFinishAfterProto)
 
 // Invalid EscrowCreate proto (no amount)
 const testInvalidEscrowCreateProtoNoAmount = new EscrowCreate()
 testInvalidEscrowCreateProtoNoAmount.setDestination(testDestinationProto)
+testInvalidEscrowCreateProtoNoAmount.setFinishAfter(testFinishAfterProto)
+
+// Invalid EscrowCreate proto (no XRP)
+const testAmountProtoIssuedCurrency = new Amount()
+testAmountProtoIssuedCurrency.setValue(testCurrencyAmountProtoIssuedCurrency)
+
+const testInvalidEscrowCreateProtoNoXRP = new EscrowCreate()
+testInvalidEscrowCreateProtoNoXRP.setDestination(testDestinationProto)
+testInvalidEscrowCreateProtoNoXRP.setAmount(testAmountProtoIssuedCurrency)
+testInvalidEscrowCreateProtoNoXRP.setFinishAfter(testFinishAfterProto)
+
+// Invalid EscrowCreate proto (no cancelAfter or finishAfter)
+const testInvalidEscrowCreateProtoNoCancelFinish = new EscrowCreate()
+testInvalidEscrowCreateProtoNoCancelFinish.setDestination(testDestinationProto)
+testInvalidEscrowCreateProtoNoCancelFinish.setAmount(testAmountProto)
+testInvalidEscrowCreateProtoNoCancelFinish.setCondition(testConditionProto)
+
+// Invalid EscrowCreate proto (finishAfter not before cancelAfter)
+const testFinishAfterProtoEarly = new FinishAfter()
+testFinishAfterProtoEarly.setValue(testFinishAfterEarly)
+
+const testInvalidEscrowCreateProtoBadCancelFinish = new EscrowCreate()
+testInvalidEscrowCreateProtoBadCancelFinish.setDestination(testDestinationProto)
+testInvalidEscrowCreateProtoBadCancelFinish.setAmount(testAmountProto)
+testInvalidEscrowCreateProtoBadCancelFinish.setCondition(testConditionProto)
+testInvalidEscrowCreateProtoBadCancelFinish.setCancelAfter(testCancelAfterProto)
+testInvalidEscrowCreateProtoBadCancelFinish.setFinishAfter(
+  testFinishAfterProtoEarly,
+)
+
+// Invalid EscrowCreate proto (no finishAfter or condition)
+const testInvalidEscrowCreateProtoNoFinishCondition = new EscrowCreate()
+testInvalidEscrowCreateProtoNoFinishCondition.setDestination(
+  testDestinationProto,
+)
+testInvalidEscrowCreateProtoNoFinishCondition.setAmount(testAmountProto)
+testInvalidEscrowCreateProtoNoFinishCondition.setCancelAfter(
+  testCancelAfterProto,
+)
 
 // Invalid EscrowFinish proto (missing owner)
 const testInvalidEscrowFinishProto = new EscrowFinish()
@@ -531,6 +573,10 @@ export {
   testInvalidEscrowCreateProtoNoDestination,
   testInvalidEscrowCreateProtoBadDestination,
   testInvalidEscrowCreateProtoNoAmount,
+  testInvalidEscrowCreateProtoBadCancelFinish,
+  testInvalidEscrowCreateProtoNoCancelFinish,
+  testInvalidEscrowCreateProtoNoFinishCondition,
+  testInvalidEscrowCreateProtoNoXRP,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
   testInvalidOfferCreateProto,
