@@ -271,6 +271,7 @@ testEscrowCreateProtoAllFields.setDestinationTag(testDestinationTagProto)
 const testEscrowCreateProtoMandatoryOnly = new EscrowCreate()
 testEscrowCreateProtoMandatoryOnly.setAmount(testAmountProto)
 testEscrowCreateProtoMandatoryOnly.setDestination(testDestinationProto)
+testEscrowCreateProtoMandatoryOnly.setFinishAfter(testFinishAfterProto)
 
 // EscrowFinish protos
 const testFulfillmentProto = new Fulfillment()

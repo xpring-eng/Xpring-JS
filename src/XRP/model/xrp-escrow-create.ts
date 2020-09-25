@@ -32,6 +32,12 @@ export default class XrpEscrowCreate {
       )
     }
     const amount = XrpCurrencyAmount.from(amountCurrencyAmountProto)
+    if (!amount.drops) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'EscrowCreate protobuf `amount` field does not represent XRP.',
+      )
+    }
 
     const destination = escrowCreate.getDestination()?.getValue()?.getAddress()
     if (!destination) {
@@ -56,7 +62,26 @@ export default class XrpEscrowCreate {
 
     const cancelAfter = escrowCreate.getCancelAfter()?.getValue()
     const finishAfter = escrowCreate.getFinishAfter()?.getValue()
+    if (!cancelAfter && !finishAfter) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'EscrowCreate protobuf is missing at least one of the `cancelAfter` and `finishAfter` fields.',
+      )
+    }
+    if (cancelAfter && finishAfter && cancelAfter <= finishAfter) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'EscrowCreate protobuf `finishAfter` field is not before `cancelAfter` field.',
+      )
+    }
+
     const condition = escrowCreate.getCondition()?.getValue_asB64()
+    if (!finishAfter && !condition) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'EscrowCreate protobuf is missing at least one of the `finishAfter` and `condition` fields.',
+      )
+    }
 
     return new XrpEscrowCreate(
       amount,
