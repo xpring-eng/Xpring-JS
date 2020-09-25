@@ -35,6 +35,12 @@ export default class XrpDepositPreauth {
         undefined,
         xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
       )
+      if (!authorizeXAddress) {
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          'Cannot construct XAddress from DepositPreauth protobuf `authorize` field.',
+        )
+      }
       return new XrpDepositPreauth(authorizeXAddress, undefined)
     }
 
@@ -44,6 +50,12 @@ export default class XrpDepositPreauth {
         undefined,
         xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
       )
+      if (!unauthorizeXAddress) {
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          'Cannot construct XAddress from DepositPreauth protobuf `unauthorize` field.',
+        )
+      }
       return new XrpDepositPreauth(undefined, unauthorizeXAddress)
     }
 

@@ -53,6 +53,8 @@ import {
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidDepositPreauthProtoNoAuthUnauth,
+  testInvalidDepositPreauthProtoSetBadAuthorize,
+  testInvalidDepositPreauthProtoSetBadUnauthorize,
   testInvalidCheckCreateProto,
   testInvalidEscrowCancelProto,
   testInvalidEscrowCreateProto,
@@ -339,7 +341,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
       undefined,
       true,
     )
-    assert.equal(depositPreauth?.authorizeXAddress, expectedXAddress)
+    assert.equal(depositPreauth.authorizeXAddress, expectedXAddress)
   })
 
   it('Convert DepositPreauth protobuf to XrpDepositPreauth object - unauthorize set', function (): void {
@@ -359,7 +361,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
       undefined,
       true,
     )
-    assert.equal(depositPreauth?.unauthorizeXAddress, expectedXAddress)
+    assert.equal(depositPreauth.unauthorizeXAddress, expectedXAddress)
   })
 
   it('Convert DepositPreauth protobuf to XrpDepositPreauth object - neither authorize nor unauthorize', function (): void {
@@ -368,6 +370,28 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.throws(() => {
       XrpDepositPreauth.from(
         testInvalidDepositPreauthProtoNoAuthUnauth,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert DepositPreauth protobuf to XrpDepositPreauth object - bad authorize', function (): void {
+    // GIVEN a DespoitPreauth protocol buffer with a bad authorize address field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpDepositPreauth.from(
+        testInvalidDepositPreauthProtoSetBadAuthorize,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert DepositPreauth protobuf to XrpDepositPreauth object - bad unauthorize', function (): void {
+    // GIVEN a DespoitPreauth protocol buffer with a bad unauthorize address field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpDepositPreauth.from(
+        testInvalidDepositPreauthProtoSetBadUnauthorize,
         XrplNetwork.Test,
       )
     }, XrpError)
