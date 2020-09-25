@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 
 import { XrplNetwork } from 'xpring-common-js'
-import XrpUtils from '../../src/XRP/xrp-utils'
+import { XrpError, XrpUtils } from '../../src'
 import XrpTrustSet from '../../src/XRP/model/xrp-trust-set'
 import XRPSignerEntry from '../../src/XRP/model/xrp-signer-entry'
 import XrpSignerListSet from '../../src/XRP/model/xrp-signer-list-set'
@@ -465,16 +465,12 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(escrowCreate?.condition)
   })
 
-  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - missing mandatory field', function (): void {
-    // GIVEN an EscrowCreate protocol buffer that's missing a mandatory field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowCreate = XrpEscrowCreate.from(
-      testInvalidEscrowCreateProto,
-      XrplNetwork.Test,
-    )
-
-    // THEN the result is undefined.
-    assert.isUndefined(escrowCreate)
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - missing destination field', function (): void {
+    // GIVEN an EscrowCreate protocol buffer that's missing the destination field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(testInvalidEscrowCreateProto, XrplNetwork.Test)
+    }, XrpError)
   })
 
   // EscrowFinish
