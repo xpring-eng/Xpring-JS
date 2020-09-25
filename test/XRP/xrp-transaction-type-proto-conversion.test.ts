@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 
 import { XrplNetwork } from 'xpring-common-js'
-import XrpUtils from '../../src/XRP/xrp-utils'
+import { XrpError, XrpUtils } from '../../src'
 import XrpTrustSet from '../../src/XRP/model/xrp-trust-set'
 import XRPSignerEntry from '../../src/XRP/model/xrp-signer-entry'
 import XrpSignerListSet from '../../src/XRP/model/xrp-signer-list-set'
@@ -57,7 +57,8 @@ import {
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
-  testInvalidOfferCreateProto,
+  testInvalidOfferCreateProtoNoTakerGets,
+  testInvalidOfferCreateProtoNoTakerPays,
   testPaymentChannelClaimProtoAllFields,
   testPaymentChannelClaimProtoMandatoryOnly,
   testInvalidPaymentChannelClaimProto,
@@ -618,13 +619,20 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert OfferCreate protobuf to XrpOfferCreate object - missing required field', function (): void {
-    // GIVEN an OfferCreate protocol buffer missing a required field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const offerCreate = XrpOfferCreate.from(testInvalidOfferCreateProto)
+  it('Convert OfferCreate protobuf to XrpOfferCreate object - missing required TakerGets field', function (): void {
+    // GIVEN an OfferCreate protocol buffer missing the TakerGets field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpOfferCreate.from(testInvalidOfferCreateProtoNoTakerGets)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(offerCreate)
+  it('Convert OfferCreate protobuf to XrpOfferCreate object - missing required TakerPays field', function (): void {
+    // GIVEN an OfferCreate protocol buffer missing the TakerPays field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpOfferCreate.from(testInvalidOfferCreateProtoNoTakerPays)
+    }, XrpError)
   })
 
   // PaymentChannelClaim
