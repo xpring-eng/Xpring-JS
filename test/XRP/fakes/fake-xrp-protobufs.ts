@@ -364,17 +364,30 @@ testInvalidCurrencyProtoNoName.setCode(testCurrencyCode)
 const testInvalidCurrencyProtoNoCode = new Currency()
 testInvalidCurrencyProtoNoCode.setName(testCurrencyName)
 
-// Invalid IssuedCurrencyAmount proto
-const testInvalidIssuedCurrencyProto = new IssuedCurrencyAmount()
-testInvalidIssuedCurrencyProto.setCurrency(testCurrencyProto)
-testInvalidIssuedCurrencyProto.setIssuer(accountAddressProto)
-testInvalidIssuedCurrencyProto.setValue(testInvalidIssuedCurrencyValue)
+// Invalid IssuedCurrencyAmount protos
+const testInvalidIssuedCurrencyProtoBadValue = new IssuedCurrencyAmount()
+testInvalidIssuedCurrencyProtoBadValue.setCurrency(testCurrencyProto)
+testInvalidIssuedCurrencyProtoBadValue.setIssuer(accountAddressProto)
+testInvalidIssuedCurrencyProtoBadValue.setValue(testInvalidIssuedCurrencyValue)
+
+const testInvalidIssuedCurrencyProtoBadCurrency = new IssuedCurrencyAmount()
+testInvalidIssuedCurrencyProtoBadCurrency.setIssuer(accountAddressProto)
+testInvalidIssuedCurrencyProtoBadCurrency.setValue(testIssuedCurrencyValue)
+
+const testInvalidIssuedCurrencyProtoBadIssuer = new IssuedCurrencyAmount()
+testInvalidIssuedCurrencyProtoBadIssuer.setValue(testIssuedCurrencyValue)
+testInvalidIssuedCurrencyProtoBadIssuer.setCurrency(testCurrencyProto)
 
 // Invalid CurrencyAmount proto
 const testInvalidCurrencyAmountProto = new CurrencyAmount()
 testInvalidCurrencyAmountProto.setIssuedCurrencyAmount(
-  testInvalidIssuedCurrencyProto,
+  testInvalidIssuedCurrencyProtoBadValue,
 )
+
+const testInvalidCurrencyAmountProtoEmpty = new CurrencyAmount()
+
+const testInvalidCurrencyAmountProtoBadDrops = new CurrencyAmount()
+testInvalidCurrencyAmountProtoBadDrops.setXrpAmount(undefined)
 
 // Invalid Amount proto
 const invalidAmountProto = new Amount()
@@ -514,8 +527,12 @@ export {
   testGetTransactionResponseProtoMandatoryOnly,
   testInvalidCurrencyProtoNoName,
   testInvalidCurrencyProtoNoCode,
-  testInvalidIssuedCurrencyProto,
+  testInvalidIssuedCurrencyProtoBadValue,
+  testInvalidIssuedCurrencyProtoBadCurrency,
+  testInvalidIssuedCurrencyProtoBadIssuer,
   testInvalidCurrencyAmountProto,
+  testInvalidCurrencyAmountProtoEmpty,
+  testInvalidCurrencyAmountProtoBadDrops,
   testInvalidPathElementWithAccountCurrency,
   testInvalidPathElementWithAccountIssuer,
   testInvalidPathElementProtoEmpty,
