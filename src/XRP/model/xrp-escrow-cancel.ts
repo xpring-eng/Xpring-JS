@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { EscrowCancel } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -20,21 +21,33 @@ export default class XrpEscrowCancel {
   public static from(
     escrowCancel: EscrowCancel,
     xrplNetwork: XrplNetwork,
-  ): XrpEscrowCancel | undefined {
+  ): XrpEscrowCancel {
     const owner = escrowCancel.getOwner()?.getValue()?.getAddress()
     if (!owner) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'EscrowCancel protobuf is missing valid `Owner` field.',
+      )
     }
     const ownerXAddress = XrpUtils.encodeXAddress(
       owner,
       undefined,
       xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
     )
-    const offerSequence = escrowCancel.getOfferSequence()?.getValue()
 
     // ownerXAddress and offerSequence are both required fields.
-    if (!ownerXAddress || !offerSequence) {
-      return undefined
+    if (!ownerXAddress) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Cannot construct XAddress from EscrowCancel protobuf `owner` field.',
+      )
+    }
+    const offerSequence = escrowCancel.getOfferSequence()?.getValue()
+    if (!offerSequence) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'EscrowCancel protobuf is missing valid `OfferSequence` field.',
+      )
     }
     return new XrpEscrowCancel(ownerXAddress, offerSequence)
   }
