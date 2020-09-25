@@ -54,7 +54,9 @@ import {
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
   testInvalidEscrowCancelProto,
-  testInvalidEscrowCreateProto,
+  testInvalidEscrowCreateProtoNoDestination,
+  testInvalidEscrowCreateProtoBadDestination,
+  testInvalidEscrowCreateProtoNoAmount,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
   testInvalidOfferCreateProto,
@@ -469,7 +471,32 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // GIVEN an EscrowCreate protocol buffer that's missing the destination field.
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(() => {
-      XrpEscrowCreate.from(testInvalidEscrowCreateProto, XrplNetwork.Test)
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoNoDestination,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - bad destination field', function (): void {
+    // GIVEN an EscrowCreate protocol buffer with a bad destination field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoBadDestination,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - missing amount field', function (): void {
+    // GIVEN an EscrowCreate protocol buffer that's missing the amount field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoNoAmount,
+        XrplNetwork.Test,
+      )
     }, XrpError)
   })
 
