@@ -94,6 +94,7 @@ const testExpiration = 570113521
 
 // EscrowCancel values
 const testOfferSequence = 23
+const testInvalidDestination = 'badDestination'
 
 // EscrowCreate values
 const testCancelAfter = 533257958
@@ -434,8 +435,23 @@ const testInvalidCheckCreateProto = new CheckCreate()
 testInvalidCheckCreateProto.setSendMax(testSendMaxProto)
 
 // Invalid EscrowCancel proto (missing owner)
-const testInvalidEscrowCancelProto = new EscrowCancel()
-testInvalidEscrowCancelProto.setOfferSequence(testOfferSequenceProto)
+const testInvalidEscrowCancelProtoNoOwner = new EscrowCancel()
+testInvalidEscrowCancelProtoNoOwner.setOfferSequence(testOfferSequenceProto)
+
+// Invalid EscrowCancel proto (bad owner)
+const testInvalidAccountAddressProto = new AccountAddress()
+testInvalidAccountAddressProto.setAddress(testInvalidDestination)
+
+const testInvalidOwnerProto = new Owner()
+testInvalidOwnerProto.setValue(testInvalidAccountAddressProto)
+
+const testInvalidEscrowCancelProtoBadOwner = new EscrowCancel()
+testInvalidEscrowCancelProtoBadOwner.setOwner(testInvalidOwnerProto)
+testInvalidEscrowCancelProtoBadOwner.setOfferSequence(testOfferSequenceProto)
+
+// Invalid EscrowCancel proto (no offerSequence)
+const testInvalidEscrowCancelProtoNoOfferSequence = new EscrowCancel()
+testInvalidEscrowCancelProtoNoOfferSequence.setOwner(testOwnerProto)
 
 // Invalid EscrowCreate proto (missing destination)
 const testInvalidEscrowCreateProto = new EscrowCreate()
@@ -508,7 +524,9 @@ export {
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
-  testInvalidEscrowCancelProto,
+  testInvalidEscrowCancelProtoNoOwner,
+  testInvalidEscrowCancelProtoBadOwner,
+  testInvalidEscrowCancelProtoNoOfferSequence,
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,

@@ -53,7 +53,9 @@ import {
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
-  testInvalidEscrowCancelProto,
+  testInvalidEscrowCancelProtoNoOwner,
+  testInvalidEscrowCancelProtoBadOwner,
+  testInvalidEscrowCancelProtoNoOfferSequence,
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
@@ -384,11 +386,36 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert EscrowCancel protobuf to XrpEscrowCancel object - missing fields', function (): void {
-    // GIVEN an EscrowCancel protocol buffer missing required fields.
+  it('Convert EscrowCancel protobuf to XrpEscrowCancel object - missing owner field', function (): void {
+    // GIVEN an EscrowCancel protocol buffer missing required owner field.
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(() => {
-      XrpEscrowCancel.from(testInvalidEscrowCancelProto, XrplNetwork.Test)
+      XrpEscrowCancel.from(
+        testInvalidEscrowCancelProtoNoOwner,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert EscrowCancel protobuf to XrpEscrowCancel object - bad owner field', function (): void {
+    // GIVEN an EscrowCancel protocol buffer with a bad owner field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCancel.from(
+        testInvalidEscrowCancelProtoBadOwner,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert EscrowCancel protobuf to XrpEscrowCancel object - no OfferSequence field', function (): void {
+    // GIVEN an EscrowCancel protocol buffer missing required offerSequence field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCancel.from(
+        testInvalidEscrowCancelProtoNoOfferSequence,
+        XrplNetwork.Test,
+      )
     }, XrpError)
   })
 
