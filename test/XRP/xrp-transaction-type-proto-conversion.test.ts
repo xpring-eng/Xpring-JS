@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 
 import { XrplNetwork } from 'xpring-common-js'
-import XrpUtils from '../../src/XRP/xrp-utils'
+import { XrpError, XrpUtils } from '../../src'
 import XrpTrustSet from '../../src/XRP/model/xrp-trust-set'
 import XRPSignerEntry from '../../src/XRP/model/xrp-signer-entry'
 import XrpSignerListSet from '../../src/XRP/model/xrp-signer-list-set'
@@ -560,10 +560,9 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert OfferCancel protobuf to XrpOfferCancel object - missing required field', function (): void {
     // GIVEN an OfferCancel protocol buffer missing the offerSequence field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const offerCancel = XrpOfferCancel.from(testInvalidOfferCancelProto)
-
-    // THEN the result is undefined.
-    assert.isUndefined(offerCancel)
+    assert.throws(() => {
+      XrpOfferCancel.from(testInvalidOfferCancelProto)
+    }, XrpError)
   })
 
   // OfferCreate
