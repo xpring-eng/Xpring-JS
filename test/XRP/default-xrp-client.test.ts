@@ -907,7 +907,7 @@ describe('Default XRP Client', function (): void {
       })
   })
 
-  it('Unauthorize DepositPreauth - successful response', async function (): Promise<
+  it('unauthorizeSendingAccount - successful response', async function (): Promise<
     void
   > {
     // GIVEN a DefaultXrpClient with mocked networking that will return a successful hash for submitTransaction.
@@ -936,7 +936,7 @@ describe('Default XRP Client', function (): void {
     assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
-  it('Unauthorize DepositPreauth - submission failure', function (done): void {
+  it('unauthorizeSendingAccount - submission failure', function (done): void {
     // GIVEN a DefaultXrpClient which will fail to submit a transaction.
     const failureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -962,7 +962,7 @@ describe('Default XRP Client', function (): void {
       })
   })
 
-  it('Unauthorize DepositPreauth - failure with malformed sender X-Address', function (done): void {
+  it('unauthorizeSendingAccount - failure with malformed sender X-Address', function (done): void {
     // GIVEN a DefaultXrpClient with mocked networking
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
