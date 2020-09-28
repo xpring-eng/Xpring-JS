@@ -37,6 +37,11 @@ const fakedEnableDepositAuthValue = new TransactionResult(
   TransactionStatus.Succeeded,
   true,
 )
+const fakeAuthorizeSendingAccountValue = new TransactionResult(
+  transactionHash,
+  TransactionStatus.Succeeded,
+  true,
+)
 
 describe('Reliable Submission XRP Client', function (): void {
   beforeEach(function () {
@@ -50,6 +55,7 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedTransactionHistoryValue,
       fakedGetPaymentValue,
       fakedEnableDepositAuthValue,
+      fakeAuthorizeSendingAccountValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXrpClient(
       this.fakeXrpClient,
