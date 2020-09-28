@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { TrustSet } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount from './xrp-currency-amount'
 
@@ -16,14 +17,20 @@ export default class XrpTrustSet {
    * @return an XrpTrustSet with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L312
    */
-  public static from(trustSet: TrustSet): XrpTrustSet | undefined {
+  public static from(trustSet: TrustSet): XrpTrustSet {
     const limitAmountCurrencyAmount = trustSet.getLimitAmount()?.getValue()
     if (!limitAmountCurrencyAmount) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'TrustSet protobuf missing required field `LimitAmount`.',
+      )
     }
     const limitAmount = XrpCurrencyAmount.from(limitAmountCurrencyAmount)
-    if (!limitAmount) {
-      return undefined
+    if (!limitAmount.issuedCurrency) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'TrustSet protobuf does not use issued currency.',
+      )
     }
     const qualityIn = trustSet.getQualityIn()?.getValue()
     const qualityOut = trustSet.getQualityOut()?.getValue()
