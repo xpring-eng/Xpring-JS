@@ -20,7 +20,7 @@ export default class XrpAccountSet {
   public static from(accountSet: AccountSet): XrpAccountSet {
     const clearFlag = accountSet.getClearFlag()?.getValue()
     const domain = accountSet.getDomain()?.getValue()
-    if (domain?.toLowerCase() != domain) {
+    if (domain?.toLowerCase() !== domain) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'AccountSet protobuf field `domain` is not lowercase.',
@@ -48,7 +48,7 @@ export default class XrpAccountSet {
       }
       if (
         transferRate < minTransferRate &&
-        transferRate != specialCaseTransferRate
+        transferRate !== specialCaseTransferRate
       ) {
         throw new XrpError(
           XrpErrorType.MalformedProtobuf,
