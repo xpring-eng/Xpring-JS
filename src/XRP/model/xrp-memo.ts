@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { Memo } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { stringToUint8Array } from '../../Common/utils'
 
@@ -23,10 +24,16 @@ export default class XrpMemo {
    * @return an XrpMemo with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L80
    */
-  public static from(memo: Memo): XrpMemo | undefined {
+  public static from(memo: Memo): XrpMemo {
     const data = memo.getMemoData()?.getValue_asU8()
     const format = memo.getMemoFormat()?.getValue_asU8()
     const type = memo.getMemoType()?.getValue_asU8()
+    if (!data && !format && !type) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Memo protobuf missing all fields (requires at least one field).',
+      )
+    }
     return new XrpMemo(data, format, type)
   }
 
