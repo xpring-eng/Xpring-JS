@@ -7,31 +7,16 @@ import XrpTransaction from './model/xrp-transaction'
 import SendXrpDetails from './model/send-xrp-details'
 import TransactionResult from './model/transaction-result'
 import CommonXrplClient from './common-xrpl-client'
-import DefaultXrpClient from './default-xrp-client'
 
 /**
  * An XrpClient which blocks on `send` calls until the transaction has reached a deterministic state.
  */
 export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
-  private commonXrplClient: CommonXrplClient
-  private decoratedClient: XrpClientDecorator
-
   public constructor(
-    grpcUrl: string,
+    private readonly decoratedClient: XrpClientDecorator,
+    private readonly commonXrplClient: CommonXrplClient,
     readonly network: XrplNetwork,
-    forceWeb = false,
-  ) {
-    this.decoratedClient = DefaultXrpClient.defaultXrpClientWithEndpoint(
-      grpcUrl,
-      network,
-      forceWeb,
-    )
-    this.commonXrplClient = CommonXrplClient.commonXrplClientWithEndpoint(
-      grpcUrl,
-      network,
-      forceWeb,
-    )
-  }
+  ) {}
 
   public async getBalance(address: string): Promise<BigInteger> {
     return this.decoratedClient.getBalance(address)

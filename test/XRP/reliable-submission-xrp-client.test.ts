@@ -52,9 +52,10 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedEnableDepositAuthValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXrpClient(
-      this.fakeXrpClient,
+      'fakeUrl',
       XrplNetwork.Test,
     )
+    this.reliableSubmissionClient.decoratedClient = this.fakeXrpClient
   })
 
   it('Get Account Balance - Response Not Modified', async function () {
