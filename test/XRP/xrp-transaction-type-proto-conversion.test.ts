@@ -79,7 +79,6 @@ import {
 } from './fakes/fake-xrp-transaction-type-protobufs'
 
 import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import { XrpError } from '../../src'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {
   // AccountSet
