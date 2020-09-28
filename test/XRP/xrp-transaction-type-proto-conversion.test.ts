@@ -194,11 +194,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
   it('Convert CheckCancel protobuf with missing checkId', function (): void {
     // GIVEN a CheckCancel protocol buffer without a checkId.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCancel = XrpCheckCancel.from(testInvalidCheckCancelProto)
-
-    // THEN the result is undefined.
-    assert.isUndefined(checkCancel)
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpCheckCancel.from(testInvalidCheckCancelProto)
+    }, XrpError)
   })
 
   // CheckCash
