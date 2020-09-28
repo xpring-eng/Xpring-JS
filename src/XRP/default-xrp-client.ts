@@ -488,7 +488,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   /**
    * Disables DepositPreauth and unauthorizes an XRPL account to send to this XRPL account.
    *
-   * @set https://xrpl.org/depositpreauth.html
+   * @see https://xrpl.org/depositpreauth.html
    *
    * @param xAddressToUnauthorize The X-Address of the sender to unauthorize.
    * @param wallet The wallet associated with the XRPL account revoking a deposit preauthorization, and that will sign the request.
