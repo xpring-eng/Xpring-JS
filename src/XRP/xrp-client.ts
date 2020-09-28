@@ -152,4 +152,22 @@ export default class XrpClient implements XrpClientInterface {
   enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
     return this.decoratedClient.enableDepositAuth(wallet)
   }
+
+  /**
+   * Enables DepositPreauth and authorizes an XRPL account to send to this XRPL account.
+   *
+   * @see https://xrpl.org/depositpreauth.html
+   *
+   * @param xAddressToAuthorize The X-Address of the sender to enable DepositPreauth for.
+   * @param wallet The wallet associated with the XRPL account enabling a deposit preauthorization and that will sign the request.
+   */
+  authorizeSendingAccount(
+    xAddressToAuthorize: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return this.decoratedClient.authorizeSendingAccount(
+      xAddressToAuthorize,
+      wallet,
+    )
+  }
 }

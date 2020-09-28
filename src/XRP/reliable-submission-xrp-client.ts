@@ -89,6 +89,17 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     return await this.awaitFinalTransactionResult(result.hash, wallet)
   }
 
+  public async authorizeSendingAccount(
+    xAddressToAuthorize: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const result = await this.decoratedClient.authorizeSendingAccount(
+      xAddressToAuthorize,
+      wallet,
+    )
+    return await this.awaitFinalTransactionResult(result.hash, wallet)
+  }
+
   /**
    * Waits for a transaction to complete and returns a TransactionResult.
    *
