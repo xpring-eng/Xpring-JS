@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import { Signer, Utils, Wallet, XrplNetwork } from 'xpring-common-js'
+import { Utils, Wallet, XrplNetwork } from 'xpring-common-js'
 import XrpUtils from './xrp-utils'
 import bigInt, { BigInteger } from 'big-integer'
 import { StatusCode as grpcStatusCode } from 'grpc-web'
@@ -7,13 +7,9 @@ import {
   CurrencyAmount,
   XRPDropsAmount,
 } from './Generated/web/org/xrpl/rpc/v1/amount_pb'
-import { AccountRoot } from './Generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
 import {
   Destination,
   Amount,
-  Account,
-  LastLedgerSequence,
-  SigningPublicKey,
   MemoData,
   MemoFormat,
   MemoType,
@@ -42,14 +38,14 @@ import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import SendXrpDetails from './model/send-xrp-details'
 import { AccountSetFlag } from './model/account-set-flag'
 import TransactionResult from './model/transaction-result'
-
-/** A margin to pad the current ledger sequence with when submitting transactions. */
-const maxLedgerVersionOffset = 10
+import CommonXrplClient from './common-xrpl-client'
 
 /**
  * DefaultXrpClient is a client which interacts with the XRP Ledger.
  */
 export default class DefaultXrpClient implements XrpClientDecorator {
+  private commonXrplClient: CommonXrplClient
+
   /**
    * Create a new DefaultXrpClient.
    *
@@ -80,7 +76,9 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   public constructor(
     private readonly networkClient: XrpNetworkClient,
     readonly network: XrplNetwork,
-  ) {}
+  ) {
+    this.commonXrplClient = new CommonXrplClient(networkClient, network)
+  }
 
   /**
    * Retrieve the balance for the given address.
@@ -134,7 +132,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   public async getPaymentStatus(
     transactionHash: string,
   ): Promise<TransactionStatus> {
-    return await this.getTransactionStatus(transactionHash)
+    return await this.commonXrplClient.getTransactionStatus(transactionHash)
   }
 
   /**
@@ -197,7 +195,9 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     payment.setDestination(destination)
     payment.setAmount(amount)
 
-    const transaction = await this.prepareBaseTransaction(sender)
+    const transaction = await this.commonXrplClient.prepareBaseTransaction(
+      sender,
+    )
     transaction.setPayment(payment)
 
     if (memoList && memoList.length) {
@@ -225,7 +225,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
         .forEach((memo) => transaction.addMemos(memo))
     }
 
-    return this.signAndSubmitTransaction(transaction, sender)
+    return this.commonXrplClient.signAndSubmitTransaction(transaction, sender)
   }
 
   public async getOpenLedgerSequence(): Promise<number> {
@@ -282,44 +282,9 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     return RawTransactionStatus.fromGetTransactionResponse(getTxResponse)
   }
 
-  private async getMinimumFee(): Promise<XRPDropsAmount> {
-    const getFeeResponse = await this.getFee()
-
-    const fee = getFeeResponse.getFee()?.getMinimumFee()
-    if (!fee) {
-      throw XrpError.malformedResponse
-    }
-
-    return fee
-  }
-
   private async getFee(): Promise<GetFeeResponse> {
     const getFeeRequest = this.networkClient.GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)
-  }
-
-  private async getAccountData(address: string): Promise<AccountRoot> {
-    const account = this.networkClient.AccountAddress()
-    account.setAddress(address)
-
-    const request = this.networkClient.GetAccountInfoRequest()
-    request.setAccount(account)
-
-    const ledger = new LedgerSpecifier()
-    ledger.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
-    request.setLedger(ledger)
-
-    const accountInfo = await this.networkClient.getAccountInfo(request)
-    if (!accountInfo) {
-      throw XrpError.malformedResponse
-    }
-
-    const accountData = accountInfo.getAccountData()
-    if (!accountData) {
-      throw XrpError.malformedResponse
-    }
-
-    return accountData
   }
 
   /**
@@ -436,15 +401,17 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     const accountSet = new AccountSet()
     accountSet.setSetFlag(setFlag)
 
-    const transaction = await this.prepareBaseTransaction(wallet)
+    const transaction = await this.commonXrplClient.prepareBaseTransaction(
+      wallet,
+    )
     transaction.setAccountSet(accountSet)
 
-    const transactionHash = await this.signAndSubmitTransaction(
+    const transactionHash = await this.commonXrplClient.signAndSubmitTransaction(
       transaction,
       wallet,
     )
 
-    return await this.getTransactionResult(transactionHash)
+    return await this.commonXrplClient.getTransactionResult(transactionHash)
   }
 
   /**
@@ -473,131 +440,16 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     const depositPreauth = new DepositPreauth()
     depositPreauth.setAuthorize(authorize)
 
-    const transaction = await this.prepareBaseTransaction(wallet)
+    const transaction = await this.commonXrplClient.prepareBaseTransaction(
+      wallet,
+    )
     transaction.setDepositPreauth(depositPreauth)
 
-    const transactionHash = await this.signAndSubmitTransaction(
+    const transactionHash = await this.commonXrplClient.signAndSubmitTransaction(
       transaction,
       wallet,
     )
 
-    return await this.getTransactionResult(transactionHash)
-  }
-
-  /**
-   * Populates the required fields common to all transaction types.
-   *
-   * @see https://xrpl.org/transaction-common-fields.html
-   *
-   * Note: The returned Transaction object must still be assigned transaction-specific details.
-   * Some transaction types require a different fee (or no fee), in which case the fee should be overwritten appropriately
-   * when constructing the transaction-specific details. (See https://xrpl.org/transaction-cost.html)
-   *
-   * @param wallet The wallet that will sign and submit this transaction.
-   * @returns A promise which resolves to a Transaction protobuf with the required common fields populated.
-   */
-  private async prepareBaseTransaction(wallet: Wallet): Promise<Transaction> {
-    const classicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
-    if (!classicAddress) {
-      throw XrpError.xAddressRequired
-    }
-
-    const fee = await this.getMinimumFee()
-    const accountData = await this.getAccountData(classicAddress.address)
-    const openLedgerSequence = await this.getOpenLedgerSequence()
-
-    const senderAccountAddress = new AccountAddress()
-    senderAccountAddress.setAddress(wallet.getAddress())
-
-    const account = new Account()
-    account.setValue(senderAccountAddress)
-
-    const lastLedgerSequence = new LastLedgerSequence()
-    lastLedgerSequence.setValue(openLedgerSequence + maxLedgerVersionOffset)
-
-    const signingPublicKeyBytes = Utils.toBytes(wallet.publicKey)
-    const signingPublicKey = new SigningPublicKey()
-    signingPublicKey.setValue(signingPublicKeyBytes)
-
-    const transaction = new Transaction()
-    transaction.setAccount(account)
-    transaction.setFee(fee)
-    transaction.setSequence(accountData.getSequence())
-    transaction.setLastLedgerSequence(lastLedgerSequence)
-    transaction.setSigningPublicKey(signingPublicKey)
-
-    return transaction
-  }
-
-  /**
-   * Signs the provided transaction using the wallet and submits to the XRPL network.
-   *
-   * @param transaction The transaction to be signed and submitted.
-   * @param wallet The wallet that will sign and submit this transaction.
-   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
-   */
-  private async signAndSubmitTransaction(
-    transaction: Transaction,
-    wallet: Wallet,
-  ): Promise<string> {
-    const signedTransaction = Signer.signTransaction(transaction, wallet)
-    if (!signedTransaction) {
-      throw XrpError.signingError
-    }
-
-    const submitTransactionRequest = this.networkClient.SubmitTransactionRequest()
-    submitTransactionRequest.setSignedTransaction(signedTransaction)
-
-    const response = await this.networkClient.submitTransaction(
-      submitTransactionRequest,
-    )
-
-    return Utils.toHex(response.getHash_asU8())
-  }
-
-  /**
-   * Returns a detailed TransactionResult for a given XRPL transaction hash.
-   *
-   * @param transactionHash The transaction hash to populate a TransactionResult for.
-   * @returns A Promise which resolves to a TransactionResult associated with the given transaction hash.
-   */
-  private async getTransactionResult(
-    transactionHash: string,
-  ): Promise<TransactionResult> {
-    const rawStatus = await this.getRawTransactionStatus(transactionHash)
-    const isValidated = rawStatus.isValidated
-    const transactionStatus = await this.getTransactionStatus(transactionHash)
-
-    return new TransactionResult(
-      transactionHash,
-      transactionStatus,
-      isValidated,
-    )
-  }
-
-  /**
-   * Retrieve the transaction status for a Transaction given a transaction hash.
-   *
-   * Note: This method will only work for Payment type transactions which do not have the tf_partial_payment attribute set.
-   * @see https://xrpl.org/payment.html#payment-flags
-   *
-   * @param transactionHash The hash of the transaction.
-   * @returns A TransactionStatus containing the status of the given transaction.
-   */
-  private async getTransactionStatus(
-    transactionHash: string,
-  ): Promise<TransactionStatus> {
-    const transactionStatus = await this.getRawTransactionStatus(
-      transactionHash,
-    )
-
-    // Return pending if the transaction is not validated.
-    if (!transactionStatus.isValidated) {
-      return TransactionStatus.Pending
-    }
-
-    return transactionStatus.transactionStatusCode?.startsWith('tes')
-      ? TransactionStatus.Succeeded
-      : TransactionStatus.Failed
+    return await this.commonXrplClient.getTransactionResult(transactionHash)
   }
 }
