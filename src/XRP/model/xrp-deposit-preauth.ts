@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { DepositPreauth } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -21,29 +22,47 @@ export default class XrpDepositPreauth {
   public static from(
     depositPreauth: DepositPreauth,
     xrplNetwork: XrplNetwork,
-  ): XrpDepositPreauth | undefined {
+  ): XrpDepositPreauth {
     const authorize = depositPreauth.getAuthorize()?.getValue()?.getAddress()
     const unauthorize = depositPreauth
       .getUnauthorize()
       ?.getValue()
       ?.getAddress()
 
-    let authorizeXAddress
-    let unauthorizeXAddress
     if (authorize) {
-      authorizeXAddress = XrpUtils.encodeXAddress(
+      const authorizeXAddress = XrpUtils.encodeXAddress(
         authorize,
         undefined,
         xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
       )
-    } else if (unauthorize) {
-      unauthorizeXAddress = XrpUtils.encodeXAddress(
+      if (!authorizeXAddress) {
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          'Cannot construct XAddress from DepositPreauth protobuf `authorize` field.',
+        )
+      }
+      return new XrpDepositPreauth(authorizeXAddress, undefined)
+    }
+
+    if (unauthorize) {
+      const unauthorizeXAddress = XrpUtils.encodeXAddress(
         unauthorize,
         undefined,
         xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
       )
+      if (!unauthorizeXAddress) {
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          'Cannot construct XAddress from DepositPreauth protobuf `unauthorize` field.',
+        )
+      }
+      return new XrpDepositPreauth(undefined, unauthorizeXAddress)
     }
-    return new XrpDepositPreauth(authorizeXAddress, unauthorizeXAddress)
+
+    throw new XrpError(
+      XrpErrorType.MalformedProtobuf,
+      'DepositPreauth protobuf provides neither `Authorize` nor `Unauthorize` fields.',
+    )
   }
 
   /**
