@@ -696,7 +696,7 @@ describe('Default XRP Client', function (): void {
     xrpClient.paymentHistory(testAddress).catch((error) => {
       assert.equal(
         (error as XrpError).errorType,
-        XrpErrorType.PaymentConversionFailure,
+        XrpErrorType.MalformedProtobuf,
       )
       done()
     })
@@ -759,11 +759,13 @@ describe('Default XRP Client', function (): void {
     const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
     const xrpClient = new DefaultXrpClient(fakeNetworkClient, XrplNetwork.Test)
 
-    // WHEN a transaction is requested.
-    const transaction = await xrpClient.getPayment(transactionHash)
-
-    // THEN the result is undefined
-    assert.isUndefined(transaction)
+    // WHEN a transaction is requested THEN an error is thrown.
+    try {
+      await xrpClient.getPayment(transactionHash)
+      assert.fail('No error thrown.')
+    } catch (e) {
+      assert(e.message.includes('IssuedCurrency protobuf'))
+    }
   })
 
   it('Get Payment - unsupported transaction type', async function (): Promise<
@@ -860,7 +862,7 @@ describe('Default XRP Client', function (): void {
     assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
-  it('Authorize DepositPreauth - submission failure', function (done): void {
+  it('authorizeSendingAccount - submission failure', function (done): void {
     // GIVEN a DefaultXrpClient which will fail to submit a transaction.
     const failureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -886,7 +888,7 @@ describe('Default XRP Client', function (): void {
       })
   })
 
-  it('Authorize DepositPreauth - failure with malformed sender X-Address', function (done): void {
+  it('authorizeSendingAccount - failure with malformed sender X-Address', function (done): void {
     // GIVEN a DefaultXrpClient with mocked networking.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
