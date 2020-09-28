@@ -94,6 +94,9 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
    *
    * @param transactionHash The transaction to wait for.
    * @param wallet The wallet sending the transaction.
+   *
+   * @returns A Promise resolving to a TransactionResult containing the results of the transaction associated with
+   * the given transaction hash.
    */
   private async awaitFinalTransactionResult(
     transactionHash: string,
