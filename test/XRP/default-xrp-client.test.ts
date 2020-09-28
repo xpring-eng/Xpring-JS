@@ -696,7 +696,7 @@ describe('Default XRP Client', function (): void {
     xrpClient.paymentHistory(testAddress).catch((error) => {
       assert.equal(
         (error as XrpError).errorType,
-        XrpErrorType.PaymentConversionFailure,
+        XrpErrorType.MalformedProtobuf,
       )
       done()
     })
@@ -759,11 +759,13 @@ describe('Default XRP Client', function (): void {
     const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
     const xrpClient = new DefaultXrpClient(fakeNetworkClient, XrplNetwork.Test)
 
-    // WHEN a transaction is requested.
-    const transaction = await xrpClient.getPayment(transactionHash)
-
-    // THEN the result is undefined
-    assert.isUndefined(transaction)
+    // WHEN a transaction is requested THEN an error is thrown.
+    try {
+      await xrpClient.getPayment(transactionHash)
+      assert.fail('No error thrown.')
+    } catch (e) {
+      assert(e.message.includes('IssuedCurrency protobuf'))
+    }
   })
 
   it('Get Payment - unsupported transaction type', async function (): Promise<

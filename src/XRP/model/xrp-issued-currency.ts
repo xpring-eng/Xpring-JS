@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import bigInt, { BigInteger } from 'big-integer'
 import { IssuedCurrencyAmount } from '../Generated/web/org/xrpl/rpc/v1/amount_pb'
 import XrpCurrency from './xrp-currency'
@@ -5,6 +6,7 @@ import XrpCurrency from './xrp-currency'
 /*
  * An issued currency on the XRP Ledger
  * @see: https://xrpl.org/basic-data-types.html#specifying-currency-amounts
+ * @see: https://xrpl.org/currency-formats.html#issued-currency-amounts
  */
 export default class XrpIssuedCurrency {
   /**
@@ -15,24 +17,33 @@ export default class XrpIssuedCurrency {
    * @returns an XrpIssuedCurrency with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/amount.proto#L28
    */
-  public static from(
-    issuedCurrency: IssuedCurrencyAmount,
-  ): XrpIssuedCurrency | undefined {
+  public static from(issuedCurrency: IssuedCurrencyAmount): XrpIssuedCurrency {
     const currency = issuedCurrency.getCurrency()
-    const xrpCurrency = currency && XrpCurrency.from(currency)
+    if (!currency) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'IssuedCurrency protobuf does not contain `currency` field.',
+      )
+    }
 
     let value
     try {
       value = bigInt(issuedCurrency.getValue())
     } catch {
-      value = undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Cannot construct BigInt from IssuedCurrency protobuf `value` field.',
+      )
     }
 
-    if (value) {
-      const issuer = issuedCurrency.getIssuer()?.getAddress()
-      return new XrpIssuedCurrency(xrpCurrency, value, issuer)
+    const issuer = issuedCurrency.getIssuer()?.getAddress()
+    if (!issuer) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'IssuedCurrency protobuf does not contain `issuer` field.',
+      )
     }
-    return undefined
+    return new XrpIssuedCurrency(XrpCurrency.from(currency), value, issuer)
   }
 
   /**
