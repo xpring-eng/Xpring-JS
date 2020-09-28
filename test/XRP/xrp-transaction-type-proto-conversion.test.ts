@@ -63,7 +63,8 @@ import {
   testInvalidOfferCreateProto,
   testPaymentChannelClaimProtoAllFields,
   testPaymentChannelClaimProtoMandatoryOnly,
-  testInvalidPaymentChannelClaimProto,
+  testInvalidPaymentChannelClaimProtoNoChannel,
+  testInvalidPaymentChannelClaimProtoSignatureNoPublicKey,
   testInvalidPaymentChannelCreateProto,
   testInvalidPaymentChannelFundProto,
   testInvalidSignerListSetProto,
@@ -722,12 +723,19 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert PaymentChannelClaim protobuf to XrpPaymentChannelClaim object - missing mandatory field', function (): void {
     // GIVEN a PaymentChannelClaim protocol buffer missing the mandatory field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const paymentChannelClaim = XrpPaymentChannelClaim.from(
-      testInvalidPaymentChannelClaimProto,
-    )
+    assert.throws(() => {
+      XrpPaymentChannelClaim.from(testInvalidPaymentChannelClaimProtoNoChannel)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(paymentChannelClaim)
+  it('Convert PaymentChannelClaim protobuf to XrpPaymentChannelClaim object - missing signature with public key', function (): void {
+    // GIVEN a PaymentChannelClaim protocol buffer missing a signature when there is a public key.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    assert.throws(() => {
+      XrpPaymentChannelClaim.from(
+        testInvalidPaymentChannelClaimProtoSignatureNoPublicKey,
+      )
+    }, XrpError)
   })
 
   // PaymentChannelCreate
