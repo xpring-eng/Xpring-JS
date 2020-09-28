@@ -64,7 +64,11 @@ import {
   testPaymentChannelClaimProtoAllFields,
   testPaymentChannelClaimProtoMandatoryOnly,
   testInvalidPaymentChannelClaimProto,
-  testInvalidPaymentChannelCreateProto,
+  testInvalidPaymentChannelCreateProtoNoAmount,
+  testInvalidPaymentChannelCreateProtoNoDestination,
+  testInvalidPaymentChannelCreateProtoBadDestination,
+  testInvalidPaymentChannelCreateProtoNoSettleDelay,
+  testInvalidPaymentChannelCreateProtoNoPublicKey,
   testInvalidPaymentChannelFundProto,
   testInvalidSignerListSetProto,
   testInvalidTrustSetProto,
@@ -809,16 +813,59 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(paymentChannelCreate?.cancelAfter)
   })
 
-  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - missing required field', function (): void {
-    // GIVEN a PaymentChannelCreate protocol buffer missing a required field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const paymentChannelCreate = XrpPaymentChannelCreate.from(
-      testInvalidPaymentChannelCreateProto,
-      XrplNetwork.Test,
-    )
+  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - missing amount', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer missing the amount field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelCreate.from(
+        testInvalidPaymentChannelCreateProtoNoAmount,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(paymentChannelCreate)
+  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - missing destination', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer missing the destination field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelCreate.from(
+        testInvalidPaymentChannelCreateProtoNoDestination,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - bad destination', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer with a bad destination field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelCreate.from(
+        testInvalidPaymentChannelCreateProtoBadDestination,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - missing PublicKey', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer missing the PublicKey field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelCreate.from(
+        testInvalidPaymentChannelCreateProtoNoPublicKey,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - missing SettleDelay', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer missing the SettleDelay field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelCreate.from(
+        testInvalidPaymentChannelCreateProtoNoSettleDelay,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
   })
 
   // PaymentChannelFund
