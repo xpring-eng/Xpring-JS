@@ -19,7 +19,6 @@ export default class XrpTrustSet {
    */
   public static from(trustSet: TrustSet): XrpTrustSet {
     const limitAmountCurrencyAmount = trustSet.getLimitAmount()?.getValue()
-    // limitAmountCurrencyAmount is required
     if (!limitAmountCurrencyAmount) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
