@@ -454,7 +454,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @see https://xrpl.org/depositpreauth.html
    *
    * @param xAddressToAuthorize The X-Address of the sender to enable DepositPreauth for.
-   * @param wallet The wallet associated with the XRPL account enabling DepositPreauth and that will sign the request.
+   * @param wallet The wallet associated with the XRPL account enabling a deposit preauthorization and that will sign the request.
    */
   public async authorizeSendingAccount(
     xAddressToAuthorize: string,
@@ -491,7 +491,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @set https://xrpl.org/depositpreauth.html
    *
    * @param xAddressToUnauthorize The X-Address of the sender to unauthorize.
-   * @param wallet The wallet associated with the XRPL account disabling DepositPreauth and that will sign the request.
+   * @param wallet The wallet associated with the XRPL account revoking a deposit preauthorization, and that will sign the request.
    */
   public async unauthorizeSendingAccount(
     xAddressToUnauthorize: string,
@@ -544,11 +544,11 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     const accountData = await this.getAccountData(classicAddress.address)
     const openLedgerSequence = await this.getOpenLedgerSequence()
 
-    const accountAddressToUnauthorize = new AccountAddress()
-    accountAddressToUnauthorize.setAddress(wallet.getAddress())
+    const senderAccountAddress = new AccountAddress()
+    senderAccountAddress.setAddress(wallet.getAddress())
 
     const account = new Account()
-    account.setValue(accountAddressToUnauthorize)
+    account.setValue(senderAccountAddress)
 
     const lastLedgerSequence = new LastLedgerSequence()
     lastLedgerSequence.setValue(openLedgerSequence + maxLedgerVersionOffset)
