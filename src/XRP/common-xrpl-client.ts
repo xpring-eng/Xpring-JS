@@ -13,10 +13,7 @@ import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
-import GrpcNetworkClient from './grpc-xrp-network-client'
-import GrpcNetworkClientWeb from './grpc-xrp-network-client.web'
 import { XrpNetworkClient } from './xrp-network-client'
-import isNode from '../Common/utils'
 import XrpError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import TransactionResult from './model/transaction-result'
@@ -29,28 +26,7 @@ const maxLedgerVersionOffset = 10
  */
 export default class CommonXrplClient {
   /**
-   * Create a new CommonXrplClient.
-   *
-   * The CommonXrplClient will use gRPC to communicate with the given endpoint.
-   *
-   * @param grpcUrl The URL of the gRPC instance to connect to.
-   * @param network The XRPL network this client is connecting to.
-   * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
-   */
-  public static commonXrplClientWithEndpoint(
-    grpcUrl: string,
-    network: XrplNetwork,
-    forceWeb = false,
-  ): CommonXrplClient {
-    return isNode() && !forceWeb
-      ? new CommonXrplClient(new GrpcNetworkClient(grpcUrl), network)
-      : new CommonXrplClient(new GrpcNetworkClientWeb(grpcUrl), network)
-  }
-
-  /**
    * Create a new CommonXrplClient with a custom network client implementation.
-   *
-   * In general, clients should prefer to call `commonXrplClientWithEndpoint`. This constructor is provided to improve testability of this class.
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
    * @param network The network this XrpClient is connecting to.
@@ -114,7 +90,7 @@ export default class CommonXrplClient {
     return RawTransactionStatus.fromGetTransactionResponse(getTxResponse)
   }
 
-  private async getMinimumFee(): Promise<XRPDropsAmount> {
+  public async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
 
     const fee = getFeeResponse.getFee()?.getMinimumFee()
@@ -125,7 +101,7 @@ export default class CommonXrplClient {
     return fee
   }
 
-  private async getFee(): Promise<GetFeeResponse> {
+  public async getFee(): Promise<GetFeeResponse> {
     const getFeeRequest = this.networkClient.GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)
   }
