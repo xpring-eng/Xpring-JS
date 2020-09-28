@@ -36,7 +36,7 @@ export default class XrpAccountDelete {
     const destinationXAddress = XrpUtils.encodeXAddress(
       destination,
       destinationTag,
-      xrplNetwork == XrplNetwork.Test,
+      xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
     )
     if (!destinationXAddress) {
       throw new XrpError(
