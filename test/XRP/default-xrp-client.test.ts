@@ -862,7 +862,7 @@ describe('Default XRP Client', function (): void {
     assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
-  it('Authorize DepositPreauth - submission failure', function (done): void {
+  it('authorizeSendingAccount - submission failure', function (done): void {
     // GIVEN a DefaultXrpClient which will fail to submit a transaction.
     const failureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -888,7 +888,7 @@ describe('Default XRP Client', function (): void {
       })
   })
 
-  it('Authorize DepositPreauth - failure with malformed sender X-Address', function (done): void {
+  it('authorizeSendingAccount - failure with malformed sender X-Address', function (done): void {
     // GIVEN a DefaultXrpClient with mocked networking.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
