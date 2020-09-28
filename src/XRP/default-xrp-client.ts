@@ -132,18 +132,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   public async getPaymentStatus(
     transactionHash: string,
   ): Promise<TransactionStatus> {
-    const transactionStatus = await this.getRawTransactionStatus(
-      transactionHash,
-    )
-
-    // Return pending if the transaction is not validated.
-    if (!transactionStatus.isValidated) {
-      return TransactionStatus.Pending
-    }
-
-    return transactionStatus.transactionStatusCode?.startsWith('tes')
-      ? TransactionStatus.Succeeded
-      : TransactionStatus.Failed
+    return await this.getTransactionStatus(transactionHash)
   }
 
   /**
@@ -452,15 +441,8 @@ export default class DefaultXrpClient implements XrpClientDecorator {
       transaction,
       wallet,
     )
-    const rawStatus = await this.getRawTransactionStatus(transactionHash)
-    const isValidated = rawStatus.isValidated
-    const transactionStatus = await this.getPaymentStatus(transactionHash)
 
-    return new TransactionResult(
-      transactionHash,
-      transactionStatus,
-      isValidated,
-    )
+    return await this.getTransactionResult(transactionHash)
   }
 
   /**
@@ -532,5 +514,51 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     )
 
     return Utils.toHex(response.getHash_asU8())
+  }
+
+  /**
+   * Returns a detailed TransactionResult for a given XRPL transaction hash.
+   *
+   * @param transactionHash The transaction hash to populate a TransactionResult for.
+   * @returns A Promise which resolves to a TransactionResult associated with the given transaction hash.
+   */
+  private async getTransactionResult(
+    transactionHash: string,
+  ): Promise<TransactionResult> {
+    const rawStatus = await this.getRawTransactionStatus(transactionHash)
+    const isValidated = rawStatus.isValidated
+    const transactionStatus = await this.getTransactionStatus(transactionHash)
+
+    return new TransactionResult(
+      transactionHash,
+      transactionStatus,
+      isValidated,
+    )
+  }
+
+  /**
+   * Retrieve the transaction status for a Transaction given a transaction hash.
+   *
+   * Note: This method will only work for Payment type transactions which do not have the tf_partial_payment attribute set.
+   * @see https://xrpl.org/payment.html#payment-flags
+   *
+   * @param transactionHash The hash of the transaction.
+   * @returns A TransactionStatus containing the status of the given transaction.
+   */
+  private async getTransactionStatus(
+    transactionHash: string,
+  ): Promise<TransactionStatus> {
+    const transactionStatus = await this.getRawTransactionStatus(
+      transactionHash,
+    )
+
+    // Return pending if the transaction is not validated.
+    if (!transactionStatus.isValidated) {
+      return TransactionStatus.Pending
+    }
+
+    return transactionStatus.transactionStatusCode?.startsWith('tes')
+      ? TransactionStatus.Succeeded
+      : TransactionStatus.Failed
   }
 }

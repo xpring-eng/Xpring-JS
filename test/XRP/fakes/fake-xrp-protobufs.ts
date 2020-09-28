@@ -86,24 +86,24 @@ const testAccountAddressIssuer = new AccountAddress()
 testAccountAddressIssuer.setAddress(testAddress2)
 
 // PathElement protos
-const testPathElementProto = new Payment.PathElement()
-testPathElementProto.setCurrency(testCurrencyProto)
-testPathElementProto.setAccount(accountAddressProto)
-testPathElementProto.setIssuer(testAccountAddressIssuer)
+const testPathElementProtoWithAccount = new Payment.PathElement()
+testPathElementProtoWithAccount.setAccount(accountAddressProto)
 
-const testEmptyPathElementProto = new Payment.PathElement()
+const testPathElementProtoWithCurrencyIssuer = new Payment.PathElement()
+testPathElementProtoWithCurrencyIssuer.setCurrency(testCurrencyProto)
+testPathElementProtoWithCurrencyIssuer.setIssuer(testAccountAddressIssuer)
 
 // Path protos
 const testEmptyPathProto = new Payment.Path()
 
 const testPathProtoOneElement = new Payment.Path()
-testPathProtoOneElement.addElements(testPathElementProto)
+testPathProtoOneElement.addElements(testPathElementProtoWithAccount)
 
 const testPathProtoThreeElements = new Payment.Path()
 testPathProtoThreeElements.setElementsList([
-  testPathElementProto,
-  testPathElementProto,
-  testPathElementProto,
+  testPathElementProtoWithAccount,
+  testPathElementProtoWithCurrencyIssuer,
+  testPathElementProtoWithAccount,
 ])
 
 // ... for Payment protos
@@ -346,6 +346,17 @@ testSignerEntryProto.setSignerWeight(testSignerWeightProto)
 
 // INVALID OBJECTS =============================================
 
+// Invalid PathElement protos
+const testInvalidPathElementWithAccountCurrency = new Payment.PathElement()
+testInvalidPathElementWithAccountCurrency.setCurrency(testCurrencyProto)
+testInvalidPathElementWithAccountCurrency.setAccount(accountAddressProto)
+
+const testInvalidPathElementWithAccountIssuer = new Payment.PathElement()
+testInvalidPathElementWithAccountIssuer.setIssuer(testAccountAddressIssuer)
+testInvalidPathElementWithAccountIssuer.setAccount(accountAddressProto)
+
+const testInvalidPathElementProtoEmpty = new Payment.PathElement()
+
 // Invalid Currency proto
 const testInvalidCurrencyProtoNoName = new Currency()
 testInvalidCurrencyProtoNoName.setCode(testCurrencyCode)
@@ -353,17 +364,30 @@ testInvalidCurrencyProtoNoName.setCode(testCurrencyCode)
 const testInvalidCurrencyProtoNoCode = new Currency()
 testInvalidCurrencyProtoNoCode.setName(testCurrencyName)
 
-// Invalid IssuedCurrencyAmount proto
-const testInvalidIssuedCurrencyProto = new IssuedCurrencyAmount()
-testInvalidIssuedCurrencyProto.setCurrency(testCurrencyProto)
-testInvalidIssuedCurrencyProto.setIssuer(accountAddressProto)
-testInvalidIssuedCurrencyProto.setValue(testInvalidIssuedCurrencyValue)
+// Invalid IssuedCurrencyAmount protos
+const testInvalidIssuedCurrencyProtoBadValue = new IssuedCurrencyAmount()
+testInvalidIssuedCurrencyProtoBadValue.setCurrency(testCurrencyProto)
+testInvalidIssuedCurrencyProtoBadValue.setIssuer(accountAddressProto)
+testInvalidIssuedCurrencyProtoBadValue.setValue(testInvalidIssuedCurrencyValue)
+
+const testInvalidIssuedCurrencyProtoBadCurrency = new IssuedCurrencyAmount()
+testInvalidIssuedCurrencyProtoBadCurrency.setIssuer(accountAddressProto)
+testInvalidIssuedCurrencyProtoBadCurrency.setValue(testIssuedCurrencyValue)
+
+const testInvalidIssuedCurrencyProtoBadIssuer = new IssuedCurrencyAmount()
+testInvalidIssuedCurrencyProtoBadIssuer.setValue(testIssuedCurrencyValue)
+testInvalidIssuedCurrencyProtoBadIssuer.setCurrency(testCurrencyProto)
 
 // Invalid CurrencyAmount proto
 const testInvalidCurrencyAmountProto = new CurrencyAmount()
 testInvalidCurrencyAmountProto.setIssuedCurrencyAmount(
-  testInvalidIssuedCurrencyProto,
+  testInvalidIssuedCurrencyProtoBadValue,
 )
+
+const testInvalidCurrencyAmountProtoEmpty = new CurrencyAmount()
+
+const testInvalidCurrencyAmountProtoBadDrops = new CurrencyAmount()
+testInvalidCurrencyAmountProtoBadDrops.setXrpAmount(undefined)
 
 // Invalid Amount proto
 const invalidAmountProto = new Amount()
@@ -462,8 +486,9 @@ export {
   testIsValidated,
   testLedgerIndex,
   testCurrencyProto,
-  testPathElementProto,
-  testEmptyPathElementProto,
+  testAccountAddressIssuer,
+  testPathElementProtoWithAccount,
+  testPathElementProtoWithCurrencyIssuer,
   testEmptyPathProto,
   testPathProtoOneElement,
   testPathProtoThreeElements,
@@ -485,8 +510,15 @@ export {
   testGetTransactionResponseProtoMandatoryOnly,
   testInvalidCurrencyProtoNoName,
   testInvalidCurrencyProtoNoCode,
-  testInvalidIssuedCurrencyProto,
+  testInvalidIssuedCurrencyProtoBadValue,
+  testInvalidIssuedCurrencyProtoBadCurrency,
+  testInvalidIssuedCurrencyProtoBadIssuer,
   testInvalidCurrencyAmountProto,
+  testInvalidCurrencyAmountProtoEmpty,
+  testInvalidCurrencyAmountProtoBadDrops,
+  testInvalidPathElementWithAccountCurrency,
+  testInvalidPathElementWithAccountIssuer,
+  testInvalidPathElementProtoEmpty,
   testInvalidPaymentProtoBadAmount,
   testInvalidPaymentProtoBadDeliverMin,
   testInvalidPaymentProtoBadSendMax,
