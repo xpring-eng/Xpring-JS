@@ -60,9 +60,11 @@ import {
   testInvalidPathElementWithAccountIssuer,
   testInvalidPathElementWithAccountCurrency,
   testInvalidPathElementProtoEmpty,
-  testInvalidPaymentProtoBadAmount,
-  testInvalidPaymentProtoBadDeliverMin,
-  testInvalidPaymentProtoBadSendMax,
+  testInvalidPaymentProtoNoAmount,
+  testInvalidPaymentProtoBadDestination,
+  testInvalidPaymentProtoNoDestination,
+  testInvalidPaymentProtoXrpPaths,
+  testInvalidPaymentProtoXrpSendMax,
   testInvalidGetTransactionResponseProto,
   testInvalidGetTransactionResponseProtoUnsupportedType,
 } from './fakes/fake-xrp-protobufs'
@@ -364,27 +366,43 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.isUndefined(payment?.sendMax)
   })
 
-  it('Convert Payment with invalid amount field', function (): void {
-    // GIVEN a pyament protocol buffer with an invalid amount field
+  it('Convert Payment without amount field', function (): void {
+    // GIVEN a payment protocol buffer without amount field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown
     assert.throws(() => {
-      XrpPayment.from(testInvalidPaymentProtoBadAmount, XrplNetwork.Test)
+      XrpPayment.from(testInvalidPaymentProtoNoAmount, XrplNetwork.Test)
     }, XrpError)
   })
 
-  it('Convert Payment with invalid deliverMin field', function (): void {
-    // GIVEN a payment protocol buffer with an invalid deliverMin field
+  it('Convert Payment without destination field', function (): void {
+    // GIVEN a payment protocol buffer without destination field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown
     assert.throws(() => {
-      XrpPayment.from(testInvalidPaymentProtoBadDeliverMin, XrplNetwork.Test)
+      XrpPayment.from(testInvalidPaymentProtoNoDestination, XrplNetwork.Test)
     }, XrpError)
   })
 
-  it('Convert Payment with invalid sendMax field', function (): void {
-    // GIVEN a payment protocol buffer with an invalid sendMax field
+  it('Convert Payment with invalid destination field', function (): void {
+    // GIVEN a payment protocol buffer with an invalid destination field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown
     assert.throws(() => {
-      XrpPayment.from(testInvalidPaymentProtoBadSendMax, XrplNetwork.Test)
+      XrpPayment.from(testInvalidPaymentProtoBadDestination, XrplNetwork.Test)
+    }, XrpError)
+  })
+
+  it('Convert Payment with paths field in XRP transaction', function (): void {
+    // GIVEN a payment protocol buffer with a paths field in an XRP transaction
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown
+    assert.throws(() => {
+      XrpPayment.from(testInvalidPaymentProtoXrpPaths, XrplNetwork.Test)
+    }, XrpError)
+  })
+
+  it('Convert Payment with sendMax field in XRP transaction', function (): void {
+    // GIVEN a payment protocol buffer with a sendMax field in an XRP transaction
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown
+    assert.throws(() => {
+      XrpPayment.from(testInvalidPaymentProtoXrpSendMax, XrplNetwork.Test)
     }, XrpError)
   })
 
