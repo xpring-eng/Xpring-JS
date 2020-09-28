@@ -116,7 +116,7 @@ export default class CommonXrplClient {
     return RawTransactionStatus.fromGetTransactionResponse(getTxResponse)
   }
 
-  public async getMinimumFee(): Promise<XRPDropsAmount> {
+  private async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
 
     const fee = getFeeResponse.getFee()?.getMinimumFee()
@@ -127,7 +127,7 @@ export default class CommonXrplClient {
     return fee
   }
 
-  public async getFee(): Promise<GetFeeResponse> {
+  private async getFee(): Promise<GetFeeResponse> {
     const getFeeRequest = this.networkClient.GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)
   }

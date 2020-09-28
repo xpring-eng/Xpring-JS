@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { Wallet, XrplNetwork } from 'xpring-common-js'
+import { Transaction, Wallet, XrplNetwork } from 'xpring-common-js'
 import bigInt from 'big-integer'
 import FakeXrpClient from './fakes/fake-xrp-client'
 import ReliableSubmissionXrpClient from '../../src/XRP/reliable-submission-xrp-client'
@@ -7,6 +7,7 @@ import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { testXrpTransaction } from './fakes/fake-xrp-protobufs'
 import TransactionResult from '../../src/XRP/model/transaction-result'
+import FakeCommonXrplClient from './fakes/fake-common-xrpl-client'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -37,6 +38,13 @@ const fakedEnableDepositAuthValue = new TransactionResult(
   TransactionStatus.Succeeded,
   true,
 )
+const fakedOpenLedgerSequenceValue = 15
+const fakedPrepareBaseTransactionValue = new Transaction()
+const fakedTransactionResultValue = new TransactionResult(
+  transactionHash,
+  TransactionStatus.Succeeded,
+  true,
+)
 
 describe('Reliable Submission XRP Client', function (): void {
   beforeEach(function () {
@@ -51,8 +59,20 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedGetPaymentValue,
       fakedEnableDepositAuthValue,
     )
+    this.fakeCommonXrplClient = new FakeCommonXrplClient(
+      fakedOpenLedgerSequenceValue,
+      fakedLastLedgerSequenceValue,
+      fakedRawTransactionStatusValue,
+      fakedPrepareBaseTransactionValue,
+      transactionHash,
+      fakedTransactionResultValue,
+      fakedTransactionStatusValue,
+      fakedTransactionStatusValue,
+      fakedRawTransactionStatusValue,
+    )
     this.reliableSubmissionClient = new ReliableSubmissionXrpClient(
-      'fakeUrl',
+      this.fakeXrpClient,
+      this.fakeCommonXrplClient,
       XrplNetwork.Test,
     )
     this.reliableSubmissionClient.decoratedClient = this.fakeXrpClient
