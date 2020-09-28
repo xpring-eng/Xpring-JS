@@ -696,7 +696,7 @@ describe('Default XRP Client', function (): void {
     xrpClient.paymentHistory(testAddress).catch((error) => {
       assert.equal(
         (error as XrpError).errorType,
-        XrpErrorType.PaymentConversionFailure,
+        XrpErrorType.MalformedProtobuf,
       )
       done()
     })
@@ -759,11 +759,13 @@ describe('Default XRP Client', function (): void {
     const fakeNetworkClient = new FakeXRPNetworkClient(fakeNetworkResponses)
     const xrpClient = new DefaultXrpClient(fakeNetworkClient, XrplNetwork.Test)
 
-    // WHEN a transaction is requested.
-    const transaction = await xrpClient.getPayment(transactionHash)
-
-    // THEN the result is undefined
-    assert.isUndefined(transaction)
+    // WHEN a transaction is requested THEN an error is thrown.
+    try {
+      await xrpClient.getPayment(transactionHash)
+      assert.fail('No error thrown.')
+    } catch (e) {
+      assert(e.message.includes('IssuedCurrency protobuf'))
+    }
   })
 
   it('Get Payment - unsupported transaction type', async function (): Promise<
@@ -829,5 +831,79 @@ describe('Default XRP Client', function (): void {
       assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
       done()
     })
+  })
+
+  it('Authorize DepositPreauth - successful response', async function (): Promise<
+    void
+  > {
+    // GIVEN a DefaultXrpClient with mocked networking that will return a successful hash for submitTransaction.
+    const xrpClient = new DefaultXrpClient(
+      fakeSucceedingNetworkClient,
+      XrplNetwork.Test,
+    )
+
+    const xAddressToAuthorize =
+      'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
+    const { wallet } = Wallet.generateRandomWallet()!
+
+    // WHEN authorizeSendingAccount is called.
+    const result = await xrpClient.authorizeSendingAccount(
+      xAddressToAuthorize,
+      wallet,
+    )
+    const transactionHash = result.hash
+
+    // THEN a transaction hash exists and is the expected hash.
+    const expectedTransactionHash = Utils.toHex(
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
+    )
+
+    assert.exists(transactionHash)
+    assert.strictEqual(transactionHash, expectedTransactionHash)
+  })
+
+  it('authorizeSendingAccount - submission failure', function (done): void {
+    // GIVEN a DefaultXrpClient which will fail to submit a transaction.
+    const failureResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultError,
+    )
+    const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
+    const xrpClient = new DefaultXrpClient(
+      failingNetworkClient,
+      XrplNetwork.Test,
+    )
+
+    const xAddressToAuthorize =
+      'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
+    const { wallet } = Wallet.generateRandomWallet()!
+
+    // WHEN authorizeSendingAccount is attempted THEN an error is propagated.
+    xrpClient
+      .authorizeSendingAccount(xAddressToAuthorize, wallet)
+      .catch((error) => {
+        assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
+        done()
+      })
+  })
+
+  it('authorizeSendingAccount - failure with malformed sender X-Address', function (done): void {
+    // GIVEN a DefaultXrpClient with mocked networking.
+    const xrpClient = new DefaultXrpClient(
+      fakeSucceedingNetworkClient,
+      XrplNetwork.Test,
+    )
+
+    const xAddressToAuthorize = 'notanxaddress'
+    const { wallet } = Wallet.generateRandomWallet()!
+
+    // WHEN authorizeSendingAccount is attempted THEN an error is propagated.
+    xrpClient
+      .authorizeSendingAccount(xAddressToAuthorize, wallet)
+      .catch((error) => {
+        assert.deepEqual(error, XrpError.xAddressRequired)
+        done()
+      })
   })
 })
