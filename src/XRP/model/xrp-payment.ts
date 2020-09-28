@@ -19,25 +19,19 @@ export default class XrpPayment {
    * @return an XrpPayment with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L224
    */
-  public static from(
-    payment: Payment,
-    xrplNetwork: XrplNetwork,
-  ): XrpPayment | undefined {
+  public static from(payment: Payment, xrplNetwork: XrplNetwork): XrpPayment {
     const paymentAmountValue = payment.getAmount()?.getValue()
-    const amount =
-      paymentAmountValue && XrpCurrencyAmount.from(paymentAmountValue)
-    if (!amount) {
-      // amount is required
+    if (!paymentAmountValue) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Payment protobuf is missing required `amount` field.',
       )
     }
-    // TODO For non-XRP amounts, the nested field names in `amount` MUST be lower-case.
+    const amount = XrpCurrencyAmount.from(paymentAmountValue)
+    // For non-XRP amounts, the nested field names in `amount` are lower-case.
 
     const destination = payment.getDestination()?.getValue()?.getAddress()
     if (!destination) {
-      // destination is required
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Payment protobuf is missing required `destination` field.',
@@ -51,7 +45,6 @@ export default class XrpPayment {
       destinationTag,
       xrplNetwork === XrplNetwork.Test,
     )
-    // An X-address should always be able to be encoded.
     if (!destinationXAddress) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
@@ -59,38 +52,35 @@ export default class XrpPayment {
       )
     }
 
-    // If the deliverMin field is set, it must be able to be transformed into a XrpCurrencyAmount.
-    const paymentDeliverMinValue = payment.getDeliverMin()?.getValue()
-    const deliverMin =
-      paymentDeliverMinValue && XrpCurrencyAmount.from(paymentDeliverMinValue)
-    if (paymentDeliverMinValue && !deliverMin) {
-      throw new XrpError(
-        XrpErrorType.MalformedProtobuf,
-        'Payment protobuf `deliverMin` field cannot be transformed into an XrpCurrencyAmount.',
-      )
-    }
-    // TODO For non-XRP amounts, the nested field names in the deliverMin field are lower-case.
-
     const invoiceID = payment.getInvoiceId()?.getValue_asU8()
 
-    // TODO `paths` must be omitted for XRP-to-XRP transactions.
     const paths =
       payment.getPathsList()?.length > 0
         ? payment.getPathsList().map((path) => XrpPath.from(path))
         : undefined
+    if (paths && amount.drops) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Payment protobuf `paths` field should be omitted for XRP-to-XRP interactions.',
+      )
+    }
 
-    // If the sendMax field is set, it must be able to be transformed into an XrpCurrencyAmount.
     const paymentSendMaxValue = payment.getSendMax()?.getValue()
     const sendMax =
       paymentSendMaxValue && XrpCurrencyAmount.from(paymentSendMaxValue)
-    if (paymentSendMaxValue && !sendMax) {
+    if (sendMax && amount.drops) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'Payment protobuf `sendMax` field cannot be transformed into an XrpCurrencyAmount.',
+        'Payment protobuf `sendMax` field should be omitted for XRP-to-XRP interactions.',
       )
     }
-    // TODO for XRP-to-XRP payments the sendMax field must be omitted
-    // TODO for non-XRP amounts the nested field names in the SendMax field MUST be lower-case
+    // For non-XRP amounts, the nested field names in `sendMax` MUST be lower-case.
+    // `sendMax` must be supplied for cross-currency/cross-issue payments.
+
+    const paymentDeliverMinValue = payment.getDeliverMin()?.getValue()
+    const deliverMin =
+      paymentDeliverMinValue && XrpCurrencyAmount.from(paymentDeliverMinValue)
+    // For non-XRP amounts, the nested field names in `deliverMin` are lower-case.
 
     return new XrpPayment(
       amount,

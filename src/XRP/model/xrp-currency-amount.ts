@@ -15,9 +15,7 @@ export default class XrpCurrencyAmount {
    * @returns an XrpCurrencyAmount with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/amount.proto#L10
    */
-  public static from(
-    currencyAmount: CurrencyAmount,
-  ): XrpCurrencyAmount | undefined {
+  public static from(currencyAmount: CurrencyAmount): XrpCurrencyAmount {
     switch (currencyAmount.getAmountCase()) {
       // Mutually exclusive: either drops or issuedCurrency is set in an XRPCurrencyAmount
       case CurrencyAmount.AmountCase.ISSUED_CURRENCY_AMOUNT: {
