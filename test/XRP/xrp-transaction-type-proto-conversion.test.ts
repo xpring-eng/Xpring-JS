@@ -345,7 +345,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   })
 
   it('Convert DepositPreauth protobuf to XrpDepositPreauth object - unauthorize set', function (): void {
-    // GIVEN a DespoitPreauth protocol buffer with unauthorize field set.
+    // GIVEN a DepositPreauth protocol buffer with unauthorize field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
     const depositPreauth = XrpDepositPreauth.from(
       testDepositPreauthProtoSetUnauthorize,
@@ -365,7 +365,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   })
 
   it('Convert DepositPreauth protobuf to XrpDepositPreauth object - neither authorize nor unauthorize', function (): void {
-    // GIVEN a DespoitPreauth protocol buffer neither authorize nor unauthorize field set.
+    // GIVEN a DepositPreauth protocol buffer neither authorize nor unauthorize field set.
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(() => {
       XrpDepositPreauth.from(
@@ -376,7 +376,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   })
 
   it('Convert DepositPreauth protobuf to XrpDepositPreauth object - bad authorize', function (): void {
-    // GIVEN a DespoitPreauth protocol buffer with a bad authorize address field.
+    // GIVEN a DepositPreauth protocol buffer with a bad authorize address field.
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(() => {
       XrpDepositPreauth.from(
@@ -387,7 +387,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   })
 
   it('Convert DepositPreauth protobuf to XrpDepositPreauth object - bad unauthorize', function (): void {
-    // GIVEN a DespoitPreauth protocol buffer with a bad unauthorize address field.
+    // GIVEN a DepositPreauth protocol buffer with a bad unauthorize address field.
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(() => {
       XrpDepositPreauth.from(

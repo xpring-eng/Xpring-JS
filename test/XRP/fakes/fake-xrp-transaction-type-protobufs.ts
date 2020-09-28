@@ -454,6 +454,8 @@ testInvalidDepositPreauthProtoSetBadAuthorize.setAuthorize(
   testInvalidAuthorizeProto,
 )
 
+// Invalid DepositPreauth proto (bad unauthorize)
+
 const testInvalidDepositPreauthProtoSetBadUnauthorize = new DepositPreauth()
 testInvalidDepositPreauthProtoSetBadUnauthorize.setUnauthorize(
   testInvalidUnauthorizeProto,
