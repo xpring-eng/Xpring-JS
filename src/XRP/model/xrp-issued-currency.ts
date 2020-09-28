@@ -17,9 +17,7 @@ export default class XrpIssuedCurrency {
    * @returns an XrpIssuedCurrency with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/amount.proto#L28
    */
-  public static from(
-    issuedCurrency: IssuedCurrencyAmount,
-  ): XrpIssuedCurrency | undefined {
+  public static from(issuedCurrency: IssuedCurrencyAmount): XrpIssuedCurrency {
     const currency = issuedCurrency.getCurrency()
     if (!currency) {
       throw new XrpError(
