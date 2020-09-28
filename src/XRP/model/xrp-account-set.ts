@@ -20,7 +20,6 @@ export default class XrpAccountSet {
   public static from(accountSet: AccountSet): XrpAccountSet {
     const clearFlag = accountSet.getClearFlag()?.getValue()
     const domain = accountSet.getDomain()?.getValue()
-    // domain must be lowercase
     if (domain?.toLowerCase() != domain) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
@@ -30,19 +29,17 @@ export default class XrpAccountSet {
     const emailHash = accountSet.getEmailHash()?.getValue_asU8()
     const messageKey = accountSet.getMessageKey()?.getValue_asU8()
     const setFlag = accountSet.getSetFlag()?.getValue()
-    if (clearFlag && setFlag && clearFlag == setFlag) {
+    if (clearFlag && setFlag && clearFlag === setFlag) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'AccountSet protobuf fields `clearFlag` and `setFlag` are equal.',
       )
     }
     const transferRate = accountSet.getTransferRate()?.getValue()
-    // transferRate cannot be more than 2000000000 or less than 1000000000,
-    // except for the special case 0 meaning no fee.
-    const maxTransferRate = 2000000000
-    const minTransferRate = 1000000000
-    const specialCaseTransferRate = 0
     if (transferRate) {
+      const maxTransferRate = 2000000000
+      const minTransferRate = 1000000000
+      const specialCaseTransferRate = 0
       if (transferRate > maxTransferRate) {
         throw new XrpError(
           XrpErrorType.MalformedProtobuf,
@@ -60,7 +57,6 @@ export default class XrpAccountSet {
       }
     }
     const tickSize = accountSet.getTickSize()?.getValue()
-    // Valid values for tickSize are 3 to 15 inclusive, or 0 to disable.
     if (tickSize && !this.isValidTickSize(tickSize)) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
@@ -82,11 +78,8 @@ export default class XrpAccountSet {
     const minTickSize = 3
     const maxTickSize = 15
     const disableTickSize = 0
-    if (
-      (minTickSize <= tickSize && tickSize <= maxTickSize) ||
-      tickSize == disableTickSize
-    ) {
-      return true
+    if (minTickSize <= tickSize && tickSize <= maxTickSize) {
+      return tickSize === disableTickSize
     }
     return false
   }
