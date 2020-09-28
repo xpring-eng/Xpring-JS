@@ -76,6 +76,7 @@ const testDomain = 'testdomain'
 const testEmailHash = new Uint8Array([8, 9, 10])
 const testMessageKey = new Uint8Array([11, 12, 13])
 const testSetFlag = 4
+const testInvalidSetFlag = 5
 const testTransferRate = 1234567890
 const testInvalidLowTransferRate = 11
 const testInvalidHighTransferRate = 9876543210
@@ -456,6 +457,14 @@ testInvalidTickSizeProto.setValue(testInvalidTickSize)
 const testInvalidAccountSetProtoBadTickSize = new AccountSet()
 testInvalidAccountSetProtoBadTickSize.setTickSize(testInvalidTickSizeProto)
 
+// Invalid AccountSet proto (clearFlag == setFlag)
+const testInvalidSetFlagProto = new SetFlag()
+testInvalidSetFlagProto.setValue(testInvalidSetFlag)
+
+const testInvalidAccountSetProtoSameSetClearFlag = new AccountSet()
+testInvalidAccountSetProtoSameSetClearFlag.setClearFlag(testClearFlagProto)
+testInvalidAccountSetProtoSameSetClearFlag.setSetFlag(testInvalidSetFlagProto)
+
 // Invalid CheckCancel proto (missing checkId)
 const testInvalidCheckCancelProto = new CheckCancel()
 
@@ -543,6 +552,7 @@ export {
   testInvalidAccountSetProtoBadLowTransferRate,
   testInvalidAccountSetProtoBadHighTransferRate,
   testInvalidAccountSetProtoBadTickSize,
+  testInvalidAccountSetProtoSameSetClearFlag,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,

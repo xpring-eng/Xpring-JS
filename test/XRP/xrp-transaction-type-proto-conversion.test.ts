@@ -54,6 +54,7 @@ import {
   testInvalidAccountSetProtoBadLowTransferRate,
   testInvalidAccountSetProtoBadHighTransferRate,
   testInvalidAccountSetProtoBadTickSize,
+  testInvalidAccountSetProtoSameSetClearFlag,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
@@ -162,6 +163,14 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(() => {
       XrpAccountSet.from(testInvalidAccountSetProtoBadTickSize)
+    }, XrpError)
+  })
+
+  it('Convert AccountSet protobuf with same setFlag and clearFlag to XrpAccountSet object', function (): void {
+    // GIVEN an AccountSet protocol buffer with setFlag == clearFlag.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountSet.from(testInvalidAccountSetProtoSameSetClearFlag)
     }, XrpError)
   })
 

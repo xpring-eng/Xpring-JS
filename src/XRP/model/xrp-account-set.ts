@@ -30,6 +30,12 @@ export default class XrpAccountSet {
     const emailHash = accountSet.getEmailHash()?.getValue_asU8()
     const messageKey = accountSet.getMessageKey()?.getValue_asU8()
     const setFlag = accountSet.getSetFlag()?.getValue()
+    if (clearFlag && setFlag && clearFlag == setFlag) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'AccountSet protobuf fields `clearFlag` and `setFlag` are equal.',
+      )
+    }
     const transferRate = accountSet.getTransferRate()?.getValue()
     // transferRate cannot be more than 2000000000 or less than 1000000000,
     // except for the special case 0 meaning no fee.
