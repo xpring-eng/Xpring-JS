@@ -1,6 +1,8 @@
 /* eslint-disable no-restricted-syntax */
 import { Signer, Utils, Wallet, XrplNetwork } from 'xpring-common-js'
 import XrpUtils from './xrp-utils'
+import GrpcNetworkClient from './grpc-xrp-network-client'
+import GrpcNetworkClientWeb from './grpc-xrp-network-client.web'
 import { XRPDropsAmount } from './Generated/web/org/xrpl/rpc/v1/amount_pb'
 import { AccountRoot } from './Generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
 import {
@@ -14,17 +16,41 @@ import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import { XrpNetworkClient } from './xrp-network-client'
-import XrpError from './xrp-error'
+import XrpError, { XrpErrorType } from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import TransactionResult from './model/transaction-result'
+import isNode from '../Common/utils'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
+
+async function sleep(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds))
+}
 
 /**
  * CommonXrplClient is a client which interacts with the XRP Ledger.
  */
 export default class CommonXrplClient {
+  /**
+   * Create a new CommonXrplClient.
+   *
+   * The CommonXrplClient will use gRPC to communicate with the given endpoint.
+   *
+   * @param grpcUrl The URL of the gRPC instance to connect to.
+   * @param network The network this XrpClient is connecting to.
+   * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
+   */
+  public static commonXrplClientWithEndpoint(
+    grpcUrl: string,
+    network: XrplNetwork,
+    forceWeb = false,
+  ): CommonXrplClient {
+    return isNode() && !forceWeb
+      ? new CommonXrplClient(new GrpcNetworkClient(grpcUrl), network)
+      : new CommonXrplClient(new GrpcNetworkClientWeb(grpcUrl), network)
+  }
+
   /**
    * Create a new CommonXrplClient with a custom network client implementation.
    *
@@ -245,5 +271,90 @@ export default class CommonXrplClient {
     return transactionStatus.transactionStatusCode?.startsWith('tes')
       ? TransactionStatus.Succeeded
       : TransactionStatus.Failed
+  }
+
+  public determineFinalResult(
+    rawTransactionStatus: RawTransactionStatus,
+  ): TransactionStatus {
+    // Return pending if the transaction is not validated.
+    if (!rawTransactionStatus.isValidated) {
+      return TransactionStatus.Pending
+    } else {
+      const transactionStatus = rawTransactionStatus.transactionStatusCode?.startsWith(
+        'tes',
+      )
+        ? TransactionStatus.Succeeded
+        : TransactionStatus.Failed
+      return transactionStatus
+    }
+  }
+
+  public async awaitFinalTransactionResult(
+    transactionHash: string,
+    sender: Wallet,
+  ): Promise<RawTransactionStatus> {
+    const ledgerCloseTimeMs = 4 * 1000
+    await sleep(ledgerCloseTimeMs)
+
+    // Get transaction status.
+    let rawTransactionStatus = await this.getRawTransactionStatus(
+      transactionHash,
+    )
+    const { lastLedgerSequence } = rawTransactionStatus
+    if (!lastLedgerSequence) {
+      return Promise.reject(
+        new Error(
+          'The transaction did not have a lastLedgerSequence field so transaction status cannot be reliably determined.',
+        ),
+      )
+    }
+
+    // Decode the sending address to a classic address for use in determining the last ledger sequence.
+    // An invariant of `getLatestValidatedLedgerSequence` is that the given input address (1) exists when the method
+    // is called and (2) is in a classic address form.
+    //
+    // The sending address should always exist, except in the case where it is deleted. A deletion would supersede the
+    // transaction in flight, either by:
+    // 1) Consuming the nonce sequence number of the transaction, which would effectively cancel the transaction
+    // 2) Occur after the transaction has settled which is an unlikely enough case that we ignore it.
+    //
+    // This logic is brittle and should be replaced when we have an RPC that can give us this data.
+    const classicAddress = XrpUtils.decodeXAddress(sender.getAddress())
+    if (!classicAddress) {
+      throw new XrpError(
+        XrpErrorType.Unknown,
+        'The source wallet reported an address which could not be decoded to a classic address',
+      )
+    }
+    const sourceClassicAddress = classicAddress.address
+
+    // Retrieve the latest ledger index.
+    let latestLedgerSequence = await this.getLatestValidatedLedgerSequence(
+      sourceClassicAddress,
+    )
+
+    // Poll until the transaction is validated, or until the lastLedgerSequence has been passed.
+    /*
+     * In general, performing an await as part of each operation is an indication that the program is not taking full advantage of the parallelization benefits of async/await.
+     * Usually, the code should be refactored to create all the promises at once, then get access to the results using Promise.all(). Otherwise, each successive operation will not start until the previous one has completed.
+     * But here specifically, it is reasonable to await in a loop, because we need to wait for the ledger, and there is no good way to refactor this.
+     * https://eslint.org/docs/rules/no-await-in-loop
+     */
+    /* eslint-disable no-await-in-loop */
+    while (
+      latestLedgerSequence <= lastLedgerSequence &&
+      !rawTransactionStatus.isValidated
+    ) {
+      await sleep(ledgerCloseTimeMs)
+
+      // Update latestLedgerSequence and rawTransactionStatus
+      latestLedgerSequence = await this.getLatestValidatedLedgerSequence(
+        sourceClassicAddress,
+      )
+      rawTransactionStatus = await this.getRawTransactionStatus(transactionHash)
+    }
+    /* eslint-enable no-await-in-loop */
+
+    return rawTransactionStatus
   }
 }
