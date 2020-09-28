@@ -488,8 +488,12 @@ const testInvalidPaymentChannelCreateProto = new PaymentChannelCreate()
 testInvalidPaymentChannelCreateProto.setAmount(testAmountProto)
 
 // Invalid PaymentChannelFund proto (missing amount)
-const testInvalidPaymentChannelFundProto = new PaymentChannelFund()
-testInvalidPaymentChannelFundProto.setChannel(testChannelProto)
+const testInvalidPaymentChannelFundProtoNoAmount = new PaymentChannelFund()
+testInvalidPaymentChannelFundProtoNoAmount.setChannel(testChannelProto)
+
+// Invalid PaymentChannelFund proto (missing channel)
+const testInvalidPaymentChannelFundProtoNoChannel = new PaymentChannelFund()
+testInvalidPaymentChannelFundProtoNoChannel.setAmount(testAmountProto)
 
 // Invalid SignerListSet proto (missing SignerEntries)
 const testInvalidSignerListSetProto = new SignerListSet()
@@ -553,7 +557,8 @@ export {
   testInvalidOfferCreateProto,
   testInvalidPaymentChannelClaimProto,
   testInvalidPaymentChannelCreateProto,
-  testInvalidPaymentChannelFundProto,
+  testInvalidPaymentChannelFundProtoNoAmount,
+  testInvalidPaymentChannelFundProtoNoChannel,
   testInvalidSignerListSetProto,
   testInvalidTrustSetProto,
   testInvalidTrustSetProtoXRP,
