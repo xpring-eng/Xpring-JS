@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { AccountSet } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 /*
@@ -16,15 +17,52 @@ export default class XrpAccountSet {
    * @return an XrpAccountSet with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L100
    */
-  public static from(accountSet: AccountSet): XrpAccountSet | undefined {
+  public static from(accountSet: AccountSet): XrpAccountSet {
     const clearFlag = accountSet.getClearFlag()?.getValue()
     const domain = accountSet.getDomain()?.getValue()
+    if (domain != undefined && domain?.toLowerCase() !== domain) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'AccountSet protobuf field `domain` is not lowercase.',
+      )
+    }
     const emailHash = accountSet.getEmailHash()?.getValue_asU8()
     const messageKey = accountSet.getMessageKey()?.getValue_asU8()
     const setFlag = accountSet.getSetFlag()?.getValue()
+    if (clearFlag != undefined && setFlag && clearFlag === setFlag) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'AccountSet protobuf fields `clearFlag` and `setFlag` are equal.',
+      )
+    }
     const transferRate = accountSet.getTransferRate()?.getValue()
+    if (transferRate != undefined) {
+      const maxTransferRate = 2000000000
+      const minTransferRate = 1000000000
+      const specialCaseTransferRate = 0
+      if (transferRate > maxTransferRate) {
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          `AccountSet protobuf field \`transferRate\` is above ${maxTransferRate}.`,
+        )
+      }
+      if (
+        transferRate < minTransferRate &&
+        transferRate !== specialCaseTransferRate
+      ) {
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          `AccountSet protobuf field \`transferRate\` is below ${minTransferRate}.`,
+        )
+      }
+    }
     const tickSize = accountSet.getTickSize()?.getValue()
-
+    if (tickSize != undefined && !this.isValidTickSize(tickSize)) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'AccountSet protobuf field `tickSize` not between 3 and 15, inclusive, or 0.',
+      )
+    }
     return new XrpAccountSet(
       clearFlag,
       domain,
@@ -33,6 +71,16 @@ export default class XrpAccountSet {
       setFlag,
       transferRate,
       tickSize,
+    )
+  }
+
+  private static isValidTickSize(tickSize: number) {
+    const minTickSize = 3
+    const maxTickSize = 15
+    const disableTickSize = 0
+    return (
+      (minTickSize <= tickSize && tickSize <= maxTickSize) ||
+      tickSize === disableTickSize
     )
   }
 

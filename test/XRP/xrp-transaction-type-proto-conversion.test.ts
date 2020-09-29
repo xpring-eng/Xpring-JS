@@ -50,8 +50,17 @@ import {
   testSignerListSetProto,
   testTrustSetProtoAllFields,
   testTrustSetProtoMandatoryOnly,
+  testInvalidAccountSetProtoBadDomain,
+  testInvalidAccountSetProtoBadLowTransferRate,
+  testInvalidAccountSetProtoBadHighTransferRate,
+  testInvalidAccountSetProtoBadTickSize,
+  testInvalidAccountSetProtoSameSetClearFlag,
+  testInvalidAccountDeleteProto,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
+  testInvalidDepositPreauthProtoNoAuthUnauth,
+  testInvalidDepositPreauthProtoSetBadAuthorize,
+  testInvalidDepositPreauthProtoSetBadUnauthorize,
   testInvalidCheckCreateProto,
   testInvalidCheckCreateProtoBadDestination,
   testInvalidCheckCreateProtoNoSendMax,
@@ -67,11 +76,15 @@ import {
   testInvalidPaymentChannelFundProto,
   testInvalidSignerListSetProto,
   testInvalidTrustSetProto,
+  testInvalidTrustSetProtoXRP,
   testSignerEntry1,
   testSignerEntry2,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 
-import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import {
+  AccountSet,
+  AccountDelete,
+} from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {
   // AccountSet
@@ -130,6 +143,61 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(accountSet?.tickSize)
   })
 
+  it('Convert empty AccountSet protobuf to XrpAccountSet object', function (): void {
+    // GIVEN an AccountSet protocol buffer with only one field set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const accountSet = XrpAccountSet.from(new AccountSet())
+
+    // THEN the AccountSet converted as expected.
+    assert.isUndefined(accountSet.clearFlag)
+    assert.isUndefined(accountSet.domain)
+    assert.isUndefined(accountSet.emailHash)
+    assert.isUndefined(accountSet.messageKey)
+    assert.isUndefined(accountSet.setFlag)
+    assert.isUndefined(accountSet.transferRate)
+    assert.isUndefined(accountSet.tickSize)
+  })
+
+  it('Convert AccountSet protobuf with invalid domain field to XrpAccountSet object', function (): void {
+    // GIVEN an AccountSet protocol buffer with invalid domain field set.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountSet.from(testInvalidAccountSetProtoBadDomain)
+    }, XrpError)
+  })
+
+  it('Convert AccountSet protobuf with invalid low transferRate field to XrpAccountSet object', function (): void {
+    // GIVEN an AccountSet protocol buffer with invalid transferRate field set.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountSet.from(testInvalidAccountSetProtoBadLowTransferRate)
+    }, XrpError)
+  })
+
+  it('Convert AccountSet protobuf with invalid high transferRate field to XrpAccountSet object', function (): void {
+    // GIVEN an AccountSet protocol buffer with invalid transferRate field set.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountSet.from(testInvalidAccountSetProtoBadHighTransferRate)
+    }, XrpError)
+  })
+
+  it('Convert AccountSet protobuf with invalid tickSize field to XrpAccountSet object', function (): void {
+    // GIVEN an AccountSet protocol buffer with invalid tickSize field set.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountSet.from(testInvalidAccountSetProtoBadTickSize)
+    }, XrpError)
+  })
+
+  it('Convert AccountSet protobuf with same setFlag and clearFlag to XrpAccountSet object', function (): void {
+    // GIVEN an AccountSet protocol buffer with setFlag == clearFlag.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountSet.from(testInvalidAccountSetProtoSameSetClearFlag)
+    }, XrpError)
+  })
+
   // AccountDelete
 
   it('Convert AccountDelete protobuf with all fields to XrpAccountDelete object', function (): void {
@@ -168,14 +236,18 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
   it('Convert AccountDelete protobuf to XrpAccountDelete object - missing destination field', function (): void {
     // GIVEN an AccountDelete protocol buffer missing the destination field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountDelete = XrpAccountDelete.from(
-      new AccountDelete(),
-      XrplNetwork.Test,
-    )
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountDelete.from(new AccountDelete(), XrplNetwork.Test)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(accountDelete)
+  it('Convert AccountDelete protobuf to XrpAccountDelete object - bad destination field', function (): void {
+    // GIVEN an AccountDelete protocol buffer with a destination field that can't convert to an XAddress.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountDelete.from(testInvalidAccountDeleteProto, XrplNetwork.Test)
+    }, XrpError)
   })
 
   it('Convert CheckCancel protobuf to XrpCheckCancel object', function (): void {
@@ -192,11 +264,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
   it('Convert CheckCancel protobuf with missing checkId', function (): void {
     // GIVEN a CheckCancel protocol buffer without a checkId.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCancel = XrpCheckCancel.from(testInvalidCheckCancelProto)
-
-    // THEN the result is undefined.
-    assert.isUndefined(checkCancel)
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpCheckCancel.from(testInvalidCheckCancelProto)
+    }, XrpError)
   })
 
   // CheckCash
@@ -358,11 +429,11 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
       undefined,
       true,
     )
-    assert.equal(depositPreauth?.authorizeXAddress, expectedXAddress)
+    assert.equal(depositPreauth.authorizeXAddress, expectedXAddress)
   })
 
   it('Convert DepositPreauth protobuf to XrpDepositPreauth object - unauthorize set', function (): void {
-    // GIVEN a DespoitPreauth protocol buffer with unauthorize field set.
+    // GIVEN a DepositPreauth protocol buffer with unauthorize field set.
     // WHEN the protocol buffer is converted to a native Typescript type.
     const depositPreauth = XrpDepositPreauth.from(
       testDepositPreauthProtoSetUnauthorize,
@@ -378,7 +449,40 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
       undefined,
       true,
     )
-    assert.equal(depositPreauth?.unauthorizeXAddress, expectedXAddress)
+    assert.equal(depositPreauth.unauthorizeXAddress, expectedXAddress)
+  })
+
+  it('Convert DepositPreauth protobuf to XrpDepositPreauth object - neither authorize nor unauthorize', function (): void {
+    // GIVEN a DepositPreauth protocol buffer neither authorize nor unauthorize field set.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpDepositPreauth.from(
+        testInvalidDepositPreauthProtoNoAuthUnauth,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert DepositPreauth protobuf to XrpDepositPreauth object - bad authorize', function (): void {
+    // GIVEN a DepositPreauth protocol buffer with a bad authorize address field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpDepositPreauth.from(
+        testInvalidDepositPreauthProtoSetBadAuthorize,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert DepositPreauth protobuf to XrpDepositPreauth object - bad unauthorize', function (): void {
+    // GIVEN a DepositPreauth protocol buffer with a bad unauthorize address field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpDepositPreauth.from(
+        testInvalidDepositPreauthProtoSetBadUnauthorize,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
   })
 
   // Escrow Cancel
@@ -957,10 +1061,17 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
   it('Convert TrustSet protobuf to XrpTrustSet object - missing mandatory field', function (): void {
     // GIVEN a TrustSet protocol buffer missing mandatory limitAmount field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const trustSet = XrpTrustSet.from(testInvalidTrustSetProto)
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpTrustSet.from(testInvalidTrustSetProto)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined
-    assert.isUndefined(trustSet)
+  it('Convert TrustSet protobuf to XrpTrustSet object - uses XRP', function (): void {
+    // GIVEN a TrustSet protocol buffer using XRP.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpTrustSet.from(testInvalidTrustSetProtoXRP)
+    }, XrpError)
   })
 })
