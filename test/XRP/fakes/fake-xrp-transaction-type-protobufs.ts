@@ -93,9 +93,6 @@ const testInvoiceId =
   '6F1DFD1D0FE8A32E40E1F2C05CF1C15545BAB56B617F9C6C2D63A6B704BEF59B'
 const testExpiration = 570113521
 
-// DepositPreauth values
-const testInvalidDestination = 'badDestination'
-
 // EscrowCancel values
 const testOfferSequence = 23
 
@@ -451,9 +448,6 @@ testInvalidCheckCreateProto.setSendMax(testSendMaxProto)
 const testInvalidDepositPreauthProtoNoAuthUnauth = new DepositPreauth()
 
 // Invalid DepositPreauth proto (bad authorize)
-const testInvalidAccountAddressProto = new AccountAddress()
-testInvalidAccountAddressProto.setAddress(testInvalidDestination)
-
 const testInvalidAuthorizeProto = new Authorize()
 testInvalidAuthorizeProto.setValue(testInvalidAccountAddressProto)
 
