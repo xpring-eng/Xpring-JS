@@ -124,8 +124,10 @@ const testPublicKey =
 const testRegularKey = 'rAR8rR8sUkBoCZFawhkWzY4Y5YoyuznwD'
 
 // SignerListSet values
+const testDestination2 = 'rPuNV4oA6f3SrKA4pLEpdVZW6QLvn3UJxK'
 const testSignerQuorum = 3
 const testSignerWeight = 1
+const testSignerQuorumDelete = 0
 
 // TrustSet values
 const testQualityIn = 5
@@ -382,8 +384,17 @@ const testSetRegularKeyProtoNoKey = new SetRegularKey()
 const testSignerQuorumProto = new SignerQuorum()
 testSignerQuorumProto.setValue(testSignerQuorum)
 
+const testSignerQuorumProtoDelete = new SignerQuorum()
+testSignerQuorumProtoDelete.setValue(testSignerQuorumDelete)
+
+const testAccountAddressProto2 = new AccountAddress()
+testAccountAddressProto2.setAddress(testDestination2)
+
 const testAccountProto = new Account()
 testAccountProto.setValue(testAccountAddressProto)
+
+const testAccountProto2 = new Account()
+testAccountProto2.setValue(testAccountAddressProto2)
 
 const testSignerWeightProto = new SignerWeight()
 testSignerWeightProto.setValue(testSignerWeight)
@@ -393,7 +404,7 @@ testSignerEntry1.setAccount(testAccountProto)
 testSignerEntry1.setSignerWeight(testSignerWeightProto)
 
 const testSignerEntry2 = new SignerEntry()
-testSignerEntry2.setAccount(testAccountProto)
+testSignerEntry2.setAccount(testAccountProto2)
 testSignerEntry2.setSignerWeight(testSignerWeightProto)
 
 const testSignerEntryList: Array<SignerEntry> = [
@@ -404,6 +415,10 @@ const testSignerEntryList: Array<SignerEntry> = [
 const testSignerListSetProto = new SignerListSet()
 testSignerListSetProto.setSignerQuorum(testSignerQuorumProto)
 testSignerListSetProto.setSignerEntriesList(testSignerEntryList)
+
+const testSignerListSetProtoDelete = new SignerListSet()
+testSignerListSetProtoDelete.setSignerQuorum(testSignerQuorumProtoDelete)
+testSignerListSetProtoDelete.setSignerEntriesList([] as SignerEntry[])
 
 // TrustSet protos
 const testLimitAmountProto = new LimitAmount()
@@ -491,9 +506,55 @@ testInvalidPaymentChannelCreateProto.setAmount(testAmountProto)
 const testInvalidPaymentChannelFundProto = new PaymentChannelFund()
 testInvalidPaymentChannelFundProto.setChannel(testChannelProto)
 
+// Invalid SignerListSet proto (missing SignerQuorum)
+const testInvalidSignerListSetProtoNoSignerQuorum = new SignerListSet()
+testInvalidSignerListSetProtoNoSignerQuorum.setSignerEntriesList(
+  testSignerEntryList,
+)
+
 // Invalid SignerListSet proto (missing SignerEntries)
-const testInvalidSignerListSetProto = new SignerListSet()
-testInvalidSignerListSetProto.setSignerEntriesList(testSignerEntryList)
+const testInvalidSignerListSetProtoNoSignerEntries = new SignerListSet()
+testInvalidSignerListSetProtoNoSignerEntries.setSignerQuorum(
+  testSignerQuorumProto,
+)
+
+// Invalid SignerListSet proto (too many elements in SignerEntries)
+const testInvalidSignerEntryListProtoTooManyElements: Array<SignerEntry> = [
+  testSignerEntry1,
+  testSignerEntry2,
+  testSignerEntry1,
+  testSignerEntry2,
+  testSignerEntry1,
+  testSignerEntry2,
+  testSignerEntry1,
+  testSignerEntry2,
+  testSignerEntry1,
+  testSignerEntry2,
+]
+
+const testInvalidSignerListSetProtoTooManySignerEntries = new SignerListSet()
+testInvalidSignerListSetProtoTooManySignerEntries.setSignerQuorum(
+  testSignerQuorumProto,
+)
+testInvalidSignerListSetProtoTooManySignerEntries.setSignerEntriesList(
+  testInvalidSignerEntryListProtoTooManyElements,
+)
+
+// Invalid SignerListSet proto (too many elements in SignerEntries)
+const testInvalidSignerEntryListRepeatAddresses: Array<SignerEntry> = [
+  testSignerEntry1,
+  testSignerEntry2,
+  testSignerEntry1,
+  testSignerEntry2,
+]
+
+const testInvalidSignerListSetProtoRepeatAddresses = new SignerListSet()
+testInvalidSignerListSetProtoRepeatAddresses.setSignerQuorum(
+  testSignerQuorumProto,
+)
+testInvalidSignerListSetProtoRepeatAddresses.setSignerEntriesList(
+  testInvalidSignerEntryListRepeatAddresses,
+)
 
 // Invalid TrustSet proto (missing limitAmount)
 const testInvalidTrustSetProto = new TrustSet()
@@ -538,6 +599,7 @@ export {
   testSignerEntry1,
   testSignerEntry2,
   testSignerListSetProto,
+  testSignerListSetProtoDelete,
   testTrustSetProtoAllFields,
   testTrustSetProtoMandatoryOnly,
   testInvalidCheckCancelProto,
@@ -554,7 +616,10 @@ export {
   testInvalidPaymentChannelClaimProto,
   testInvalidPaymentChannelCreateProto,
   testInvalidPaymentChannelFundProto,
-  testInvalidSignerListSetProto,
+  testInvalidSignerListSetProtoNoSignerQuorum,
+  testInvalidSignerListSetProtoNoSignerEntries,
+  testInvalidSignerListSetProtoTooManySignerEntries,
+  testInvalidSignerListSetProtoRepeatAddresses,
   testInvalidTrustSetProto,
   testInvalidTrustSetProtoXRP,
 }

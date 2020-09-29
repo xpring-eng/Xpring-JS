@@ -23,7 +23,7 @@ export default class XrpSignerListSet {
     xrplNetwork: XrplNetwork,
   ): XrpSignerListSet {
     const signerQuorum = signerListSet.getSignerQuorum()?.getValue()
-    if (!signerQuorum) {
+    if (signerQuorum == undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'SignerListSet protobuf does not contain `SignerQuorum` field.',
@@ -54,6 +54,7 @@ export default class XrpSignerListSet {
             'SignerListSet protobuf contains repeat account addresses in the `SignerEntries` field.',
           )
         }
+        accounts.push(signerAccount)
       })
     }
     return new XrpSignerListSet(signerQuorum, signerEntries)
