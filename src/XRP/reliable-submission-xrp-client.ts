@@ -1,7 +1,6 @@
 import { Wallet, XrplNetwork } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import XrpClientDecorator from './xrp-client-decorator'
-import RawTransactionStatus from './raw-transaction-status'
 import TransactionStatus from './transaction-status'
 import XrpTransaction from './model/xrp-transaction'
 
@@ -70,18 +69,6 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     )
 
     return transactionHash
-  }
-
-  public async getLatestValidatedLedgerSequence(
-    address: string,
-  ): Promise<number> {
-    return this.decoratedClient.getLatestValidatedLedgerSequence(address)
-  }
-
-  public async getRawTransactionStatus(
-    transactionHash: string,
-  ): Promise<RawTransactionStatus> {
-    return this.decoratedClient.getRawTransactionStatus(transactionHash)
   }
 
   public async accountExists(address: string): Promise<boolean> {
