@@ -42,7 +42,7 @@ export default class XrpSigner {
     if (!transactionSignature) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'Signer protobuf is missing `TnxSignature` field.',
+        'Signer protobuf is missing `TransactionSignature` field.',
       )
     }
     return new XrpSigner(
