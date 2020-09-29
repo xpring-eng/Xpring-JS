@@ -46,7 +46,7 @@ export default class XrpCheckCreate {
     }
 
     const sendMaxCurrencyAmount = checkCreate.getSendMax()?.getValue()
-    if (!sendMaxCurrencyAmount) {
+    if (sendMaxCurrencyAmount == undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'CheckCreate protobuf is missing `SendMax` field.',
