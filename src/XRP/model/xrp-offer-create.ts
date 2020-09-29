@@ -26,7 +26,7 @@ export default class XrpOfferCreate {
     if (!takerGetsCurrencyAmount) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'OfferCreate protobuf is missing `TakerGets` field.',
+        'OfferCreate protobuf is missing `takerGets` field.',
       )
     }
     const takerGets = XrpCurrencyAmount.from(takerGetsCurrencyAmount)
@@ -35,7 +35,7 @@ export default class XrpOfferCreate {
     if (!takerPaysCurrencyAmount) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'OfferCreate protobuf is missing `TakerPays` field.',
+        'OfferCreate protobuf is missing `takerPays` field.',
       )
     }
     const takerPays = XrpCurrencyAmount.from(takerPaysCurrencyAmount)

@@ -605,7 +605,7 @@ const testInvalidOfferCancelProto = new OfferCancel()
 const testInvalidOfferCreateProtoNoTakerGets = new OfferCreate()
 testInvalidOfferCreateProtoNoTakerGets.setTakerPays(testTakerPaysProto)
 
-// Invalid OfferCreate proto (missing takerGets)
+// Invalid OfferCreate proto (missing takerPays)
 const testInvalidOfferCreateProtoNoTakerPays = new OfferCreate()
 testInvalidOfferCreateProtoNoTakerPays.setTakerGets(testTakerGetsProto)
 
