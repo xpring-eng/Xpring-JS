@@ -4,7 +4,6 @@ import XrpClientDecorator from './xrp-client-decorator'
 import TransactionStatus from './transaction-status'
 import ReliableSubmissionXrpClient from './reliable-submission-xrp-client'
 import DefaultXrpClient from './default-xrp-client'
-import CommonXrplClient from './common-xrpl-client'
 import XrpClientInterface from './xrp-client-interface'
 import XrpTransaction from './model/xrp-transaction'
 
@@ -37,14 +36,8 @@ export default class XrpClient implements XrpClientInterface {
       network,
       forceWeb,
     )
-    const commonXrplClient = CommonXrplClient.commonXrplClientWithEndpoint(
-      grpcUrl,
-      network,
-      forceWeb,
-    )
     this.decoratedClient = new ReliableSubmissionXrpClient(
       defaultXrpClient,
-      commonXrplClient,
       network,
     )
   }
