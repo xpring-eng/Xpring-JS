@@ -229,9 +229,12 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     return this.commonXrplClient.signAndSubmitTransaction(transaction, sender)
   }
 
+  /**
+   * TODO: (amiecorso) remove from this class any methods that occur in CommonXrplClient,
+   * after reasoning about whether this is acceptable.
+   */
   public async getOpenLedgerSequence(): Promise<number> {
-    const getFeeResponse = await this.getFee()
-    return getFeeResponse.getLedgerCurrentIndex()
+    return this.commonXrplClient.getOpenLedgerSequence()
   }
 
   /**
