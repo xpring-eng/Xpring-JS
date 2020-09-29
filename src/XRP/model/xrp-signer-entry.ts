@@ -14,7 +14,7 @@ export default class XrpSignerEntry {
    * @return an XrpSignerEntry with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/f43aeda49c5362dc83c66507cae2ec71cfa7bfdf/src/ripple/proto/org/xrpl/rpc/v1/common.proto#L471
    */
-  public static from(signerEntry: SignerEntry): XrpSignerEntry | undefined {
+  public static from(signerEntry: SignerEntry): XrpSignerEntry {
     const account = signerEntry.getAccount()?.getValue()?.getAddress()
     if (!account) {
       throw new XrpError(
