@@ -66,6 +66,9 @@ import {
   testInvalidPaymentProtoXrpPaths,
   testInvalidPaymentProtoXrpSendMax,
   testInvalidPaymentProtoNoSendMax,
+  testInvalidSignerProtoNoAccount,
+  testInvalidSignerProtoNoPublicKey,
+  testInvalidSignerProtoNoTxnSignature,
   testInvalidGetTransactionResponseProto,
   testInvalidGetTransactionResponseProtoUnsupportedType,
 } from './fakes/fake-xrp-protobufs'
@@ -444,15 +447,19 @@ describe('Protocol Buffer Conversion', function (): void {
 
   // Signer
 
-  it('Convert Signer with all fields set', function (): void {
+  it('Convert Signer protobuf with all fields set', function (): void {
     // GIVEN a Signer protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const signer = XrpSigner.from(testSignerProto)
+    const signer = XrpSigner.from(testSignerProto, XrplNetwork.Test)
 
     // THEN all fields are present and converted correctly.
     assert.equal(
-      signer?.account,
-      testSignerProto.getAccount()?.getValue()?.getAddress(),
+      signer?.accountXAddress,
+      XrpUtils.encodeXAddress(
+        testSignerProto.getAccount()?.getValue()?.getAddress()!,
+        undefined,
+        true,
+      ),
     )
     assert.deepEqual(
       signer?.signingPublicKey,
@@ -462,6 +469,30 @@ describe('Protocol Buffer Conversion', function (): void {
       signer?.transactionSignature,
       testSignerProto.getTransactionSignature()?.getValue_asU8(),
     )
+  })
+
+  it('Convert Signer protobuf missing required field account', function (): void {
+    // GIVEN a Signer protocol buffer missing an account.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpSigner.from(testInvalidSignerProtoNoAccount, XrplNetwork.Test)
+    }, XrpError)
+  })
+
+  it('Convert Signer protobuf missing required field SigningPubKey', function (): void {
+    // GIVEN a Signer protocol buffer missing a public key.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpSigner.from(testInvalidSignerProtoNoPublicKey, XrplNetwork.Test)
+    }, XrpError)
+  })
+
+  it('Convert Signer protobuf missing required field TxnSignature', function (): void {
+    // GIVEN a Signer protocol buffer missing a transaction signature.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpSigner.from(testInvalidSignerProtoNoTxnSignature, XrplNetwork.Test)
+    }, XrpError)
   })
 
   // SignerEntry
@@ -514,7 +545,9 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.deepEqual(transaction?.memos, [
       XrpMemo.from(testMemoProtoAllFields)!,
     ])
-    assert.deepEqual(transaction?.signers, [XrpSigner.from(testSignerProto)!])
+    assert.deepEqual(transaction?.signers, [
+      XrpSigner.from(testSignerProto, XrplNetwork.Test)!,
+    ])
     assert.equal(
       transaction?.sourceXAddress,
       XrpUtils.encodeXAddress(

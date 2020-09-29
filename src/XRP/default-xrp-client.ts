@@ -19,6 +19,7 @@ import {
   MemoType,
   SetFlag,
   Authorize,
+  Unauthorize,
 } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
   AccountSet,
@@ -453,7 +454,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @see https://xrpl.org/depositpreauth.html
    *
    * @param xAddressToAuthorize The X-Address of the sender to enable DepositPreauth for.
-   * @param wallet The wallet associated with the XRPL account enabling DepositPreauth and that will sign the request.
+   * @param wallet The wallet associated with the XRPL account enabling a deposit preauthorization and that will sign the request.
    */
   public async authorizeSendingAccount(
     xAddressToAuthorize: string,
@@ -472,6 +473,43 @@ export default class DefaultXrpClient implements XrpClientDecorator {
 
     const depositPreauth = new DepositPreauth()
     depositPreauth.setAuthorize(authorize)
+
+    const transaction = await this.prepareBaseTransaction(wallet)
+    transaction.setDepositPreauth(depositPreauth)
+
+    const transactionHash = await this.signAndSubmitTransaction(
+      transaction,
+      wallet,
+    )
+
+    return await this.getTransactionResult(transactionHash)
+  }
+
+  /**
+   * Disables DepositPreauth and unauthorizes an XRPL account to send to this XRPL account.
+   *
+   * @see https://xrpl.org/depositpreauth.html
+   *
+   * @param xAddressToUnauthorize The X-Address of the sender to unauthorize.
+   * @param wallet The wallet associated with the XRPL account revoking a deposit preauthorization, and that will sign the request.
+   */
+  public async unauthorizeSendingAccount(
+    xAddressToUnauthorize: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const classicAddress = XrpUtils.decodeXAddress(xAddressToUnauthorize)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const accountAddressToUnauthorize = new AccountAddress()
+    accountAddressToUnauthorize.setAddress(xAddressToUnauthorize)
+
+    const unauthorize = new Unauthorize()
+    unauthorize.setValue(accountAddressToUnauthorize)
+
+    const depositPreauth = new DepositPreauth()
+    depositPreauth.setUnauthorize(unauthorize)
 
     const transaction = await this.prepareBaseTransaction(wallet)
     transaction.setDepositPreauth(depositPreauth)

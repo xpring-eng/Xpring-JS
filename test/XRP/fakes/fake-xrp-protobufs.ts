@@ -441,6 +441,23 @@ const testInvalidPaymentProtoNoSendMax = new Payment()
 testInvalidPaymentProtoNoSendMax.setAmount(paymentAmountProtoIssuedCurrency)
 testInvalidPaymentProtoNoSendMax.setDestination(paymentDestinationProto)
 
+// Invalid Signer protos
+const testInvalidSignerProtoNoAccount = new Signer()
+testInvalidSignerProtoNoAccount.setSigningPublicKey(signingPublicKeyProto)
+testInvalidSignerProtoNoAccount.setTransactionSignature(
+  transactionSignatureProto,
+)
+
+const testInvalidSignerProtoNoPublicKey = new Signer()
+testInvalidSignerProtoNoPublicKey.setAccount(accountProto)
+testInvalidSignerProtoNoPublicKey.setTransactionSignature(
+  transactionSignatureProto,
+)
+
+const testInvalidSignerProtoNoTxnSignature = new Signer()
+testInvalidSignerProtoNoTxnSignature.setAccount(accountProto)
+testInvalidSignerProtoNoTxnSignature.setSigningPublicKey(signingPublicKeyProto)
+
 // Invalid Transaction proto (PAYMENT, malformed) (only mandatory common fields set)
 const testInvalidPaymentTransaction = new Transaction()
 testInvalidPaymentTransaction.setAccount(transactionAccountProto)
@@ -551,6 +568,9 @@ export {
   testInvalidPaymentProtoXrpSendMax,
   testInvalidPaymentProtoNoSendMax,
   testInvalidPaymentTransaction,
+  testInvalidSignerProtoNoAccount,
+  testInvalidSignerProtoNoPublicKey,
+  testInvalidSignerProtoNoTxnSignature,
   testInvalidGetTransactionResponseProto,
   testInvalidGetTransactionResponseProtoUnsupportedType,
   testInvalidGetAccountTransactionHistoryResponse,
