@@ -602,8 +602,12 @@ testInvalidEscrowFinishProto.setOfferSequence(testOfferSequenceProto)
 const testInvalidOfferCancelProto = new OfferCancel()
 
 // Invalid OfferCreate proto (missing takerGets)
-const testInvalidOfferCreateProto = new OfferCreate()
-testInvalidOfferCreateProto.setTakerPays(testTakerPaysProto)
+const testInvalidOfferCreateProtoNoTakerGets = new OfferCreate()
+testInvalidOfferCreateProtoNoTakerGets.setTakerPays(testTakerPaysProto)
+
+// Invalid OfferCreate proto (missing takerPays)
+const testInvalidOfferCreateProtoNoTakerPays = new OfferCreate()
+testInvalidOfferCreateProtoNoTakerPays.setTakerGets(testTakerGetsProto)
 
 // Invalid PaymentChannelClaim proto (missing channel)
 const testInvalidPaymentChannelClaimProto = new PaymentChannelClaim()
@@ -691,7 +695,8 @@ export {
   testInvalidEscrowCreateProtoNoXRP,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
-  testInvalidOfferCreateProto,
+  testInvalidOfferCreateProtoNoTakerGets,
+  testInvalidOfferCreateProtoNoTakerPays,
   testInvalidPaymentChannelClaimProto,
   testInvalidPaymentChannelCreateProto,
   testInvalidPaymentChannelFundProto,
