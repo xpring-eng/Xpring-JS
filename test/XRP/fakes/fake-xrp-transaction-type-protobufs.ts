@@ -521,8 +521,20 @@ testInvalidDepositPreauthProtoSetBadUnauthorize.setUnauthorize(
 )
 
 // Invalid EscrowCancel proto (missing owner)
-const testInvalidEscrowCancelProto = new EscrowCancel()
-testInvalidEscrowCancelProto.setOfferSequence(testOfferSequenceProto)
+const testInvalidEscrowCancelProtoNoOwner = new EscrowCancel()
+testInvalidEscrowCancelProtoNoOwner.setOfferSequence(testOfferSequenceProto)
+
+// Invalid EscrowCancel proto (bad owner)
+const testInvalidOwnerProto = new Owner()
+testInvalidOwnerProto.setValue(testInvalidAccountAddressProto)
+
+const testInvalidEscrowCancelProtoBadOwner = new EscrowCancel()
+testInvalidEscrowCancelProtoBadOwner.setOwner(testInvalidOwnerProto)
+testInvalidEscrowCancelProtoBadOwner.setOfferSequence(testOfferSequenceProto)
+
+// Invalid EscrowCancel proto (no offerSequence)
+const testInvalidEscrowCancelProtoNoOfferSequence = new EscrowCancel()
+testInvalidEscrowCancelProtoNoOfferSequence.setOwner(testOwnerProto)
 
 // Invalid EscrowCreate proto (missing destination)
 const testInvalidEscrowCreateProto = new EscrowCreate()
@@ -613,7 +625,9 @@ export {
   testInvalidDepositPreauthProtoNoAuthUnauth,
   testInvalidDepositPreauthProtoSetBadAuthorize,
   testInvalidDepositPreauthProtoSetBadUnauthorize,
-  testInvalidEscrowCancelProto,
+  testInvalidEscrowCancelProtoNoOwner,
+  testInvalidEscrowCancelProtoBadOwner,
+  testInvalidEscrowCancelProtoNoOfferSequence,
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
