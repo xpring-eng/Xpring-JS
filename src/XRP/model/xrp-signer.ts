@@ -29,6 +29,12 @@ export default class XrpSigner {
       undefined,
       xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
     )
+    if (!accountXAddress) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Cannot construct XAddress from Signer protobuf `account` field.',
+      )
+    }
     const signingPublicKey = signer.getSigningPublicKey()?.getValue_asU8()
     if (!signingPublicKey) {
       throw new XrpError(
@@ -59,8 +65,8 @@ export default class XrpSigner {
    * @param transactionSignature A signature for this transaction, verifiable using the SigningPubKey.
    */
   private constructor(
-    readonly accountXAddress?: string,
-    readonly signingPublicKey?: Uint8Array,
-    readonly transactionSignature?: Uint8Array,
+    readonly accountXAddress: string,
+    readonly signingPublicKey: Uint8Array,
+    readonly transactionSignature: Uint8Array,
   ) {}
 }
