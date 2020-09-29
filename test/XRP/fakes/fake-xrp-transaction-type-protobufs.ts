@@ -93,6 +93,9 @@ const testInvoiceId =
   '6F1DFD1D0FE8A32E40E1F2C05CF1C15545BAB56B617F9C6C2D63A6B704BEF59B'
 const testExpiration = 570113521
 
+// DepositPreauth values
+const testInvalidDestination = 'badDestination'
+
 // EscrowCancel values
 const testOfferSequence = 23
 
@@ -444,6 +447,31 @@ testInvalidCheckCashProto.setAmount(testAmountProto)
 const testInvalidCheckCreateProto = new CheckCreate()
 testInvalidCheckCreateProto.setSendMax(testSendMaxProto)
 
+// Invalid DepositPreauth proto (neither authorize nor unauthorize)
+const testInvalidDepositPreauthProtoNoAuthUnauth = new DepositPreauth()
+
+// Invalid DepositPreauth proto (bad authorize)
+const testInvalidAccountAddressProto = new AccountAddress()
+testInvalidAccountAddressProto.setAddress(testInvalidDestination)
+
+const testInvalidAuthorizeProto = new Authorize()
+testInvalidAuthorizeProto.setValue(testInvalidAccountAddressProto)
+
+const testInvalidUnauthorizeProto = new Unauthorize()
+testInvalidUnauthorizeProto.setValue(testInvalidAccountAddressProto)
+
+const testInvalidDepositPreauthProtoSetBadAuthorize = new DepositPreauth()
+testInvalidDepositPreauthProtoSetBadAuthorize.setAuthorize(
+  testInvalidAuthorizeProto,
+)
+
+// Invalid DepositPreauth proto (bad unauthorize)
+
+const testInvalidDepositPreauthProtoSetBadUnauthorize = new DepositPreauth()
+testInvalidDepositPreauthProtoSetBadUnauthorize.setUnauthorize(
+  testInvalidUnauthorizeProto,
+)
+
 // Invalid EscrowCancel proto (missing owner)
 const testInvalidEscrowCancelProto = new EscrowCancel()
 testInvalidEscrowCancelProto.setOfferSequence(testOfferSequenceProto)
@@ -483,6 +511,13 @@ const testInvalidTrustSetProto = new TrustSet()
 testInvalidTrustSetProto.setQualityIn(testQualityInProto)
 testInvalidTrustSetProto.setQualityOut(testQualityOutProto)
 
+// Invalid TrustSet proto (limitAmount uses XRP)
+const testInvalidLimitAmountProto = new LimitAmount()
+testInvalidLimitAmountProto.setValue(testCurrencyAmountProtoDrops)
+
+const testInvalidTrustSetProtoXRP = new TrustSet()
+testInvalidTrustSetProtoXRP.setLimitAmount(testInvalidLimitAmountProto)
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -520,6 +555,9 @@ export {
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
+  testInvalidDepositPreauthProtoNoAuthUnauth,
+  testInvalidDepositPreauthProtoSetBadAuthorize,
+  testInvalidDepositPreauthProtoSetBadUnauthorize,
   testInvalidEscrowCancelProto,
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
@@ -530,4 +568,5 @@ export {
   testInvalidPaymentChannelFundProto,
   testInvalidSignerListSetProto,
   testInvalidTrustSetProto,
+  testInvalidTrustSetProtoXRP,
 }
