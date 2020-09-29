@@ -79,7 +79,10 @@ import {
   testSignerEntry2,
 } from './fakes/fake-xrp-transaction-type-protobufs'
 
-import { AccountDelete } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import {
+  AccountSet,
+  AccountDelete,
+} from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {
   // AccountSet
@@ -136,6 +139,21 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(accountSet?.setFlag)
     assert.isUndefined(accountSet?.transferRate)
     assert.isUndefined(accountSet?.tickSize)
+  })
+
+  it('Convert empty AccountSet protobuf to XrpAccountSet object', function (): void {
+    // GIVEN an AccountSet protocol buffer with only one field set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    const accountSet = XrpAccountSet.from(new AccountSet())
+
+    // THEN the AccountSet converted as expected.
+    assert.isUndefined(accountSet.clearFlag)
+    assert.isUndefined(accountSet.domain)
+    assert.isUndefined(accountSet.emailHash)
+    assert.isUndefined(accountSet.messageKey)
+    assert.isUndefined(accountSet.setFlag)
+    assert.isUndefined(accountSet.transferRate)
+    assert.isUndefined(accountSet.tickSize)
   })
 
   it('Convert AccountSet protobuf with invalid domain field to XrpAccountSet object', function (): void {
