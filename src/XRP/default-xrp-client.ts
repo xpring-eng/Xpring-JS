@@ -18,12 +18,15 @@ import {
   MemoFormat,
   MemoType,
   SetFlag,
+  Authorize,
+  Unauthorize,
 } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
   AccountSet,
   Memo,
   Payment,
   Transaction,
+  DepositPreauth,
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
@@ -436,6 +439,80 @@ export default class DefaultXrpClient implements XrpClientDecorator {
 
     const transaction = await this.prepareBaseTransaction(wallet)
     transaction.setAccountSet(accountSet)
+
+    const transactionHash = await this.signAndSubmitTransaction(
+      transaction,
+      wallet,
+    )
+
+    return await this.getTransactionResult(transactionHash)
+  }
+
+  /**
+   * Enables DepositPreauth and authorizes an XRPL account to send to this XRPL account.
+   *
+   * @see https://xrpl.org/depositpreauth.html
+   *
+   * @param xAddressToAuthorize The X-Address of the sender to enable DepositPreauth for.
+   * @param wallet The wallet associated with the XRPL account enabling a deposit preauthorization and that will sign the request.
+   */
+  public async authorizeSendingAccount(
+    xAddressToAuthorize: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const classicAddress = XrpUtils.decodeXAddress(xAddressToAuthorize)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const accountAddressToAuthorize = new AccountAddress()
+    accountAddressToAuthorize.setAddress(xAddressToAuthorize)
+
+    const authorize = new Authorize()
+    authorize.setValue(accountAddressToAuthorize)
+
+    const depositPreauth = new DepositPreauth()
+    depositPreauth.setAuthorize(authorize)
+
+    const transaction = await this.prepareBaseTransaction(wallet)
+    transaction.setDepositPreauth(depositPreauth)
+
+    const transactionHash = await this.signAndSubmitTransaction(
+      transaction,
+      wallet,
+    )
+
+    return await this.getTransactionResult(transactionHash)
+  }
+
+  /**
+   * Disables DepositPreauth and unauthorizes an XRPL account to send to this XRPL account.
+   *
+   * @see https://xrpl.org/depositpreauth.html
+   *
+   * @param xAddressToUnauthorize The X-Address of the sender to unauthorize.
+   * @param wallet The wallet associated with the XRPL account revoking a deposit preauthorization, and that will sign the request.
+   */
+  public async unauthorizeSendingAccount(
+    xAddressToUnauthorize: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const classicAddress = XrpUtils.decodeXAddress(xAddressToUnauthorize)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const accountAddressToUnauthorize = new AccountAddress()
+    accountAddressToUnauthorize.setAddress(xAddressToUnauthorize)
+
+    const unauthorize = new Unauthorize()
+    unauthorize.setValue(accountAddressToUnauthorize)
+
+    const depositPreauth = new DepositPreauth()
+    depositPreauth.setUnauthorize(unauthorize)
+
+    const transaction = await this.prepareBaseTransaction(wallet)
+    transaction.setDepositPreauth(depositPreauth)
 
     const transactionHash = await this.signAndSubmitTransaction(
       transaction,

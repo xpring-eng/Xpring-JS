@@ -406,13 +406,10 @@ describe('Protocol Buffer Conversion', function (): void {
 
   it('Convert Memo with no fields set', function (): void {
     // GIVEN a memo with no fields set.
-    // WHEN the protocol buffer is converted to a native TypeScript type
-    const memo = XrpMemo.from(testEmptyMemoProto)
-
-    // THEN all fields are undefined.
-    assert.isUndefined(memo?.data)
-    assert.isUndefined(memo?.format)
-    assert.isUndefined(memo?.type)
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpMemo.from(testEmptyMemoProto)
+    }, XrpError)
   })
 
   // Signer
