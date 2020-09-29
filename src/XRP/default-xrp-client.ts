@@ -252,40 +252,17 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   public async getLatestValidatedLedgerSequence(
     address: string,
   ): Promise<number> {
-    // rippled doesn't support a gRPC call that tells us the latest validated ledger sequence. To get around this,
-    // query the account info for an account which will exist, using a shortcut for the latest validated ledger. The
-    // response will contain the ledger index the information was retrieved at.
-    const accountAddress = new AccountAddress()
-    accountAddress.setAddress(address)
-
-    const ledgerSpecifier = new LedgerSpecifier()
-    ledgerSpecifier.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
-
-    const getAccountInfoRequest = this.networkClient.GetAccountInfoRequest()
-    getAccountInfoRequest.setAccount(accountAddress)
-    getAccountInfoRequest.setLedger(ledgerSpecifier)
-
-    const getAccountInfoResponse = await this.networkClient.getAccountInfo(
-      getAccountInfoRequest,
-    )
-
-    return getAccountInfoResponse.getLedgerIndex()
+    return this.commonXrplClient.getLatestValidatedLedgerSequence(address)
   }
 
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
-    const getTxRequest = this.networkClient.GetTransactionRequest()
-    getTxRequest.setHash(Utils.toBytes(transactionHash))
-
-    const getTxResponse = await this.networkClient.getTransaction(getTxRequest)
-
-    return RawTransactionStatus.fromGetTransactionResponse(getTxResponse)
+    return this.commonXrplClient.getRawTransactionStatus(transactionHash)
   }
 
   private async getFee(): Promise<GetFeeResponse> {
-    const getFeeRequest = this.networkClient.GetFeeRequest()
-    return this.networkClient.getFee(getFeeRequest)
+    return this.commonXrplClient.getFee()
   }
 
   /**

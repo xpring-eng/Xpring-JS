@@ -54,7 +54,7 @@ export default class CommonXrplClient {
    * @param network The network this XrpClient is connecting to.
    */
   public constructor(
-    private readonly networkClient: XrpNetworkClient,
+    public readonly networkClient: XrpNetworkClient,
     readonly network: XrplNetwork,
   ) {}
 
@@ -112,7 +112,7 @@ export default class CommonXrplClient {
     return RawTransactionStatus.fromGetTransactionResponse(getTxResponse)
   }
 
-  private async getMinimumFee(): Promise<XRPDropsAmount> {
+  public async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
 
     const fee = getFeeResponse.getFee()?.getMinimumFee()
@@ -123,7 +123,7 @@ export default class CommonXrplClient {
     return fee
   }
 
-  private async getFee(): Promise<GetFeeResponse> {
+  public async getFee(): Promise<GetFeeResponse> {
     const getFeeRequest = this.networkClient.GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)
   }
