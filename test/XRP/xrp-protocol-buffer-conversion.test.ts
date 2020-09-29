@@ -437,15 +437,20 @@ describe('Protocol Buffer Conversion', function (): void {
   it('Convert SignerEntry with all fields set', function (): void {
     // GIVEN a SignerEntry protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const signerEntry = XrpSignerEntry.from(testSignerEntryProto)
+    const signerEntry = XrpSignerEntry.from(
+      testSignerEntryProto,
+      XrplNetwork.Test,
+    )
 
     // THEN all fields are present and converted correctly.
-    assert.equal(
-      signerEntry?.account,
-      testSignerEntryProto?.getAccount()?.getValue()?.getAddress(),
+    const expectedXAddress = XrpUtils.encodeXAddress(
+      testSignerEntryProto.getAccount()?.getValue()?.getAddress()!,
+      undefined,
+      true,
     )
+    assert.equal(signerEntry.accountXAddress, expectedXAddress)
     assert.equal(
-      signerEntry?.signerWeight,
+      signerEntry.signerWeight,
       testSignerEntryProto.getSignerWeight()?.getValue(),
     )
   })
@@ -454,7 +459,10 @@ describe('Protocol Buffer Conversion', function (): void {
     // GIVEN a SignerEntry protocol buffer with no account field set.
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
-      XrpSignerEntry.from(testInvalidSignerEntryProtoNoAccount)
+      XrpSignerEntry.from(
+        testInvalidSignerEntryProtoNoAccount,
+        XrplNetwork.Test,
+      )
     }, XrpError)
   })
 
@@ -462,7 +470,10 @@ describe('Protocol Buffer Conversion', function (): void {
     // GIVEN a SignerEntry protocol buffer with no SignerWeight field set.
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
-      XrpSignerEntry.from(testInvalidSignerEntryProtoNoSignerWeight)
+      XrpSignerEntry.from(
+        testInvalidSignerEntryProtoNoSignerWeight,
+        XrplNetwork.Test,
+      )
     }, XrpError)
   })
 
