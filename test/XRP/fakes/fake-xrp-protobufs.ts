@@ -46,6 +46,7 @@ const testCurrencyName = 'currencyName'
 const testCurrencyCode = new Uint8Array([1, 2, 3])
 const testAddress = 'rsKouRxYLWGseFwXSAo57qXjcGiNqR55wr'
 const testAddress2 = 'rPuNV4oA6f3SrKA4pLEpdVZW6QLvn3UJxK'
+const testInvalidAddress = 'badAddress'
 const testIssuedCurrencyValue = '100'
 const testInvalidIssuedCurrencyValue = 'xrp' // non-numeric
 const testPublicKey = new Uint8Array([1, 2, 3])
@@ -452,8 +453,20 @@ testInvalidGetAccountTransactionHistoryResponse.setTransactionsList(
 )
 
 // Invalid SignerEntry protos
+const testInvalidAccountAddressProto = new AccountAddress()
+testInvalidAccountAddressProto.setAddress(testInvalidAddress)
+
+const testInvalidSignerEntryAccountProto = new Account()
+testInvalidSignerEntryAccountProto.setValue(testInvalidAccountAddressProto)
+
 const testInvalidSignerEntryProtoNoAccount = new SignerEntry()
 testInvalidSignerEntryProtoNoAccount.setSignerWeight(testSignerWeightProto)
+
+const testInvalidSignerEntryProtoBadAccount = new SignerEntry()
+testInvalidSignerEntryProtoBadAccount.setAccount(
+  testInvalidSignerEntryAccountProto,
+)
+testInvalidSignerEntryProtoBadAccount.setSignerWeight(testSignerWeightProto)
 
 const testInvalidSignerEntryProtoNoSignerWeight = new SignerEntry()
 testInvalidSignerEntryProtoNoSignerWeight.setAccount(
@@ -536,5 +549,6 @@ export {
   testInvalidGetTransactionResponseProtoUnsupportedType,
   testInvalidGetAccountTransactionHistoryResponse,
   testInvalidSignerEntryProtoNoAccount,
+  testInvalidSignerEntryProtoBadAccount,
   testInvalidSignerEntryProtoNoSignerWeight,
 }

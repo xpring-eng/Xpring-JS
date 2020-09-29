@@ -66,6 +66,7 @@ import {
   testInvalidGetTransactionResponseProto,
   testInvalidGetTransactionResponseProtoUnsupportedType,
   testInvalidSignerEntryProtoNoAccount,
+  testInvalidSignerEntryProtoBadAccount,
   testInvalidSignerEntryProtoNoSignerWeight,
 } from './fakes/fake-xrp-protobufs'
 
@@ -461,6 +462,17 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.throws(() => {
       XrpSignerEntry.from(
         testInvalidSignerEntryProtoNoAccount,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert SignerEntry with bad account field', function (): void {
+    // GIVEN a SignerEntry protocol buffer with a bad account field.
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpSignerEntry.from(
+        testInvalidSignerEntryProtoBadAccount,
         XrplNetwork.Test,
       )
     }, XrpError)
