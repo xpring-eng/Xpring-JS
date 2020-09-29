@@ -209,6 +209,7 @@ testPaymentProtoAllFieldsSet.setSendMax(sendMaxProto)
 const testPaymentProtoMandatoryFieldsOnly = new Payment()
 testPaymentProtoMandatoryFieldsOnly.setAmount(paymentAmountProtoIssuedCurrency)
 testPaymentProtoMandatoryFieldsOnly.setDestination(paymentDestinationProto)
+testPaymentProtoMandatoryFieldsOnly.setSendMax(sendMaxProto)
 
 // Memo protos
 const memoDataProto = new MemoData()
@@ -436,6 +437,10 @@ testInvalidPaymentProtoXrpSendMax.setAmount(paymentAmountProtoXRP)
 testInvalidPaymentProtoXrpSendMax.setDestination(paymentDestinationProto)
 testInvalidPaymentProtoXrpSendMax.setSendMax(sendMaxProto)
 
+const testInvalidPaymentProtoNoSendMax = new Payment()
+testInvalidPaymentProtoNoSendMax.setAmount(paymentAmountProtoIssuedCurrency)
+testInvalidPaymentProtoNoSendMax.setDestination(paymentDestinationProto)
+
 // Invalid Transaction proto (PAYMENT, malformed) (only mandatory common fields set)
 const testInvalidPaymentTransaction = new Transaction()
 testInvalidPaymentTransaction.setAccount(transactionAccountProto)
@@ -544,6 +549,7 @@ export {
   testInvalidPaymentProtoNoDestination,
   testInvalidPaymentProtoXrpPaths,
   testInvalidPaymentProtoXrpSendMax,
+  testInvalidPaymentProtoNoSendMax,
   testInvalidPaymentTransaction,
   testInvalidGetTransactionResponseProto,
   testInvalidGetTransactionResponseProtoUnsupportedType,

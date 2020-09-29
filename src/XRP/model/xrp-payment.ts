@@ -21,7 +21,7 @@ export default class XrpPayment {
    */
   public static from(payment: Payment, xrplNetwork: XrplNetwork): XrpPayment {
     const paymentAmountValue = payment.getAmount()?.getValue()
-    if (!paymentAmountValue) {
+    if (paymentAmountValue == undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Payment protobuf is missing required `amount` field.',
@@ -31,7 +31,7 @@ export default class XrpPayment {
     // For non-XRP amounts, the nested field names in `amount` are lower-case.
 
     const destination = payment.getDestination()?.getValue()?.getAddress()
-    if (!destination) {
+    if (destination == undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Payment protobuf is missing required `destination` field.',
@@ -58,7 +58,7 @@ export default class XrpPayment {
       payment.getPathsList()?.length > 0
         ? payment.getPathsList().map((path) => XrpPath.from(path))
         : undefined
-    if (paths && amount.drops) {
+    if (paths != undefined && amount.drops != undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Payment protobuf `paths` field should be omitted for XRP-to-XRP interactions.',
@@ -68,14 +68,19 @@ export default class XrpPayment {
     const paymentSendMaxValue = payment.getSendMax()?.getValue()
     const sendMax =
       paymentSendMaxValue && XrpCurrencyAmount.from(paymentSendMaxValue)
-    if (sendMax && amount.drops) {
+    if (sendMax != undefined && amount.drops != undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Payment protobuf `sendMax` field should be omitted for XRP-to-XRP interactions.',
       )
     }
     // For non-XRP amounts, the nested field names in `sendMax` MUST be lower-case.
-    // `sendMax` must be supplied for cross-currency/cross-issue payments.
+    if (sendMax == undefined && amount.issuedCurrency != undefined) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Payment protobuf `sendMax` field must be present for non-XRP-to-XRP interactions.',
+      )
+    }
 
     const paymentDeliverMinValue = payment.getDeliverMin()?.getValue()
     const deliverMin =
