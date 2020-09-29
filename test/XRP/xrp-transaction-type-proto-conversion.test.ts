@@ -67,7 +67,13 @@ import {
   testInvalidEscrowCancelProtoNoOwner,
   testInvalidEscrowCancelProtoBadOwner,
   testInvalidEscrowCancelProtoNoOfferSequence,
-  testInvalidEscrowCreateProto,
+  testInvalidEscrowCreateProtoNoDestination,
+  testInvalidEscrowCreateProtoBadDestination,
+  testInvalidEscrowCreateProtoNoAmount,
+  testInvalidEscrowCreateProtoBadCancelFinish,
+  testInvalidEscrowCreateProtoNoCancelFinish,
+  testInvalidEscrowCreateProtoNoFinishCondition,
+  testInvalidEscrowCreateProtoNoXRP,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
   testInvalidOfferCreateProto,
@@ -608,20 +614,85 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
     assert.equal(escrowCreate?.destinationXAddress, expectedXAddress)
     assert.isUndefined(escrowCreate?.cancelAfter)
-    assert.isUndefined(escrowCreate?.finishAfter)
+    assert.equal(
+      escrowCreate?.finishAfter,
+      testEscrowCreateProtoMandatoryOnly.getFinishAfter()?.getValue(),
+    )
     assert.isUndefined(escrowCreate?.condition)
   })
 
-  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - missing mandatory field', function (): void {
-    // GIVEN an EscrowCreate protocol buffer that's missing a mandatory field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowCreate = XrpEscrowCreate.from(
-      testInvalidEscrowCreateProto,
-      XrplNetwork.Test,
-    )
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - missing destination field', function (): void {
+    // GIVEN an EscrowCreate protocol buffer that's missing the destination field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoNoDestination,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(escrowCreate)
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - bad destination field', function (): void {
+    // GIVEN an EscrowCreate protocol buffer with a bad destination field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoBadDestination,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - missing amount field', function (): void {
+    // GIVEN an EscrowCreate protocol buffer that's missing the amount field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoNoAmount,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - amount not XRP', function (): void {
+    // GIVEN an EscrowCreate protocol buffer with a non-XRP amount.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(testInvalidEscrowCreateProtoNoXRP, XrplNetwork.Test)
+    }, XrpError)
+  })
+
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - missing cancelAfter and finishAfter fields', function (): void {
+    // GIVEN an EscrowCreate protocol buffer that's missing both the cancelAfter and finishAfter fields.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoNoCancelFinish,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - bad cancelAfter and finishAfter fields', function (): void {
+    // GIVEN an EscrowCreate protocol buffer with a finishAfter field that is not before the cancelAfter field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoBadCancelFinish,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - no finishAfter and condition fields', function (): void {
+    // GIVEN an EscrowCreate protocol buffer that's missing both the finishAfter and condition fields.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoNoFinishCondition,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
   })
 
   // EscrowFinish
