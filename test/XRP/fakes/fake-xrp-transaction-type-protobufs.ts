@@ -487,6 +487,17 @@ testInvalidCheckCashProto.setAmount(testAmountProto)
 const testInvalidCheckCreateProto = new CheckCreate()
 testInvalidCheckCreateProto.setSendMax(testSendMaxProto)
 
+// Invalid CheckCreate proto (bad destination)
+const testInvalidCheckCreateProtoBadDestination = new CheckCreate()
+testInvalidCheckCreateProtoBadDestination.setDestination(
+  testInvalidDestinationProto,
+)
+testInvalidCheckCreateProtoBadDestination.setSendMax(testSendMaxProto)
+
+// Invalid CheckCreate proto (missing SendMax)
+const testInvalidCheckCreateProtoNoSendMax = new CheckCreate()
+testInvalidCheckCreateProtoNoSendMax.setDestination(testDestinationProto)
+
 // Invalid DepositPreauth proto (neither authorize nor unauthorize)
 const testInvalidDepositPreauthProtoNoAuthUnauth = new DepositPreauth()
 
@@ -597,6 +608,8 @@ export {
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
+  testInvalidCheckCreateProtoBadDestination,
+  testInvalidCheckCreateProtoNoSendMax,
   testInvalidDepositPreauthProtoNoAuthUnauth,
   testInvalidDepositPreauthProtoSetBadAuthorize,
   testInvalidDepositPreauthProtoSetBadUnauthorize,
