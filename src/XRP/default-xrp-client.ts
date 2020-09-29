@@ -25,7 +25,6 @@ import {
   DepositPreauth,
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
-import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
 import XrpClientDecorator from './xrp-client-decorator'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
@@ -262,10 +261,6 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
     return this.commonXrplClient.getRawTransactionStatus(transactionHash)
-  }
-
-  private async getFee(): Promise<GetFeeResponse> {
-    return this.commonXrplClient.getFee()
   }
 
   /**

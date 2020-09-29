@@ -101,6 +101,12 @@ export default class CommonXrplClient {
     return getAccountInfoResponse.getLedgerIndex()
   }
 
+  /**
+   * Retrieve the raw transaction status for the given transaction hash.
+   *
+   * @param transactionHash: The hash of the transaction.
+   * @returns The status of the given transaction.
+   */
   public async getRawTransactionStatus(
     transactionHash: string,
   ): Promise<RawTransactionStatus> {
