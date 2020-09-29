@@ -53,7 +53,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     const transactionHash = await this.decoratedClient.sendWithDetails(
       sendXrpDetails,
     )
-    await this.awaitFinalTransactionResult(transactionHash, sender)
+    await this.awaitFinalTransactionStatus(transactionHash, sender)
 
     return transactionHash
   }
@@ -86,9 +86,23 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
 
   public async enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
     const result = await this.decoratedClient.enableDepositAuth(wallet)
-    const transactionHash = result.hash
+    return await this.awaitFinalTransactionResult(result.hash, wallet)
+  }
 
-    const rawTransactionStatus = await this.awaitFinalTransactionResult(
+  /**
+   * Waits for a transaction to complete and returns a TransactionResult.
+   *
+   * @param transactionHash The transaction to wait for.
+   * @param wallet The wallet sending the transaction.
+   *
+   * @returns A Promise resolving to a TransactionResult containing the results of the transaction associated with
+   * the given transaction hash.
+   */
+  private async awaitFinalTransactionResult(
+    transactionHash: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const rawTransactionStatus = await this.awaitFinalTransactionStatus(
       transactionHash,
       wallet,
     )
@@ -116,7 +130,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     }
   }
 
-  private async awaitFinalTransactionResult(
+  private async awaitFinalTransactionStatus(
     transactionHash: string,
     sender: Wallet,
   ): Promise<RawTransactionStatus> {
