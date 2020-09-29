@@ -26,7 +26,7 @@ export default class XrpEscrowCancel {
     if (!owner) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'EscrowCancel protobuf is missing valid `Owner` field.',
+        'EscrowCancel protobuf is missing valid `owner` field.',
       )
     }
     const ownerXAddress = XrpUtils.encodeXAddress(
@@ -46,7 +46,7 @@ export default class XrpEscrowCancel {
     if (!offerSequence) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'EscrowCancel protobuf is missing valid `OfferSequence` field.',
+        'EscrowCancel protobuf is missing valid `offerSequence` field.',
       )
     }
     return new XrpEscrowCancel(ownerXAddress, offerSequence)
