@@ -913,7 +913,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the SignerListSet converted as expected.
-    const expectedSignerEntries: Array<XRPSignerEntry | undefined> = [
+    const expectedSignerEntries: Array<XRPSignerEntry> = [
       XRPSignerEntry.from(testSignerEntry1, XrplNetwork.Test),
       XRPSignerEntry.from(testSignerEntry2, XrplNetwork.Test),
     ]
