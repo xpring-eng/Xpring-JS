@@ -86,6 +86,7 @@ const testInvalidTickSize = 27
 // AccountDelete values
 const testDestination = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
 const testDestinationTag = 13
+const testInvalidDestination = 'badDestination'
 
 // CheckCancel values
 const testCheckId =
@@ -95,9 +96,6 @@ const testCheckId =
 const testInvoiceId =
   '6F1DFD1D0FE8A32E40E1F2C05CF1C15545BAB56B617F9C6C2D63A6B704BEF59B'
 const testExpiration = 570113521
-
-// DepositPreauth values
-const testInvalidDestination = 'badDestination'
 
 // EscrowCancel values
 const testOfferSequence = 23
@@ -468,6 +466,16 @@ const testInvalidAccountSetProtoSameSetClearFlag = new AccountSet()
 testInvalidAccountSetProtoSameSetClearFlag.setClearFlag(testClearFlagProto)
 testInvalidAccountSetProtoSameSetClearFlag.setSetFlag(testInvalidSetFlagProto)
 
+// Invalid AccountDelete proto (bad destination)
+const testInvalidAccountAddressProto = new AccountAddress()
+testInvalidAccountAddressProto.setAddress(testInvalidDestination)
+
+const testInvalidDestinationProto = new Destination()
+testInvalidDestinationProto.setValue(testInvalidAccountAddressProto)
+
+const testInvalidAccountDeleteProto = new AccountDelete()
+testInvalidAccountDeleteProto.setDestination(testInvalidDestinationProto)
+
 // Invalid CheckCancel proto (missing checkId)
 const testInvalidCheckCancelProto = new CheckCancel()
 
@@ -483,9 +491,6 @@ testInvalidCheckCreateProto.setSendMax(testSendMaxProto)
 const testInvalidDepositPreauthProtoNoAuthUnauth = new DepositPreauth()
 
 // Invalid DepositPreauth proto (bad authorize)
-const testInvalidAccountAddressProto = new AccountAddress()
-testInvalidAccountAddressProto.setAddress(testInvalidDestination)
-
 const testInvalidAuthorizeProto = new Authorize()
 testInvalidAuthorizeProto.setValue(testInvalidAccountAddressProto)
 
@@ -588,6 +593,7 @@ export {
   testInvalidAccountSetProtoBadHighTransferRate,
   testInvalidAccountSetProtoBadTickSize,
   testInvalidAccountSetProtoSameSetClearFlag,
+  testInvalidAccountDeleteProto,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,

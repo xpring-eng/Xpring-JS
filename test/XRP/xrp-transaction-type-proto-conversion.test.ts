@@ -55,6 +55,7 @@ import {
   testInvalidAccountSetProtoBadHighTransferRate,
   testInvalidAccountSetProtoBadTickSize,
   testInvalidAccountSetProtoSameSetClearFlag,
+  testInvalidAccountDeleteProto,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidDepositPreauthProtoNoAuthUnauth,
@@ -215,14 +216,18 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
   it('Convert AccountDelete protobuf to XrpAccountDelete object - missing destination field', function (): void {
     // GIVEN an AccountDelete protocol buffer missing the destination field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const accountDelete = XrpAccountDelete.from(
-      new AccountDelete(),
-      XrplNetwork.Test,
-    )
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountDelete.from(new AccountDelete(), XrplNetwork.Test)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(accountDelete)
+  it('Convert AccountDelete protobuf to XrpAccountDelete object - bad destination field', function (): void {
+    // GIVEN an AccountDelete protocol buffer with a destination field that can't convert to an XAddress.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpAccountDelete.from(testInvalidAccountDeleteProto, XrplNetwork.Test)
+    }, XrpError)
   })
 
   it('Convert CheckCancel protobuf to XrpCheckCancel object', function (): void {
