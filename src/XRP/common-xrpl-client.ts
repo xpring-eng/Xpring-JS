@@ -16,17 +16,13 @@ import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import { XrpNetworkClient } from './xrp-network-client'
-import XrpError, { XrpErrorType } from './xrp-error'
+import XrpError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import TransactionResult from './model/transaction-result'
 import isNode from '../Common/utils'
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
-
-async function sleep(milliseconds: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, milliseconds))
-}
 
 /**
  * CommonXrplClient is a client which interacts with the XRP Ledger.
