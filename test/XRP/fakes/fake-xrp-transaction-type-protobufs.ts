@@ -330,6 +330,9 @@ testPaymentChannelClaimProtoAllFields.setChannel(testChannelProto)
 testPaymentChannelClaimProtoAllFields.setBalance(testBalanceProto)
 testPaymentChannelClaimProtoAllFields.setAmount(testAmountProto)
 testPaymentChannelClaimProtoAllFields.setPaymentChannelSignature(
+  testPaymentChannelSignatureProto,
+)
+testPaymentChannelClaimProtoAllFields.setPublicKey(
   testPaymentChannelPublicKeyProto,
 )
 
@@ -610,7 +613,22 @@ const testInvalidOfferCreateProtoNoTakerPays = new OfferCreate()
 testInvalidOfferCreateProtoNoTakerPays.setTakerGets(testTakerGetsProto)
 
 // Invalid PaymentChannelClaim proto (missing channel)
-const testInvalidPaymentChannelClaimProto = new PaymentChannelClaim()
+const testInvalidPaymentChannelClaimProtoNoChannel = new PaymentChannelClaim()
+
+// Invalid PaymentChannelClaim proto (missing publicKey with signature)
+const testInvalidPaymentChannelClaimProtoSignatureNoPublicKey = new PaymentChannelClaim()
+testInvalidPaymentChannelClaimProtoSignatureNoPublicKey.setChannel(
+  testChannelProto,
+)
+testInvalidPaymentChannelClaimProtoSignatureNoPublicKey.setBalance(
+  testBalanceProto,
+)
+testInvalidPaymentChannelClaimProtoSignatureNoPublicKey.setAmount(
+  testAmountProto,
+)
+testInvalidPaymentChannelClaimProtoSignatureNoPublicKey.setPaymentChannelSignature(
+  testPaymentChannelSignatureProto,
+)
 
 // Invalid PaymentChannelCreate proto (missing destination)
 const testInvalidPaymentChannelCreateProto = new PaymentChannelCreate()
@@ -697,7 +715,8 @@ export {
   testInvalidOfferCancelProto,
   testInvalidOfferCreateProtoNoTakerGets,
   testInvalidOfferCreateProtoNoTakerPays,
-  testInvalidPaymentChannelClaimProto,
+  testInvalidPaymentChannelClaimProtoNoChannel,
+  testInvalidPaymentChannelClaimProtoSignatureNoPublicKey,
   testInvalidPaymentChannelCreateProto,
   testInvalidPaymentChannelFundProto,
   testInvalidSignerListSetProto,
