@@ -1,5 +1,4 @@
 /* eslint-disable class-methods-use-this */
-import { Transaction } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { XrpNetworkClient } from '../../../src/XRP/xrp-network-client'
 import {
   GetAccountInfoRequest,
@@ -34,7 +33,10 @@ import {
   GetAccountTransactionHistoryResponse,
 } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import Result from '../../Common/Helpers/result'
-import { testGetAccountTransactionHistoryResponse } from './fake-xrp-protobufs'
+import {
+  testGetAccountTransactionHistoryResponse,
+  testTransactionPaymentAllFields,
+} from './fake-xrp-protobufs'
 import XrpError, { XrpErrorType } from '../../../src/XRP/xrp-error'
 
 /**
@@ -148,7 +150,8 @@ export class FakeXRPNetworkClientResponses {
     const meta = new Meta()
     meta.setTransactionResult(transactionResult)
 
-    const transaction = new Transaction()
+    // use a fully populated, valid Transaction proto
+    const transaction = testTransactionPaymentAllFields
 
     const response = new GetTransactionResponse()
     response.setValidated(true)
