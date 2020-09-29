@@ -76,12 +76,17 @@ const testDomain = 'testdomain'
 const testEmailHash = new Uint8Array([8, 9, 10])
 const testMessageKey = new Uint8Array([11, 12, 13])
 const testSetFlag = 4
+const testInvalidSetFlag = 5
 const testTransferRate = 1234567890
+const testInvalidLowTransferRate = 11
+const testInvalidHighTransferRate = 9876543210
 const testTickSize = 7
+const testInvalidTickSize = 27
 
 // AccountDelete values
 const testDestination = 'rPEPPER7kfTD9w2To4CQk6UCfuHM9c6GDY'
 const testDestinationTag = 13
+const testInvalidDestination = 'badDestination'
 
 // CheckCancel values
 const testCheckId =
@@ -96,7 +101,6 @@ const testExpiration = 570113521
 const testOfferSequence = 23
 
 // EscrowCreate values
-const testInvalidDestination = 'badDestination'
 const testCancelAfter = 533257958
 const testFinishAfter = 533171558
 const testFinishAfterEarly = 533341558
@@ -133,7 +137,6 @@ const testQualityOut = 2
 // Protobuf objects ======================================================================
 
 // AccountSet protos
-
 const testClearFlagProto = new ClearFlag()
 testClearFlagProto.setValue(testClearFlag)
 
@@ -425,6 +428,56 @@ testTrustSetProtoMandatoryOnly.setLimitAmount(testLimitAmountProto)
 
 // Invalid Protobuf Objects ========================================================================
 
+// Invalid AccountSet proto (bad domain)
+const testInvalidDomainProto = new Domain()
+testInvalidDomainProto.setValue(testDomain.toUpperCase())
+
+const testInvalidAccountSetProtoBadDomain = new AccountSet()
+testInvalidAccountSetProtoBadDomain.setDomain(testInvalidDomainProto)
+
+// Invalid AccountSet proto (invalid transferRate (too low))
+const testInvalidLowTransferRateProto = new TransferRate()
+testInvalidLowTransferRateProto.setValue(testInvalidLowTransferRate)
+
+const testInvalidAccountSetProtoBadLowTransferRate = new AccountSet()
+testInvalidAccountSetProtoBadLowTransferRate.setTransferRate(
+  testInvalidLowTransferRateProto,
+)
+
+// Invalid AccountSet proto (invalid transferRate (too high))
+const testInvalidHighTransferRateProto = new TransferRate()
+testInvalidHighTransferRateProto.setValue(testInvalidHighTransferRate)
+
+const testInvalidAccountSetProtoBadHighTransferRate = new AccountSet()
+testInvalidAccountSetProtoBadHighTransferRate.setTransferRate(
+  testInvalidHighTransferRateProto,
+)
+
+// Invalid AccountSet proto (invalid tickSize)
+const testInvalidTickSizeProto = new TickSize()
+testInvalidTickSizeProto.setValue(testInvalidTickSize)
+
+const testInvalidAccountSetProtoBadTickSize = new AccountSet()
+testInvalidAccountSetProtoBadTickSize.setTickSize(testInvalidTickSizeProto)
+
+// Invalid AccountSet proto (clearFlag == setFlag)
+const testInvalidSetFlagProto = new SetFlag()
+testInvalidSetFlagProto.setValue(testInvalidSetFlag)
+
+const testInvalidAccountSetProtoSameSetClearFlag = new AccountSet()
+testInvalidAccountSetProtoSameSetClearFlag.setClearFlag(testClearFlagProto)
+testInvalidAccountSetProtoSameSetClearFlag.setSetFlag(testInvalidSetFlagProto)
+
+// Invalid AccountDelete proto (bad destination)
+const testInvalidAccountAddressProto = new AccountAddress()
+testInvalidAccountAddressProto.setAddress(testInvalidDestination)
+
+const testInvalidDestinationProto = new Destination()
+testInvalidDestinationProto.setValue(testInvalidAccountAddressProto)
+
+const testInvalidAccountDeleteProto = new AccountDelete()
+testInvalidAccountDeleteProto.setDestination(testInvalidDestinationProto)
+
 // Invalid CheckCancel proto (missing checkId)
 const testInvalidCheckCancelProto = new CheckCancel()
 
@@ -436,9 +489,54 @@ testInvalidCheckCashProto.setAmount(testAmountProto)
 const testInvalidCheckCreateProto = new CheckCreate()
 testInvalidCheckCreateProto.setSendMax(testSendMaxProto)
 
+// Invalid CheckCreate proto (bad destination)
+const testInvalidCheckCreateProtoBadDestination = new CheckCreate()
+testInvalidCheckCreateProtoBadDestination.setDestination(
+  testInvalidDestinationProto,
+)
+testInvalidCheckCreateProtoBadDestination.setSendMax(testSendMaxProto)
+
+// Invalid CheckCreate proto (missing SendMax)
+const testInvalidCheckCreateProtoNoSendMax = new CheckCreate()
+testInvalidCheckCreateProtoNoSendMax.setDestination(testDestinationProto)
+
+// Invalid DepositPreauth proto (neither authorize nor unauthorize)
+const testInvalidDepositPreauthProtoNoAuthUnauth = new DepositPreauth()
+
+// Invalid DepositPreauth proto (bad authorize)
+const testInvalidAuthorizeProto = new Authorize()
+testInvalidAuthorizeProto.setValue(testInvalidAccountAddressProto)
+
+const testInvalidUnauthorizeProto = new Unauthorize()
+testInvalidUnauthorizeProto.setValue(testInvalidAccountAddressProto)
+
+const testInvalidDepositPreauthProtoSetBadAuthorize = new DepositPreauth()
+testInvalidDepositPreauthProtoSetBadAuthorize.setAuthorize(
+  testInvalidAuthorizeProto,
+)
+
+// Invalid DepositPreauth proto (bad unauthorize)
+
+const testInvalidDepositPreauthProtoSetBadUnauthorize = new DepositPreauth()
+testInvalidDepositPreauthProtoSetBadUnauthorize.setUnauthorize(
+  testInvalidUnauthorizeProto,
+)
+
 // Invalid EscrowCancel proto (missing owner)
-const testInvalidEscrowCancelProto = new EscrowCancel()
-testInvalidEscrowCancelProto.setOfferSequence(testOfferSequenceProto)
+const testInvalidEscrowCancelProtoNoOwner = new EscrowCancel()
+testInvalidEscrowCancelProtoNoOwner.setOfferSequence(testOfferSequenceProto)
+
+// Invalid EscrowCancel proto (bad owner)
+const testInvalidOwnerProto = new Owner()
+testInvalidOwnerProto.setValue(testInvalidAccountAddressProto)
+
+const testInvalidEscrowCancelProtoBadOwner = new EscrowCancel()
+testInvalidEscrowCancelProtoBadOwner.setOwner(testInvalidOwnerProto)
+testInvalidEscrowCancelProtoBadOwner.setOfferSequence(testOfferSequenceProto)
+
+// Invalid EscrowCancel proto (no offerSequence)
+const testInvalidEscrowCancelProtoNoOfferSequence = new EscrowCancel()
+testInvalidEscrowCancelProtoNoOfferSequence.setOwner(testOwnerProto)
 
 // Invalid EscrowCreate proto (missing destination)
 const testInvalidEscrowCreateProtoNoDestination = new EscrowCreate()
@@ -446,12 +544,6 @@ testInvalidEscrowCreateProtoNoDestination.setAmount(testAmountProto)
 testInvalidEscrowCreateProtoNoDestination.setFinishAfter(testFinishAfterProto)
 
 // Invalid EscrowCreate proto (bad destination)
-const testInvalidAccountAddressProto = new AccountAddress()
-testInvalidAccountAddressProto.setAddress(testInvalidDestination)
-
-const testInvalidDestinationProto = new Destination()
-testInvalidDestinationProto.setValue(testInvalidAccountAddressProto)
-
 const testInvalidEscrowCreateProtoBadDestination = new EscrowCreate()
 testInvalidEscrowCreateProtoBadDestination.setAmount(testAmountProto)
 testInvalidEscrowCreateProtoBadDestination.setDestination(
@@ -533,6 +625,13 @@ const testInvalidTrustSetProto = new TrustSet()
 testInvalidTrustSetProto.setQualityIn(testQualityInProto)
 testInvalidTrustSetProto.setQualityOut(testQualityOutProto)
 
+// Invalid TrustSet proto (limitAmount uses XRP)
+const testInvalidLimitAmountProto = new LimitAmount()
+testInvalidLimitAmountProto.setValue(testCurrencyAmountProtoDrops)
+
+const testInvalidTrustSetProtoXRP = new TrustSet()
+testInvalidTrustSetProtoXRP.setLimitAmount(testInvalidLimitAmountProto)
+
 export {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -566,10 +665,23 @@ export {
   testSignerListSetProto,
   testTrustSetProtoAllFields,
   testTrustSetProtoMandatoryOnly,
+  testInvalidAccountSetProtoBadDomain,
+  testInvalidAccountSetProtoBadLowTransferRate,
+  testInvalidAccountSetProtoBadHighTransferRate,
+  testInvalidAccountSetProtoBadTickSize,
+  testInvalidAccountSetProtoSameSetClearFlag,
+  testInvalidAccountDeleteProto,
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
-  testInvalidEscrowCancelProto,
+  testInvalidCheckCreateProtoBadDestination,
+  testInvalidCheckCreateProtoNoSendMax,
+  testInvalidDepositPreauthProtoNoAuthUnauth,
+  testInvalidDepositPreauthProtoSetBadAuthorize,
+  testInvalidDepositPreauthProtoSetBadUnauthorize,
+  testInvalidEscrowCancelProtoNoOwner,
+  testInvalidEscrowCancelProtoBadOwner,
+  testInvalidEscrowCancelProtoNoOfferSequence,
   testInvalidEscrowCreateProtoNoDestination,
   testInvalidEscrowCreateProtoBadDestination,
   testInvalidEscrowCreateProtoNoAmount,
@@ -585,4 +697,5 @@ export {
   testInvalidPaymentChannelFundProto,
   testInvalidSignerListSetProto,
   testInvalidTrustSetProto,
+  testInvalidTrustSetProtoXRP,
 }
