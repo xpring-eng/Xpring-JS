@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { SignerEntry } from '../Generated/web/org/xrpl/rpc/v1/common_pb'
 
 /*
@@ -15,9 +16,19 @@ export default class XrpSignerEntry {
    */
   public static from(signerEntry: SignerEntry): XrpSignerEntry | undefined {
     const account = signerEntry.getAccount()?.getValue()?.getAddress()
+    if (!account) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'SignerEntry protobuf does not contain `account` field.',
+      )
+    }
+
     const signerWeight = signerEntry.getSignerWeight()?.getValue()
-    if (!account || !signerWeight) {
-      return undefined
+    if (!signerWeight) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'SignerEntry protobuf does not contain `SignerWeight` field.',
+      )
     }
     return new XrpSignerEntry(account, signerWeight)
   }
@@ -29,7 +40,7 @@ export default class XrpSignerEntry {
    *                     weight of the signatures provided meets or exceeds the SignerList's SignerQuorum value.
    */
   private constructor(
-    readonly account?: string,
-    readonly signerWeight?: number,
+    readonly account: string,
+    readonly signerWeight: number,
   ) {}
 }
