@@ -58,9 +58,11 @@ export default class CommonXrplClient {
    * @param network The network this XrpClient is connecting to.
    */
   public constructor(
-    public readonly networkClient: XrpNetworkClient,
+    public networkClient: XrpNetworkClient,
     readonly network: XrplNetwork,
-  ) {}
+  ) {
+    this.networkClient = networkClient
+  }
 
   public async getOpenLedgerSequence(): Promise<number> {
     const getFeeResponse = await this.getFee()
