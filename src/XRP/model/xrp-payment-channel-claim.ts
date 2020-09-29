@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { PaymentChannelClaim } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount from './xrp-currency-amount'
 
@@ -18,11 +19,13 @@ export default class XrpPaymentChannelClaim {
    */
   public static from(
     paymentChannelClaim: PaymentChannelClaim,
-  ): XrpPaymentChannelClaim | undefined {
+  ): XrpPaymentChannelClaim {
     const channel = paymentChannelClaim.getChannel()?.getValue_asB64()
-    // channel is a required field
     if (!channel) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'PaymentChannelClaim protobuf does not contain `channel` field.',
+      )
     }
 
     const balanceCurrencyAmount = paymentChannelClaim.getBalance()?.getValue()
@@ -42,6 +45,12 @@ export default class XrpPaymentChannelClaim {
       ?.getValue_asB64()
 
     const publicKey = paymentChannelClaim.getPublicKey()?.getValue_asB64()
+    if (signature && !publicKey) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'PaymentChannelClaim protobuf does not contain `publicKey` field when `signature` field is provided.',
+      )
+    }
 
     return new XrpPaymentChannelClaim(
       channel,
