@@ -29,8 +29,6 @@ import { AccountRoot } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger
 const transactionHash = 'DEADBEEF'
 const { wallet } = Wallet.generateRandomWallet()!
 
-const fakeSucceedingNetworkClient = new FakeXRPNetworkClient()
-
 /**
  * Convenience function which allows construction of `GetAccountInfoResponse` objects.
  *
@@ -62,11 +60,41 @@ describe('Common XRPL Client', function (): void {
   it('awaitFinalTransactionResult - returns when transaction is validated', async function (): Promise<
     void
   > {
-    // GIVEN a CommonXrplClient with fake networking that will succeed.
+    // GIVEN a CommonXrplClient with fake networking that will succeed with a not-yet-validated transaction response
+    const getTransactionResponse = FakeXRPNetworkClientResponses.defaultGetTransactionResponse()
+    getTransactionResponse.setValidated(false)
+
+    const notYetValidatedTransactionResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse(),
+      getTransactionResponse,
+    )
+    const fakeNetworkClient = new FakeXRPNetworkClient(
+      notYetValidatedTransactionResponses,
+    )
+
     const commonXrplClient = new CommonXrplClient(
-      fakeSucceedingNetworkClient,
+      fakeNetworkClient,
       XrplNetwork.Test,
     )
+
+    // AND a transaction that will become validated in 200ms
+    const newGetTransactionResponse = FakeXRPNetworkClientResponses.defaultGetTransactionResponse()
+    newGetTransactionResponse.setValidated(true)
+
+    const newFakeNetworkClientResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse(),
+      newGetTransactionResponse,
+    )
+    const newNetworkClient = new FakeXRPNetworkClient(
+      newFakeNetworkClientResponses,
+    )
+    setTimeout(() => {
+      commonXrplClient.networkClient = newNetworkClient
+    }, 200)
 
     // WHEN awaitFinalTransactionResult is called.
     const rawTransactionStatus = await commonXrplClient.awaitFinalTransactionResult(
@@ -178,7 +206,6 @@ describe('Common XRPL Client', function (): void {
     setTimeout(() => {
       commonXrplClient.networkClient = newNetworkClient
     }, 200)
-    const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN awaitFinalTransactionResult is called
     const rawTransactionStatus = await commonXrplClient.awaitFinalTransactionResult(
