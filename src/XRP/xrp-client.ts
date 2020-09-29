@@ -3,7 +3,6 @@ import { BigInteger } from 'big-integer'
 import XrpClientDecorator from './xrp-client-decorator'
 import TransactionStatus from './transaction-status'
 import ReliableSubmissionXrpClient from './reliable-submission-xrp-client'
-import DefaultXrpClient from './default-xrp-client'
 import XrpClientInterface from './xrp-client-interface'
 import XrpTransaction from './model/xrp-transaction'
 
@@ -31,14 +30,10 @@ export default class XrpClient implements XrpClientInterface {
   public constructor(grpcUrl: string, network: XrplNetwork, forceWeb = false) {
     this.network = network
 
-    const defaultXrpClient = DefaultXrpClient.defaultXrpClientWithEndpoint(
+    this.decoratedClient = new ReliableSubmissionXrpClient(
       grpcUrl,
       network,
       forceWeb,
-    )
-    this.decoratedClient = new ReliableSubmissionXrpClient(
-      defaultXrpClient,
-      network,
     )
   }
 
