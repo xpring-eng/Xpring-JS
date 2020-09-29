@@ -65,8 +65,9 @@ import {
   testInvalidPaymentProtoBadSendMax,
   testInvalidGetTransactionResponseProto,
   testInvalidGetTransactionResponseProtoUnsupportedType,
+  testInvalidSignerEntryProtoNoAccount,
+  testInvalidSignerEntryProtoNoSignerWeight,
 } from './fakes/fake-xrp-protobufs'
-import { SignerEntry } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 
 // TODO(amiecorso): Refactor tests to separate files.
 describe('Protocol Buffer Conversion', function (): void {
@@ -449,13 +450,20 @@ describe('Protocol Buffer Conversion', function (): void {
     )
   })
 
-  it('Convert SignerEntry with no fields set', function (): void {
-    // GIVEN a SignerEntry protocol buffer with no fields set.
-    // WHEN the protocol buffer is converted to a native TypeScript type.
-    const signerEntry = XrpSignerEntry.from(new SignerEntry())
+  it('Convert SignerEntry with no account field set', function (): void {
+    // GIVEN a SignerEntry protocol buffer with no account field set.
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpSignerEntry.from(testInvalidSignerEntryProtoNoAccount)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(signerEntry)
+  it('Convert SignerEntry with no SignerWeight field set', function (): void {
+    // GIVEN a SignerEntry protocol buffer with no SignerWeight field set.
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpSignerEntry.from(testInvalidSignerEntryProtoNoSignerWeight)
+    }, XrpError)
   })
 
   // Transaction

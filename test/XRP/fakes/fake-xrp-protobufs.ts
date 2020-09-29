@@ -451,6 +451,15 @@ testInvalidGetAccountTransactionHistoryResponse.setTransactionsList(
   invalidTransactionResponseList,
 )
 
+// Invalid SignerEntry protos
+const testInvalidSignerEntryProtoNoAccount = new SignerEntry()
+testInvalidSignerEntryProtoNoAccount.setSignerWeight(testSignerWeightProto)
+
+const testInvalidSignerEntryProtoNoSignerWeight = new SignerEntry()
+testInvalidSignerEntryProtoNoSignerWeight.setAccount(
+  testSignerEntryAccountProto,
+)
+
 // XRP OBJECTS ===================================================
 
 // test XrpTransaction
@@ -526,4 +535,6 @@ export {
   testInvalidGetTransactionResponseProto,
   testInvalidGetTransactionResponseProtoUnsupportedType,
   testInvalidGetAccountTransactionHistoryResponse,
+  testInvalidSignerEntryProtoNoAccount,
+  testInvalidSignerEntryProtoNoSignerWeight,
 }
