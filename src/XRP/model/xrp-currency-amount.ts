@@ -19,11 +19,11 @@ export default class XrpCurrencyAmount {
     // Mutually exclusive: either drops or issuedCurrency is set in an XRPCurrencyAmount
     const issuedCurrencyAmount = currencyAmount.getIssuedCurrencyAmount()
     const xrpAmount = currencyAmount.getXrpAmount()
-    if (issuedCurrencyAmount != undefined && xrpAmount == undefined) {
+    if (issuedCurrencyAmount !== undefined && xrpAmount === undefined) {
       const issuedCurrency = XrpIssuedCurrency.from(issuedCurrencyAmount)
       return new XrpCurrencyAmount(undefined, issuedCurrency)
     }
-    if (xrpAmount != undefined && issuedCurrencyAmount == undefined) {
+    if (xrpAmount !== undefined && issuedCurrencyAmount === undefined) {
       const drops = xrpAmount.getDrops()
       return new XrpCurrencyAmount(drops, undefined)
     }

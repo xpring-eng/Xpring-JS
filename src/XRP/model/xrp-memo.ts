@@ -28,7 +28,7 @@ export default class XrpMemo {
     const data = memo.getMemoData()?.getValue_asU8()
     const format = memo.getMemoFormat()?.getValue_asU8()
     const type = memo.getMemoType()?.getValue_asU8()
-    if (data == undefined && format == undefined && type == undefined) {
+    if (data === undefined && format === undefined && type === undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Memo protobuf missing all fields (requires at least one field).',
