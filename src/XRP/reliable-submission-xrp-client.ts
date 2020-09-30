@@ -125,20 +125,31 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     )
   }
 
+  private isMalformedTransactionStatus(transactionStatusCode: string): boolean {
+    return transactionStatusCode.startsWith('tem')
+  }
+
   private determineFinalResult(
     rawTransactionStatus: RawTransactionStatus,
   ): TransactionStatus {
+    const transactionStatusCode = rawTransactionStatus.transactionStatusCode
+
+    if (!transactionStatusCode) {
+      // Is this legit? What does this even mean? Is this just for testing purposes?
+      throw new Error('no')
+    }
+
     // Return pending if the transaction is not validated.
     if (!rawTransactionStatus.isValidated) {
-      return TransactionStatus.Pending
-    } else {
-      const transactionStatus = rawTransactionStatus.transactionStatusCode?.startsWith(
-        'tes',
-      )
-        ? TransactionStatus.Succeeded
-        : TransactionStatus.Failed
-      return transactionStatus
+      return this.isMalformedTransactionStatus(transactionStatusCode)
+        ? TransactionStatus.MalformedTransaction
+        : TransactionStatus.Pending
     }
+
+    const transactionStatus = transactionStatusCode?.startsWith('tes')
+      ? TransactionStatus.Succeeded
+      : TransactionStatus.Failed
+    return transactionStatus
   }
 
   private async awaitFinalTransactionStatus(
@@ -204,6 +215,19 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
         sourceClassicAddress,
       )
       rawTransactionStatus = await this.getRawTransactionStatus(transactionHash)
+
+      const transactionStatusCode = rawTransactionStatus.transactionStatusCode
+
+      if (!transactionStatusCode) {
+        // Is this legit? What does this even mean? Is this just for testing purposes?
+        throw new Error('no')
+      }
+
+      if (this.isMalformedTransactionStatus(transactionStatusCode)) {
+        // Return early; malformed transactions will not change just by waiting, man
+        console.log('returning early')
+        return rawTransactionStatus
+      }
     }
     /* eslint-enable no-await-in-loop */
 

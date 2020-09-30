@@ -229,4 +229,19 @@ describe('XrpClient Integration Tests', function (): void {
       AccountRootFlags.checkFlag(AccountRootFlags.LSF_DEPOSIT_AUTH, flags!),
     )
   })
+
+  it.only('authorizeSendingAccount - should fail when authorizing own self', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    console.log(wallet.getAddress())
+    // GIVEN an existing testnet account
+    // WHEN enableDepositAuth is called
+    const result = await xrpClient.authorizeSendingAccount(
+      wallet.getAddress(),
+      wallet,
+    )
+
+    console.log(result)
+  })
 })
