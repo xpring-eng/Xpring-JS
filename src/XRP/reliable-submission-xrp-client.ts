@@ -1,11 +1,11 @@
 import { Wallet, XrplNetwork } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import XrpClientDecorator from './xrp-client-decorator'
-import TransactionStatus from './transaction-status'
+import TransactionStatus from './final-transaction-status'
 import XrpTransaction from './model/xrp-transaction'
 
 import SendXrpDetails from './model/send-xrp-details'
-import TransactionResult from './model/transaction-result'
+import FinalTransactionResult from './model/transaction-result'
 import CommonXrplClient from './common-xrpl-client'
 import DefaultXrpClient from './default-xrp-client'
 import CommonXrplClientInterface from './common-xrpl-client-interface'
@@ -110,7 +110,9 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     return this.decoratedClient.getPayment(transactionHash)
   }
 
-  public async enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
+  public async enableDepositAuth(
+    wallet: Wallet,
+  ): Promise<FinalTransactionResult> {
     const result = await this.decoratedClient.enableDepositAuth(wallet)
     return await this.commonXrplClient.awaitFinalTransactionResult(
       result.hash,

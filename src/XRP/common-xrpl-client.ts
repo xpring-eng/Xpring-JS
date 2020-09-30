@@ -12,12 +12,12 @@ import {
 import { Transaction } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
-import TransactionStatus from './transaction-status'
+import TransactionStatus from './final-transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import { XrpNetworkClient } from './xrp-network-client'
 import XrpError, { XrpErrorType } from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
-import TransactionResult from './model/transaction-result'
+import FinalTransactionResult from './model/transaction-result'
 import isNode from '../Common/utils'
 
 async function sleep(milliseconds: number): Promise<void> {
@@ -263,12 +263,12 @@ export default class CommonXrplClient {
    */
   public async getTransactionResult(
     transactionHash: string,
-  ): Promise<TransactionResult> {
+  ): Promise<FinalTransactionResult> {
     const rawStatus = await this.getRawTransactionStatus(transactionHash)
     const isValidated = rawStatus.isValidated
     const transactionStatus = await this.getTransactionStatus(transactionHash)
 
-    return new TransactionResult(
+    return new FinalTransactionResult(
       transactionHash,
       transactionStatus,
       isValidated,
@@ -313,13 +313,13 @@ export default class CommonXrplClient {
   public async awaitFinalTransactionResult(
     transactionHash: string,
     wallet: Wallet,
-  ): Promise<TransactionResult> {
+  ): Promise<FinalTransactionResult> {
     const rawTransactionStatus = await this.awaitFinalTransactionStatus(
       transactionHash,
       wallet,
     )
     const finalStatus = this.determineFinalResult(rawTransactionStatus)
-    return new TransactionResult(
+    return new FinalTransactionResult(
       transactionHash,
       finalStatus,
       rawTransactionStatus.isValidated,

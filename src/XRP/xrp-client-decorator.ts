@@ -1,10 +1,10 @@
 import { Wallet, XrplNetwork } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
-import TransactionStatus from './transaction-status'
+import TransactionStatus from './final-transaction-status'
 import XrpTransaction from './model/xrp-transaction'
 
 import SendXrpDetails from './model/send-xrp-details'
-import TransactionResult from './model/transaction-result'
+import FinalTransactionResult from './model/transaction-result'
 
 /** A decorator interface for XrpClients. */
 export default interface XrpClientDecorator {
@@ -97,5 +97,5 @@ export default interface XrpClientDecorator {
    * @returns A promise which resolves to a TransactionResult object that contains the hash of the submitted AccountSet transaction
    *          and the final status of the transaction.
    */
-  enableDepositAuth(wallet: Wallet): Promise<TransactionResult>
+  enableDepositAuth(wallet: Wallet): Promise<FinalTransactionResult>
 }

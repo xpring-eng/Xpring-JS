@@ -25,7 +25,7 @@ import {
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import XrpClientDecorator from './xrp-client-decorator'
-import TransactionStatus from './transaction-status'
+import TransactionStatus from './final-transaction-status'
 import XrpTransaction from './model/xrp-transaction'
 import GrpcNetworkClient from './grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './grpc-xrp-network-client.web'
@@ -35,7 +35,7 @@ import XrpError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import SendXrpDetails from './model/send-xrp-details'
 import { AccountSetFlag } from './model/account-set-flag'
-import TransactionResult from './model/transaction-result'
+import FinalTransactionResult from './model/transaction-result'
 import CommonXrplClient from './common-xrpl-client'
 
 /**
@@ -333,7 +333,9 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @returns A promise which resolves to a TransactionResult object that contains the hash of the submitted AccountSet transaction,
    *          the preliminary status, and whether the transaction has been included in a validated ledger yet.
    */
-  public async enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
+  public async enableDepositAuth(
+    wallet: Wallet,
+  ): Promise<FinalTransactionResult> {
     const setFlag = new SetFlag()
     setFlag.setValue(AccountSetFlag.asfDepositAuth)
 
@@ -364,7 +366,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   public async authorizeSendingAccount(
     xAddressToAuthorize: string,
     wallet: Wallet,
-  ): Promise<TransactionResult> {
+  ): Promise<FinalTransactionResult> {
     const classicAddress = XrpUtils.decodeXAddress(xAddressToAuthorize)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
@@ -402,7 +404,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   public async unauthorizeSendingAccount(
     xAddressToUnauthorize: string,
     wallet: Wallet,
-  ): Promise<TransactionResult> {
+  ): Promise<FinalTransactionResult> {
     const classicAddress = XrpUtils.decodeXAddress(xAddressToUnauthorize)
     if (!classicAddress) {
       throw XrpError.xAddressRequired

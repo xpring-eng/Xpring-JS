@@ -3,7 +3,7 @@ import TransactionStatus from '../transaction-status'
 /**
  * Represents the outcome of submitting an XRPL transaction.
  */
-export default class TransactionResult {
+export default class FinalTransactionResult {
   public readonly hash: string
   public readonly status: TransactionStatus
   public readonly validated: boolean
