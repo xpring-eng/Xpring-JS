@@ -29,7 +29,7 @@ const maxLedgerVersionOffset = 10
  */
 export default class CommonXrplClient {
   /**
-   * Create a new CommonXrplClient.
+   * Creates a new CommonXrplClient.
    *
    * The CommonXrplClient will use gRPC to communicate with the given endpoint.
    *
@@ -48,7 +48,7 @@ export default class CommonXrplClient {
   }
 
   /**
-   * Create a new CommonXrplClient with a custom network client implementation.
+   * Creates a new CommonXrplClient with a custom network client implementation.
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
    * @param network The network this XrpClient is connecting to.
@@ -58,6 +58,10 @@ export default class CommonXrplClient {
     readonly network: XrplNetwork,
   ) {}
 
+  /**
+   * Retrieves the sequence number of the current open ledger in this rippled node.
+   * @see https://xrpl.org/ledgers.html#open-closed-and-validated-ledgers
+   */
   public async getOpenLedgerSequence(): Promise<number> {
     const getFeeResponse = await this.getFee()
     return getFeeResponse.getLedgerCurrentIndex()
@@ -102,7 +106,7 @@ export default class CommonXrplClient {
   }
 
   /**
-   * Retrieve the raw transaction status for the given transaction hash.
+   * Retrieves the raw transaction status for the given transaction hash.
    *
    * @param transactionHash: The hash of the transaction.
    * @returns The status of the given transaction.
@@ -118,6 +122,12 @@ export default class CommonXrplClient {
     return RawTransactionStatus.fromGetTransactionResponse(getTxResponse)
   }
 
+  /**
+   * Retrieves the minimum transaction cost for a reference transaction to be queued for a later ledger,
+   * represented in drops of XRP.
+   * @see  https://xrpl.org/rippleapi-reference.html#transaction-fees
+   * @see https://xrpl.org/fee.html#response-format
+   */
   public async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
 
@@ -129,11 +139,22 @@ export default class CommonXrplClient {
     return fee
   }
 
+  /**
+   * Reports the current state of the open-ledger requirements for the transaction cost.
+   * @see https://xrpl.org/rippleapi-reference.html#transaction-fees
+   * @see https://xrpl.org/fee.html#response-format
+   */
   public async getFee(): Promise<GetFeeResponse> {
     const getFeeRequest = this.networkClient.GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)
   }
 
+  /**
+   * Returns the AccountRoot object containing information about this XRPL account.
+   * @see https://xrpl.org/account_info.html#account_info
+   *
+   * @param address The XRPL account for which to retrieve information.
+   */
   public async getAccountData(address: string): Promise<AccountRoot> {
     const account = this.networkClient.AccountAddress()
     account.setAddress(address)
