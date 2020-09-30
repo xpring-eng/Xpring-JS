@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import { Signer, Utils, Wallet, XrplNetwork } from 'xpring-common-js'
 import XrpUtils from './xrp-utils'
 import GrpcNetworkClient from './grpc-xrp-network-client'
@@ -29,11 +28,11 @@ async function sleep(milliseconds: number): Promise<void> {
 const maxLedgerVersionOffset = 10
 
 /**
- * CommonXrplClient is a client which interacts with the XRP Ledger.
+ * CommonXrplClient is a client which supports the core, common functionality for interacting with the XRP Ledger.
  */
 export default class CommonXrplClient {
   /**
-   * Create a new CommonXrplClient.
+   * Creates a new CommonXrplClient.
    *
    * The CommonXrplClient will use gRPC to communicate with the given endpoint.
    *
@@ -52,7 +51,7 @@ export default class CommonXrplClient {
   }
 
   /**
-   * Create a new CommonXrplClient with a custom network client implementation.
+   * Creates a new CommonXrplClient with a custom network client implementation.
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
    * @param network The network this XrpClient is connecting to.
@@ -64,6 +63,10 @@ export default class CommonXrplClient {
     this.networkClient = networkClient
   }
 
+  /**
+   * Retrieves the sequence number of the current open ledger in this rippled node.
+   * @see https://xrpl.org/ledgers.html#open-closed-and-validated-ledgers
+   */
   public async getOpenLedgerSequence(): Promise<number> {
     const getFeeResponse = await this.getFee()
     return getFeeResponse.getLedgerCurrentIndex()
@@ -108,7 +111,7 @@ export default class CommonXrplClient {
   }
 
   /**
-   * Retrieve the raw transaction status for the given transaction hash.
+   * Retrieves the raw transaction status for the given transaction hash.
    *
    * @param transactionHash: The hash of the transaction.
    * @returns The status of the given transaction.
@@ -124,6 +127,12 @@ export default class CommonXrplClient {
     return RawTransactionStatus.fromGetTransactionResponse(getTxResponse)
   }
 
+  /**
+   * Retrieves the minimum transaction cost for a reference transaction to be queued for a later ledger,
+   * represented in drops of XRP.
+   * @see  https://xrpl.org/rippleapi-reference.html#transaction-fees
+   * @see https://xrpl.org/fee.html#response-format
+   */
   public async getMinimumFee(): Promise<XRPDropsAmount> {
     const getFeeResponse = await this.getFee()
 
@@ -135,11 +144,22 @@ export default class CommonXrplClient {
     return fee
   }
 
+  /**
+   * Reports the current state of the open-ledger requirements for the transaction cost.
+   * @see https://xrpl.org/rippleapi-reference.html#transaction-fees
+   * @see https://xrpl.org/fee.html#response-format
+   */
   public async getFee(): Promise<GetFeeResponse> {
     const getFeeRequest = this.networkClient.GetFeeRequest()
     return this.networkClient.getFee(getFeeRequest)
   }
 
+  /**
+   * Returns the AccountRoot object containing information about this XRPL account.
+   * @see https://xrpl.org/account_info.html#account_info
+   *
+   * @param address The XRPL account for which to retrieve information.
+   */
   public async getAccountData(address: string): Promise<AccountRoot> {
     const account = this.networkClient.AccountAddress()
     account.setAddress(address)
@@ -281,7 +301,39 @@ export default class CommonXrplClient {
       : TransactionStatus.Failed
   }
 
-  public determineFinalResult(
+  /**
+   * Waits for a transaction to complete and returns a TransactionResult.
+   *
+   * @param transactionHash The transaction to wait for.
+   * @param wallet The wallet sending the transaction.
+   *
+   * @returns A Promise resolving to a TransactionResult containing the results of the transaction associated with
+   * the given transaction hash.
+   */
+  public async awaitFinalTransactionResult(
+    transactionHash: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const rawTransactionStatus = await this.awaitFinalTransactionStatus(
+      transactionHash,
+      wallet,
+    )
+    const finalStatus = this.determineFinalResult(rawTransactionStatus)
+    return new TransactionResult(
+      transactionHash,
+      finalStatus,
+      rawTransactionStatus.isValidated,
+    )
+  }
+
+  /**
+   * Determines the current TransactionStatus from a RawTransactionStatus (translating from
+   * a rippled transaction status code such as `tesSUCCESS`, in conjunction with validated
+   * status, into a TransactionStatus enum instance)
+   *
+   * @param rawTransactionStatus
+   */
+  private determineFinalResult(
     rawTransactionStatus: RawTransactionStatus,
   ): TransactionStatus {
     // Return pending if the transaction is not validated.
@@ -297,7 +349,16 @@ export default class CommonXrplClient {
     }
   }
 
-  public async awaitFinalTransactionResult(
+  /**
+   * The core logic of reliable submission.  Polls the ledger until the result of the transaction
+   * can be considered final, meaning it has either been included in a validated ledger, or the
+   * transaction's lastLedgerSequence has been surpassed by the latest ledger sequence (meaning it
+   * will never be included in a validated ledger.)
+   *
+   * @param transactionHash The hash of the transaction being awaited.
+   * @param sender The address used to obtain the latest ledger sequence.
+   */
+  public async awaitFinalTransactionStatus(
     transactionHash: string,
     sender: Wallet,
   ): Promise<RawTransactionStatus> {

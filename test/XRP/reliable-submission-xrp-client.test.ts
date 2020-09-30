@@ -31,7 +31,7 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
 )
 const fakedTransactionHistoryValue = [testXrpTransaction]
 const fakedGetPaymentValue = testXrpTransaction
-const fakedEnableDepositAuthValue = new TransactionResult(
+const fakedTransactionResultValue = new TransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
   true,
@@ -46,11 +46,11 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedAccountExistsValue,
       fakedTransactionHistoryValue,
       fakedGetPaymentValue,
-      fakedEnableDepositAuthValue,
+      fakedTransactionResultValue,
     )
     this.fakeCommonXrplClient = new FakeCommonXrplClient(
-      fakedTransactionStatusValue,
       fakedRawTransactionStatusValue,
+      fakedTransactionResultValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXrpClient(
       this.fakeXrpClient,
@@ -124,6 +124,6 @@ describe('Reliable Submission XRP Client', function (): void {
     const result = await this.reliableSubmissionClient.enableDepositAuth(wallet)
 
     // THEN the function returns
-    assert.deepEqual(result.hash, fakedEnableDepositAuthValue.hash)
+    assert.deepEqual(result.hash, fakedTransactionResultValue.hash)
   })
 })

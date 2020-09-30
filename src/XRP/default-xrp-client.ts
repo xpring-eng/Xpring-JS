@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import { Utils, Wallet, XrplNetwork } from 'xpring-common-js'
 import XrpUtils from './xrp-utils'
 import bigInt, { BigInteger } from 'big-integer'
@@ -40,10 +39,10 @@ import TransactionResult from './model/transaction-result'
 import CommonXrplClient from './common-xrpl-client'
 
 /**
- * DefaultXrpClient is a client which interacts with the XRP Ledger.
+ * DefaultXrpClient is a client for handling XRP payments on the XRPL.
  */
 export default class DefaultXrpClient implements XrpClientDecorator {
-  public commonXrplClient: CommonXrplClient
+  private commonXrplClient: CommonXrplClient
 
   /**
    * Create a new DefaultXrpClient.

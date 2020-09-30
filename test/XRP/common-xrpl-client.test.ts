@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import { assert } from 'chai'
 
-import { Utils, Wallet, XrplNetwork } from 'xpring-common-js'
+import { Wallet, XrplNetwork } from 'xpring-common-js'
 import {
   FakeXRPNetworkClient,
   FakeXRPNetworkClientResponses,
@@ -12,7 +12,7 @@ import { GetTransactionResponse } from '../../src/XRP/Generated/node/org/xrpl/rp
 import { GetAccountInfoResponse } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/get_account_info_pb'
 import {
   Meta,
-  TransactionResult,
+  TransactionResult as TransactionResultProto,
 } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/meta_pb'
 import { Transaction } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/transaction_pb'
 import {
@@ -24,6 +24,8 @@ import {
   LastLedgerSequence,
 } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/common_pb'
 import { AccountRoot } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger_objects_pb'
+import TransactionResult from '../../src/XRP/model/transaction-result'
+import TransactionStatus from '../../src/XRP/transaction-status'
 
 // The network layer is faked, so this is a perfunctory argument
 const transactionHash = 'DEADBEEF'
@@ -97,23 +99,22 @@ describe('Common XRPL Client', function (): void {
     }, 200)
 
     // WHEN awaitFinalTransactionResult is called.
-    const rawTransactionStatus = await commonXrplClient.awaitFinalTransactionResult(
+    const finalTransactionResult = await commonXrplClient.awaitFinalTransactionResult(
       transactionHash,
       wallet,
     )
     // THEN it returns and the result is as expected.
-    const expectedTransactionHash = Utils.toHex(
-      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
+    const expectedTransactionResult = new TransactionResult(
+      transactionHash,
+      TransactionStatus.Succeeded,
+      true,
     )
 
-    assert.deepEqual(
-      rawTransactionStatus,
-      await commonXrplClient.getRawTransactionStatus(expectedTransactionHash),
-    )
+    assert.deepEqual(finalTransactionResult, expectedTransactionResult)
   })
 
   it("awaitFinalTransactionResult - Throws when transaction doesn't have a last ledger sequence", function (done) {
-    const transactionResult = new TransactionResult()
+    const transactionResult = new TransactionResultProto()
     transactionResult.setResult('tesSUCCESS')
 
     const meta = new Meta()
@@ -154,7 +155,7 @@ describe('Common XRPL Client', function (): void {
     this.timeout(10000)
 
     // GIVEN a CommonXrplClient with fake networking that will succeed, while providing a not-yet-validated transaction status
-    const transactionResult = new TransactionResult()
+    const transactionResult = new TransactionResultProto()
     transactionResult.setResult('tefFAILURE')
 
     const meta = new Meta()
@@ -208,21 +209,18 @@ describe('Common XRPL Client', function (): void {
     }, 200)
 
     // WHEN awaitFinalTransactionResult is called
-    const rawTransactionStatus = await commonXrplClient.awaitFinalTransactionResult(
+    const finalTransactionResult = await commonXrplClient.awaitFinalTransactionResult(
       transactionHash,
       wallet,
     )
 
     // THEN it returns and the result is as expected.
-    const expectedTransactionHash = Utils.toHex(
-      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
+    const expectedResult = new TransactionResult(
+      transactionHash,
+      TransactionStatus.Failed,
+      false,
     )
 
-    assert.deepEqual(
-      rawTransactionStatus,
-      await commonXrplClient.getRawTransactionStatus(expectedTransactionHash),
-    )
-    assert.equal(rawTransactionStatus.isValidated, false)
-    assert.equal(rawTransactionStatus.transactionStatusCode, 'tefFAILURE')
+    assert.deepEqual(finalTransactionResult, expectedResult)
   })
 })

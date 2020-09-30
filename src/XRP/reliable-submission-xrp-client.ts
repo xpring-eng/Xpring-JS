@@ -88,7 +88,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     const transactionHash = await this.decoratedClient.sendWithDetails(
       sendXrpDetails,
     )
-    await this.commonXrplClient.awaitFinalTransactionResult(
+    await this.commonXrplClient.awaitFinalTransactionStatus(
       transactionHash,
       sender,
     )
@@ -112,19 +112,9 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
 
   public async enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
     const result = await this.decoratedClient.enableDepositAuth(wallet)
-    const transactionHash = result.hash
-
-    const rawTransactionStatus = await this.commonXrplClient.awaitFinalTransactionResult(
-      transactionHash,
+    return await this.commonXrplClient.awaitFinalTransactionResult(
+      result.hash,
       wallet,
-    )
-    const finalStatus = this.commonXrplClient.determineFinalResult(
-      rawTransactionStatus,
-    )
-    return new TransactionResult(
-      transactionHash,
-      finalStatus,
-      rawTransactionStatus.isValidated,
     )
   }
 }
