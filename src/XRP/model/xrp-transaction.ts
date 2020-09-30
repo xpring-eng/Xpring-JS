@@ -65,12 +65,11 @@ export default class XrpTransaction {
         'Transaction protobuf is missing valid `fee` field.',
       )
     }
-    try {
-      parseInt(fee)
-    } catch {
+    const intFee = Number(fee)
+    if (isNaN(intFee)) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'Transaction protobuf `fee` field is not a valid number of XRP drops.',
+        'Transaction protobuf `fee` field is not a valid integer number of XRP drops.',
       )
     }
 
@@ -155,13 +154,13 @@ export default class XrpTransaction {
     }
 
     const transactionHashBytes = getTransactionResponse.getHash_asU8()
-    if (!transactionHashBytes) {
+    const transactionHash = Utils.toHex(transactionHashBytes)
+    if (!transactionHash) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Transaction protobuf is missing valid `hash` field.',
       )
     }
-    const transactionHash = Utils.toHex(transactionHashBytes)
 
     // Transactions report their timestamps since the Ripple Epoch, which is 946,684,800 seconds after
     // the unix epoch. Convert transaction's timestamp to a unix timestamp.
