@@ -31,7 +31,7 @@ export default class XrpPayment {
     // For non-XRP amounts, the nested field names in `amount` are lower-case.
 
     const destination = payment.getDestination()?.getValue()?.getAddress()
-    if (destination == undefined) {
+    if (destination === undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Payment protobuf is missing required `destination` field.',
@@ -58,7 +58,7 @@ export default class XrpPayment {
       payment.getPathsList()?.length > 0
         ? payment.getPathsList().map((path) => XrpPath.from(path))
         : undefined
-    if (paths != undefined && amount.drops != undefined) {
+    if (paths !== undefined && amount.drops !== undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Payment protobuf `paths` field should be omitted for XRP-to-XRP interactions.',
@@ -68,14 +68,14 @@ export default class XrpPayment {
     const paymentSendMaxValue = payment.getSendMax()?.getValue()
     const sendMax =
       paymentSendMaxValue && XrpCurrencyAmount.from(paymentSendMaxValue)
-    if (sendMax != undefined && amount.drops != undefined) {
+    if (sendMax !== undefined && amount.drops !== undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Payment protobuf `sendMax` field should be omitted for XRP-to-XRP interactions.',
       )
     }
     // For non-XRP amounts, the nested field names in `sendMax` MUST be lower-case.
-    if (sendMax == undefined && amount.issuedCurrency != undefined) {
+    if (sendMax === undefined && amount.issuedCurrency !== undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Payment protobuf `sendMax` field must be present for non-XRP-to-XRP interactions.',
