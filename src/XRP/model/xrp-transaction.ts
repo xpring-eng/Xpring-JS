@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { Utils, XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { Transaction } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -26,26 +27,60 @@ export default class XrpTransaction {
   public static from(
     getTransactionResponse: GetTransactionResponse,
     xrplNetwork: XrplNetwork,
-  ): XrpTransaction | undefined {
+  ): XrpTransaction {
     const transaction = getTransactionResponse.getTransaction()
     if (!transaction) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Transaction protobuf is missing valid `transaction` field.',
+      )
     }
 
     const account = transaction.getAccount()?.getValue()?.getAddress()
     if (!account) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Transaction protobuf is missing valid `account` field.',
+      )
+    }
+
+    const sourceTag = transaction.getSourceTag()?.getValue()
+
+    const sourceXAddress = XrpUtils.encodeXAddress(
+      account,
+      sourceTag,
+      xrplNetwork === XrplNetwork.Test || xrplNetwork === XrplNetwork.Dev,
+    )
+    if (!sourceXAddress) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Cannot construct XAddress from Transaction protobuf `account` and `sourceTag` fields.',
+      )
     }
 
     const fee = transaction.getFee()?.getDrops()
+    if (!fee) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Transaction protobuf is missing valid `fee` field.',
+      )
+    }
+    try {
+      parseInt(fee)
+    } catch {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Transaction protobuf `fee` field is not a valid number of XRP drops.',
+      )
+    }
 
     const sequence = transaction.getSequence()?.getValue()
-
-    const signingPublicKey = transaction.getSigningPublicKey()?.getValue_asU8()
-
-    const transactionSignature = transaction
-      .getTransactionSignature()
-      ?.getValue_asU8()
+    if (!sequence) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Transaction protobuf is missing valid `sequence` field.',
+      )
+    }
 
     const accountTransactionID = transaction
       .getAccountTransactionId()
@@ -67,13 +102,29 @@ export default class XrpTransaction {
         .map((signer) => XrpSigner.from(signer, xrplNetwork))
     }
 
-    const sourceTag = transaction.getSourceTag()?.getValue()
+    const signingPublicKey = transaction.getSigningPublicKey()?.getValue_asB64()
+    if (signingPublicKey == undefined) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Transaction protobuf is missing valid `signingPublicKey` field.',
+      )
+    }
+    if (!signers && signingPublicKey == '') {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Transaction protobuf does not have a `signingPublicKey` field or a `signers` field.',
+      )
+    }
 
-    const sourceXAddress = XrpUtils.encodeXAddress(
-      account,
-      sourceTag,
-      xrplNetwork === XrplNetwork.Test,
-    )
+    const transactionSignature = transaction
+      .getTransactionSignature()
+      ?.getValue_asU8()
+    if (!transactionSignature) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Transaction protobuf is missing valid `transactionSignature` field.',
+      )
+    }
 
     let paymentFields
     let type
@@ -81,23 +132,34 @@ export default class XrpTransaction {
       case Transaction.TransactionDataCase.PAYMENT: {
         const payment = transaction.getPayment()
         if (!payment) {
-          return undefined
+          throw new XrpError(
+            XrpErrorType.MalformedProtobuf,
+            'Transaction protobuf is type Payment but is missing `payment` field.',
+          )
         }
-        paymentFields = payment && XrpPayment.from(payment, xrplNetwork)
-        if (!paymentFields) {
-          return undefined
-        }
-        type = payment && XrpTransactionType.Payment
+        paymentFields = XrpPayment.from(payment, xrplNetwork)
+        type = XrpTransactionType.Payment
         break
       }
+      case Transaction.TransactionDataCase.TRANSACTION_DATA_NOT_SET: {
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          'Transaction protobuf is missing transaction data.',
+        )
+      }
       default:
-        // Unsupported transaction type.
-        return undefined
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          'Transaction protobuf has an unsupported transaction type.',
+        )
     }
 
     const transactionHashBytes = getTransactionResponse.getHash_asU8()
     if (!transactionHashBytes) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Transaction protobuf is missing valid `hash` field.',
+      )
     }
     const transactionHash = Utils.toHex(transactionHashBytes)
 
@@ -132,22 +194,22 @@ export default class XrpTransaction {
 
     return new XrpTransaction(
       transactionHash,
-      accountTransactionID,
+      sourceXAddress,
+      type,
       fee,
+      sequence,
+      signingPublicKey,
+      transactionSignature,
+      validated,
+      ledgerIndex,
+      accountTransactionID,
       flags,
       lastLedgerSequence,
       memos,
-      sequence,
       signers,
-      signingPublicKey,
-      sourceXAddress,
-      transactionSignature,
-      type,
       paymentFields,
       timestamp,
       deliveredAmount,
-      validated,
-      ledgerIndex,
     )
   }
 
@@ -182,21 +244,21 @@ export default class XrpTransaction {
    */
   private constructor(
     readonly hash: string,
+    readonly sourceXAddress: string,
+    readonly type: XrpTransactionType,
+    readonly fee: string,
+    readonly sequence: number,
+    readonly signingPublicKey: string,
+    readonly transactionSignature: Uint8Array,
+    readonly validated: boolean,
+    readonly ledgerIndex: number,
     readonly accountTransactionID?: Uint8Array,
-    readonly fee?: string,
     readonly flags?: PaymentFlags,
     readonly lastLedgerSequence?: number,
     readonly memos?: Array<XrpMemo>,
-    readonly sequence?: number,
     readonly signers?: Array<XrpSigner>,
-    readonly signingPublicKey?: Uint8Array,
-    readonly sourceXAddress?: string,
-    readonly transactionSignature?: Uint8Array,
-    readonly type?: XrpTransactionType,
     readonly paymentFields?: XrpPayment,
     readonly timestamp?: number,
     readonly deliveredAmount?: string,
-    readonly validated?: boolean,
-    readonly ledgerIndex?: number,
   ) {}
 }

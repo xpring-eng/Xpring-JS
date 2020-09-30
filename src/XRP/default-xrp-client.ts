@@ -385,11 +385,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
             getTransactionResponse,
             this.network,
           )
-          if (!xrpTransaction) {
-            throw XrpError.paymentConversionFailure
-          } else {
-            payments.push(xrpTransaction)
-          }
+          payments.push(xrpTransaction)
           break
         }
         default:
@@ -409,9 +405,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @throws An error if the transaction hash was invalid.
    * @returns An {@link XrpTransaction} object representing an XRP Ledger transaction.
    */
-  public async getPayment(
-    transactionHash: string,
-  ): Promise<XrpTransaction | undefined> {
+  public async getPayment(transactionHash: string): Promise<XrpTransaction> {
     const getTransactionRequest = this.networkClient.GetTransactionRequest()
     getTransactionRequest.setHash(Utils.toBytes(transactionHash))
 

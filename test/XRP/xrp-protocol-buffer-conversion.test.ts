@@ -19,7 +19,6 @@ import XrpSigner from '../../src/XRP/model/xrp-signer'
 import XrpTransaction from '../../src/XRP/model/xrp-transaction'
 import XrpSignerEntry from '../../src/XRP/model/xrp-signer-entry'
 import {
-  testPublicKey,
   testTransactionSignature,
   testSequence,
   testFee,
@@ -537,7 +536,10 @@ describe('Protocol Buffer Conversion', function (): void {
     // THEN all fields are present and converted correctly.
     assert.equal(transaction?.fee, testFee)
     assert.equal(transaction?.sequence, testSequence)
-    assert.equal(transaction?.signingPublicKey, testPublicKey)
+    assert.equal(
+      transaction?.signingPublicKey,
+      transactionProto?.getSigningPublicKey()?.getValue_asB64(),
+    )
     assert.equal(transaction?.transactionSignature, testTransactionSignature)
     assert.equal(transaction?.accountTransactionID, testAccountTransactionID)
     assert.equal(transaction?.flags, testFlags)
@@ -584,7 +586,10 @@ describe('Protocol Buffer Conversion', function (): void {
     // THEN all fields are present and converted correctly.
     assert.equal(transaction?.fee, testFee)
     assert.equal(transaction?.sequence, testSequence)
-    assert.deepEqual(transaction?.signingPublicKey, testPublicKey)
+    assert.deepEqual(
+      transaction?.signingPublicKey,
+      transactionProto?.getSigningPublicKey()?.getValue_asB64(),
+    )
     assert.deepEqual(
       transaction?.transactionSignature,
       testTransactionSignature,

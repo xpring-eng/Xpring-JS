@@ -135,9 +135,7 @@ export default class XrpClient implements XrpClientInterface {
    * @throws An error if the transaction hash was invalid.
    * @returns An {@link XrpTransaction} object representing an XRP Ledger transaction.
    */
-  public async getPayment(
-    transactionHash: string,
-  ): Promise<XrpTransaction | undefined> {
+  public async getPayment(transactionHash: string): Promise<XrpTransaction> {
     return this.decoratedClient.getPayment(transactionHash)
   }
 
