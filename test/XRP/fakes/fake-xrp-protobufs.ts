@@ -465,9 +465,19 @@ testInvalidPaymentProtoNoSendMax.setAmount(paymentAmountProtoIssuedCurrency)
 testInvalidPaymentProtoNoSendMax.setDestination(paymentDestinationProto)
 
 // Invalid Signer protos
+const invalidAccountProto = new Account()
+invalidAccountProto.setValue(invalidDestinationAccountAddressProto)
+
 const testInvalidSignerProtoNoAccount = new Signer()
 testInvalidSignerProtoNoAccount.setSigningPublicKey(signingPublicKeyProto)
 testInvalidSignerProtoNoAccount.setTransactionSignature(
+  transactionSignatureProto,
+)
+
+const testInvalidSignerProtoBadAccount = new Signer()
+testInvalidSignerProtoBadAccount.setAccount(invalidAccountProto)
+testInvalidSignerProtoBadAccount.setSigningPublicKey(signingPublicKeyProto)
+testInvalidSignerProtoBadAccount.setTransactionSignature(
   transactionSignatureProto,
 )
 
@@ -505,9 +515,6 @@ testInvalidPaymentTransactionNoAccount.setPayment(
 )
 
 // ... bad account
-const invalidAccountProto = new Account()
-invalidAccountProto.setValue(invalidDestinationAccountAddressProto)
-
 const testInvalidPaymentTransactionBadAccount = new Transaction()
 testInvalidPaymentTransactionBadAccount.setAccount(invalidAccountProto)
 testInvalidPaymentTransactionBadAccount.setFee(transactionFeeProto)
@@ -792,6 +799,7 @@ export {
   testInvalidPaymentProtoNoSendMax,
   testInvalidPaymentTransaction,
   testInvalidSignerProtoNoAccount,
+  testInvalidSignerProtoBadAccount,
   testInvalidSignerProtoNoPublicKey,
   testInvalidSignerProtoNoTxnSignature,
   testInvalidGetTransactionResponseProto,

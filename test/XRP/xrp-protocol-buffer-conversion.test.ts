@@ -67,6 +67,7 @@ import {
   testInvalidPaymentProtoXrpSendMax,
   testInvalidPaymentProtoNoSendMax,
   testInvalidSignerProtoNoAccount,
+  testInvalidSignerProtoBadAccount,
   testInvalidSignerProtoNoPublicKey,
   testInvalidSignerProtoNoTxnSignature,
   testInvalidGetTransactionResponseProto,
@@ -487,6 +488,14 @@ describe('Protocol Buffer Conversion', function (): void {
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(() => {
       XrpSigner.from(testInvalidSignerProtoNoAccount, XrplNetwork.Test)
+    }, XrpError)
+  })
+
+  it('Convert Signer protobuf with invalid field account', function (): void {
+    // GIVEN a Signer protocol buffer with an invalid account.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpSigner.from(testInvalidSignerProtoBadAccount, XrplNetwork.Test)
     }, XrpError)
   })
 
