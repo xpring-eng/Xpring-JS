@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import { Utils, Wallet, XrplNetwork } from 'xpring-common-js'
 import XrpUtils from './xrp-utils'
 import bigInt, { BigInteger } from 'big-integer'

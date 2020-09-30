@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-syntax */
 import { Signer, Utils, Wallet, XrplNetwork } from 'xpring-common-js'
 import XrpUtils from './xrp-utils'
 import GrpcNetworkClient from './grpc-xrp-network-client'
