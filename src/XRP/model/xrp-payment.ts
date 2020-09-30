@@ -21,7 +21,7 @@ export default class XrpPayment {
    */
   public static from(payment: Payment, xrplNetwork: XrplNetwork): XrpPayment {
     const paymentAmountValue = payment.getAmount()?.getValue()
-    if (paymentAmountValue == undefined) {
+    if (paymentAmountValue === undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Payment protobuf is missing required `amount` field.',
