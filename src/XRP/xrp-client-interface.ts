@@ -1,11 +1,11 @@
 import { Wallet, XrplNetwork } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
-import TransactionStatus from './final-transaction-status'
+import TransactionStatus from './transaction-status'
 
 import XrpTransaction from './model/xrp-transaction'
 import XrpMemo from './model/xrp-memo'
 import SendXrpDetails from './model/send-xrp-details'
-import FinalTransactionResult from './model/transaction-result'
+import FinalTransactionResult from './model/final-transaction-result'
 
 /**
  * An interface describing XrpClient.

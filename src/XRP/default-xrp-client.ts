@@ -25,7 +25,7 @@ import {
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import XrpClientDecorator from './xrp-client-decorator'
-import TransactionStatus from './final-transaction-status'
+import TransactionStatus from './transaction-status'
 import XrpTransaction from './model/xrp-transaction'
 import GrpcNetworkClient from './grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './grpc-xrp-network-client.web'
@@ -35,7 +35,7 @@ import XrpError from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import SendXrpDetails from './model/send-xrp-details'
 import { AccountSetFlag } from './model/account-set-flag'
-import FinalTransactionResult from './model/transaction-result'
+import FinalTransactionResult from './model/final-transaction-result'
 import CommonXrplClient from './common-xrpl-client'
 
 /**

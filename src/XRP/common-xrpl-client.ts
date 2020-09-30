@@ -12,12 +12,12 @@ import {
 import { Transaction } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
-import TransactionStatus from './final-transaction-status'
+import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import { XrpNetworkClient } from './xrp-network-client'
 import XrpError, { XrpErrorType } from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
-import FinalTransactionResult from './model/transaction-result'
+import FinalTransactionResult from './model/final-transaction-result'
 import isNode from '../Common/utils'
 
 async function sleep(milliseconds: number): Promise<void> {

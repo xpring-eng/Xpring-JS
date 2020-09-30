@@ -1,5 +1,5 @@
 import { Wallet, XrplNetwork } from 'xpring-common-js'
-import FinalTransactionResult from './model/transaction-result'
+import FinalTransactionResult from './model/final-transaction-result'
 import RawTransactionStatus from './raw-transaction-status'
 
 /**
