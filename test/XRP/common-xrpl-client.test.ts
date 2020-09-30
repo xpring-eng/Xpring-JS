@@ -214,11 +214,6 @@ describe('Common XRPL Client', function (): void {
       wallet,
     )
 
-    // TODO: (amiecorso) in separate PR, update the generation of a `TransactionResult` such that:
-    // - consider renaming to FinalTransactionResult
-    // - take into account whether the lastLedgerSequence has been passed on the transaction in question, thus giving it a `Failed` state
-    // - or better, some new state such as TransactionStatus.LastLedgerPassed
-
     // THEN it returns and the result is as expected.
     const expectedResult = new TransactionResult(
       transactionHash,

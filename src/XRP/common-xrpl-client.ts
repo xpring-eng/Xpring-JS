@@ -440,7 +440,7 @@ export default class CommonXrplClient {
       rawTransactionStatus = await this.getRawTransactionStatus(transactionHash)
     }
     /* eslint-enable no-await-in-loop */
-    const lastLedgerPassed = latestLedgerSequence > lastLedgerSequence
+    const lastLedgerPassed = latestLedgerSequence >= lastLedgerSequence
     return {
       rawTransactionStatus: rawTransactionStatus,
       lastLedgerPassed: lastLedgerPassed,

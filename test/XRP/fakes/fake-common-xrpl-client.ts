@@ -7,7 +7,10 @@ import TransactionResult from '../../../src/XRP/model/final-transaction-result'
 
 class FakeCommonXrplClient implements CommonXrplClientInterface {
   public constructor(
-    public awaitFinalTransactionStatusValue: Result<RawTransactionStatus>,
+    public awaitFinalTransactionStatusValue: Result<{
+      rawTransactionStatus: RawTransactionStatus
+      lastLedgerPassed: boolean
+    }>,
     public awaitFinalTransactionResultValue: Result<TransactionResult>,
     public network: XrplNetwork = XrplNetwork.Test,
   ) {}
@@ -15,7 +18,10 @@ class FakeCommonXrplClient implements CommonXrplClientInterface {
   public async awaitFinalTransactionStatus(
     _transactionHash: string,
     _sender: Wallet,
-  ): Promise<RawTransactionStatus> {
+  ): Promise<{
+    rawTransactionStatus: RawTransactionStatus
+    lastLedgerPassed: boolean
+  }> {
     return FakeCommonXrplClient.returnOrThrow(
       this.awaitFinalTransactionStatusValue,
     )
