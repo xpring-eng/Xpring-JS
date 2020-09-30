@@ -25,7 +25,7 @@ import isNode from '../Common/utils'
 const maxLedgerVersionOffset = 10
 
 /**
- * CommonXrplClient is a client which interacts with the XRP Ledger.
+ * CommonXrplClient is a client which supports the core, common functionality for interacting with the XRP Ledger.
  */
 export default class CommonXrplClient {
   /**

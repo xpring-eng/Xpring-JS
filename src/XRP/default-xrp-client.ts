@@ -41,7 +41,7 @@ import TransactionResult from './model/transaction-result'
 import CommonXrplClient from './common-xrpl-client'
 
 /**
- * DefaultXrpClient is a client which interacts with the XRP Ledger.
+ * DefaultXrpClient is a client for handling XRP payments on the XRPL.
  */
 export default class DefaultXrpClient implements XrpClientDecorator {
   private commonXrplClient: CommonXrplClient
