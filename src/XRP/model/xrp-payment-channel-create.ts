@@ -25,7 +25,7 @@ export default class XrpPaymentChannelCreate {
     xrplNetwork: XrplNetwork,
   ): XrpPaymentChannelCreate {
     const amountCurrencyAmount = paymentChannelCreate.getAmount()?.getValue()
-    if (!amountCurrencyAmount) {
+    if (amountCurrencyAmount === undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'PaymentChannelCreate protobuf does not contain `amount` field.',
@@ -57,7 +57,7 @@ export default class XrpPaymentChannelCreate {
     }
 
     const settleDelay = paymentChannelCreate.getSettleDelay()?.getValue()
-    if (!settleDelay) {
+    if (settleDelay === undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'PaymentChannelCreate protobuf does not contain `SettleDelay` field.',
