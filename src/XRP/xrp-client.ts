@@ -30,7 +30,7 @@ export default class XrpClient implements XrpClientInterface {
   public constructor(grpcUrl: string, network: XrplNetwork, forceWeb = false) {
     this.network = network
 
-    this.decoratedClient = new ReliableSubmissionXrpClient(
+    this.decoratedClient = ReliableSubmissionXrpClient.reliableSubmissionXrpClientWithEndpoint(
       grpcUrl,
       network,
       forceWeb,

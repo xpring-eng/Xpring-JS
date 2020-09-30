@@ -8,28 +8,53 @@ import SendXrpDetails from './model/send-xrp-details'
 import TransactionResult from './model/transaction-result'
 import CommonXrplClient from './common-xrpl-client'
 import DefaultXrpClient from './default-xrp-client'
+import CommonXrplClientInterface from './common-xrpl-client-interface'
 
 /**
  * An XrpClient which blocks on `send` calls until the transaction has reached a deterministic state.
  */
 export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
-  private decoratedClient: XrpClientDecorator
-  private commonXrplClient: CommonXrplClient
-
+  /**
+   * A constructor for direct client injection, primarily for testing.
+   *
+   * @param decoratedClient The XrpClient being decorated by this ReliableSubmissionClient.
+   * @param commonXrplClient The instance of CommonXrplClient available to this ReliableSubmissionClient.
+   * @param network The network this XrpClient is connecting to.
+   */
   public constructor(
-    grpcUrl: string,
+    readonly decoratedClient: XrpClientDecorator,
+    readonly commonXrplClient: CommonXrplClientInterface,
     readonly network: XrplNetwork,
+  ) {}
+
+  /**
+   * Create a new ReliableSubmissionXrpClient.
+   *
+   * The ReliableSubmissionXrpClient will use gRPC to communicate with the given endpoint.
+   *
+   * @param grpcUrl The URL of the gRPC instance to connect to.
+   * @param network The network this XrpClient is connecting to.
+   * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
+   */
+  public static reliableSubmissionXrpClientWithEndpoint(
+    grpcUrl: string,
+    network: XrplNetwork,
     forceWeb = false,
-  ) {
-    this.decoratedClient = DefaultXrpClient.defaultXrpClientWithEndpoint(
+  ): ReliableSubmissionXrpClient {
+    const decoratedClient = DefaultXrpClient.defaultXrpClientWithEndpoint(
       grpcUrl,
       network,
       forceWeb,
     )
-    this.commonXrplClient = CommonXrplClient.commonXrplClientWithEndpoint(
+    const commonXrplClient = CommonXrplClient.commonXrplClientWithEndpoint(
       grpcUrl,
       network,
       forceWeb,
+    )
+    return new ReliableSubmissionXrpClient(
+      decoratedClient,
+      commonXrplClient,
+      network,
     )
   }
 
