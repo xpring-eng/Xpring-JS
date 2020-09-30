@@ -8,7 +8,7 @@ import TransactionStatus from '../../src/XRP/transaction-status'
 import XpringClient from '../../src/Xpring/xpring-client'
 
 import XpringError from '../../src/Xpring/xpring-error'
-import TransactionResult from '../../src/XRP/model/transaction-result'
+import TransactionResult from '../../src/XRP/model/final-transaction-result'
 
 /* Default values for the fake XRP Client. These values must be provided but are not varied in testing. */
 /* eslint-disable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention --
