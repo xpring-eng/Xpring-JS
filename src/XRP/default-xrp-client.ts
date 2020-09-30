@@ -44,7 +44,7 @@ import CommonXrplClient from './common-xrpl-client'
  * DefaultXrpClient is a client which interacts with the XRP Ledger.
  */
 export default class DefaultXrpClient implements XrpClientDecorator {
-  public commonXrplClient: CommonXrplClient
+  private commonXrplClient: CommonXrplClient
 
   /**
    * Create a new DefaultXrpClient.
