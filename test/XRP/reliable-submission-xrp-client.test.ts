@@ -6,7 +6,7 @@ import ReliableSubmissionXrpClient from '../../src/XRP/reliable-submission-xrp-c
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { testXrpTransaction } from './fakes/fake-xrp-protobufs'
-import TransactionResult from '../../src/XRP/model/transaction-result'
+import TransactionResult from '../../src/XRP/model/final-transaction-result'
 import FakeCommonXrplClient from './fakes/fake-common-xrpl-client'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'

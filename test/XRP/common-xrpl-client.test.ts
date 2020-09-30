@@ -24,7 +24,7 @@ import {
   LastLedgerSequence,
 } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/common_pb'
 import { AccountRoot } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger_objects_pb'
-import TransactionResult from '../../src/XRP/model/transaction-result'
+import TransactionResult from '../../src/XRP/model/final-transaction-result'
 import TransactionStatus from '../../src/XRP/transaction-status'
 
 // The network layer is faked, so this is a perfunctory argument
@@ -222,7 +222,7 @@ describe('Common XRPL Client', function (): void {
     // THEN it returns and the result is as expected.
     const expectedResult = new TransactionResult(
       transactionHash,
-      TransactionStatus.Pending,
+      TransactionStatus.LastLedgerPassed,
       false,
     )
 

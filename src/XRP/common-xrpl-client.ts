@@ -314,11 +314,14 @@ export default class CommonXrplClient {
     transactionHash: string,
     wallet: Wallet,
   ): Promise<FinalTransactionResult> {
-    const rawTransactionStatus = await this.awaitFinalTransactionStatus(
-      transactionHash,
-      wallet,
+    const {
+      rawTransactionStatus,
+      lastLedgerPassed,
+    } = await this.awaitFinalTransactionStatus(transactionHash, wallet)
+    const finalStatus = this.determineFinalResult(
+      rawTransactionStatus,
+      lastLedgerPassed,
     )
-    const finalStatus = this.determineFinalResult(rawTransactionStatus)
     return new FinalTransactionResult(
       transactionHash,
       finalStatus,
@@ -335,10 +338,21 @@ export default class CommonXrplClient {
    */
   private determineFinalResult(
     rawTransactionStatus: RawTransactionStatus,
+    lastLedgerPassed: boolean,
   ): TransactionStatus {
+    // I don't know if this is actually possible... just making the compiler happy in safest way
+    if (!rawTransactionStatus.transactionStatusCode) {
+      throw XrpError.malformedResponse
+    }
+    if (rawTransactionStatus.transactionStatusCode.startsWith('tem')) {
+      return TransactionStatus.MalformedTransaction
+    }
+    if (lastLedgerPassed) {
+      return TransactionStatus.LastLedgerPassed
+    }
     // Return pending if the transaction is not validated.
     if (!rawTransactionStatus.isValidated) {
-      return TransactionStatus.Pending
+      return TransactionStatus.Pending // should never happen, can tighten up the logic
     } else {
       const transactionStatus = rawTransactionStatus.transactionStatusCode?.startsWith(
         'tes',
@@ -361,7 +375,10 @@ export default class CommonXrplClient {
   public async awaitFinalTransactionStatus(
     transactionHash: string,
     sender: Wallet,
-  ): Promise<RawTransactionStatus> {
+  ): Promise<{
+    rawTransactionStatus: RawTransactionStatus
+    lastLedgerPassed: boolean
+  }> {
     const ledgerCloseTimeMs = 4 * 1000
     await sleep(ledgerCloseTimeMs)
 
@@ -423,7 +440,10 @@ export default class CommonXrplClient {
       rawTransactionStatus = await this.getRawTransactionStatus(transactionHash)
     }
     /* eslint-enable no-await-in-loop */
-
-    return rawTransactionStatus
+    const lastLedgerPassed = latestLedgerSequence > lastLedgerSequence
+    return {
+      rawTransactionStatus: rawTransactionStatus,
+      lastLedgerPassed: lastLedgerPassed,
+    }
   }
 }
