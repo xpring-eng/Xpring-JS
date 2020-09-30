@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { CheckCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -22,10 +23,13 @@ export default class XrpCheckCreate {
   public static from(
     checkCreate: CheckCreate,
     xrplNetwork: XrplNetwork,
-  ): XrpCheckCreate | undefined {
+  ): XrpCheckCreate {
     const destination = checkCreate.getDestination()?.getValue()?.getAddress()
     if (!destination) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'CheckCreate protobuf is missing `destination` field.',
+      )
     }
     const destinationTag = checkCreate.getDestinationTag()?.getValue()
 
@@ -35,17 +39,21 @@ export default class XrpCheckCreate {
       xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
     )
     if (!destinationXAddress) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Cannot construct XAddress from CheckCreate protobuf `destination` and `destinationTag` fields.',
+      )
     }
 
     const sendMaxCurrencyAmount = checkCreate.getSendMax()?.getValue()
-    if (!sendMaxCurrencyAmount) {
-      return undefined
+    if (sendMaxCurrencyAmount == undefined) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'CheckCreate protobuf is missing `SendMax` field.',
+      )
     }
     const sendMax = XrpCurrencyAmount.from(sendMaxCurrencyAmount)
-    if (!sendMax) {
-      return undefined
-    }
+
     const expiration = checkCreate.getExpiration()?.getValue()
     const invoiceId = checkCreate.getInvoiceId()?.getValue_asB64()
     return new XrpCheckCreate(
