@@ -23,7 +23,7 @@ export default class XrpSignerListSet {
     xrplNetwork: XrplNetwork,
   ): XrpSignerListSet {
     const signerQuorum = signerListSet.getSignerQuorum()?.getValue()
-    if (signerQuorum == undefined) {
+    if (signerQuorum === undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'SignerListSet protobuf does not contain `SignerQuorum` field.',
@@ -33,7 +33,7 @@ export default class XrpSignerListSet {
       .getSignerEntriesList()
       .map((signerEntry) => XrpSignerEntry.from(signerEntry, xrplNetwork))
     if (signerQuorum != 0) {
-      if (signerEntries.length == 0) {
+      if (signerEntries.length === 0) {
         throw new XrpError(
           XrpErrorType.MalformedProtobuf,
           'SignerListSet protobuf does not contain `SignerEntries` field with nonzero `SignerQuorum` field.',
