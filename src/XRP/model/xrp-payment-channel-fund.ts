@@ -31,7 +31,7 @@ export default class XrpPaymentChannelFund {
     }
 
     const amountCurrencyAmount = paymentChannelFund.getAmount()?.getValue()
-    if (!amountCurrencyAmount) {
+    if (amountCurrencyAmount === undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'PaymentChannelFund protobuf does not contain `amount` field.',
