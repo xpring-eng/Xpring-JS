@@ -487,6 +487,17 @@ testInvalidCheckCashProto.setAmount(testAmountProto)
 const testInvalidCheckCreateProto = new CheckCreate()
 testInvalidCheckCreateProto.setSendMax(testSendMaxProto)
 
+// Invalid CheckCreate proto (bad destination)
+const testInvalidCheckCreateProtoBadDestination = new CheckCreate()
+testInvalidCheckCreateProtoBadDestination.setDestination(
+  testInvalidDestinationProto,
+)
+testInvalidCheckCreateProtoBadDestination.setSendMax(testSendMaxProto)
+
+// Invalid CheckCreate proto (missing SendMax)
+const testInvalidCheckCreateProtoNoSendMax = new CheckCreate()
+testInvalidCheckCreateProtoNoSendMax.setDestination(testDestinationProto)
+
 // Invalid DepositPreauth proto (neither authorize nor unauthorize)
 const testInvalidDepositPreauthProtoNoAuthUnauth = new DepositPreauth()
 
@@ -510,8 +521,20 @@ testInvalidDepositPreauthProtoSetBadUnauthorize.setUnauthorize(
 )
 
 // Invalid EscrowCancel proto (missing owner)
-const testInvalidEscrowCancelProto = new EscrowCancel()
-testInvalidEscrowCancelProto.setOfferSequence(testOfferSequenceProto)
+const testInvalidEscrowCancelProtoNoOwner = new EscrowCancel()
+testInvalidEscrowCancelProtoNoOwner.setOfferSequence(testOfferSequenceProto)
+
+// Invalid EscrowCancel proto (bad owner)
+const testInvalidOwnerProto = new Owner()
+testInvalidOwnerProto.setValue(testInvalidAccountAddressProto)
+
+const testInvalidEscrowCancelProtoBadOwner = new EscrowCancel()
+testInvalidEscrowCancelProtoBadOwner.setOwner(testInvalidOwnerProto)
+testInvalidEscrowCancelProtoBadOwner.setOfferSequence(testOfferSequenceProto)
+
+// Invalid EscrowCancel proto (no offerSequence)
+const testInvalidEscrowCancelProtoNoOfferSequence = new EscrowCancel()
+testInvalidEscrowCancelProtoNoOfferSequence.setOwner(testOwnerProto)
 
 // Invalid EscrowCreate proto (missing destination)
 const testInvalidEscrowCreateProto = new EscrowCreate()
@@ -597,10 +620,14 @@ export {
   testInvalidCheckCancelProto,
   testInvalidCheckCashProto,
   testInvalidCheckCreateProto,
+  testInvalidCheckCreateProtoBadDestination,
+  testInvalidCheckCreateProtoNoSendMax,
   testInvalidDepositPreauthProtoNoAuthUnauth,
   testInvalidDepositPreauthProtoSetBadAuthorize,
   testInvalidDepositPreauthProtoSetBadUnauthorize,
-  testInvalidEscrowCancelProto,
+  testInvalidEscrowCancelProtoNoOwner,
+  testInvalidEscrowCancelProtoBadOwner,
+  testInvalidEscrowCancelProtoNoOfferSequence,
   testInvalidEscrowCreateProto,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
