@@ -67,15 +67,28 @@ import {
   testInvalidEscrowCancelProtoNoOwner,
   testInvalidEscrowCancelProtoBadOwner,
   testInvalidEscrowCancelProtoNoOfferSequence,
-  testInvalidEscrowCreateProto,
+  testInvalidEscrowCreateProtoNoDestination,
+  testInvalidEscrowCreateProtoBadDestination,
+  testInvalidEscrowCreateProtoNoAmount,
+  testInvalidEscrowCreateProtoBadCancelFinish,
+  testInvalidEscrowCreateProtoNoCancelFinish,
+  testInvalidEscrowCreateProtoNoFinishCondition,
+  testInvalidEscrowCreateProtoNoXRP,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
-  testInvalidOfferCreateProto,
+  testInvalidOfferCreateProtoNoTakerGets,
+  testInvalidOfferCreateProtoNoTakerPays,
   testPaymentChannelClaimProtoAllFields,
   testPaymentChannelClaimProtoMandatoryOnly,
-  testInvalidPaymentChannelClaimProto,
-  testInvalidPaymentChannelCreateProto,
-  testInvalidPaymentChannelFundProto,
+  testInvalidPaymentChannelClaimProtoNoChannel,
+  testInvalidPaymentChannelClaimProtoSignatureNoPublicKey,
+  testInvalidPaymentChannelCreateProtoNoAmount,
+  testInvalidPaymentChannelCreateProtoNoDestination,
+  testInvalidPaymentChannelCreateProtoBadDestination,
+  testInvalidPaymentChannelCreateProtoNoSettleDelay,
+  testInvalidPaymentChannelCreateProtoNoPublicKey,
+  testInvalidPaymentChannelFundProtoNoAmount,
+  testInvalidPaymentChannelFundProtoNoChannel,
   testInvalidSignerListSetProto,
   testInvalidTrustSetProto,
   testInvalidTrustSetProtoXRP,
@@ -608,20 +621,85 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
     assert.equal(escrowCreate?.destinationXAddress, expectedXAddress)
     assert.isUndefined(escrowCreate?.cancelAfter)
-    assert.isUndefined(escrowCreate?.finishAfter)
+    assert.equal(
+      escrowCreate?.finishAfter,
+      testEscrowCreateProtoMandatoryOnly.getFinishAfter()?.getValue(),
+    )
     assert.isUndefined(escrowCreate?.condition)
   })
 
-  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - missing mandatory field', function (): void {
-    // GIVEN an EscrowCreate protocol buffer that's missing a mandatory field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowCreate = XrpEscrowCreate.from(
-      testInvalidEscrowCreateProto,
-      XrplNetwork.Test,
-    )
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - missing destination field', function (): void {
+    // GIVEN an EscrowCreate protocol buffer that's missing the destination field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoNoDestination,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(escrowCreate)
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - bad destination field', function (): void {
+    // GIVEN an EscrowCreate protocol buffer with a bad destination field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoBadDestination,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - missing amount field', function (): void {
+    // GIVEN an EscrowCreate protocol buffer that's missing the amount field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoNoAmount,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - amount not XRP', function (): void {
+    // GIVEN an EscrowCreate protocol buffer with a non-XRP amount.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(testInvalidEscrowCreateProtoNoXRP, XrplNetwork.Test)
+    }, XrpError)
+  })
+
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - missing cancelAfter and finishAfter fields', function (): void {
+    // GIVEN an EscrowCreate protocol buffer that's missing both the cancelAfter and finishAfter fields.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoNoCancelFinish,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - bad cancelAfter and finishAfter fields', function (): void {
+    // GIVEN an EscrowCreate protocol buffer with a finishAfter field that is not before the cancelAfter field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoBadCancelFinish,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert EscrowCreate protobuf to XrpEscrowCreate object - no finishAfter and condition fields', function (): void {
+    // GIVEN an EscrowCreate protocol buffer that's missing both the finishAfter and condition fields.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowCreate.from(
+        testInvalidEscrowCreateProtoNoFinishCondition,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
   })
 
   // EscrowFinish
@@ -707,10 +785,9 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert OfferCancel protobuf to XrpOfferCancel object - missing required field', function (): void {
     // GIVEN an OfferCancel protocol buffer missing the offerSequence field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const offerCancel = XrpOfferCancel.from(testInvalidOfferCancelProto)
-
-    // THEN the result is undefined.
-    assert.isUndefined(offerCancel)
+    assert.throws(() => {
+      XrpOfferCancel.from(testInvalidOfferCancelProto)
+    }, XrpError)
   })
 
   // OfferCreate
@@ -765,13 +842,20 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert OfferCreate protobuf to XrpOfferCreate object - missing required field', function (): void {
-    // GIVEN an OfferCreate protocol buffer missing a required field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const offerCreate = XrpOfferCreate.from(testInvalidOfferCreateProto)
+  it('Convert OfferCreate protobuf to XrpOfferCreate object - missing required TakerGets field', function (): void {
+    // GIVEN an OfferCreate protocol buffer missing the TakerGets field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpOfferCreate.from(testInvalidOfferCreateProtoNoTakerGets)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(offerCreate)
+  it('Convert OfferCreate protobuf to XrpOfferCreate object - missing required TakerPays field', function (): void {
+    // GIVEN an OfferCreate protocol buffer missing the TakerPays field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpOfferCreate.from(testInvalidOfferCreateProtoNoTakerPays)
+    }, XrpError)
   })
 
   // PaymentChannelClaim
@@ -833,12 +917,19 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert PaymentChannelClaim protobuf to XrpPaymentChannelClaim object - missing mandatory field', function (): void {
     // GIVEN a PaymentChannelClaim protocol buffer missing the mandatory field.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const paymentChannelClaim = XrpPaymentChannelClaim.from(
-      testInvalidPaymentChannelClaimProto,
-    )
+    assert.throws(() => {
+      XrpPaymentChannelClaim.from(testInvalidPaymentChannelClaimProtoNoChannel)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(paymentChannelClaim)
+  it('Convert PaymentChannelClaim protobuf to XrpPaymentChannelClaim object - missing signature with public key', function (): void {
+    // GIVEN a PaymentChannelClaim protocol buffer missing a signature when there is a public key.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    assert.throws(() => {
+      XrpPaymentChannelClaim.from(
+        testInvalidPaymentChannelClaimProtoSignatureNoPublicKey,
+      )
+    }, XrpError)
   })
 
   // PaymentChannelCreate
@@ -920,16 +1011,59 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(paymentChannelCreate?.cancelAfter)
   })
 
-  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - missing required field', function (): void {
-    // GIVEN a PaymentChannelCreate protocol buffer missing a required field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const paymentChannelCreate = XrpPaymentChannelCreate.from(
-      testInvalidPaymentChannelCreateProto,
-      XrplNetwork.Test,
-    )
+  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - missing amount', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer missing the amount field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelCreate.from(
+        testInvalidPaymentChannelCreateProtoNoAmount,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(paymentChannelCreate)
+  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - missing destination', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer missing the destination field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelCreate.from(
+        testInvalidPaymentChannelCreateProtoNoDestination,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - bad destination', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer with a bad destination field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelCreate.from(
+        testInvalidPaymentChannelCreateProtoBadDestination,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - missing PublicKey', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer missing the publicKey field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelCreate.from(
+        testInvalidPaymentChannelCreateProtoNoPublicKey,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - missing SettleDelay', function (): void {
+    // GIVEN a PaymentChannelCreate protocol buffer missing the settleDelay field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelCreate.from(
+        testInvalidPaymentChannelCreateProtoNoSettleDelay,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
   })
 
   // PaymentChannelFund
@@ -979,15 +1113,20 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(paymentChannelFund?.expiration)
   })
 
-  it('Convert PaymentChannelFund protobuf to XrpPaymentChannelFund object - missing mandatory fields', function (): void {
-    // GIVEN a PaymentChannelFund protocol buffer missing a mandatory field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const paymentChannelFund = XrpPaymentChannelFund.from(
-      testInvalidPaymentChannelFundProto,
-    )
+  it('Convert PaymentChannelFund protobuf to XrpPaymentChannelFund object - missing amount', function (): void {
+    // GIVEN a PaymentChannelFund protocol buffer missing the required amount field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelFund.from(testInvalidPaymentChannelFundProtoNoAmount)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(paymentChannelFund)
+  it('Convert PaymentChannelFund protobuf to XrpPaymentChannelFund object - missing channel', function (): void {
+    // GIVEN a PaymentChannelFund protocol buffer missing the required channel field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelFund.from(testInvalidPaymentChannelFundProtoNoChannel)
+    }, XrpError)
   })
 
   // SetRegularKey
@@ -1018,12 +1157,15 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert SignerListSet protobuf to XrpSignerListSet object - all fields set', function (): void {
     // GIVEN a SetRegularKey protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const signerListSet = XrpSignerListSet.from(testSignerListSetProto)
+    const signerListSet = XrpSignerListSet.from(
+      testSignerListSetProto,
+      XrplNetwork.Test,
+    )
 
     // THEN the SignerListSet converted as expected.
     const expectedSignerEntries: Array<XRPSignerEntry | undefined> = [
-      XRPSignerEntry.from(testSignerEntry1),
-      XRPSignerEntry.from(testSignerEntry2),
+      XRPSignerEntry.from(testSignerEntry1, XrplNetwork.Test),
+      XRPSignerEntry.from(testSignerEntry2, XrplNetwork.Test),
     ]
 
     assert.equal(
@@ -1036,7 +1178,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert SignerListSet protobuf to XrpSignerListSet object - missing signerEntries', function (): void {
     // GIVEN a SignerListSet protocol buffer without signerQuorum set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const signerListSet = XrpSignerListSet.from(testInvalidSignerListSetProto)
+    const signerListSet = XrpSignerListSet.from(
+      testInvalidSignerListSetProto,
+      XrplNetwork.Test,
+    )
 
     // THEN the result is undefined.
     assert.isUndefined(signerListSet)

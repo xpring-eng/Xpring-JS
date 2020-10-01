@@ -103,6 +103,7 @@ const testOfferSequence = 23
 // EscrowCreate values
 const testCancelAfter = 533257958
 const testFinishAfter = 533171558
+const testFinishAfterEarly = 533341558
 const testCondition =
   'A0258020E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855810100'
 
@@ -274,6 +275,7 @@ testEscrowCreateProtoAllFields.setDestinationTag(testDestinationTagProto)
 const testEscrowCreateProtoMandatoryOnly = new EscrowCreate()
 testEscrowCreateProtoMandatoryOnly.setAmount(testAmountProto)
 testEscrowCreateProtoMandatoryOnly.setDestination(testDestinationProto)
+testEscrowCreateProtoMandatoryOnly.setFinishAfter(testFinishAfterProto)
 
 // EscrowFinish protos
 const testFulfillmentProto = new Fulfillment()
@@ -328,6 +330,9 @@ testPaymentChannelClaimProtoAllFields.setChannel(testChannelProto)
 testPaymentChannelClaimProtoAllFields.setBalance(testBalanceProto)
 testPaymentChannelClaimProtoAllFields.setAmount(testAmountProto)
 testPaymentChannelClaimProtoAllFields.setPaymentChannelSignature(
+  testPaymentChannelSignatureProto,
+)
+testPaymentChannelClaimProtoAllFields.setPublicKey(
   testPaymentChannelPublicKeyProto,
 )
 
@@ -514,7 +519,6 @@ testInvalidDepositPreauthProtoSetBadAuthorize.setAuthorize(
 )
 
 // Invalid DepositPreauth proto (bad unauthorize)
-
 const testInvalidDepositPreauthProtoSetBadUnauthorize = new DepositPreauth()
 testInvalidDepositPreauthProtoSetBadUnauthorize.setUnauthorize(
   testInvalidUnauthorizeProto,
@@ -537,8 +541,60 @@ const testInvalidEscrowCancelProtoNoOfferSequence = new EscrowCancel()
 testInvalidEscrowCancelProtoNoOfferSequence.setOwner(testOwnerProto)
 
 // Invalid EscrowCreate proto (missing destination)
-const testInvalidEscrowCreateProto = new EscrowCreate()
-testInvalidEscrowCreateProto.setAmount(testAmountProto)
+const testInvalidEscrowCreateProtoNoDestination = new EscrowCreate()
+testInvalidEscrowCreateProtoNoDestination.setAmount(testAmountProto)
+testInvalidEscrowCreateProtoNoDestination.setFinishAfter(testFinishAfterProto)
+
+// Invalid EscrowCreate proto (bad destination)
+const testInvalidEscrowCreateProtoBadDestination = new EscrowCreate()
+testInvalidEscrowCreateProtoBadDestination.setAmount(testAmountProto)
+testInvalidEscrowCreateProtoBadDestination.setDestination(
+  testInvalidDestinationProto,
+)
+testInvalidEscrowCreateProtoBadDestination.setFinishAfter(testFinishAfterProto)
+
+// Invalid EscrowCreate proto (no amount)
+const testInvalidEscrowCreateProtoNoAmount = new EscrowCreate()
+testInvalidEscrowCreateProtoNoAmount.setDestination(testDestinationProto)
+testInvalidEscrowCreateProtoNoAmount.setFinishAfter(testFinishAfterProto)
+
+// Invalid EscrowCreate proto (no XRP)
+const testAmountProtoIssuedCurrency = new Amount()
+testAmountProtoIssuedCurrency.setValue(testCurrencyAmountProtoIssuedCurrency)
+
+const testInvalidEscrowCreateProtoNoXRP = new EscrowCreate()
+testInvalidEscrowCreateProtoNoXRP.setDestination(testDestinationProto)
+testInvalidEscrowCreateProtoNoXRP.setAmount(testAmountProtoIssuedCurrency)
+testInvalidEscrowCreateProtoNoXRP.setFinishAfter(testFinishAfterProto)
+
+// Invalid EscrowCreate proto (no cancelAfter or finishAfter)
+const testInvalidEscrowCreateProtoNoCancelFinish = new EscrowCreate()
+testInvalidEscrowCreateProtoNoCancelFinish.setDestination(testDestinationProto)
+testInvalidEscrowCreateProtoNoCancelFinish.setAmount(testAmountProto)
+testInvalidEscrowCreateProtoNoCancelFinish.setCondition(testConditionProto)
+
+// Invalid EscrowCreate proto (finishAfter not before cancelAfter)
+const testFinishAfterProtoEarly = new FinishAfter()
+testFinishAfterProtoEarly.setValue(testFinishAfterEarly)
+
+const testInvalidEscrowCreateProtoBadCancelFinish = new EscrowCreate()
+testInvalidEscrowCreateProtoBadCancelFinish.setDestination(testDestinationProto)
+testInvalidEscrowCreateProtoBadCancelFinish.setAmount(testAmountProto)
+testInvalidEscrowCreateProtoBadCancelFinish.setCondition(testConditionProto)
+testInvalidEscrowCreateProtoBadCancelFinish.setCancelAfter(testCancelAfterProto)
+testInvalidEscrowCreateProtoBadCancelFinish.setFinishAfter(
+  testFinishAfterProtoEarly,
+)
+
+// Invalid EscrowCreate proto (no finishAfter or condition)
+const testInvalidEscrowCreateProtoNoFinishCondition = new EscrowCreate()
+testInvalidEscrowCreateProtoNoFinishCondition.setDestination(
+  testDestinationProto,
+)
+testInvalidEscrowCreateProtoNoFinishCondition.setAmount(testAmountProto)
+testInvalidEscrowCreateProtoNoFinishCondition.setCancelAfter(
+  testCancelAfterProto,
+)
 
 // Invalid EscrowFinish proto (missing owner)
 const testInvalidEscrowFinishProto = new EscrowFinish()
@@ -548,19 +604,91 @@ testInvalidEscrowFinishProto.setOfferSequence(testOfferSequenceProto)
 const testInvalidOfferCancelProto = new OfferCancel()
 
 // Invalid OfferCreate proto (missing takerGets)
-const testInvalidOfferCreateProto = new OfferCreate()
-testInvalidOfferCreateProto.setTakerPays(testTakerPaysProto)
+const testInvalidOfferCreateProtoNoTakerGets = new OfferCreate()
+testInvalidOfferCreateProtoNoTakerGets.setTakerPays(testTakerPaysProto)
+
+// Invalid OfferCreate proto (missing takerPays)
+const testInvalidOfferCreateProtoNoTakerPays = new OfferCreate()
+testInvalidOfferCreateProtoNoTakerPays.setTakerGets(testTakerGetsProto)
 
 // Invalid PaymentChannelClaim proto (missing channel)
-const testInvalidPaymentChannelClaimProto = new PaymentChannelClaim()
+const testInvalidPaymentChannelClaimProtoNoChannel = new PaymentChannelClaim()
+
+// Invalid PaymentChannelClaim proto (missing publicKey with signature)
+const testInvalidPaymentChannelClaimProtoSignatureNoPublicKey = new PaymentChannelClaim()
+testInvalidPaymentChannelClaimProtoSignatureNoPublicKey.setChannel(
+  testChannelProto,
+)
+testInvalidPaymentChannelClaimProtoSignatureNoPublicKey.setBalance(
+  testBalanceProto,
+)
+testInvalidPaymentChannelClaimProtoSignatureNoPublicKey.setAmount(
+  testAmountProto,
+)
+testInvalidPaymentChannelClaimProtoSignatureNoPublicKey.setPaymentChannelSignature(
+  testPaymentChannelSignatureProto,
+)
+
+// Invalid PaymentChannelCreate proto (missing amount)
+const testInvalidPaymentChannelCreateProtoNoAmount = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoNoAmount.setDestination(
+  testDestinationProto,
+)
+testInvalidPaymentChannelCreateProtoNoAmount.setSettleDelay(
+  testSettleDelayProto,
+)
+testInvalidPaymentChannelCreateProtoNoAmount.setPublicKey(testPublicKeyProto)
 
 // Invalid PaymentChannelCreate proto (missing destination)
-const testInvalidPaymentChannelCreateProto = new PaymentChannelCreate()
-testInvalidPaymentChannelCreateProto.setAmount(testAmountProto)
+const testInvalidPaymentChannelCreateProtoNoDestination = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoNoDestination.setAmount(testAmountProto)
+testInvalidPaymentChannelCreateProtoNoDestination.setSettleDelay(
+  testSettleDelayProto,
+)
+testInvalidPaymentChannelCreateProtoNoDestination.setPublicKey(
+  testPublicKeyProto,
+)
+
+// Invalid PaymentChannelCreate proto (bad destination)
+const testInvalidPaymentChannelCreateProtoBadDestination = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoBadDestination.setAmount(testAmountProto)
+testInvalidPaymentChannelCreateProtoBadDestination.setDestination(
+  testInvalidDestinationProto,
+)
+testInvalidPaymentChannelCreateProtoBadDestination.setSettleDelay(
+  testSettleDelayProto,
+)
+testInvalidPaymentChannelCreateProtoBadDestination.setPublicKey(
+  testPublicKeyProto,
+)
+
+// Invalid PaymentChannelCreate proto (missing settleDelay)
+const testInvalidPaymentChannelCreateProtoNoSettleDelay = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoNoSettleDelay.setAmount(testAmountProto)
+testInvalidPaymentChannelCreateProtoNoSettleDelay.setDestination(
+  testDestinationProto,
+)
+testInvalidPaymentChannelCreateProtoNoSettleDelay.setPublicKey(
+  testPublicKeyProto,
+)
+
+// Invalid PaymentChannelCreate proto (missing publicKey)
+const testInvalidPaymentChannelCreateProtoNoPublicKey = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoNoPublicKey.setAmount(testAmountProto)
+testInvalidPaymentChannelCreateProtoNoPublicKey.setDestination(
+  testDestinationProto,
+)
+testInvalidPaymentChannelCreateProtoNoPublicKey.setSettleDelay(
+  testSettleDelayProto,
+)
 
 // Invalid PaymentChannelFund proto (missing amount)
-const testInvalidPaymentChannelFundProto = new PaymentChannelFund()
-testInvalidPaymentChannelFundProto.setChannel(testChannelProto)
+const testInvalidPaymentChannelFundProtoNoAmount = new PaymentChannelFund()
+testInvalidPaymentChannelFundProtoNoAmount.setChannel(testChannelProto)
+
+// Invalid PaymentChannelFund proto (missing channel)
+const testInvalidPaymentChannelFundProtoNoChannel = new PaymentChannelFund()
+testInvalidPaymentChannelFundProtoNoChannel.setAmount(testAmountProto)
 
 // Invalid SignerListSet proto (missing SignerEntries)
 const testInvalidSignerListSetProto = new SignerListSet()
@@ -628,13 +756,26 @@ export {
   testInvalidEscrowCancelProtoNoOwner,
   testInvalidEscrowCancelProtoBadOwner,
   testInvalidEscrowCancelProtoNoOfferSequence,
-  testInvalidEscrowCreateProto,
+  testInvalidEscrowCreateProtoNoDestination,
+  testInvalidEscrowCreateProtoBadDestination,
+  testInvalidEscrowCreateProtoNoAmount,
+  testInvalidEscrowCreateProtoBadCancelFinish,
+  testInvalidEscrowCreateProtoNoCancelFinish,
+  testInvalidEscrowCreateProtoNoFinishCondition,
+  testInvalidEscrowCreateProtoNoXRP,
   testInvalidEscrowFinishProto,
   testInvalidOfferCancelProto,
-  testInvalidOfferCreateProto,
-  testInvalidPaymentChannelClaimProto,
-  testInvalidPaymentChannelCreateProto,
-  testInvalidPaymentChannelFundProto,
+  testInvalidOfferCreateProtoNoTakerGets,
+  testInvalidOfferCreateProtoNoTakerPays,
+  testInvalidPaymentChannelClaimProtoNoChannel,
+  testInvalidPaymentChannelClaimProtoSignatureNoPublicKey,
+  testInvalidPaymentChannelCreateProtoNoAmount,
+  testInvalidPaymentChannelCreateProtoNoDestination,
+  testInvalidPaymentChannelCreateProtoBadDestination,
+  testInvalidPaymentChannelCreateProtoNoSettleDelay,
+  testInvalidPaymentChannelCreateProtoNoPublicKey,
+  testInvalidPaymentChannelFundProtoNoAmount,
+  testInvalidPaymentChannelFundProtoNoChannel,
   testInvalidSignerListSetProto,
   testInvalidTrustSetProto,
   testInvalidTrustSetProtoXRP,
