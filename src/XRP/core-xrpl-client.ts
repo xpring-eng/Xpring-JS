@@ -356,7 +356,7 @@ export default class CoreXrplClient {
    * @param transactionHash The hash of the transaction being awaited.
    * @param sender The address used to obtain the latest ledger sequence.
    */
-  private async waitForFinalTransactionOutcome(
+  public async waitForFinalTransactionOutcome(
     transactionHash: string,
     sender: Wallet,
   ): Promise<RawTransactionStatus> {

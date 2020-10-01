@@ -22,8 +22,8 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
    * @param network The network this XrpClient is connecting to.
    */
   public constructor(
-    readonly decoratedClient: XrpClientDecorator,
-    readonly coreXrplClient: CoreXrplClientInterface,
+    private readonly decoratedClient: XrpClientDecorator,
+    private readonly coreXrplClient: CoreXrplClientInterface,
     readonly network: XrplNetwork,
   ) {}
 
@@ -88,7 +88,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     const transactionHash = await this.decoratedClient.sendWithDetails(
       sendXrpDetails,
     )
-    await this.coreXrplClient.awaitFinalTransactionStatus(
+    await this.coreXrplClient.waitForFinalTransactionOutcome(
       transactionHash,
       sender,
     )
@@ -112,7 +112,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
 
   public async enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
     const result = await this.decoratedClient.enableDepositAuth(wallet)
-    return await this.coreXrplClient.awaitFinalTransactionResult(
+    return await this.coreXrplClient.getFinalTransactionResultAsync(
       result.hash,
       wallet,
     )
