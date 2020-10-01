@@ -110,6 +110,7 @@ describe('Common XRPL Client', function (): void {
       transactionHash,
       TransactionStatus.Succeeded,
       true,
+      true,
     )
 
     assert.deepEqual(finalTransactionResult, expectedTransactionResult)
@@ -223,6 +224,7 @@ describe('Common XRPL Client', function (): void {
       transactionHash,
       TransactionStatus.LastLedgerPassed,
       false,
+      true,
     )
 
     assert.deepEqual(finalTransactionResult, expectedResult)

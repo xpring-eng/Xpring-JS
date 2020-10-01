@@ -265,11 +265,14 @@ export default class CoreXrplClient {
     const rawStatus = await this.getRawTransactionStatus(transactionHash)
     const isValidated = rawStatus.isValidated
     const transactionStatus = await this.getTransactionStatus(transactionHash)
-
+    const final = isValidated ? true : false
+    // TODO: add logic to this method to investigate the transaction's last ledger sequence,
+    // the XRPL latest ledger sequence, and make a more granular distinction in case of yet-unvalidated txn??
     return new TransactionResult(
       transactionHash,
       transactionStatus,
       isValidated,
+      final,
     )
   }
 
@@ -324,6 +327,7 @@ export default class CoreXrplClient {
       transactionHash,
       finalStatus,
       rawTransactionStatus.isValidated,
+      true,
     )
   }
 

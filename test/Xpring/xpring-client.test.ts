@@ -25,6 +25,7 @@ const fakedEnableDepositAuthValue = new TransactionResult(
   fakeTransactionHash,
   TransactionStatus.Succeeded,
   true,
+  true,
 )
 /* eslint-enable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention */
 

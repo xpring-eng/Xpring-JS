@@ -35,6 +35,7 @@ const fakedTransactionResultValue = new TransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
   true,
+  true,
 )
 const fakedWaitForFinalTransactionOutcomeValue = {
   rawTransactionStatus: fakedRawTransactionStatusValue,
