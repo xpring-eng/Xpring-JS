@@ -102,13 +102,13 @@ export default class XrpTransaction {
     }
 
     const signingPublicKey = transaction.getSigningPublicKey()?.getValue_asB64()
-    if (signingPublicKey == undefined) {
+    if (signingPublicKey === undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Transaction protobuf is missing valid `signingPublicKey` field.',
       )
     }
-    if (!signers && signingPublicKey == '') {
+    if (!signers && signingPublicKey === '') {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'Transaction protobuf does not have a `signingPublicKey` field or a `signers` field.',
