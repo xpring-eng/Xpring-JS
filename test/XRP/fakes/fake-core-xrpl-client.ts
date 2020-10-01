@@ -3,7 +3,7 @@ import { Wallet } from '../../../src/index'
 import Result from '../../Common/Helpers/result'
 import { XrplNetwork } from 'xpring-common-js'
 import RawTransactionStatus from '../../../src/XRP/raw-transaction-status'
-import TransactionResult from '../../../src/XRP/model/final-transaction-result'
+import TransactionResult from '../../../src/XRP/model/transaction-result'
 
 class FakeCoreXrplClient implements CoreXrplClientInterface {
   public constructor(

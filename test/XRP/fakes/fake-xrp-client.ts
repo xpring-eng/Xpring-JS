@@ -6,7 +6,7 @@ import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
 import Result from '../../Common/Helpers/result'
 import { XrplNetwork } from 'xpring-common-js'
 import SendXrpDetails from '../../../src/XRP/model/send-xrp-details'
-import TransactionResult from '../../../src/XRP/model/final-transaction-result'
+import TransactionResult from '../../../src/XRP/model/transaction-result'
 
 class FakeXrpClient implements XrpClientDecorator {
   public constructor(

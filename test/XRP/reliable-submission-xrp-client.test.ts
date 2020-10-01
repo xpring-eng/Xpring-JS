@@ -6,7 +6,7 @@ import ReliableSubmissionXrpClient from '../../src/XRP/reliable-submission-xrp-c
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { testXrpTransaction } from './fakes/fake-xrp-protobufs'
-import FinalTransactionResult from '../../src/XRP/model/final-transaction-result'
+import TransactionResult from '../../src/XRP/model/transaction-result'
 import FakeCoreXrplClient from './fakes/fake-core-xrpl-client'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
@@ -31,7 +31,7 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
 )
 const fakedTransactionHistoryValue = [testXrpTransaction]
 const fakedGetPaymentValue = testXrpTransaction
-const fakedTransactionResultValue = new FinalTransactionResult(
+const fakedTransactionResultValue = new TransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
   true,

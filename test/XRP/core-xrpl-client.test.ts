@@ -24,7 +24,7 @@ import {
   LastLedgerSequence,
 } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/common_pb'
 import { AccountRoot } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger_objects_pb'
-import TransactionResult from '../../src/XRP/model/final-transaction-result'
+import TransactionResult from '../../src/XRP/model/transaction-result'
 import TransactionStatus from '../../src/XRP/transaction-status'
 
 // The network layer is faked, so this is a perfunctory argument
@@ -59,7 +59,7 @@ function makeAccountInfoResponse(
 }
 
 describe('Common XRPL Client', function (): void {
-  it('awaitFinalTransactionResult - returns when transaction is validated', async function (): Promise<
+  it('awaitTransactionResult - returns when transaction is validated', async function (): Promise<
     void
   > {
     // GIVEN a CoreXrplClient with fake networking that will succeed with a not-yet-validated transaction response
@@ -100,8 +100,8 @@ describe('Common XRPL Client', function (): void {
       coreXrplClient.networkClient = newNetworkClient
     }, 200)
 
-    // WHEN awaitFinalTransactionResult is called.
-    const finalTransactionResult = await coreXrplClient.getFinalTransactionResultAsync(
+    // WHEN awaitTransactionResult is called.
+    const finalTransactionResult = await coreXrplClient.getTransactionResultAsync(
       transactionHash,
       wallet,
     )
@@ -115,7 +115,7 @@ describe('Common XRPL Client', function (): void {
     assert.deepEqual(finalTransactionResult, expectedTransactionResult)
   })
 
-  it("awaitFinalTransactionResult - Throws when transaction doesn't have a last ledger sequence", function (done) {
+  it("awaitTransactionResult - Throws when transaction doesn't have a last ledger sequence", function (done) {
     const transactionResult = new TransactionResultProto()
     transactionResult.setResult('tesSUCCESS')
 
@@ -144,13 +144,13 @@ describe('Common XRPL Client', function (): void {
       XrplNetwork.Test,
     )
 
-    // WHEN awaitFinalTransactionResult is called THEN the promise is rejected.
+    // WHEN awaitTransactionResult is called THEN the promise is rejected.
     coreXrplClient
-      .getFinalTransactionResultAsync(transactionHash, wallet)
+      .getTransactionResultAsync(transactionHash, wallet)
       .catch(() => done())
   })
 
-  it('awaitFinalTransactionResult - Returns when the lastLedgerSequence has been passed', async function (): Promise<
+  it('awaitTransactionResult - Returns when the lastLedgerSequence has been passed', async function (): Promise<
     void
   > {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
@@ -212,8 +212,8 @@ describe('Common XRPL Client', function (): void {
       coreXrplClient.networkClient = newNetworkClient
     }, 200)
 
-    // WHEN awaitFinalTransactionResult is called
-    const finalTransactionResult = await coreXrplClient.getFinalTransactionResultAsync(
+    // WHEN awaitTransactionResult is called
+    const finalTransactionResult = await coreXrplClient.getTransactionResultAsync(
       transactionHash,
       wallet,
     )
