@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { Payment } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -18,20 +19,23 @@ export default class XrpPayment {
    * @return an XrpPayment with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L224
    */
-  public static from(
-    payment: Payment,
-    xrplNetwork: XrplNetwork,
-  ): XrpPayment | undefined {
+  public static from(payment: Payment, xrplNetwork: XrplNetwork): XrpPayment {
     const paymentAmountValue = payment.getAmount()?.getValue()
-    const amount =
-      paymentAmountValue && XrpCurrencyAmount.from(paymentAmountValue)
-    if (!amount) {
-      return undefined // amount is required
+    if (paymentAmountValue === undefined) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Payment protobuf is missing required `amount` field.',
+      )
     }
+    const amount = XrpCurrencyAmount.from(paymentAmountValue)
+    // For non-XRP amounts, the nested field names in `amount` are lower-case.
 
     const destination = payment.getDestination()?.getValue()?.getAddress()
-    if (!destination) {
-      return undefined // destination is required
+    if (destination === undefined) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Payment protobuf is missing required `destination` field.',
+      )
     }
 
     const destinationTag = payment.getDestinationTag()?.getValue()
@@ -41,17 +45,11 @@ export default class XrpPayment {
       destinationTag,
       xrplNetwork === XrplNetwork.Test,
     )
-    // An X-address should always be able to be encoded.
     if (!destinationXAddress) {
-      return undefined
-    }
-
-    // If the deliverMin field is set, it must be able to be transformed into a XrpCurrencyAmount.
-    const paymentDeliverMinValue = payment.getDeliverMin()?.getValue()
-    const deliverMin =
-      paymentDeliverMinValue && XrpCurrencyAmount.from(paymentDeliverMinValue)
-    if (paymentDeliverMinValue && !deliverMin) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Payment protobuf destination cannot be encoded into an X-address.',
+      )
     }
 
     const invoiceID = payment.getInvoiceId()?.getValue_asU8()
@@ -60,14 +58,34 @@ export default class XrpPayment {
       payment.getPathsList()?.length > 0
         ? payment.getPathsList().map((path) => XrpPath.from(path))
         : undefined
+    if (paths !== undefined && amount.drops !== undefined) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Payment protobuf `paths` field should be omitted for XRP-to-XRP interactions.',
+      )
+    }
 
-    // If the sendMax field is set, it must be able to be transformed into an XrpCurrencyAmount.
     const paymentSendMaxValue = payment.getSendMax()?.getValue()
     const sendMax =
       paymentSendMaxValue && XrpCurrencyAmount.from(paymentSendMaxValue)
-    if (paymentSendMaxValue && !sendMax) {
-      return undefined
+    if (sendMax !== undefined && amount.drops !== undefined) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Payment protobuf `sendMax` field should be omitted for XRP-to-XRP interactions.',
+      )
     }
+    // For non-XRP amounts, the nested field names in `sendMax` MUST be lower-case.
+    if (sendMax === undefined && amount.issuedCurrency !== undefined) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Payment protobuf `sendMax` field must be present for non-XRP-to-XRP interactions.',
+      )
+    }
+
+    const paymentDeliverMinValue = payment.getDeliverMin()?.getValue()
+    const deliverMin =
+      paymentDeliverMinValue && XrpCurrencyAmount.from(paymentDeliverMinValue)
+    // For non-XRP amounts, the nested field names in `deliverMin` are lower-case.
 
     return new XrpPayment(
       amount,
@@ -89,8 +107,8 @@ export default class XrpPayment {
    * @param sendMax (Optional) Highest amount of source currency this transaction is allowed to cost.
    */
   private constructor(
-    readonly amount?: XrpCurrencyAmount,
-    readonly destinationXAddress?: string,
+    readonly amount: XrpCurrencyAmount,
+    readonly destinationXAddress: string,
     readonly deliverMin?: XrpCurrencyAmount,
     readonly invoiceID?: Uint8Array,
     readonly paths?: Array<XrpPath | undefined>,

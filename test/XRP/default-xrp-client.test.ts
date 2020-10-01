@@ -764,7 +764,7 @@ describe('Default XRP Client', function (): void {
       await xrpClient.getPayment(transactionHash)
       assert.fail('No error thrown.')
     } catch (e) {
-      assert(e.message.includes('IssuedCurrency protobuf'))
+      assert(e.message.includes('Payment protobuf'))
     }
   })
 
