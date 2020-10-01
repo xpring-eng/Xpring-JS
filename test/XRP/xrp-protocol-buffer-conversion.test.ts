@@ -70,6 +70,9 @@ import {
   testInvalidSignerProtoBadAccount,
   testInvalidSignerProtoNoPublicKey,
   testInvalidSignerProtoNoTxnSignature,
+  testInvalidSignerEntryProtoNoAccount,
+  testInvalidSignerEntryProtoBadAccount,
+  testInvalidSignerEntryProtoNoSignerWeight,
   testInvalidGetTransactionResponseProto,
   testInvalidGetTransactionResponseProtoUnsupportedType,
   testInvalidGetTransactionResponseProtoNoTransaction,
@@ -84,7 +87,6 @@ import {
   testInvalidGetTransactionResponseProtoNoData,
   testInvalidGetTransactionResponseProtoNoHash,
 } from './fakes/fake-xrp-protobufs'
-import { SignerEntry } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
 
 // TODO(amiecorso): Refactor tests to separate files.
 describe('Protocol Buffer Conversion', function (): void {
@@ -520,26 +522,55 @@ describe('Protocol Buffer Conversion', function (): void {
   it('Convert SignerEntry with all fields set', function (): void {
     // GIVEN a SignerEntry protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const signerEntry = XrpSignerEntry.from(testSignerEntryProto)
+    const signerEntry = XrpSignerEntry.from(
+      testSignerEntryProto,
+      XrplNetwork.Test,
+    )
 
     // THEN all fields are present and converted correctly.
-    assert.equal(
-      signerEntry?.account,
-      testSignerEntryProto?.getAccount()?.getValue()?.getAddress(),
+    const expectedXAddress = XrpUtils.encodeXAddress(
+      testSignerEntryProto.getAccount()?.getValue()?.getAddress()!,
+      undefined,
+      true,
     )
+    assert.equal(signerEntry.accountXAddress, expectedXAddress)
     assert.equal(
-      signerEntry?.signerWeight,
+      signerEntry.signerWeight,
       testSignerEntryProto.getSignerWeight()?.getValue(),
     )
   })
 
-  it('Convert SignerEntry with no fields set', function (): void {
-    // GIVEN a SignerEntry protocol buffer with no fields set.
-    // WHEN the protocol buffer is converted to a native TypeScript type.
-    const signerEntry = XrpSignerEntry.from(new SignerEntry())
+  it('Convert SignerEntry with no account field set', function (): void {
+    // GIVEN a SignerEntry protocol buffer with no account field set.
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpSignerEntry.from(
+        testInvalidSignerEntryProtoNoAccount,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(signerEntry)
+  it('Convert SignerEntry with bad account field', function (): void {
+    // GIVEN a SignerEntry protocol buffer with a bad account field.
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpSignerEntry.from(
+        testInvalidSignerEntryProtoBadAccount,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert SignerEntry with no SignerWeight field set', function (): void {
+    // GIVEN a SignerEntry protocol buffer with no signerWeight field set.
+    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpSignerEntry.from(
+        testInvalidSignerEntryProtoNoSignerWeight,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
   })
 
   // Transaction
@@ -657,8 +688,8 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.equal(
       transaction.sourceXAddress,
       XrpUtils.encodeXAddress(
-        transactionProto!.getAccount()!.getValue()!.getAddress()!,
-        transactionProto!.getSourceTag()?.getValue(),
+        transactionProto.getAccount()!.getValue()!.getAddress()!,
+        transactionProto.getSourceTag()?.getValue(),
         true,
       ),
     )

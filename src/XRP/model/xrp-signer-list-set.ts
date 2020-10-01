@@ -1,3 +1,4 @@
+import { XrplNetwork } from 'xpring-common-js'
 import { SignerListSet } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpSignerEntry from './xrp-signer-entry'
 /*
@@ -18,6 +19,7 @@ export default class XrpSignerListSet {
    */
   public static from(
     signerListSet: SignerListSet,
+    xrplNetwork: XrplNetwork,
   ): XrpSignerListSet | undefined {
     const signerQuorum = signerListSet.getSignerQuorum()?.getValue()
     if (!signerQuorum) {
@@ -25,7 +27,7 @@ export default class XrpSignerListSet {
     }
     const signerEntries = signerListSet
       .getSignerEntriesList()
-      .map((signerEntry) => XrpSignerEntry.from(signerEntry))
+      .map((signerEntry) => XrpSignerEntry.from(signerEntry, xrplNetwork))
     return new XrpSignerListSet(signerQuorum, signerEntries)
   }
 
