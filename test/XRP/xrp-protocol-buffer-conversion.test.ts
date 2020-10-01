@@ -479,7 +479,7 @@ describe('Protocol Buffer Conversion', function (): void {
   })
 
   it('Convert SignerEntry with no SignerWeight field set', function (): void {
-    // GIVEN a SignerEntry protocol buffer with no SignerWeight field set.
+    // GIVEN a SignerEntry protocol buffer with no signerWeight field set.
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
       XrpSignerEntry.from(
