@@ -37,7 +37,7 @@ import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import SendXrpDetails from './model/send-xrp-details'
 import { AccountSetFlag } from './model/account-set-flag'
 import TransactionResult from './model/transaction-result'
-import CommonXrplClient from './common-xrpl-client'
+import CommonXrplClient from './core-xrpl-client'
 
 /**
  * DefaultXrpClient is a client for handling XRP payments on the XRPL.

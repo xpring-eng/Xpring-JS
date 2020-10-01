@@ -26,7 +26,7 @@ const maxLedgerVersionOffset = 10
 /**
  * CommonXrplClient is a client which supports the core, common functionality for interacting with the XRP Ledger.
  */
-export default class CommonXrplClient {
+export default class CoreXrplClient {
   /**
    * Creates a new CommonXrplClient.
    *
@@ -40,10 +40,10 @@ export default class CommonXrplClient {
     grpcUrl: string,
     network: XrplNetwork,
     forceWeb = false,
-  ): CommonXrplClient {
+  ): CoreXrplClient {
     return isNode() && !forceWeb
-      ? new CommonXrplClient(new GrpcNetworkClient(grpcUrl), network)
-      : new CommonXrplClient(new GrpcNetworkClientWeb(grpcUrl), network)
+      ? new CoreXrplClient(new GrpcNetworkClient(grpcUrl), network)
+      : new CoreXrplClient(new GrpcNetworkClientWeb(grpcUrl), network)
   }
 
   /**
