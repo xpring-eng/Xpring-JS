@@ -688,8 +688,8 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.equal(
       transaction.sourceXAddress,
       XrpUtils.encodeXAddress(
-        transactionProto.getAccount()!.getValue()!.getAddress()!,
-        transactionProto.getSourceTag()?.getValue(),
+        transactionProto?.getAccount()!.getValue()!.getAddress()!,
+        transactionProto?.getSourceTag()?.getValue(),
         true,
       ),
     )
