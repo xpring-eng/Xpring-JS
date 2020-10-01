@@ -308,15 +308,15 @@ export default class CoreXrplClient {
    * @returns A Promise resolving to a TransactionResult containing the results of the transaction associated with
    * the given transaction hash.
    */
-  public async awaitFinalTransactionResult(
+  public async getFinalTransactionResultAsync(
     transactionHash: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    const rawTransactionStatus = await this.awaitFinalTransactionStatus(
+    const rawTransactionStatus = await this.waitForFinalTransactionOutcome(
       transactionHash,
       wallet,
     )
-    const finalStatus = this.determineFinalResult(rawTransactionStatus)
+    const finalStatus = this.getFinalTransactionStatus(rawTransactionStatus)
     return new TransactionResult(
       transactionHash,
       finalStatus,
@@ -331,7 +331,7 @@ export default class CoreXrplClient {
    *
    * @param rawTransactionStatus
    */
-  private determineFinalResult(
+  private getFinalTransactionStatus(
     rawTransactionStatus: RawTransactionStatus,
   ): TransactionStatus {
     // Return pending if the transaction is not validated.
@@ -356,7 +356,7 @@ export default class CoreXrplClient {
    * @param transactionHash The hash of the transaction being awaited.
    * @param sender The address used to obtain the latest ledger sequence.
    */
-  public async awaitFinalTransactionStatus(
+  private async waitForFinalTransactionOutcome(
     transactionHash: string,
     sender: Wallet,
   ): Promise<RawTransactionStatus> {
