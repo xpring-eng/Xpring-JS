@@ -7,7 +7,7 @@ import XrpClientInterface from './xrp-client-interface'
 import XrpTransaction from './model/xrp-transaction'
 
 import SendXrpDetails from './model/send-xrp-details'
-import FinalTransactionResult from './model/final-transaction-result'
+import TransactionResult from './model/transaction-result'
 
 /**
  * XrpClient is a client which interacts with the XRP Ledger.
@@ -144,7 +144,7 @@ export default class XrpClient implements XrpClientInterface {
    * @returns A promise which resolves to a TransactionResult object that contains the hash of the submitted AccountSet transaction,
    *          the final status of the transaction, and whether the transaction was included in a validated ledger.
    */
-  enableDepositAuth(wallet: Wallet): Promise<FinalTransactionResult> {
+  enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
     return this.decoratedClient.enableDepositAuth(wallet)
   }
 }

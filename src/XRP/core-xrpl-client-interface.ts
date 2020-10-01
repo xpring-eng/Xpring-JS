@@ -1,5 +1,5 @@
 import { Wallet, XrplNetwork } from 'xpring-common-js'
-import FinalTransactionResult from './model/final-transaction-result'
+import TransactionResult from './model/transaction-result'
 import RawTransactionStatus from './raw-transaction-status'
 
 /**
@@ -38,5 +38,5 @@ export default interface CoreXrplClientInterface {
   getFinalTransactionResultAsync(
     transactionHash: string,
     wallet: Wallet,
-  ): Promise<FinalTransactionResult>
+  ): Promise<TransactionResult>
 }

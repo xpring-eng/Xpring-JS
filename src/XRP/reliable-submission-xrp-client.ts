@@ -5,7 +5,7 @@ import TransactionStatus from './transaction-status'
 import XrpTransaction from './model/xrp-transaction'
 
 import SendXrpDetails from './model/send-xrp-details'
-import FinalTransactionResult from './model/final-transaction-result'
+import TransactionResult from './model/transaction-result'
 import CoreXrplClient from './core-xrpl-client'
 import DefaultXrpClient from './default-xrp-client'
 import CoreXrplClientInterface from './core-xrpl-client-interface'
@@ -110,9 +110,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     return this.decoratedClient.getPayment(transactionHash)
   }
 
-  public async enableDepositAuth(
-    wallet: Wallet,
-  ): Promise<FinalTransactionResult> {
+  public async enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
     const result = await this.decoratedClient.enableDepositAuth(wallet)
     return await this.coreXrplClient.getFinalTransactionResultAsync(
       result.hash,

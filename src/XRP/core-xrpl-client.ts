@@ -17,7 +17,7 @@ import RawTransactionStatus from './raw-transaction-status'
 import { XrpNetworkClient } from './xrp-network-client'
 import XrpError, { XrpErrorType } from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
-import FinalTransactionResult from './model/final-transaction-result'
+import TransactionResult from './model/transaction-result'
 import isNode from '../Common/utils'
 
 async function sleep(milliseconds: number): Promise<void> {
@@ -261,12 +261,12 @@ export default class CoreXrplClient {
    */
   public async getTransactionResult(
     transactionHash: string,
-  ): Promise<FinalTransactionResult> {
+  ): Promise<TransactionResult> {
     const rawStatus = await this.getRawTransactionStatus(transactionHash)
     const isValidated = rawStatus.isValidated
     const transactionStatus = await this.getTransactionStatus(transactionHash)
 
-    return new FinalTransactionResult(
+    return new TransactionResult(
       transactionHash,
       transactionStatus,
       isValidated,
@@ -311,7 +311,7 @@ export default class CoreXrplClient {
   public async getFinalTransactionResultAsync(
     transactionHash: string,
     wallet: Wallet,
-  ): Promise<FinalTransactionResult> {
+  ): Promise<TransactionResult> {
     const {
       rawTransactionStatus,
       lastLedgerPassed,
@@ -320,7 +320,7 @@ export default class CoreXrplClient {
       rawTransactionStatus,
       lastLedgerPassed,
     )
-    return new FinalTransactionResult(
+    return new TransactionResult(
       transactionHash,
       finalStatus,
       rawTransactionStatus.isValidated,
