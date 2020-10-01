@@ -466,7 +466,7 @@ testInvalidPaymentProtoNoSendMax.setDestination(paymentDestinationProto)
 
 // Invalid Signer protos
 const invalidAccountProto = new Account()
-invalidAccountProto.setValue(invalidDestinationAccountAddressProto)
+invalidAccountProto.setValue(invalidAccountAddressProto)
 
 const testInvalidSignerProtoNoAccount = new Signer()
 testInvalidSignerProtoNoAccount.setSigningPublicKey(signingPublicKeyProto)
