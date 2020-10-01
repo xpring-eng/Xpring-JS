@@ -12,7 +12,7 @@ class FakeCoreXrplClient implements CoreXrplClientInterface {
     public network: XrplNetwork = XrplNetwork.Test,
   ) {}
 
-  public async awaitFinalTransactionStatus(
+  public async waitForFinalTransactionOutcome(
     _transactionHash: string,
     _sender: Wallet,
   ): Promise<RawTransactionStatus> {
@@ -21,7 +21,7 @@ class FakeCoreXrplClient implements CoreXrplClientInterface {
     )
   }
 
-  public async awaitFinalTransactionResult(
+  public async getFinalTransactionResultAsync(
     _transactionHash: string,
     _sender: Wallet,
   ): Promise<TransactionResult> {

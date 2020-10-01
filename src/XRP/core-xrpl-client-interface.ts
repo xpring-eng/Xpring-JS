@@ -18,7 +18,7 @@ export default interface CoreXrplClientInterface {
    * @param transactionHash The hash of the transaction being awaited.
    * @param sender The address used to obtain the latest ledger sequence.
    */
-  awaitFinalTransactionStatus(
+  waitForFinalTransactionOutcome(
     transactionHash: string,
     sender: Wallet,
   ): Promise<RawTransactionStatus>
@@ -32,7 +32,7 @@ export default interface CoreXrplClientInterface {
    * @returns A Promise resolving to a TransactionResult containing the results of the transaction associated with
    * the given transaction hash.
    */
-  awaitFinalTransactionResult(
+  getFinalTransactionResultAsync(
     transactionHash: string,
     wallet: Wallet,
   ): Promise<TransactionResult>
