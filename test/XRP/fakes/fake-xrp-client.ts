@@ -17,6 +17,7 @@ class FakeXrpClient implements XrpClientDecorator {
     public paymentHistoryValue: Result<Array<XrpTransaction>>,
     public getPaymentValue: Result<XrpTransaction>,
     public enableDepositAuthValue: Result<TransactionResult>,
+    public authorizeSendingAccountValue: Result<TransactionResult>,
     public readonly network: XrplNetwork = XrplNetwork.Test,
   ) {}
 
@@ -56,6 +57,13 @@ class FakeXrpClient implements XrpClientDecorator {
 
   async enableDepositAuth(_wallet: Wallet): Promise<TransactionResult> {
     return FakeXrpClient.returnOrThrow(this.enableDepositAuthValue)
+  }
+
+  async authorizeSendingAccount(
+    _xAddressToAuthorize: string,
+    _wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return FakeXrpClient.returnOrThrow(this.authorizeSendingAccountValue)
   }
 
   // eslint-disable-next-line @typescript-eslint/require-await
