@@ -3,7 +3,7 @@ import TransactionResult from './model/transaction-result'
 import RawTransactionStatus from './raw-transaction-status'
 
 /**
- * An interface describing CoreXrplClient.
+ * An interface that CoreXrplClients adhere to.
  */
 export default interface CoreXrplClientInterface {
   /** The XRPL Network of the node that this client is communicating with. */

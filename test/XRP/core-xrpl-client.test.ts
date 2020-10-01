@@ -95,6 +95,8 @@ describe('Common XRPL Client', function (): void {
       newFakeNetworkClientResponses,
     )
     setTimeout(() => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       coreXrplClient.networkClient = newNetworkClient
     }, 200)
 
@@ -205,6 +207,8 @@ describe('Common XRPL Client', function (): void {
       newFakeNetworkClientResponses,
     )
     setTimeout(() => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       coreXrplClient.networkClient = newNetworkClient
     }, 200)
 

@@ -57,11 +57,9 @@ export default class CoreXrplClient {
    * @param network The network this XrpClient is connecting to.
    */
   public constructor(
-    public networkClient: XrpNetworkClient,
+    public readonly networkClient: XrpNetworkClient,
     readonly network: XrplNetwork,
-  ) {
-    this.networkClient = networkClient
-  }
+  ) {}
 
   /**
    * Retrieves the sequence number of the current open ledger in this rippled node.
