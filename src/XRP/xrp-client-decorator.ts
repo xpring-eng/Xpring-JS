@@ -98,4 +98,17 @@ export default interface XrpClientDecorator {
    *          and the final status of the transaction.
    */
   enableDepositAuth(wallet: Wallet): Promise<TransactionResult>
+
+  /**
+   * Enables DepositPreauth and authorizes an XRPL account to send to this XRPL account.
+   *
+   * @see https://xrpl.org/depositpreauth.html
+   *
+   * @param xAddressToAuthorize The X-Address of the sender to enable DepositPreauth for.
+   * @param wallet The wallet associated with the XRPL account enabling a deposit preauthorization and that will sign the request.
+   */
+  authorizeSendingAccount(
+    xAddressToAuthorize: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult>
 }
