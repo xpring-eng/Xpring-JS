@@ -3,9 +3,9 @@ import TransactionResult from './model/transaction-result'
 import RawTransactionStatus from './raw-transaction-status'
 
 /**
- * An interface describing CommonXrplClient.
+ * An interface describing CoreXrplClient.
  */
-export default interface CommonXrplClientInterface {
+export default interface CoreXrplClientInterface {
   /** The XRPL Network of the node that this client is communicating with. */
   network: XrplNetwork
 

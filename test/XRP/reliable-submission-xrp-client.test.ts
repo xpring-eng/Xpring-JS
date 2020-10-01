@@ -7,7 +7,7 @@ import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { testXrpTransaction } from './fakes/fake-xrp-protobufs'
 import TransactionResult from '../../src/XRP/model/transaction-result'
-import FakeCommonXrplClient from './fakes/fake-common-xrpl-client'
+import FakeCoreXrplClient from './fakes/fake-common-xrpl-client'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -48,13 +48,13 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedGetPaymentValue,
       fakedTransactionResultValue,
     )
-    this.fakeCommonXrplClient = new FakeCommonXrplClient(
+    this.fakeCoreXrplClient = new FakeCoreXrplClient(
       fakedRawTransactionStatusValue,
       fakedTransactionResultValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXrpClient(
       this.fakeXrpClient,
-      this.fakeCommonXrplClient,
+      this.fakeCoreXrplClient,
       XrplNetwork.Test,
     )
   })

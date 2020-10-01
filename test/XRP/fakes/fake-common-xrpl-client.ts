@@ -1,11 +1,11 @@
-import CommonXrplClientInterface from '../../../src/XRP/common-xrpl-client-interface'
+import CoreXrplClientInterface from '../../../src/XRP/core-xrpl-client-interface'
 import { Wallet } from '../../../src/index'
 import Result from '../../Common/Helpers/result'
 import { XrplNetwork } from 'xpring-common-js'
 import RawTransactionStatus from '../../../src/XRP/raw-transaction-status'
 import TransactionResult from '../../../src/XRP/model/transaction-result'
 
-class FakeCommonXrplClient implements CommonXrplClientInterface {
+class FakeCoreXrplClient implements CoreXrplClientInterface {
   public constructor(
     public awaitFinalTransactionStatusValue: Result<RawTransactionStatus>,
     public awaitFinalTransactionResultValue: Result<TransactionResult>,
@@ -16,7 +16,7 @@ class FakeCommonXrplClient implements CommonXrplClientInterface {
     _transactionHash: string,
     _sender: Wallet,
   ): Promise<RawTransactionStatus> {
-    return FakeCommonXrplClient.returnOrThrow(
+    return FakeCoreXrplClient.returnOrThrow(
       this.awaitFinalTransactionStatusValue,
     )
   }
@@ -25,7 +25,7 @@ class FakeCommonXrplClient implements CommonXrplClientInterface {
     _transactionHash: string,
     _sender: Wallet,
   ): Promise<TransactionResult> {
-    return FakeCommonXrplClient.returnOrThrow(
+    return FakeCoreXrplClient.returnOrThrow(
       this.awaitFinalTransactionResultValue,
     )
   }
@@ -39,4 +39,4 @@ class FakeCommonXrplClient implements CommonXrplClientInterface {
   }
 }
 
-export default FakeCommonXrplClient
+export default FakeCoreXrplClient
