@@ -1157,12 +1157,15 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert SignerListSet protobuf to XrpSignerListSet object - all fields set', function (): void {
     // GIVEN a SetRegularKey protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const signerListSet = XrpSignerListSet.from(testSignerListSetProto)
+    const signerListSet = XrpSignerListSet.from(
+      testSignerListSetProto,
+      XrplNetwork.Test,
+    )
 
     // THEN the SignerListSet converted as expected.
     const expectedSignerEntries: Array<XRPSignerEntry | undefined> = [
-      XRPSignerEntry.from(testSignerEntry1),
-      XRPSignerEntry.from(testSignerEntry2),
+      XRPSignerEntry.from(testSignerEntry1, XrplNetwork.Test),
+      XRPSignerEntry.from(testSignerEntry2, XrplNetwork.Test),
     ]
 
     assert.equal(
@@ -1175,7 +1178,10 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   it('Convert SignerListSet protobuf to XrpSignerListSet object - missing signerEntries', function (): void {
     // GIVEN a SignerListSet protocol buffer without signerQuorum set.
     // WHEN the protocol buffer is converted to a native Typescript type.
-    const signerListSet = XrpSignerListSet.from(testInvalidSignerListSetProto)
+    const signerListSet = XrpSignerListSet.from(
+      testInvalidSignerListSetProto,
+      XrplNetwork.Test,
+    )
 
     // THEN the result is undefined.
     assert.isUndefined(signerListSet)
