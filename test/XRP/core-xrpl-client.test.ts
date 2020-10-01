@@ -101,7 +101,7 @@ describe('Common XRPL Client', function (): void {
     }, 200)
 
     // WHEN awaitTransactionResult is called.
-    const finalTransactionResult = await coreXrplClient.getTransactionResultAsync(
+    const finalTransactionResult = await coreXrplClient.getFinalTransactionResultAsync(
       transactionHash,
       wallet,
     )
@@ -146,7 +146,7 @@ describe('Common XRPL Client', function (): void {
 
     // WHEN awaitTransactionResult is called THEN the promise is rejected.
     coreXrplClient
-      .getTransactionResultAsync(transactionHash, wallet)
+      .getFinalTransactionResultAsync(transactionHash, wallet)
       .catch(() => done())
   })
 
@@ -213,7 +213,7 @@ describe('Common XRPL Client', function (): void {
     }, 200)
 
     // WHEN awaitTransactionResult is called
-    const finalTransactionResult = await coreXrplClient.getTransactionResultAsync(
+    const finalTransactionResult = await coreXrplClient.getFinalTransactionResultAsync(
       transactionHash,
       wallet,
     )
