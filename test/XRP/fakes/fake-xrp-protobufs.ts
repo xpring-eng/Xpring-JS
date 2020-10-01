@@ -49,6 +49,7 @@ const testAddress2 = 'rPuNV4oA6f3SrKA4pLEpdVZW6QLvn3UJxK'
 const testIssuedCurrencyValue = '100'
 const testInvalidIssuedCurrencyValue = 'xrp' // non-numeric
 const testPublicKey = new Uint8Array([1, 2, 3])
+const testInvalidAddress = 'badAddress'
 const testTransactionSignature = new Uint8Array([4, 5, 6])
 const testSequence = 1
 const testFee = '3'
@@ -159,16 +160,25 @@ testCurrencyAmountProtoIssuedCurrency.setIssuedCurrencyAmount(
 )
 
 // Amount proto
-const paymentAmountProto = new Amount()
-paymentAmountProto.setValue(testCurrencyAmountProtoIssuedCurrency)
+const paymentAmountProtoIssuedCurrency = new Amount()
+paymentAmountProtoIssuedCurrency.setValue(testCurrencyAmountProtoIssuedCurrency)
+
+const paymentAmountProtoXRP = new Amount()
+paymentAmountProtoXRP.setValue(testCurrencyAmountProtoDrops)
 
 // AccountAddress proto
 const destinationAccountAddressProto = new AccountAddress()
 destinationAccountAddressProto.setAddress(testAddress2)
 
+const invalidDestinationAccountAddressProto = new AccountAddress()
+invalidDestinationAccountAddressProto.setAddress(testInvalidAddress)
+
 // Destination proto
 const paymentDestinationProto = new Destination()
 paymentDestinationProto.setValue(destinationAccountAddressProto)
+
+const invalidPaymentDestinationProto = new Destination()
+invalidPaymentDestinationProto.setValue(invalidDestinationAccountAddressProto)
 
 // DestinationTag proto
 const destinationTagProto = new DestinationTag()
@@ -188,7 +198,7 @@ sendMaxProto.setValue(testCurrencyAmountProtoDrops)
 
 // Payment protos
 const testPaymentProtoAllFieldsSet = new Payment()
-testPaymentProtoAllFieldsSet.setAmount(paymentAmountProto)
+testPaymentProtoAllFieldsSet.setAmount(paymentAmountProtoIssuedCurrency)
 testPaymentProtoAllFieldsSet.setDestination(paymentDestinationProto)
 testPaymentProtoAllFieldsSet.setDestinationTag(destinationTagProto)
 testPaymentProtoAllFieldsSet.setDeliverMin(deliverMinProto)
@@ -197,8 +207,9 @@ testPaymentProtoAllFieldsSet.setPathsList(paths)
 testPaymentProtoAllFieldsSet.setSendMax(sendMaxProto)
 
 const testPaymentProtoMandatoryFieldsOnly = new Payment()
-testPaymentProtoMandatoryFieldsOnly.setAmount(paymentAmountProto)
+testPaymentProtoMandatoryFieldsOnly.setAmount(paymentAmountProtoIssuedCurrency)
 testPaymentProtoMandatoryFieldsOnly.setDestination(paymentDestinationProto)
+testPaymentProtoMandatoryFieldsOnly.setSendMax(sendMaxProto)
 
 // Memo protos
 const memoDataProto = new MemoData()
@@ -402,19 +413,33 @@ const invalidSendMaxProto = new SendMax()
 invalidSendMaxProto.setValue(testInvalidCurrencyAmountProto)
 
 // Invalid Payment protos
-const testInvalidPaymentProtoBadAmount = new Payment()
-testInvalidPaymentProtoBadAmount.setAmount(invalidAmountProto) // invalid via bad buried IssuedCurrencyAmount
-testInvalidPaymentProtoBadAmount.setDestination(paymentDestinationProto)
+const testInvalidPaymentProtoNoAmount = new Payment()
+testInvalidPaymentProtoNoAmount.setDestination(paymentDestinationProto)
 
-const testInvalidPaymentProtoBadDeliverMin = new Payment()
-testInvalidPaymentProtoBadDeliverMin.setAmount(paymentAmountProto)
-testInvalidPaymentProtoBadDeliverMin.setDestination(paymentDestinationProto)
-testInvalidPaymentProtoBadDeliverMin.setDeliverMin(invalidDeliverMinProto)
+const testInvalidPaymentProtoNoDestination = new Payment()
+testInvalidPaymentProtoNoDestination.setAmount(paymentAmountProtoIssuedCurrency)
 
-const testInvalidPaymentProtoBadSendMax = new Payment()
-testInvalidPaymentProtoBadSendMax.setAmount(paymentAmountProto)
-testInvalidPaymentProtoBadSendMax.setDestination(paymentDestinationProto)
-testInvalidPaymentProtoBadSendMax.setSendMax(invalidSendMaxProto)
+const testInvalidPaymentProtoBadDestination = new Payment()
+testInvalidPaymentProtoBadDestination.setAmount(
+  paymentAmountProtoIssuedCurrency,
+)
+testInvalidPaymentProtoBadDestination.setDestination(
+  invalidPaymentDestinationProto,
+)
+
+const testInvalidPaymentProtoXrpPaths = new Payment()
+testInvalidPaymentProtoXrpPaths.setAmount(paymentAmountProtoXRP)
+testInvalidPaymentProtoXrpPaths.setDestination(paymentDestinationProto)
+testInvalidPaymentProtoXrpPaths.setPathsList(paths)
+
+const testInvalidPaymentProtoXrpSendMax = new Payment()
+testInvalidPaymentProtoXrpSendMax.setAmount(paymentAmountProtoXRP)
+testInvalidPaymentProtoXrpSendMax.setDestination(paymentDestinationProto)
+testInvalidPaymentProtoXrpSendMax.setSendMax(sendMaxProto)
+
+const testInvalidPaymentProtoNoSendMax = new Payment()
+testInvalidPaymentProtoNoSendMax.setAmount(paymentAmountProtoIssuedCurrency)
+testInvalidPaymentProtoNoSendMax.setDestination(paymentDestinationProto)
 
 // Invalid Signer protos
 const testInvalidSignerProtoNoAccount = new Signer()
@@ -440,7 +465,7 @@ testInvalidPaymentTransaction.setFee(transactionFeeProto)
 testInvalidPaymentTransaction.setSequence(transactionSequenceProto)
 testInvalidPaymentTransaction.setSigningPublicKey(signingPublicKeyProto)
 testInvalidPaymentTransaction.setTransactionSignature(transactionSignatureProto)
-testInvalidPaymentTransaction.setPayment(testInvalidPaymentProtoBadAmount)
+testInvalidPaymentTransaction.setPayment(testInvalidPaymentProtoNoAmount)
 
 // Invalid GetTransactionResponse protos
 const testInvalidGetTransactionResponseProto = new GetTransactionResponse()
@@ -536,9 +561,12 @@ export {
   testInvalidPathElementWithAccountCurrency,
   testInvalidPathElementWithAccountIssuer,
   testInvalidPathElementProtoEmpty,
-  testInvalidPaymentProtoBadAmount,
-  testInvalidPaymentProtoBadDeliverMin,
-  testInvalidPaymentProtoBadSendMax,
+  testInvalidPaymentProtoNoAmount,
+  testInvalidPaymentProtoBadDestination,
+  testInvalidPaymentProtoNoDestination,
+  testInvalidPaymentProtoXrpPaths,
+  testInvalidPaymentProtoXrpSendMax,
+  testInvalidPaymentProtoNoSendMax,
   testInvalidPaymentTransaction,
   testInvalidSignerProtoNoAccount,
   testInvalidSignerProtoNoPublicKey,

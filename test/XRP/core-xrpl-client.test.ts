@@ -7,7 +7,7 @@ import {
   FakeXRPNetworkClientResponses,
 } from './fakes/fake-xrp-network-client'
 import 'mocha'
-import CommonXrplClient from '../../src/XRP/common-xrpl-client'
+import CoreXrplClient from '../../src/XRP/core-xrpl-client'
 import { GetTransactionResponse } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/get_transaction_pb'
 import { GetAccountInfoResponse } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/get_account_info_pb'
 import {
@@ -62,7 +62,7 @@ describe('Common XRPL Client', function (): void {
   it('awaitFinalTransactionResult - returns when transaction is validated', async function (): Promise<
     void
   > {
-    // GIVEN a CommonXrplClient with fake networking that will succeed with a not-yet-validated transaction response
+    // GIVEN a CoreXrplClient with fake networking that will succeed with a not-yet-validated transaction response
     const getTransactionResponse = FakeXRPNetworkClientResponses.defaultGetTransactionResponse()
     getTransactionResponse.setValidated(false)
 
@@ -76,7 +76,7 @@ describe('Common XRPL Client', function (): void {
       notYetValidatedTransactionResponses,
     )
 
-    const commonXrplClient = new CommonXrplClient(
+    const coreXrplClient = new CoreXrplClient(
       fakeNetworkClient,
       XrplNetwork.Test,
     )
@@ -95,11 +95,13 @@ describe('Common XRPL Client', function (): void {
       newFakeNetworkClientResponses,
     )
     setTimeout(() => {
-      commonXrplClient.networkClient = newNetworkClient
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      coreXrplClient.networkClient = newNetworkClient
     }, 200)
 
     // WHEN awaitFinalTransactionResult is called.
-    const finalTransactionResult = await commonXrplClient.awaitFinalTransactionResult(
+    const finalTransactionResult = await coreXrplClient.getFinalTransactionResultAsync(
       transactionHash,
       wallet,
     )
@@ -137,14 +139,14 @@ describe('Common XRPL Client', function (): void {
     const fakeNetworkClient = new FakeXRPNetworkClient(
       transactionWithoutLastLedgerResponses,
     )
-    const commonXrplClient = new CommonXrplClient(
+    const coreXrplClient = new CoreXrplClient(
       fakeNetworkClient,
       XrplNetwork.Test,
     )
 
     // WHEN awaitFinalTransactionResult is called THEN the promise is rejected.
-    commonXrplClient
-      .awaitFinalTransactionResult(transactionHash, wallet)
+    coreXrplClient
+      .getFinalTransactionResultAsync(transactionHash, wallet)
       .catch(() => done())
   })
 
@@ -154,7 +156,7 @@ describe('Common XRPL Client', function (): void {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
     this.timeout(10000)
 
-    // GIVEN a CommonXrplClient with fake networking that will succeed, while providing a not-yet-validated transaction status
+    // GIVEN a CoreXrplClient with fake networking that will succeed, while providing a not-yet-validated transaction status
     const transactionResult = new TransactionResultProto()
     transactionResult.setResult('tefSUCCESS')
 
@@ -184,7 +186,7 @@ describe('Common XRPL Client', function (): void {
       notYetValidatedTransactionResponses,
     )
 
-    const commonXrplClient = new CommonXrplClient(
+    const coreXrplClient = new CoreXrplClient(
       fakeNetworkClient,
       XrplNetwork.Test,
     )
@@ -205,11 +207,13 @@ describe('Common XRPL Client', function (): void {
       newFakeNetworkClientResponses,
     )
     setTimeout(() => {
-      commonXrplClient.networkClient = newNetworkClient
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      coreXrplClient.networkClient = newNetworkClient
     }, 200)
 
     // WHEN awaitFinalTransactionResult is called
-    const finalTransactionResult = await commonXrplClient.awaitFinalTransactionResult(
+    const finalTransactionResult = await coreXrplClient.getFinalTransactionResultAsync(
       transactionHash,
       wallet,
     )

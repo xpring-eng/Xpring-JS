@@ -3,9 +3,9 @@ import FinalTransactionResult from './model/final-transaction-result'
 import RawTransactionStatus from './raw-transaction-status'
 
 /**
- * An interface describing CommonXrplClient.
+ * An interface that CoreXrplClients adhere to.
  */
-export default interface CommonXrplClientInterface {
+export default interface CoreXrplClientInterface {
   /** The XRPL Network of the node that this client is communicating with. */
   network: XrplNetwork
 
@@ -18,7 +18,7 @@ export default interface CommonXrplClientInterface {
    * @param transactionHash The hash of the transaction being awaited.
    * @param sender The address used to obtain the latest ledger sequence.
    */
-  awaitFinalTransactionStatus(
+  waitForFinalTransactionOutcome(
     transactionHash: string,
     sender: Wallet,
   ): Promise<{
@@ -35,7 +35,7 @@ export default interface CommonXrplClientInterface {
    * @returns A Promise resolving to a TransactionResult containing the results of the transaction associated with
    * the given transaction hash.
    */
-  awaitFinalTransactionResult(
+  getFinalTransactionResultAsync(
     transactionHash: string,
     wallet: Wallet,
   ): Promise<FinalTransactionResult>

@@ -6,9 +6,9 @@ import XrpTransaction from './model/xrp-transaction'
 
 import SendXrpDetails from './model/send-xrp-details'
 import FinalTransactionResult from './model/final-transaction-result'
-import CommonXrplClient from './common-xrpl-client'
+import CoreXrplClient from './core-xrpl-client'
 import DefaultXrpClient from './default-xrp-client'
-import CommonXrplClientInterface from './common-xrpl-client-interface'
+import CoreXrplClientInterface from './core-xrpl-client-interface'
 
 /**
  * An XrpClient which blocks on `send` calls until the transaction has reached a deterministic state.
@@ -18,12 +18,12 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
    * A constructor for direct client injection, primarily for testing.
    *
    * @param decoratedClient The XrpClient being decorated by this ReliableSubmissionClient.
-   * @param commonXrplClient The instance of CommonXrplClient available to this ReliableSubmissionClient.
+   * @param coreXrplClient The instance of CoreXrplClient available to this ReliableSubmissionClient.
    * @param network The network this XrpClient is connecting to.
    */
   public constructor(
-    readonly decoratedClient: XrpClientDecorator,
-    readonly commonXrplClient: CommonXrplClientInterface,
+    private readonly decoratedClient: XrpClientDecorator,
+    private readonly coreXrplClient: CoreXrplClientInterface,
     readonly network: XrplNetwork,
   ) {}
 
@@ -46,14 +46,14 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
       network,
       forceWeb,
     )
-    const commonXrplClient = CommonXrplClient.commonXrplClientWithEndpoint(
+    const coreXrplClient = CoreXrplClient.coreXrplClientWithEndpoint(
       grpcUrl,
       network,
       forceWeb,
     )
     return new ReliableSubmissionXrpClient(
       decoratedClient,
-      commonXrplClient,
+      coreXrplClient,
       network,
     )
   }
@@ -88,7 +88,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     const transactionHash = await this.decoratedClient.sendWithDetails(
       sendXrpDetails,
     )
-    await this.commonXrplClient.awaitFinalTransactionStatus(
+    await this.coreXrplClient.waitForFinalTransactionOutcome(
       transactionHash,
       sender,
     )
@@ -114,7 +114,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     wallet: Wallet,
   ): Promise<FinalTransactionResult> {
     const result = await this.decoratedClient.enableDepositAuth(wallet)
-    return await this.commonXrplClient.awaitFinalTransactionResult(
+    return await this.coreXrplClient.getFinalTransactionResultAsync(
       result.hash,
       wallet,
     )

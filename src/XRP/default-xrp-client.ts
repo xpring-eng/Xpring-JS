@@ -36,13 +36,13 @@ import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import SendXrpDetails from './model/send-xrp-details'
 import { AccountSetFlag } from './model/account-set-flag'
 import FinalTransactionResult from './model/final-transaction-result'
-import CommonXrplClient from './common-xrpl-client'
+import CoreXrplClient from './core-xrpl-client'
 
 /**
  * DefaultXrpClient is a client for handling XRP payments on the XRPL.
  */
 export default class DefaultXrpClient implements XrpClientDecorator {
-  private commonXrplClient: CommonXrplClient
+  private coreXrplClient: CoreXrplClient
 
   /**
    * Create a new DefaultXrpClient.
@@ -75,7 +75,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     private readonly networkClient: XrpNetworkClient,
     readonly network: XrplNetwork,
   ) {
-    this.commonXrplClient = new CommonXrplClient(networkClient, network)
+    this.coreXrplClient = new CoreXrplClient(networkClient, network)
   }
 
   /**
@@ -130,7 +130,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   public async getPaymentStatus(
     transactionHash: string,
   ): Promise<TransactionStatus> {
-    return await this.commonXrplClient.getTransactionStatus(transactionHash)
+    return await this.coreXrplClient.getTransactionStatus(transactionHash)
   }
 
   /**
@@ -193,9 +193,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     payment.setDestination(destination)
     payment.setAmount(amount)
 
-    const transaction = await this.commonXrplClient.prepareBaseTransaction(
-      sender,
-    )
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
     transaction.setPayment(payment)
 
     if (memoList && memoList.length) {
@@ -223,7 +221,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
         .forEach((memo) => transaction.addMemos(memo))
     }
 
-    return this.commonXrplClient.signAndSubmitTransaction(transaction, sender)
+    return this.coreXrplClient.signAndSubmitTransaction(transaction, sender)
   }
 
   /**
@@ -342,17 +340,15 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     const accountSet = new AccountSet()
     accountSet.setSetFlag(setFlag)
 
-    const transaction = await this.commonXrplClient.prepareBaseTransaction(
-      wallet,
-    )
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
     transaction.setAccountSet(accountSet)
 
-    const transactionHash = await this.commonXrplClient.signAndSubmitTransaction(
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
       transaction,
       wallet,
     )
 
-    return await this.commonXrplClient.getTransactionResult(transactionHash)
+    return await this.coreXrplClient.getTransactionResult(transactionHash)
   }
 
   /**
@@ -381,16 +377,14 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     const depositPreauth = new DepositPreauth()
     depositPreauth.setAuthorize(authorize)
 
-    const transaction = await this.commonXrplClient.prepareBaseTransaction(
-      wallet,
-    )
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
     transaction.setDepositPreauth(depositPreauth)
 
-    const transactionHash = await this.commonXrplClient.signAndSubmitTransaction(
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
       transaction,
       wallet,
     )
-    return await this.commonXrplClient.getTransactionResult(transactionHash)
+    return await this.coreXrplClient.getTransactionResult(transactionHash)
   }
 
   /**
@@ -419,15 +413,13 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     const depositPreauth = new DepositPreauth()
     depositPreauth.setUnauthorize(unauthorize)
 
-    const transaction = await this.commonXrplClient.prepareBaseTransaction(
-      wallet,
-    )
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
     transaction.setDepositPreauth(depositPreauth)
 
-    const transactionHash = await this.commonXrplClient.signAndSubmitTransaction(
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
       transaction,
       wallet,
     )
-    return await this.commonXrplClient.getTransactionResult(transactionHash)
+    return await this.coreXrplClient.getTransactionResult(transactionHash)
   }
 }

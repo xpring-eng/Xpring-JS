@@ -6,8 +6,8 @@ import ReliableSubmissionXrpClient from '../../src/XRP/reliable-submission-xrp-c
 import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { testXrpTransaction } from './fakes/fake-xrp-protobufs'
-import TransactionResult from '../../src/XRP/model/final-transaction-result'
-import FakeCommonXrplClient from './fakes/fake-common-xrpl-client'
+import FinalTransactionResult from '../../src/XRP/model/final-transaction-result'
+import FakeCoreXrplClient from './fakes/fake-core-xrpl-client'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -31,12 +31,12 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
 )
 const fakedTransactionHistoryValue = [testXrpTransaction]
 const fakedGetPaymentValue = testXrpTransaction
-const fakedTransactionResultValue = new TransactionResult(
+const fakedTransactionResultValue = new FinalTransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
   true,
 )
-const fakedAwaitFinalTransactionStatusValue = {
+const fakedWaitForFinalTransactionOutcomeValue = {
   rawTransactionStatus: fakedRawTransactionStatusValue,
   lastLedgerPassed: false,
 }
@@ -52,13 +52,13 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedGetPaymentValue,
       fakedTransactionResultValue,
     )
-    this.fakeCommonXrplClient = new FakeCommonXrplClient(
-      fakedAwaitFinalTransactionStatusValue,
+    this.fakeCoreXrplClient = new FakeCoreXrplClient(
+      fakedWaitForFinalTransactionOutcomeValue,
       fakedTransactionResultValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXrpClient(
       this.fakeXrpClient,
-      this.fakeCommonXrplClient,
+      this.fakeCoreXrplClient,
       XrplNetwork.Test,
     )
   })

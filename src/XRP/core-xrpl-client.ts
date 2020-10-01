@@ -28,40 +28,38 @@ async function sleep(milliseconds: number): Promise<void> {
 const maxLedgerVersionOffset = 10
 
 /**
- * CommonXrplClient is a client which supports the core, common functionality for interacting with the XRP Ledger.
+ * CoreXrplClient is a client which supports the core, common functionality for interacting with the XRP Ledger.
  */
-export default class CommonXrplClient {
+export default class CoreXrplClient {
   /**
-   * Creates a new CommonXrplClient.
+   * Creates a new CoreXrplClient.
    *
-   * The CommonXrplClient will use gRPC to communicate with the given endpoint.
+   * The CoreXrplClient will use gRPC to communicate with the given endpoint.
    *
    * @param grpcUrl The URL of the gRPC instance to connect to.
    * @param network The network this XrpClient is connecting to.
    * @param forceWeb If `true`, then we will use the gRPC-Web client even when on Node. Defaults to false. This is mainly for testing and in the future will be removed when we have browser testing.
    */
-  public static commonXrplClientWithEndpoint(
+  public static coreXrplClientWithEndpoint(
     grpcUrl: string,
     network: XrplNetwork,
     forceWeb = false,
-  ): CommonXrplClient {
+  ): CoreXrplClient {
     return isNode() && !forceWeb
-      ? new CommonXrplClient(new GrpcNetworkClient(grpcUrl), network)
-      : new CommonXrplClient(new GrpcNetworkClientWeb(grpcUrl), network)
+      ? new CoreXrplClient(new GrpcNetworkClient(grpcUrl), network)
+      : new CoreXrplClient(new GrpcNetworkClientWeb(grpcUrl), network)
   }
 
   /**
-   * Creates a new CommonXrplClient with a custom network client implementation.
+   * Creates a new CoreXrplClient with a custom network client implementation.
    *
    * @param networkClient A network client which will manage remote RPCs to Rippled.
    * @param network The network this XrpClient is connecting to.
    */
   public constructor(
-    public networkClient: XrpNetworkClient,
+    public readonly networkClient: XrpNetworkClient,
     readonly network: XrplNetwork,
-  ) {
-    this.networkClient = networkClient
-  }
+  ) {}
 
   /**
    * Retrieves the sequence number of the current open ledger in this rippled node.
@@ -310,15 +308,15 @@ export default class CommonXrplClient {
    * @returns A Promise resolving to a TransactionResult containing the results of the transaction associated with
    * the given transaction hash.
    */
-  public async awaitFinalTransactionResult(
+  public async getFinalTransactionResultAsync(
     transactionHash: string,
     wallet: Wallet,
   ): Promise<FinalTransactionResult> {
     const {
       rawTransactionStatus,
       lastLedgerPassed,
-    } = await this.awaitFinalTransactionStatus(transactionHash, wallet)
-    const finalStatus = this.determineFinalResult(
+    } = await this.waitForFinalTransactionOutcome(transactionHash, wallet)
+    const finalStatus = this.getFinalTransactionStatus(
       rawTransactionStatus,
       lastLedgerPassed,
     )
@@ -336,7 +334,7 @@ export default class CommonXrplClient {
    *
    * @param rawTransactionStatus
    */
-  private determineFinalResult(
+  private getFinalTransactionStatus(
     rawTransactionStatus: RawTransactionStatus,
     lastLedgerPassed: boolean,
   ): TransactionStatus {
@@ -372,7 +370,7 @@ export default class CommonXrplClient {
    * @param transactionHash The hash of the transaction being awaited.
    * @param sender The address used to obtain the latest ledger sequence.
    */
-  public async awaitFinalTransactionStatus(
+  public async waitForFinalTransactionOutcome(
     transactionHash: string,
     sender: Wallet,
   ): Promise<{
