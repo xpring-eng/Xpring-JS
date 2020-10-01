@@ -60,14 +60,14 @@ export default class XrpPaymentChannelCreate {
     if (settleDelay === undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'PaymentChannelCreate protobuf does not contain `SettleDelay` field.',
+        'PaymentChannelCreate protobuf does not contain `settleDelay` field.',
       )
     }
     const publicKey = paymentChannelCreate.getPublicKey()?.getValue_asB64()
     if (!publicKey) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'PaymentChannelCreate protobuf does not contain `PublicKey` field.',
+        'PaymentChannelCreate protobuf does not contain `publicKey` field.',
       )
     }
 

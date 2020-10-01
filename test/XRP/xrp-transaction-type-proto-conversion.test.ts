@@ -1044,7 +1044,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   })
 
   it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - missing PublicKey', function (): void {
-    // GIVEN a PaymentChannelCreate protocol buffer missing the PublicKey field.
+    // GIVEN a PaymentChannelCreate protocol buffer missing the publicKey field.
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(() => {
       XrpPaymentChannelCreate.from(
@@ -1055,7 +1055,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
   })
 
   it('Convert PaymentChannelCreate protobuf to XrpPaymentChannelCreate object - missing SettleDelay', function (): void {
-    // GIVEN a PaymentChannelCreate protocol buffer missing the SettleDelay field.
+    // GIVEN a PaymentChannelCreate protocol buffer missing the settleDelay field.
     // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(() => {
       XrpPaymentChannelCreate.from(
