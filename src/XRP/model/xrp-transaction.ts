@@ -64,7 +64,7 @@ export default class XrpTransaction {
     if (transaction.getSignersList().length > 0) {
       signers = transaction
         .getSignersList()
-        .map((signer) => XrpSigner.from(signer))
+        .map((signer) => XrpSigner.from(signer, xrplNetwork))
     }
 
     const sourceTag = transaction.getSourceTag()?.getValue()

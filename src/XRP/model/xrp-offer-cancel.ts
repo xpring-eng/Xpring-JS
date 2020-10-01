@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { OfferCancel } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 /*
@@ -15,10 +16,13 @@ export default class XrpOfferCancel {
    * @return an XrpOfferCancel with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L206
    */
-  public static from(offerCancel: OfferCancel): XrpOfferCancel | undefined {
+  public static from(offerCancel: OfferCancel): XrpOfferCancel {
     const offerSequence = offerCancel.getOfferSequence()?.getValue()
     if (!offerSequence) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'OfferCancel protobuf is missing `offerSequence` field.',
+      )
     }
     return new XrpOfferCancel(offerSequence)
   }

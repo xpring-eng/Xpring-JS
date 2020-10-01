@@ -52,8 +52,8 @@ export default class XrpIssuedCurrency {
    * @param issuer Unique account address of the entity issuing the currency.
    */
   private constructor(
-    readonly currency?: XrpCurrency,
-    readonly value?: BigInteger,
-    readonly issuer?: string,
+    readonly currency: XrpCurrency,
+    readonly value: BigInteger,
+    readonly issuer: string,
   ) {}
 }
