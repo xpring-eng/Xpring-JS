@@ -34,18 +34,6 @@ const fakedTransactionResultValue = new TransactionResult(
 
 describe('Reliable Submission XRP Client', function (): void {
   beforeEach(function () {
-    this.fakedRawTransactionStatusValue = new RawTransactionStatus(
-      fakedRawTransactionStatusValidatedValue,
-      fakedRawTransactionStatusTransactionStatusCode,
-      fakedRawTransactionStatusLastLedgerSequenceValue,
-      fakedFullPaymentValue,
-    )
-
-    const fakedWaitForFinalTransactionOutcomeValue = {
-      rawTransactionStatus: this.fakedRawTransactionStatusValue,
-      lastLedgerPassed: false,
-    }
-
     this.fakeXrpClient = new FakeXrpClient(
       fakedGetBalanceValue,
       fakedTransactionStatusValue,
