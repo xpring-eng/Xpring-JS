@@ -36,14 +36,14 @@ export default class XrpSignerListSet {
       if (signerEntries.length === 0) {
         throw new XrpError(
           XrpErrorType.MalformedProtobuf,
-          'SignerListSet protobuf does not contain `SignerEntries` field with nonzero `SignerQuorum` field.',
+          'SignerListSet protobuf does not contain `signerEntries` field with nonzero `signerQuorum` field.',
         )
       }
       const maxSignerEntryLength = 8
       if (signerEntries.length > maxSignerEntryLength) {
         throw new XrpError(
           XrpErrorType.MalformedProtobuf,
-          'SignerListSet protobuf has greater than 8 members in the `SignerEntries` field.',
+          'SignerListSet protobuf has greater than 8 members in the `signerEntries` field.',
         )
       }
       const accounts = new Set()
@@ -52,7 +52,7 @@ export default class XrpSignerListSet {
         if (accounts.has(signerAccountXAddress)) {
           throw new XrpError(
             XrpErrorType.MalformedProtobuf,
-            'SignerListSet protobuf contains repeat account addresses in the `SignerEntries` field.',
+            'SignerListSet protobuf contains repeat account addresses in the `signerEntries` field.',
           )
         }
         accounts.add(signerAccountXAddress)

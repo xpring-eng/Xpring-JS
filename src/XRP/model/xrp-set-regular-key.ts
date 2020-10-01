@@ -18,9 +18,7 @@ export default class XrpSetRegularKey {
    * @return an XrpSetRegularKey with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L298
    */
-  public static from(
-    setRegularKey: SetRegularKey,
-  ): XrpSetRegularKey | undefined {
+  public static from(setRegularKey: SetRegularKey): XrpSetRegularKey {
     const regularKey = setRegularKey.getRegularKey()?.getValue()?.getAddress()
     return new XrpSetRegularKey(regularKey)
   }

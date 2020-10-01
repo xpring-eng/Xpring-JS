@@ -41,10 +41,10 @@ export default class XrpSignerEntry {
     }
 
     const signerWeight = signerEntry.getSignerWeight()?.getValue()
-    if (!signerWeight) {
+    if (signerWeight === undefined) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'SignerEntry protobuf does not contain `SignerWeight` field.',
+        'SignerEntry protobuf does not contain `signerWeight` field.',
       )
     }
     return new XrpSignerEntry(accountXAddress, signerWeight)

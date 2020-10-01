@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { OfferCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount from './xrp-currency-amount'
 
@@ -19,25 +20,25 @@ export default class XrpOfferCreate {
    * @return an XrpOfferCreate with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L212
    */
-  public static from(offerCreate: OfferCreate): XrpOfferCreate | undefined {
+  public static from(offerCreate: OfferCreate): XrpOfferCreate {
     // takerGets and takerPays are required fields
     const takerGetsCurrencyAmount = offerCreate.getTakerGets()?.getValue()
     if (!takerGetsCurrencyAmount) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'OfferCreate protobuf is missing `takerGets` field.',
+      )
     }
     const takerGets = XrpCurrencyAmount.from(takerGetsCurrencyAmount)
-    if (!takerGets) {
-      return undefined
-    }
 
     const takerPaysCurrencyAmount = offerCreate.getTakerPays()?.getValue()
     if (!takerPaysCurrencyAmount) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'OfferCreate protobuf is missing `takerPays` field.',
+      )
     }
     const takerPays = XrpCurrencyAmount.from(takerPaysCurrencyAmount)
-    if (!takerPays) {
-      return undefined
-    }
     const expiration = offerCreate.getExpiration()?.getValue()
     const offerSequence = offerCreate.getOfferSequence()?.getValue()
 
