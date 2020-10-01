@@ -83,7 +83,8 @@ import {
   testInvalidPaymentChannelClaimProtoNoChannel,
   testInvalidPaymentChannelClaimProtoSignatureNoPublicKey,
   testInvalidPaymentChannelCreateProto,
-  testInvalidPaymentChannelFundProto,
+  testInvalidPaymentChannelFundProtoNoAmount,
+  testInvalidPaymentChannelFundProtoNoChannel,
   testInvalidSignerListSetProto,
   testInvalidTrustSetProto,
   testInvalidTrustSetProtoXRP,
@@ -1065,15 +1066,20 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(paymentChannelFund?.expiration)
   })
 
-  it('Convert PaymentChannelFund protobuf to XrpPaymentChannelFund object - missing mandatory fields', function (): void {
-    // GIVEN a PaymentChannelFund protocol buffer missing a mandatory field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const paymentChannelFund = XrpPaymentChannelFund.from(
-      testInvalidPaymentChannelFundProto,
-    )
+  it('Convert PaymentChannelFund protobuf to XrpPaymentChannelFund object - missing amount', function (): void {
+    // GIVEN a PaymentChannelFund protocol buffer missing the required amount field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelFund.from(testInvalidPaymentChannelFundProtoNoAmount)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(paymentChannelFund)
+  it('Convert PaymentChannelFund protobuf to XrpPaymentChannelFund object - missing channel', function (): void {
+    // GIVEN a PaymentChannelFund protocol buffer missing the required channel field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpPaymentChannelFund.from(testInvalidPaymentChannelFundProtoNoChannel)
+    }, XrpError)
   })
 
   // SetRegularKey
