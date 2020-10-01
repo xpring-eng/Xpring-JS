@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { PaymentChannelFund } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount from './xrp-currency-amount'
 
@@ -20,19 +21,23 @@ export default class XrpPaymentChannelFund {
    */
   public static from(
     paymentChannelFund: PaymentChannelFund,
-  ): XrpPaymentChannelFund | undefined {
+  ): XrpPaymentChannelFund {
     const channel = paymentChannelFund.getChannel()?.getValue_asB64()
+    if (!channel) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'PaymentChannelFund protobuf does not contain `channel` field.',
+      )
+    }
 
     const amountCurrencyAmount = paymentChannelFund.getAmount()?.getValue()
-    if (!amountCurrencyAmount) {
-      return undefined
+    if (amountCurrencyAmount === undefined) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'PaymentChannelFund protobuf does not contain `amount` field.',
+      )
     }
     const amount = XrpCurrencyAmount.from(amountCurrencyAmount)
-
-    // channel and amount are required fields
-    if (!channel || !amount) {
-      return undefined
-    }
 
     const expiration = paymentChannelFund.getExpiration()?.getValue()
 

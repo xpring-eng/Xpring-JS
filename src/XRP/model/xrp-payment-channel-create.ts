@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { PaymentChannelCreate } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -22,10 +23,13 @@ export default class XrpPaymentChannelCreate {
   public static from(
     paymentChannelCreate: PaymentChannelCreate,
     xrplNetwork: XrplNetwork,
-  ): XrpPaymentChannelCreate | undefined {
+  ): XrpPaymentChannelCreate {
     const amountCurrencyAmount = paymentChannelCreate.getAmount()?.getValue()
-    if (!amountCurrencyAmount) {
-      return undefined
+    if (amountCurrencyAmount === undefined) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'PaymentChannelCreate protobuf does not contain `amount` field.',
+      )
     }
     const amount = XrpCurrencyAmount.from(amountCurrencyAmount)
     const destination = paymentChannelCreate
@@ -33,7 +37,10 @@ export default class XrpPaymentChannelCreate {
       ?.getValue()
       ?.getAddress()
     if (!destination) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'PaymentChannelCreate protobuf does not contain `destination` field.',
+      )
     }
     const destinationTag = paymentChannelCreate.getDestinationTag()?.getValue()
 
@@ -42,13 +49,26 @@ export default class XrpPaymentChannelCreate {
       destinationTag,
       xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
     )
+    if (!destinationXAddress) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Cannot construct XAddress from PaymentChannelCreate protobuf `destination` and `destinationTag` fields.',
+      )
+    }
 
     const settleDelay = paymentChannelCreate.getSettleDelay()?.getValue()
+    if (settleDelay === undefined) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'PaymentChannelCreate protobuf does not contain `settleDelay` field.',
+      )
+    }
     const publicKey = paymentChannelCreate.getPublicKey()?.getValue_asB64()
-
-    // required fields
-    if (!amount || !destinationXAddress || !settleDelay || !publicKey) {
-      return undefined
+    if (!publicKey) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'PaymentChannelCreate protobuf does not contain `publicKey` field.',
+      )
     }
 
     const cancelAfter = paymentChannelCreate.getCancelAfter()?.getValue()
