@@ -20,7 +20,7 @@ export default class XrpAccountSet {
   public static from(accountSet: AccountSet): XrpAccountSet {
     const clearFlag = accountSet.getClearFlag()?.getValue()
     const domain = accountSet.getDomain()?.getValue()
-    if (domain != undefined && domain?.toLowerCase() !== domain) {
+    if (domain !== undefined && domain?.toLowerCase() !== domain) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'AccountSet protobuf field `domain` is not lowercase.',
@@ -29,7 +29,11 @@ export default class XrpAccountSet {
     const emailHash = accountSet.getEmailHash()?.getValue_asU8()
     const messageKey = accountSet.getMessageKey()?.getValue_asU8()
     const setFlag = accountSet.getSetFlag()?.getValue()
-    if (clearFlag != undefined && setFlag && clearFlag === setFlag) {
+    if (
+      clearFlag !== undefined &&
+      setFlag !== undefined &&
+      clearFlag === setFlag
+    ) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'AccountSet protobuf fields `clearFlag` and `setFlag` are equal.',
@@ -57,7 +61,7 @@ export default class XrpAccountSet {
       }
     }
     const tickSize = accountSet.getTickSize()?.getValue()
-    if (tickSize != undefined && !this.isValidTickSize(tickSize)) {
+    if (tickSize !== undefined && !this.isValidTickSize(tickSize)) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
         'AccountSet protobuf field `tickSize` not between 3 and 15, inclusive, or 0.',
