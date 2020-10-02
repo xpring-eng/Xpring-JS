@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { XrplNetwork } from 'xpring-common-js'
 import { SignerListSet } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpSignerEntry from './xrp-signer-entry'
@@ -20,14 +21,43 @@ export default class XrpSignerListSet {
   public static from(
     signerListSet: SignerListSet,
     xrplNetwork: XrplNetwork,
-  ): XrpSignerListSet | undefined {
+  ): XrpSignerListSet {
     const signerQuorum = signerListSet.getSignerQuorum()?.getValue()
-    if (!signerQuorum) {
-      return undefined
+    if (signerQuorum === undefined) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'SignerListSet protobuf does not contain `SignerQuorum` field.',
+      )
     }
     const signerEntries = signerListSet
       .getSignerEntriesList()
       .map((signerEntry) => XrpSignerEntry.from(signerEntry, xrplNetwork))
+    if (signerQuorum !== 0) {
+      if (signerEntries.length === 0) {
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          'SignerListSet protobuf does not contain `signerEntries` field with nonzero `signerQuorum` field.',
+        )
+      }
+      const maxSignerEntryLength = 8
+      if (signerEntries.length > maxSignerEntryLength) {
+        throw new XrpError(
+          XrpErrorType.MalformedProtobuf,
+          'SignerListSet protobuf has greater than 8 members in the `signerEntries` field.',
+        )
+      }
+      const accounts = new Set()
+      signerEntries.forEach((signerEntry) => {
+        const signerAccountXAddress = signerEntry.accountXAddress
+        if (accounts.has(signerAccountXAddress)) {
+          throw new XrpError(
+            XrpErrorType.MalformedProtobuf,
+            'SignerListSet protobuf contains repeat account addresses in the `signerEntries` field.',
+          )
+        }
+        accounts.add(signerAccountXAddress)
+      })
+    }
     return new XrpSignerListSet(signerQuorum, signerEntries)
   }
 
@@ -40,6 +70,6 @@ export default class XrpSignerListSet {
    */
   private constructor(
     readonly signerQuorum: number,
-    readonly signerEntries?: Array<XrpSignerEntry | undefined>,
+    readonly signerEntries?: Array<XrpSignerEntry>,
   ) {}
 }
