@@ -229,4 +229,57 @@ describe('XrpClient Integration Tests', function (): void {
       AccountRootFlags.checkFlag(AccountRootFlags.LSF_DEPOSIT_AUTH, flags!),
     )
   })
+
+  it('Authorize Sending Account - failure on authorizing self', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN authorizeSendingAccount is called with the account's own address
+    const result = await xrpClient.authorizeSendingAccount(
+      wallet.getAddress(),
+      wallet,
+    )
+
+    // THEN the transaction fails due to a malformed transaction.
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.MalformedTransaction)
+  })
+
+  it.only('Authorize Sending Account - can send funds after authorize', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN authorizeSendingAccount is called with the account's own address
+    const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
+
+    await xrpClient.enableDepositAuth(wallet)
+
+    await xrpClient.authorizeSendingAccount(sendingWallet.getAddress(), wallet)
+
+    const result = await xrpClient.send(
+      amount,
+      wallet.getAddress(),
+      sendingWallet,
+    )
+    console.log(result)
+
+    // const result = await xrpClient.enableDepositAuth(wallet)
+
+    // const result = await xrpClient.authorizeSendingAccount(
+    //   recipientAddress,
+    //   wallet,
+    // )
+
+    // THEN the transaction fails due to a malformed transaction.
+    // const transactionHash = result.hash
+    // const transactionStatus = result.status
+
+    // assert.exists(transactionHash)
+    // assert.equal(transactionStatus, TransactionStatus.MalformedTransaction)
+  })
 })
