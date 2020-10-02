@@ -21,18 +21,13 @@ const fakeTransactionHash = 'deadbeefdeadbeefdeadbeef'
 const fakeAccountExistsResult = true
 const fakePaymentHistoryValue = []
 const fakeGetPaymentValue = testXrpTransaction
-const fakedEnableDepositAuthValue = new TransactionResult(
+const fakedSuccessfulTransactionResult = new TransactionResult(
   fakeTransactionHash,
   TransactionStatus.Succeeded,
   true,
   true,
 )
-const fakedAuthorizeSendingAccountValue = new TransactionResult(
-  fakeTransactionHash,
-  TransactionStatus.Succeeded,
-  true,
-  true,
-)
+
 /* eslint-enable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention */
 
 // An amount to send
@@ -59,8 +54,8 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
-      fakedEnableDepositAuthValue,
-      fakedAuthorizeSendingAccountValue,
+      fakedSuccessfulTransactionResult,
+      fakedSuccessfulTransactionResult,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -85,8 +80,8 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
-      fakedEnableDepositAuthValue,
-      fakedAuthorizeSendingAccountValue,
+      fakedSuccessfulTransactionResult,
+      fakedSuccessfulTransactionResult,
     )
 
     const payIDClient = new FakeXrpPayIdClient(payIDError)
@@ -110,8 +105,8 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
-      fakedEnableDepositAuthValue,
-      fakedAuthorizeSendingAccountValue,
+      fakedSuccessfulTransactionResult,
+      fakedSuccessfulTransactionResult,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -136,8 +131,8 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
-      fakedEnableDepositAuthValue,
-      fakedAuthorizeSendingAccountValue,
+      fakedSuccessfulTransactionResult,
+      fakedSuccessfulTransactionResult,
     )
 
     const payIDClient = new FakeXrpPayIdClient(payIDError)
@@ -161,8 +156,8 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
-      fakedEnableDepositAuthValue,
-      fakedAuthorizeSendingAccountValue,
+      fakedSuccessfulTransactionResult,
+      fakedSuccessfulTransactionResult,
       XrplNetwork.Test,
     )
     const payIDClient = new FakeXrpPayIdClient(payIDError, XrplNetwork.Main)
