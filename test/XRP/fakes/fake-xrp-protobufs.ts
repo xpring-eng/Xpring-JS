@@ -53,6 +53,7 @@ const testPublicKey = new Uint8Array([1, 2, 3])
 const testTransactionSignature = new Uint8Array([4, 5, 6])
 const testSequence = 1
 const testFee = '3'
+const testInvalidFee = '1x'
 const testDrops = '20'
 const testDestinationTag = 2
 const testInvoiceID = new Uint8Array([7, 8, 9])
@@ -146,6 +147,9 @@ xrpDropsProto.setDrops(testDrops)
 const transactionFeeProto = new XRPDropsAmount()
 transactionFeeProto.setDrops(testFee)
 
+const invalidTransactionFeeProto = new XRPDropsAmount()
+invalidTransactionFeeProto.setDrops(testInvalidFee)
+
 // Sequence proto
 const transactionSequenceProto = new Sequence()
 transactionSequenceProto.setValue(testSequence)
@@ -234,6 +238,9 @@ accountProto.setValue(accountAddressProto)
 const signingPublicKeyProto = new SigningPublicKey()
 signingPublicKeyProto.setValue(testPublicKey)
 
+const signingPublicKeyProtoEmpty = new SigningPublicKey()
+signingPublicKeyProtoEmpty.setValue('')
+
 // TransactionSignature proto
 const transactionSignatureProto = new TransactionSignature()
 transactionSignatureProto.setValue(testTransactionSignature)
@@ -293,6 +300,16 @@ testTransactionPaymentMandatoryFields.setPayment(
   testPaymentProtoMandatoryFieldsOnly,
 )
 
+// (PAYMENT) (mandatory fields, with signers instead of public key)
+const testTransactionPaymentSigners = new Transaction()
+testTransactionPaymentSigners.setAccount(transactionAccountProto)
+testTransactionPaymentSigners.setFee(transactionFeeProto)
+testTransactionPaymentSigners.setSequence(transactionSequenceProto)
+testTransactionPaymentSigners.setSigningPublicKey(signingPublicKeyProtoEmpty)
+testTransactionPaymentSigners.setSignersList([testSignerProto])
+testTransactionPaymentSigners.setTransactionSignature(transactionSignatureProto)
+testTransactionPaymentSigners.setPayment(testPaymentProtoMandatoryFieldsOnly)
+
 // (CHECKCASH) (only mandatory common fields set, currently unsupported)
 const checkCashProto = new CheckCash()
 
@@ -330,6 +347,12 @@ testGetTransactionResponseProtoMandatoryOnly.setTransaction(
   testTransactionPaymentMandatoryFields,
 )
 testGetTransactionResponseProtoMandatoryOnly.setHash(testTransactionHash)
+
+const testGetTransactionResponseProtoSigners = new GetTransactionResponse()
+testGetTransactionResponseProtoSigners.setTransaction(
+  testTransactionPaymentSigners,
+)
+testGetTransactionResponseProtoSigners.setHash(testTransactionHash)
 
 // GetAccountTransactionHistoryResponse proto
 const testGetAccountTransactionHistoryResponse = new GetAccountTransactionHistoryResponse()
@@ -442,9 +465,19 @@ testInvalidPaymentProtoNoSendMax.setAmount(paymentAmountProtoIssuedCurrency)
 testInvalidPaymentProtoNoSendMax.setDestination(paymentDestinationProto)
 
 // Invalid Signer protos
+const invalidAccountProto = new Account()
+invalidAccountProto.setValue(invalidAccountAddressProto)
+
 const testInvalidSignerProtoNoAccount = new Signer()
 testInvalidSignerProtoNoAccount.setSigningPublicKey(signingPublicKeyProto)
 testInvalidSignerProtoNoAccount.setTransactionSignature(
+  transactionSignatureProto,
+)
+
+const testInvalidSignerProtoBadAccount = new Signer()
+testInvalidSignerProtoBadAccount.setAccount(invalidAccountProto)
+testInvalidSignerProtoBadAccount.setSigningPublicKey(signingPublicKeyProto)
+testInvalidSignerProtoBadAccount.setTransactionSignature(
   transactionSignatureProto,
 )
 
@@ -467,6 +500,127 @@ testInvalidPaymentTransaction.setSigningPublicKey(signingPublicKeyProto)
 testInvalidPaymentTransaction.setTransactionSignature(transactionSignatureProto)
 testInvalidPaymentTransaction.setPayment(testInvalidPaymentProtoNoAmount)
 
+// ... no account
+const testInvalidPaymentTransactionNoAccount = new Transaction()
+testInvalidPaymentTransactionNoAccount.setFee(transactionFeeProto)
+testInvalidPaymentTransactionNoAccount.setSequence(transactionSequenceProto)
+testInvalidPaymentTransactionNoAccount.setSigningPublicKey(
+  signingPublicKeyProto,
+)
+testInvalidPaymentTransactionNoAccount.setTransactionSignature(
+  transactionSignatureProto,
+)
+testInvalidPaymentTransactionNoAccount.setPayment(
+  testPaymentProtoMandatoryFieldsOnly,
+)
+
+// ... bad account
+const testInvalidPaymentTransactionBadAccount = new Transaction()
+testInvalidPaymentTransactionBadAccount.setAccount(invalidAccountProto)
+testInvalidPaymentTransactionBadAccount.setFee(transactionFeeProto)
+testInvalidPaymentTransactionBadAccount.setSequence(transactionSequenceProto)
+testInvalidPaymentTransactionBadAccount.setSigningPublicKey(
+  signingPublicKeyProto,
+)
+testInvalidPaymentTransactionBadAccount.setTransactionSignature(
+  transactionSignatureProto,
+)
+testInvalidPaymentTransactionBadAccount.setPayment(
+  testPaymentProtoMandatoryFieldsOnly,
+)
+
+// ... no fee
+const testInvalidPaymentTransactionNoFee = new Transaction()
+testInvalidPaymentTransactionNoFee.setAccount(transactionAccountProto)
+testInvalidPaymentTransactionNoFee.setSequence(transactionSequenceProto)
+testInvalidPaymentTransactionNoFee.setSigningPublicKey(signingPublicKeyProto)
+testInvalidPaymentTransactionNoFee.setTransactionSignature(
+  transactionSignatureProto,
+)
+testInvalidPaymentTransactionNoFee.setPayment(
+  testPaymentProtoMandatoryFieldsOnly,
+)
+
+// ... non-int fee
+const testInvalidTransactionPaymentBadFee = new Transaction()
+testInvalidTransactionPaymentBadFee.setAccount(transactionAccountProto)
+testInvalidTransactionPaymentBadFee.setFee(invalidTransactionFeeProto)
+testInvalidTransactionPaymentBadFee.setSequence(transactionSequenceProto)
+testInvalidTransactionPaymentBadFee.setSigningPublicKey(signingPublicKeyProto)
+testInvalidTransactionPaymentBadFee.setTransactionSignature(
+  transactionSignatureProto,
+)
+testInvalidTransactionPaymentBadFee.setPayment(
+  testPaymentProtoMandatoryFieldsOnly,
+)
+
+// ... no sequence
+const testInvalidTransactionPaymentNoSequence = new Transaction()
+testInvalidTransactionPaymentNoSequence.setAccount(transactionAccountProto)
+testInvalidTransactionPaymentNoSequence.setFee(transactionFeeProto)
+testInvalidTransactionPaymentNoSequence.setSigningPublicKey(
+  signingPublicKeyProto,
+)
+testInvalidTransactionPaymentNoSequence.setTransactionSignature(
+  transactionSignatureProto,
+)
+testInvalidTransactionPaymentNoSequence.setPayment(
+  testPaymentProtoMandatoryFieldsOnly,
+)
+
+// ... no signingPublicKey
+const testInvalidTransactionPaymentNoSigningPublicKey = new Transaction()
+testInvalidTransactionPaymentNoSigningPublicKey.setAccount(
+  transactionAccountProto,
+)
+testInvalidTransactionPaymentNoSigningPublicKey.setFee(transactionFeeProto)
+testInvalidTransactionPaymentNoSigningPublicKey.setSequence(
+  transactionSequenceProto,
+)
+testInvalidTransactionPaymentNoSigningPublicKey.setTransactionSignature(
+  transactionSignatureProto,
+)
+testInvalidTransactionPaymentNoSigningPublicKey.setPayment(
+  testPaymentProtoMandatoryFieldsOnly,
+)
+
+// ... no signers
+const testInvalidTransactionPaymentNoSigners = new Transaction()
+testInvalidTransactionPaymentNoSigners.setAccount(transactionAccountProto)
+testInvalidTransactionPaymentNoSigners.setFee(transactionFeeProto)
+testInvalidTransactionPaymentNoSigners.setSequence(transactionSequenceProto)
+testInvalidTransactionPaymentNoSigners.setSigningPublicKey(
+  signingPublicKeyProtoEmpty,
+)
+testInvalidTransactionPaymentNoSigners.setTransactionSignature(
+  transactionSignatureProto,
+)
+testInvalidTransactionPaymentNoSigners.setPayment(
+  testPaymentProtoMandatoryFieldsOnly,
+)
+
+// ... no transactionSignature
+const testInvalidTransactionPaymentNoSignature = new Transaction()
+testInvalidTransactionPaymentNoSignature.setAccount(transactionAccountProto)
+testInvalidTransactionPaymentNoSignature.setFee(transactionFeeProto)
+testInvalidTransactionPaymentNoSignature.setSequence(transactionSequenceProto)
+testInvalidTransactionPaymentNoSignature.setSigningPublicKey(
+  signingPublicKeyProto,
+)
+testInvalidTransactionPaymentNoSignature.setPayment(
+  testPaymentProtoMandatoryFieldsOnly,
+)
+
+// ... no data
+const testInvalidTransactionPaymentNoData = new Transaction()
+testInvalidTransactionPaymentNoData.setAccount(transactionAccountProto)
+testInvalidTransactionPaymentNoData.setFee(transactionFeeProto)
+testInvalidTransactionPaymentNoData.setSequence(transactionSequenceProto)
+testInvalidTransactionPaymentNoData.setSigningPublicKey(signingPublicKeyProto)
+testInvalidTransactionPaymentNoData.setTransactionSignature(
+  transactionSignatureProto,
+)
+
 // Invalid GetTransactionResponse protos
 const testInvalidGetTransactionResponseProto = new GetTransactionResponse()
 testInvalidGetTransactionResponseProto.setTransaction(
@@ -481,6 +635,81 @@ testInvalidGetTransactionResponseProtoUnsupportedType.setTransaction(
 )
 testInvalidGetTransactionResponseProtoUnsupportedType.setHash(
   testTransactionHash,
+)
+
+// ... no transaction
+const testInvalidGetTransactionResponseProtoNoTransaction = new GetTransactionResponse()
+testInvalidGetTransactionResponseProtoNoTransaction.setHash(testTransactionHash)
+
+// ... no account
+const testInvalidGetTransactionResponseProtoNoAccount = new GetTransactionResponse()
+testInvalidGetTransactionResponseProtoNoAccount.setTransaction(
+  testInvalidPaymentTransactionNoAccount,
+)
+testInvalidGetTransactionResponseProtoNoAccount.setHash(testTransactionHash)
+
+// ... bad account
+const testInvalidGetTransactionResponseProtoBadAccount = new GetTransactionResponse()
+testInvalidGetTransactionResponseProtoBadAccount.setTransaction(
+  testInvalidPaymentTransactionBadAccount,
+)
+testInvalidGetTransactionResponseProtoBadAccount.setHash(testTransactionHash)
+
+// ... no fee
+const testInvalidGetTransactionResponseProtoNoFee = new GetTransactionResponse()
+testInvalidGetTransactionResponseProtoNoFee.setTransaction(
+  testInvalidPaymentTransactionNoFee,
+)
+testInvalidGetTransactionResponseProtoNoFee.setHash(testTransactionHash)
+
+// ... non-int fee
+const testInvalidGetTransactionResponseProtoBadFee = new GetTransactionResponse()
+testInvalidGetTransactionResponseProtoBadFee.setTransaction(
+  testInvalidTransactionPaymentBadFee,
+)
+testInvalidGetTransactionResponseProtoBadFee.setHash(testTransactionHash)
+
+// ... no sequence
+const testInvalidGetTransactionResponseProtoNoSequence = new GetTransactionResponse()
+testInvalidGetTransactionResponseProtoNoSequence.setTransaction(
+  testInvalidTransactionPaymentNoSequence,
+)
+testInvalidGetTransactionResponseProtoNoSequence.setHash(testTransactionHash)
+
+// ... no signingPublicKey
+const testInvalidGetTransactionResponseProtoNoSigningPublicKey = new GetTransactionResponse()
+testInvalidGetTransactionResponseProtoNoSigningPublicKey.setTransaction(
+  testInvalidTransactionPaymentNoSigningPublicKey,
+)
+testInvalidGetTransactionResponseProtoNoSigningPublicKey.setHash(
+  testTransactionHash,
+)
+
+// ... no signers
+const testInvalidGetTransactionResponseProtoNoSigners = new GetTransactionResponse()
+testInvalidGetTransactionResponseProtoNoSigners.setTransaction(
+  testInvalidTransactionPaymentNoSigners,
+)
+testInvalidGetTransactionResponseProtoNoSigners.setHash(testTransactionHash)
+
+// ... no transactionSignature
+const testInvalidGetTransactionResponseProtoNoSignature = new GetTransactionResponse()
+testInvalidGetTransactionResponseProtoNoSignature.setTransaction(
+  testInvalidTransactionPaymentNoSignature,
+)
+testInvalidGetTransactionResponseProtoNoSignature.setHash(testTransactionHash)
+
+// ... no data
+const testInvalidGetTransactionResponseProtoNoData = new GetTransactionResponse()
+testInvalidGetTransactionResponseProtoNoData.setTransaction(
+  testInvalidTransactionPaymentNoData,
+)
+testInvalidGetTransactionResponseProtoNoData.setHash(testTransactionHash)
+
+// ... no hash
+const testInvalidGetTransactionResponseProtoNoHash = new GetTransactionResponse()
+testInvalidGetTransactionResponseProtoNoHash.setTransaction(
+  testTransactionPaymentMandatoryFields,
 )
 
 // Invalid GetAccountTransactionHistoryResponse proto
@@ -568,6 +797,7 @@ export {
   testXrpTransaction,
   testGetAccountTransactionHistoryResponse,
   testGetTransactionResponseProtoMandatoryOnly,
+  testGetTransactionResponseProtoSigners,
   testInvalidCurrencyProtoNoName,
   testInvalidCurrencyProtoNoCode,
   testInvalidIssuedCurrencyProtoBadValue,
@@ -587,10 +817,22 @@ export {
   testInvalidPaymentProtoNoSendMax,
   testInvalidPaymentTransaction,
   testInvalidSignerProtoNoAccount,
+  testInvalidSignerProtoBadAccount,
   testInvalidSignerProtoNoPublicKey,
   testInvalidSignerProtoNoTxnSignature,
   testInvalidGetTransactionResponseProto,
   testInvalidGetTransactionResponseProtoUnsupportedType,
+  testInvalidGetTransactionResponseProtoNoTransaction,
+  testInvalidGetTransactionResponseProtoNoAccount,
+  testInvalidGetTransactionResponseProtoBadAccount,
+  testInvalidGetTransactionResponseProtoNoFee,
+  testInvalidGetTransactionResponseProtoBadFee,
+  testInvalidGetTransactionResponseProtoNoSequence,
+  testInvalidGetTransactionResponseProtoNoSigningPublicKey,
+  testInvalidGetTransactionResponseProtoNoSigners,
+  testInvalidGetTransactionResponseProtoNoSignature,
+  testInvalidGetTransactionResponseProtoNoData,
+  testInvalidGetTransactionResponseProtoNoHash,
   testInvalidGetAccountTransactionHistoryResponse,
   testInvalidSignerEntryProtoNoAccount,
   testInvalidSignerEntryProtoBadAccount,

@@ -63,9 +63,7 @@ class FakeXrpClient implements XrpClientDecorator {
     return FakeXrpClient.returnOrThrow(this.paymentHistoryValue)
   }
 
-  async getPayment(
-    _transactionHash: string,
-  ): Promise<XrpTransaction | undefined> {
+  async getPayment(_transactionHash: string): Promise<XrpTransaction> {
     return FakeXrpClient.returnOrThrow(this.getPaymentValue)
   }
 

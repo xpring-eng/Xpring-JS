@@ -30,9 +30,7 @@ export default class XRPTestUtils {
         transactions[i],
         XrplNetwork.Test,
       )
-      if (paymentXrpTransaction) {
-        paymentXrpTransactions.push(paymentXrpTransaction)
-      }
+      paymentXrpTransactions.push(paymentXrpTransaction)
     }
     return paymentXrpTransactions
   }
