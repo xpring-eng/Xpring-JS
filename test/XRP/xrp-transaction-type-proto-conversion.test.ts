@@ -48,6 +48,7 @@ import {
   testSetRegularKeyProtoWithKey,
   testSetRegularKeyProtoNoKey,
   testSignerListSetProto,
+  testSignerListSetProtoDelete,
   testTrustSetProtoAllFields,
   testTrustSetProtoMandatoryOnly,
   testInvalidAccountSetProtoBadDomain,
@@ -89,7 +90,10 @@ import {
   testInvalidPaymentChannelCreateProtoNoPublicKey,
   testInvalidPaymentChannelFundProtoNoAmount,
   testInvalidPaymentChannelFundProtoNoChannel,
-  testInvalidSignerListSetProto,
+  testInvalidSignerListSetProtoNoSignerQuorum,
+  testInvalidSignerListSetProtoNoSignerEntries,
+  testInvalidSignerListSetProtoTooManySignerEntries,
+  testInvalidSignerListSetProtoRepeatAddresses,
   testInvalidTrustSetProto,
   testInvalidTrustSetProtoXRP,
   testSignerEntry1,
@@ -1163,7 +1167,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
 
     // THEN the SignerListSet converted as expected.
-    const expectedSignerEntries: Array<XRPSignerEntry | undefined> = [
+    const expectedSignerEntries: Array<XRPSignerEntry> = [
       XRPSignerEntry.from(testSignerEntry1, XrplNetwork.Test),
       XRPSignerEntry.from(testSignerEntry2, XrplNetwork.Test),
     ]
@@ -1175,16 +1179,63 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.deepEqual(signerListSet?.signerEntries, expectedSignerEntries)
   })
 
-  it('Convert SignerListSet protobuf to XrpSignerListSet object - missing signerEntries', function (): void {
-    // GIVEN a SignerListSet protocol buffer without signerQuorum set.
+  it('Convert SignerListSet protobuf to XrpSignerListSet object - delete', function (): void {
+    // GIVEN a SetRegularKey protocol buffer with all fields set.
     // WHEN the protocol buffer is converted to a native Typescript type.
     const signerListSet = XrpSignerListSet.from(
-      testInvalidSignerListSetProto,
+      testSignerListSetProtoDelete,
       XrplNetwork.Test,
     )
 
-    // THEN the result is undefined.
-    assert.isUndefined(signerListSet)
+    assert.equal(
+      signerListSet.signerQuorum,
+      testSignerListSetProtoDelete.getSignerQuorum()?.getValue(),
+    )
+    assert.deepEqual(signerListSet.signerEntries, [])
+  })
+
+  it('Convert SignerListSet protobuf to XrpSignerListSet object - missing signerQuorum', function (): void {
+    // GIVEN a SignerListSet protocol buffer without signerQuorum set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    assert.throws(() => {
+      XrpSignerListSet.from(
+        testInvalidSignerListSetProtoNoSignerQuorum,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert SignerListSet protobuf to XrpSignerListSet object - missing signerEntries', function (): void {
+    // GIVEN a SignerListSet protocol buffer without signerEntries set.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    assert.throws(() => {
+      XrpSignerListSet.from(
+        testInvalidSignerListSetProtoNoSignerEntries,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert SignerListSet protobuf to XrpSignerListSet object - signerEntries too large', function (): void {
+    // GIVEN a SignerListSet protocol buffer with too many elements in signerEntries.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    assert.throws(() => {
+      XrpSignerListSet.from(
+        testInvalidSignerListSetProtoTooManySignerEntries,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert SignerListSet protobuf to XrpSignerListSet object - repeat addresses in signerEntries', function (): void {
+    // GIVEN a SignerListSet protocol buffer with repeat addresses in signerEntries.
+    // WHEN the protocol buffer is converted to a native Typescript type.
+    assert.throws(() => {
+      XrpSignerListSet.from(
+        testInvalidSignerListSetProtoRepeatAddresses,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
   })
 
   // TrustSet
