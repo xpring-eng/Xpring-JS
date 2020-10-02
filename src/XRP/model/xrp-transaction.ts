@@ -143,7 +143,7 @@ export default class XrpTransaction {
       case Transaction.TransactionDataCase.TRANSACTION_DATA_NOT_SET: {
         throw new XrpError(
           XrpErrorType.MalformedProtobuf,
-          'Transaction protobuf is missing transaction data.',
+          'Transaction protobuf is missing transaction data case.',
         )
       }
       default:
