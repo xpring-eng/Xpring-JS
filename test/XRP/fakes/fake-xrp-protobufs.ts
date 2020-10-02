@@ -46,10 +46,10 @@ const testCurrencyName = 'currencyName'
 const testCurrencyCode = new Uint8Array([1, 2, 3])
 const testAddress = 'rsKouRxYLWGseFwXSAo57qXjcGiNqR55wr'
 const testAddress2 = 'rPuNV4oA6f3SrKA4pLEpdVZW6QLvn3UJxK'
+const testInvalidAddress = 'badAddress'
 const testIssuedCurrencyValue = '100'
 const testInvalidIssuedCurrencyValue = 'xrp' // non-numeric
 const testPublicKey = new Uint8Array([1, 2, 3])
-const testInvalidAddress = 'badAddress'
 const testTransactionSignature = new Uint8Array([4, 5, 6])
 const testSequence = 1
 const testFee = '3'
@@ -170,15 +170,15 @@ paymentAmountProtoXRP.setValue(testCurrencyAmountProtoDrops)
 const destinationAccountAddressProto = new AccountAddress()
 destinationAccountAddressProto.setAddress(testAddress2)
 
-const invalidDestinationAccountAddressProto = new AccountAddress()
-invalidDestinationAccountAddressProto.setAddress(testInvalidAddress)
+const invalidAccountAddressProto = new AccountAddress()
+invalidAccountAddressProto.setAddress(testInvalidAddress)
 
 // Destination proto
 const paymentDestinationProto = new Destination()
 paymentDestinationProto.setValue(destinationAccountAddressProto)
 
 const invalidPaymentDestinationProto = new Destination()
-invalidPaymentDestinationProto.setValue(invalidDestinationAccountAddressProto)
+invalidPaymentDestinationProto.setValue(invalidAccountAddressProto)
 
 // DestinationTag proto
 const destinationTagProto = new DestinationTag()
@@ -493,6 +493,24 @@ testInvalidGetAccountTransactionHistoryResponse.setTransactionsList(
   invalidTransactionResponseList,
 )
 
+// Invalid SignerEntry protos
+const testInvalidSignerEntryAccountProto = new Account()
+testInvalidSignerEntryAccountProto.setValue(invalidAccountAddressProto)
+
+const testInvalidSignerEntryProtoNoAccount = new SignerEntry()
+testInvalidSignerEntryProtoNoAccount.setSignerWeight(testSignerWeightProto)
+
+const testInvalidSignerEntryProtoBadAccount = new SignerEntry()
+testInvalidSignerEntryProtoBadAccount.setAccount(
+  testInvalidSignerEntryAccountProto,
+)
+testInvalidSignerEntryProtoBadAccount.setSignerWeight(testSignerWeightProto)
+
+const testInvalidSignerEntryProtoNoSignerWeight = new SignerEntry()
+testInvalidSignerEntryProtoNoSignerWeight.setAccount(
+  testSignerEntryAccountProto,
+)
+
 // XRP OBJECTS ===================================================
 
 // test XrpTransaction
@@ -574,4 +592,7 @@ export {
   testInvalidGetTransactionResponseProto,
   testInvalidGetTransactionResponseProtoUnsupportedType,
   testInvalidGetAccountTransactionHistoryResponse,
+  testInvalidSignerEntryProtoNoAccount,
+  testInvalidSignerEntryProtoBadAccount,
+  testInvalidSignerEntryProtoNoSignerWeight,
 }

@@ -519,7 +519,6 @@ testInvalidDepositPreauthProtoSetBadAuthorize.setAuthorize(
 )
 
 // Invalid DepositPreauth proto (bad unauthorize)
-
 const testInvalidDepositPreauthProtoSetBadUnauthorize = new DepositPreauth()
 testInvalidDepositPreauthProtoSetBadUnauthorize.setUnauthorize(
   testInvalidUnauthorizeProto,
@@ -630,13 +629,66 @@ testInvalidPaymentChannelClaimProtoSignatureNoPublicKey.setPaymentChannelSignatu
   testPaymentChannelSignatureProto,
 )
 
+// Invalid PaymentChannelCreate proto (missing amount)
+const testInvalidPaymentChannelCreateProtoNoAmount = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoNoAmount.setDestination(
+  testDestinationProto,
+)
+testInvalidPaymentChannelCreateProtoNoAmount.setSettleDelay(
+  testSettleDelayProto,
+)
+testInvalidPaymentChannelCreateProtoNoAmount.setPublicKey(testPublicKeyProto)
+
 // Invalid PaymentChannelCreate proto (missing destination)
-const testInvalidPaymentChannelCreateProto = new PaymentChannelCreate()
-testInvalidPaymentChannelCreateProto.setAmount(testAmountProto)
+const testInvalidPaymentChannelCreateProtoNoDestination = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoNoDestination.setAmount(testAmountProto)
+testInvalidPaymentChannelCreateProtoNoDestination.setSettleDelay(
+  testSettleDelayProto,
+)
+testInvalidPaymentChannelCreateProtoNoDestination.setPublicKey(
+  testPublicKeyProto,
+)
+
+// Invalid PaymentChannelCreate proto (bad destination)
+const testInvalidPaymentChannelCreateProtoBadDestination = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoBadDestination.setAmount(testAmountProto)
+testInvalidPaymentChannelCreateProtoBadDestination.setDestination(
+  testInvalidDestinationProto,
+)
+testInvalidPaymentChannelCreateProtoBadDestination.setSettleDelay(
+  testSettleDelayProto,
+)
+testInvalidPaymentChannelCreateProtoBadDestination.setPublicKey(
+  testPublicKeyProto,
+)
+
+// Invalid PaymentChannelCreate proto (missing settleDelay)
+const testInvalidPaymentChannelCreateProtoNoSettleDelay = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoNoSettleDelay.setAmount(testAmountProto)
+testInvalidPaymentChannelCreateProtoNoSettleDelay.setDestination(
+  testDestinationProto,
+)
+testInvalidPaymentChannelCreateProtoNoSettleDelay.setPublicKey(
+  testPublicKeyProto,
+)
+
+// Invalid PaymentChannelCreate proto (missing publicKey)
+const testInvalidPaymentChannelCreateProtoNoPublicKey = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoNoPublicKey.setAmount(testAmountProto)
+testInvalidPaymentChannelCreateProtoNoPublicKey.setDestination(
+  testDestinationProto,
+)
+testInvalidPaymentChannelCreateProtoNoPublicKey.setSettleDelay(
+  testSettleDelayProto,
+)
 
 // Invalid PaymentChannelFund proto (missing amount)
-const testInvalidPaymentChannelFundProto = new PaymentChannelFund()
-testInvalidPaymentChannelFundProto.setChannel(testChannelProto)
+const testInvalidPaymentChannelFundProtoNoAmount = new PaymentChannelFund()
+testInvalidPaymentChannelFundProtoNoAmount.setChannel(testChannelProto)
+
+// Invalid PaymentChannelFund proto (missing channel)
+const testInvalidPaymentChannelFundProtoNoChannel = new PaymentChannelFund()
+testInvalidPaymentChannelFundProtoNoChannel.setAmount(testAmountProto)
 
 // Invalid SignerListSet proto (missing SignerEntries)
 const testInvalidSignerListSetProto = new SignerListSet()
@@ -717,8 +769,13 @@ export {
   testInvalidOfferCreateProtoNoTakerPays,
   testInvalidPaymentChannelClaimProtoNoChannel,
   testInvalidPaymentChannelClaimProtoSignatureNoPublicKey,
-  testInvalidPaymentChannelCreateProto,
-  testInvalidPaymentChannelFundProto,
+  testInvalidPaymentChannelCreateProtoNoAmount,
+  testInvalidPaymentChannelCreateProtoNoDestination,
+  testInvalidPaymentChannelCreateProtoBadDestination,
+  testInvalidPaymentChannelCreateProtoNoSettleDelay,
+  testInvalidPaymentChannelCreateProtoNoPublicKey,
+  testInvalidPaymentChannelFundProtoNoAmount,
+  testInvalidPaymentChannelFundProtoNoChannel,
   testInvalidSignerListSetProto,
   testInvalidTrustSetProto,
   testInvalidTrustSetProtoXRP,
