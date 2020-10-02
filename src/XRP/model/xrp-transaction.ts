@@ -149,7 +149,7 @@ export default class XrpTransaction {
       default:
         throw new XrpError(
           XrpErrorType.MalformedProtobuf,
-          'Transaction protobuf has an unsupported transaction type.',
+          'Transaction protobuf is of a transaction type unsupported by xpring-js.',
         )
     }
 

@@ -798,7 +798,6 @@ describe('Protocol Buffer Conversion', function (): void {
 
   it('Convert PAYMENT Transaction with no signers', function (): void {
     // GIVEN a GetTransactionResponse protocol buffer with a Transaction field missing a signers field
-    // with an empty signingPublicKey field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
       XrpTransaction.from(
@@ -821,7 +820,6 @@ describe('Protocol Buffer Conversion', function (): void {
 
   it('Convert PAYMENT Transaction with no data', function (): void {
     // GIVEN a GetTransactionResponse protocol buffer with a Transaction field missing a data field
-    // with an empty signingPublicKey field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
       XrpTransaction.from(
@@ -833,7 +831,6 @@ describe('Protocol Buffer Conversion', function (): void {
 
   it('Convert PAYMENT Transaction with no hash', function (): void {
     // GIVEN a GetTransactionResponse protocol buffer with a Transaction field missing a hash field
-    // with an empty signingPublicKey field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
       XrpTransaction.from(
