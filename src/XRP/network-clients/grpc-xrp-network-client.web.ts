@@ -1,28 +1,28 @@
 import {
   GetAccountTransactionHistoryRequest,
   GetAccountTransactionHistoryResponse,
-} from './Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
-import { XRPLedgerAPIServiceClient } from './Generated/web/org/xrpl/rpc/v1/xrp_ledger_grpc_web_pb'
+} from '../Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+import { XRPLedgerAPIServiceClient } from '../Generated/web/org/xrpl/rpc/v1/xrp_ledger_grpc_web_pb'
 
-import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
+import { AccountAddress } from '../Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from './Generated/web/org/xrpl/rpc/v1/submit_pb'
+} from '../Generated/web/org/xrpl/rpc/v1/submit_pb'
 import {
   GetTransactionRequest,
   GetTransactionResponse,
-} from './Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+} from '../Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 import {
   GetFeeRequest,
   GetFeeResponse,
-} from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
+} from '../Generated/web/org/xrpl/rpc/v1/get_fee_pb'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
-} from './Generated/web/org/xrpl/rpc/v1/get_account_info_pb'
+} from '../Generated/web/org/xrpl/rpc/v1/get_account_info_pb'
 import { XrpNetworkClient } from './xrp-network-client'
-import isNode from '../Common/utils'
+import isNode from '../../Common/utils'
 
 /**
  * A GRPC Based network client.

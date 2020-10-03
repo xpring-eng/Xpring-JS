@@ -2,26 +2,26 @@ import * as grpc from '@grpc/grpc-js'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
-} from './Generated/node/org/xrpl/rpc/v1/get_account_info_pb'
+} from '../Generated/node/org/xrpl/rpc/v1/get_account_info_pb'
 import {
   GetFeeRequest,
   GetFeeResponse,
-} from './Generated/node/org/xrpl/rpc/v1/get_fee_pb'
+} from '../Generated/node/org/xrpl/rpc/v1/get_fee_pb'
 import {
   SubmitTransactionRequest,
   SubmitTransactionResponse,
-} from './Generated/node/org/xrpl/rpc/v1/submit_pb'
-import * as XRPLedgerGrpcPb from './Generated/node/org/xrpl/rpc/v1/xrp_ledger_grpc_pb'
-import { AccountAddress } from './Generated/node/org/xrpl/rpc/v1/account_pb'
+} from '../Generated/node/org/xrpl/rpc/v1/submit_pb'
+import * as XRPLedgerGrpcPb from '../Generated/node/org/xrpl/rpc/v1/xrp_ledger_grpc_pb'
+import { AccountAddress } from '../Generated/node/org/xrpl/rpc/v1/account_pb'
 import {
   GetAccountTransactionHistoryRequest,
   GetAccountTransactionHistoryResponse,
-} from './Generated/node/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+} from '../Generated/node/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import {
   GetTransactionRequest,
   GetTransactionResponse,
-} from './Generated/node/org/xrpl/rpc/v1/get_transaction_pb'
-import isNode from '../Common/utils'
+} from '../Generated/node/org/xrpl/rpc/v1/get_transaction_pb'
+import isNode from '../../Common/utils'
 import { XrpNetworkClient } from './xrp-network-client'
 
 /**
