@@ -37,7 +37,7 @@ import {
   testGetAccountTransactionHistoryResponse,
   testTransactionPaymentAllFields,
 } from './fake-xrp-protobufs'
-import XrpError, { XrpErrorType } from '../../../src/XRP/xrp-error'
+import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
 
 /**
  * A list of responses the fake network client will give.

@@ -1,5 +1,5 @@
-import { GetTransactionResponse } from './Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
-import PaymentFlags from './model/payment-flags'
+import { GetTransactionResponse } from '../Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+import PaymentFlags from './payment-flags'
 
 /** Abstraction around raw Transaction Status for compatibility. */
 // TODO:(keefertaylor) This class is now defunct. Refactor and remove.

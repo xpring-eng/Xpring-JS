@@ -1,7 +1,7 @@
 import bigInt from 'big-integer'
 import { assert } from 'chai'
 import { XrplNetwork, XrpUtils } from 'xpring-common-js'
-import TransactionStatus from '../../src/XRP/transaction-status'
+import TransactionStatus from '../../src/XRP/shared/transaction-status'
 import XrpClient from '../../src/XRP/xrp-client'
 import GrpcNetworkClient from '../../src/XRP/grpc-xrp-network-client'
 
@@ -13,7 +13,7 @@ import XRPTestUtils, {
 } from './helpers/xrp-test-utils'
 import { LedgerSpecifier } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger_pb'
 import { XrpError } from '../../src/XRP'
-import { AccountRootFlags } from '../../src/XRP/model'
+import { AccountRootFlags } from '../../src/XRP/protobuf-wrappers'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds

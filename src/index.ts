@@ -25,8 +25,8 @@ export {
   XrpSigner,
   XrpTransactionType,
   XrpTransaction,
-} from './XRP/model'
-export { default as XrpError } from './XRP/xrp-error'
+} from './XRP/protobuf-wrappers'
+export { default as XrpError } from './XRP/shared/xrp-error'
 export { default as XrpPayIdClient } from './PayID/xrp-pay-id-client'
 
 /** PayID Functionality. */

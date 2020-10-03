@@ -1,13 +1,13 @@
 import { Wallet, XrplNetwork } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import XrpClientDecorator from './xrp-client-decorator'
-import TransactionStatus from './transaction-status'
+import TransactionStatus from './shared/transaction-status'
 import ReliableSubmissionXrpClient from './reliable-submission-xrp-client'
 import XrpClientInterface from './xrp-client-interface'
-import XrpTransaction from './model/xrp-transaction'
+import XrpTransaction from './protobuf-wrappers/xrp-transaction'
 
-import SendXrpDetails from './model/send-xrp-details'
-import TransactionResult from './model/transaction-result'
+import SendXrpDetails from './protobuf-wrappers/send-xrp-details'
+import TransactionResult from './protobuf-wrappers/transaction-result'
 
 /**
  * XrpClient is a client which interacts with the XRP Ledger.
