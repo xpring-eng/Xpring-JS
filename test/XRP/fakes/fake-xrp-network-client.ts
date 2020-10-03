@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { XrpNetworkClient } from '../../../src/XRP/xrp-network-client'
+import { XrpNetworkClient } from '../../../src/XRP/network-clients/xrp-network-client'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
