@@ -89,7 +89,7 @@ export default interface XrpClientInterface {
    * @throws An error if the transaction hash was invalid.
    * @returns An {@link XrpTransaction} object representing an XRP Ledger transaction.
    */
-  getPayment(transactionHash: string): Promise<XrpTransaction | undefined>
+  getPayment(transactionHash: string): Promise<XrpTransaction>
 
   /**
    * Enable Deposit Authorization for this XRPL account.
