@@ -642,7 +642,7 @@ describe('Default XRP Client', function (): void {
     const nonPaymentTransactionResponse = new GetTransactionResponse()
     nonPaymentTransactionResponse.setTransaction(testCheckCashTransaction)
     // add CHECKCASH transaction - history then contains payment and non-payment transactions
-    const heteregeneousTransactionHistory = testGetAccountTransactionHistoryResponse
+    const heteregeneousTransactionHistory = testGetAccountTransactionHistoryResponse.clone()
     heteregeneousTransactionHistory.addTransactions(
       nonPaymentTransactionResponse,
     )
@@ -782,10 +782,12 @@ describe('Default XRP Client', function (): void {
     const xrpClient = new DefaultXrpClient(fakeNetworkClient, XrplNetwork.Test)
 
     // WHEN a transaction is requested.
-    const transaction = await xrpClient.getPayment(transactionHash)
-
-    // THEN the result is undefined
-    assert.isUndefined(transaction)
+    try {
+      await xrpClient.getPayment(transactionHash)
+      assert.fail('No error thrown.')
+    } catch (e) {
+      assert(e.message.includes('Transaction protobuf'))
+    }
   })
 
   it('Enable Deposit Auth - successful response', async function (): Promise<

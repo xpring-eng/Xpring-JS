@@ -19,6 +19,7 @@ import XrpError, { XrpErrorType } from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import TransactionResult from './model/transaction-result'
 import isNode from '../Common/utils'
+import CoreXrplClientInterface from './core-xrpl-client-interface'
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
@@ -30,7 +31,7 @@ const maxLedgerVersionOffset = 10
 /**
  * CoreXrplClient is a client which supports the core, common functionality for interacting with the XRP Ledger.
  */
-export default class CoreXrplClient {
+export default class CoreXrplClient implements CoreXrplClientInterface {
   /**
    * Creates a new CoreXrplClient.
    *
