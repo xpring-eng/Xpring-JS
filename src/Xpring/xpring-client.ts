@@ -3,7 +3,7 @@ import { BigInteger } from 'big-integer'
 import XrpPayIdClientInterface from '../PayID/xrp-pay-id-client-interface'
 import XrpClientInterface from '../XRP/xrp-client-interface'
 import XpringError from './xpring-error'
-import SendXrpDetails from '../XRP/protobuf-wrappers/send-xrp-details'
+import SendXrpDetails from '../XRP/shared/send-xrp-details'
 
 /**
  * Composes interactions of Xpring services.

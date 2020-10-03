@@ -4,8 +4,8 @@ import TransactionStatus from './shared/transaction-status'
 
 import XrpTransaction from './protobuf-wrappers/xrp-transaction'
 import XrpMemo from './protobuf-wrappers/xrp-memo'
-import SendXrpDetails from './protobuf-wrappers/send-xrp-details'
-import TransactionResult from './protobuf-wrappers/transaction-result'
+import SendXrpDetails from './shared/send-xrp-details'
+import TransactionResult from './shared/transaction-result'
 
 /**
  * An interface describing XrpClient.

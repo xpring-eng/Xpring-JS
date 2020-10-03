@@ -6,8 +6,8 @@ import ReliableSubmissionXrpClient from './reliable-submission-xrp-client'
 import XrpClientInterface from './xrp-client-interface'
 import XrpTransaction from './protobuf-wrappers/xrp-transaction'
 
-import SendXrpDetails from './protobuf-wrappers/send-xrp-details'
-import TransactionResult from './protobuf-wrappers/transaction-result'
+import SendXrpDetails from './shared/send-xrp-details'
+import TransactionResult from './shared/transaction-result'
 
 /**
  * XrpClient is a client which interacts with the XRP Ledger.

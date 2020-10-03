@@ -3,8 +3,8 @@ import { BigInteger } from 'big-integer'
 import TransactionStatus from './shared/transaction-status'
 import XrpTransaction from './protobuf-wrappers/xrp-transaction'
 
-import SendXrpDetails from './protobuf-wrappers/send-xrp-details'
-import TransactionResult from './protobuf-wrappers/transaction-result'
+import SendXrpDetails from './shared/send-xrp-details'
+import TransactionResult from './shared/transaction-result'
 
 /** A decorator interface for XrpClients. */
 export default interface XrpClientDecorator {
