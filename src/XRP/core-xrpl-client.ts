@@ -324,10 +324,9 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
       rawTransactionStatus,
       lastLedgerPassed,
     } = await this.waitForFinalTransactionOutcome(transactionHash, wallet)
-    const finalStatus = this.getFinalTransactionStatus(
-      rawTransactionStatus,
-      lastLedgerPassed,
-    )
+    const finalStatus = lastLedgerPassed
+      ? TransactionStatus.LastLedgerSequenceExpired
+      : this.getFinalTransactionStatus(rawTransactionStatus)
     return TransactionResult.getFinalTransactionResult(
       transactionHash,
       finalStatus,
@@ -344,17 +343,15 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
    */
   private getFinalTransactionStatus(
     rawTransactionStatus: RawTransactionStatus,
-    lastLedgerPassed: boolean,
   ): TransactionStatus {
     if (rawTransactionStatus.transactionStatusCode.startsWith('tem')) {
       return TransactionStatus.MalformedTransaction
     }
-    if (lastLedgerPassed) {
-      return TransactionStatus.LastLedgerSequenceExpired
-    }
-    // Return pending if the transaction is not validated.
     if (!rawTransactionStatus.isValidated) {
-      return TransactionStatus.Pending // should never happen, can tighten up the logic
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        "The lastLedgerSequence was not passed, but the ledger is not validated either. `getFinalTransactionStatus` shouldn't be called in this case.",
+      )
     } else {
       const transactionStatus = rawTransactionStatus.transactionStatusCode?.startsWith(
         'tes',
