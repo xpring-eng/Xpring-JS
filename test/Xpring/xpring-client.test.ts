@@ -6,7 +6,6 @@ import FakeXrpPayIdClient from '../PayID/fakes/fake-xrp-pay-id-client'
 import { testXrpTransaction } from '../XRP/fakes/fake-xrp-protobufs'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import XpringClient from '../../src/Xpring/xpring-client'
-import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 
 import XpringError from '../../src/Xpring/xpring-error'
 import TransactionResult from '../../src/XRP/model/transaction-result'
@@ -19,17 +18,10 @@ import TransactionResult from '../../src/XRP/model/transaction-result'
 const fakeBalance = bigInt(10)
 const fakePaymentStatus = TransactionStatus.Succeeded
 const fakeTransactionHash = 'deadbeefdeadbeefdeadbeef'
-const fakeLastLedgerSequenceValue = 10
 const fakeAccountExistsResult = true
-const fakeRawTransactionStatus = new RawTransactionStatus(
-  true,
-  'tesSUCCESS',
-  fakeLastLedgerSequenceValue,
-  true,
-)
 const fakePaymentHistoryValue = []
 const fakeGetPaymentValue = testXrpTransaction
-const fakedEnableDepositAuthValue = new TransactionResult(
+const fakedEnableDepositAuthValue = TransactionResult.getFinalTransactionResult(
   fakeTransactionHash,
   TransactionStatus.Succeeded,
   true,
@@ -57,8 +49,6 @@ describe('Xpring Client', function (): void {
       fakeBalance,
       fakePaymentStatus,
       expectedTransactionHash,
-      fakeLastLedgerSequenceValue,
-      fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
@@ -84,8 +74,6 @@ describe('Xpring Client', function (): void {
       fakeBalance,
       fakePaymentStatus,
       expectedTransactionHash,
-      fakeLastLedgerSequenceValue,
-      fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
@@ -110,8 +98,6 @@ describe('Xpring Client', function (): void {
       fakeBalance,
       fakePaymentStatus,
       xrpError,
-      fakeLastLedgerSequenceValue,
-      fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
@@ -137,8 +123,6 @@ describe('Xpring Client', function (): void {
       fakeBalance,
       fakePaymentStatus,
       xrpError,
-      fakeLastLedgerSequenceValue,
-      fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
@@ -163,8 +147,6 @@ describe('Xpring Client', function (): void {
       fakeBalance,
       fakePaymentStatus,
       fakeTransactionHash,
-      fakeLastLedgerSequenceValue,
-      fakeRawTransactionStatus,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,

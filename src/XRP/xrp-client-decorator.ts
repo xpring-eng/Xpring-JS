@@ -1,7 +1,6 @@
 import { Wallet, XrplNetwork } from 'xpring-common-js'
 import { BigInteger } from 'big-integer'
 import TransactionStatus from './transaction-status'
-import RawTransactionStatus from './raw-transaction-status'
 import XrpTransaction from './model/xrp-transaction'
 
 import SendXrpDetails from './model/send-xrp-details'
@@ -59,33 +58,6 @@ export default interface XrpClientDecorator {
   sendWithDetails(sendXrpDetails: SendXrpDetails): Promise<string>
 
   /**
-   * Retrieve the latest validated ledger sequence on the XRP Ledger.
-   *
-   * Note: This call will throw if the given account does not exist on the ledger at the current time. It is the
-   * *caller's responsibility* to ensure this invariant is met.
-   *
-   * Note: The input address *must* be in a classic address form. Inputs are not checked to this internal method.
-   *
-   * TODO(keefertaylor): The above requirements are onerous, difficult to reason about and the logic of this method is
-   * brittle. Replace this method's implementation when rippled supports a `ledger` RPC via gRPC.
-   *
-   * @param address An address that exists at the current time. The address is unchecked and must be a classic address.
-   * @returns The index of the latest validated ledger.
-   * @throws XRPException If there was a problem communicating with the XRP Ledger.
-   */
-  getLatestValidatedLedgerSequence(address: string): Promise<number>
-
-  /**
-   * Retrieve the raw transaction status for the given transaction hash.
-   *
-   * @param transactionHash: The hash of the transaction.
-   * @returns The status of the given transaction.
-   */
-  getRawTransactionStatus(
-    transactionHash: string,
-  ): Promise<RawTransactionStatus>
-
-  /**
    * Check if an address exists on the XRP Ledger.
    *
    * @param address The address to check the existence of.
@@ -115,7 +87,7 @@ export default interface XrpClientDecorator {
    * @throws An error if the transaction hash was invalid.
    * @returns An {@link XrpTransaction} object representing an XRP Ledger transaction.
    */
-  getPayment(transactionHash: string): Promise<XrpTransaction | undefined>
+  getPayment(transactionHash: string): Promise<XrpTransaction>
 
   /**
    * Enable Deposit Authorization for this XRPL account.

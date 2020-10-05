@@ -7,6 +7,7 @@ import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
 import TransactionStatus from '../../src/XRP/transaction-status'
 import { testXrpTransaction } from './fakes/fake-xrp-protobufs'
 import TransactionResult from '../../src/XRP/model/transaction-result'
+import FakeCoreXrplClient from './fakes/fake-core-xrpl-client'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -17,22 +18,14 @@ const transactionHash = 'DEADBEEF'
 const fakedGetBalanceValue = bigInt(10)
 const fakedTransactionStatusValue = TransactionStatus.Succeeded
 const fakedSendValue = transactionHash
-const fakedLastLedgerSequenceValue = 10
-
 const fakedRawTransactionStatusLastLedgerSequenceValue = 20
 const fakedRawTransactionStatusValidatedValue = true
 const fakedRawTransactionStatusTransactionStatusCode = transactionStatusCodeSuccess
 const fakedAccountExistsValue = true
 const fakedFullPaymentValue = true
-const fakedRawTransactionStatusValue = new RawTransactionStatus(
-  fakedRawTransactionStatusValidatedValue,
-  fakedRawTransactionStatusTransactionStatusCode,
-  fakedRawTransactionStatusLastLedgerSequenceValue,
-  fakedFullPaymentValue,
-)
 const fakedTransactionHistoryValue = [testXrpTransaction]
 const fakedGetPaymentValue = testXrpTransaction
-const fakedEnableDepositAuthValue = new TransactionResult(
+const fakedTransactionResultValue = TransactionResult.getFinalTransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
   true,
@@ -44,15 +37,29 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedGetBalanceValue,
       fakedTransactionStatusValue,
       fakedSendValue,
-      fakedLastLedgerSequenceValue,
-      fakedRawTransactionStatusValue,
       fakedAccountExistsValue,
       fakedTransactionHistoryValue,
       fakedGetPaymentValue,
-      fakedEnableDepositAuthValue,
+      fakedTransactionResultValue,
+    )
+
+    this.fakedRawTransactionStatusValue = new RawTransactionStatus(
+      fakedRawTransactionStatusValidatedValue,
+      fakedRawTransactionStatusTransactionStatusCode,
+      fakedRawTransactionStatusLastLedgerSequenceValue,
+      fakedFullPaymentValue,
+    )
+    const fakedWaitForFinalTransactionOutcomeValue = {
+      rawTransactionStatus: this.fakedRawTransactionStatusValue,
+      lastLedgerPassed: false,
+    }
+    this.fakeCoreXrplClient = new FakeCoreXrplClient(
+      fakedWaitForFinalTransactionOutcomeValue,
+      fakedTransactionResultValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXrpClient(
       this.fakeXrpClient,
+      this.fakeCoreXrplClient,
       XrplNetwork.Test,
     )
   })
@@ -77,56 +84,13 @@ describe('Reliable Submission XRP Client', function (): void {
     assert.deepEqual(returnedValue, fakedTransactionStatusValue)
   })
 
-  it('Get Latest Ledger Sequence - Response Not Modified', async function () {
-    // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` WHEN the latest ledger sequence is retrieved.
-    const returnedValue = await this.reliableSubmissionClient.getLatestValidatedLedgerSequence(
-      testAddress,
-    )
-
-    // THEN the result is returned unaltered.
-    assert.deepEqual(returnedValue, fakedLastLedgerSequenceValue)
-  })
-
-  it('Get Raw Transaction Status - Response Not Modified', async function () {
-    // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` WHEN a raw transaction status is retrieved.
-    const returnedValue = await this.reliableSubmissionClient.getRawTransactionStatus(
-      testAddress,
-    )
-
-    // THEN the result is returned unaltered.
-    assert.deepEqual(returnedValue, fakedRawTransactionStatusValue)
-  })
-
-  it('Send - Returns when the latestLedgerSequence is too low', async function () {
-    // Increase timeout because `setTimeout` is only accurate to 1500ms.
-    this.timeout(5000)
-
-    // GIVEN A ledger sequence number that will increment in 200ms.
-    setTimeout(() => {
-      const latestLedgerSequence =
-        fakedRawTransactionStatusLastLedgerSequenceValue + 1
-      this.fakeXrpClient.latestLedgerSequence = latestLedgerSequence
-    }, 200)
-    const { wallet } = Wallet.generateRandomWallet()!
-
-    // WHEN a reliable send is submitted
-    const transactionHash = await this.reliableSubmissionClient.send(
-      '1',
-      testAddress,
-      wallet,
-    )
-
-    // THEN the function returns
-    assert.deepEqual(transactionHash, fakedSendValue)
-  })
-
   it('Send - Returns when the transaction is validated', async function () {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
     this.timeout(5000)
 
     // GIVEN A transaction that will validate itself in 200ms.
     setTimeout(() => {
-      fakedRawTransactionStatusValue.isValidated = true
+      this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
     const { wallet } = Wallet.generateRandomWallet()!
 
@@ -139,26 +103,6 @@ describe('Reliable Submission XRP Client', function (): void {
 
     // THEN the function returns
     assert.deepEqual(transactionHash, fakedSendValue)
-  })
-
-  it("Send - Throws when transaction doesn't have a last ledger sequence", function (done) {
-    // Increase timeout because the poll interview is 4s.
-    this.timeout(5000)
-
-    // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` which will return a transaction that did not have a last ledger sequence attached.
-    const malformedRawTransactionStatus = new RawTransactionStatus(
-      fakedRawTransactionStatusValidatedValue,
-      fakedRawTransactionStatusTransactionStatusCode,
-      0,
-      fakedFullPaymentValue,
-    )
-    this.fakeXrpClient.getRawTransactionStatusValue = malformedRawTransactionStatus
-    const { wallet } = Wallet.generateRandomWallet()!
-
-    // WHEN `send` is called THEN the promise is rejected.
-    this.reliableSubmissionClient
-      .send('1', testAddress, wallet)
-      .catch(() => done())
   })
 
   it('Payment History - Response Not Modified', async function () {
@@ -171,32 +115,13 @@ describe('Reliable Submission XRP Client', function (): void {
     assert.deepEqual(returnedValue, fakedTransactionHistoryValue)
   })
 
-  it('Enable Deposit Auth - Returns when the latestLedgerSequence is too low', async function () {
-    // Increase timeout because `setTimeout` is only accurate to 1500ms.
-    this.timeout(5000)
-
-    // GIVEN A ledger sequence number that will increment in 200ms.
-    setTimeout(() => {
-      const latestLedgerSequence =
-        fakedRawTransactionStatusLastLedgerSequenceValue + 1
-      this.fakeXrpClient.latestLedgerSequence = latestLedgerSequence
-    }, 200)
-    const { wallet } = Wallet.generateRandomWallet()!
-
-    // WHEN enableDepositAuth is called
-    const result = await this.reliableSubmissionClient.enableDepositAuth(wallet)
-
-    // THEN the function returns
-    assert.deepEqual(result.hash, fakedEnableDepositAuthValue.hash)
-  })
-
   it('Enable Deposit Auth - Returns when the transaction is validated', async function () {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
     this.timeout(5000)
 
     // GIVEN A transaction that will validate itself in 200ms.
     setTimeout(() => {
-      fakedRawTransactionStatusValue.isValidated = true
+      this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
     const { wallet } = Wallet.generateRandomWallet()!
 
@@ -204,24 +129,6 @@ describe('Reliable Submission XRP Client', function (): void {
     const result = await this.reliableSubmissionClient.enableDepositAuth(wallet)
 
     // THEN the function returns
-    assert.deepEqual(result.hash, fakedEnableDepositAuthValue.hash)
-  })
-
-  it("Enable Deposit Auth - Throws when transaction doesn't have a last ledger sequence", function (done) {
-    // Increase timeout because the poll interview is 4s.
-    this.timeout(5000)
-
-    // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` which will return a transaction that did not have a last ledger sequence attached.
-    const malformedRawTransactionStatus = new RawTransactionStatus(
-      fakedRawTransactionStatusValidatedValue,
-      fakedRawTransactionStatusTransactionStatusCode,
-      0,
-      fakedFullPaymentValue,
-    )
-    this.fakeXrpClient.getRawTransactionStatusValue = malformedRawTransactionStatus
-    const { wallet } = Wallet.generateRandomWallet()!
-
-    // WHEN `enableDepositAuth` is called THEN the promise is rejected.
-    this.reliableSubmissionClient.enableDepositAuth(wallet).catch(() => done())
+    assert.deepEqual(result.hash, fakedTransactionResultValue.hash)
   })
 })

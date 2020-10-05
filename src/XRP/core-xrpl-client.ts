@@ -15,10 +15,15 @@ import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
 import TransactionStatus from './transaction-status'
 import RawTransactionStatus from './raw-transaction-status'
 import { XrpNetworkClient } from './xrp-network-client'
-import XrpError from './xrp-error'
+import XrpError, { XrpErrorType } from './xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import TransactionResult from './model/transaction-result'
 import isNode from '../Common/utils'
+import CoreXrplClientInterface from './core-xrpl-client-interface'
+
+async function sleep(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds))
+}
 
 /** A margin to pad the current ledger sequence with when submitting transactions. */
 const maxLedgerVersionOffset = 10
@@ -26,7 +31,7 @@ const maxLedgerVersionOffset = 10
 /**
  * CoreXrplClient is a client which supports the core, common functionality for interacting with the XRP Ledger.
  */
-export default class CoreXrplClient {
+export default class CoreXrplClient implements CoreXrplClientInterface {
   /**
    * Creates a new CoreXrplClient.
    *
@@ -261,12 +266,19 @@ export default class CoreXrplClient {
     const rawStatus = await this.getRawTransactionStatus(transactionHash)
     const isValidated = rawStatus.isValidated
     const transactionStatus = await this.getTransactionStatus(transactionHash)
-
-    return new TransactionResult(
-      transactionHash,
-      transactionStatus,
-      isValidated,
-    )
+    // TODO: add logic to this method to investigate the transaction's last ledger sequence,
+    // the XRPL latest ledger sequence, and make a more granular distinction in case of yet-unvalidated txn??
+    return isValidated
+      ? TransactionResult.getFinalTransactionResult(
+          transactionHash,
+          transactionStatus,
+          isValidated,
+        )
+      : TransactionResult.getPendingTransactionResult(
+          transactionHash,
+          transactionStatus,
+          isValidated,
+        )
   }
 
   /**
@@ -293,5 +305,144 @@ export default class CoreXrplClient {
     return transactionStatus.transactionStatusCode?.startsWith('tes')
       ? TransactionStatus.Succeeded
       : TransactionStatus.Failed
+  }
+
+  /**
+   * Waits for a transaction to complete and returns a TransactionResult.
+   *
+   * @param transactionHash The transaction to wait for.
+   * @param wallet The wallet sending the transaction.
+   *
+   * @returns A Promise resolving to a TransactionResult containing the results of the transaction associated with
+   * the given transaction hash.
+   */
+  public async getFinalTransactionResultAsync(
+    transactionHash: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const {
+      rawTransactionStatus,
+      lastLedgerPassed,
+    } = await this.waitForFinalTransactionOutcome(transactionHash, wallet)
+    const finalStatus = lastLedgerPassed
+      ? TransactionStatus.LastLedgerSequenceExpired
+      : this.getFinalTransactionStatus(rawTransactionStatus)
+    return TransactionResult.getFinalTransactionResult(
+      transactionHash,
+      finalStatus,
+      rawTransactionStatus.isValidated,
+    )
+  }
+
+  /**
+   * Determines the current TransactionStatus from a RawTransactionStatus (translating from
+   * a rippled transaction status code such as `tesSUCCESS`, in conjunction with validated
+   * status, into a TransactionStatus enum instance)
+   *
+   * @param rawTransactionStatus
+   */
+  private getFinalTransactionStatus(
+    rawTransactionStatus: RawTransactionStatus,
+  ): TransactionStatus {
+    if (rawTransactionStatus.transactionStatusCode.startsWith('tem')) {
+      return TransactionStatus.MalformedTransaction
+    }
+    if (!rawTransactionStatus.isValidated) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        "The lastLedgerSequence was not passed, but the ledger is not validated either. `getFinalTransactionStatus` shouldn't be called in this case.",
+      )
+    } else {
+      const transactionStatus = rawTransactionStatus.transactionStatusCode?.startsWith(
+        'tes',
+      )
+        ? TransactionStatus.Succeeded
+        : TransactionStatus.Failed
+      return transactionStatus
+    }
+  }
+
+  /**
+   * The core logic of reliable submission.  Polls the ledger until the result of the transaction
+   * can be considered final, meaning it has either been included in a validated ledger, or the
+   * transaction's lastLedgerSequence has been surpassed by the latest ledger sequence (meaning it
+   * will never be included in a validated ledger.)
+   *
+   * @param transactionHash The hash of the transaction being awaited.
+   * @param sender The address used to obtain the latest ledger sequence.
+   */
+  public async waitForFinalTransactionOutcome(
+    transactionHash: string,
+    sender: Wallet,
+  ): Promise<{
+    rawTransactionStatus: RawTransactionStatus
+    lastLedgerPassed: boolean
+  }> {
+    const ledgerCloseTimeMs = 4 * 1000
+    await sleep(ledgerCloseTimeMs)
+
+    // Get transaction status.
+    let rawTransactionStatus = await this.getRawTransactionStatus(
+      transactionHash,
+    )
+    const { lastLedgerSequence } = rawTransactionStatus
+    if (!lastLedgerSequence) {
+      return Promise.reject(
+        new Error(
+          'The transaction did not have a lastLedgerSequence field so transaction status cannot be reliably determined.',
+        ),
+      )
+    }
+
+    // Decode the sending address to a classic address for use in determining the last ledger sequence.
+    // An invariant of `getLatestValidatedLedgerSequence` is that the given input address (1) exists when the method
+    // is called and (2) is in a classic address form.
+    //
+    // The sending address should always exist, except in the case where it is deleted. A deletion would supersede the
+    // transaction in flight, either by:
+    // 1) Consuming the nonce sequence number of the transaction, which would effectively cancel the transaction
+    // 2) Occur after the transaction has settled which is an unlikely enough case that we ignore it.
+    //
+    // This logic is brittle and should be replaced when we have an RPC that can give us this data.
+    const classicAddress = XrpUtils.decodeXAddress(sender.getAddress())
+    if (!classicAddress) {
+      throw new XrpError(
+        XrpErrorType.Unknown,
+        'The source wallet reported an address which could not be decoded to a classic address',
+      )
+    }
+    const sourceClassicAddress = classicAddress.address
+
+    // Retrieve the latest ledger index.
+    let latestLedgerSequence = await this.getLatestValidatedLedgerSequence(
+      sourceClassicAddress,
+    )
+
+    // Poll until the transaction is validated, or until the lastLedgerSequence has been passed.
+    /*
+     * In general, performing an await as part of each operation is an indication that the program is not taking full advantage of the parallelization benefits of async/await.
+     * Usually, the code should be refactored to create all the promises at once, then get access to the results using Promise.all(). Otherwise, each successive operation will not start until the previous one has completed.
+     * But here specifically, it is reasonable to await in a loop, because we need to wait for the ledger, and there is no good way to refactor this.
+     * https://eslint.org/docs/rules/no-await-in-loop
+     */
+    /* eslint-disable no-await-in-loop */
+    while (
+      latestLedgerSequence <= lastLedgerSequence &&
+      !rawTransactionStatus.isValidated
+    ) {
+      await sleep(ledgerCloseTimeMs)
+
+      // Update latestLedgerSequence and rawTransactionStatus
+      latestLedgerSequence = await this.getLatestValidatedLedgerSequence(
+        sourceClassicAddress,
+      )
+      rawTransactionStatus = await this.getRawTransactionStatus(transactionHash)
+    }
+    /* eslint-enable no-await-in-loop */
+    const lastLedgerPassed = latestLedgerSequence >= lastLedgerSequence
+    return {
+      rawTransactionStatus: rawTransactionStatus,
+      lastLedgerPassed: lastLedgerPassed,
+    }
   }
 }
