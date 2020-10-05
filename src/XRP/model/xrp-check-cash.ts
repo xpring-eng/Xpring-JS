@@ -37,16 +37,10 @@ export default class XrpCheckCash {
       ? XrpCurrencyAmount.from(deliverMinCurrencyAmount)
       : undefined
 
-    if (deliverMin && amount) {
-      throw new XrpError(
-        XrpErrorType.MalformedProtobuf,
-        'CheckCash protobuf is contains both `amount` and `deliverMin` fields.',
-      )
-    }
     if (!deliverMin && !amount) {
       throw new XrpError(
         XrpErrorType.MalformedProtobuf,
-        'CheckCash protobuf is contains neither `amount` nor `deliverMin` fields.',
+        'CheckCash protobuf contains neither `amount` nor `deliverMin` fields.',
       )
     }
 
