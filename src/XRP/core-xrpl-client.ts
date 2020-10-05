@@ -347,6 +347,11 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
     if (rawTransactionStatus.transactionStatusCode.startsWith('tem')) {
       return TransactionStatus.MalformedTransaction
     }
+
+    if (rawTransactionStatus.transactionStatusCode.startsWith('tec')) {
+      return TransactionStatus.ClaimedCostOnly
+    }
+
     if (!rawTransactionStatus.isValidated) {
       throw new XrpError(
         XrpErrorType.InvalidInput,

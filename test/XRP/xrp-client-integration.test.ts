@@ -249,37 +249,51 @@ describe('XrpClient Integration Tests', function (): void {
     assert.equal(transactionStatus, TransactionStatus.MalformedTransaction)
   })
 
-  it.only('Authorize Sending Account - can send funds after authorize', async function (): Promise<
+  it('Authorize Sending Account - failure on authorizing already authorized account', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
-    // GIVEN an existing testnet account
-    // WHEN authorizeSendingAccount is called with the account's own address
+    // GIVEN an existing testnet account that has authorized another account to send funds to it
+    const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
+    await xrpClient.enableDepositAuth(wallet)
+    await xrpClient.authorizeSendingAccount(sendingWallet.getAddress(), wallet)
+
+    // WHEN authorizeSedingAccount is called on the already authorized account
+    const result = await xrpClient.authorizeSendingAccount(
+      sendingWallet.getAddress(),
+      wallet,
+    )
+
+    // THEN the transaction fails and the cost of the transaction is claimed by the network.
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.ClaimedCostOnly)
+  })
+
+  it('Authorize Sending Account - can send funds after authorize', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account that has authorized another account to send XRP to it
     const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
 
     await xrpClient.enableDepositAuth(wallet)
 
     await xrpClient.authorizeSendingAccount(sendingWallet.getAddress(), wallet)
 
-    const result = await xrpClient.send(
+    // WHEN the authorized account sends XRP
+    const transactionHash = await xrpClient.send(
       amount,
       wallet.getAddress(),
       sendingWallet,
     )
-    console.log(result)
 
-    // const result = await xrpClient.enableDepositAuth(wallet)
-
-    // const result = await xrpClient.authorizeSendingAccount(
-    //   recipientAddress,
-    //   wallet,
-    // )
-
-    // THEN the transaction fails due to a malformed transaction.
-    // const transactionHash = result.hash
-    // const transactionStatus = result.status
-
-    // assert.exists(transactionHash)
-    // assert.equal(transactionStatus, TransactionStatus.MalformedTransaction)
+    // Then the transaction succeeds.
+    const transactionStatus = await xrpWebClient.getPaymentStatus(
+      transactionHash,
+    )
+    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
 })

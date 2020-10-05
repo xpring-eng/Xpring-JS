@@ -1,5 +1,8 @@
 /** Represents statuses of transactions. */
 enum TransactionStatus {
+  /** The transaction did not achieve its intended purpose, but the transaction cost was destroyed. */
+  ClaimedCostOnly,
+
   /** The transaction is not included in a finalized ledger, and is not valid, due to improper syntax, conflicting options, a bad signature, or something else. */
   MalformedTransaction,
 
