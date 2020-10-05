@@ -346,10 +346,6 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
     rawTransactionStatus: RawTransactionStatus,
     lastLedgerPassed: boolean,
   ): TransactionStatus {
-    // I don't know if this is actually possible... just making the compiler happy in safest way
-    if (!rawTransactionStatus.transactionStatusCode) {
-      throw XrpError.malformedResponse
-    }
     if (rawTransactionStatus.transactionStatusCode.startsWith('tem')) {
       return TransactionStatus.MalformedTransaction
     }
