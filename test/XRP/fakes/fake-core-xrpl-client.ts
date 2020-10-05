@@ -7,15 +7,22 @@ import TransactionResult from '../../../src/XRP/model/transaction-result'
 
 class FakeCoreXrplClient implements CoreXrplClientInterface {
   public constructor(
-    public awaitFinalTransactionStatusValue: Result<RawTransactionStatus>,
+    public awaitFinalTransactionStatusValue: Result<{
+      rawTransactionStatus: RawTransactionStatus
+      lastLedgerPassed: boolean
+    }>,
     public awaitFinalTransactionResultValue: Result<TransactionResult>,
     public network: XrplNetwork = XrplNetwork.Test,
   ) {}
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async waitForFinalTransactionOutcome(
     _transactionHash: string,
     _sender: Wallet,
-  ): Promise<RawTransactionStatus> {
+  ): Promise<{
+    rawTransactionStatus: RawTransactionStatus
+    lastLedgerPassed: boolean
+  }> {
     return FakeCoreXrplClient.returnOrThrow(
       this.awaitFinalTransactionStatusValue,
     )

@@ -21,7 +21,10 @@ export default interface CoreXrplClientInterface {
   waitForFinalTransactionOutcome(
     transactionHash: string,
     sender: Wallet,
-  ): Promise<RawTransactionStatus>
+  ): Promise<{
+    rawTransactionStatus: RawTransactionStatus
+    lastLedgerPassed: boolean
+  }>
 
   /**
    * Waits for a transaction to complete and returns a TransactionResult.

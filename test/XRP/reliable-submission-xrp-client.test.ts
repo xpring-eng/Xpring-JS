@@ -31,11 +31,15 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
 )
 const fakedTransactionHistoryValue = [testXrpTransaction]
 const fakedGetPaymentValue = testXrpTransaction
-const fakedTransactionResultValue = new TransactionResult(
+const fakedTransactionResultValue = TransactionResult.getFinalTransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
   true,
 )
+const fakedWaitForFinalTransactionOutcomeValue = {
+  rawTransactionStatus: fakedRawTransactionStatusValue,
+  lastLedgerPassed: false,
+}
 
 describe('Reliable Submission XRP Client', function (): void {
   beforeEach(function () {
@@ -49,7 +53,7 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedTransactionResultValue,
     )
     this.fakeCoreXrplClient = new FakeCoreXrplClient(
-      fakedRawTransactionStatusValue,
+      fakedWaitForFinalTransactionOutcomeValue,
       fakedTransactionResultValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXrpClient(
