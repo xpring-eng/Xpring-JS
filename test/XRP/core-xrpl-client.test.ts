@@ -106,10 +106,9 @@ describe('Common XRPL Client', function (): void {
       wallet,
     )
     // THEN it returns and the result is as expected.
-    const expectedTransactionResult = new TransactionResult(
+    const expectedTransactionResult = TransactionResult.getFinalTransactionResult(
       transactionHash,
       TransactionStatus.Succeeded,
-      true,
       true,
     )
 
@@ -220,11 +219,10 @@ describe('Common XRPL Client', function (): void {
     )
 
     // THEN it returns and the result is as expected.
-    const expectedResult = new TransactionResult(
+    const expectedResult = TransactionResult.getFinalTransactionResult(
       transactionHash,
-      TransactionStatus.LastLedgerPassed,
+      TransactionStatus.LastLedgerSequenceExpired,
       false,
-      true,
     )
 
     assert.deepEqual(finalTransactionResult, expectedResult)
