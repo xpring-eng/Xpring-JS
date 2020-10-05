@@ -31,10 +31,9 @@ const fakedRawTransactionStatusValue = new RawTransactionStatus(
 )
 const fakedTransactionHistoryValue = [testXrpTransaction]
 const fakedGetPaymentValue = testXrpTransaction
-const fakedTransactionResultValue = new TransactionResult(
+const fakedTransactionResultValue = TransactionResult.getFinalTransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
-  true,
   true,
 )
 const fakedWaitForFinalTransactionOutcomeValue = {

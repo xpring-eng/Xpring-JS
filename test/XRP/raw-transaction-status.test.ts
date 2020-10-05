@@ -9,6 +9,10 @@ import {
 } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import RawTransactionStatus from '../../src/XRP/shared/raw-transaction-status'
 import PaymentFlags from '../../src/XRP/shared/payment-flags'
+import {
+  Meta,
+  TransactionResult,
+} from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/meta_pb'
 
 describe('raw transaction status', function (): void {
   it('isFullPayment - non payment', function (): void {
@@ -16,8 +20,13 @@ describe('raw transaction status', function (): void {
     const transaction = new Transaction()
     transaction.clearPayment()
 
+    const transactionResult = new TransactionResult()
+    transactionResult.setResult('tesSUCCESS')
+    const meta = new Meta()
+    meta.setTransactionResult(transactionResult)
     const getTxResponse = new GetTransactionResponse()
     getTxResponse.setTransaction(transaction)
+    getTxResponse.setMeta(meta)
 
     // WHEN the raw transaction status is wrapped in a RawTransactionStatus object.
     const rawTransactionStatus = RawTransactionStatus.fromGetTransactionResponse(
@@ -35,12 +44,17 @@ describe('raw transaction status', function (): void {
     const flags = new Flags()
     flags.setValue(PaymentFlags.TF_PARTIAL_PAYMENT)
 
+    const transactionResult = new TransactionResult()
+    transactionResult.setResult('tesSUCCESS')
+    const meta = new Meta()
+    meta.setTransactionResult(transactionResult)
     const transaction = new Transaction()
     transaction.setPayment(payment)
     transaction.setFlags(flags)
 
     const getTxResponse = new GetTransactionResponse()
     getTxResponse.setTransaction(transaction)
+    getTxResponse.setMeta(meta)
 
     // WHEN the raw transaction status is wrapped in a RawTransactionStatus object.
     const rawTransactionStatus = RawTransactionStatus.fromGetTransactionResponse(
@@ -58,8 +72,13 @@ describe('raw transaction status', function (): void {
     const transaction = new Transaction()
     transaction.setPayment(payment)
 
+    const transactionResult = new TransactionResult()
+    transactionResult.setResult('tesSUCCESS')
+    const meta = new Meta()
+    meta.setTransactionResult(transactionResult)
     const getTxResponse = new GetTransactionResponse()
     getTxResponse.setTransaction(transaction)
+    getTxResponse.setMeta(meta)
 
     // WHEN the raw transaction status is wrapped in a RawTransactionStatus object.
     const rawTransactionStatus = RawTransactionStatus.fromGetTransactionResponse(

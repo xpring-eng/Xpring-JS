@@ -32,7 +32,7 @@
     "@babel/plugin-transform-runtime": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
     "@babel/preset-typescript": "^7.10.4",
-    "@openapitools/openapi-generator-cli": "^1.0.13-4.3.1",
+    "@openapitools/openapi-generator-cli": "^2.0.2",
     "@types/chai": "4.2.12",
     "@types/google-protobuf": "^3.7.2",
     "@types/mocha": "8.0.3",
@@ -69,7 +69,7 @@
     "google-protobuf": "^3.12.2",
     "grpc-web": "1.2.1",
     "xhr2": "0.2.0",
-    "xpring-common-js": "6.2.2"
+    "xpring-common-js": "6.2.3"
   },
   "nyc": {
     "extension": [
