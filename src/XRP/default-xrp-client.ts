@@ -26,7 +26,6 @@ import {
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import XrpClientDecorator from './xrp-client-decorator'
 import TransactionStatus from './transaction-status'
-import RawTransactionStatus from './raw-transaction-status'
 import XrpTransaction from './model/xrp-transaction'
 import GrpcNetworkClient from './grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './grpc-xrp-network-client.web'
@@ -223,41 +222,6 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     }
 
     return this.coreXrplClient.signAndSubmitTransaction(transaction, sender)
-  }
-
-  /**
-   * TODO: (amiecorso) remove from this class any methods that occur in CoreXrplClient,
-   * after reasoning about whether this is acceptable.
-   */
-  public async getOpenLedgerSequence(): Promise<number> {
-    return this.coreXrplClient.getOpenLedgerSequence()
-  }
-
-  /**
-   * Retrieve the latest validated ledger sequence on the XRP Ledger.
-   *
-   * Note: This call will throw if the given account does not exist on the ledger at the current time. It is the
-   * *caller's responsibility* to ensure this invariant is met.
-   *
-   * Note: The input address *must* be in a classic address form. Inputs are not checked to this internal method.
-   *
-   * TODO(keefertaylor): The above requirements are onerous, difficult to reason about and the logic of this method is
-   * brittle. Replace this method's implementation when rippled supports a `ledger` RPC via gRPC.
-   *
-   * @param address An address that exists at the current time. The address is unchecked and must be a classic address.
-   * @returns The index of the latest validated ledger.
-   * @throws XrpException If there was a problem communicating with the XRP Ledger.
-   */
-  public async getLatestValidatedLedgerSequence(
-    address: string,
-  ): Promise<number> {
-    return this.coreXrplClient.getLatestValidatedLedgerSequence(address)
-  }
-
-  public async getRawTransactionStatus(
-    transactionHash: string,
-  ): Promise<RawTransactionStatus> {
-    return this.coreXrplClient.getRawTransactionStatus(transactionHash)
   }
 
   /**

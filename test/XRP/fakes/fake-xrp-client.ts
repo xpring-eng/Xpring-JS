@@ -2,7 +2,6 @@ import { BigInteger } from 'big-integer'
 import XrpClientDecorator from '../../../src/XRP/xrp-client-decorator'
 import TransactionStatus from '../../../src/XRP/transaction-status'
 import { Wallet } from '../../../src/index'
-import RawTransactionStatus from '../../../src/XRP/raw-transaction-status'
 import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
 import Result from '../../Common/Helpers/result'
 import { XrplNetwork } from 'xpring-common-js'
@@ -14,8 +13,6 @@ class FakeXrpClient implements XrpClientDecorator {
     public getBalanceValue: Result<BigInteger>,
     public getPaymentStatusValue: Result<TransactionStatus>,
     public transactionHash: Result<string>,
-    public getLatestValidatedLedgerSequenceValue: Result<number>,
-    public getRawTransactionStatusValue: Result<RawTransactionStatus>,
     public accountExistsValue: Result<boolean>,
     public paymentHistoryValue: Result<Array<XrpTransaction>>,
     public getPaymentValue: Result<XrpTransaction>,
@@ -41,18 +38,6 @@ class FakeXrpClient implements XrpClientDecorator {
 
   async sendWithDetails(_sendXrpDetails: SendXrpDetails): Promise<string> {
     return FakeXrpClient.returnOrThrow(this.transactionHash)
-  }
-
-  async getLatestValidatedLedgerSequence(_address: string): Promise<number> {
-    return FakeXrpClient.returnOrThrow(
-      this.getLatestValidatedLedgerSequenceValue,
-    )
-  }
-
-  async getRawTransactionStatus(
-    _transactionHash: string,
-  ): Promise<RawTransactionStatus> {
-    return FakeXrpClient.returnOrThrow(this.getRawTransactionStatusValue)
   }
 
   async accountExists(_address: string): Promise<boolean> {
