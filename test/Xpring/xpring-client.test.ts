@@ -21,7 +21,7 @@ const fakeTransactionHash = 'deadbeefdeadbeefdeadbeef'
 const fakeAccountExistsResult = true
 const fakePaymentHistoryValue = []
 const fakeGetPaymentValue = testXrpTransaction
-const fakedEnableDepositAuthValue = new TransactionResult(
+const fakedEnableDepositAuthValue = TransactionResult.getFinalTransactionResult(
   fakeTransactionHash,
   TransactionStatus.Succeeded,
   true,
