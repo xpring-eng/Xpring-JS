@@ -32,7 +32,7 @@ export default class XrpEscrowFinish {
     const ownerXAddress = XrpUtils.encodeXAddress(
       owner,
       undefined,
-      xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
+      xrplNetwork === XrplNetwork.Test || xrplNetwork === XrplNetwork.Dev,
     )
     if (!ownerXAddress) {
       throw new XrpError(
