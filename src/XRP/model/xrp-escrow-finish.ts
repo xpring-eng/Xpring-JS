@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { XrplNetwork } from 'xpring-common-js'
 import XrpUtils from '../xrp-utils'
 import { EscrowFinish } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -20,22 +21,34 @@ export default class XrpEscrowFinish {
   public static from(
     escrowFinish: EscrowFinish,
     xrplNetwork: XrplNetwork,
-  ): XrpEscrowFinish | undefined {
+  ): XrpEscrowFinish {
     const owner = escrowFinish.getOwner()?.getValue()?.getAddress()
     if (!owner) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'EscrowFinish protobuf is missing required `owner` field.',
+      )
     }
     const ownerXAddress = XrpUtils.encodeXAddress(
       owner,
       undefined,
       xrplNetwork == XrplNetwork.Test || xrplNetwork == XrplNetwork.Dev,
     )
+    if (!ownerXAddress) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'Cannot construct XAddress from EscrowFinish protobuf `owner` field.',
+      )
+    }
 
     const offerSequence = escrowFinish.getOfferSequence()?.getValue()
-
-    if (!ownerXAddress || !offerSequence) {
-      return undefined
+    if (offerSequence === undefined) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'EscrowFinish protobuf is missing required `offerSequence` field.',
+      )
     }
+
     const condition = escrowFinish.getCondition()?.getValue_asB64()
     const fulfillment = escrowFinish.getFulfillment()?.getValue_asB64()
 
