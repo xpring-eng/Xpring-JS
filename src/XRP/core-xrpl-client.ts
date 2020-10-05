@@ -354,7 +354,7 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
       return TransactionStatus.MalformedTransaction
     }
     if (lastLedgerPassed) {
-      return TransactionStatus.LastLedgerPassed
+      return TransactionStatus.LastLedgerSequenceExpired
     }
     // Return pending if the transaction is not validated.
     if (!rawTransactionStatus.isValidated) {
