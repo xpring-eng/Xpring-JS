@@ -134,7 +134,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     xAddressToUnauthorize: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    const result = await this.decoratedClient.authorizeSendingAccount(
+    const result = await this.decoratedClient.unauthorizeSendingAccount(
       xAddressToUnauthorize,
       wallet,
     )
