@@ -230,6 +230,30 @@ describe('XrpClient Integration Tests', function (): void {
     )
   })
 
+  it('Enable Deposit Auth - sending by unauthorized account fails after enabled', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account with DepositAuth enabled
+    await xrpClient.enableDepositAuth(wallet)
+
+    const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
+
+    // WHEN an account that is not authorized sends XRP
+    const transactionHash = await xrpClient.send(
+      amount,
+      wallet.getAddress(),
+      sendingWallet,
+    )
+
+    // THEN the transaction fails.
+    const transactionStatus = await xrpWebClient.getPaymentStatus(
+      transactionHash,
+    )
+    console.log(transactionStatus)
+    assert.deepEqual(transactionStatus, TransactionStatus.Failed)
+  })
+
   it('Authorize Sending Account - failure on authorizing self', async function (): Promise<
     void
   > {
