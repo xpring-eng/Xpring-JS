@@ -127,8 +127,10 @@ const testPublicKey =
 const testRegularKey = 'rAR8rR8sUkBoCZFawhkWzY4Y5YoyuznwD'
 
 // SignerListSet values
+const testDestination2 = 'rPuNV4oA6f3SrKA4pLEpdVZW6QLvn3UJxK'
 const testSignerQuorum = 3
 const testSignerWeight = 1
+const testSignerQuorumDelete = 0
 
 // TrustSet values
 const testQualityIn = 5
@@ -388,8 +390,17 @@ const testSetRegularKeyProtoNoKey = new SetRegularKey()
 const testSignerQuorumProto = new SignerQuorum()
 testSignerQuorumProto.setValue(testSignerQuorum)
 
+const testSignerQuorumProtoDelete = new SignerQuorum()
+testSignerQuorumProtoDelete.setValue(testSignerQuorumDelete)
+
+const testAccountAddressProto2 = new AccountAddress()
+testAccountAddressProto2.setAddress(testDestination2)
+
 const testAccountProto = new Account()
 testAccountProto.setValue(testAccountAddressProto)
+
+const testAccountProto2 = new Account()
+testAccountProto2.setValue(testAccountAddressProto2)
 
 const testSignerWeightProto = new SignerWeight()
 testSignerWeightProto.setValue(testSignerWeight)
@@ -399,7 +410,7 @@ testSignerEntry1.setAccount(testAccountProto)
 testSignerEntry1.setSignerWeight(testSignerWeightProto)
 
 const testSignerEntry2 = new SignerEntry()
-testSignerEntry2.setAccount(testAccountProto)
+testSignerEntry2.setAccount(testAccountProto2)
 testSignerEntry2.setSignerWeight(testSignerWeightProto)
 
 const testSignerEntryList: Array<SignerEntry> = [
@@ -410,6 +421,10 @@ const testSignerEntryList: Array<SignerEntry> = [
 const testSignerListSetProto = new SignerListSet()
 testSignerListSetProto.setSignerQuorum(testSignerQuorumProto)
 testSignerListSetProto.setSignerEntriesList(testSignerEntryList)
+
+const testSignerListSetProtoDelete = new SignerListSet()
+testSignerListSetProtoDelete.setSignerQuorum(testSignerQuorumProtoDelete)
+testSignerListSetProtoDelete.setSignerEntriesList([] as SignerEntry[])
 
 // TrustSet protos
 const testLimitAmountProto = new LimitAmount()
@@ -519,7 +534,6 @@ testInvalidDepositPreauthProtoSetBadAuthorize.setAuthorize(
 )
 
 // Invalid DepositPreauth proto (bad unauthorize)
-
 const testInvalidDepositPreauthProtoSetBadUnauthorize = new DepositPreauth()
 testInvalidDepositPreauthProtoSetBadUnauthorize.setUnauthorize(
   testInvalidUnauthorizeProto,
@@ -630,17 +644,116 @@ testInvalidPaymentChannelClaimProtoSignatureNoPublicKey.setPaymentChannelSignatu
   testPaymentChannelSignatureProto,
 )
 
+// Invalid PaymentChannelCreate proto (missing amount)
+const testInvalidPaymentChannelCreateProtoNoAmount = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoNoAmount.setDestination(
+  testDestinationProto,
+)
+testInvalidPaymentChannelCreateProtoNoAmount.setSettleDelay(
+  testSettleDelayProto,
+)
+testInvalidPaymentChannelCreateProtoNoAmount.setPublicKey(testPublicKeyProto)
+
 // Invalid PaymentChannelCreate proto (missing destination)
-const testInvalidPaymentChannelCreateProto = new PaymentChannelCreate()
-testInvalidPaymentChannelCreateProto.setAmount(testAmountProto)
+const testInvalidPaymentChannelCreateProtoNoDestination = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoNoDestination.setAmount(testAmountProto)
+testInvalidPaymentChannelCreateProtoNoDestination.setSettleDelay(
+  testSettleDelayProto,
+)
+testInvalidPaymentChannelCreateProtoNoDestination.setPublicKey(
+  testPublicKeyProto,
+)
+
+// Invalid PaymentChannelCreate proto (bad destination)
+const testInvalidPaymentChannelCreateProtoBadDestination = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoBadDestination.setAmount(testAmountProto)
+testInvalidPaymentChannelCreateProtoBadDestination.setDestination(
+  testInvalidDestinationProto,
+)
+testInvalidPaymentChannelCreateProtoBadDestination.setSettleDelay(
+  testSettleDelayProto,
+)
+testInvalidPaymentChannelCreateProtoBadDestination.setPublicKey(
+  testPublicKeyProto,
+)
+
+// Invalid PaymentChannelCreate proto (missing settleDelay)
+const testInvalidPaymentChannelCreateProtoNoSettleDelay = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoNoSettleDelay.setAmount(testAmountProto)
+testInvalidPaymentChannelCreateProtoNoSettleDelay.setDestination(
+  testDestinationProto,
+)
+testInvalidPaymentChannelCreateProtoNoSettleDelay.setPublicKey(
+  testPublicKeyProto,
+)
+
+// Invalid PaymentChannelCreate proto (missing publicKey)
+const testInvalidPaymentChannelCreateProtoNoPublicKey = new PaymentChannelCreate()
+testInvalidPaymentChannelCreateProtoNoPublicKey.setAmount(testAmountProto)
+testInvalidPaymentChannelCreateProtoNoPublicKey.setDestination(
+  testDestinationProto,
+)
+testInvalidPaymentChannelCreateProtoNoPublicKey.setSettleDelay(
+  testSettleDelayProto,
+)
 
 // Invalid PaymentChannelFund proto (missing amount)
-const testInvalidPaymentChannelFundProto = new PaymentChannelFund()
-testInvalidPaymentChannelFundProto.setChannel(testChannelProto)
+const testInvalidPaymentChannelFundProtoNoAmount = new PaymentChannelFund()
+testInvalidPaymentChannelFundProtoNoAmount.setChannel(testChannelProto)
+
+// Invalid PaymentChannelFund proto (missing channel)
+const testInvalidPaymentChannelFundProtoNoChannel = new PaymentChannelFund()
+testInvalidPaymentChannelFundProtoNoChannel.setAmount(testAmountProto)
+
+// Invalid SignerListSet proto (missing SignerQuorum)
+const testInvalidSignerListSetProtoNoSignerQuorum = new SignerListSet()
+testInvalidSignerListSetProtoNoSignerQuorum.setSignerEntriesList(
+  testSignerEntryList,
+)
 
 // Invalid SignerListSet proto (missing SignerEntries)
-const testInvalidSignerListSetProto = new SignerListSet()
-testInvalidSignerListSetProto.setSignerEntriesList(testSignerEntryList)
+const testInvalidSignerListSetProtoNoSignerEntries = new SignerListSet()
+testInvalidSignerListSetProtoNoSignerEntries.setSignerQuorum(
+  testSignerQuorumProto,
+)
+
+// Invalid SignerListSet proto (too many elements in SignerEntries)
+const testInvalidSignerEntryListProtoTooManyElements: Array<SignerEntry> = [
+  testSignerEntry1,
+  testSignerEntry2,
+  testSignerEntry1,
+  testSignerEntry2,
+  testSignerEntry1,
+  testSignerEntry2,
+  testSignerEntry1,
+  testSignerEntry2,
+  testSignerEntry1,
+  testSignerEntry2,
+]
+
+const testInvalidSignerListSetProtoTooManySignerEntries = new SignerListSet()
+testInvalidSignerListSetProtoTooManySignerEntries.setSignerQuorum(
+  testSignerQuorumProto,
+)
+testInvalidSignerListSetProtoTooManySignerEntries.setSignerEntriesList(
+  testInvalidSignerEntryListProtoTooManyElements,
+)
+
+// Invalid SignerListSet proto (too many elements in SignerEntries)
+const testInvalidSignerEntryListRepeatAddresses: Array<SignerEntry> = [
+  testSignerEntry1,
+  testSignerEntry2,
+  testSignerEntry1,
+  testSignerEntry2,
+]
+
+const testInvalidSignerListSetProtoRepeatAddresses = new SignerListSet()
+testInvalidSignerListSetProtoRepeatAddresses.setSignerQuorum(
+  testSignerQuorumProto,
+)
+testInvalidSignerListSetProtoRepeatAddresses.setSignerEntriesList(
+  testInvalidSignerEntryListRepeatAddresses,
+)
 
 // Invalid TrustSet proto (missing limitAmount)
 const testInvalidTrustSetProto = new TrustSet()
@@ -685,6 +798,7 @@ export {
   testSignerEntry1,
   testSignerEntry2,
   testSignerListSetProto,
+  testSignerListSetProtoDelete,
   testTrustSetProtoAllFields,
   testTrustSetProtoMandatoryOnly,
   testInvalidAccountSetProtoBadDomain,
@@ -717,9 +831,17 @@ export {
   testInvalidOfferCreateProtoNoTakerPays,
   testInvalidPaymentChannelClaimProtoNoChannel,
   testInvalidPaymentChannelClaimProtoSignatureNoPublicKey,
-  testInvalidPaymentChannelCreateProto,
-  testInvalidPaymentChannelFundProto,
-  testInvalidSignerListSetProto,
+  testInvalidPaymentChannelCreateProtoNoAmount,
+  testInvalidPaymentChannelCreateProtoNoDestination,
+  testInvalidPaymentChannelCreateProtoBadDestination,
+  testInvalidPaymentChannelCreateProtoNoSettleDelay,
+  testInvalidPaymentChannelCreateProtoNoPublicKey,
+  testInvalidPaymentChannelFundProtoNoAmount,
+  testInvalidPaymentChannelFundProtoNoChannel,
+  testInvalidSignerListSetProtoNoSignerQuorum,
+  testInvalidSignerListSetProtoNoSignerEntries,
+  testInvalidSignerListSetProtoTooManySignerEntries,
+  testInvalidSignerListSetProtoRepeatAddresses,
   testInvalidTrustSetProto,
   testInvalidTrustSetProtoXRP,
 }

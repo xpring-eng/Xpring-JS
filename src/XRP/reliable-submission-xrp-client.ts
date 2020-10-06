@@ -104,9 +104,7 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     return this.decoratedClient.paymentHistory(address)
   }
 
-  public async getPayment(
-    transactionHash: string,
-  ): Promise<XrpTransaction | undefined> {
+  public async getPayment(transactionHash: string): Promise<XrpTransaction> {
     return this.decoratedClient.getPayment(transactionHash)
   }
 

@@ -25,7 +25,7 @@ const fakedAccountExistsValue = true
 const fakedFullPaymentValue = true
 const fakedTransactionHistoryValue = [testXrpTransaction]
 const fakedGetPaymentValue = testXrpTransaction
-const fakedTransactionResultValue = new TransactionResult(
+const fakedTransactionResultValue = TransactionResult.getFinalTransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
   true,
@@ -41,7 +41,6 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedAccountExistsValue,
       fakedTransactionHistoryValue,
       fakedGetPaymentValue,
-      fakedTransactionResultValue,
       fakedTransactionResultValue,
     )
 

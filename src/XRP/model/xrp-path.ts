@@ -27,7 +27,5 @@ export default class XrpPath {
    *
    * @param pathElements List of XrpPathElements that make up this XRPPath.
    */
-  private constructor(
-    readonly pathElements: Array<XrpPathElement | undefined>,
-  ) {}
+  private constructor(readonly pathElements: Array<XrpPathElement>) {}
 }
