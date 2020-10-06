@@ -2,20 +2,27 @@ import CoreXrplClientInterface from '../../../src/XRP/core-xrpl-client-interface
 import { Wallet } from '../../../src/index'
 import Result from '../../Common/Helpers/result'
 import { XrplNetwork } from 'xpring-common-js'
-import RawTransactionStatus from '../../../src/XRP/raw-transaction-status'
-import TransactionResult from '../../../src/XRP/model/transaction-result'
+import RawTransactionStatus from '../../../src/XRP/shared/raw-transaction-status'
+import TransactionResult from '../../../src/XRP/shared/transaction-result'
 
 class FakeCoreXrplClient implements CoreXrplClientInterface {
   public constructor(
-    public awaitFinalTransactionStatusValue: Result<RawTransactionStatus>,
+    public awaitFinalTransactionStatusValue: Result<{
+      rawTransactionStatus: RawTransactionStatus
+      lastLedgerPassed: boolean
+    }>,
     public awaitFinalTransactionResultValue: Result<TransactionResult>,
     public network: XrplNetwork = XrplNetwork.Test,
   ) {}
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async waitForFinalTransactionOutcome(
     _transactionHash: string,
     _sender: Wallet,
-  ): Promise<RawTransactionStatus> {
+  ): Promise<{
+    rawTransactionStatus: RawTransactionStatus
+    lastLedgerPassed: boolean
+  }> {
     return FakeCoreXrplClient.returnOrThrow(
       this.awaitFinalTransactionStatusValue,
     )

@@ -1,5 +1,6 @@
-import { GetTransactionResponse } from './Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
-import PaymentFlags from './model/payment-flags'
+import { GetTransactionResponse } from '../Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
+import PaymentFlags from './payment-flags'
+import { XrpError, XrpErrorType } from '.'
 
 /** Abstraction around raw Transaction Status for compatibility. */
 // TODO:(keefertaylor) This class is now defunct. Refactor and remove.
@@ -12,11 +13,22 @@ export default class RawTransactionStatus {
   ): RawTransactionStatus {
     const transaction = getTransactionResponse.getTransaction()
     if (!transaction) {
-      throw new Error(
+      throw new XrpError(
+        XrpErrorType.MalformedResponse,
         'Malformed input, `getTxResponse` did not contain a transaction.',
       )
     }
 
+    const transactionResultCode = getTransactionResponse
+      .getMeta()
+      ?.getTransactionResult()
+      ?.getResult()
+    if (!transactionResultCode) {
+      throw new XrpError(
+        XrpErrorType.MalformedResponse,
+        'Malformed input, `getTxResponse` did not contain a transaction result code.',
+      )
+    }
     const isPayment = transaction.hasPayment()
     const flags = transaction.getFlags()?.getValue() ?? 0
 
@@ -29,7 +41,7 @@ export default class RawTransactionStatus {
 
     return new RawTransactionStatus(
       getTransactionResponse.getValidated(),
-      getTransactionResponse.getMeta()?.getTransactionResult()?.getResult(),
+      transactionResultCode,
       getTransactionResponse
         .getTransaction()
         ?.getLastLedgerSequence()
@@ -43,7 +55,7 @@ export default class RawTransactionStatus {
    */
   constructor(
     public isValidated: boolean,
-    public transactionStatusCode: string | undefined,
+    public transactionStatusCode: string,
     public lastLedgerSequence: number | undefined,
     public isFullPayment: boolean,
   ) {}

@@ -1,6 +1,6 @@
 import { Wallet, XrplNetwork } from 'xpring-common-js'
-import TransactionResult from './model/transaction-result'
-import RawTransactionStatus from './raw-transaction-status'
+import TransactionResult from './shared/transaction-result'
+import RawTransactionStatus from './shared/raw-transaction-status'
 
 /**
  * An interface that CoreXrplClients adhere to.
@@ -21,7 +21,10 @@ export default interface CoreXrplClientInterface {
   waitForFinalTransactionOutcome(
     transactionHash: string,
     sender: Wallet,
-  ): Promise<RawTransactionStatus>
+  ): Promise<{
+    rawTransactionStatus: RawTransactionStatus
+    lastLedgerPassed: boolean
+  }>
 
   /**
    * Waits for a transaction to complete and returns a TransactionResult.

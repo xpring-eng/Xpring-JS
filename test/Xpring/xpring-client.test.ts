@@ -4,11 +4,11 @@ import { FakeWallet, XrplNetwork } from 'xpring-common-js'
 import FakeXrpClient from '../XRP/fakes/fake-xrp-client'
 import FakeXrpPayIdClient from '../PayID/fakes/fake-xrp-pay-id-client'
 import { testXrpTransaction } from '../XRP/fakes/fake-xrp-protobufs'
-import TransactionStatus from '../../src/XRP/transaction-status'
+import TransactionStatus from '../../src/XRP/shared/transaction-status'
 import XpringClient from '../../src/Xpring/xpring-client'
 
 import XpringError from '../../src/Xpring/xpring-error'
-import TransactionResult from '../../src/XRP/model/transaction-result'
+import TransactionResult from '../../src/XRP/shared/transaction-result'
 
 /* Default values for the fake XRP Client. These values must be provided but are not varied in testing. */
 /* eslint-disable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention --
@@ -21,7 +21,7 @@ const fakeTransactionHash = 'deadbeefdeadbeefdeadbeef'
 const fakeAccountExistsResult = true
 const fakePaymentHistoryValue = []
 const fakeGetPaymentValue = testXrpTransaction
-const fakedEnableDepositAuthValue = new TransactionResult(
+const fakedEnableDepositAuthValue = TransactionResult.getFinalTransactionResult(
   fakeTransactionHash,
   TransactionStatus.Succeeded,
   true,
