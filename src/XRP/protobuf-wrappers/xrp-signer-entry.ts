@@ -1,5 +1,5 @@
 import { XrpError, XrpErrorType } from '..'
-import XrpUtils from '../xrp-utils'
+import XrpUtils from '../shared/xrp-utils'
 import { SignerEntry } from '../Generated/web/org/xrpl/rpc/v1/common_pb'
 import { XrplNetwork } from 'xpring-common-js'
 
