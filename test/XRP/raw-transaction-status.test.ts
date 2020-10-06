@@ -7,8 +7,8 @@ import {
   Transaction,
   Payment,
 } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
-import RawTransactionStatus from '../../src/XRP/raw-transaction-status'
-import PaymentFlags from '../../src/XRP/model/payment-flags'
+import RawTransactionStatus from '../../src/XRP/shared/raw-transaction-status'
+import PaymentFlags from '../../src/XRP/shared/payment-flags'
 import {
   Meta,
   TransactionResult,

@@ -9,12 +9,8 @@ export {
 } from 'xpring-common-js'
 
 /** XRP Functionality. */
-export { TransactionStatus, XrpClient, XrpUtils } from './XRP'
+export { XrpClient } from './XRP'
 export {
-  AccountSetFlag,
-  AccountRootFlags,
-  PaymentFlags,
-  SendXrpDetails,
   XrpCurrencyAmount,
   XrpCurrency,
   XrpIssuedCurrency,
@@ -23,10 +19,19 @@ export {
   XrpPath,
   XrpPayment,
   XrpSigner,
-  XrpTransactionType,
   XrpTransaction,
-} from './XRP/model'
-export { default as XrpError } from './XRP/xrp-error'
+} from './XRP/protobuf-wrappers'
+export {
+  AccountSetFlag,
+  AccountRootFlag,
+  PaymentFlag,
+  SendXrpDetails,
+  TransactionResult,
+  TransactionStatus,
+  XrpError,
+  XrpTransactionType,
+  XrpUtils,
+} from './XRP/shared'
 export { default as XrpPayIdClient } from './PayID/xrp-pay-id-client'
 
 /** PayID Functionality. */
