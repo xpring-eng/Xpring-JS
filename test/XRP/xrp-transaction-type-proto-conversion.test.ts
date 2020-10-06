@@ -58,7 +58,8 @@ import {
   testInvalidAccountSetProtoSameSetClearFlag,
   testInvalidAccountDeleteProto,
   testInvalidCheckCancelProto,
-  testInvalidCheckCashProto,
+  testInvalidCheckCashProtoNoCheckId,
+  testInvalidCheckCashProtoNoAmountDeliverMin,
   testInvalidDepositPreauthProtoNoAuthUnauth,
   testInvalidDepositPreauthProtoSetBadAuthorize,
   testInvalidDepositPreauthProtoSetBadUnauthorize,
@@ -329,13 +330,20 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert invalid CheckCash protobuf to XrpCheckCash object - missing checkId ', function (): void {
+  it('Convert invalid CheckCash protobuf to XrpCheckCash object - missing checkId', function (): void {
     // GIVEN an invalid CheckCash protocol buffer missing the checkId field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCash = XrpCheckCash.from(testInvalidCheckCashProto)
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpCheckCash.from(testInvalidCheckCashProtoNoCheckId)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(checkCash)
+  it('Convert invalid CheckCash protobuf to XrpCheckCash object - missing amount and deliverMin', function (): void {
+    // GIVEN an invalid CheckCash protocol buffer missing both the amount and deliverMin fields.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpCheckCash.from(testInvalidCheckCashProtoNoAmountDeliverMin)
+    }, XrpError)
   })
 
   // CheckCreate

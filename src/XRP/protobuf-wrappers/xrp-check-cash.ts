@@ -1,3 +1,4 @@
+import { XrpError, XrpErrorType } from '..'
 import { CheckCash } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import XrpCurrencyAmount from './xrp-currency-amount'
 
@@ -17,11 +18,13 @@ export default class XrpCheckCash {
    * @return an XrpCheckCash with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/3d86b49dae8173344b39deb75e53170a9b6c5284/src/ripple/proto/org/xrpl/rpc/v1/transaction.proto#L132
    */
-  public static from(checkCash: CheckCash): XrpCheckCash | undefined {
+  public static from(checkCash: CheckCash): XrpCheckCash {
     const checkId = checkCash.getCheckId()?.getValue_asB64()
-    // checkId is required
     if (!checkId) {
-      return undefined
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'CheckCash protobuf is missing `checkID` field.',
+      )
     }
 
     const amountCurrencyAmount = checkCash.getAmount()?.getValue()
@@ -33,6 +36,13 @@ export default class XrpCheckCash {
     const deliverMin = deliverMinCurrencyAmount
       ? XrpCurrencyAmount.from(deliverMinCurrencyAmount)
       : undefined
+
+    if (!deliverMin && !amount) {
+      throw new XrpError(
+        XrpErrorType.MalformedProtobuf,
+        'CheckCash protobuf contains neither `amount` nor `deliverMin` fields.',
+      )
+    }
 
     return new XrpCheckCash(checkId, amount, deliverMin)
   }

@@ -500,8 +500,12 @@ testInvalidAccountDeleteProto.setDestination(testInvalidDestinationProto)
 const testInvalidCheckCancelProto = new CheckCancel()
 
 // Invalid CheckCash proto (missing checkId)
-const testInvalidCheckCashProto = new CheckCash()
-testInvalidCheckCashProto.setAmount(testAmountProto)
+const testInvalidCheckCashProtoNoCheckId = new CheckCash()
+testInvalidCheckCashProtoNoCheckId.setAmount(testAmountProto)
+
+// Invalid CheckCash proto (missing both deliverMin and amount)
+const testInvalidCheckCashProtoNoAmountDeliverMin = new CheckCash()
+testInvalidCheckCashProtoNoAmountDeliverMin.setCheckId(testCheckIdProto)
 
 // Invalid CheckCreate proto (missing destination)
 const testInvalidCheckCreateProto = new CheckCreate()
@@ -808,7 +812,8 @@ export {
   testInvalidAccountSetProtoSameSetClearFlag,
   testInvalidAccountDeleteProto,
   testInvalidCheckCancelProto,
-  testInvalidCheckCashProto,
+  testInvalidCheckCashProtoNoCheckId,
+  testInvalidCheckCashProtoNoAmountDeliverMin,
   testInvalidCheckCreateProto,
   testInvalidCheckCreateProtoBadDestination,
   testInvalidCheckCreateProtoNoSendMax,
