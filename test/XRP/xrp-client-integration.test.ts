@@ -359,4 +359,34 @@ describe('XrpClient Integration Tests', function (): void {
     assert.exists(transactionHash)
     assert.equal(transactionStatus, TransactionStatus.ClaimedCostOnly)
   })
+
+  it('Unauthorize Sending Account - cannot send funds after an authorized account is unauthorized', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account that has authorized another account to send XRP to it
+    const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
+
+    await xrpClient.enableDepositAuth(wallet)
+
+    await xrpClient.authorizeSendingAccount(sendingWallet.getAddress(), wallet)
+
+    // WHEN the sender's account is unauthorized and a payment is sent.
+    await xrpClient.unauthorizeSendingAccount(
+      sendingWallet.getAddress(),
+      wallet,
+    )
+
+    const transactionHash = await xrpClient.send(
+      amount,
+      wallet.getAddress(),
+      sendingWallet,
+    )
+
+    // THEN the transaction fails.
+    const transactionStatus = await xrpWebClient.getPaymentStatus(
+      transactionHash,
+    )
+    assert.deepEqual(transactionStatus, TransactionStatus.Failed)
+  })
 })
