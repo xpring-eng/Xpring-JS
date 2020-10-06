@@ -616,8 +616,17 @@ testInvalidEscrowCreateProtoNoFinishCondition.setCancelAfter(
 )
 
 // Invalid EscrowFinish proto (missing owner)
-const testInvalidEscrowFinishProto = new EscrowFinish()
-testInvalidEscrowFinishProto.setOfferSequence(testOfferSequenceProto)
+const testInvalidEscrowFinishProtoNoOwner = new EscrowFinish()
+testInvalidEscrowFinishProtoNoOwner.setOfferSequence(testOfferSequenceProto)
+
+// Invalid EscrowFinish proto (bad owner)
+const testInvalidEscrowFinishProtoBadOwner = new EscrowFinish()
+testInvalidEscrowFinishProtoBadOwner.setOwner(testInvalidOwnerProto)
+testInvalidEscrowFinishProtoBadOwner.setOfferSequence(testOfferSequenceProto)
+
+// Invalid EscrowFinish proto (missing offerSequence)
+const testInvalidEscrowFinishProtoNoOfferSequence = new EscrowFinish()
+testInvalidEscrowFinishProtoNoOfferSequence.setOwner(testOwnerProto)
 
 // Invalid OfferCancel proto (missing offerSequence)
 const testInvalidOfferCancelProto = new OfferCancel()
@@ -830,7 +839,9 @@ export {
   testInvalidEscrowCreateProtoNoCancelFinish,
   testInvalidEscrowCreateProtoNoFinishCondition,
   testInvalidEscrowCreateProtoNoXRP,
-  testInvalidEscrowFinishProto,
+  testInvalidEscrowFinishProtoNoOwner,
+  testInvalidEscrowFinishProtoBadOwner,
+  testInvalidEscrowFinishProtoNoOfferSequence,
   testInvalidOfferCancelProto,
   testInvalidOfferCreateProtoNoTakerGets,
   testInvalidOfferCreateProtoNoTakerPays,
