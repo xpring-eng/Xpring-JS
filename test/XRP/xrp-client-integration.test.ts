@@ -237,9 +237,8 @@ describe('XrpClient Integration Tests', function (): void {
     // GIVEN an existing testnet account with DepositAuth enabled
     await xrpClient.enableDepositAuth(wallet)
 
-    const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
-
     // WHEN an account that is not authorized sends XRP
+    const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
     const transactionHash = await xrpClient.send(
       amount,
       wallet.getAddress(),
