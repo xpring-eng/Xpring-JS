@@ -42,6 +42,7 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedGetPaymentValue,
       fakedTransactionResultValue,
       fakedTransactionResultValue,
+      fakedTransactionResultValue,
     )
 
     this.fakedRawTransactionStatusValue = new RawTransactionStatus(
