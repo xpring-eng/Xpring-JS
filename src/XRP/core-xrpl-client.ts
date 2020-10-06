@@ -367,6 +367,12 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
     }
   }
 
+  private isMalformedTransaction(
+    rawTransactionStatus: RawTransactionStatus,
+  ): boolean {
+    return rawTransactionStatus.transactionStatusCode.startsWith('tem')
+  }
+
   /**
    * The core logic of reliable submission.  Polls the ledger until the result of the transaction
    * can be considered final, meaning it has either been included in a validated ledger, or the
@@ -433,7 +439,8 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
     /* eslint-disable no-await-in-loop */
     while (
       latestLedgerSequence <= lastLedgerSequence &&
-      !rawTransactionStatus.isValidated
+      !rawTransactionStatus.isValidated &&
+      !this.isMalformedTransaction(rawTransactionStatus)
     ) {
       await sleep(ledgerCloseTimeMs)
 
