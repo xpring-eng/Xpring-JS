@@ -23,15 +23,9 @@ const fakedRawTransactionStatusValidatedValue = true
 const fakedRawTransactionStatusTransactionStatusCode = transactionStatusCodeSuccess
 const fakedAccountExistsValue = true
 const fakedFullPaymentValue = true
-const fakedRawTransactionStatusValue = new RawTransactionStatus(
-  fakedRawTransactionStatusValidatedValue,
-  fakedRawTransactionStatusTransactionStatusCode,
-  fakedRawTransactionStatusLastLedgerSequenceValue,
-  fakedFullPaymentValue,
-)
 const fakedTransactionHistoryValue = [testXrpTransaction]
 const fakedGetPaymentValue = testXrpTransaction
-const fakedTransactionResultValue = new TransactionResult(
+const fakedTransactionResultValue = TransactionResult.getFinalTransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
   true,
@@ -48,8 +42,19 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedGetPaymentValue,
       fakedTransactionResultValue,
     )
+
+    this.fakedRawTransactionStatusValue = new RawTransactionStatus(
+      fakedRawTransactionStatusValidatedValue,
+      fakedRawTransactionStatusTransactionStatusCode,
+      fakedRawTransactionStatusLastLedgerSequenceValue,
+      fakedFullPaymentValue,
+    )
+    const fakedWaitForFinalTransactionOutcomeValue = {
+      rawTransactionStatus: this.fakedRawTransactionStatusValue,
+      lastLedgerPassed: false,
+    }
     this.fakeCoreXrplClient = new FakeCoreXrplClient(
-      fakedRawTransactionStatusValue,
+      fakedWaitForFinalTransactionOutcomeValue,
       fakedTransactionResultValue,
     )
     this.reliableSubmissionClient = new ReliableSubmissionXrpClient(
@@ -85,7 +90,7 @@ describe('Reliable Submission XRP Client', function (): void {
 
     // GIVEN A transaction that will validate itself in 200ms.
     setTimeout(() => {
-      fakedRawTransactionStatusValue.isValidated = true
+      this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
     const { wallet } = Wallet.generateRandomWallet()!
 
@@ -116,7 +121,7 @@ describe('Reliable Submission XRP Client', function (): void {
 
     // GIVEN A transaction that will validate itself in 200ms.
     setTimeout(() => {
-      fakedRawTransactionStatusValue.isValidated = true
+      this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
     const { wallet } = Wallet.generateRandomWallet()!
 
