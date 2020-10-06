@@ -249,7 +249,6 @@ describe('XrpClient Integration Tests', function (): void {
     const transactionStatus = await xrpWebClient.getPaymentStatus(
       transactionHash,
     )
-    console.log(transactionStatus)
     assert.deepEqual(transactionStatus, TransactionStatus.Failed)
   })
 
