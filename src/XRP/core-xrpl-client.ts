@@ -324,12 +324,9 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
       rawTransactionStatus,
       lastLedgerPassed,
     } = await this.waitForFinalTransactionOutcome(transactionHash, wallet)
-    const finalStatus = lastLedgerPassed
-      ? TransactionStatus.LastLedgerSequenceExpired
-      : this.getFinalTransactionStatus(rawTransactionStatus)
     return TransactionResult.getFinalTransactionResult(
       transactionHash,
-      finalStatus,
+      this.getFinalTransactionStatus(rawTransactionStatus, lastLedgerPassed),
       rawTransactionStatus.isValidated,
     )
   }
@@ -339,14 +336,21 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
    * a rippled transaction status code such as `tesSUCCESS`, in conjunction with validated
    * status, into a TransactionStatus enum instance)
    *
-   * @param rawTransactionStatus
+   * @param rawTransactionStatus The RawTransactionStatus to convert to a TransactionStatus.
+   * @param lastLedgerPassed Whether or not the ledger this transaction was meant to be validated in was passed.
    */
   private getFinalTransactionStatus(
     rawTransactionStatus: RawTransactionStatus,
+    lastLedgerPassed: boolean,
   ): TransactionStatus {
     if (rawTransactionStatus.transactionStatusCode.startsWith('tem')) {
       return TransactionStatus.MalformedTransaction
     }
+
+    if (lastLedgerPassed) {
+      return TransactionStatus.LastLedgerSequenceExpired
+    }
+
     if (!rawTransactionStatus.isValidated) {
       throw new XrpError(
         XrpErrorType.InvalidInput,
