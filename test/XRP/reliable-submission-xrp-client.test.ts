@@ -165,7 +165,7 @@ describe('Reliable Submission XRP Client', function (): void {
     const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN unauthorizeSendingAccount is called
-    const result = await this.reliableSubmissionClient.unAuthorizeSendingAccount(
+    const result = await this.reliableSubmissionClient.unauthorizeSendingAccount(
       testAddress,
       wallet,
     )
