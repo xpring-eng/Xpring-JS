@@ -357,7 +357,7 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
         "The lastLedgerSequence was not passed, but the ledger is not validated either. `getFinalTransactionStatus` shouldn't be called in this case.",
       )
     } else {
-      const transactionStatus = rawTransactionStatus.transactionStatusCode?.startsWith(
+      const transactionStatus = rawTransactionStatus.transactionStatusCode.startsWith(
         'tes',
       )
         ? TransactionStatus.Succeeded
