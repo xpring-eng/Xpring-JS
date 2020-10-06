@@ -1,6 +1,6 @@
 import { BigInteger } from 'big-integer'
 import { Wallet } from 'xpring-common-js'
-import XrpMemo from './xrp-memo'
+import XrpMemo from '../protobuf-wrappers/xrp-memo'
 
 /**
  * Describes the fine grained details for sending money over the XRP ledger. The

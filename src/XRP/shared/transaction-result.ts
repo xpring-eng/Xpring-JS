@@ -1,4 +1,4 @@
-import TransactionStatus from '../transaction-status'
+import TransactionStatus from '../shared/transaction-status'
 
 /**
  * Represents the outcome of submitting an XRPL transaction.
