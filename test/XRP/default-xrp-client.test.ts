@@ -17,7 +17,7 @@ import {
   Meta,
   TransactionResult,
 } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/meta_pb'
-import TransactionStatus from '../../src/XRP/transaction-status'
+import TransactionStatus from '../../src/XRP/shared/transaction-status'
 import { Transaction } from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import {
   testGetAccountTransactionHistoryResponse,
@@ -27,8 +27,8 @@ import {
   testInvalidGetTransactionResponseProtoUnsupportedType,
   testInvalidGetAccountTransactionHistoryResponse,
 } from './fakes/fake-xrp-protobufs'
-import XrpTransaction from '../../src/XRP/model/xrp-transaction'
-import XrpError, { XrpErrorType } from '../../src/XRP/xrp-error'
+import XrpTransaction from '../../src/XRP/protobuf-wrappers/xrp-transaction'
+import XrpError, { XrpErrorType } from '../../src/XRP/shared/xrp-error'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 

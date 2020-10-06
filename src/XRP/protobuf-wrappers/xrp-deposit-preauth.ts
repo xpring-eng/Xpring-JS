@@ -1,6 +1,6 @@
 import { XrpError, XrpErrorType } from '..'
 import { XrplNetwork } from 'xpring-common-js'
-import XrpUtils from '../xrp-utils'
+import XrpUtils from '../shared/xrp-utils'
 import { DepositPreauth } from '../Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 /*
