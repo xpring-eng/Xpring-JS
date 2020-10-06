@@ -290,7 +290,7 @@ describe('XrpClient Integration Tests', function (): void {
       sendingWallet,
     )
 
-    // Then the transaction succeeds.
+    // THEN the transaction succeeds.
     const transactionStatus = await xrpWebClient.getPaymentStatus(
       transactionHash,
     )
