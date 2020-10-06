@@ -1,52 +1,54 @@
-import {
-  GetAccountTransactionHistoryRequest,
-  GetAccountTransactionHistoryResponse,
-} from './Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
-import { XRPLedgerAPIServiceClient } from './Generated/web/org/xrpl/rpc/v1/xrp_ledger_grpc_web_pb'
-
-import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
-import {
-  SubmitTransactionRequest,
-  SubmitTransactionResponse,
-} from './Generated/web/org/xrpl/rpc/v1/submit_pb'
-import {
-  GetTransactionRequest,
-  GetTransactionResponse,
-} from './Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
-import {
-  GetFeeRequest,
-  GetFeeResponse,
-} from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
+import * as grpc from '@grpc/grpc-js'
 import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
-} from './Generated/web/org/xrpl/rpc/v1/get_account_info_pb'
+} from '../Generated/node/org/xrpl/rpc/v1/get_account_info_pb'
+import {
+  GetFeeRequest,
+  GetFeeResponse,
+} from '../Generated/node/org/xrpl/rpc/v1/get_fee_pb'
+import {
+  SubmitTransactionRequest,
+  SubmitTransactionResponse,
+} from '../Generated/node/org/xrpl/rpc/v1/submit_pb'
+import * as XRPLedgerGrpcPb from '../Generated/node/org/xrpl/rpc/v1/xrp_ledger_grpc_pb'
+import { AccountAddress } from '../Generated/node/org/xrpl/rpc/v1/account_pb'
+import {
+  GetAccountTransactionHistoryRequest,
+  GetAccountTransactionHistoryResponse,
+} from '../Generated/node/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+import {
+  GetTransactionRequest,
+  GetTransactionResponse,
+} from '../Generated/node/org/xrpl/rpc/v1/get_transaction_pb'
+import isNode from '../../Common/utils'
 import { XrpNetworkClient } from './xrp-network-client'
-import isNode from '../Common/utils'
 
 /**
  * A GRPC Based network client.
  */
-export default class XrpGrpcNetworkClient implements XrpNetworkClient {
-  private readonly grpcClient: XRPLedgerAPIServiceClient
+export default class GrpcXrpNetworkClient implements XrpNetworkClient {
+  private readonly grpcClient: XRPLedgerGrpcPb.XRPLedgerAPIServiceClient
 
   public constructor(grpcURL: string) {
-    if (isNode()) {
-      try {
-        // This polyfill hack enables XMLHttpRequest on the global node.js state
-        global.XMLHttpRequest = require('xhr2') // eslint-disable-line
-      } catch {
-        // Swallow the error here for browsers
-      }
-    }
-    this.grpcClient = new XRPLedgerAPIServiceClient(grpcURL)
+    if (!isNode())
+      throw new Error('Use gRPC-Web Network Client on the browser!')
+
+    const XRPLedgerAPIServiceClient = grpc.makeClientConstructor(
+      XRPLedgerGrpcPb['org.xrpl.rpc.v1.XRPLedgerAPIService'],
+      'XRPLedgerAPIService',
+    )
+    this.grpcClient = (new XRPLedgerAPIServiceClient(
+      grpcURL,
+      grpc.credentials.createInsecure(),
+    ) as unknown) as XRPLedgerGrpcPb.XRPLedgerAPIServiceClient
   }
 
   public async getAccountInfo(
     request: GetAccountInfoRequest,
   ): Promise<GetAccountInfoResponse> {
     return new Promise((resolve, reject): void => {
-      this.grpcClient.getAccountInfo(request, {}, (error, response): void => {
+      this.grpcClient.getAccountInfo(request, (error, response): void => {
         if (error != null || response == null) {
           reject(error)
           return
@@ -58,7 +60,7 @@ export default class XrpGrpcNetworkClient implements XrpNetworkClient {
 
   public async getFee(request: GetFeeRequest): Promise<GetFeeResponse> {
     return new Promise((resolve, reject): void => {
-      this.grpcClient.getFee(request, {}, (error, response): void => {
+      this.grpcClient.getFee(request, (error, response): void => {
         if (error != null || response == null) {
           reject(error)
           return
@@ -72,7 +74,7 @@ export default class XrpGrpcNetworkClient implements XrpNetworkClient {
     request: GetTransactionRequest,
   ): Promise<GetTransactionResponse> {
     return new Promise((resolve, reject): void => {
-      this.grpcClient.getTransaction(request, {}, (error, response): void => {
+      this.grpcClient.getTransaction(request, (error, response): void => {
         if (error != null || response == null) {
           reject(error)
           return
@@ -86,17 +88,13 @@ export default class XrpGrpcNetworkClient implements XrpNetworkClient {
     request: SubmitTransactionRequest,
   ): Promise<SubmitTransactionResponse> {
     return new Promise((resolve, reject): void => {
-      this.grpcClient.submitTransaction(
-        request,
-        {},
-        (error, response): void => {
-          if (error != null || response == null) {
-            reject(error)
-            return
-          }
-          resolve(response)
-        },
-      )
+      this.grpcClient.submitTransaction(request, (error, response): void => {
+        if (error != null || response == null) {
+          reject(error)
+          return
+        }
+        resolve(response)
+      })
     })
   }
 
@@ -106,7 +104,6 @@ export default class XrpGrpcNetworkClient implements XrpNetworkClient {
     return new Promise((resolve, reject): void => {
       this.grpcClient.getAccountTransactionHistory(
         request,
-        {},
         (error, response): void => {
           if (error != null || response == null) {
             reject(error)

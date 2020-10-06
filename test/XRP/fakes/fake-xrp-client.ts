@@ -1,12 +1,12 @@
 import { BigInteger } from 'big-integer'
 import XrpClientDecorator from '../../../src/XRP/xrp-client-decorator'
-import TransactionStatus from '../../../src/XRP/transaction-status'
+import TransactionStatus from '../../../src/XRP/shared/transaction-status'
 import { Wallet } from '../../../src/index'
-import XrpTransaction from '../../../src/XRP/model/xrp-transaction'
+import XrpTransaction from '../../../src/XRP/protobuf-wrappers/xrp-transaction'
 import Result from '../../Common/Helpers/result'
 import { XrplNetwork } from 'xpring-common-js'
-import SendXrpDetails from '../../../src/XRP/model/send-xrp-details'
-import TransactionResult from '../../../src/XRP/model/transaction-result'
+import SendXrpDetails from '../../../src/XRP/shared/send-xrp-details'
+import TransactionResult from '../../../src/XRP/shared/transaction-result'
 
 class FakeXrpClient implements XrpClientDecorator {
   public constructor(
