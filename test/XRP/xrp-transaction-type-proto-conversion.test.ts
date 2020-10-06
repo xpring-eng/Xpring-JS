@@ -58,7 +58,8 @@ import {
   testInvalidAccountSetProtoSameSetClearFlag,
   testInvalidAccountDeleteProto,
   testInvalidCheckCancelProto,
-  testInvalidCheckCashProto,
+  testInvalidCheckCashProtoNoCheckId,
+  testInvalidCheckCashProtoNoAmountDeliverMin,
   testInvalidDepositPreauthProtoNoAuthUnauth,
   testInvalidDepositPreauthProtoSetBadAuthorize,
   testInvalidDepositPreauthProtoSetBadUnauthorize,
@@ -75,7 +76,9 @@ import {
   testInvalidEscrowCreateProtoNoCancelFinish,
   testInvalidEscrowCreateProtoNoFinishCondition,
   testInvalidEscrowCreateProtoNoXRP,
-  testInvalidEscrowFinishProto,
+  testInvalidEscrowFinishProtoNoOwner,
+  testInvalidEscrowFinishProtoBadOwner,
+  testInvalidEscrowFinishProtoNoOfferSequence,
   testInvalidOfferCancelProto,
   testInvalidOfferCreateProtoNoTakerGets,
   testInvalidOfferCreateProtoNoTakerPays,
@@ -329,13 +332,20 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     )
   })
 
-  it('Convert invalid CheckCash protobuf to XrpCheckCash object - missing checkId ', function (): void {
+  it('Convert invalid CheckCash protobuf to XrpCheckCash object - missing checkId', function (): void {
     // GIVEN an invalid CheckCash protocol buffer missing the checkId field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const checkCash = XrpCheckCash.from(testInvalidCheckCashProto)
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpCheckCash.from(testInvalidCheckCashProtoNoCheckId)
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(checkCash)
+  it('Convert invalid CheckCash protobuf to XrpCheckCash object - missing amount and deliverMin', function (): void {
+    // GIVEN an invalid CheckCash protocol buffer missing both the amount and deliverMin fields.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpCheckCash.from(testInvalidCheckCashProtoNoAmountDeliverMin)
+    }, XrpError)
   })
 
   // CheckCreate
@@ -760,16 +770,37 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
     assert.isUndefined(escrowFinish?.fulfillment)
   })
 
-  it('Convert EscrowFinish protobuf to XrpEscrowFinish object - missing required fields', function (): void {
-    // GIVEN an EscrowFinish protocol buffer missing a mandatory field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
-    const escrowFinish = XrpEscrowFinish.from(
-      testInvalidEscrowFinishProto,
-      XrplNetwork.Test,
-    )
+  it('Convert EscrowFinish protobuf to XrpEscrowFinish object - missing owner', function (): void {
+    // GIVEN an EscrowFinish protocol buffer missing the owner field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowFinish.from(
+        testInvalidEscrowFinishProtoNoOwner,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
 
-    // THEN the result is undefined.
-    assert.isUndefined(escrowFinish)
+  it('Convert EscrowFinish protobuf to XrpEscrowFinish object - bad owner', function (): void {
+    // GIVEN an EscrowFinish protocol buffer with a bad owner field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowFinish.from(
+        testInvalidEscrowFinishProtoBadOwner,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
+  })
+
+  it('Convert EscrowFinish protobuf to XrpEscrowFinish object - missing offerSequence', function (): void {
+    // GIVEN an EscrowFinish protocol buffer missing the offerSequence field.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
+    assert.throws(() => {
+      XrpEscrowFinish.from(
+        testInvalidEscrowFinishProtoNoOfferSequence,
+        XrplNetwork.Test,
+      )
+    }, XrpError)
   })
 
   // OfferCancel
@@ -788,7 +819,7 @@ describe('Protobuf Conversions - Transaction Types', function (): void {
 
   it('Convert OfferCancel protobuf to XrpOfferCancel object - missing required field', function (): void {
     // GIVEN an OfferCancel protocol buffer missing the offerSequence field.
-    // WHEN the protocol buffer is converted to a native Typescript type.
+    // WHEN the protocol buffer is converted to a native Typescript type THEN an error is thrown.
     assert.throws(() => {
       XrpOfferCancel.from(testInvalidOfferCancelProto)
     }, XrpError)
