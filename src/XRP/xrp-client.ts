@@ -176,7 +176,7 @@ export default class XrpClient implements XrpClientInterface {
     xAddressToUnauthorize: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    return this.decoratedClient.authorizeSendingAccount(
+    return this.decoratedClient.unauthorizeSendingAccount(
       xAddressToUnauthorize,
       wallet,
     )

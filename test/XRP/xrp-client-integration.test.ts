@@ -318,4 +318,45 @@ describe('XrpClient Integration Tests', function (): void {
     )
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
+
+  it('Unauthorize Sending Account - failure on unauthorizing self', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN unauthorizeSendingAccount is called with the account's own address
+    const result = await xrpClient.unauthorizeSendingAccount(
+      wallet.getAddress(),
+      wallet,
+    )
+
+    // THEN the transaction fails due to a malformed transaction.
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.MalformedTransaction)
+  })
+
+  it('Unauthorize Sending Account - failure on unauthorizing account that is not authorized', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account that has not authorized any accounts
+    await xrpClient.enableDepositAuth(wallet)
+
+    // WHEN unauthorizeSendingAccount is called on an account that is not authorized
+    const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const result = await xrpClient.unauthorizeSendingAccount(
+      sendingWallet.getAddress(),
+      wallet,
+    )
+
+    // THEN the transaction fails and the cost of the transaction is claimed by the network.
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.ClaimedCostOnly)
+  })
 })
