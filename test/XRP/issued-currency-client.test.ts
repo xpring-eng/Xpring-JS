@@ -8,7 +8,7 @@ const fakeSucceedingNetworkClient = new FakeXRPNetworkClient()
 //   FakeXRPNetworkClientResponses.defaultErrorResponses,
 // )
 
-describe('Default XRP Client', function (): void {
+describe('Issued Currency Client', function (): void {
   it('Dummy description', function (): void {
     // GIVEN an IssuedCurrencyClient.
     const issuedCurrencyClient = new IssuedCurrencyClient(
