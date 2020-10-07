@@ -84,6 +84,5 @@ export default class IssuedCurrencyClient {
 
   public shutUpCompiler(): void {
     console.log(this.networkClient)
-    console.log(this.coreXrplClient)
   }
 }
