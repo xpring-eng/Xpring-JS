@@ -19,12 +19,12 @@ export default class JsonRpcNetworkClient {
   }
 
   public async submitRequest(
-    requestObject: JsonRequest,
+    jsonRequest: JsonRequest,
   ): Promise<AxiosResponse<unknown>> {
     const requestOptions: AxiosRequestConfig = {
       url: '/',
       method: 'post',
-      data: requestObject,
+      data: jsonRequest,
       headers: { 'Content-Type': 'application/json' },
     }
     return await this.axiosInstance.request(requestOptions)
