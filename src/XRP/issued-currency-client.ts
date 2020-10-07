@@ -54,8 +54,8 @@ export default class IssuedCurrencyClient {
   // }
 
   public getAccountTrustLines(_address: string): void {
-    //const baseURL = 'test.xrp.xpring.io:51235'
-    const baseURL = 'https://s1.ripple.com:51235'
+    const baseURL = 'test.xrp.xpring.io:51234'
+    //const baseURL = 'https://s1.ripple.com:51234'
     const instance: AxiosInstance = axios.create({
       baseURL,
     })
