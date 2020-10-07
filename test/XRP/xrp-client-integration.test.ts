@@ -335,7 +335,12 @@ describe('XrpClient Integration Tests', function (): void {
     const transactionStatus = result.status
 
     assert.exists(transactionHash)
-    assert.equal(transactionStatus, TransactionStatus.MalformedTransaction)
+    // Note that this is different from what the docs suggest: https://xrpl.org/depositpreauth.html
+    // The code being returned in this case is actually a `tecNO_ENTRY`, which is what
+    // should be returned if the account to unauthorize was never authorized in the first place.
+    // This seems literally true, so we're resting for that.
+    // Note, however, that authorizing self above does in fact return a TransactionStatus.MalformedTransaction.
+    assert.equal(transactionStatus, TransactionStatus.ClaimedCostOnly)
   })
 
   it('Unauthorize Sending Account - failure on unauthorizing account that is not authorized', async function (): Promise<
