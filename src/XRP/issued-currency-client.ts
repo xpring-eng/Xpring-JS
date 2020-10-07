@@ -4,7 +4,7 @@ import { XrplNetwork } from 'xpring-common-js'
 // import { XrpNetworkClient } from './network-clients/xrp-network-client'
 // import isNode from '../Common/utils'
 //import CoreXrplClient from './core-xrpl-client'
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
 
 /**
  * IssuedCurrencyClient is a client for handling Issued Currencies on the XRPL.
@@ -53,9 +53,7 @@ export default class IssuedCurrencyClient {
   //   ],
   // }
 
-  public async getAccountTrustLines(
-    _address: string,
-  ): Promise<AxiosResponse<unknown>> {
+  public getAccountTrustLines(_address: string): void {
     //const baseURL = 'test.xrp.xpring.io:51235'
     const baseURL = 'https://s1.ripple.com:51235'
     const instance: AxiosInstance = axios.create({
@@ -76,16 +74,15 @@ export default class IssuedCurrencyClient {
       data: serverInfoRequest,
       headers: { 'Content-Type': 'application/json' },
     }
-    // instance
-    //   .request(requestOptions)
-    //   .then((response) => {
-    //     // process the response if server returns HTTP 200-299
-    //     console.log(response)
-    //   })
-    //   .catch((error) => {
-    //     // error handling (you cannot access the response body)
-    //     console.log(error)
-    //   })
-    return await instance.request(requestOptions)
+    instance
+      .request(requestOptions)
+      .then((response) => {
+        // process the response if server returns HTTP 200-299
+        console.log(response)
+      })
+      .catch((error) => {
+        // error handling (you cannot access the response body)
+        console.log(error)
+      })
   }
 }
