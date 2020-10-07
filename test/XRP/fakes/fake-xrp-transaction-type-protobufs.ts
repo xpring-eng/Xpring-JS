@@ -500,8 +500,12 @@ testInvalidAccountDeleteProto.setDestination(testInvalidDestinationProto)
 const testInvalidCheckCancelProto = new CheckCancel()
 
 // Invalid CheckCash proto (missing checkId)
-const testInvalidCheckCashProto = new CheckCash()
-testInvalidCheckCashProto.setAmount(testAmountProto)
+const testInvalidCheckCashProtoNoCheckId = new CheckCash()
+testInvalidCheckCashProtoNoCheckId.setAmount(testAmountProto)
+
+// Invalid CheckCash proto (missing both deliverMin and amount)
+const testInvalidCheckCashProtoNoAmountDeliverMin = new CheckCash()
+testInvalidCheckCashProtoNoAmountDeliverMin.setCheckId(testCheckIdProto)
 
 // Invalid CheckCreate proto (missing destination)
 const testInvalidCheckCreateProto = new CheckCreate()
@@ -612,8 +616,17 @@ testInvalidEscrowCreateProtoNoFinishCondition.setCancelAfter(
 )
 
 // Invalid EscrowFinish proto (missing owner)
-const testInvalidEscrowFinishProto = new EscrowFinish()
-testInvalidEscrowFinishProto.setOfferSequence(testOfferSequenceProto)
+const testInvalidEscrowFinishProtoNoOwner = new EscrowFinish()
+testInvalidEscrowFinishProtoNoOwner.setOfferSequence(testOfferSequenceProto)
+
+// Invalid EscrowFinish proto (bad owner)
+const testInvalidEscrowFinishProtoBadOwner = new EscrowFinish()
+testInvalidEscrowFinishProtoBadOwner.setOwner(testInvalidOwnerProto)
+testInvalidEscrowFinishProtoBadOwner.setOfferSequence(testOfferSequenceProto)
+
+// Invalid EscrowFinish proto (missing offerSequence)
+const testInvalidEscrowFinishProtoNoOfferSequence = new EscrowFinish()
+testInvalidEscrowFinishProtoNoOfferSequence.setOwner(testOwnerProto)
 
 // Invalid OfferCancel proto (missing offerSequence)
 const testInvalidOfferCancelProto = new OfferCancel()
@@ -808,7 +821,8 @@ export {
   testInvalidAccountSetProtoSameSetClearFlag,
   testInvalidAccountDeleteProto,
   testInvalidCheckCancelProto,
-  testInvalidCheckCashProto,
+  testInvalidCheckCashProtoNoCheckId,
+  testInvalidCheckCashProtoNoAmountDeliverMin,
   testInvalidCheckCreateProto,
   testInvalidCheckCreateProtoBadDestination,
   testInvalidCheckCreateProtoNoSendMax,
@@ -825,7 +839,9 @@ export {
   testInvalidEscrowCreateProtoNoCancelFinish,
   testInvalidEscrowCreateProtoNoFinishCondition,
   testInvalidEscrowCreateProtoNoXRP,
-  testInvalidEscrowFinishProto,
+  testInvalidEscrowFinishProtoNoOwner,
+  testInvalidEscrowFinishProtoBadOwner,
+  testInvalidEscrowFinishProtoNoOfferSequence,
   testInvalidOfferCancelProto,
   testInvalidOfferCreateProtoNoTakerGets,
   testInvalidOfferCreateProtoNoTakerPays,
