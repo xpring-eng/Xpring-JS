@@ -76,7 +76,10 @@ export default class IssuedCurrencyClient {
       wallet,
     )
 
-    return await this.coreXrplClient.getTransactionResult(transactionHash)
+    return await this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      wallet,
+    )
   }
 
   public shutUpCompiler(): void {
