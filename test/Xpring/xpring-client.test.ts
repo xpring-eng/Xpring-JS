@@ -21,11 +21,12 @@ const fakeTransactionHash = 'deadbeefdeadbeefdeadbeef'
 const fakeAccountExistsResult = true
 const fakePaymentHistoryValue = []
 const fakeGetPaymentValue = testXrpTransaction
-const fakedEnableDepositAuthValue = TransactionResult.getFinalTransactionResult(
+const fakedSuccessfulTransactionResult = TransactionResult.getFinalTransactionResult(
   fakeTransactionHash,
   TransactionStatus.Succeeded,
   true,
 )
+
 /* eslint-enable @typescript-eslint/no-magic-numbers, @typescript-eslint/naming-convention */
 
 // An amount to send
@@ -52,7 +53,8 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
-      fakedEnableDepositAuthValue,
+      fakedSuccessfulTransactionResult,
+      fakedSuccessfulTransactionResult,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -77,7 +79,8 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
-      fakedEnableDepositAuthValue,
+      fakedSuccessfulTransactionResult,
+      fakedSuccessfulTransactionResult,
     )
 
     const payIDClient = new FakeXrpPayIdClient(payIDError)
@@ -101,7 +104,8 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
-      fakedEnableDepositAuthValue,
+      fakedSuccessfulTransactionResult,
+      fakedSuccessfulTransactionResult,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -126,7 +130,8 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
-      fakedEnableDepositAuthValue,
+      fakedSuccessfulTransactionResult,
+      fakedSuccessfulTransactionResult,
     )
 
     const payIDClient = new FakeXrpPayIdClient(payIDError)
@@ -150,7 +155,8 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
-      fakedEnableDepositAuthValue,
+      fakedSuccessfulTransactionResult,
+      fakedSuccessfulTransactionResult,
       XrplNetwork.Test,
     )
     const payIDClient = new FakeXrpPayIdClient(payIDError, XrplNetwork.Main)
