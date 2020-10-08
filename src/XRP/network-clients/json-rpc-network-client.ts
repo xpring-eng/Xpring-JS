@@ -1,6 +1,10 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, { AxiosInstance, AxiosResponse } from 'axios'
 
-interface JsonRequest {
+/**
+ * The standard format for a request to the JSON RPC exposed by a rippled node.
+ * @see https://xrpl.org/request-formatting.html
+ */
+interface RippledJsonRequest {
   method: string
   params: unknown
 }
@@ -32,14 +36,13 @@ export default class JsonRpcNetworkClient {
    * @returns The response from the rippled server.
    */
   public async submitRequest(
-    jsonRequest: JsonRequest,
+    jsonRequest: RippledJsonRequest,
   ): Promise<AxiosResponse<unknown>> {
-    const requestOptions: AxiosRequestConfig = {
+    return await this.axiosInstance.request({
       url: '/',
       method: 'post',
       data: jsonRequest,
       headers: { 'Content-Type': 'application/json' },
-    }
-    return await this.axiosInstance.request(requestOptions)
+    })
   }
 }
