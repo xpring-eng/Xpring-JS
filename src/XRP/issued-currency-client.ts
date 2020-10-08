@@ -85,11 +85,12 @@ export default class IssuedCurrencyClient {
     if (accountLinesResponse.result.error) {
       throw XrpError.accountNotFound
     }
-    if (accountLinesResponse.result.lines === undefined) {
+    const rawTrustLines = accountLinesResponse.result.lines
+    if (rawTrustLines === undefined) {
       throw XrpError.malformedResponse
     }
     const trustLines: Array<TrustLine> = []
-    accountLinesResponse.result.lines.map((trustLineJson) => {
+    rawTrustLines.map((trustLineJson) => {
       trustLines.push(new TrustLine(trustLineJson))
     })
     return trustLines
