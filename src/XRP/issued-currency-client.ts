@@ -89,10 +89,9 @@ export default class IssuedCurrencyClient {
       throw XrpError.malformedResponse
     }
     const trustLines: Array<TrustLine> = []
-    for (const trustLineJson of accountLinesResponse.result.lines) {
-      const trustLine = new TrustLine(trustLineJson)
-      trustLines.push(trustLine)
-    }
+    accountLinesResponse.result.lines.map((trustLineJson) => {
+      trustLines.push(new TrustLine(trustLineJson))
+    })
     return trustLines
   }
 }
