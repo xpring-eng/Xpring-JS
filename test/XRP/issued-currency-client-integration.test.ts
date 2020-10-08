@@ -2,7 +2,6 @@ import { assert } from 'chai'
 import { WalletFactory, XrplNetwork } from 'xpring-common-js'
 import { XrpError } from '../../src/XRP'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
-import XRPTestUtils from './helpers/xrp-test-utils'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -60,13 +59,15 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a valid, funded address that doesn't have any trustlines
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
-    const address = wallet.getAddress()
+    const address = 'XVgfuVNA3AdYotM4ymXciybXLpHUEVzuVmRE1KSLCemREG9'
+    // TODO: generate fresh funded account each time, once testnet faucet stops rejecting your certificate
+    //const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    //onst address = wallet.getAddress()
 
     // WHEN getTrustLines is called for that addres
-    const trustLines = issuedCurrencyClient.getTrustLines(address)
+    const trustLines = await issuedCurrencyClient.getTrustLines(address)
 
     // THEN the result is an empty array.
-    console.log(trustLines)
+    assert.equal(trustLines, [])
   })
 })
