@@ -21,7 +21,7 @@ import {
 } from '../Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
 
 /**
- * The network client interface provides a wrapper around network calls to the XRP node.
+ * The GrpcNetworkClientInterface provides a wrapper around gRPC network calls to a rippled node.
  */
 export interface GrpcNetworkClientInterface {
   getAccountInfo(
