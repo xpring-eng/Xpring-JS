@@ -1,4 +1,7 @@
-import { AccountLinesResponse, RippledJsonRequest } from '../shared/json-schema'
+import {
+  AccountLinesResponse,
+  JsonRpcRequestOptions,
+} from '../shared/json-schema'
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
 
 /**
@@ -28,7 +31,7 @@ export default class JsonRpcNetworkClient {
    * @returns The response from the rippled server.
    */
   public async submitRequest(
-    jsonRequest: RippledJsonRequest,
+    jsonRequest: JsonRpcRequestOptions,
   ): Promise<AxiosResponse<unknown>> {
     return await this.axiosInstance.request({
       url: '/',

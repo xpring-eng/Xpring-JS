@@ -4,7 +4,7 @@
  * The standard format for a request to the JSON RPC exposed by a rippled node.
  * @see https://xrpl.org/request-formatting.html
  */
-interface RippledJsonRequest {
+interface JsonRpcRequestOptions {
   method: string
   params: unknown
 }
@@ -48,4 +48,4 @@ interface TrustLineJson {
   freeze_peer?: boolean
 }
 
-export { RippledJsonRequest, AccountLinesResponse, TrustLineJson }
+export { JsonRpcRequestOptions, AccountLinesResponse, TrustLineJson }
