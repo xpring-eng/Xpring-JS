@@ -1,6 +1,10 @@
 /* Schema for adding type information to JSON objects. */
 
-interface RequestJson {
+/**
+ * The standard format for a request to the JSON RPC exposed by a rippled node.
+ * @see https://xrpl.org/request-formatting.html
+ */
+interface RippledJsonRequest {
   method: string
   params: unknown
 }
@@ -44,4 +48,4 @@ interface TrustLineJson {
   freeze_peer?: boolean
 }
 
-export { RequestJson, AccountLinesResponseJson, TrustLineJson }
+export { RippledJsonRequest, AccountLinesResponseJson, TrustLineJson }

@@ -1,5 +1,8 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
-import { AccountLinesResponseJson, RequestJson } from '../shared/json-schema'
+import {
+  AccountLinesResponseJson,
+  RippledJsonRequest,
+} from '../shared/json-schema'
+import axios, { AxiosInstance, AxiosResponse } from 'axios'
 
 /**
  * A network client for interacting with the rippled JSON RPC.
@@ -28,15 +31,14 @@ export default class JsonRpcNetworkClient {
    * @returns The response from the rippled server.
    */
   public async submitRequest(
-    jsonRequest: RequestJson,
+    jsonRequest: RippledJsonRequest,
   ): Promise<AxiosResponse<unknown>> {
-    const requestOptions: AxiosRequestConfig = {
+    return await this.axiosInstance.request({
       url: '/',
       method: 'post',
       data: jsonRequest,
       headers: { 'Content-Type': 'application/json' },
-    }
-    return await this.axiosInstance.request(requestOptions)
+    })
   }
 
   public async getAccountLines(
