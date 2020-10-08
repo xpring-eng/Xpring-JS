@@ -48,8 +48,4 @@ interface TrustLineJson {
   freeze_peer?: boolean
 }
 
-export {
-  RippledJsonRequest,
-  AccountLinesResponse as AccountLinesResponseJson,
-  TrustLineJson,
-}
+export { RippledJsonRequest, AccountLinesResponse, TrustLineJson }

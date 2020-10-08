@@ -6,7 +6,7 @@ import isNode from '../Common/utils'
 import CoreXrplClient from './core-xrpl-client'
 import TrustLine from './shared/trustline'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
-import { AccountLinesResponseJson } from './shared/json-schema'
+import { AccountLinesResponse } from './shared/json-schema'
 import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
 import { XrpError } from './shared'
 
@@ -78,7 +78,7 @@ export default class IssuedCurrencyClient {
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
-    const accountLinesResponse: AccountLinesResponseJson = await this.jsonNetworkClient.getAccountLines(
+    const accountLinesResponse: AccountLinesResponse = await this.jsonNetworkClient.getAccountLines(
       classicAddress.address,
     )
 

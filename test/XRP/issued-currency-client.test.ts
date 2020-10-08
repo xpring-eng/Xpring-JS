@@ -9,7 +9,7 @@ import 'mocha'
 import TrustLine from '../../src/XRP/shared/trustline'
 import { assert } from 'chai'
 import { XrpError } from '../../src/XRP'
-import { AccountLinesResponseJson } from '../../src/XRP/shared/json-schema'
+import { AccountLinesResponse } from '../../src/XRP/shared/json-schema'
 
 const fakeSucceedingGrpcClient = new FakeXRPNetworkClient()
 // const fakeErroringNetworkClient = new FakeXRPNetworkClient(
@@ -31,7 +31,7 @@ describe('Issued Currency Client', function (): void {
     // WHEN getTrustLines is called
     const trustLines = await issuedCurrencyClient.getTrustLines(testAddress)
     const expectedTrustLines: Array<TrustLine> = []
-    const trustlinesJson: AccountLinesResponseJson = await fakeSucceedingJsonClient.getAccountLines(
+    const trustlinesJson: AccountLinesResponse = await fakeSucceedingJsonClient.getAccountLines(
       testAddress,
     )
     if (trustlinesJson.result.lines === undefined) {
@@ -65,7 +65,7 @@ describe('Issued Currency Client', function (): void {
 
   it('getTrustLines - account not found error response', function (done): void {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
-    const accountNotFoundResponse: AccountLinesResponseJson = {
+    const accountNotFoundResponse: AccountLinesResponse = {
       result: {
         error: 'actNotFound',
         status: 'error',

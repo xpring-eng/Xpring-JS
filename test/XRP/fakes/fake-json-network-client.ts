@@ -1,6 +1,6 @@
 import Result from '../../Common/Helpers/result'
 import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
-import { AccountLinesResponseJson } from '../../../src/XRP/shared/json-schema'
+import { AccountLinesResponse } from '../../../src/XRP/shared/json-schema'
 
 /**
  * A list of responses the fake network client will give.
@@ -32,14 +32,14 @@ export class FakeJsonNetworkClientResponses {
    */
   public constructor(
     public readonly getAccountLinesResponse: Result<
-      AccountLinesResponseJson
+      AccountLinesResponse
     > = FakeJsonNetworkClientResponses.defaultGetAccountLinesResponse(),
   ) {}
 
   /**
    * Construct a default response for getAccountLines request.
    */
-  public static defaultGetAccountLinesResponse(): AccountLinesResponseJson {
+  public static defaultGetAccountLinesResponse(): AccountLinesResponse {
     return {
       result: {
         account: 'r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
@@ -89,7 +89,7 @@ export class FakeJsonNetworkClient {
     private readonly responses: FakeJsonNetworkClientResponses = FakeJsonNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
 
-  getAccountLines(_address: string): Promise<AccountLinesResponseJson> {
+  getAccountLines(_address: string): Promise<AccountLinesResponse> {
     const accountLinesResponse = this.responses.getAccountLinesResponse
     if (accountLinesResponse instanceof Error) {
       return Promise.reject(accountLinesResponse)
