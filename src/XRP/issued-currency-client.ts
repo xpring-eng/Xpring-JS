@@ -57,7 +57,7 @@ export default class IssuedCurrencyClient {
    *
    * @param wallet The wallet associated with the XRPL account enabling Require Authorization and that will sign the request.
    * @returns A promise which resolves to a TransactionResult object that contains the hash of the submitted AccountSet transaction,
-   *          the preliminary status, and whether the transaction has been included in a validated ledger yet.
+   *          the final status, and whether the transaction was included in a validated ledger.
    */
   public async requireAuthorizedTrustlines(
     wallet: Wallet,

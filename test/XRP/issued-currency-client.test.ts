@@ -16,11 +16,11 @@ const walletFactory = new WalletFactory(XrplNetwork.Test)
 
 describe('Default XRP Client', function (): void {
   })
-  it('Enable Deposit Auth - successful response', async function (): Promise<
+  it('requireAuthorizedTrustlines - successful response', async function (): Promise<
     void
   > {
-    // GIVEN a IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const xrpClient = new IssuedCurrencyClient(
+    // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
@@ -40,10 +40,8 @@ describe('Default XRP Client', function (): void {
     assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
-  it('Enable Deposit Auth - submission failure', async function (): Promise<
-    void
-  > {
-    // GIVEN a IssuedCurrencyClient which will fail to submit a transaction.
+  it('requireAuthorizedTrustlines - submission failure', function (): void {
+    // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
     const failureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
       FakeXRPNetworkClientResponses.defaultFeeResponse(),
