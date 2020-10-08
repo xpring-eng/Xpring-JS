@@ -5,10 +5,9 @@ import { XrpNetworkClient } from './network-clients/xrp-network-client'
 import isNode from '../Common/utils'
 import CoreXrplClient from './core-xrpl-client'
 import { AccountSetFlag } from './shared/account-set-flag'
-import { SetFlag } from './Generated/web/org/xrpl/rpc/v1/common_pb'
+import { SetFlag, ClearFlag } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountSet } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import TransactionResult from './shared/transaction-result'
-import { ClearFlag } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
