@@ -8,6 +8,7 @@ import { AccountSetFlag } from './shared/account-set-flag'
 import { SetFlag } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountSet } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import TransactionResult from './shared/transaction-result'
+import { ClearFlag } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -67,6 +68,38 @@ export default class IssuedCurrencyClient {
 
     const accountSet = new AccountSet()
     accountSet.setSetFlag(setFlag)
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
+    transaction.setAccountSet(accountSet)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      wallet,
+    )
+
+    return await this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      wallet,
+    )
+  }
+
+  /**
+   * Disable Require Authorization for this XRPL account.
+   *
+   * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#require-auth
+   *
+   * @param wallet The wallet associated with the XRPL account disabling Require Authorization and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that contains the hash of the submitted AccountSet transaction,
+   *          the final status, and whether the transaction was included in a validated ledger.
+   */
+  public async allowUnauthorizedTrustlines(
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const clearFlag = new ClearFlag()
+    clearFlag.setValue(AccountSetFlag.asfRequireAuth)
+
+    const accountSet = new AccountSet()
+    accountSet.setClearFlag(clearFlag)
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
     transaction.setAccountSet(accountSet)
