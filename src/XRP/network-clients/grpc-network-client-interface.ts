@@ -23,7 +23,7 @@ import {
 /**
  * The network client interface provides a wrapper around network calls to the XRP node.
  */
-export interface XrpNetworkClient {
+export interface GrpcNetworkClientInterface {
   getAccountInfo(
     request: GetAccountInfoRequest,
   ): Promise<GetAccountInfoResponse>

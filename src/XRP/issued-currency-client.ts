@@ -1,12 +1,13 @@
 import { XrplNetwork } from 'xpring-common-js'
 import GrpcNetworkClient from './network-clients/grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
-import { XrpNetworkClient } from './network-clients/xrp-network-client'
+import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
 import isNode from '../Common/utils'
 import CoreXrplClient from './core-xrpl-client'
 import TrustLine from './shared/trustline'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
 import { AccountLinesResponseJson } from './shared/json-schema'
+import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -52,8 +53,8 @@ export default class IssuedCurrencyClient {
    * @param network The network this IssuedCurrencyClient is connecting to.
    */
   public constructor(
-    private readonly grpcNetworkClient: XrpNetworkClient,
-    private readonly jsonNetworkClient: JsonRpcNetworkClient,
+    private readonly grpcNetworkClient: GrpcNetworkClientInterface,
+    private readonly jsonNetworkClient: JsonNetworkClientInterface,
     readonly network: XrplNetwork,
   ) {
     this.coreXrplClient = new CoreXrplClient(grpcNetworkClient, network)
