@@ -68,6 +68,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const trustLines = await issuedCurrencyClient.getTrustLines(address)
 
     // THEN the result is an empty array.
-    assert.deepEqual(trustLines, [])
+    assert.isArray(trustLines)
+    assert.isEmpty(trustLines)
   })
 })
