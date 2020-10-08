@@ -9,7 +9,7 @@ interface RippledJsonRequest {
   params: unknown
 }
 
-interface AccountLinesResponseJson {
+interface AccountLinesResponse {
   result: {
     error?: string
     account?: string
@@ -48,4 +48,8 @@ interface TrustLineJson {
   freeze_peer?: boolean
 }
 
-export { RippledJsonRequest, AccountLinesResponseJson, TrustLineJson }
+export {
+  RippledJsonRequest,
+  AccountLinesResponse as AccountLinesResponseJson,
+  TrustLineJson,
+}
