@@ -58,7 +58,6 @@ export default class JsonRpcNetworkClient {
     )
     const accountLinesResponse: AccountLinesResponseJson = axiosResponse.data
 
-    console.log(accountLinesResponse)
     return accountLinesResponse
   }
 }
