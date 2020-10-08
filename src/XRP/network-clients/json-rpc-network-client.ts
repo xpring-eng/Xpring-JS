@@ -1,9 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
-
-interface JsonRequest {
-  method: string
-  params: unknown
-}
+import { RequestJson } from '../shared/json-schema'
 
 /**
  * A network client for interacting with the rippled JSON RPC.
@@ -32,7 +28,7 @@ export default class JsonRpcNetworkClient {
    * @returns The response from the rippled server.
    */
   public async submitRequest(
-    jsonRequest: JsonRequest,
+    jsonRequest: RequestJson,
   ): Promise<AxiosResponse<unknown>> {
     const requestOptions: AxiosRequestConfig = {
       url: '/',
