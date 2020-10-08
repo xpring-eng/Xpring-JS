@@ -2,7 +2,7 @@ import { TrustLineJson } from './json-schema'
 
 /**
  * Represents a trust line on the XRP Ledger.
- * @see
+ * @see https://xrpl.org/trust-lines-and-issuing.html
  */
 export default class TrustLine {
   /** The unique Address of the counterparty to this trust line. */
