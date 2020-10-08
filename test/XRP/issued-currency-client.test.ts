@@ -62,4 +62,49 @@ describe('Issued Currency Client', function (): void {
         assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
       })
   })
+
+  it('allowUnauthorizedTrustlines - successful response', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingNetworkClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN allowUnauthorizedTrustlines is called
+    const result = await issuedCurrencyClient.allowUnauthorizedTrustlines(
+      this.wallet,
+    )
+    const transactionHash = result.hash
+
+    // THEN a transaction hash exists and is the expected hash
+    const expectedTransactionHash = Utils.toHex(
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
+    )
+
+    assert.exists(transactionHash)
+    assert.strictEqual(transactionHash, expectedTransactionHash)
+  })
+
+  it('allowUnauthorizedTrustlines - submission failure', function (): void {
+    // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
+    const failureResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultError,
+    )
+    const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      failingNetworkClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN allowUnauthorizedTrustlines is attempted THEN an error is propagated.
+    issuedCurrencyClient
+      .requireAuthorizedTrustlines(this.wallet)
+      .catch((error) => {
+        assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
+      })
+  })
 })
