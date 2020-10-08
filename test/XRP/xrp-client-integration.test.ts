@@ -246,9 +246,7 @@ describe('XrpClient Integration Tests', function (): void {
     )
 
     // THEN the transaction fails.
-    const transactionStatus = await xrpWebClient.getPaymentStatus(
-      transactionHash,
-    )
+    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
     assert.deepEqual(transactionStatus, TransactionStatus.Failed)
   })
 
@@ -313,9 +311,7 @@ describe('XrpClient Integration Tests', function (): void {
     )
 
     // THEN the transaction succeeds.
-    const transactionStatus = await xrpWebClient.getPaymentStatus(
-      transactionHash,
-    )
+    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
 })
