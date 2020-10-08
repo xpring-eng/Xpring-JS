@@ -15,20 +15,22 @@ const fakeSucceedingNetworkClient = new FakeXRPNetworkClient()
 const walletFactory = new WalletFactory(XrplNetwork.Test)
 
 describe('Default XRP Client', function (): void {
+  before(async function () {
+    this.wallet = (await walletFactory.generateRandomWallet())!.wallet
   })
   it('requireAuthorizedTrustlines - successful response', async function (): Promise<
     void
   > {
-    const xrpClient = new IssuedCurrencyClient(
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
+    const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
 
-    const wallet = (await walletFactory.generateRandomWallet())!.wallet
-
     // WHEN requireAuthorizedTrustlines is called
-    const result = await xrpClient.requireAuthorizedTrustlines(wallet)
+    const result = await issuedCurrencyClient.requireAuthorizedTrustlines(
+      this.wallet,
+    )
     const transactionHash = result.hash
 
     // THEN a transaction hash exists and is the expected hash
@@ -48,15 +50,16 @@ describe('Default XRP Client', function (): void {
       FakeXRPNetworkClientResponses.defaultError,
     )
     const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
-    const xrpClient = new IssuedCurrencyClient(
+    const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
       XrplNetwork.Test,
     )
-    const wallet = (await walletFactory.generateRandomWallet())!.wallet
 
     // WHEN requireAuthorizedTrustlines is attempted THEN an error is propagated.
-    xrpClient.requireAuthorizedTrustlines(wallet).catch((error) => {
-      assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
-    })
+    issuedCurrencyClient
+      .requireAuthorizedTrustlines(this.wallet)
+      .catch((error) => {
+        assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
+      })
   })
 })
