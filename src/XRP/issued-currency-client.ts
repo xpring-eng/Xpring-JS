@@ -44,7 +44,7 @@ export default class IssuedCurrencyClient {
    * @param network The network this IssuedCurrencyClient is connecting to.
    */
   public constructor(
-    private readonly networkClient: XrpNetworkClient,
+    networkClient: XrpNetworkClient,
     readonly network: XrplNetwork,
   ) {
     this.coreXrplClient = new CoreXrplClient(networkClient, network)
@@ -80,9 +80,5 @@ export default class IssuedCurrencyClient {
       transactionHash,
       wallet,
     )
-  }
-
-  public shutUpCompiler(): void {
-    console.log(this.networkClient)
   }
 }

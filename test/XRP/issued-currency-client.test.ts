@@ -15,15 +15,6 @@ const fakeSucceedingNetworkClient = new FakeXRPNetworkClient()
 const walletFactory = new WalletFactory(XrplNetwork.Test)
 
 describe('Default XRP Client', function (): void {
-  it('Dummy description', function (): void {
-    // GIVEN an IssuedCurrencyClient.
-    const issuedCurrencyClient = new IssuedCurrencyClient(
-      fakeSucceedingNetworkClient,
-      XrplNetwork.Test,
-    )
-
-    // WHEN the compiler is told to shut up THEN everything is fine.
-    issuedCurrencyClient.shutUpCompiler()
   })
   it('Enable Deposit Auth - successful response', async function (): Promise<
     void
