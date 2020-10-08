@@ -7,7 +7,6 @@ import CoreXrplClient from './core-xrpl-client'
 import TrustLine from './shared/trustline'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
 import { AccountLinesResponseJson } from './shared/json-schema'
-import { AxiosResponse } from 'axios'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -73,21 +72,9 @@ export default class IssuedCurrencyClient {
    * @returns An array of TrustLine objects, representing all trust lines associated with this account.
    */
   public async getTrustLines(account: string): Promise<Array<TrustLine>> {
-    // TODO: consider an option for including the 'peer' param in the request, which limits the returned trust lines to only
-    // those shared between the two accounts. (This would have to be an argument to the method too.)
-    const accountLinesRequest = {
-      method: 'account_lines',
-      params: [
-        {
-          account: account,
-          ledger_index: 'validated',
-        },
-      ],
-    }
-    const axiosResponse: AxiosResponse = await this.jsonNetworkClient.submitRequest(
-      accountLinesRequest,
+    const accountLinesResponse: AccountLinesResponseJson = await this.jsonNetworkClient.getAccountLines(
+      account,
     )
-    const accountLinesResponse: AccountLinesResponseJson = axiosResponse.data
 
     const trustLines: Array<TrustLine> = []
     for (const trustLineJson of accountLinesResponse.result.lines) {

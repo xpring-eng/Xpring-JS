@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
-import { RequestJson } from '../shared/json-schema'
+import { AccountLinesResponseJson, RequestJson } from '../shared/json-schema'
 
 /**
  * A network client for interacting with the rippled JSON RPC.
@@ -37,5 +37,26 @@ export default class JsonRpcNetworkClient {
       headers: { 'Content-Type': 'application/json' },
     }
     return await this.axiosInstance.request(requestOptions)
+  }
+
+  public async getAccountLines(
+    account: string,
+  ): Promise<AccountLinesResponseJson> {
+    // TODO: consider an option for including the 'peer' param in the request, which limits the returned trust lines to only
+    // those shared between the two accounts. (This would have to be an argument to the method here and in i-c-client too.)
+    const accountLinesRequest = {
+      method: 'account_lines',
+      params: [
+        {
+          account: account,
+          ledger_index: 'validated',
+        },
+      ],
+    }
+    const axiosResponse: AxiosResponse = await this.submitRequest(
+      accountLinesRequest,
+    )
+    const accountLinesResponse: AccountLinesResponseJson = axiosResponse.data
+    return accountLinesResponse
   }
 }
