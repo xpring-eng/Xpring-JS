@@ -1,4 +1,4 @@
-import { XrplNetwork } from 'xpring-common-js'
+import { XrplNetwork, XrpUtils } from 'xpring-common-js'
 import GrpcNetworkClient from './network-clients/grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
 import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
@@ -8,6 +8,7 @@ import TrustLine from './shared/trustline'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
 import { AccountLinesResponseJson } from './shared/json-schema'
 import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
+import { XrpError } from './shared'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -68,14 +69,25 @@ export default class IssuedCurrencyClient {
    * Retrieves information about an account's trust lines, which maintain balances of all non-XRP currencies and assets.
    * @see https://xrpl.org/trust-lines-and-issuing.html
    *
-   * @param account The account for which to retrieve associated trust lines.
+   * @param account The account for which to retrieve associated trust lines, encoded as an X-Address.
+   * @see https://xrpaddress.info/
    * @returns An array of TrustLine objects, representing all trust lines associated with this account.
    */
   public async getTrustLines(account: string): Promise<Array<TrustLine>> {
+    const classicAddress = XrpUtils.decodeXAddress(account)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
     const accountLinesResponse: AccountLinesResponseJson = await this.jsonNetworkClient.getAccountLines(
-      account,
+      classicAddress.address,
     )
 
+    if (accountLinesResponse.result.error) {
+      throw XrpError.accountNotFound
+    }
+    if (accountLinesResponse.result.lines === undefined) {
+      throw XrpError.malformedResponse
+    }
     const trustLines: Array<TrustLine> = []
     for (const trustLineJson of accountLinesResponse.result.lines) {
       const trustLine = new TrustLine(trustLineJson)

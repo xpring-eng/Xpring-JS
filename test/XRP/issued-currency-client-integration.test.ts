@@ -1,6 +1,8 @@
 import { assert } from 'chai'
-import { XrplNetwork } from 'xpring-common-js'
+import { WalletFactory, XrplNetwork } from 'xpring-common-js'
+import { XrpError } from '../../src/XRP'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
+import XRPTestUtils from './helpers/xrp-test-utils'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -12,8 +14,7 @@ const testAddressWithTrustLines =
 
 // An IssuedCurrencyClient that makes requests.
 const rippledGrpcUrl = 'test.xrp.xpring.io:50051'
-// TODO: replace this with xpring rippled node when confirmed with Tyler Longwell that port is open
-const rippledJsonUrl = 'https://s1.ripple.com:51234/'
+const rippledJsonUrl = 'http://test.xrp.xpring.io:51234'
 const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
   rippledGrpcUrl,
   rippledJsonUrl,
@@ -38,5 +39,34 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN there is a successful non-empty result
     assert.exists(trustLines)
     assert.isTrue(trustLines.length > 0)
+  })
+
+  it('getTrustLines - account not found', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN a valid address that doesn't actually exist on the ledger
+    const walletFactory = new WalletFactory(XrplNetwork.Test)
+    const address = (await walletFactory.generateRandomWallet())!.wallet.getAddress()
+
+    // WHEN getTrustLines is called for that address THEN an error is propagated.
+    issuedCurrencyClient.getTrustLines(address).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.accountNotFound)
+    })
+  })
+
+  it('getTrustLines - account with no trust lines', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    // GIVEN a valid, funded address that doesn't have any trustlines
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const address = wallet.getAddress()
+
+    // WHEN getTrustLines is called for that addres
+    const trustLines = issuedCurrencyClient.getTrustLines(address)
+
+    // THEN the result is an empty array.
+    console.log(trustLines)
   })
 })

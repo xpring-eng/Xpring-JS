@@ -7,11 +7,26 @@ interface RequestJson {
 
 interface AccountLinesResponseJson {
   result: {
-    account: string
-    lines: TrustLineJson[]
+    error?: string
+    account?: string
+    lines?: Array<TrustLineJson>
     status: string
   }
 }
+
+// interface AccountLinesErrorJson {
+//   result: {
+//     error: string
+//     error_code: number
+//     error_message: string
+//     request: {
+//       account: string
+//       command: string
+//       ledger_index: string
+//     }
+//     status: string
+//   }
+// }
 
 interface TrustLineJson {
   account: string
