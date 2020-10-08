@@ -11,6 +11,7 @@
  */
 class AccountRootFlags {
   static LSF_DEPOSIT_AUTH = 1 << 24
+  static LSF_REQUIRE_AUTH = 1 << 18
 
   /**
    * Check if the given flag is set in the given set of bit-flags.
