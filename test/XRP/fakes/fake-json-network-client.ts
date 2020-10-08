@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 import Result from '../../Common/Helpers/result'
 import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
 import { AccountLinesResponseJson } from '../../../src/XRP/shared/json-schema'
