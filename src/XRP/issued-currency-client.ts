@@ -53,7 +53,7 @@ export default class IssuedCurrencyClient {
    * @param network The network this IssuedCurrencyClient is connecting to.
    */
   public constructor(
-    private readonly grpcNetworkClient: GrpcNetworkClientInterface,
+    grpcNetworkClient: GrpcNetworkClientInterface,
     private readonly jsonNetworkClient: JsonNetworkClientInterface,
     readonly network: XrplNetwork,
   ) {
@@ -61,7 +61,6 @@ export default class IssuedCurrencyClient {
   }
 
   public shutUpCompiler(): void {
-    console.log(this.grpcNetworkClient)
     console.log(this.coreXrplClient)
   }
 
