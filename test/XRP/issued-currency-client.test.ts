@@ -14,7 +14,7 @@ const fakeSucceedingNetworkClient = new FakeXRPNetworkClient()
 // )
 const walletFactory = new WalletFactory(XrplNetwork.Test)
 
-describe('Default XRP Client', function (): void {
+describe('Issued Currency Client', function (): void {
   before(async function () {
     this.wallet = (await walletFactory.generateRandomWallet())!.wallet
   })
