@@ -1,43 +1,7 @@
 /* eslint-disable class-methods-use-this */
-import { XrpNetworkClient } from '../../../src/XRP/network-clients/xrp-network-client'
-import {
-  GetAccountInfoRequest,
-  GetAccountInfoResponse,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_info_pb'
-import {
-  GetFeeRequest,
-  GetFeeResponse,
-  Fee,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_fee_pb'
-import {
-  GetTransactionRequest,
-  GetTransactionResponse,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_transaction_pb'
-import {
-  SubmitTransactionRequest,
-  SubmitTransactionResponse,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/submit_pb'
-import { AccountRoot } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
-import {
-  XRPDropsAmount,
-  CurrencyAmount,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/amount_pb'
-import { AccountAddress } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/account_pb'
-import {
-  Meta,
-  TransactionResult,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/meta_pb'
-import { Balance } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/common_pb'
-import {
-  GetAccountTransactionHistoryRequest,
-  GetAccountTransactionHistoryResponse,
-} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
 import Result from '../../Common/Helpers/result'
-import {
-  testGetAccountTransactionHistoryResponse,
-  testTransactionPaymentAllFields,
-} from './fake-xrp-protobufs'
 import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
+import { AccountLinesResponseJson } from '../../../src/XRP/shared/json-schema'
 
 /**
  * A list of responses the fake network client will give.
@@ -46,6 +10,7 @@ export class FakeJsonNetworkClientResponses {
   /**
    * A default error.
    */
+  // TODO: what should an error really look like in this context?
   public static defaultError = new XrpError(XrpErrorType.Unknown, 'Test error')
 
   /**
@@ -58,202 +23,79 @@ export class FakeJsonNetworkClientResponses {
    */
   public static defaultErrorResponses = new FakeJsonNetworkClientResponses(
     FakeJsonNetworkClientResponses.defaultError,
-    FakeJsonNetworkClientResponses.defaultError,
-    FakeJsonNetworkClientResponses.defaultError,
-    FakeJsonNetworkClientResponses.defaultError,
-    FakeJsonNetworkClientResponses.defaultError,
   )
 
   /**
    * Construct a new set of responses.
    *
-   * @param getAccountInfoResponse The response or error that will be returned from the getAccountInfo request. Default is the default account info response.
-   * @param getFeeResponse The response or error that will be returned from the getFee request. Defaults to the default fee response.
-   * @param submitTransactionResponse The response or error that will be returned from the submitTransaction request. Defaults to the default submit transaction response.
-   * @param getTransactionStatusResponse The response or error that will be returned from the getTransactionStatus request. Defaults to the default transaction status response.
-   * @param getTransactionHistoryResponse The response or error that will be returned from the getTransactionHistory request. Default to the default transaction history response.
+   * @param getAccountLinesResponse The response or error that will be returned from the getAccountLines request.
+   *                                Default is the example at https://xrpl.org/account_lines.html#response-format for JSON-RPC.
    */
   public constructor(
-    public readonly getAccountInfoResponse: Result<
-      GetAccountInfoResponse
-    > = FakeJsonNetworkClientResponses.defaultAccountInfoResponse(),
-    public readonly getFeeResponse: Result<
-      GetFeeResponse
-    > = FakeJsonNetworkClientResponses.defaultFeeResponse(),
-    public readonly submitransactionResponse: Result<
-      SubmitTransactionResponse
-    > = FakeJsonNetworkClientResponses.defaultSubmitTransactionResponse(),
-    public readonly getTransactionStatusResponse: Result<
-      GetTransactionResponse
-    > = FakeJsonNetworkClientResponses.defaultGetTransactionResponse(),
-    public readonly getTransactionHistoryResponse: Result<
-      GetAccountTransactionHistoryResponse
-    > = FakeJsonNetworkClientResponses.defaultGetTransactionHistoryResponse(),
+    public readonly getAccountLinesResponse: Result<
+      AccountLinesResponseJson
+    > = FakeJsonNetworkClientResponses.defaultGetAccountLinesResponse(),
   ) {}
 
   /**
-   * Construct a default AccountInfoResponse.
+   * Construct a default response for getAccountLines request.
    */
-  public static defaultAccountInfoResponse(): GetAccountInfoResponse {
-    const xrpAmount = new XRPDropsAmount()
-    xrpAmount.setDrops('10')
-
-    const currencyAmount = new CurrencyAmount()
-    currencyAmount.setXrpAmount(xrpAmount)
-
-    const balance = new Balance()
-    balance.setValue(currencyAmount)
-
-    const accountRoot = new AccountRoot()
-    accountRoot.setBalance(balance)
-
-    const accountInfo = new GetAccountInfoResponse()
-    accountInfo.setAccountData(accountRoot)
-
-    return accountInfo
-  }
-
-  /**
-   * Construct a default FeeResponse.
-   */
-  public static defaultFeeResponse(): GetFeeResponse {
-    const minimumFee = new XRPDropsAmount()
-    minimumFee.setDrops('1')
-
-    const fee = new Fee()
-    fee.setMinimumFee(minimumFee)
-
-    const getFeeResponse = new GetFeeResponse()
-    getFeeResponse.setFee(fee)
-    getFeeResponse.setLedgerCurrentIndex(1)
-
-    return getFeeResponse
-  }
-
-  /**
-   * Construct a default SubmitTransactionResponse.
-   */
-  public static defaultSubmitTransactionResponse(): SubmitTransactionResponse {
-    const submitTransactionResponse = new SubmitTransactionResponse()
-    submitTransactionResponse.setHash('123456')
-
-    return submitTransactionResponse
-  }
-
-  /**
-   * Construct a default getTransactionResponse.
-   */
-  public static defaultGetTransactionResponse(): GetTransactionResponse {
-    const transactionResult = new TransactionResult()
-    transactionResult.setResult('tesSUCCESS')
-
-    const meta = new Meta()
-    meta.setTransactionResult(transactionResult)
-
-    // use a fully populated, valid Transaction proto
-    const transaction = testTransactionPaymentAllFields
-
-    const response = new GetTransactionResponse()
-    response.setValidated(true)
-    response.setMeta(meta)
-    response.setTransaction(transaction)
-
-    return response
-  }
-
-  /**
-   * Construct a default getTransactionHistoryResponse.
-   */
-  public static defaultGetTransactionHistoryResponse(): GetAccountTransactionHistoryResponse {
-    // constructed in test/fakes/fake-xrp-protobufs.ts
-    return testGetAccountTransactionHistoryResponse
+  public static defaultGetAccountLinesResponse(): AccountLinesResponseJson {
+    return {
+      result: {
+        account: 'r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+        lines: [
+          {
+            account: 'r3vi7mWxru9rJCxETCyA1CHvzL96eZWx5z',
+            balance: '0',
+            currency: 'ASP',
+            limit: '0',
+            limit_peer: '10',
+            quality_in: 0,
+            quality_out: 0,
+          },
+          {
+            account: 'r3vi7mWxru9rJCxETCyA1CHvzL96eZWx5z',
+            balance: '0',
+            currency: 'XAU',
+            limit: '0',
+            limit_peer: '0',
+            no_ripple: true,
+            no_ripple_peer: true,
+            quality_in: 0,
+            quality_out: 0,
+          },
+          {
+            account: 'rs9M85karFkCRjvc6KMWn8Coigm9cbcgcx',
+            balance: '0',
+            currency: '015841551A748AD2C1F76FF6ECB0CCCD00000000',
+            limit: '10.01037626125837',
+            limit_peer: '0',
+            no_ripple: true,
+            quality_in: 0,
+            quality_out: 0,
+          },
+        ],
+        status: 'success',
+      },
+    }
   }
 }
 
 /**
  * A fake network client which stubs network interaction.
  */
-export class FakeJsonNetworkClient implements XrpNetworkClient {
+export class FakeJsonNetworkClient {
   public constructor(
     private readonly responses: FakeJsonNetworkClientResponses = FakeJsonNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
 
-  getAccountInfo(
-    _accountInfoRequest: GetAccountInfoRequest,
-  ): Promise<GetAccountInfoResponse> {
-    const accountInfoResponse = this.responses.getAccountInfoResponse
-    if (accountInfoResponse instanceof Error) {
-      return Promise.reject(accountInfoResponse)
+  getAccountLines(_address: string): Promise<AccountLinesResponseJson> {
+    const accountLinesResponse = this.responses.getAccountLinesResponse
+    if (accountLinesResponse instanceof Error) {
+      return Promise.reject(accountLinesResponse)
     }
 
-    return Promise.resolve(accountInfoResponse)
-  }
-
-  getFee(_feeRequest: GetFeeRequest): Promise<GetFeeResponse> {
-    const feeResponse = this.responses.getFeeResponse
-    if (feeResponse instanceof Error) {
-      return Promise.reject(feeResponse)
-    }
-
-    return Promise.resolve(feeResponse)
-  }
-
-  submitTransaction(
-    _submitSignedTransactionRequest: SubmitTransactionRequest,
-  ): Promise<SubmitTransactionResponse> {
-    const submitTransactionResponse = this.responses.submitransactionResponse
-    if (submitTransactionResponse instanceof Error) {
-      return Promise.reject(submitTransactionResponse)
-    }
-
-    return Promise.resolve(submitTransactionResponse)
-  }
-
-  getTransaction(
-    _getTransactionStatusRequest: GetTransactionRequest,
-  ): Promise<GetTransactionResponse> {
-    const transactionStatusResponse = this.responses
-      .getTransactionStatusResponse
-    if (transactionStatusResponse instanceof Error) {
-      return Promise.reject(transactionStatusResponse)
-    }
-
-    return Promise.resolve(transactionStatusResponse)
-  }
-
-  getTransactionHistory(
-    _GetAccountTransactionHistoryRequest: GetAccountTransactionHistoryRequest,
-  ): Promise<GetAccountTransactionHistoryResponse> {
-    const transactionHistoryResponse = this.responses
-      .getTransactionHistoryResponse
-    if (transactionHistoryResponse instanceof Error) {
-      return Promise.reject(transactionHistoryResponse)
-    }
-
-    return Promise.resolve(transactionHistoryResponse)
-  }
-
-  public AccountAddress(): AccountAddress {
-    return new AccountAddress()
-  }
-
-  public GetAccountInfoRequest(): GetAccountInfoRequest {
-    return new GetAccountInfoRequest()
-  }
-
-  public GetTransactionRequest(): GetTransactionRequest {
-    return new GetTransactionRequest()
-  }
-
-  public GetFeeRequest(): GetFeeRequest {
-    return new GetFeeRequest()
-  }
-
-  public SubmitTransactionRequest(): SubmitTransactionRequest {
-    return new SubmitTransactionRequest()
-  }
-
-  public GetAccountTransactionHistoryRequest(): GetAccountTransactionHistoryRequest {
-    return new GetAccountTransactionHistoryRequest()
+    return Promise.resolve(accountLinesResponse)
   }
 }
