@@ -1,9 +1,14 @@
-import { Wallet, XrplNetwork } from 'xpring-common-js'
+import { XrplNetwork, XrpUtils, Wallet } from 'xpring-common-js'
 import GrpcNetworkClient from './network-clients/grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
-import { XrpNetworkClient } from './network-clients/xrp-network-client'
+import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
 import isNode from '../Common/utils'
 import CoreXrplClient from './core-xrpl-client'
+import TrustLine from './shared/trustline'
+import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
+import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
+import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
+import { XrpError } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import { SetFlag, ClearFlag } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountSet } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
@@ -27,12 +32,19 @@ export default class IssuedCurrencyClient {
    */
   public static issuedCurrencyClientWithEndpoint(
     grpcUrl: string,
+    jsonUrl: string,
     network: XrplNetwork,
     forceWeb = false,
   ): IssuedCurrencyClient {
-    return isNode() && !forceWeb
-      ? new IssuedCurrencyClient(new GrpcNetworkClient(grpcUrl), network)
-      : new IssuedCurrencyClient(new GrpcNetworkClientWeb(grpcUrl), network)
+    const grpcNetworkClient =
+      isNode() && !forceWeb
+        ? new GrpcNetworkClient(grpcUrl)
+        : new GrpcNetworkClientWeb(grpcUrl)
+    return new IssuedCurrencyClient(
+      grpcNetworkClient,
+      new JsonRpcNetworkClient(jsonUrl),
+      network,
+    )
   }
 
   /**
@@ -44,10 +56,11 @@ export default class IssuedCurrencyClient {
    * @param network The network this IssuedCurrencyClient is connecting to.
    */
   public constructor(
-    networkClient: XrpNetworkClient,
+    grpcNetworkClient: GrpcNetworkClientInterface,
+    private readonly jsonNetworkClient: JsonNetworkClientInterface,
     readonly network: XrplNetwork,
   ) {
-    this.coreXrplClient = new CoreXrplClient(networkClient, network)
+    this.coreXrplClient = new CoreXrplClient(grpcNetworkClient, network)
   }
 
   /**
@@ -79,6 +92,37 @@ export default class IssuedCurrencyClient {
       transactionHash,
       wallet,
     )
+  }
+
+  /**
+   * Retrieves information about an account's trust lines, which maintain balances of all non-XRP currencies and assets.
+   * @see https://xrpl.org/trust-lines-and-issuing.html
+   *
+   * @param account The account for which to retrieve associated trust lines, encoded as an X-Address.
+   * @see https://xrpaddress.info/
+   * @returns An array of TrustLine objects, representing all trust lines associated with this account.
+   */
+  public async getTrustLines(account: string): Promise<Array<TrustLine>> {
+    const classicAddress = XrpUtils.decodeXAddress(account)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+    const accountLinesResponse: AccountLinesResponse = await this.jsonNetworkClient.getAccountLines(
+      classicAddress.address,
+    )
+
+    if (accountLinesResponse.result.error) {
+      throw XrpError.accountNotFound
+    }
+    const rawTrustLines = accountLinesResponse.result.lines
+    if (rawTrustLines === undefined) {
+      throw XrpError.malformedResponse
+    }
+    const trustLines: Array<TrustLine> = []
+    rawTrustLines.map((trustLineJson) => {
+      trustLines.push(new TrustLine(trustLineJson))
+    })
+    return trustLines
   }
 
   /**
