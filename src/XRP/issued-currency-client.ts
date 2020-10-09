@@ -167,7 +167,7 @@ export default class IssuedCurrencyClient {
     const issuedCurrencyAmount = new IssuedCurrencyAmount()
     issuedCurrencyAmount.setCurrency(currency)
     issuedCurrencyAmount.setIssuer(issuerAccountAddress)
-    // TODO (tedkalaw): Support other types of amounts.
+    // TODO (tedkalaw): Support other types of amounts (number, bigInt, etc)
     issuedCurrencyAmount.setValue(amount)
 
     const currencyAmount = new CurrencyAmount()

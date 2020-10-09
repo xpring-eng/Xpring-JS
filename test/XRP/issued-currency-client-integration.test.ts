@@ -128,4 +128,25 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       AccountRootFlag.checkFlag(AccountRootFlag.LSF_REQUIRE_AUTH, flags!),
     )
   })
+
+  it.only('createTrustline - valid request', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    await issuedCurrencyClient.createTrustline(
+      issuer.getAddress(),
+      'USD',
+      '0',
+      wallet,
+    )
+
+    // const trustLines = await issuedCurrencyClient.getTrustLines(
+    //   wallet.getAddress(),
+    // )
+
+    // console.log(trustLines)
+
+    // assert.exists(trustLines)
+    // // TODO improve the specificity of this test once necessary methods have been implemented on IssuedCurrencyClient
+    // assert.isTrue(trustLines.length > 0)
+  })
 })
