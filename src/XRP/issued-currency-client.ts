@@ -56,8 +56,7 @@ export default class IssuedCurrencyClient {
    * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#require-auth
    *
    * @param wallet The wallet associated with the XRPL account enabling Require Authorization and that will sign the request.
-   * @returns A promise which resolves to a TransactionResult object that contains the hash of the submitted AccountSet transaction,
-   *          the final status, and whether the transaction was included in a validated ledger.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
    */
   public async requireAuthorizedTrustlines(
     wallet: Wallet,
@@ -88,8 +87,7 @@ export default class IssuedCurrencyClient {
    * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#require-auth
    *
    * @param wallet The wallet associated with the XRPL account disabling Require Authorization and that will sign the request.
-   * @returns A promise which resolves to a TransactionResult object that contains the hash of the submitted AccountSet transaction,
-   *          the final status, and whether the transaction was included in a validated ledger.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
    */
   public async allowUnauthorizedTrustlines(
     wallet: Wallet,
