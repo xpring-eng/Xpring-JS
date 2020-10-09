@@ -32,17 +32,15 @@ export default class IssuedCurrencyClient {
     network: XrplNetwork,
     forceWeb = false,
   ): IssuedCurrencyClient {
-    return isNode() && !forceWeb
-      ? new IssuedCurrencyClient(
-          new GrpcNetworkClient(grpcUrl),
-          new JsonRpcNetworkClient(jsonUrl),
-          network,
-        )
-      : new IssuedCurrencyClient(
-          new GrpcNetworkClientWeb(grpcUrl),
-          new JsonRpcNetworkClient(jsonUrl),
-          network,
-        )
+    const grpcNetworkClient =
+      isNode() && !forceWeb
+        ? new GrpcNetworkClient(grpcUrl)
+        : new GrpcNetworkClientWeb(grpcUrl)
+    return new IssuedCurrencyClient(
+      grpcNetworkClient,
+      new JsonRpcNetworkClient(jsonUrl),
+      network,
+    )
   }
 
   /**
