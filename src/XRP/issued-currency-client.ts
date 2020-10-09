@@ -12,18 +12,18 @@ import {
   AccountSet,
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
+import isNode from '../Common/utils'
+import CoreXrplClient from './core-xrpl-client'
 import GrpcNetworkClient from './network-clients/grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
 import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
-import isNode from '../Common/utils'
-import CoreXrplClient from './core-xrpl-client'
+import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
 import { XrpError } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
-import TrustLine from './shared/trustline'
 import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
-import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
+import TrustLine from './shared/trustline'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
