@@ -163,4 +163,22 @@ export default class XrpClient implements XrpClientInterface {
       wallet,
     )
   }
+
+  /**
+   * Unauthorizes an XRPL account to send to this XRPL account.
+   *
+   * @see https://xrpl.org/depositpreauth.html
+   *
+   * @param xAddressToUnauthorize The X-Address of the account to unauthorize as a sender.
+   * @param wallet The wallet associated with the XRPL account unauthorizing a sender, and that will sign the request.
+   */
+  unauthorizeSendingAccount(
+    xAddressToUnauthorize: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return this.decoratedClient.unauthorizeSendingAccount(
+      xAddressToUnauthorize,
+      wallet,
+    )
+  }
 }
