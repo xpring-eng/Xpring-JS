@@ -37,6 +37,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // THEN there is a successful non-empty result
     assert.exists(trustLines)
+    // TODO improve the specificity of this test once necessary methods have been implemented on IssuedCurrencyClient
     assert.isTrue(trustLines.length > 0)
   })
 
