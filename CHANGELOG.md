@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- A new method `authorizeSendingAccount` is added to `XrpClient` which authorizes
+  senders to send XRP to the specified XRPL account.
+  (See https://xrpl.org/depositpreauth.html)
+
 ## 5.1.2 - 2020-10-02
 
 This release contains updated dependencies for stability and security.

@@ -14,7 +14,7 @@ import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
 import TransactionStatus from './shared/transaction-status'
 import RawTransactionStatus from './shared/raw-transaction-status'
-import { XrpNetworkClient } from './network-clients/xrp-network-client'
+import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
 import XrpError, { XrpErrorType } from './shared/xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import TransactionResult from './shared/transaction-result'
@@ -58,7 +58,7 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
    * @param network The network this XrpClient is connecting to.
    */
   public constructor(
-    public readonly networkClient: XrpNetworkClient,
+    public readonly networkClient: GrpcNetworkClientInterface,
     readonly network: XrplNetwork,
   ) {}
 
@@ -347,6 +347,11 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
     if (rawTransactionStatus.transactionStatusCode.startsWith('tem')) {
       return TransactionStatus.MalformedTransaction
     }
+
+    if (rawTransactionStatus.transactionStatusCode.startsWith('tec')) {
+      return TransactionStatus.ClaimedCostOnly
+    }
+
     if (!rawTransactionStatus.isValidated) {
       throw new XrpError(
         XrpErrorType.InvalidInput,
@@ -360,6 +365,12 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
         : TransactionStatus.Failed
       return transactionStatus
     }
+  }
+
+  private isMalformedTransaction(
+    rawTransactionStatus: RawTransactionStatus,
+  ): boolean {
+    return rawTransactionStatus.transactionStatusCode.startsWith('tem')
   }
 
   /**
@@ -428,7 +439,8 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
     /* eslint-disable no-await-in-loop */
     while (
       latestLedgerSequence <= lastLedgerSequence &&
-      !rawTransactionStatus.isValidated
+      !rawTransactionStatus.isValidated &&
+      !this.isMalformedTransaction(rawTransactionStatus)
     ) {
       await sleep(ledgerCloseTimeMs)
 
