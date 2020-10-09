@@ -5,7 +5,7 @@ import { XrpNetworkClient } from './network-clients/xrp-network-client'
 import isNode from '../Common/utils'
 import CoreXrplClient from './core-xrpl-client'
 import { AccountSetFlag } from './shared/account-set-flag'
-import { SetFlag } from './Generated/web/org/xrpl/rpc/v1/common_pb'
+import { SetFlag, ClearFlag } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountSet } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import TransactionResult from './shared/transaction-result'
 
@@ -51,21 +51,28 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * Enable Require Authorization for this XRPL account.
-   *
-   * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#require-auth
-   *
+   * Helper function. Sets/clears a flag value.
+   * @param flag The desired flag that is being changed.
+   * @param enable Whether the flag is being enabled (true if enabling, false if disabling).
    * @param wallet The wallet associated with the XRPL account enabling Require Authorization and that will sign the request.
    * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
    */
-  public async requireAuthorizedTrustlines(
+  private async changeFlag(
+    flag: number,
+    enable: boolean,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    const setFlag = new SetFlag()
-    setFlag.setValue(AccountSetFlag.asfRequireAuth)
-
     const accountSet = new AccountSet()
-    accountSet.setSetFlag(setFlag)
+
+    if (enable) {
+      const setFlag = new SetFlag()
+      setFlag.setValue(flag)
+      accountSet.setSetFlag(setFlag)
+    } else {
+      const clearFlag = new ClearFlag()
+      clearFlag.setValue(flag)
+      accountSet.setClearFlag(clearFlag)
+    }
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
     transaction.setAccountSet(accountSet)
@@ -79,5 +86,19 @@ export default class IssuedCurrencyClient {
       transactionHash,
       wallet,
     )
+  }
+
+  /**
+   * Enable Require Authorization for this XRPL account.
+   *
+   * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#require-auth
+   *
+   * @param wallet The wallet associated with the XRPL account enabling Require Authorization and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async requireAuthorizedTrustlines(
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return this.changeFlag(AccountSetFlag.asfRequireAuth, true, wallet)
   }
 }
