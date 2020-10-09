@@ -101,4 +101,16 @@ export default class IssuedCurrencyClient {
   ): Promise<TransactionResult> {
     return this.changeFlag(AccountSetFlag.asfRequireAuth, true, wallet)
   }
+
+  /**
+   * Enable Disallow XRP for this XRPL account.
+   *
+   * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#require-auth
+   *
+   * @param wallet The wallet associated with the XRPL account enabling Disallow XRP and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async disallowIncomingXrp(wallet: Wallet): Promise<TransactionResult> {
+    return this.changeFlag(AccountSetFlag.asfDisallowXRP, true, wallet)
+  }
 }
