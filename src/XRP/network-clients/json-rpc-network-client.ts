@@ -30,15 +30,32 @@ export default class JsonRpcNetworkClient {
    * @see https://xrpl.org/request-formatting.html#json-rpc-format
    * @returns The response from the rippled server.
    */
-  public async submitRequest(
+  private async submitRequest(
     jsonRequest: JsonRpcRequestOptions,
   ): Promise<AxiosResponse<unknown>> {
-    return await this.axiosInstance.request({
-      url: '/',
-      method: 'post',
-      data: jsonRequest,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    const axiosResponse = await this.axiosInstance
+      .request({
+        url: '/',
+        method: 'post',
+        data: jsonRequest,
+        headers: { 'Content-Type': 'application/json' },
+      })
+      .catch(function (error) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          throw new Error(error.toJSON())
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          throw new Error('The request was made but no response was received.')
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          throw new Error(error.message)
+        }
+      })
+    return axiosResponse
   }
 
   /**
