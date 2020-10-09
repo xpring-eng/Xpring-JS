@@ -1,4 +1,4 @@
-import { XrplNetwork, XrpUtils } from 'xpring-common-js'
+import { XrplNetwork, XrpUtils, Wallet } from 'xpring-common-js'
 import GrpcNetworkClient from './network-clients/grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
 import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
@@ -9,6 +9,10 @@ import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
 import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
 import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
 import { XrpError } from './shared'
+import { AccountSetFlag } from './shared/account-set-flag'
+import { SetFlag } from './Generated/web/org/xrpl/rpc/v1/common_pb'
+import { AccountSet } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import TransactionResult from './shared/transaction-result'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -59,8 +63,35 @@ export default class IssuedCurrencyClient {
     this.coreXrplClient = new CoreXrplClient(grpcNetworkClient, network)
   }
 
-  public shutUpCompiler(): void {
-    console.log(this.coreXrplClient)
+  /**
+   * Enable Require Authorization for this XRPL account.
+   *
+   * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#require-auth
+   *
+   * @param wallet The wallet associated with the XRPL account enabling Require Authorization and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async requireAuthorizedTrustlines(
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const setFlag = new SetFlag()
+    setFlag.setValue(AccountSetFlag.asfRequireAuth)
+
+    const accountSet = new AccountSet()
+    accountSet.setSetFlag(setFlag)
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
+    transaction.setAccountSet(accountSet)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      wallet,
+    )
+
+    return await this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      wallet,
+    )
   }
 
   /**
