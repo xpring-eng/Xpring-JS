@@ -167,4 +167,17 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       AccountRootFlag.LSF_REQUIRE_DEST_TAG,
     )
   })
+
+  it('requireDestinationTags/allowNoDestinationTag - rippled', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN requireDestinationTags is called, followed by allowNoDestinationTag
+    await issuedCurrencyClient.requireDestinationTags(wallet)
+    const result = await issuedCurrencyClient.allowNoDestinationTag(wallet)
+
+    // THEN both transactions were successfully submitted and there should be no flag set on the account.
+    await runFlagIntegrationTestSuccess(wallet, result, AccountRootFlag.NO_FLAG)
+  })
 })
