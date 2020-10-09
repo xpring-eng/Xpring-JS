@@ -153,4 +153,18 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       AccountRootFlag.LSF_DISALLOW_XRP,
     )
   })
+
+  it('requireDestinationTags - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN requireDestinationTags is called
+    const result = await issuedCurrencyClient.requireDestinationTags(wallet)
+
+    // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    await runFlagIntegrationTestSuccess(
+      wallet,
+      result,
+      AccountRootFlag.LSF_REQUIRE_DEST_TAG,
+    )
+  })
 })
