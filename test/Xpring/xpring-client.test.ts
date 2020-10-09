@@ -55,6 +55,7 @@ describe('Xpring Client', function (): void {
       fakeGetPaymentValue,
       fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
+      fakedSuccessfulTransactionResult,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -81,6 +82,7 @@ describe('Xpring Client', function (): void {
       fakeGetPaymentValue,
       fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
+      fakedSuccessfulTransactionResult,
     )
 
     const payIDClient = new FakeXrpPayIdClient(payIDError)
@@ -104,6 +106,7 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
+      fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
     )
@@ -132,6 +135,7 @@ describe('Xpring Client', function (): void {
       fakeGetPaymentValue,
       fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
+      fakedSuccessfulTransactionResult,
     )
 
     const payIDClient = new FakeXrpPayIdClient(payIDError)
@@ -155,6 +159,7 @@ describe('Xpring Client', function (): void {
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
+      fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
       XrplNetwork.Test,

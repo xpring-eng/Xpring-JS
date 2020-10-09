@@ -42,6 +42,7 @@ describe('Reliable Submission XRP Client', function (): void {
       fakedGetPaymentValue,
       fakedTransactionResultValue,
       fakedTransactionResultValue,
+      fakedTransactionResultValue,
     )
 
     this.fakedRawTransactionStatusValue = new RawTransactionStatus(
@@ -145,6 +146,26 @@ describe('Reliable Submission XRP Client', function (): void {
 
     // WHEN authorizeSendingAccount is called
     const result = await this.reliableSubmissionClient.authorizeSendingAccount(
+      testAddress,
+      wallet,
+    )
+
+    // THEN the function returns
+    assert.deepEqual(result.hash, fakedTransactionResultValue.hash)
+  })
+
+  it('unauthorizeSendingAccount - Returns when the transaction is validated', async function () {
+    // Increase timeout because `setTimeout` is only accurate to 1500ms.
+    this.timeout(5000)
+
+    // GIVEN A transaction that will validate itself in 200ms.
+    setTimeout(() => {
+      this.fakedRawTransactionStatusValue.isValidated = true
+    }, 200)
+    const { wallet } = Wallet.generateRandomWallet()!
+
+    // WHEN unauthorizeSendingAccount is called
+    const result = await this.reliableSubmissionClient.unauthorizeSendingAccount(
       testAddress,
       wallet,
     )
