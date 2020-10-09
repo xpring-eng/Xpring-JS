@@ -246,9 +246,7 @@ describe('XrpClient Integration Tests', function (): void {
     )
 
     // THEN the transaction fails.
-    const transactionStatus = await xrpWebClient.getPaymentStatus(
-      transactionHash,
-    )
+    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
     assert.deepEqual(transactionStatus, TransactionStatus.Failed)
   })
 
@@ -268,7 +266,7 @@ describe('XrpClient Integration Tests', function (): void {
     const transactionStatus = result.status
 
     assert.exists(transactionHash)
-    assert.equal(transactionStatus, TransactionStatus.MalformedTransaction)
+    assert.deepEqual(transactionStatus, TransactionStatus.MalformedTransaction)
   })
 
   it('Authorize Sending Account - failure on authorizing already authorized account', async function (): Promise<
@@ -280,7 +278,7 @@ describe('XrpClient Integration Tests', function (): void {
     await xrpClient.enableDepositAuth(wallet)
     await xrpClient.authorizeSendingAccount(sendingWallet.getAddress(), wallet)
 
-    // WHEN authorizeSedingAccount is called on the already authorized account
+    // WHEN authorizeSendingAccount is called on the already authorized account
     const result = await xrpClient.authorizeSendingAccount(
       sendingWallet.getAddress(),
       wallet,
@@ -291,7 +289,7 @@ describe('XrpClient Integration Tests', function (): void {
     const transactionStatus = result.status
 
     assert.exists(transactionHash)
-    assert.equal(transactionStatus, TransactionStatus.ClaimedCostOnly)
+    assert.deepEqual(transactionStatus, TransactionStatus.ClaimedCostOnly)
   })
 
   it('Authorize Sending Account - can send funds after authorize', async function (): Promise<
@@ -313,9 +311,7 @@ describe('XrpClient Integration Tests', function (): void {
     )
 
     // THEN the transaction succeeds.
-    const transactionStatus = await xrpWebClient.getPaymentStatus(
-      transactionHash,
-    )
+    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
     assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
   })
 
