@@ -84,4 +84,18 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       AccountRootFlag.LSF_REQUIRE_AUTH,
     )
   })
+
+  it('disallowIncomingXrp - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN disallowIncomingXrp is called
+    const result = await issuedCurrencyClient.disallowIncomingXrp(wallet)
+
+    // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    await runFlagIntegrationTestSuccess(
+      wallet,
+      result,
+      AccountRootFlag.LSF_DISALLOW_XRP,
+    )
+  })
 })
