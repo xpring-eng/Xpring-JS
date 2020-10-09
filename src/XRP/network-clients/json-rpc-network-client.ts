@@ -41,6 +41,11 @@ export default class JsonRpcNetworkClient {
     })
   }
 
+  /**
+   * Submits an account_lines request to the rippled JSON RPC.
+   *
+   * @param account The XRPL account to query for trust lines.
+   */
   public async getAccountLines(account: string): Promise<AccountLinesResponse> {
     // TODO: consider an option for including the 'peer' param in the request, which limits the returned trust lines to only
     // those shared between the two accounts. (This would have to be an argument to the method here and in i-c-client too.)
