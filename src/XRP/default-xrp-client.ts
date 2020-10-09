@@ -29,7 +29,7 @@ import TransactionStatus from './shared/transaction-status'
 import XrpTransaction from './protobuf-wrappers/xrp-transaction'
 import GrpcNetworkClient from './network-clients/grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
-import { XrpNetworkClient } from './network-clients/xrp-network-client'
+import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
 import isNode from '../Common/utils'
 import XrpError from './shared/xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
@@ -72,7 +72,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @param network The network this XrpClient is connecting to.
    */
   public constructor(
-    private readonly networkClient: XrpNetworkClient,
+    private readonly networkClient: GrpcNetworkClientInterface,
     readonly network: XrplNetwork,
   ) {
     this.coreXrplClient = new CoreXrplClient(networkClient, network)

@@ -21,13 +21,14 @@ import {
   GetAccountInfoRequest,
   GetAccountInfoResponse,
 } from '../Generated/web/org/xrpl/rpc/v1/get_account_info_pb'
-import { XrpNetworkClient } from './xrp-network-client'
+import { GrpcNetworkClientInterface } from './grpc-network-client-interface'
 import isNode from '../../Common/utils'
 
 /**
  * A GRPC Based network client.
  */
-export default class XrpGrpcNetworkClient implements XrpNetworkClient {
+export default class XrpGrpcNetworkClient
+  implements GrpcNetworkClientInterface {
   private readonly grpcClient: XRPLedgerAPIServiceClient
 
   public constructor(grpcURL: string) {
