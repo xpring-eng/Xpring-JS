@@ -347,6 +347,11 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
     if (rawTransactionStatus.transactionStatusCode.startsWith('tem')) {
       return TransactionStatus.MalformedTransaction
     }
+
+    if (rawTransactionStatus.transactionStatusCode.startsWith('tec')) {
+      return TransactionStatus.ClaimedCostOnly
+    }
+
     if (!rawTransactionStatus.isValidated) {
       throw new XrpError(
         XrpErrorType.InvalidInput,
@@ -360,6 +365,12 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
         : TransactionStatus.Failed
       return transactionStatus
     }
+  }
+
+  private isMalformedTransaction(
+    rawTransactionStatus: RawTransactionStatus,
+  ): boolean {
+    return rawTransactionStatus.transactionStatusCode.startsWith('tem')
   }
 
   /**
@@ -428,7 +439,8 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
     /* eslint-disable no-await-in-loop */
     while (
       latestLedgerSequence <= lastLedgerSequence &&
-      !rawTransactionStatus.isValidated
+      !rawTransactionStatus.isValidated &&
+      !this.isMalformedTransaction(rawTransactionStatus)
     ) {
       await sleep(ledgerCloseTimeMs)
 
