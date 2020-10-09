@@ -134,11 +134,11 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   > {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
-    // WHEN disallowIncomingXrp is called
+    // WHEN disallowIncomingXrp is called, followed by allowIncomingXrp
     await issuedCurrencyClient.disallowIncomingXrp(wallet)
     const result = await issuedCurrencyClient.allowIncomingXrp(wallet)
 
-    // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    // THEN the transaction was successfully submitted and the flag should not be set on the account.
     await XRPTestUtils.verifyFlagModification(
       wallet,
       rippledGrpcUrl,
