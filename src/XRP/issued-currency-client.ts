@@ -181,6 +181,6 @@ export default class IssuedCurrencyClient {
   public async allowNoDestinationTag(
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    return this.changeFlag(AccountSetFlag.asfRequireDest, true, wallet)
+    return this.changeFlag(AccountSetFlag.asfRequireDest, false, wallet)
   }
 }
