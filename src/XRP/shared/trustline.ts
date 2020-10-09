@@ -1,4 +1,4 @@
-import { TrustLineJson } from './json-schema'
+import { TrustLineJson } from './rippled-json-rpc-schema'
 
 /**
  * Represents a trust line on the XRP Ledger.

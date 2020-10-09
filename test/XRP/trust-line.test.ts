@@ -2,7 +2,7 @@ import { assert } from 'chai'
 
 import TrustLine from '../../src/XRP/shared/trustline'
 import 'mocha'
-import { TrustLineJson } from '../../src/XRP/shared/json-schema'
+import { TrustLineJson } from '../../src/XRP/shared/rippled-json-rpc-schema'
 
 describe('TrustLine Conversion Tests', function (): void {
   it('TrustLine from JSON - all fields present', function (): void {

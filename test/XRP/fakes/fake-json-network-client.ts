@@ -1,6 +1,6 @@
 import Result from '../../Common/Helpers/result'
 import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
-import { AccountLinesResponse } from '../../../src/XRP/shared/json-schema'
+import { AccountLinesResponse } from '../../../src/XRP/shared/rippled-json-rpc-schema'
 
 /**
  * A list of responses the fake network client will give.

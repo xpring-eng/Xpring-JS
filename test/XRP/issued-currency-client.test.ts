@@ -9,7 +9,7 @@ import 'mocha'
 import TrustLine from '../../src/XRP/shared/trustline'
 import { assert } from 'chai'
 import { XrpError } from '../../src/XRP'
-import { AccountLinesResponse } from '../../src/XRP/shared/json-schema'
+import { AccountLinesResponse } from '../../src/XRP/shared/rippled-json-rpc-schema'
 
 const fakeSucceedingGrpcClient = new FakeXRPNetworkClient()
 // const fakeErroringNetworkClient = new FakeXRPNetworkClient(

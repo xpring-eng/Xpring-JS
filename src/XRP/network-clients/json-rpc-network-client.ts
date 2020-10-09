@@ -1,7 +1,7 @@
 import {
   AccountLinesResponse,
   JsonRpcRequestOptions,
-} from '../shared/json-schema'
+} from '../shared/rippled-json-rpc-schema'
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
 
 /**
