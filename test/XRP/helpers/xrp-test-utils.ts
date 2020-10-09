@@ -116,6 +116,7 @@ export default class XRPTestUtils {
     rippledGrpcUrl: string,
     result: TransactionResult,
     accountRootFlag: number,
+    checkTrue = true,
   ): Promise<void> {
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     const transactionHash = result.hash
@@ -148,7 +149,11 @@ export default class XRPTestUtils {
 
     assert.exists(transactionHash)
     assert.equal(transactionStatus, TransactionStatus.Succeeded)
-    assert.isTrue(AccountRootFlag.checkFlag(accountRootFlag, flags))
+    if (checkTrue) {
+      assert.isTrue(AccountRootFlag.checkFlag(accountRootFlag, flags))
+    } else {
+      assert.isFalse(AccountRootFlag.checkFlag(accountRootFlag, flags))
+    }
   }
 }
 
