@@ -79,7 +79,7 @@ export default class TrustLine {
     this.limitPeer = trustLineJson.limit_peer
     this.qualityIn = trustLineJson.quality_in
     this.qualityOut = trustLineJson.quality_out
-    this.noRipple = trustLineJson.no_ripple ? trustLineJson.no_ripple : false
+    this.noRipple = !!trustLineJson.no_ripple
     this.noRipplePeer = !!trustLineJson.no_ripple_peer
     this.authorized = !!trustLineJson.authorized
     this.peerAuthorized = !!trustLineJson.peer_authorized
