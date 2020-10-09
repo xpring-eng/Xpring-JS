@@ -22,12 +22,13 @@ import {
   GetTransactionResponse,
 } from '../Generated/node/org/xrpl/rpc/v1/get_transaction_pb'
 import isNode from '../../Common/utils'
-import { XrpNetworkClient } from './xrp-network-client'
+import { GrpcNetworkClientInterface } from './grpc-network-client-interface'
 
 /**
  * A GRPC Based network client.
  */
-export default class GrpcXrpNetworkClient implements XrpNetworkClient {
+export default class GrpcXrpNetworkClient
+  implements GrpcNetworkClientInterface {
   private readonly grpcClient: XRPLedgerGrpcPb.XRPLedgerAPIServiceClient
 
   public constructor(grpcURL: string) {
