@@ -148,7 +148,7 @@ export default class XRPTestUtils {
 
     assert.exists(transactionHash)
     assert.equal(transactionStatus, TransactionStatus.Succeeded)
-    assert.isTrue(AccountRootFlag.checkFlag(accountRootFlag, flags))
+    assert.isTrue(AccountRootFlag.checkFlag(accountRootFlag, flags!))
   }
 }
 
