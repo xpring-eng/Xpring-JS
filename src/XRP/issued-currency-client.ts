@@ -131,6 +131,7 @@ export default class IssuedCurrencyClient {
     })
     return trustLines
   }
+
   /**
    * Enable Require Authorization for this XRPL account.
    *
@@ -143,6 +144,20 @@ export default class IssuedCurrencyClient {
     wallet: Wallet,
   ): Promise<TransactionResult> {
     return this.changeFlag(AccountSetFlag.asfRequireAuth, true, wallet)
+  }
+
+  /**
+   * Disable Require Authorization for this XRPL account.
+   *
+   * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#require-auth
+   *
+   * @param wallet The wallet associated with the XRPL account disabling Require Authorization and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async allowUnauthorizedTrustlines(
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return this.changeFlag(AccountSetFlag.asfRequireAuth, false, wallet)
   }
 
   /**
@@ -159,6 +174,7 @@ export default class IssuedCurrencyClient {
 
   /**
    * Enable Disallow XRP for this XRPL account.
+   * Note that the meaning of this flag is not enforced by rippled, and is only intended for use by client applications.
    *
    * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#disallow-xrp
    *
@@ -171,6 +187,7 @@ export default class IssuedCurrencyClient {
 
   /**
    * Disable Disallow XRP for this XRPL account.
+   * Note that the meaning of this flag is not enforced by rippled, and is only intended for use by client applications.
    *
    * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#disallow-xrp
    *
