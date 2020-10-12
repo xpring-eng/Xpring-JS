@@ -1,10 +1,10 @@
 import { assert } from 'chai'
 import { Wallet, WalletFactory, XrplNetwork } from 'xpring-common-js'
-import { XrpClient, XrpError } from '../../src/XRP'
+import { XrpError } from '../../src/XRP'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
-import { AccountRootFlag, TransactionStatus } from '../../src/XRP/shared'
+import { AccountRootFlag } from '../../src/XRP/shared'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -99,21 +99,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('disallowIncomingXrp - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
-    // GIVEN an existing testnet account
-    // WHEN disallowIncomingXrp is called
-    const result = await issuedCurrencyClient.disallowIncomingXrp(wallet)
-
-    // THEN the transaction was successfully submitted and the correct flag was set on the account.
-    await XRPTestUtils.verifyFlagModification(
-      wallet,
-      rippledGrpcUrl,
-      result,
-      AccountRootFlag.LSF_DISALLOW_XRP,
-    )
-  })
-
   it('requireAuthorizedTrustlines/allowUnauthorizedTrustlines - rippled', async function (): Promise<
     void
   > {
@@ -126,39 +111,28 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       wallet,
     )
 
+    // THEN the transaction was successfully submitted and the correct flag was unset on the account.
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledGrpcUrl,
+      result,
+      AccountRootFlag.LSF_REQUIRE_AUTH,
+      false,
+    )
+  })
+
+  it('disallowIncomingXrp - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN disallowIncomingXrp is called
+    const result = await issuedCurrencyClient.disallowIncomingXrp(wallet)
+
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
-    const transactionHash = result.hash
-    const transactionStatus = result.status
-
-    // get the account data and check the flag bitmap
-    const networkClient = new GrpcNetworkClient(rippledGrpcUrl)
-    const account = networkClient.AccountAddress()
-    const classicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
-    account.setAddress(classicAddress!.address)
-
-    const request = networkClient.GetAccountInfoRequest()
-    request.setAccount(account)
-
-    const ledger = new LedgerSpecifier()
-    ledger.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
-    request.setLedger(ledger)
-
-    const accountInfo = await networkClient.getAccountInfo(request)
-    if (!accountInfo) {
-      throw XrpError.malformedResponse
-    }
-
-    const accountData = accountInfo.getAccountData()
-    if (!accountData) {
-      throw XrpError.malformedResponse
-    }
-
-    const flags = accountData.getFlags()?.getValue()
-
-    assert.exists(transactionHash)
-    assert.equal(transactionStatus, TransactionStatus.Succeeded)
-    assert.isFalse(
-      AccountRootFlag.checkFlag(AccountRootFlag.LSF_REQUIRE_AUTH, flags!),
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledGrpcUrl,
+      result,
+      AccountRootFlag.LSF_DISALLOW_XRP,
     )
   })
 
