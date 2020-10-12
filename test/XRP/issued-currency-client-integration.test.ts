@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import { Wallet, WalletFactory, XrplNetwork } from 'xpring-common-js'
-import { XrpError } from '../../src/XRP'
+import { XrpClient, XrpError } from '../../src/XRP'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
@@ -181,5 +181,26 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       result,
       AccountRootFlag.LSF_REQUIRE_DEST_TAG,
     )
+  })
+
+  it('requireDestinationTags - transaction without destination tags', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account with requireDestinationTags set
+    await issuedCurrencyClient.requireDestinationTags(wallet)
+    const wallet2 = await XRPTestUtils.randomWalletFromFaucet()
+
+    // WHEN a transaction is sent to the account
+    const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
+    const transactionHash = await xrpClient.send(
+      '100',
+      wallet.getAddress(),
+      wallet2,
+    )
+    const transactionResult = await xrpClient.getPaymentStatus(transactionHash)
+    console.log(transactionResult)
+
+    // THEN the transaction fails.
   })
 })
