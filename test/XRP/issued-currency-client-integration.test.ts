@@ -178,7 +178,24 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('requireDestinationTags - transaction without destination tags', async function (): Promise<
+  it('allowNoDestinationTag - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN requireDestinationTags is called, followed by allowNoDestinationTag
+    await issuedCurrencyClient.requireDestinationTags(wallet)
+    const result = await issuedCurrencyClient.allowNoDestinationTag(wallet)
+
+    // THEN both transactions were successfully submitted and there should be no flag set on the account.
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledGrpcUrl,
+      result,
+      AccountRootFlag.LSF_REQUIRE_DEST_TAG,
+      false,
+    )
+  })
+
+  it('requireDestinationTags/allowNoDestinationTag - transaction without destination tags', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -186,7 +203,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     await issuedCurrencyClient.requireDestinationTags(wallet)
     const wallet2 = await XRPTestUtils.randomWalletFromFaucet()
 
-    // WHEN a transaction is sent to the account
+    // WHEN a transaction is sent to the account without a destination tag
     const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
     const xrpAmount = '100'
     const transactionHash = await xrpClient.send(
@@ -199,5 +216,22 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction fails.
     assert.exists(transactionHash)
     assert.equal(transactionStatus, TransactionStatus.Failed)
+
+    // GIVEN an existing testnet account with requireDestinationTags unset
+    await issuedCurrencyClient.allowNoDestinationTag(wallet)
+
+    // WHEN a transaction is sent to the account without a destination tag
+    const transactionHash2 = await xrpClient.send(
+      xrpAmount,
+      wallet.getAddress(),
+      wallet2,
+    )
+    const transactionStatus2 = await xrpClient.getPaymentStatus(
+      transactionHash2,
+    )
+
+    // THEN the transaction succeeds.
+    assert.exists(transactionHash2)
+    assert.equal(transactionStatus2, TransactionStatus.Succeeded)
   })
 })
