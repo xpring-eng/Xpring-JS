@@ -184,4 +184,17 @@ export default class IssuedCurrencyClient {
   public async disallowIncomingXrp(wallet: Wallet): Promise<TransactionResult> {
     return this.changeFlag(AccountSetFlag.asfDisallowXRP, true, wallet)
   }
+
+  /**
+   * Disable Disallow XRP for this XRPL account.
+   * Note that the meaning of this flag is not enforced by rippled, and is only intended for use by client applications.
+   *
+   * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#disallow-xrp
+   *
+   * @param wallet The wallet associated with the XRPL account disabling Disallow XRP and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async allowIncomingXrp(wallet: Wallet): Promise<TransactionResult> {
+    return this.changeFlag(AccountSetFlag.asfDisallowXRP, false, wallet)
+  }
 }

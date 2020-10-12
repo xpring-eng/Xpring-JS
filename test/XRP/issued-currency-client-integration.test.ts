@@ -99,9 +99,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('requireAuthorizedTrustlines/allowUnauthorizedTrustlines - rippled', async function (): Promise<
-    void
-  > {
+  it('allowUnauthorizedTrustlines - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account that has enabled Require Authorized Trust Lines
     await issuedCurrencyClient.requireAuthorizedTrustlines(wallet)
@@ -118,6 +116,21 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       result,
       AccountRootFlag.LSF_REQUIRE_AUTH,
       false,
+    )
+  })
+
+  it('enableRippling - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN enableRippling is called
+    const result = await issuedCurrencyClient.enableRippling(wallet)
+
+    // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledGrpcUrl,
+      result,
+      AccountRootFlag.LSF_DEFAULT_RIPPLE,
     )
   })
 
@@ -138,18 +151,20 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   // TODO: Once required IOU functionality exists in SDK, add integration tests that successfully establish an unauthorized trustline to this account.
 
-  it('enableRippling - rippled', async function (): Promise<void> {
+  it('allowIncomingXrp - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
-    // WHEN enableRippling is called
-    const result = await issuedCurrencyClient.enableRippling(wallet)
+    // WHEN disallowIncomingXrp is called, followed by allowIncomingXrp
+    await issuedCurrencyClient.disallowIncomingXrp(wallet)
+    const result = await issuedCurrencyClient.allowIncomingXrp(wallet)
 
-    // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    // THEN the transaction was successfully submitted and the flag should not be set on the account.
     await XRPTestUtils.verifyFlagModification(
       wallet,
       rippledGrpcUrl,
       result,
-      AccountRootFlag.LSF_DEFAULT_RIPPLE,
+      AccountRootFlag.LSF_DISALLOW_XRP,
+      false,
     )
   })
 })
