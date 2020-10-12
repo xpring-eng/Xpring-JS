@@ -231,7 +231,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       wallet.getAddress(),
       wallet2,
     )
-    const transactionStatus2 = await xrpClient.getPaymentStatus(transactionHash)
+    const transactionStatus2 = await xrpClient.getPaymentStatus(
+      transactionHash2,
+    )
 
     // THEN the transaction succeeds.
     assert.exists(transactionHash2)
