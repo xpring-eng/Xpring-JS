@@ -113,4 +113,19 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       AccountRootFlag.LSF_DISALLOW_XRP,
     )
   })
+
+  it('enableRippling - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN enableRippling is called
+    const result = await issuedCurrencyClient.enableRippling(wallet)
+
+    // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledGrpcUrl,
+      result,
+      AccountRootFlag.LSF_DEFAULT_RIPPLE,
+    )
+  })
 })
