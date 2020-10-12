@@ -114,31 +114,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('disallowIncomingXrp - attempt XRP transaction', async function (): Promise<
-    void
-  > {
-    // TODO(mvadari) FINISH THIS TEST
-    this.timeout(timeoutMs)
-    // GIVEN two existing testnet accounts
-    const wallet2 = await XRPTestUtils.randomWalletFromFaucet()
-
-    // WHEN disallowIncomingXrp is called on one and the other sends XRP to it
-    await issuedCurrencyClient.disallowIncomingXrp(wallet)
-
-    const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
-    const xrpAmount = '100'
-    const transactionHash = await xrpClient.send(
-      xrpAmount,
-      wallet.getAddress(),
-      wallet2,
-    )
-    const transactionResult = await xrpClient.getPaymentStatus(transactionHash)
-    console.log(transactionResult)
-    console.log(TransactionStatus.Succeeded)
-
-    // THEN the transaction fails to submit.
-  })
-
   it('enableRippling - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
