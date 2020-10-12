@@ -95,7 +95,7 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * * Retrieves information about an account's trust lines, which maintain balances of all non-XRP currencies and assets.
+   * Retrieves information about an account's trust lines, which maintain balances of all non-XRP currencies and assets.
    * @see https://xrpl.org/trust-lines-and-issuing.html
    *
    * @param account The account for which to retrieve associated trust lines, encoded as an X-Address.
