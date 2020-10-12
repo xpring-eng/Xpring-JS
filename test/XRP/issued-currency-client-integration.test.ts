@@ -144,6 +144,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       rippledGrpcUrl,
       result,
       AccountRootFlag.LSF_DISALLOW_XRP,
+      false,
     )
   })
 

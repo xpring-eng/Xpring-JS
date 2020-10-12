@@ -169,7 +169,7 @@ export default class IssuedCurrencyClient {
     return this.changeFlag(AccountSetFlag.asfDisallowXRP, true, wallet)
   }
 
-  /*** Disable Disallow XRP for this XRPL account.
+  /** Disable Disallow XRP for this XRPL account.
    *
    * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#disallow-xrp
    *
@@ -193,6 +193,7 @@ export default class IssuedCurrencyClient {
   ): Promise<TransactionResult> {
     return this.changeFlag(AccountSetFlag.asfRequireDest, true, wallet)
   }
+
   /**
    * Disable Require Destination for this XRPL account.
    *
