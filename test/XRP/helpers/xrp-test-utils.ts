@@ -1,8 +1,13 @@
+import { assert } from 'chai'
 import { GetAccountTransactionHistoryResponse } from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/get_account_transaction_history_pb'
+import { LedgerSpecifier } from '../../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger_pb'
 import XrpTransaction from '../../../src/XRP/protobuf-wrappers/xrp-transaction'
 import { WalletFactory, Wallet, XrplNetwork } from 'xpring-common-js'
+import TransactionStatus from '../../../src/XRP/shared/transaction-status'
 import { XrpUtils, XrpError, XrpErrorType } from '../../../src/XRP'
 import XrpMemo from '../../../src/XRP/protobuf-wrappers/xrp-memo'
+import { AccountRootFlag, TransactionResult } from '../../../src/XRP/shared'
+import GrpcNetworkClient from '../../../src/XRP/network-clients/grpc-xrp-network-client'
 import bigInt from 'big-integer'
 import XrpClient from '../../../src/XRP/xrp-client'
 import axios from 'axios'
@@ -104,6 +109,51 @@ export default class XRPTestUtils {
     throw new Error(
       `Unable to fund address with faucet after waiting ${timeoutInSeconds} seconds`,
     )
+  }
+
+  static async verifyFlagModification(
+    wallet: Wallet,
+    rippledGrpcUrl: string,
+    result: TransactionResult,
+    accountRootFlag: number,
+    checkTrue = true,
+  ): Promise<void> {
+    // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+
+    // get the account data and check the flag bitmap
+    const networkClient = new GrpcNetworkClient(rippledGrpcUrl)
+    const account = networkClient.AccountAddress()
+    const classicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
+    account.setAddress(classicAddress!.address)
+
+    const request = networkClient.GetAccountInfoRequest()
+    request.setAccount(account)
+
+    const ledger = new LedgerSpecifier()
+    ledger.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
+    request.setLedger(ledger)
+
+    const accountInfo = await networkClient.getAccountInfo(request)
+    if (!accountInfo) {
+      throw XrpError.malformedResponse
+    }
+
+    const accountData = accountInfo.getAccountData()
+    if (!accountData) {
+      throw XrpError.malformedResponse
+    }
+
+    const flags = accountData.getFlags()?.getValue()
+
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.Succeeded)
+    if (checkTrue) {
+      assert.isTrue(AccountRootFlag.checkFlag(accountRootFlag, flags!))
+    } else {
+      assert.isFalse(AccountRootFlag.checkFlag(accountRootFlag, flags!))
+    }
   }
 }
 
