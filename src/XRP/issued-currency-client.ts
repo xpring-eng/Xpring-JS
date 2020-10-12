@@ -207,6 +207,10 @@ export default class IssuedCurrencyClient {
   public async allowNoDestinationTag(
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    return this.changeFlag(AccountSetFlag.asfRequireDest, false, wallet)
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfRequireDest,
+      false,
+      wallet,
+    )
   }
 }
