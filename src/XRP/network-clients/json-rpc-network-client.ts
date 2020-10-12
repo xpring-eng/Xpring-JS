@@ -1,5 +1,6 @@
 import {
   AccountLinesResponse,
+  GatewayBalancesResponse,
   JsonRpcRequestOptions,
 } from '../shared/rippled-json-rpc-schema'
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
@@ -80,5 +81,27 @@ export default class JsonRpcNetworkClient {
     )
     const accountLinesResponse: AccountLinesResponse = axiosResponse.data
     return accountLinesResponse
+  }
+
+  public async getGatewayBalances(
+    account: string,
+    hotwallet: string | Array<string>,
+  ): Promise<GatewayBalancesResponse> {
+    const gatewayBalancesRequest = {
+      method: 'gateway_balances',
+      params: [
+        {
+          account: account,
+          hotwallet: hotwallet,
+          ledger_index: 'validated',
+          strict: 'true',
+        },
+      ],
+    }
+    const axiosResponse: AxiosResponse = await this.submitRequest(
+      gatewayBalancesRequest,
+    )
+    const gatewayBalancesResponse: GatewayBalancesResponse = axiosResponse.data
+    return gatewayBalancesResponse
   }
 }

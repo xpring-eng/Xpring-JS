@@ -18,19 +18,18 @@ interface AccountLinesResponse {
   }
 }
 
-// interface AccountLinesErrorJson {
-//   result: {
-//     error: string
-//     error_code: number
-//     error_message: string
-//     request: {
-//       account: string
-//       command: string
-//       ledger_index: string
-//     }
-//     status: string
-//   }
-// }
+interface GatewayBalancesResponse {
+  result: {
+    account: string
+    assets?: unknown
+    balances?: unknown
+    ledger_hash: string
+    ledger_index: number
+    obligations?: unknown
+    status: string
+    validated: boolean
+  }
+}
 
 interface TrustLineJson {
   account: string
@@ -48,4 +47,9 @@ interface TrustLineJson {
   freeze_peer?: boolean
 }
 
-export { JsonRpcRequestOptions, AccountLinesResponse, TrustLineJson }
+export {
+  JsonRpcRequestOptions,
+  AccountLinesResponse,
+  GatewayBalancesResponse,
+  TrustLineJson,
+}
