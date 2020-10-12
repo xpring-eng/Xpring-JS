@@ -131,6 +131,38 @@ export default class IssuedCurrencyClient {
     })
     return trustLines
   }
+
+  /**
+   * Disable Require Authorization for this XRPL account.
+   *
+   * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#require-auth
+   *
+   * @param wallet The wallet associated with the XRPL account disabling Require Authorization and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async allowUnauthorizedTrustlines(
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const clearFlag = new ClearFlag()
+    clearFlag.setValue(AccountSetFlag.asfRequireAuth)
+
+    const accountSet = new AccountSet()
+    accountSet.setClearFlag(clearFlag)
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
+    transaction.setAccountSet(accountSet)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      wallet,
+    )
+
+    return await this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      wallet,
+    )
+  }
+
   /**
    * Enable Require Authorization for this XRPL account.
    *
