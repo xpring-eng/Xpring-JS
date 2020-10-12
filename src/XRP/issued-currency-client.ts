@@ -211,4 +211,18 @@ export default class IssuedCurrencyClient {
   ): Promise<TransactionResult> {
     return this.changeFlag(AccountSetFlag.asfRequireDest, true, wallet)
   }
+
+  /**
+   * Disable Require Destination for this XRPL account.
+   *
+   * @see https://xrpl.org/require-destination-tags.html
+   *
+   * @param wallet The wallet associated with the XRPL account disabling Require Destination and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async allowNoDestinationTag(
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return this.changeFlag(AccountSetFlag.asfRequireDest, false, wallet)
+  }
 }
