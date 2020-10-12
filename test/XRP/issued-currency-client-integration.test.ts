@@ -178,4 +178,46 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   // TODO: Once required IOU functionality exists in SDK, add integration tests that successfully establish an unauthorized trustline to this account.
+
+  it('enableRippling - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN enableRippling is called
+    const result = await issuedCurrencyClient.enableRippling(wallet)
+
+    // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+
+    // get the account data and check the flag bitmap
+    const networkClient = new GrpcNetworkClient(rippledGrpcUrl)
+    const account = networkClient.AccountAddress()
+    const classicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
+    account.setAddress(classicAddress!.address)
+
+    const request = networkClient.GetAccountInfoRequest()
+    request.setAccount(account)
+
+    const ledger = new LedgerSpecifier()
+    ledger.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
+    request.setLedger(ledger)
+
+    const accountInfo = await networkClient.getAccountInfo(request)
+    if (!accountInfo) {
+      throw XrpError.malformedResponse
+    }
+
+    const accountData = accountInfo.getAccountData()
+    if (!accountData) {
+      throw XrpError.malformedResponse
+    }
+
+    const flags = accountData.getFlags()?.getValue()
+
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.Succeeded)
+    assert.isTrue(
+      AccountRootFlag.checkFlag(AccountRootFlag.LSF_DEFAULT_RIPPLE, flags!),
+    )
+  })
 })

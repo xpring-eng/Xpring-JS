@@ -155,4 +155,33 @@ export default class IssuedCurrencyClient {
       wallet,
     )
   }
+
+  /**
+   * Enable Default Ripple for this XRPL account.
+   *
+   * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#default-ripple
+   *
+   * @param wallet The wallet associated with the XRPL account enabling Default Ripple and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async enableRippling(wallet: Wallet): Promise<TransactionResult> {
+    const setFlag = new SetFlag()
+    setFlag.setValue(AccountSetFlag.asfDefaultRipple)
+
+    const accountSet = new AccountSet()
+    accountSet.setSetFlag(setFlag)
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
+    transaction.setAccountSet(accountSet)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      wallet,
+    )
+
+    return await this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      wallet,
+    )
+  }
 }
