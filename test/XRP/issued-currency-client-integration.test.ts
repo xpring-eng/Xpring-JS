@@ -133,8 +133,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     void
   > {
     this.timeout(timeoutMs)
-    // GIVEN an existing testnet account
+    // GIVEN an existing testnet account that has enabled Require Authorized Trust Lines
     await issuedCurrencyClient.requireAuthorizedTrustlines(wallet)
+
     // WHEN allowUnauthorizedTrustlines is called
     const result = await issuedCurrencyClient.allowUnauthorizedTrustlines(
       wallet,
@@ -171,6 +172,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     assert.exists(transactionHash)
     assert.equal(transactionStatus, TransactionStatus.Succeeded)
-    assert.isTrue(AccountRootFlag.checkFlag(AccountRootFlag.NO_FLAGS, flags!))
+    assert.isFalse(
+      AccountRootFlag.checkFlag(AccountRootFlag.LSF_REQUIRE_AUTH, flags!),
+    )
   })
+
+  // TODO: Once required IOU functionality exists in SDK, add integration tests that successfully establish an unauthorized trustline to this account.
 })
