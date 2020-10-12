@@ -18,16 +18,22 @@ interface AccountLinesResponse {
   }
 }
 
+interface CurrencyValuePair {
+  currency: string
+  value: string
+}
+
 interface GatewayBalancesResponse {
   result: {
-    account: string
-    assets?: unknown
-    balances?: unknown
-    ledger_hash: string
-    ledger_index: number
-    obligations?: unknown
+    error?: string
+    account?: string
+    assets?: { [account: string]: CurrencyValuePair[] }
+    balances?: { [account: string]: CurrencyValuePair[] }
+    ledger_hash?: string
+    ledger_index?: number
+    obligations?: { [account: string]: CurrencyValuePair[] }
     status: string
-    validated: boolean
+    validated?: boolean
   }
 }
 
