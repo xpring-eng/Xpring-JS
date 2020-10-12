@@ -168,6 +168,7 @@ export default class IssuedCurrencyClient {
   public async disallowIncomingXrp(wallet: Wallet): Promise<TransactionResult> {
     return this.changeFlag(AccountSetFlag.asfDisallowXRP, true, wallet)
   }
+
   /**
    * Disable Disallow XRP for this XRPL account.
    *
