@@ -183,25 +183,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('requireDestinationTags/allowNoDestinationTag - rippled', async function (): Promise<
-    void
-  > {
-    this.timeout(timeoutMs)
-    // GIVEN an existing testnet account
-    // WHEN requireDestinationTags is called, followed by allowNoDestinationTag
-    await issuedCurrencyClient.requireDestinationTags(wallet)
-    const result = await issuedCurrencyClient.allowNoDestinationTag(wallet)
-
-    // THEN both transactions were successfully submitted and there should be no flag set on the account.
-    await XRPTestUtils.verifyFlagModification(
-      wallet,
-      rippledGrpcUrl,
-      result,
-      AccountRootFlag.LSF_REQUIRE_DEST_TAG,
-      false,
-    )
-  })
-
   it('requireDestinationTags - transaction without destination tags', async function (): Promise<
     void
   > {
@@ -223,5 +204,22 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction fails.
     assert.exists(transactionHash)
     assert.equal(transactionStatus, TransactionStatus.Failed)
+  })
+
+  it('allowNoDestinationTag - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN requireDestinationTags is called, followed by allowNoDestinationTag
+    await issuedCurrencyClient.requireDestinationTags(wallet)
+    const result = await issuedCurrencyClient.allowNoDestinationTag(wallet)
+
+    // THEN both transactions were successfully submitted and there should be no flag set on the account.
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledGrpcUrl,
+      result,
+      AccountRootFlag.LSF_REQUIRE_DEST_TAG,
+      false,
+    )
   })
 })
