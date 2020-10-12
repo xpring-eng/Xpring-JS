@@ -223,6 +223,8 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(transactionStatus, TransactionStatus.Failed)
 
     // GIVEN an existing testnet account with requireDestinationTags unset
+    await issuedCurrencyClient.allowNoDestinationTag(wallet)
+
     // WHEN a transaction is sent to the account without a destination tag
     const transactionHash2 = await xrpClient.send(
       xrpAmount,
