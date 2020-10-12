@@ -129,9 +129,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('disallowIncomingXrp/allowIncomingXrp - rippled', async function (): Promise<
-    void
-  > {
+  it('allowIncomingXrp - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN disallowIncomingXrp is called, followed by allowIncomingXrp
