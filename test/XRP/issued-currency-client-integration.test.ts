@@ -1,10 +1,10 @@
 import { assert } from 'chai'
-import { WalletFactory, XrplNetwork } from 'xpring-common-js'
-import { XrpError } from '../../src/XRP'
+import { Wallet, WalletFactory, XrplNetwork } from 'xpring-common-js'
+import { XrpClient, XrpError } from '../../src/XRP'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
-import { AccountRootFlag } from '../../src/XRP/shared'
+import { AccountRootFlag, TransactionStatus } from '../../src/XRP/shared'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -28,7 +28,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   this.retries(3)
 
   // A Wallet with some balance on Testnet.
-  let wallet
+  let wallet: Wallet
   before(async function () {
     wallet = await XRPTestUtils.randomWalletFromFaucet()
   })
@@ -99,6 +99,26 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
+  it('allowUnauthorizedTrustlines - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account that has enabled Require Authorized Trust Lines
+    await issuedCurrencyClient.requireAuthorizedTrustlines(wallet)
+
+    // WHEN allowUnauthorizedTrustlines is called
+    const result = await issuedCurrencyClient.allowUnauthorizedTrustlines(
+      wallet,
+    )
+
+    // THEN the transaction was successfully submitted and the correct flag was unset on the account.
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledGrpcUrl,
+      result,
+      AccountRootFlag.LSF_REQUIRE_AUTH,
+      false,
+    )
+  })
+
   it('enableRippling - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
@@ -129,9 +149,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('disallowIncomingXrp/allowIncomingXrp - rippled', async function (): Promise<
-    void
-  > {
+  // TODO: Once required IOU functionality exists in SDK, add integration tests that successfully establish an unauthorized trustline to this account.
+
+  it('allowIncomingXrp - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN disallowIncomingXrp is called, followed by allowIncomingXrp
@@ -180,5 +200,28 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       AccountRootFlag.LSF_REQUIRE_DEST_TAG,
       false,
     )
+  })
+
+  it('requireDestinationTags - transaction without destination tags', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account with requireDestinationTags set
+    await issuedCurrencyClient.requireDestinationTags(wallet)
+    const wallet2 = await XRPTestUtils.randomWalletFromFaucet()
+
+    // WHEN a transaction is sent to the account
+    const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
+    const xrpAmount = '100'
+    const transactionHash = await xrpClient.send(
+      xrpAmount,
+      wallet.getAddress(),
+      wallet2,
+    )
+    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
+
+    // THEN the transaction fails.
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.Failed)
   })
 })
