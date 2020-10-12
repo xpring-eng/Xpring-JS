@@ -1,10 +1,10 @@
 import { assert } from 'chai'
 import { Wallet, WalletFactory, XrplNetwork } from 'xpring-common-js'
-import { XrpError } from '../../src/XRP'
+import { XrpClient, XrpError } from '../../src/XRP'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
-import { AccountRootFlag } from '../../src/XRP/shared'
+import { AccountRootFlag, TransactionStatus } from '../../src/XRP/shared'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -166,5 +166,43 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       AccountRootFlag.LSF_DISALLOW_XRP,
       false,
     )
+  })
+
+  it('requireDestinationTags - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN requireDestinationTags is called
+    const result = await issuedCurrencyClient.requireDestinationTags(wallet)
+
+    // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledGrpcUrl,
+      result,
+      AccountRootFlag.LSF_REQUIRE_DEST_TAG,
+    )
+  })
+
+  it('requireDestinationTags - transaction without destination tags', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account with requireDestinationTags set
+    await issuedCurrencyClient.requireDestinationTags(wallet)
+    const wallet2 = await XRPTestUtils.randomWalletFromFaucet()
+
+    // WHEN a transaction is sent to the account
+    const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
+    const xrpAmount = '100'
+    const transactionHash = await xrpClient.send(
+      xrpAmount,
+      wallet.getAddress(),
+      wallet2,
+    )
+    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
+
+    // THEN the transaction fails.
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.Failed)
   })
 })

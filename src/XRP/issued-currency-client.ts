@@ -197,4 +197,18 @@ export default class IssuedCurrencyClient {
   public async allowIncomingXrp(wallet: Wallet): Promise<TransactionResult> {
     return this.changeFlag(AccountSetFlag.asfDisallowXRP, false, wallet)
   }
+
+  /**
+   * Enable Require Destination Tags for this XRPL account.
+   *
+   * @see https://xrpl.org/require-destination-tags.html
+   *
+   * @param wallet The wallet associated with the XRPL account enabling Require Destination Tags and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async requireDestinationTags(
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return this.changeFlag(AccountSetFlag.asfRequireDest, true, wallet)
+  }
 }
