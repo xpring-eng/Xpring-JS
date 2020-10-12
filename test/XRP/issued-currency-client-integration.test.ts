@@ -200,7 +200,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('requireDestinationTags - transaction without destination tags', async function (): Promise<
+  it('requireDestinationTags/allowNoDestinationTag - transaction without destination tags', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -208,7 +208,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     await issuedCurrencyClient.requireDestinationTags(wallet)
     const wallet2 = await XRPTestUtils.randomWalletFromFaucet()
 
-    // WHEN a transaction is sent to the account
+    // WHEN a transaction is sent to the account without a destination tag
     const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
     const xrpAmount = '100'
     const transactionHash = await xrpClient.send(
@@ -221,5 +221,18 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction fails.
     assert.exists(transactionHash)
     assert.equal(transactionStatus, TransactionStatus.Failed)
+
+    // GIVEN an existing testnet account with requireDestinationTags unset
+    // WHEN a transaction is sent to the account without a destination tag
+    const transactionHash2 = await xrpClient.send(
+      xrpAmount,
+      wallet.getAddress(),
+      wallet2,
+    )
+    const transactionStatus2 = await xrpClient.getPaymentStatus(transactionHash)
+
+    // THEN the transaction succeeds.
+    assert.exists(transactionHash2)
+    assert.equal(transactionStatus2, TransactionStatus.Succeeded)
   })
 })
