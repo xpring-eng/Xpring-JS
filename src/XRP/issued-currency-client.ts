@@ -187,6 +187,7 @@ export default class IssuedCurrencyClient {
 
   /**
    * Disable Disallow XRP for this XRPL account.
+   * Note that the meaning of this flag is not enforced by rippled, and is only intended for use by client applications.
    *
    * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#disallow-xrp
    *
