@@ -4,7 +4,7 @@ import { XrpClient, XrpError } from '../../src/XRP'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
-import { AccountRootFlag } from '../../src/XRP/shared'
+import { AccountRootFlag, TransactionStatus } from '../../src/XRP/shared'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -193,14 +193,16 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // WHEN a transaction is sent to the account
     const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
+    const xrpAmount = '100'
     const transactionHash = await xrpClient.send(
-      '100',
+      xrpAmount,
       wallet.getAddress(),
       wallet2,
     )
-    const transactionResult = await xrpClient.getPaymentStatus(transactionHash)
-    console.log(transactionResult)
+    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
 
     // THEN the transaction fails.
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.Failed)
   })
 })
