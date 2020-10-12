@@ -1,10 +1,10 @@
 import { assert } from 'chai'
-import { WalletFactory, XrplNetwork } from 'xpring-common-js'
-import { XrpError } from '../../src/XRP'
+import { Wallet, WalletFactory, XrplNetwork } from 'xpring-common-js'
+import { XrpClient, XrpError } from '../../src/XRP'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
-import { AccountRootFlag } from '../../src/XRP/shared'
+import { AccountRootFlag, TransactionStatus } from '../../src/XRP/shared'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -28,7 +28,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   this.retries(3)
 
   // A Wallet with some balance on Testnet.
-  let wallet
+  let wallet: Wallet
   before(async function () {
     wallet = await XRPTestUtils.randomWalletFromFaucet()
   })
@@ -112,6 +112,31 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       result,
       AccountRootFlag.LSF_DISALLOW_XRP,
     )
+  })
+
+  it('disallowIncomingXrp - attempt XRP transaction', async function (): Promise<
+    void
+  > {
+    // TODO(mvadari) FINISH THIS TEST
+    this.timeout(timeoutMs)
+    // GIVEN two existing testnet accounts
+    const wallet2 = await XRPTestUtils.randomWalletFromFaucet()
+
+    // WHEN disallowIncomingXrp is called on one and the other sends XRP to it
+    await issuedCurrencyClient.disallowIncomingXrp(wallet)
+
+    const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
+    const xrpAmount = '100'
+    const transactionHash = await xrpClient.send(
+      xrpAmount,
+      wallet.getAddress(),
+      wallet2,
+    )
+    const transactionResult = await xrpClient.getPaymentStatus(transactionHash)
+    console.log(transactionResult)
+    console.log(TransactionStatus.Succeeded)
+
+    // THEN the transaction fails to submit.
   })
 
   it('enableRippling - rippled', async function (): Promise<void> {
