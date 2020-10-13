@@ -11,7 +11,8 @@ import { JsonNetworkClientInterface } from './network-clients/json-network-clien
 import { XrpError } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
-import { TransferRate } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
+import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
+import { AccountSet } from './Generated/node/org/xrpl/rpc/v1/transaction_pb'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
