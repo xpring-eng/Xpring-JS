@@ -393,4 +393,51 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.limit, trustLineLimit)
     assert.equal(createdTrustLine.currency, trustLineCurrency)
   })
+
+  it.only('authorizeTrustline - valid account', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    const accountToTrust = await XRPTestUtils.randomWalletFromFaucet()
+
+    // GIVEN an existing testnet account and an issuer's wallet
+    // WHEN a trustline is created with the issuer with a positive value
+    await issuedCurrencyClient.createTrustline(
+      wallet.getAddress(),
+      'USD',
+      '1',
+      accountToTrust,
+    )
+
+    const accountToTrustTrustLines = await issuedCurrencyClient.getTrustLines(
+      accountToTrust.getAddress(),
+    )
+    console.log('accounttotrust', accountToTrustTrustLines)
+
+    const walletTrustLines = await issuedCurrencyClient.getTrustLines(
+      wallet.getAddress(),
+    )
+    console.log('wallet', walletTrustLines)
+
+    await issuedCurrencyClient.authorizeTrustline(
+      accountToTrust.getAddress(),
+      'USD',
+      wallet,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      wallet.getAddress(),
+    )
+    console.log('wallet trustlines', trustLines)
+
+    const accountToTrustTrustLines2 = await issuedCurrencyClient.getTrustLines(
+      accountToTrust.getAddress(),
+    )
+    console.log('accounttotrust', accountToTrustTrustLines2)
+
+    // THEN a trustline is created between the wallet and the issuer.
+    assert.isArray(trustLines)
+    assert.isNotEmpty(trustLines)
+    console.log(trustLines)
+  })
 })
