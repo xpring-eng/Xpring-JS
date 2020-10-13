@@ -16,6 +16,7 @@ import { AccountSetFlag } from './shared/account-set-flag'
 import { SetFlag, ClearFlag } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountSet } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import TransactionResult from './shared/transaction-result'
+import GatewayBalances from './shared/gateway-balances'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -144,16 +145,17 @@ export default class IssuedCurrencyClient {
    * @param hotwallet (Optional) An operational address to exclude from the balances issued, or an array of such addresses,
    *                   encoded as X-Addresses.
    * @see https://xrpaddress.info/
-   * @returns TODO: figure this out
+   * @returns A GatewayBalances object containing information about an account's balances.
    */
   public async getGatewayBalances(
     account: string,
-    hotwallet: string | Array<string>,
-  ): Promise<GatewayBalancesResponse> {
+    hotwallet?: string | Array<string>,
+  ): Promise<GatewayBalances> {
     const classicAddress = XrpUtils.decodeXAddress(account)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
+    // TODO: verify address format of hotwallet (and add test)
     const gatewayBalancesResponse: GatewayBalancesResponse = await this.jsonNetworkClient.getGatewayBalances(
       classicAddress.address,
       hotwallet,
@@ -162,8 +164,7 @@ export default class IssuedCurrencyClient {
     if (gatewayBalancesResponse.result.error) {
       throw XrpError.accountNotFound
     }
-    // TODO: update this when decided what object type to return
-    return gatewayBalancesResponse
+    return new GatewayBalances(gatewayBalancesResponse)
   }
 
   /**

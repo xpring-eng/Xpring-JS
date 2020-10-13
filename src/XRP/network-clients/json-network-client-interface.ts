@@ -25,6 +25,6 @@ export interface JsonNetworkClientInterface {
    */
   getGatewayBalances(
     account: string,
-    hotwallet: string | Array<string>,
+    hotwallet?: string | Array<string>,
   ): Promise<GatewayBalancesResponse>
 }

@@ -14,6 +14,7 @@ import 'mocha'
 import TrustLine from '../../src/XRP/shared/trustline'
 import { XrpError } from '../../src/XRP'
 import { AccountLinesResponse } from '../../src/XRP/shared/rippled-json-rpc-schema'
+import GatewayBalances from '../../src/XRP/shared/gateway-balances'
 
 const fakeSucceedingGrpcClient = new FakeXRPNetworkClient()
 
@@ -273,6 +274,73 @@ describe('Issued Currency Client', function (): void {
     // WHEN disallowIncomingXrp is attempted THEN an error is propagated.
     issuedCurrencyClient.disallowIncomingXrp(this.wallet).catch((error) => {
       assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
+    })
+  })
+
+  it('getGatewayBalances - successful response', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient.
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getBalances is called
+    const gatewayBalances = await issuedCurrencyClient.getGatewayBalances(
+      testAddress,
+    )
+    const expectedGatewayBalances: GatewayBalances = new GatewayBalances(
+      await fakeSucceedingJsonClient.getGatewayBalances(testAddress),
+    )
+
+    // THEN the result is as expected
+    assert.deepEqual(gatewayBalances, expectedGatewayBalances)
+  })
+
+  it('getGatewayBalances - invalid account', function (done): void {
+    // GIVEN an IssuedCurrencyClient
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getGatewayBalances is called with an invalid address THEN an error is propagated.
+    const address = 'malformedAddress'
+    issuedCurrencyClient.getGatewayBalances(address).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.xAddressRequired)
+      done()
+    })
+  })
+
+  it('getGatewayBalances - account not found error response', function (done): void {
+    // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getGatewayBalances
+    const accountNotFoundResponse: AccountLinesResponse = {
+      result: {
+        error: 'actNotFound',
+        status: 'error',
+      },
+    }
+    const fakeErroringJsonClientResponses = new FakeJsonNetworkClientResponses(
+      FakeJsonNetworkClientResponses.defaultGetAccountLinesResponse(),
+      accountNotFoundResponse,
+    )
+    const fakeErroringJsonClient = new FakeJsonNetworkClient(
+      fakeErroringJsonClientResponses,
+    )
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeErroringJsonClient,
+      XrplNetwork.Test,
+    )
+    // WHEN getGatewayBalances is called THEN an error is propagated.
+    issuedCurrencyClient.getGatewayBalances(testAddress).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.accountNotFound)
+      done()
     })
   })
 })
