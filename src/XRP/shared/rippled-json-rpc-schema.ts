@@ -31,7 +31,7 @@ interface GatewayBalancesResponse {
     balances?: { [account: string]: CurrencyValuePair[] }
     ledger_hash?: string
     ledger_index?: number
-    obligations?: { [account: string]: CurrencyValuePair[] }
+    obligations?: { [currencyCode: string]: string }
     status: string
     validated?: boolean
   }
@@ -56,6 +56,7 @@ interface TrustLineJson {
 export {
   JsonRpcRequestOptions,
   AccountLinesResponse,
+  CurrencyValuePair,
   GatewayBalancesResponse,
   TrustLineJson,
 }
