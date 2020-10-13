@@ -157,9 +157,14 @@ export default class IssuedCurrencyClient {
     if (!XrpUtils.isValidXAddress(issuerXAddress)) {
       throw XrpError.xAddressRequired
     }
+    const classicAddress = XrpUtils.decodeXAddress(issuerXAddress)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
 
+    // TODO (tedkalaw): Remove this when ripple-binary-codec supports X-Addresses.
     const issuerAccountAddress = new AccountAddress()
-    issuerAccountAddress.setAddress(issuerXAddress)
+    issuerAccountAddress.setAddress(classicAddress.address)
 
     const currency = new Currency()
     currency.setName(currencyName)

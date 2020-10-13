@@ -1,5 +1,6 @@
 import { assert } from 'chai'
 import { WalletFactory, XrplNetwork, XrpUtils } from 'xpring-common-js'
+
 import { XrpError } from '../../src/XRP'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 import TransactionStatus from '../../src/XRP/shared/transaction-status'
@@ -129,9 +130,13 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it.only('createTrustline - valid request', async function (): Promise<void> {
+  it('createTrustline - adding a trustline with 0 value', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    // GIVEN an existing testnet account and an issuer's wallet
+    // WHEN a trustline is created with the issuer with a value of 0
     await issuedCurrencyClient.createTrustline(
       issuer.getAddress(),
       'USD',
@@ -139,14 +144,36 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       wallet,
     )
 
-    // const trustLines = await issuedCurrencyClient.getTrustLines(
-    //   wallet.getAddress(),
-    // )
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      wallet.getAddress(),
+    )
 
-    // console.log(trustLines)
+    // THEN no trustlines are created.
+    assert.isArray(trustLines)
+    assert.isEmpty(trustLines)
+  })
 
-    // assert.exists(trustLines)
-    // // TODO improve the specificity of this test once necessary methods have been implemented on IssuedCurrencyClient
-    // assert.isTrue(trustLines.length > 0)
+  it('createTrustline - adding a trustline with non-zero value', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+
+    // GIVEN an existing testnet account and an issuer's wallet
+    // WHEN a trustline is created with the issuer with a positive value
+    await issuedCurrencyClient.createTrustline(
+      issuer.getAddress(),
+      'USD',
+      '1',
+      wallet,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      wallet.getAddress(),
+    )
+
+    // THEN a trustline is created between the wallet and the issuer.
+    assert.isArray(trustLines)
+    assert.isNotEmpty(trustLines)
   })
 })
