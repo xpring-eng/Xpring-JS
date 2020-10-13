@@ -229,4 +229,20 @@ export default class IssuedCurrencyClient {
       wallet,
     )
   }
+
+  /**
+   * Disable Global Freeze for this XRPL account.
+   *
+   * @see https://xrpl.org/freezes.html#global-freeze
+   *
+   * @param wallet The wallet associated with the XRPL account disabling Global Freeze and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async disableGlobalFreeze(wallet: Wallet): Promise<TransactionResult> {
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfGlobalFreeze,
+      false,
+      wallet,
+    )
+  }
 }
