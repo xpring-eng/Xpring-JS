@@ -223,6 +223,10 @@ export default class IssuedCurrencyClient {
    * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
    */
   public async enableGlobalFreeze(wallet: Wallet): Promise<TransactionResult> {
-    return this.changeFlag(AccountSetFlag.asfGlobalFreeze, true, wallet)
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfGlobalFreeze,
+      true,
+      wallet,
+    )
   }
 }
