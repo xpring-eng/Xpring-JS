@@ -280,7 +280,7 @@ describe('Issued Currency Client', function (): void {
   it('getGatewayBalances - successful response', async function (): Promise<
     void
   > {
-    // GIVEN an IssuedCurrencyClient.
+    // GIVEN an IssuedCurrencyClient with faked networking that will return successful responses.
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,

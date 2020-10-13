@@ -1,3 +1,4 @@
+import { XrpUtils } from 'xpring-common-js'
 import { XrpError, XrpErrorType } from '.'
 import {
   GatewayBalancesResponse,
@@ -23,10 +24,13 @@ export class IssuedCurrencyValue {
  * @see https://xrpl.org/gateway_balances.html
  */
 export default class GatewayBalances {
-  /** The address of the account that issued the balances. */
+  /**
+   * The address of the account that issued the balances, encoded as an X-Address.
+   * @see https://xrpaddress.info/
+   */
   readonly account: string
 
-  /**
+  /** TODO: finish these docs
    */
   readonly assets?: { [account: string]: IssuedCurrencyValue[] }
   readonly balances?: { [account: string]: IssuedCurrencyValue[] }
@@ -48,7 +52,14 @@ export default class GatewayBalances {
         'gatewayBalancesResponse is missing required field `account`.',
       )
     }
-    this.account = account
+    const xAddress = XrpUtils.encodeXAddress(account, undefined, true)
+    if (!xAddress) {
+      throw new XrpError(
+        XrpErrorType.MalformedResponse,
+        'Could not convert account to X-Address.',
+      )
+    }
+    this.account = xAddress
     this.ledgerHash = gatewayBalancesResponse.result.ledger_hash
     this.ledgerIndex = gatewayBalancesResponse.result.ledger_index
     this.assets = gatewayBalancesResponse.result.assets
