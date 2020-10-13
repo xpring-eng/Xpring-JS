@@ -12,12 +12,10 @@ import {
   MemoData,
   MemoFormat,
   MemoType,
-  SetFlag,
   Authorize,
   Unauthorize,
 } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
-  AccountSet,
   Memo,
   Payment,
   Transaction,
@@ -322,25 +320,14 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @see https://xrpl.org/depositauth.html
    *
    * @param wallet The wallet associated with the XRPL account enabling Deposit Authorization and that will sign the request.
-   * @returns A promise which resolves to a TransactionResult object that contains the hash of the submitted AccountSet transaction,
-   *          the preliminary status, and whether the transaction has been included in a validated ledger yet.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
    */
   public async enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
-    const setFlag = new SetFlag()
-    setFlag.setValue(AccountSetFlag.asfDepositAuth)
-
-    const accountSet = new AccountSet()
-    accountSet.setSetFlag(setFlag)
-
-    const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
-    transaction.setAccountSet(accountSet)
-
-    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
-      transaction,
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfDepositAuth,
+      true,
       wallet,
     )
-
-    return await this.coreXrplClient.getTransactionResult(transactionHash)
   }
 
   /**
