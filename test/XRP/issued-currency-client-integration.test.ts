@@ -239,4 +239,63 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.exists(transactionHash2)
     assert.equal(transactionStatus2, TransactionStatus.Succeeded)
   })
+
+  it('setTransferFee - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN setTransferFee is called
+    const expectedTransferFee = 1000000123
+    const result = await issuedCurrencyClient.setTransferFee(
+      expectedTransferFee,
+      wallet,
+    )
+
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+
+    const accountData = await this.getAccountData(wallet, rippledGrpcUrl)
+    const transferRate = accountData.getTransferRate()?.getValue()
+
+    // THEN the transaction was successfully submitted and the correct transfer rate was set on the account.
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.Succeeded)
+    assert.equal(transferRate, expectedTransferFee)
+  })
+
+  it('setTransferFee - bad transferRate values', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    const lowTransferFee = 12345
+    const highTransferFee = 9876543210
+
+    // GIVEN an existing testnet account
+    // WHEN setTransferFee is called on a too-low transfer fee
+    const result = await issuedCurrencyClient.setTransferFee(
+      lowTransferFee,
+      wallet,
+    )
+
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+
+    // THEN the transaction fails.
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.Failed)
+
+    // GIVEN an existing testnet account
+    // WHEN setTransferFee is called on a too-high transfer fee
+    const result2 = await issuedCurrencyClient.setTransferFee(
+      highTransferFee,
+      wallet,
+    )
+
+    const transactionHash2 = result2.hash
+    const transactionStatus2 = result2.status
+
+    // THEN the transaction fails.
+    assert.exists(transactionHash2)
+    assert.equal(transactionStatus2, TransactionStatus.Failed)
+  })
 })
