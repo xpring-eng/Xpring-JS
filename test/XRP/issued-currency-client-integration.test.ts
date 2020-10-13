@@ -253,7 +253,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const transactionHash = result.hash
     const transactionStatus = result.status
 
-    const accountData = await this.getAccountData(wallet, rippledGrpcUrl)
+    const accountData = await XRPTestUtils.getAccountData(
+      wallet,
+      rippledGrpcUrl,
+    )
     const transferRate = accountData.getTransferRate()?.getValue()
 
     // THEN the transaction was successfully submitted and the correct transfer rate was set on the account.
@@ -282,7 +285,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // THEN the transaction fails.
     assert.exists(transactionHash)
-    assert.equal(transactionStatus, TransactionStatus.Failed)
+    assert.equal(transactionStatus, TransactionStatus.MalformedTransaction)
 
     // GIVEN an existing testnet account
     // WHEN setTransferFee is called on a too-high transfer fee
@@ -296,6 +299,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // THEN the transaction fails.
     assert.exists(transactionHash2)
-    assert.equal(transactionStatus2, TransactionStatus.Failed)
+    assert.equal(transactionStatus2, TransactionStatus.MalformedTransaction)
   })
 })
