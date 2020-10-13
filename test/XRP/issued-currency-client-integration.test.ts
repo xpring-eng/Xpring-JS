@@ -271,7 +271,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     const lowTransferFee = 12345
-    const highTransferFee = 9876543210
+    const highTransferFee = 3000001234
 
     // GIVEN an existing testnet account
     // WHEN setTransferFee is called on a too-low transfer fee
