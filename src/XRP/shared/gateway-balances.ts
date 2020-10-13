@@ -28,14 +28,14 @@ export default class GatewayBalances {
 
   /**
    */
-  readonly assets: { [account: string]: IssuedCurrencyValue[] }
-  readonly balances: { [account: string]: IssuedCurrencyValue[] }
-  readonly obligations: { [currencyCode: string]: string }
-  readonly ledgerHash: string | undefined
-  readonly ledgerIndex: number | undefined
+  readonly assets?: { [account: string]: IssuedCurrencyValue[] }
+  readonly balances?: { [account: string]: IssuedCurrencyValue[] }
+  readonly obligations?: { [currencyCode: string]: string }
+  readonly ledgerHash?: string | undefined
+  readonly ledgerIndex?: number | undefined
 
   public constructor(gatewayBalancesResponse: GatewayBalancesResponse) {
-    if (!gatewayBalancesResponse.result.validated === false) {
+    if (gatewayBalancesResponse.result.validated === false) {
       throw new XrpError(
         XrpErrorType.MalformedResponse,
         'Gateway Balances response indicates unvalidated ledger.',
@@ -43,62 +43,16 @@ export default class GatewayBalances {
     }
     const account = gatewayBalancesResponse.result.account
     if (!account) {
-      throw XrpError.malformedResponse
+      throw new XrpError(
+        XrpErrorType.MalformedResponse,
+        'gatewayBalancesResponse is missing required field `account`.',
+      )
     }
     this.account = account
     this.ledgerHash = gatewayBalancesResponse.result.ledger_hash
     this.ledgerIndex = gatewayBalancesResponse.result.ledger_index
-
-    // populate assets
-    const responseAssets = gatewayBalancesResponse.result.assets
-    if (!responseAssets) {
-      throw new XrpError(
-        XrpErrorType.MalformedProtobuf,
-        'Gateway Balances response is missing `assets` field.',
-      )
-    }
-    const assets = {}
-    for (const accountKey in responseAssets) {
-      const currencyValuePairArray: Array<CurrencyValuePair> =
-        responseAssets[accountKey]
-      const issuedCurrencyValueArray: Array<IssuedCurrencyValue> = []
-      for (const currencyValuePair of currencyValuePairArray) {
-        const issuedCurrencyValue = new IssuedCurrencyValue(currencyValuePair)
-        issuedCurrencyValueArray.push(issuedCurrencyValue)
-      } // end for currencyValuePair
-      assets[accountKey] = issuedCurrencyValueArray
-    } // end for accountKey
-    this.assets = assets
-
-    // populate balances
-    const responseBalances = gatewayBalancesResponse.result.balances
-    if (!responseBalances) {
-      throw new XrpError(
-        XrpErrorType.MalformedProtobuf,
-        'Gateway Balances response is missing `balances` field.',
-      )
-    }
-    const balances = {}
-    for (const accountKey in responseBalances) {
-      const currencyValuePairArray: Array<CurrencyValuePair> =
-        responseBalances[accountKey]
-      const issuedCurrencyValueArray: Array<IssuedCurrencyValue> = []
-      for (const currencyValuePair of currencyValuePairArray) {
-        const issuedCurrencyValue = new IssuedCurrencyValue(currencyValuePair)
-        issuedCurrencyValueArray.push(issuedCurrencyValue)
-      } // end for currencyValuePair
-      balances[accountKey] = issuedCurrencyValueArray
-    } // end for accountKey
-    this.balances = balances
-
-    // populate obligations
-    const responseObligations = gatewayBalancesResponse.result.obligations
-    if (!responseObligations) {
-      throw new XrpError(
-        XrpErrorType.MalformedProtobuf,
-        'Gateway Balances response is missing `obligations` field.',
-      )
-    }
-    this.obligations = responseObligations
+    this.assets = gatewayBalancesResponse.result.assets
+    this.balances = gatewayBalancesResponse.result.balances
+    this.obligations = gatewayBalancesResponse.result.obligations
   }
 }
