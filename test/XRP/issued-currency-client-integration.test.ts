@@ -163,7 +163,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   // TODO: Once required IOU functionality exists in SDK, add integration tests that successfully establish an unauthorized trustline to this account.
 
-  it('requireDestinationTags - rippled', async function (): Promise<void> {
+  it('requireDestinationTags/allowNoDestinationTag - rippled', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN requireDestinationTags is called
@@ -229,5 +231,20 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction succeeds.
     assert.exists(transactionHash2)
     assert.equal(transactionStatus2, TransactionStatus.Succeeded)
+  })
+
+  it('enableGlobalFreeze - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN enableGlobalFreeze is called
+    const result = await issuedCurrencyClient.enableGlobalFreeze(wallet)
+
+    // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledGrpcUrl,
+      result,
+      AccountRootFlag.LSF_GLOBAL_FREEZE,
+    )
   })
 })
