@@ -295,7 +295,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(transactionStatus2, TransactionStatus.MalformedTransaction)
   })
 
-  it('enableGlobalFreeze - rippled', async function (): Promise<void> {
+  it('enableGlobalFreeze/disableGlobalFreeze - rippled', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN enableGlobalFreeze is called
@@ -307,6 +309,19 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       rippledGrpcUrl,
       result,
       AccountRootFlag.LSF_GLOBAL_FREEZE,
+    )
+
+    // GIVEN an existing testnet account with Global Freeze enabled
+    // WHEN disableGlobalFreeze is called
+    const result2 = await issuedCurrencyClient.disableGlobalFreeze(wallet)
+
+    // THEN both transactions were successfully submitted and there should be no flag set on the account.
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledGrpcUrl,
+      result2,
+      AccountRootFlag.LSF_GLOBAL_FREEZE,
+      false,
     )
   })
 
