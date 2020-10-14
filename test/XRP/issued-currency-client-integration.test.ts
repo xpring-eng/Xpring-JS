@@ -324,4 +324,19 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       false,
     )
   })
+
+  it('enableNoFreeze - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN enableNoFreeze is called
+    const result = await issuedCurrencyClient.enableNoFreeze(wallet)
+
+    // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledGrpcUrl,
+      result,
+      AccountRootFlag.LSF_NO_FREEZE,
+    )
+  })
 })
