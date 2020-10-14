@@ -1,4 +1,7 @@
-import { AccountLinesResponse } from '../shared/rippled-json-rpc-schema'
+import {
+  AccountLinesResponse,
+  GatewayBalancesResponse,
+} from '../shared/rippled-json-rpc-schema'
 
 /**
  * The JsonNetworkClientInterface defines the calls available via the rippled JSON-RPC.
