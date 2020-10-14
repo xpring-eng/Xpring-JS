@@ -1,6 +1,5 @@
 import {
   AccountLinesResponse,
-  GatewayBalancesResponse,
   JsonRpcRequestOptions,
 } from '../shared/rippled-json-rpc-schema'
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
@@ -61,7 +60,6 @@ export default class JsonRpcNetworkClient {
 
   /**
    * Submits an account_lines request to the rippled JSON RPC.
-   * @see https://xrpl.org/account_lines.html
    *
    * @param account The XRPL account to query for trust lines.
    */
@@ -82,35 +80,5 @@ export default class JsonRpcNetworkClient {
     )
     const accountLinesResponse: AccountLinesResponse = axiosResponse.data
     return accountLinesResponse
-  }
-
-  /**
-   * Submits a gateway_balances request to the rippled JSON RPC.
-   * @see https://xrpl.org/gateway_balances.html
-   *
-   * @param account The XRPL account for which to retrieve balances.
-   * @param hotwallet (Optional) An operational address to exclude from the balances issued, or an array of such addresses.
-   * @see https://xrpl.org/issuing-and-operational-addresses.html
-   */
-  public async getGatewayBalances(
-    account: string,
-    hotwallet?: string | Array<string>,
-  ): Promise<GatewayBalancesResponse> {
-    const gatewayBalancesRequest = {
-      method: 'gateway_balances',
-      params: [
-        {
-          account: account,
-          hotwallet: hotwallet,
-          ledger_index: 'validated',
-          strict: 'true',
-        },
-      ],
-    }
-    const axiosResponse: AxiosResponse = await this.submitRequest(
-      gatewayBalancesRequest,
-    )
-    const gatewayBalancesResponse: GatewayBalancesResponse = axiosResponse.data
-    return gatewayBalancesResponse
   }
 }

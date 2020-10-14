@@ -6,10 +6,7 @@ import isNode from '../Common/utils'
 import CoreXrplClient from './core-xrpl-client'
 import TrustLine from './shared/trustline'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
-import {
-  AccountLinesResponse,
-  GatewayBalancesResponse,
-} from './shared/rippled-json-rpc-schema'
+import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
 import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
 import { XrpError } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'

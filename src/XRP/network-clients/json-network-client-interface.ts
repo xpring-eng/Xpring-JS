@@ -1,18 +1,9 @@
-import {
-  AccountLinesResponse,
-  GatewayBalancesResponse,
-} from '../shared/rippled-json-rpc-schema'
+import { AccountLinesResponse } from '../shared/rippled-json-rpc-schema'
 
 /**
  * The JsonNetworkClientInterface defines the calls available via the rippled JSON-RPC.
  */
 export interface JsonNetworkClientInterface {
-  /**
-   * Submits an account_lines request to the rippled JSON RPC.
-   * @see https://xrpl.org/account_lines.html
-   *
-   * @param account The XRPL account to query for trust lines.
-   */
   getAccountLines(account: string): Promise<AccountLinesResponse>
 
   /**
