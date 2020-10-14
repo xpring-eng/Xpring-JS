@@ -295,6 +295,8 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   it('setTransferFee - bad transferRate values', async function (): Promise<
     void
   > {
+    this.timeout(timeoutMs)
+
     const lowTransferFee = 12345
     const highTransferFee = 3000001234
 
