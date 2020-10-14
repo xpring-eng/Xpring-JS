@@ -1,7 +1,7 @@
 /* eslint-disable no-bitwise -- Explicitly testing bitwise flags in this file */
 import { assert } from 'chai'
 
-import PaymentFlags from '../../src/XRP/shared/payment-flags'
+import PaymentFlags from '../../../src/XRP/shared/payment-flags'
 import 'mocha'
 
 describe('rippled flags', function (): void {

@@ -1,26 +1,26 @@
 import { assert } from 'chai'
 
 import { XrplNetwork } from 'xpring-common-js'
-import { XrpError, XrpUtils } from '../../src'
-import XrpTrustSet from '../../src/XRP/protobuf-wrappers/xrp-trust-set'
-import XRPSignerEntry from '../../src/XRP/protobuf-wrappers/xrp-signer-entry'
-import XrpSignerListSet from '../../src/XRP/protobuf-wrappers/xrp-signer-list-set'
-import XrpSetRegularKey from '../../src/XRP/protobuf-wrappers/xrp-set-regular-key'
-import XrpPaymentChannelFund from '../../src/XRP/protobuf-wrappers/xrp-payment-channel-fund'
-import XrpPaymentChannelCreate from '../../src/XRP/protobuf-wrappers/xrp-payment-channel-create'
-import XrpPaymentChannelClaim from '../../src/XRP/protobuf-wrappers/xrp-payment-channel-claim'
-import XrpOfferCreate from '../../src/XRP/protobuf-wrappers/xrp-offer-create'
-import XrpOfferCancel from '../../src/XRP/protobuf-wrappers/xrp-offer-cancel'
-import XrpEscrowFinish from '../../src/XRP/protobuf-wrappers/xrp-escrow-finish'
-import XrpEscrowCreate from '../../src/XRP/protobuf-wrappers/xrp-escrow-create'
-import XrpEscrowCancel from '../../src/XRP/protobuf-wrappers/xrp-escrow-cancel'
-import XrpDepositPreauth from '../../src/XRP/protobuf-wrappers/xrp-deposit-preauth'
-import XrpCheckCreate from '../../src/XRP/protobuf-wrappers/xrp-check-create'
-import XrpCheckCash from '../../src/XRP/protobuf-wrappers/xrp-check-cash'
-import XrpAccountSet from '../../src/XRP/protobuf-wrappers/xrp-account-set'
-import XrpCurrencyAmount from '../../src/XRP/protobuf-wrappers/xrp-currency-amount'
-import XrpCheckCancel from '../../src/XRP/protobuf-wrappers/xrp-check-cancel'
-import XrpAccountDelete from '../../src/XRP/protobuf-wrappers/xrp-account-delete'
+import { XrpError, XrpUtils } from '../../../src'
+import XrpTrustSet from '../../../src/XRP/protobuf-wrappers/xrp-trust-set'
+import XRPSignerEntry from '../../../src/XRP/protobuf-wrappers/xrp-signer-entry'
+import XrpSignerListSet from '../../../src/XRP/protobuf-wrappers/xrp-signer-list-set'
+import XrpSetRegularKey from '../../../src/XRP/protobuf-wrappers/xrp-set-regular-key'
+import XrpPaymentChannelFund from '../../../src/XRP/protobuf-wrappers/xrp-payment-channel-fund'
+import XrpPaymentChannelCreate from '../../../src/XRP/protobuf-wrappers/xrp-payment-channel-create'
+import XrpPaymentChannelClaim from '../../../src/XRP/protobuf-wrappers/xrp-payment-channel-claim'
+import XrpOfferCreate from '../../../src/XRP/protobuf-wrappers/xrp-offer-create'
+import XrpOfferCancel from '../../../src/XRP/protobuf-wrappers/xrp-offer-cancel'
+import XrpEscrowFinish from '../../../src/XRP/protobuf-wrappers/xrp-escrow-finish'
+import XrpEscrowCreate from '../../../src/XRP/protobuf-wrappers/xrp-escrow-create'
+import XrpEscrowCancel from '../../../src/XRP/protobuf-wrappers/xrp-escrow-cancel'
+import XrpDepositPreauth from '../../../src/XRP/protobuf-wrappers/xrp-deposit-preauth'
+import XrpCheckCreate from '../../../src/XRP/protobuf-wrappers/xrp-check-create'
+import XrpCheckCash from '../../../src/XRP/protobuf-wrappers/xrp-check-cash'
+import XrpAccountSet from '../../../src/XRP/protobuf-wrappers/xrp-account-set'
+import XrpCurrencyAmount from '../../../src/XRP/protobuf-wrappers/xrp-currency-amount'
+import XrpCheckCancel from '../../../src/XRP/protobuf-wrappers/xrp-check-cancel'
+import XrpAccountDelete from '../../../src/XRP/protobuf-wrappers/xrp-account-delete'
 import {
   testAccountSetProtoAllFields,
   testAccountSetProtoOneFieldSet,
@@ -101,12 +101,12 @@ import {
   testInvalidTrustSetProtoXRP,
   testSignerEntry1,
   testSignerEntry2,
-} from './fakes/fake-xrp-transaction-type-protobufs'
+} from '../fakes/fake-xrp-transaction-type-protobufs'
 
 import {
   AccountSet,
   AccountDelete,
-} from '../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
+} from '../../../src/XRP/Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 describe('Protobuf Conversions - Transaction Types', function (): void {
   // AccountSet
