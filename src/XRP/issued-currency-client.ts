@@ -6,10 +6,7 @@ import isNode from '../Common/utils'
 import CoreXrplClient from './core-xrpl-client'
 import TrustLine from './shared/trustline'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
-import {
-  AccountLinesResponse,
-  GatewayBalancesResponse,
-} from './shared/rippled-json-rpc-schema'
+import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
 import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
 import { XrpError } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
@@ -93,37 +90,6 @@ export default class IssuedCurrencyClient {
       trustLines.push(new TrustLine(trustLineJson))
     })
     return trustLines
-  }
-
-  /**
-   * Returns information about the total balances issued by a given account,
-   * optionally excluding amounts held by operational addresses.
-   * @see https://xrpl.org/issuing-and-operational-addresses.html
-   *
-   * @param account The account for which to retrieve balance information, encoded as an X-Address.
-   * @param hotwallet (Optional) An operational address to exclude from the balances issued, or an array of such addresses,
-   *                   encoded as X-Addresses.
-   * @see https://xrpaddress.info/
-   * @returns TODO: figure this out
-   */
-  public async getGatewayBalances(
-    account: string,
-    hotwallet: string | Array<string>,
-  ): Promise<GatewayBalancesResponse> {
-    const classicAddress = XrpUtils.decodeXAddress(account)
-    if (!classicAddress) {
-      throw XrpError.xAddressRequired
-    }
-    const gatewayBalancesResponse: GatewayBalancesResponse = await this.jsonNetworkClient.getGatewayBalances(
-      classicAddress.address,
-      hotwallet,
-    )
-
-    if (gatewayBalancesResponse.result.error) {
-      throw XrpError.accountNotFound
-    }
-    // TODO: update this when decided what object type to return
-    return gatewayBalancesResponse
   }
 
   /**
