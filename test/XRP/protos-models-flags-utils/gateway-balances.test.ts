@@ -3,6 +3,7 @@ import { assert } from 'chai'
 import GatewayBalances from '../../../src/XRP/shared/gateway-balances'
 import 'mocha'
 import { GatewayBalancesResponse } from '../../../src/XRP/shared/rippled-json-rpc-schema'
+import { XrpUtils } from 'xpring-common-js'
 
 describe('GatewayBalances Conversion Tests', function (): void {
   it('GatewayBalances from GatewayBalancesResponse - all fields present', function (): void {
@@ -59,8 +60,13 @@ describe('GatewayBalances Conversion Tests', function (): void {
     const gatewayBalances = new GatewayBalances(testGatewayBalancesResponse)
 
     // THEN the result is as expected.
+    const expectedAddress = XrpUtils.encodeXAddress(
+      'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',
+      undefined,
+      true,
+    )!
     const expectedGatewayBalances: GatewayBalances = {
-      account: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',
+      account: expectedAddress,
       ledgerHash:
         '980FECF48CA4BFDEC896692C31A50D484BDFE865EC101B00259C413AA3DBD672',
       assets: {
@@ -139,8 +145,13 @@ describe('GatewayBalances Conversion Tests', function (): void {
     const gatewayBalances = new GatewayBalances(testGatewayBalancesResponse)
 
     // THEN the result is as expected.
+    const expectedAddress = XrpUtils.encodeXAddress(
+      'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',
+      undefined,
+      true,
+    )!
     const expectedGatewayBalances: GatewayBalances = {
-      account: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',
+      account: expectedAddress,
       ledgerHash: undefined,
       assets: undefined,
       balances: {
