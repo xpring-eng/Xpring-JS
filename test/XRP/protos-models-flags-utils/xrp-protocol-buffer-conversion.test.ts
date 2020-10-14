@@ -7,17 +7,17 @@ import bigInt from 'big-integer'
 import { assert } from 'chai'
 
 import { Utils, XrplNetwork } from 'xpring-common-js'
-import { XrpError, XrpUtils } from '../../src'
-import XrpCurrency from '../../src/XRP/protobuf-wrappers/xrp-currency'
-import XrpCurrencyAmount from '../../src/XRP/protobuf-wrappers/xrp-currency-amount'
-import XrpIssuedCurrency from '../../src/XRP/protobuf-wrappers/xrp-issued-currency'
-import XrpMemo from '../../src/XRP/protobuf-wrappers/xrp-memo'
-import XrpPath from '../../src/XRP/protobuf-wrappers/xrp-path'
-import XrpPathElement from '../../src/XRP/protobuf-wrappers/xrp-path-element'
-import XrpPayment from '../../src/XRP/protobuf-wrappers/xrp-payment'
-import XrpSigner from '../../src/XRP/protobuf-wrappers/xrp-signer'
-import XrpTransaction from '../../src/XRP/protobuf-wrappers/xrp-transaction'
-import XrpSignerEntry from '../../src/XRP/protobuf-wrappers/xrp-signer-entry'
+import { XrpError, XrpUtils } from '../../../src'
+import XrpCurrency from '../../../src/XRP/protobuf-wrappers/xrp-currency'
+import XrpCurrencyAmount from '../../../src/XRP/protobuf-wrappers/xrp-currency-amount'
+import XrpIssuedCurrency from '../../../src/XRP/protobuf-wrappers/xrp-issued-currency'
+import XrpMemo from '../../../src/XRP/protobuf-wrappers/xrp-memo'
+import XrpPath from '../../../src/XRP/protobuf-wrappers/xrp-path'
+import XrpPathElement from '../../../src/XRP/protobuf-wrappers/xrp-path-element'
+import XrpPayment from '../../../src/XRP/protobuf-wrappers/xrp-payment'
+import XrpSigner from '../../../src/XRP/protobuf-wrappers/xrp-signer'
+import XrpTransaction from '../../../src/XRP/protobuf-wrappers/xrp-transaction'
+import XrpSignerEntry from '../../../src/XRP/protobuf-wrappers/xrp-signer-entry'
 import {
   testTransactionSignature,
   testSequence,
@@ -86,7 +86,7 @@ import {
   testInvalidGetTransactionResponseProtoNoSignature,
   testInvalidGetTransactionResponseProtoNoData,
   testInvalidGetTransactionResponseProtoNoHash,
-} from './fakes/fake-xrp-protobufs'
+} from '../fakes/fake-xrp-protobufs'
 
 // TODO(amiecorso): Refactor tests to separate files.
 describe('Protocol Buffer Conversion', function (): void {
@@ -603,8 +603,8 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.equal(
       transaction.sourceXAddress,
       XrpUtils.encodeXAddress(
-        transactionProto!.getAccount()!.getValue()!.getAddress()!,
-        transactionProto!.getSourceTag()?.getValue(),
+        transactionProto.getAccount()!.getValue()!.getAddress()!,
+        transactionProto.getSourceTag()?.getValue(),
         true,
       ),
     )
@@ -650,8 +650,8 @@ describe('Protocol Buffer Conversion', function (): void {
     assert.equal(
       transaction.sourceXAddress,
       XrpUtils.encodeXAddress(
-        transactionProto!.getAccount()!.getValue()!.getAddress()!,
-        transactionProto!.getSourceTag()?.getValue(),
+        transactionProto.getAccount()!.getValue()!.getAddress()!,
+        transactionProto.getSourceTag()?.getValue(),
         true,
       ),
     )
