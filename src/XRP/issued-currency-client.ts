@@ -224,7 +224,7 @@ export default class IssuedCurrencyClient {
    *
    * @param transferFee The amount you must send for the recipient to get 1 billion units of the same currency.
    *                    It cannot be set to less than 1000000000 or more than 2000000000.
-   * @param wallet The wallet associated with the XRPL account disabling Require Destination and that will sign the request.
+   * @param wallet The wallet associated with the issuing account, and that will sign the request.
    * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
    */
   public async setTransferFee(
