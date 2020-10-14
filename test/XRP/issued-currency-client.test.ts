@@ -277,6 +277,49 @@ describe('Issued Currency Client', function (): void {
     })
   })
 
+  it('allowIncomingXrp - successful response', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN allowIncomingXrp is called
+    const result = await issuedCurrencyClient.allowIncomingXrp(this.wallet)
+    const transactionHash = result.hash
+
+    // THEN a transaction hash exists and is the expected hash
+    const expectedTransactionHash = Utils.toHex(
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
+    )
+
+    assert.exists(transactionHash)
+    assert.strictEqual(transactionHash, expectedTransactionHash)
+  })
+
+  it('allowIncomingXrp - submission failure', function (): void {
+    // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
+    const failureResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultError,
+    )
+    const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      failingNetworkClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN allowIncomingXrp is attempted THEN an error is propagated.
+    issuedCurrencyClient.allowIncomingXrp(this.wallet).catch((error) => {
+      assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
+    })
+  })
+
   it('getGatewayBalances - successful response', async function (): Promise<
     void
   > {
@@ -341,6 +384,93 @@ describe('Issued Currency Client', function (): void {
       assert.typeOf(error, 'Error')
       assert.equal(error, XrpError.accountNotFound)
       done()
+    })
+  })
+
+  it('requireDestinationTags - successful response', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+    // WHEN requireDestinationTags is called
+    const result = await issuedCurrencyClient.requireDestinationTags(
+      this.wallet,
+    )
+    const transactionHash = result.hash
+
+    // THEN a transaction hash exists and is the expected hash
+    const expectedTransactionHash = Utils.toHex(
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
+    )
+
+    assert.exists(transactionHash)
+    assert.strictEqual(transactionHash, expectedTransactionHash)
+  })
+
+  it('requireDestinationTags - submission failure', function (): void {
+    // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
+    const failureResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultError,
+    )
+    const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      failingNetworkClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN requireDestinationTags is attempted THEN an error is propagated.
+    issuedCurrencyClient.requireDestinationTags(this.wallet).catch((error) => {
+      assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
+    })
+  })
+
+  it('allowNoDestinationTag - successful response', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN allowNoDestinationTag is called
+    const result = await issuedCurrencyClient.allowNoDestinationTag(this.wallet)
+    const transactionHash = result.hash
+
+    // THEN a transaction hash exists and is the expected hash
+    const expectedTransactionHash = Utils.toHex(
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
+    )
+
+    assert.exists(transactionHash)
+    assert.strictEqual(transactionHash, expectedTransactionHash)
+  })
+
+  it('allowNoDestinationTag - submission failure', function (): void {
+    // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
+    const failureResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultError,
+    )
+    const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      failingNetworkClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN allowNoDestinationTag is attempted THEN an error is propagated.
+    issuedCurrencyClient.allowNoDestinationTag(this.wallet).catch((error) => {
+      assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
     })
   })
 })

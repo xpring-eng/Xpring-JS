@@ -13,8 +13,6 @@ import {
 import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
 import { XrpError } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
-import { SetFlag, ClearFlag } from './Generated/web/org/xrpl/rpc/v1/common_pb'
-import { AccountSet } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import TransactionResult from './shared/transaction-result'
 import GatewayBalances from './shared/gateway-balances'
 
@@ -65,44 +63,6 @@ export default class IssuedCurrencyClient {
     readonly network: XrplNetwork,
   ) {
     this.coreXrplClient = new CoreXrplClient(grpcNetworkClient, network)
-  }
-
-  /**
-   * Helper function. Sets/clears a flag value.
-   * @param flag The desired flag that is being changed.
-   * @param enable Whether the flag is being enabled (true if enabling, false if disabling).
-   * @param wallet The wallet associated with the XRPL account enabling Require Authorization and that will sign the request.
-   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
-   */
-  private async changeFlag(
-    flag: number,
-    enable: boolean,
-    wallet: Wallet,
-  ): Promise<TransactionResult> {
-    const accountSet = new AccountSet()
-
-    if (enable) {
-      const setFlag = new SetFlag()
-      setFlag.setValue(flag)
-      accountSet.setSetFlag(setFlag)
-    } else {
-      const clearFlag = new ClearFlag()
-      clearFlag.setValue(flag)
-      accountSet.setClearFlag(clearFlag)
-    }
-
-    const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
-    transaction.setAccountSet(accountSet)
-
-    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
-      transaction,
-      wallet,
-    )
-
-    return await this.coreXrplClient.getFinalTransactionResultAsync(
-      transactionHash,
-      wallet,
-    )
   }
 
   /**
@@ -178,7 +138,11 @@ export default class IssuedCurrencyClient {
   public async requireAuthorizedTrustlines(
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    return this.changeFlag(AccountSetFlag.asfRequireAuth, true, wallet)
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfRequireAuth,
+      true,
+      wallet,
+    )
   }
 
   /**
@@ -192,7 +156,11 @@ export default class IssuedCurrencyClient {
   public async allowUnauthorizedTrustlines(
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    return this.changeFlag(AccountSetFlag.asfRequireAuth, false, wallet)
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfRequireAuth,
+      false,
+      wallet,
+    )
   }
 
   /**
@@ -204,7 +172,11 @@ export default class IssuedCurrencyClient {
    * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
    */
   public async enableRippling(wallet: Wallet): Promise<TransactionResult> {
-    return this.changeFlag(AccountSetFlag.asfDefaultRipple, true, wallet)
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfDefaultRipple,
+      true,
+      wallet,
+    )
   }
 
   /**
@@ -217,6 +189,63 @@ export default class IssuedCurrencyClient {
    * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
    */
   public async disallowIncomingXrp(wallet: Wallet): Promise<TransactionResult> {
-    return this.changeFlag(AccountSetFlag.asfDisallowXRP, true, wallet)
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfDisallowXRP,
+      true,
+      wallet,
+    )
+  }
+
+  /**
+   * Disable Disallow XRP for this XRPL account.
+   * Note that the meaning of this flag is not enforced by rippled, and is only intended for use by client applications.
+   *
+   * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#disallow-xrp
+   *
+   * @param wallet The wallet associated with the XRPL account disabling Disallow XRP and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async allowIncomingXrp(wallet: Wallet): Promise<TransactionResult> {
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfDisallowXRP,
+      false,
+      wallet,
+    )
+  }
+
+  /**
+   * Enable Require Destination Tags for this XRPL account.
+   *
+   * @see https://xrpl.org/require-destination-tags.html
+   *
+   * @param wallet The wallet associated with the XRPL account enabling Require Destination Tags and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async requireDestinationTags(
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfRequireDest,
+      true,
+      wallet,
+    )
+  }
+
+  /**
+   * Disable Require Destination for this XRPL account.
+   *
+   * @see https://xrpl.org/require-destination-tags.html
+   *
+   * @param wallet The wallet associated with the XRPL account disabling Require Destination and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async allowNoDestinationTag(
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfRequireDest,
+      false,
+      wallet,
+    )
   }
 }
