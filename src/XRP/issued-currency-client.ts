@@ -15,6 +15,8 @@ import { XrpError } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
 import GatewayBalances from './shared/gateway-balances'
+import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
+import { AccountSet } from './Generated/node/org/xrpl/rpc/v1/transaction_pb'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -245,6 +247,41 @@ export default class IssuedCurrencyClient {
     return this.coreXrplClient.changeFlag(
       AccountSetFlag.asfRequireDest,
       false,
+      wallet,
+    )
+  }
+
+  /**
+   * Set the Transfer Fees for an issuing account.
+   * The Transfer Fee is a percentage to charge when two users transfer an issuer's IOUs on the XRPL.
+   *
+   * @see https://xrpl.org/transfer-fees.html
+   *
+   * @param transferFee The amount you must send for the recipient to get 1 billion units of the same currency.
+   *                    It cannot be set to less than 1000000000 or more than 2000000000.
+   * @param wallet The wallet associated with the issuing account, and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async setTransferFee(
+    transferFee: number,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const transferRate = new TransferRate()
+    transferRate.setValue(transferFee)
+
+    const accountSet = new AccountSet()
+    accountSet.setTransferRate(transferRate)
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
+    transaction.setAccountSet(accountSet)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      wallet,
+    )
+
+    return await this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
       wallet,
     )
   }
