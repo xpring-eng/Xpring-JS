@@ -285,4 +285,52 @@ export default class IssuedCurrencyClient {
       wallet,
     )
   }
+
+  /**
+   * Enable Global Freeze for this XRPL account.
+   *
+   * @see https://xrpl.org/freezes.html#global-freeze
+   *
+   * @param wallet The wallet associated with the XRPL account enabling Global Freeze and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async enableGlobalFreeze(wallet: Wallet): Promise<TransactionResult> {
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfGlobalFreeze,
+      true,
+      wallet,
+    )
+  }
+
+  /**
+   * Disable Global Freeze for this XRPL account.
+   *
+   * @see https://xrpl.org/freezes.html#global-freeze
+   *
+   * @param wallet The wallet associated with the XRPL account disabling Global Freeze and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async disableGlobalFreeze(wallet: Wallet): Promise<TransactionResult> {
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfGlobalFreeze,
+      false,
+      wallet,
+    )
+  }
+
+  /**
+   * Permanently enable No Freeze for this XRPL account.
+   *
+   * @see https://xrpl.org/freezes.html#no-freeze
+   *
+   * @param wallet The wallet associated with the XRPL account enabling No Freeze and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async enableNoFreeze(wallet: Wallet): Promise<TransactionResult> {
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfNoFreeze,
+      true,
+      wallet,
+    )
+  }
 }
