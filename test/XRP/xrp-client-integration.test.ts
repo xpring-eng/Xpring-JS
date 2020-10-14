@@ -1,9 +1,8 @@
 import bigInt from 'big-integer'
 import { assert } from 'chai'
-import { XrplNetwork, XrpUtils } from 'xpring-common-js'
+import { XrplNetwork } from 'xpring-common-js'
 import TransactionStatus from '../../src/XRP/shared/transaction-status'
 import XrpClient from '../../src/XRP/xrp-client'
-import GrpcNetworkClient from '../../src/XRP/network-clients/grpc-xrp-network-client'
 
 import XRPTestUtils, {
   iForgotToPickUpCarlMemo,
@@ -11,8 +10,6 @@ import XRPTestUtils, {
   noFormatMemo,
   noTypeMemo,
 } from './helpers/xrp-test-utils'
-import { LedgerSpecifier } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger_pb'
-import { XrpError } from '../../src/XRP'
 import { AccountRootFlag } from '../../src/XRP/shared'
 
 // A timeout for these tests.
@@ -195,38 +192,11 @@ describe('XrpClient Integration Tests', function (): void {
     const result = await xrpClient.enableDepositAuth(wallet)
 
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
-    const transactionHash = result.hash
-    const transactionStatus = result.status
-
-    // get the account data and check the flag bitmap
-    const networkClient = new GrpcNetworkClient(rippledUrl)
-    const account = networkClient.AccountAddress()
-    const classicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
-    account.setAddress(classicAddress!.address)
-
-    const request = networkClient.GetAccountInfoRequest()
-    request.setAccount(account)
-
-    const ledger = new LedgerSpecifier()
-    ledger.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
-    request.setLedger(ledger)
-
-    const accountInfo = await networkClient.getAccountInfo(request)
-    if (!accountInfo) {
-      throw XrpError.malformedResponse
-    }
-
-    const accountData = accountInfo.getAccountData()
-    if (!accountData) {
-      throw XrpError.malformedResponse
-    }
-
-    const flags = accountData.getFlags()?.getValue()
-
-    assert.exists(transactionHash)
-    assert.equal(transactionStatus, TransactionStatus.Succeeded)
-    assert.isTrue(
-      AccountRootFlag.checkFlag(AccountRootFlag.LSF_DEPOSIT_AUTH, flags!),
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledUrl,
+      result,
+      AccountRootFlag.LSF_DEPOSIT_AUTH,
     )
   })
 

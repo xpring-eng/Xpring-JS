@@ -6,10 +6,15 @@ import { XRPDropsAmount } from './Generated/web/org/xrpl/rpc/v1/amount_pb'
 import { AccountRoot } from './Generated/web/org/xrpl/rpc/v1/ledger_objects_pb'
 import {
   Account,
+  ClearFlag,
   LastLedgerSequence,
+  SetFlag,
   SigningPublicKey,
 } from './Generated/web/org/xrpl/rpc/v1/common_pb'
-import { Transaction } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
+import {
+  AccountSet,
+  Transaction,
+} from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import { GetFeeResponse } from './Generated/web/org/xrpl/rpc/v1/get_fee_pb'
 import TransactionStatus from './shared/transaction-status'
@@ -456,5 +461,40 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
       rawTransactionStatus: rawTransactionStatus,
       lastLedgerPassed: lastLedgerPassed,
     }
+  }
+
+  /**
+   * Helper function. Sets/clears a flag value.
+   * @param flag The desired flag that is being changed.
+   * @param enable Whether the flag is being enabled (true if enabling, false if disabling).
+   * @param wallet The wallet associated with the XRPL account enabling Require Authorization and that will sign the request.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
+   */
+  public async changeFlag(
+    flag: number,
+    enable: boolean,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const accountSet = new AccountSet()
+
+    if (enable) {
+      const setFlag = new SetFlag()
+      setFlag.setValue(flag)
+      accountSet.setSetFlag(setFlag)
+    } else {
+      const clearFlag = new ClearFlag()
+      clearFlag.setValue(flag)
+      accountSet.setClearFlag(clearFlag)
+    }
+
+    const transaction = await this.prepareBaseTransaction(wallet)
+    transaction.setAccountSet(accountSet)
+
+    const transactionHash = await this.signAndSubmitTransaction(
+      transaction,
+      wallet,
+    )
+
+    return await this.getFinalTransactionResultAsync(transactionHash, wallet)
   }
 }
