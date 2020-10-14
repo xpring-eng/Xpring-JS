@@ -11,6 +11,7 @@ import GrpcNetworkClient from '../../../src/XRP/network-clients/grpc-xrp-network
 import bigInt from 'big-integer'
 import XrpClient from '../../../src/XRP/xrp-client'
 import axios from 'axios'
+import { AccountRoot } from '../../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger_objects_pb'
 
 /**
  * Convenience class for utility functions used in test cases for XrpClient infrastructure.
@@ -111,17 +112,10 @@ export default class XRPTestUtils {
     )
   }
 
-  static async verifyFlagModification(
+  static async getAccountData(
     wallet: Wallet,
     rippledGrpcUrl: string,
-    result: TransactionResult,
-    accountRootFlag: number,
-    checkTrue = true,
-  ): Promise<void> {
-    // THEN the transaction was successfully submitted and the correct flag was set on the account.
-    const transactionHash = result.hash
-    const transactionStatus = result.status
-
+  ): Promise<AccountRoot> {
     // get the account data and check the flag bitmap
     const networkClient = new GrpcNetworkClient(rippledGrpcUrl)
     const account = networkClient.AccountAddress()
@@ -144,6 +138,21 @@ export default class XRPTestUtils {
     if (!accountData) {
       throw XrpError.malformedResponse
     }
+
+    return accountData
+  }
+
+  static async verifyFlagModification(
+    wallet: Wallet,
+    rippledGrpcUrl: string,
+    result: TransactionResult,
+    accountRootFlag: number,
+    checkTrue = true,
+  ): Promise<void> {
+    // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+    const accountData = await this.getAccountData(wallet, rippledGrpcUrl)
 
     const flags = accountData.getFlags()?.getValue()
 
