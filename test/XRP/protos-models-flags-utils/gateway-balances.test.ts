@@ -63,7 +63,6 @@ describe('GatewayBalances Conversion Tests', function (): void {
       account: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',
       ledgerHash:
         '980FECF48CA4BFDEC896692C31A50D484BDFE865EC101B00259C413AA3DBD672',
-      ledgerIndex: 14483212,
       assets: {
         r9F6wk8HkXrgYWoJ7fsv4VrUBVoqDVtzkH: [
           {
@@ -143,7 +142,6 @@ describe('GatewayBalances Conversion Tests', function (): void {
     const expectedGatewayBalances: GatewayBalances = {
       account: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',
       ledgerHash: undefined,
-      ledgerIndex: 14483212,
       assets: undefined,
       balances: {
         rKm4uWpg9tfwbVSeATv4KxDe6mpE9yPkgJ: [

@@ -30,13 +30,25 @@ export default class GatewayBalances {
    */
   readonly account: string
 
-  /** TODO: finish these docs
+  /**
+   * (Optional, omitted if empty) Total amounts held that are issued by others.
+   * In the recommended configuration, the issuing address should have none.
    */
   readonly assets?: { [account: string]: IssuedCurrencyValue[] }
+
+  /**
+   * (Optional, omitted if empty) Amounts issued to the hotwallet addresses from the request.
+   * The keys are addresses and the values are arrays of currency amounts they hold.
+   */
   readonly balances?: { [account: string]: IssuedCurrencyValue[] }
+
+  /**
+   * (Optional, omitted if empty) Total amounts issued to addresses not excluded, as a map of currencies to the total value issued.
+   */
   readonly obligations?: { [currencyCode: string]: string }
+
+  /** (May be omitted) The ledger index of the ledger version that was used to generate this response. */
   readonly ledgerHash?: string | undefined
-  readonly ledgerIndex?: number | undefined
 
   public constructor(gatewayBalancesResponse: GatewayBalancesResponse) {
     if (gatewayBalancesResponse.result.validated === false) {
@@ -61,7 +73,6 @@ export default class GatewayBalances {
     }
     this.account = xAddress
     this.ledgerHash = gatewayBalancesResponse.result.ledger_hash
-    this.ledgerIndex = gatewayBalancesResponse.result.ledger_index
     this.assets = gatewayBalancesResponse.result.assets
     this.balances = gatewayBalancesResponse.result.balances
     this.obligations = gatewayBalancesResponse.result.obligations
