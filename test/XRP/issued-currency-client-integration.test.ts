@@ -163,7 +163,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   // TODO: Once required IOU functionality exists in SDK, add integration tests that successfully establish an unauthorized trustline to this account.
 
-  it('requireDestinationTags - rippled', async function (): Promise<void> {
+  it('requireDestinationTags/allowNoDestinationTag - rippled', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN requireDestinationTags is called
@@ -229,6 +231,83 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction succeeds.
     assert.exists(transactionHash2)
     assert.equal(transactionStatus2, TransactionStatus.Succeeded)
+  })
+
+  it('setTransferFee - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN setTransferFee is called
+    const expectedTransferFee = 1000000123
+    const result = await issuedCurrencyClient.setTransferFee(
+      expectedTransferFee,
+      wallet,
+    )
+
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+
+    const accountData = await XRPTestUtils.getAccountData(
+      wallet,
+      rippledGrpcUrl,
+    )
+    const transferRate = accountData.getTransferRate()?.getValue()
+
+    // THEN the transaction was successfully submitted and the correct transfer rate was set on the account.
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.Succeeded)
+    assert.equal(transferRate, expectedTransferFee)
+  })
+
+  it('setTransferFee - bad transferRate values', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    const lowTransferFee = 12345
+    const highTransferFee = 3000001234
+
+    // GIVEN an existing testnet account
+    // WHEN setTransferFee is called on a too-low transfer fee
+    const result = await issuedCurrencyClient.setTransferFee(
+      lowTransferFee,
+      wallet,
+    )
+
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+
+    // THEN the transaction fails.
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.MalformedTransaction)
+
+    // GIVEN an existing testnet account
+    // WHEN setTransferFee is called on a too-high transfer fee
+    const result2 = await issuedCurrencyClient.setTransferFee(
+      highTransferFee,
+      wallet,
+    )
+
+    const transactionHash2 = result2.hash
+    const transactionStatus2 = result2.status
+
+    // THEN the transaction fails.
+    assert.exists(transactionHash2)
+    assert.equal(transactionStatus2, TransactionStatus.MalformedTransaction)
+  })
+
+  it('enableGlobalFreeze - rippled', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN enableGlobalFreeze is called
+    const result = await issuedCurrencyClient.enableGlobalFreeze(wallet)
+
+    // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledGrpcUrl,
+      result,
+      AccountRootFlag.LSF_GLOBAL_FREEZE,
+    )
   })
 
   it('enableNoFreeze - rippled', async function (): Promise<void> {
