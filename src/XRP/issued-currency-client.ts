@@ -215,7 +215,7 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * Enable No Freeze for this XRPL account.
+   * Permanently enable No Freeze for this XRPL account.
    *
    * @see https://xrpl.org/freezes.html#no-freeze
    *
