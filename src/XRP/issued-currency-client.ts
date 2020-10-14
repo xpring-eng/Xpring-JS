@@ -319,9 +319,9 @@ export default class IssuedCurrencyClient {
    * TODO (tedkalaw): Implement qualityIn/qualityOut.
    *
    * @param issuerXAddress The X-Address of the issuer to extend trust to.
-   * @param currencyName The currency to this trust line applies to, as a three-letter ISO 4217 Currency Code  or a 160-bit hex value according to currency format.
+   * @param currencyName The currency this trust line applies to, as a three-letter ISO 4217 Currency Code  or a 160-bit hex value according to currency format.
    * @param amount Decimal representation of the limit to set on this trust line.
-   * @param wallet The
+   * @param wallet The wallet creating the trustline.
    */
   public async createTrustline(
     issuerXAddress: string,
@@ -337,7 +337,7 @@ export default class IssuedCurrencyClient {
       throw XrpError.xAddressRequired
     }
 
-    // TODO (tedkalaw): Remove this when ripple-binary-codec supports X-Addresses.
+    // TODO (tedkalaw): Use X-Address directly when ripple-binary-codec supports X-Addresses.
     const issuerAccountAddress = new AccountAddress()
     issuerAccountAddress.setAddress(classicAddress.address)
 
