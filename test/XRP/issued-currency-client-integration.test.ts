@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { Wallet, WalletFactory, XrplNetwork } from 'xpring-common-js'
+import { Wallet, WalletFactory, XrplNetwork, XrpUtils } from 'xpring-common-js'
 import { XrpClient, XrpError } from '../../src/XRP'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
@@ -340,14 +340,14 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('createTrustline - adding a trustline with 0 value', async function (): Promise<
+  it('createTrustLine - adding a trustline with 0 value', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
     // GIVEN an existing testnet account and an issuer's wallet
-    // WHEN a trustline is created with the issuer with a value of 0
-    await issuedCurrencyClient.createTrustline(
+    // WHEN a trust line is created with the issuer with a value of 0
+    await issuedCurrencyClient.createTrustLine(
       issuer.getAddress(),
       'USD',
       '0',
@@ -358,23 +358,26 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       wallet.getAddress(),
     )
 
-    // THEN no trustlines are created.
+    // THEN no trustlines were created.
     assert.isArray(trustLines)
     assert.isEmpty(trustLines)
   })
 
-  it('createTrustline - adding a trustline with non-zero value', async function (): Promise<
+  it('createTrustLine - adding a trustline with non-zero value', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
 
+    const trustLineLimit = '1'
+    const trustLineCurrency = 'USD'
+
     // GIVEN an existing testnet account and an issuer's wallet
     // WHEN a trustline is created with the issuer with a positive value
-    await issuedCurrencyClient.createTrustline(
+    await issuedCurrencyClient.createTrustLine(
       issuer.getAddress(),
-      'USD',
-      '1',
+      trustLineCurrency,
+      trustLineLimit,
       wallet,
     )
 
@@ -382,8 +385,12 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       wallet.getAddress(),
     )
 
-    // THEN a trustline is created between the wallet and the issuer.
-    assert.isArray(trustLines)
-    assert.isNotEmpty(trustLines)
+    const [createdTrustLine] = trustLines
+    const classicAddress = XrpUtils.decodeXAddress(issuer.getAddress())!
+
+    // THEN a trust line was created with the issuing account.
+    assert.equal(createdTrustLine.account, classicAddress.address)
+    assert.equal(createdTrustLine.limit, trustLineLimit)
+    assert.equal(createdTrustLine.currency, trustLineCurrency)
   })
 })

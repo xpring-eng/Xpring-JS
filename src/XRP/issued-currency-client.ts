@@ -312,7 +312,7 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * Creates a trustline between this XRPL account and an issuer of an IssuedCurrency.
+   * Creates a trust line between this XRPL account and an issuer of an IssuedCurrency.
    *
    * @see https://xrpl.org/trustset.html
    *
@@ -323,7 +323,7 @@ export default class IssuedCurrencyClient {
    * @param amount Decimal representation of the limit to set on this trust line.
    * @param wallet The wallet creating the trustline.
    */
-  public async createTrustline(
+  public async createTrustLine(
     issuerXAddress: string,
     currencyName: string,
     amount: string,
