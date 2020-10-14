@@ -229,6 +229,44 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(transactionStatus2, TransactionStatus.Succeeded)
   })
 
+  // TODO: when SDK functionality is expanded, improve test specificity by creating trustlines/issued currencies first,
+  // which will also avoid the need for maintenance after a testnet reset.
+
+  // TODO: Implement an integration test for an account with balances/assets/obligations once functionality exists for first creating things.
+  it('getGatewayBalances - account not found', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN a valid address that doesn't actually exist on the ledger
+    const walletFactory = new WalletFactory(XrplNetwork.Test)
+    const address = (await walletFactory.generateRandomWallet())!.wallet.getAddress()
+
+    // WHEN getGatewayBalances is called for that address THEN an error is propagated.
+    issuedCurrencyClient.getGatewayBalances(address).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.accountNotFound)
+    })
+  })
+
+  it('getGatewayBalances - account with no issued currencies', async function (): Promise<
+    void
+  > {
+    // GIVEN a valid, funded address that has not issued any currencies
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const address = wallet.getAddress()
+
+    // WHEN getGatewayBalances is called for that address
+    const gatewayBalances = await issuedCurrencyClient.getGatewayBalances(
+      address,
+    )
+
+    // THEN the result is as expected.
+    assert.equal(gatewayBalances.account, address)
+    assert.isUndefined(gatewayBalances.assets)
+    assert.isUndefined(gatewayBalances.balances)
+    assert.isUndefined(gatewayBalances.obligations)
+  })
+
   it('setTransferFee - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
@@ -257,70 +295,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   it('setTransferFee - bad transferRate values', async function (): Promise<
     void
   > {
-    this.timeout(timeoutMs)
-
-  // TODO: when SDK functionality is expanded, improve test specificity by creating trustlines/issued currencies first,
-  // which will also avoid the need for maintenance after a testnet reset.
-
-  // TODO: Implement an integration test for an account with balances/assets/obligations once functionality exists for first creating things.
-  it('getGatewayBalances - account not found', async function (): Promise<
-    void
-  > {
-    this.timeout(timeoutMs)
-    // GIVEN a valid address that doesn't actually exist on the ledger
-    const walletFactory = new WalletFactory(XrplNetwork.Test)
-    const address = (await walletFactory.generateRandomWallet())!.wallet.getAddress()
-
-    // WHEN getGatewayBalances is called for that address THEN an error is propagated.
-    issuedCurrencyClient.getGatewayBalances(address).catch((error) => {
-      assert.typeOf(error, 'Error')
-      assert.equal(error, XrpError.accountNotFound)
-    })
-  })
-
-  it('getGatewayBalances - account with no issued currencies', async function (): Promise<void> {
-    // GIVEN a valid, funded address that has not issued any currencies
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
-    const address = wallet.getAddress()
-
-    // WHEN getGatewayBalances is called for that address
-    const gatewayBalances = await issuedCurrencyClient.getGatewayBalances(
-      address,
-    )
-
-    // THEN the result is as expected.
-    assert.equal(gatewayBalances.account, address)
-    assert.isUndefined(gatewayBalances.assets)
-    assert.isUndefined(gatewayBalances.balances)
-    assert.isUndefined(gatewayBalances.obligations)
-    })
-
-it('setTransferFee - rippled', async function (): Promise<void> {
-  this.timeout(timeoutMs)
-  // GIVEN an existing testnet account
-  // WHEN setTransferFee is called
-  const expectedTransferFee = 1000000123
-  const result = await issuedCurrencyClient.setTransferFee(
-    expectedTransferFee,
-    wallet,
-  )
-
-  const transactionHash = result.hash
-  const transactionStatus = result.status
-
-  const accountData = await XRPTestUtils.getAccountData(
-    wallet,
-    rippledGrpcUrl,
-  )
-  const transferRate = accountData.getTransferRate()?.getValue()
-
-  // THEN the transaction was successfully submitted and the correct transfer rate was set on the account.
-  assert.exists(transactionHash)
-  assert.equal(transactionStatus, TransactionStatus.Succeeded)
-  assert.equal(transferRate, expectedTransferFee)
-})
-
-it('setTransferFee - bad transferRate values', async function (): Promise<void> {
     const lowTransferFee = 12345
     const highTransferFee = 3000001234
 
