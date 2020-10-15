@@ -166,6 +166,7 @@ export class FakeJsonNetworkClient {
   getAccountLines(_address: string): Promise<AccountLinesResponse> {
     const accountLinesResponse = this.responses.getAccountLinesResponse
     if (accountLinesResponse instanceof Error) {
+      console.log('account lines response was instance of error')
       return Promise.reject(accountLinesResponse)
     }
 

@@ -85,7 +85,7 @@ export default class IssuedCurrencyClient {
     )
 
     if (accountLinesResponse.result.error) {
-      if (accountLinesResponse.result.error == 'actNotfound') {
+      if (accountLinesResponse.result.error === 'actNotFound') {
         throw XrpError.accountNotFound
       } else {
         throw new XrpError(
