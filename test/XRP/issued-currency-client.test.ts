@@ -350,13 +350,52 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
-    // WHEN getGatewayBalances is called with an invalid address THEN an error is propagated.
-    const address = 'malformedAddress'
-    issuedCurrencyClient.getGatewayBalances(address).catch((error) => {
+    // WHEN getGatewayBalances is called with a classic address (no X-address) THEN an error is propagated.
+    const classicAddress = 'rhhh49pFH96roGyuC4E5P4CHaNjS1k8gzM'
+    issuedCurrencyClient.getGatewayBalances(classicAddress).catch((error) => {
       assert.typeOf(error, 'Error')
       assert.equal(error, XrpError.xAddressRequired)
       done()
     })
+  })
+
+  it('getGatewayBalances - invalid hotwallet, single address', function (done): void {
+    // GIVEN an IssuedCurrencyClient
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getGatewayBalances is called with a classic hotwallet address (no X-address) THEN an error is propagated.
+    const classicAddress = 'rhhh49pFH96roGyuC4E5P4CHaNjS1k8gzM'
+    issuedCurrencyClient
+      .getGatewayBalances(testAddress, classicAddress)
+      .catch((error) => {
+        assert.typeOf(error, 'Error')
+        assert.equal(error, XrpError.xAddressRequired)
+        done()
+      })
+  })
+
+  it('getGatewayBalances - invalid hotwallet, multiple addresses', function (done): void {
+    // GIVEN an IssuedCurrencyClient
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getGatewayBalances is called with classic hotwallet addresses (no X-address) THEN an error is propagated.
+    const classicAddress1 = 'rhhh49pFH96roGyuC4E5P4CHaNjS1k8gzM'
+    const classicAddress2 = 'r4DymtkgUAh2wqRxVfdd3Xtswzim6eC6c5'
+    issuedCurrencyClient
+      .getGatewayBalances(testAddress, [classicAddress1, classicAddress2])
+      .catch((error) => {
+        assert.typeOf(error, 'Error')
+        assert.equal(error, XrpError.xAddressRequired)
+        done()
+      })
   })
 
   it('getGatewayBalances - account not found error response', function (done): void {

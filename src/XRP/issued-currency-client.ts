@@ -113,14 +113,35 @@ export default class IssuedCurrencyClient {
     account: string,
     hotwallet?: string | Array<string>,
   ): Promise<GatewayBalances> {
+    // check issuing account for X-Address format
     const classicAddress = XrpUtils.decodeXAddress(account)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
+
+    // check hotwallet addresses for X-Address format
+    const hotwalletArray: Array<string> = []
+    if (hotwallet !== undefined) {
+      if (typeof hotwallet == 'string') {
+        const hotwalletClassicAddress = XrpUtils.decodeXAddress(hotwallet)
+        if (!hotwalletClassicAddress) {
+          throw XrpError.xAddressRequired
+        }
+        hotwalletArray.push(hotwalletClassicAddress.address)
+      } else {
+        for (const address of hotwallet) {
+          const hotwalletClassicAddress = XrpUtils.decodeXAddress(address)
+          if (!hotwalletClassicAddress) {
+            throw XrpError.xAddressRequired
+          }
+          hotwalletArray.push(hotwalletClassicAddress.address)
+        }
+      }
+    }
     // TODO: verify address format of hotwallet (and add test)
     const gatewayBalancesResponse: GatewayBalancesResponse = await this.jsonNetworkClient.getGatewayBalances(
       classicAddress.address,
-      hotwallet,
+      hotwalletArray,
     )
 
     if (gatewayBalancesResponse.result.error) {
