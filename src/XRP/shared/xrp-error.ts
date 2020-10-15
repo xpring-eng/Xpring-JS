@@ -10,6 +10,7 @@ export enum XrpErrorType {
   SigningError,
   Unknown,
   XAddressRequired,
+  InvalidHotwallet,
 }
 
 /**
@@ -63,6 +64,14 @@ export default class XrpError extends Error {
   static signingError = new XrpError(
     XrpErrorType.SigningError,
     'There was an error signing the transaction.',
+  )
+
+  /**
+   *
+   */
+  static invalidHotwallet = new XrpError(
+    XrpErrorType.InvalidHotwallet,
+    'The hotwallet provided in the request was invalid.',
   )
 
   /**

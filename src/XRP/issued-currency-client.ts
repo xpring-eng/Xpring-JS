@@ -11,7 +11,7 @@ import {
   GatewayBalancesResponse,
 } from './shared/rippled-json-rpc-schema'
 import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
-import { XrpError } from './shared'
+import { XrpError, XrpErrorType } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
 import GatewayBalances from './shared/gateway-balances'
@@ -85,8 +85,16 @@ export default class IssuedCurrencyClient {
     )
 
     if (accountLinesResponse.result.error) {
-      throw XrpError.accountNotFound
+      if (accountLinesResponse.result.error == 'actNotfound') {
+        throw XrpError.accountNotFound
+      } else {
+        throw new XrpError(
+          XrpErrorType.Unknown,
+          accountLinesResponse.result.error,
+        )
+      }
     }
+
     const rawTrustLines = accountLinesResponse.result.lines
     if (rawTrustLines === undefined) {
       throw XrpError.malformedResponse
@@ -145,7 +153,16 @@ export default class IssuedCurrencyClient {
     )
 
     if (gatewayBalancesResponse.result.error) {
-      throw XrpError.accountNotFound
+      if (gatewayBalancesResponse.result.error == 'actNotFound') {
+        throw XrpError.accountNotFound
+      } else if (gatewayBalancesResponse.result.error == 'invalidHotwallet') {
+        throw XrpError.invalidHotwallet
+      } else {
+        throw new XrpError(
+          XrpErrorType.Unknown,
+          gatewayBalancesResponse.result.error,
+        )
+      }
     }
     return new GatewayBalances(gatewayBalancesResponse)
   }
