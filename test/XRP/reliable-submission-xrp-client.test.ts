@@ -17,7 +17,11 @@ const transactionHash = 'DEADBEEF'
 
 const fakedGetBalanceValue = bigInt(10)
 const fakedTransactionStatusValue = TransactionStatus.Succeeded
-const fakedSendValue = transactionHash
+const fakedSendValue = TransactionResult.getFinalTransactionResult(
+  transactionHash,
+  TransactionStatus.Succeeded,
+  true,
+)
 const fakedRawTransactionStatusLastLedgerSequenceValue = 20
 const fakedRawTransactionStatusValidatedValue = true
 const fakedRawTransactionStatusTransactionStatusCode = transactionStatusCodeSuccess

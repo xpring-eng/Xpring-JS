@@ -18,6 +18,11 @@ import TransactionResult from '../../src/XRP/shared/transaction-result'
 const fakeBalance = bigInt(10)
 const fakePaymentStatus = TransactionStatus.Succeeded
 const fakeTransactionHash = 'deadbeefdeadbeefdeadbeef'
+const fakeSendXrpValue = TransactionResult.getFinalTransactionResult(
+  fakeTransactionHash,
+  TransactionStatus.Succeeded,
+  true,
+)
 const fakeAccountExistsResult = true
 const fakePaymentHistoryValue = []
 const fakeGetPaymentValue = testXrpTransaction
@@ -49,7 +54,7 @@ describe('Xpring Client', function (): void {
     const xrpClient = new FakeXrpClient(
       fakeBalance,
       fakePaymentStatus,
-      expectedTransactionHash,
+      fakeSendXrpValue,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
@@ -72,11 +77,10 @@ describe('Xpring Client', function (): void {
 
   it('send - failure in PayID', function (done): void {
     // GIVEN a XpringClient composed of a PayIDClient which will throw an error.
-    const expectedTransactionHash = 'deadbeefdeadbeefdeadbeef'
     const xrpClient = new FakeXrpClient(
       fakeBalance,
       fakePaymentStatus,
-      expectedTransactionHash,
+      fakedSuccessfulTransactionResult,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
@@ -155,7 +159,7 @@ describe('Xpring Client', function (): void {
     const xrpClient = new FakeXrpClient(
       fakeBalance,
       fakePaymentStatus,
-      fakeTransactionHash,
+      fakedSuccessfulTransactionResult,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
