@@ -125,7 +125,7 @@ export default class XrpClient implements XrpClientInterface {
   }
 
   /**
-   * Send the given amount of XRP from the source wallet to the destination PayID, allowing
+   * Send the given amount of XRP from the source wallet to a destination, allowing
    * for additional details to be specified for use with supplementary features of the XRP
    * ledger.
    *
