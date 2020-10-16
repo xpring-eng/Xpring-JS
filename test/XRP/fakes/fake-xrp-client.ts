@@ -19,6 +19,7 @@ class FakeXrpClient implements XrpClientDecorator {
     public enableDepositAuthValue: Result<TransactionResult>,
     public authorizeSendingAccountValue: Result<TransactionResult>,
     public unauthorizeSendingAccountValue: Result<TransactionResult>,
+    // TODO: remove `transactionHash` from constructor once `XpringClient` is deprecated and tests are removed.
     public transactionHash: Result<string> = 'deadbeef',
     public readonly network: XrplNetwork = XrplNetwork.Test,
   ) {}
@@ -31,6 +32,7 @@ class FakeXrpClient implements XrpClientDecorator {
     return FakeXrpClient.returnOrThrow(this.getPaymentStatusValue)
   }
 
+  // TODO: remove `send` and `sendWithDetails` once `XpringClient` has been deprecated and tests removed.
   async send(
     _amount: BigInteger | number | string,
     _destination: string,
