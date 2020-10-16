@@ -51,6 +51,7 @@ describe('Xpring Client', function (): void {
   it('send - success', async function (): Promise<void> {
     // GIVEN a XpringClient composed of a fake PayIDClient and a fake XrpClient which will both succeed.
     const expectedTransactionHash = fakeTransactionHash
+
     const xrpClient = new FakeXrpClient(
       fakeBalance,
       fakePaymentStatus,
@@ -61,6 +62,7 @@ describe('Xpring Client', function (): void {
       fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
+      expectedTransactionHash,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -113,6 +115,7 @@ describe('Xpring Client', function (): void {
       fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
+      xrpError,
     )
 
     const resolvedXRPAddress = 'r123'
