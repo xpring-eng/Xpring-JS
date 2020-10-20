@@ -8,7 +8,7 @@ import TrustLine from './shared/trustline'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
 import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
 import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
-import { XrpError } from './shared'
+import { XrpError, XrpErrorType } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
 import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
@@ -68,21 +68,41 @@ export default class IssuedCurrencyClient {
    * @see https://xrpl.org/trust-lines-and-issuing.html
    *
    * @param account The account for which to retrieve associated trust lines, encoded as an X-Address.
+   * @param peerAccount (Optional) The address of a second account. If provided, show only lines of trust connecting the two accounts.
    * @see https://xrpaddress.info/
    * @returns An array of TrustLine objects, representing all trust lines associated with this account.
    */
-  public async getTrustLines(account: string): Promise<Array<TrustLine>> {
+  public async getTrustLines(
+    account: string,
+    peerAccount?: string,
+  ): Promise<Array<TrustLine>> {
     const classicAddress = XrpUtils.decodeXAddress(account)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
+    if (peerAccount) {
+      const peerClassicAddress = XrpUtils.decodeXAddress(peerAccount)
+      if (!peerClassicAddress) {
+        throw XrpError.xAddressRequired
+      }
+    }
+
     const accountLinesResponse: AccountLinesResponse = await this.jsonNetworkClient.getAccountLines(
       classicAddress.address,
+      peerAccount,
     )
 
     if (accountLinesResponse.result.error) {
-      throw XrpError.accountNotFound
+      if (accountLinesResponse.result.error === 'actNotFound') {
+        throw XrpError.accountNotFound
+      } else {
+        throw new XrpError(
+          XrpErrorType.Unknown,
+          accountLinesResponse.result.error,
+        )
+      }
     }
+
     const rawTrustLines = accountLinesResponse.result.lines
     if (rawTrustLines === undefined) {
       throw XrpError.malformedResponse

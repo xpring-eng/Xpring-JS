@@ -63,15 +63,17 @@ export default class JsonRpcNetworkClient {
    *
    * @param account The XRPL account to query for trust lines.
    */
-  public async getAccountLines(account: string): Promise<AccountLinesResponse> {
-    // TODO: consider an option for including the 'peer' param in the request, which limits the returned trust lines to only
-    // those shared between the two accounts. (This would have to be an argument to the method here and in i-c-client too.)
+  public async getAccountLines(
+    account: string,
+    peerAccount?: string,
+  ): Promise<AccountLinesResponse> {
     const accountLinesRequest = {
       method: 'account_lines',
       params: [
         {
           account: account,
           ledger_index: 'validated',
+          peer: peerAccount,
         },
       ],
     }
