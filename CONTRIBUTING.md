@@ -25,8 +25,11 @@ Before being considered for review or merging, each pull request must:
 - Be [marked as drafts](https://github.blog/2019-02-14-introducing-draft-pull-requests/) until they are ready for review.
 - Adhere to the [code of conduct](CODE_OF_CONDUCT.md) for this repository.
 
-## Building The Library
+## Dependencies
 
+A JDK installation (https://www.oracle.com/java/technologies/javase-jdk11-downloads.html).
+
+## Building The Library
 The library should build and pass all tests.
 
 ```shell
@@ -41,14 +44,26 @@ $ git submodule update --init --recursive
 $ npm i
 
 # Install gRPC Web
-## OSX
+## OSX, for web and node
 $ curl -L https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-darwin-x86_64 --output protoc-gen-grpc-web
 $ sudo mv protoc-gen-grpc-web /usr/local/bin/
 $ chmod +x /usr/local/bin/protoc-gen-grpc-web
-## Linux
+
+$ curl -L https://github.com/grpc/grpc-node/releases/download/1.0.7/protoc-gen-grpc-node-1.0.7-darwin-x86_64 --output protoc-gen-grpc-node
+$ sudo mv protoc-gen-grpc-node /usr/local/bin/
+$ chmod +x /usr/local/bin/protoc-gen-grpc-node
+
+### Alternatively use Homebrew:
+$ brew install protobuf
+
+## Linux, for web and node
 $ curl -L https://github.com/grpc/grpc-web/releases/download/1.0.7/protoc-gen-grpc-web-1.0.7-linux-x86_64 --output protoc-gen-grpc-web
 $ sudo mv protoc-gen-grpc-web /usr/local/bin/
 $ chmod +x /usr/local/bin/protoc-gen-grpc-web
+
+$ curl -L https://github.com/grpc/grpc-node/releases/download/1.0.7/protoc-gen-grpc-node-1.0.7-darwin-x86_64 --output protoc-gen-grpc-node
+$ sudo mv protoc-gen-grpc-node /usr/local/bin/
+$ chmod +x /usr/local/bin/protoc-gen-grpc-nod
 
 # Run tests.
 $ npm test
