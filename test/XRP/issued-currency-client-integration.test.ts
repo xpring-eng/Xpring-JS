@@ -430,7 +430,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.deepEqual(
       transactionResult,
       TransactionResult.getFinalTransactionResult(
-        status,
+        transactionResult.hash,
         TransactionStatus.Succeeded,
         true,
       ),
