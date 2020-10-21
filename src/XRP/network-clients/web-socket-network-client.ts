@@ -51,15 +51,12 @@ export default class WebSocketNetworkClient {
     })
   }
 
-  private async sendMessage(message): Promise<void> {
+  private async apiRequest(options): Promise<any> {
     while (this.socket.readyState === 0) {
       await this.sleep(5)
     }
-    this.socket.send(JSON.stringify(message))
-  }
+    this.socket.send(JSON.stringify(options))
 
-  private async apiRequest(options): Promise<any> {
-    await this.sendMessage(options)
     this.waiting[options.id] = undefined
     while (this.waiting[options.id] === undefined) {
       await this.sleep(5)
