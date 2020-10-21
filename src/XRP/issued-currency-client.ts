@@ -68,7 +68,7 @@ export default class IssuedCurrencyClient {
    * @see https://xrpl.org/trust-lines-and-issuing.html
    *
    * @param account The account for which to retrieve associated trust lines, encoded as an X-Address.
-   * @param peerAccount (Optional) The address of a second account. If provided, show only lines of trust connecting the two accounts.
+   * @param peerAccount (Optional) The address of a second account. If provided, show only trust lines connecting the two accounts.
    * @see https://xrpaddress.info/
    * @returns An array of TrustLine objects, representing all trust lines associated with this account.
    */
