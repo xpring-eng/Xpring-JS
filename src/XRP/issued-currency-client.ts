@@ -1,6 +1,11 @@
 import { XrplNetwork, XrpUtils, Wallet } from 'xpring-common-js'
 
-import { LimitAmount } from './Generated/web/org/xrpl/rpc/v1/common_pb'
+import {
+  LimitAmount,
+  Amount,
+  TransferRate,
+  Destination,
+} from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
   Currency,
@@ -10,6 +15,7 @@ import {
 import {
   TrustSet,
   AccountSet,
+  Payment,
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 import isNode from '../Common/utils'
@@ -19,12 +25,11 @@ import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
 import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
 import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
-import { XrpError } from './shared'
+import { TransactionStatus, XrpError, XrpErrorType } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
 import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
 import TrustLine from './shared/trustline'
-import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -370,6 +375,113 @@ export default class IssuedCurrencyClient {
     return await this.coreXrplClient.getFinalTransactionResultAsync(
       transactionHash,
       wallet,
+    )
+  }
+
+  /**
+   *
+   * @param sender
+   * @param destination
+   * @param issuedCurrency
+   */
+  // TODO: (acorso) make this private if/when incorporated into higher level convenience methods
+  // TODO: (acorso) consider using an object for long list of params
+  public async sendIssuedCurrency(
+    sender: Wallet,
+    destinationAddress: string,
+    currency: string,
+    issuer: string,
+    value: string,
+  ): Promise<TransactionResult> {
+    if (!XrpUtils.isValidXAddress(destinationAddress)) {
+      throw new XrpError(
+        XrpErrorType.XAddressRequired,
+        'Destination address must be in X-address format.  See https://xrpaddress.info/.',
+      )
+    }
+
+    // TODO: (acorso) we don't need to convert back to a classic address once the ripple-binary-codec supports X-addresses for issued currencies.
+    const issuerClassicAddress = XrpUtils.decodeXAddress(issuer)
+    if (!issuerClassicAddress) {
+      throw new XrpError(
+        XrpErrorType.XAddressRequired,
+        'Issuer address must be in X-address format.  See https://xrpaddress.info/.',
+      )
+    }
+    if (!issuerClassicAddress.address) {
+      throw new XrpError(
+        XrpErrorType.XAddressRequired,
+        'Decoded classic address is missing address field.',
+      )
+    }
+
+    // TODO: is there any way to verify the format of the currency param?
+    // Ultimately, rippled will police these formats as well, so this may be best/only policable via informative error propagation.
+    const currencyProto = new Currency()
+    currencyProto.setName(currency)
+
+    const accountAddress = new AccountAddress()
+    accountAddress.setAddress(issuerClassicAddress.address)
+
+    const issuedCurrency = new IssuedCurrencyAmount()
+    issuedCurrency.setCurrency(currencyProto)
+    issuedCurrency.setIssuer(accountAddress)
+    // TODO: is there any restriction on the value of value param?
+    issuedCurrency.setValue(value)
+
+    const currencyAmount = new CurrencyAmount()
+    currencyAmount.setIssuedCurrencyAmount(issuedCurrency)
+
+    const amount = new Amount()
+    amount.setValue(currencyAmount)
+
+    const destinationAccountAddress = new AccountAddress()
+    destinationAccountAddress.setAddress(destinationAddress)
+
+    const destination = new Destination()
+    destination.setValue(destinationAccountAddress)
+
+    const payment = new Payment()
+    payment.setDestination(destination)
+    payment.setAmount(amount)
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
+    transaction.setPayment(payment)
+
+    // TODO: (acorso) structure this like we have `sendXrpWithDetails`... memos should be optional
+    // if (memoList && memoList.length) {
+    //   memoList
+    //     .map((memo) => {
+    //       const xrpMemo = new Memo()
+    //       if (memo.data) {
+    //         const memoData = new MemoData()
+    //         memoData.setValue(memo.data)
+    //         xrpMemo.setMemoData(memoData)
+    //       }
+    //       if (memo.format) {
+    //         const memoFormat = new MemoFormat()
+    //         memoFormat.setValue(memo.format)
+    //         xrpMemo.setMemoFormat(memoFormat)
+    //       }
+    //       if (memo.type) {
+    //         const memoType = new MemoType()
+    //         memoType.setValue(memo.type)
+    //         xrpMemo.setMemoType(memoType)
+    //       }
+
+    //       return xrpMemo
+    //     })
+    //     .forEach((memo) => transaction.addMemos(memo))
+    // }
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      sender,
+    )
+    return TransactionResult.getPendingTransactionResult(
+      transactionHash,
+      TransactionStatus.Pending,
+      false,
     )
   }
 }
