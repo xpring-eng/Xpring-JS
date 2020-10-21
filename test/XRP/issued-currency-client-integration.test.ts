@@ -4,7 +4,11 @@ import { XrpClient, XrpError } from '../../src/XRP'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
-import { AccountRootFlag, TransactionStatus } from '../../src/XRP/shared'
+import {
+  AccountRootFlag,
+  TransactionResult,
+  TransactionStatus,
+} from '../../src/XRP/shared'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -392,5 +396,44 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.account, classicAddress.address)
     assert.equal(createdTrustLine.limit, trustLineLimit)
     assert.equal(createdTrustLine.currency, trustLineCurrency)
+  })
+
+  it('sendIssuedCurrency - success issuing a new currency', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account and an issuer's wallet.
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+
+    const trustLineLimit = '1000'
+    const trustLineCurrency = 'USD'
+
+    // AND a trustline that has been created with the issuer with a positive value
+    await issuedCurrencyClient.createTrustLine(
+      issuer.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      wallet,
+    )
+
+    // WHEN an issued currency payment is sent to the account that established the trust line.
+
+    // THEN the payment succeeds.
+    const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
+      issuer,
+      wallet.getAddress(),
+      'USD',
+      issuer.getAddress(),
+      '200',
+    )
+    assert.exists(transactionResult)
+    assert.deepEqual(
+      transactionResult,
+      TransactionResult.getFinalTransactionResult(
+        status,
+        TransactionStatus.Succeeded,
+        true,
+      ),
+    )
   })
 })

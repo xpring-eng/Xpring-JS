@@ -25,7 +25,7 @@ import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
 import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
 import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
-import { TransactionStatus, XrpError, XrpErrorType } from './shared'
+import { XrpError, XrpErrorType } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
 import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
@@ -378,6 +378,7 @@ export default class IssuedCurrencyClient {
     )
   }
 
+  // TODO: (acorso) don't forget to doc this
   /**
    *
    * @param sender
@@ -478,10 +479,9 @@ export default class IssuedCurrencyClient {
       transaction,
       sender,
     )
-    return TransactionResult.getPendingTransactionResult(
+    return this.coreXrplClient.getFinalTransactionResultAsync(
       transactionHash,
-      TransactionStatus.Pending,
-      false,
+      sender,
     )
   }
 }
