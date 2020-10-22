@@ -462,9 +462,45 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  // TODO: (acorso) add test for attempting to issue more of an issued currency than the trust line limit
-  // TODO: (acorso) add test for sending issued currency where sender is not issuer
-  // TODO: (acorso) add test for sending issued currency where sendiner is not issuer AND they don't own the currency
+  it('sendIssuedCurrency - failure to create issued currency above trust line limit', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account and an issuer's wallet
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+
+    // AND a trustline that has been created to the issuer with a positive value
+    const trustLineLimit = '100'
+    const trustLineCurrency = 'USD'
+
+    await issuedCurrencyClient.createTrustLine(
+      issuer.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      wallet,
+    )
+
+    // WHEN an issued currency payment is sent to the account that established the trust line THEN the payment succeeds.
+    const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
+      issuer,
+      wallet.getAddress(),
+      'USD',
+      issuer.getAddress(),
+      '200',
+    )
+    assert.exists(transactionResult)
+    assert.deepEqual(
+      transactionResult,
+      TransactionResult.getFinalTransactionResult(
+        transactionResult.hash,
+        TransactionStatus.ClaimedCostOnly,
+        true,
+      ),
+    )
+  })
+
+  // TODO: (acorso) add test for sending issued currency where sender is not issuer (success)
+  // TODO: (acorso) add test for sending issued currency where sender is not issuer AND they don't own the currency (failure)
   // TODO: (acorso) add test for attempting to send an issued currency payment where the transfer fee argument is too low (lower than actual transfer fee, which will require setting the transfer fee)
   // TODO: (acorso) add test for attempting to redeem an issued currency payment to the issuer (should succeed)
   // TODO: (acorso) add test for attempting to send an issued currency payment to a user that doesn't have a trustline established with the issuer, AND issuer has enabledAuthorizedTrustlines (should fail)
