@@ -1,6 +1,5 @@
 import Result from '../../Common/Helpers/result'
 import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
-import { AccountLinesResponse } from '../../../src/XRP/shared/rippled-json-rpc-schema'
 import {
   WebSocketResponse,
   WebSocketStatusResponse,
