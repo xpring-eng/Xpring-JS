@@ -9,10 +9,14 @@ import {
   TransactionStatus,
   XrpErrorType,
 } from '../../src/XRP/shared'
+import { WebSocketResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
+import { fail } from 'assert'
+// import { WebSocketResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
 const timeoutMs = 60 * 1000
+// const shortTimeoutMs = 10 * 1000
 
 // An address on TestNet that has a balance.
 const testAddressWithTrustLines =
@@ -21,7 +25,7 @@ const testAddressWithTrustLines =
 // An IssuedCurrencyClient that makes requests.
 const rippledGrpcUrl = 'test.xrp.xpring.io:50051'
 const rippledJsonUrl = 'http://test.xrp.xpring.io:51234'
-const rippledWebSocketUrl = 'wss://test.xrp.xpring.io'
+const rippledWebSocketUrl = 'wss://wss.test.xrp.xpring.io'
 const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
   rippledGrpcUrl,
   rippledJsonUrl,
@@ -29,14 +33,25 @@ const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoi
   XrplNetwork.Test,
 )
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 describe('IssuedCurrencyClient Integration Tests', function (): void {
   // Retry integration tests on failure.
   this.retries(3)
 
   // A Wallet with some balance on Testnet.
   let wallet: Wallet
+  let wallet2: Wallet
   before(async function () {
     wallet = await XRPTestUtils.randomWalletFromFaucet()
+    wallet2 = await XRPTestUtils.randomWalletFromFaucet()
+  })
+
+  after(function (done) {
+    issuedCurrencyClient.webSocketNetworkClient.close()
+    done()
   })
 
   it('getTrustLines - valid request', async function (): Promise<void> {
@@ -205,7 +220,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account with requireDestinationTags set
     await issuedCurrencyClient.requireDestinationTags(wallet)
-    const wallet2 = await XRPTestUtils.randomWalletFromFaucet()
 
     // WHEN a transaction is sent to the account without a destination tag
     const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
@@ -418,5 +432,45 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.account, classicAddress.address)
     assert.equal(createdTrustLine.limit, trustLineLimit)
     assert.equal(createdTrustLine.currency, trustLineCurrency)
+  })
+
+  it('monitorIncomingPayments - valid request', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    let messageReceived = false
+    const callback = (_data: WebSocketResponse) => {
+      messageReceived = true
+    }
+
+    const xAddress = wallet.getAddress()
+    const classicAddress = XrpUtils.decodeXAddress(xAddress)
+    if (classicAddress === undefined) {
+      fail('Address is not a valid classic address')
+    }
+    const address = classicAddress.address
+    // GIVEN a test address that has at least one trust line on testnet
+    // WHEN monitorIncomingPayments is called for that address
+    const response = await issuedCurrencyClient.monitorIncomingPayments(
+      address,
+      callback,
+    )
+
+    // THEN the subscribe request is successfully submitted and received
+    assert(response.status === 'success')
+
+    const waitUntilMessageReceived = async () => {
+      while (!messageReceived) {
+        await sleep(5)
+      }
+    }
+
+    const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
+    const xrpAmount = '100'
+    await xrpClient.send(xrpAmount, xAddress, wallet2)
+
+    await waitUntilMessageReceived()
+    assert(messageReceived)
   })
 })

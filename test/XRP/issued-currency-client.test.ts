@@ -15,6 +15,7 @@ import TrustLine from '../../src/XRP/shared/trustline'
 import { XrpError } from '../../src/XRP'
 import { AccountLinesResponse } from '../../src/XRP/shared/rippled-json-rpc-schema'
 import { FakeWebSocketNetworkClient } from './fakes/fake-web-socket-network-client'
+import { WebSocketResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
 
 const fakeSucceedingGrpcClient = new FakeXRPNetworkClient()
 
@@ -610,5 +611,36 @@ describe('Issued Currency Client', function (): void {
     issuedCurrencyClient.enableNoFreeze(this.wallet).catch((error) => {
       assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
     })
+  })
+
+  it('monitorIncomingPayments - successful response', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient.
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    const callback = (_data: WebSocketResponse) => {
+      return
+    }
+
+    // WHEN monitorIncomingPayments is called
+    const subscribeResponse = await issuedCurrencyClient.monitorIncomingPayments(
+      testAddress,
+      callback,
+    )
+    const expectedSubscribeResponse = {
+      id: 'subscribe_transaction_' + testAddress,
+      result: undefined,
+      status: 'success',
+      type: 'response',
+    }
+
+    // THEN the result is as expected
+    assert.deepEqual(subscribeResponse, expectedSubscribeResponse)
   })
 })

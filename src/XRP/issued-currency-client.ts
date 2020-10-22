@@ -78,7 +78,7 @@ export default class IssuedCurrencyClient {
   public constructor(
     grpcNetworkClient: GrpcNetworkClientInterface,
     private readonly jsonNetworkClient: JsonNetworkClientInterface,
-    private readonly webSocketNetworkClient: WebSocketNetworkClientInterface,
+    readonly webSocketNetworkClient: WebSocketNetworkClientInterface,
     readonly network: XrplNetwork,
   ) {
     this.coreXrplClient = new CoreXrplClient(grpcNetworkClient, network)
@@ -120,7 +120,11 @@ export default class IssuedCurrencyClient {
     callback: (data: WebSocketResponse) => void,
   ): Promise<WebSocketStatusResponse> {
     const id = 'monitor_transactions_' + account
-    return await this.webSocketNetworkClient.subscribe(id, 'ledger', callback)
+    return await this.webSocketNetworkClient.subscribeToAccount(
+      id,
+      callback,
+      account,
+    )
   }
 
   /**
