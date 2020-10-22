@@ -13,6 +13,12 @@ import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
 import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
 import { AccountSet } from './Generated/node/org/xrpl/rpc/v1/transaction_pb'
+import {
+  WebSocketResponse,
+  WebSocketStatusResponse,
+} from './shared/rippled-web-socket-schema'
+import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
+import WebSocketNetworkClient from './network-clients/web-socket-network-client'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -33,6 +39,7 @@ export default class IssuedCurrencyClient {
   public static issuedCurrencyClientWithEndpoint(
     grpcUrl: string,
     jsonUrl: string,
+    webSocketUrl: string,
     network: XrplNetwork,
     forceWeb = false,
   ): IssuedCurrencyClient {
@@ -43,6 +50,7 @@ export default class IssuedCurrencyClient {
     return new IssuedCurrencyClient(
       grpcNetworkClient,
       new JsonRpcNetworkClient(jsonUrl),
+      new WebSocketNetworkClient(webSocketUrl),
       network,
     )
   }
@@ -58,6 +66,7 @@ export default class IssuedCurrencyClient {
   public constructor(
     grpcNetworkClient: GrpcNetworkClientInterface,
     private readonly jsonNetworkClient: JsonNetworkClientInterface,
+    private readonly webSocketNetworkClient: WebSocketNetworkClientInterface,
     readonly network: XrplNetwork,
   ) {
     this.coreXrplClient = new CoreXrplClient(grpcNetworkClient, network)
@@ -92,6 +101,14 @@ export default class IssuedCurrencyClient {
       trustLines.push(new TrustLine(trustLineJson))
     })
     return trustLines
+  }
+
+  public async monitorIncomingPayments(
+    account: string,
+    callback: (data: WebSocketResponse) => void,
+  ): Promise<WebSocketStatusResponse> {
+    const id = 'monitor_transactions_' + account
+    return await this.webSocketNetworkClient.subscribe(id, 'ledger', callback)
   }
 
   /**

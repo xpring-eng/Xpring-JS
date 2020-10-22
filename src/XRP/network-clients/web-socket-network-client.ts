@@ -96,7 +96,7 @@ export default class WebSocketNetworkClient {
     stream: string,
     callback: (data: WebSocketResponse) => void,
     // TODO make multiple streams/callbacks an option??
-  ): Promise<void> {
+  ): Promise<WebSocketStatusResponse> {
     this.addCallback(stream, callback)
     const response = await this.apiRequest({
       id,
@@ -107,5 +107,6 @@ export default class WebSocketNetworkClient {
       console.error('Error subscribing: ', response)
       // TODO throw descriptive error
     }
+    return response
   }
 }

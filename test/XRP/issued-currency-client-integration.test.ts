@@ -17,9 +17,11 @@ const testAddressWithTrustLines =
 // An IssuedCurrencyClient that makes requests.
 const rippledGrpcUrl = 'test.xrp.xpring.io:50051'
 const rippledJsonUrl = 'http://test.xrp.xpring.io:51234'
+const rippledWebSocketUrl = 'wss://test.xrp.xpring.io'
 const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
   rippledGrpcUrl,
   rippledJsonUrl,
+  rippledWebSocketUrl,
   XrplNetwork.Test,
 )
 
