@@ -19,7 +19,7 @@ import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
 import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
 import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
-import { XrpError } from './shared'
+import { XrpError, XrpErrorType } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
 import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
@@ -335,6 +335,13 @@ export default class IssuedCurrencyClient {
     const classicAddress = XrpUtils.decodeXAddress(issuerXAddress)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
+    }
+
+    if (currencyName === 'XRP') {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'createTrustLine: Trust lines can only be created for Issued Currencies',
+      )
     }
 
     // TODO (tedkalaw): Use X-Address directly when ripple-binary-codec supports X-Addresses.
