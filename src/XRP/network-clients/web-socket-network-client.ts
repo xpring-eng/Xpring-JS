@@ -3,8 +3,8 @@ import {
   WebSocketRequestOptions,
   WebSocketResponse,
   WebSocketStatusResponse,
+  WebSocketTransactionResponse,
 } from '../shared/rippled-web-socket-schema'
-// import { WebSocketNetworkClientInterface } from './web-socket-network-client-interface'
 
 /**
  * A network client for interacting with the rippled WebSocket API.
@@ -12,6 +12,10 @@ import {
  */
 export default class WebSocketNetworkClient {
   private readonly socket: WebSocket
+  private accountCallbacks: Map<
+    string,
+    (data: WebSocketTransactionResponse) => void
+  >
   private callbacks: Map<string, (data: WebSocketResponse) => void>
   private waiting: Map<string, WebSocketResponse | undefined>
 
@@ -27,6 +31,7 @@ export default class WebSocketNetworkClient {
    */
   public constructor(webSocketUrl: string) {
     this.socket = new WebSocket(webSocketUrl)
+    this.accountCallbacks = new Map()
     this.callbacks = new Map()
     this.waiting = new Map()
     this.callbacks.set('response', (data: WebSocketResponse) => {
@@ -36,6 +41,17 @@ export default class WebSocketNetworkClient {
         return
       }
       this.waiting[dataStatusResponse.id] = data
+    })
+    this.callbacks.set('transaction', (data: WebSocketResponse) => {
+      const dataTransaction = data as WebSocketTransactionResponse
+      const account = dataTransaction.transaction.Destination
+      const callback = this.accountCallbacks.get(account)
+      if (callback) {
+        callback(dataTransaction)
+      } else {
+        console.log('WTFFFFFFF', account, callback)
+        console.log(data)
+      }
     })
 
     this.socket.addEventListener('message', (event) => {
@@ -51,7 +67,7 @@ export default class WebSocketNetworkClient {
     })
 
     this.socket.addEventListener('close', (event) => {
-      console.log('Disconnected...', event)
+      console.log('Disconnected...', event.reason)
       // TODO handle this better
     })
 
@@ -80,33 +96,34 @@ export default class WebSocketNetworkClient {
   }
 
   private addCallback(
-    type: string,
-    callback: (data: WebSocketResponse) => void,
+    account: string,
+    callback: (data: WebSocketTransactionResponse) => void,
   ): void {
     // TODO figure out if there are more exceptions
-    if (type === 'ledger') {
-      this.callbacks.set('ledgerClosed', callback)
-    } else {
-      this.callbacks.set(type, callback)
-    }
+    this.accountCallbacks.set(account, callback)
   }
 
-  public async subscribe(
+  public async subscribeToAccount(
     id: string,
-    stream: string,
-    callback: (data: WebSocketResponse) => void,
+    callback: (data: WebSocketTransactionResponse) => void,
+    account: string,
     // TODO make multiple streams/callbacks an option??
   ): Promise<WebSocketStatusResponse> {
-    this.addCallback(stream, callback)
-    const response = await this.apiRequest({
+    this.addCallback(account, callback)
+    const options = {
       id,
       command: 'subscribe',
-      streams: [stream],
-    })
+      accounts: [account],
+    }
+    const response = await this.apiRequest(options)
     if (response.status !== 'success') {
       console.error('Error subscribing: ', response)
       // TODO throw descriptive error
     }
     return response
+  }
+
+  public close(): void {
+    this.socket.close()
   }
 }

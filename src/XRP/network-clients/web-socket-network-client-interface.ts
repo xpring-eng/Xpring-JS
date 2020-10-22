@@ -7,11 +7,10 @@ import {
  * The WebSocketNetworkClientInterface defines the calls available via the rippled WebSocket API.
  */
 export interface WebSocketNetworkClientInterface {
-  subscribe(
+  subscribeToAccount(
     id: string,
-    stream: string,
     callback: (data: WebSocketResponse) => void,
-    // TODO make multiple streams/callbacks an option??
+    account: string,
   ): Promise<WebSocketStatusResponse>
 
   // unsubscribe(
@@ -19,4 +18,6 @@ export interface WebSocketNetworkClientInterface {
   //   stream: string,
   //   // TODO make multiple streams/callbacks an option??
   // ): Promise<void>
+
+  close(): void
 }

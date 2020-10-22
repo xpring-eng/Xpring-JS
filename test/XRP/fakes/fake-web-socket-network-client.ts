@@ -60,10 +60,10 @@ export class FakeWebSocketNetworkClient {
     private readonly responses: FakeWebSocketNetworkClientResponses = FakeWebSocketNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
 
-  subscribe(
+  subscribeToAccount(
     _id: string,
-    _stream: string,
     _callback: (data: WebSocketResponse) => void,
+    _account: string,
   ): Promise<WebSocketStatusResponse> {
     const subscribeResponse = this.responses.getSubscribeResponse
     if (subscribeResponse instanceof Error) {
@@ -71,5 +71,9 @@ export class FakeWebSocketNetworkClient {
     }
 
     return Promise.resolve(subscribeResponse)
+  }
+
+  close(): void {
+    return
   }
 }

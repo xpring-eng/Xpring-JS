@@ -11,13 +11,29 @@ interface WebSocketRequestOptions {
   accounts?: unknown[]
 }
 
-type WebSocketResponse = WebSocketStatusResponse | WebSocketLedgerResponse
+type WebSocketResponse =
+  | WebSocketStatusResponse
+  | WebSocketLedgerResponse
+  | WebSocketTransactionResponse
 
 interface WebSocketStatusResponse {
   id?: string
-  result: WebSocketLedgerResponse | undefined
+  result: WebSocketLedgerResponse | WebSocketTransactionResponse | undefined
   status: string
   type: string
+}
+
+interface WebSocketTransactionResponse {
+  engine_result: string
+  engine_result_code: number
+  engine_result_message: string
+  ledger_hash: string
+  ledger_index: number
+  meta: unknown // TODO make this better
+  status: string
+  transaction: WebSocketTransaction
+  type: string
+  validated: boolean
 }
 
 interface WebSocketLedgerResponse {
@@ -33,4 +49,25 @@ interface WebSocketLedgerResponse {
   validated_ledgers: string
 }
 
-export { WebSocketRequestOptions, WebSocketResponse, WebSocketStatusResponse }
+interface WebSocketTransaction {
+  Account: string
+  Amount: string
+  Destination: string
+  Fee: string
+  Flags: number
+  LastLedgerSequence: number
+  Sequence: number
+  SigningPubKey: string
+  TranasctionType: string
+  TxnSignature: string
+  date: number
+  hash: string
+}
+
+export {
+  WebSocketRequestOptions,
+  WebSocketResponse,
+  WebSocketStatusResponse,
+  WebSocketTransaction,
+  WebSocketTransactionResponse,
+}
