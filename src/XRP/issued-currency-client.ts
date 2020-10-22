@@ -385,6 +385,47 @@ export default class IssuedCurrencyClient {
    * i.e. is not cross-currency), or to redeem issued currency at the issuing address.
    * The specific case depends on the relationship among the parameters.
    *
+   * TODO: (acorso) Remove this, and make that ^^ better.: ================================================================================
+   * Notes to reviewers:
+   *
+   * Case - ALL:
+   *      The destination address is NOT the same as the sending address of the transaction.
+   *      (This should only be true for currency exchange payments, which is a cross-currency payment to yourself.)
+   *
+   *      The SendMax field (if present) should always indicate the same currency and issuer as the Amount field... otherwise, it would
+   *      be considered a cross-currency payment (which are triggered by different currencies in Amount v.s. SendMax fields).
+   *      SendMax values are not parameterized here, and are instead derived from the provided values for issuer, currency, etc.
+   *       - therefore this method is incapable of initiating a cross-currency payment.
+   *
+   *
+   * Case - Creating an issued currency:
+   *      The sending address of the transaction is the same address as the issuer of the `Amount` field.
+   *
+   *      No SendMax field is required because the Transfer Fee doesn't apply to transactions in which
+   *              the originator or the destination address is the same as the issuer.
+   *               (you don't get charged to handle your own money, or let your customers redeem their money with you.)
+   *
+   *      ... does the destination address need to have a trustline established to the sender/issuer?
+   *
+   *
+   * Case - dispensing an issued currency from an operational address (https://xrpl.org/issuing-and-operational-addresses.html):
+   *      The sending address (an operational address) is not the same address as the issuer of the `Amount` field
+   *
+   *      Issuer needs to allow rippling (https://xrpl.org/rippling.html).
+   *
+   *      A SendMax field is required here, because the transfer fee will apply as the sender of this txn is not the issuer.
+   *
+   *
+   * Case - sending an issued currency payment from one XRPL address to another:
+   *      Identical to dispensing an issued currency from an operational address (which is just making an issued currency payment)
+   *
+   *
+   * Case - redeeming an issued currency with the issuer:
+   *      The destination address is the same address as the issuer of the `Amount` field.
+   *
+   *      No SendMax field is required because the Transfer Fee doesn't apply (see first Case above)
+   *==================================================================================================================================
+   *
    * @param sender The Wallet from which issued currency will be sent, and that will sign the transaction.
    * @param destinationAddress The destination address (recipient) for the payment, encoded as an X-address (see https://xrpaddress.info/).
    * @param transferFee The transfer fee associated with the issuing account, expressed as a percentage (i.e. a value of .5 indicates a 0.5% transfer fee).
@@ -424,8 +465,6 @@ export default class IssuedCurrencyClient {
       )
     }
 
-    // TODO: is there any way to verify the format of the currency param?
-    // Ultimately, rippled will police these formats as well, so this may be best/only policable via informative error propagation.
     const currencyProto = new Currency()
     currencyProto.setName(currency)
 
@@ -435,7 +474,6 @@ export default class IssuedCurrencyClient {
     const issuedCurrency = new IssuedCurrencyAmount()
     issuedCurrency.setCurrency(currencyProto)
     issuedCurrency.setIssuer(issuerAccountAddress)
-    // TODO: is there any restriction on the value of value param that we can check here??
     issuedCurrency.setValue(value)
 
     const currencyAmount = new CurrencyAmount()
