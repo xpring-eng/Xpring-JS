@@ -398,17 +398,18 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.currency, trustLineCurrency)
   })
 
-  it('sendIssuedCurrency - success issuing a new currency', async function (): Promise<
+  // TODO: (acorso) Consider refactoring to re-use faucet wallets whenever possible to reduce test run time.
+  it('sendIssuedCurrency - success creating issued currency', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
-    // GIVEN an existing testnet account and an issuer's wallet.
+    // GIVEN an existing testnet account and an issuer's wallet
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
 
+    // AND a trustline that has been created to the issuer with a positive value
     const trustLineLimit = '1000'
     const trustLineCurrency = 'USD'
 
-    // AND a trustline that has been created with the issuer with a positive value
     await issuedCurrencyClient.createTrustLine(
       issuer.getAddress(),
       trustLineCurrency,
@@ -416,13 +417,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       wallet,
     )
 
-    // WHEN an issued currency payment is sent to the account that established the trust line.
-
-    // THEN the payment succeeds.
+    // WHEN an issued currency payment is sent to the account that established the trust line THEN the payment succeeds.
     const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
       issuer,
       wallet.getAddress(),
-      0.05,
       'USD',
       issuer.getAddress(),
       '200',
@@ -438,8 +436,37 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  // TODO: (acorso) add test for attempting to issue currency without trustline set?
+  it('sendIssuedCurrency - failure to create issued currency w/o trustline', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account and an issuer's wallet, but no trust line between them
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+
+    // WHEN an issued currency payment is sent to the account that established the trust line THEN the payment succeeds.
+    const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
+      issuer,
+      wallet.getAddress(),
+      'USD',
+      issuer.getAddress(),
+      '200',
+    )
+    assert.exists(transactionResult)
+    assert.deepEqual(
+      transactionResult,
+      TransactionResult.getFinalTransactionResult(
+        transactionResult.hash,
+        TransactionStatus.ClaimedCostOnly,
+        true,
+      ),
+    )
+  })
+
   // TODO: (acorso) add test for attempting to issue more of an issued currency than the trust line limit
-  // TODO: (acorso) add test for attempting to send an issued currency payment where the transfer fee argument is too low (lower than actual transfer fee)
-  // TODO: ERROR CODES??
+  // TODO: (acorso) add test for sending issued currency where sender is not issuer
+  // TODO: (acorso) add test for sending issued currency where sendiner is not issuer AND they don't own the currency
+  // TODO: (acorso) add test for attempting to send an issued currency payment where the transfer fee argument is too low (lower than actual transfer fee, which will require setting the transfer fee)
+  // TODO: (acorso) add test for attempting to redeem an issued currency payment to the issuer (should succeed)
+  // TODO: (acorso) add test for attempting to send an issued currency payment to a user that doesn't have a trustline established with the issuer, AND issuer has enabledAuthorizedTrustlines (should fail)
+  // TODO: (acorso) confirm that the presence of a SendMax when not necessary also doesn't cause any problems (i.e. include the argument)
 })

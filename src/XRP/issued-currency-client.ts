@@ -428,20 +428,21 @@ export default class IssuedCurrencyClient {
    *
    * @param sender The Wallet from which issued currency will be sent, and that will sign the transaction.
    * @param destinationAddress The destination address (recipient) for the payment, encoded as an X-address (see https://xrpaddress.info/).
-   * @param transferFee The transfer fee associated with the issuing account, expressed as a percentage (i.e. a value of .5 indicates a 0.5% transfer fee).
    * @param currency The three-letter currency code of the issued currency being sent.
    * @param issuer The issuing address of the issued currency being sent.
    * @param value The amount of issued currency to send.
+   * @param transferFee Optional - can be omitted if sender address or destinationAddress are the same address as the issuer.
+   *                    The transfer fee associated with the issuing account, expressed as a percentage. (i.e. a value of .5 indicates a 0.5% transfer fee).
    */
   // TODO: (acorso) make this private if/when incorporated into higher level convenience methods
   // TODO: (acorso) consider using an object for long list of params
   public async sendIssuedCurrency(
     sender: Wallet,
     destinationAddress: string,
-    transferFee: number,
     currency: string,
     issuer: string,
     value: string,
+    transferFee?: number,
   ): Promise<TransactionResult> {
     if (!XrpUtils.isValidXAddress(destinationAddress)) {
       throw new XrpError(
@@ -488,65 +489,44 @@ export default class IssuedCurrencyClient {
     const destination = new Destination()
     destination.setValue(destinationAccountAddress)
 
-    // Construct SendMax - value should be intended amount + relevant transfer fee
-    // Note that a transfer fee doesn't apply if the source address (of this transaction) and the issuing address of the currency being
-    // sent are the same (i.e. issuer sending currency directly) OR if the issuer of the currency and the destination are the same
-    // (i.e. redeeming an issued currency).
-    // However, it also doesn't hurt to include a SendMax field, it just won't nd up being used (added this to questions just to make sure).
-
-    const numericValue = Number(value)
-    const sendMaxValue = (1 + transferFee / 100) * numericValue
-
-    const sendMaxIssuedCurrencyAmount = new IssuedCurrencyAmount()
-    sendMaxIssuedCurrencyAmount.setCurrency(currencyProto)
-    sendMaxIssuedCurrencyAmount.setIssuer(issuerAccountAddress)
-    sendMaxIssuedCurrencyAmount.setValue(String(sendMaxValue))
-
-    const sendMaxCurrencyAmount = new CurrencyAmount()
-    sendMaxCurrencyAmount.setIssuedCurrencyAmount(sendMaxIssuedCurrencyAmount)
-
-    const sendMax = new SendMax()
-    sendMax.setValue(sendMaxCurrencyAmount)
-
     // Construct Payment fields
     const payment = new Payment()
     payment.setDestination(destination)
     // Note that the destinationTag doesn't need to be explicitly set here, because the ripple-binary-codec will decode this X-Address and
     // assign the decoded destinationTag before signing.
     payment.setAmount(amount)
-    payment.setSendMax(sendMax)
+
+    if (!(transferFee === undefined)) {
+      // Construct SendMax - value should be intended amount + relevant transfer fee
+      // Note that a transfer fee doesn't apply if the source address (of this transaction) and the issuing address of the currency being
+      // sent are the same (i.e. issuer sending currency directly) OR if the issuer of the currency and the destination are the same
+      // (i.e. redeeming an issued currency).
+      // However, it also doesn't hurt to include a SendMax field, it just won't nd up being used (added this to questions just to make sure).
+
+      const numericValue = Number(value)
+      const sendMaxValue = (1 + transferFee / 100) * numericValue
+
+      const sendMaxIssuedCurrencyAmount = new IssuedCurrencyAmount()
+      sendMaxIssuedCurrencyAmount.setCurrency(currencyProto)
+      sendMaxIssuedCurrencyAmount.setIssuer(issuerAccountAddress)
+      sendMaxIssuedCurrencyAmount.setValue(String(sendMaxValue))
+
+      const sendMaxCurrencyAmount = new CurrencyAmount()
+      sendMaxCurrencyAmount.setIssuedCurrencyAmount(sendMaxIssuedCurrencyAmount)
+
+      const sendMax = new SendMax()
+      sendMax.setValue(sendMaxCurrencyAmount)
+
+      payment.setSendMax(sendMax)
+    }
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
     transaction.setPayment(payment)
 
+    // TODO: (acorso) structure this like we have `sendXrp` v.s. `sendXrpWithDetails` to allow for additional optional fields, such as memos.
+    //  as well as potentially:
     // TODO: (acorso) learn about partial payments and whether they're essential to offer WRT to issued currencies (https://xrpl.org/payment.html#partial-payments)
     // TODO: (acorso) learn about other payment flags and whether they're essential to offer WRT to issued currencies (https://xrpl.org/payment.html#payment-flags)
-
-    // TODO: (acorso) structure this like we have `sendXrpWithDetails`... memos should be optional
-    // if (memoList && memoList.length) {
-    //   memoList
-    //     .map((memo) => {
-    //       const xrpMemo = new Memo()
-    //       if (memo.data) {
-    //         const memoData = new MemoData()
-    //         memoData.setValue(memo.data)
-    //         xrpMemo.setMemoData(memoData)
-    //       }
-    //       if (memo.format) {
-    //         const memoFormat = new MemoFormat()
-    //         memoFormat.setValue(memo.format)
-    //         xrpMemo.setMemoFormat(memoFormat)
-    //       }
-    //       if (memo.type) {
-    //         const memoType = new MemoType()
-    //         memoType.setValue(memo.type)
-    //         xrpMemo.setMemoType(memoType)
-    //       }
-
-    //       return xrpMemo
-    //     })
-    //     .forEach((memo) => transaction.addMemos(memo))
-    // }
 
     const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
       transaction,
