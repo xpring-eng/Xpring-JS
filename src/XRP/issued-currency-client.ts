@@ -25,7 +25,6 @@ import TransactionResult from './shared/transaction-result'
 import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
 import TrustLine from './shared/trustline'
 import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
-import { AccountSet } from './Generated/node/org/xrpl/rpc/v1/transaction_pb'
 import {
   WebSocketResponse,
   WebSocketStatusResponse,
