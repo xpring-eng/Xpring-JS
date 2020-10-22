@@ -634,11 +634,12 @@ describe('Issued Currency Client', function (): void {
       callback,
     )
     const expectedSubscribeResponse = {
-      id: 'subscribe_transaction_' + testAddress,
+      id: 'subscribe_transaction',
       result: undefined,
       status: 'success',
       type: 'response',
     }
+    // TODO get the fake websocket client to handle the address too
 
     // THEN the result is as expected
     assert.deepEqual(subscribeResponse, expectedSubscribeResponse)
