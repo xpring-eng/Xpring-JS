@@ -30,6 +30,7 @@ import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
 import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
 import TrustLine from './shared/trustline'
+import { SendMax } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -390,6 +391,7 @@ export default class IssuedCurrencyClient {
   public async sendIssuedCurrency(
     sender: Wallet,
     destinationAddress: string,
+    transferFee: number,
     currency: string,
     issuer: string,
     value: string,
@@ -421,13 +423,13 @@ export default class IssuedCurrencyClient {
     const currencyProto = new Currency()
     currencyProto.setName(currency)
 
-    const accountAddress = new AccountAddress()
-    accountAddress.setAddress(issuerClassicAddress.address)
+    const issuerAccountAddress = new AccountAddress()
+    issuerAccountAddress.setAddress(issuerClassicAddress.address)
 
     const issuedCurrency = new IssuedCurrencyAmount()
     issuedCurrency.setCurrency(currencyProto)
-    issuedCurrency.setIssuer(accountAddress)
-    // TODO: is there any restriction on the value of value param?
+    issuedCurrency.setIssuer(issuerAccountAddress)
+    // TODO: is there any restriction on the value of value param that we can check here??
     issuedCurrency.setValue(value)
 
     const currencyAmount = new CurrencyAmount()
@@ -442,9 +444,26 @@ export default class IssuedCurrencyClient {
     const destination = new Destination()
     destination.setValue(destinationAccountAddress)
 
+    // Construct SendMax - value should be intended amount + relevant transfer fee
+    const numericValue = Number(value)
+    const sendMaxValue = (1 + transferFee) * numericValue
+
+    const sendMaxIssuedCurrencyAmount = new IssuedCurrencyAmount()
+    sendMaxIssuedCurrencyAmount.setCurrency(currencyProto)
+    sendMaxIssuedCurrencyAmount.setIssuer(issuerAccountAddress)
+    sendMaxIssuedCurrencyAmount.setValue(String(sendMaxValue))
+
+    const sendMaxCurrencyAmount = new CurrencyAmount()
+    sendMaxCurrencyAmount.setIssuedCurrencyAmount(sendMaxIssuedCurrencyAmount)
+
+    const sendMax = new SendMax()
+    sendMax.setValue(sendMaxCurrencyAmount)
+
+    // Construct Payment fields
     const payment = new Payment()
     payment.setDestination(destination)
     payment.setAmount(amount)
+    payment.setSendMax(sendMax)
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
     transaction.setPayment(payment)

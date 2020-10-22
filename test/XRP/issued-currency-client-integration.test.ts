@@ -422,6 +422,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
       issuer,
       wallet.getAddress(),
+      0.05,
       'USD',
       issuer.getAddress(),
       '200',
@@ -436,4 +437,8 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       ),
     )
   })
+
+  // TODO: (acorso) add test for attempting to issue currency without trustline set?
+  // TODO: (acorso) add test for attempting to issue more of an issued currency than the trust line limit
+  // TODO: ERROR CODES??
 })
