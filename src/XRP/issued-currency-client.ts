@@ -402,6 +402,7 @@ export default class IssuedCurrencyClient {
         'Destination address must be in X-address format.  See https://xrpaddress.info/.',
       )
     }
+    // TODO: (acorso) Don't we need to grab the destination tag here?  Or is this happening in the serializer?
 
     // TODO: (acorso) we don't need to convert back to a classic address once the ripple-binary-codec supports X-addresses for issued currencies.
     const issuerClassicAddress = XrpUtils.decodeXAddress(issuer)
@@ -445,6 +446,9 @@ export default class IssuedCurrencyClient {
     destination.setValue(destinationAccountAddress)
 
     // Construct SendMax - value should be intended amount + relevant transfer fee
+    // Note that a transfer fee doesn't apply if the source address (of this transaction) and the issuing address of the currency being
+    // sent are the same (i.e. issuer sending currency directly).  However, it also doesn't hurt to include a SendMax field, it just won't
+    // end up being used (added this to questions just to make sure).
     const numericValue = Number(value)
     const sendMaxValue = (1 + transferFee) * numericValue
 
@@ -462,11 +466,16 @@ export default class IssuedCurrencyClient {
     // Construct Payment fields
     const payment = new Payment()
     payment.setDestination(destination)
+    // Note that the destinationTag doesn't need to be explicitly set here, because the ripple-binary-codec will decode this X-Address and
+    // assign the decoded destinationTag before signing.
     payment.setAmount(amount)
     payment.setSendMax(sendMax)
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
     transaction.setPayment(payment)
+
+    // TODO: (acorso) learn about partial payments and whether they're essential to offer WRT to issued currencies (https://xrpl.org/payment.html#partial-payments)
+    // TODO: (acorso) learn about other payment flags and whether they're essential to offer WRT to issued currencies (https://xrpl.org/payment.html#payment-flags)
 
     // TODO: (acorso) structure this like we have `sendXrpWithDetails`... memos should be optional
     // if (memoList && memoList.length) {

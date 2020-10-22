@@ -440,5 +440,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   // TODO: (acorso) add test for attempting to issue currency without trustline set?
   // TODO: (acorso) add test for attempting to issue more of an issued currency than the trust line limit
+  // TODO: (acorso) add test for attempting to send an issued currency payment where the transfer fee argument is too low (lower than actual transfer fee)
   // TODO: ERROR CODES??
 })
