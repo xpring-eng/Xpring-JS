@@ -58,7 +58,7 @@ interface WebSocketTransaction {
   LastLedgerSequence: number
   Sequence: number
   SigningPubKey: string
-  TranasctionType: string
+  TransactionType: string
   TxnSignature: string
   date: number
   hash: string
