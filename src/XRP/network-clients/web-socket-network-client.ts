@@ -1,4 +1,9 @@
-import WebSocket from 'ws'
+import WebSocket = require('ws')
+import {
+  WebSocketRequestOptions,
+  WebSocketResponse,
+  WebSocketStatusResponse,
+} from '../shared/rippled-web-socket-schema'
 // import { WebSocketNetworkClientInterface } from './web-socket-network-client-interface'
 
 /**
@@ -7,10 +12,10 @@ import WebSocket from 'ws'
  */
 export default class WebSocketNetworkClient {
   private readonly socket: WebSocket
-  private callbacks: Map<string, (data: any) => void>
-  private waiting: Map<string, any | undefined>
+  private callbacks: Map<string, (data: WebSocketResponse) => void>
+  private waiting: Map<string, WebSocketResponse | undefined>
 
-  sleep = (ms: number) => {
+  sleep = (ms: number): Promise<void> => {
     return new Promise((resolve) => setTimeout(resolve, ms))
   }
 
@@ -24,8 +29,13 @@ export default class WebSocketNetworkClient {
     this.socket = new WebSocket(webSocketUrl)
     this.callbacks = new Map()
     this.waiting = new Map()
-    this.callbacks.set('response', (data: any) => {
-      this.waiting[data.id] = data
+    this.callbacks.set('response', (data: WebSocketResponse) => {
+      const dataStatusResponse = data as WebSocketStatusResponse
+      if (dataStatusResponse.id === undefined) {
+        console.log("Response somehow doesn't have an id")
+        return
+      }
+      this.waiting[dataStatusResponse.id] = data
     })
 
     this.socket.addEventListener('message', (event) => {
@@ -51,7 +61,9 @@ export default class WebSocketNetworkClient {
     })
   }
 
-  private async apiRequest(options): Promise<any> {
+  private async apiRequest(
+    options: WebSocketRequestOptions,
+  ): Promise<WebSocketStatusResponse> {
     while (this.socket.readyState === 0) {
       await this.sleep(5)
     }
@@ -61,12 +73,16 @@ export default class WebSocketNetworkClient {
     while (this.waiting[options.id] === undefined) {
       await this.sleep(5)
     }
+    const response = this.waiting[options.id]
     this.waiting.delete(options.id)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return this.waiting[options.id]
+
+    return response as WebSocketStatusResponse
   }
 
-  private addCallback(type: string, callback: (data: any) => void) {
+  private addCallback(
+    type: string,
+    callback: (data: WebSocketResponse) => void,
+  ): void {
     // TODO figure out if there are more exceptions
     if (type === 'ledger') {
       this.callbacks.set('ledgerClosed', callback)
@@ -78,7 +94,7 @@ export default class WebSocketNetworkClient {
   public async subscribe(
     id: string,
     stream: string,
-    callback: (data: any) => void,
+    callback: (data: WebSocketResponse) => void,
     // TODO make multiple streams/callbacks an option??
   ): Promise<void> {
     this.addCallback(stream, callback)
