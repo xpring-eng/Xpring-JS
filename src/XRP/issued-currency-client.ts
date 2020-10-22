@@ -379,12 +379,18 @@ export default class IssuedCurrencyClient {
     )
   }
 
-  // TODO: (acorso) don't forget to doc this
   /**
+   * Sends issued currency from one account to another.  This method can be used to create issued currency, dispense issued currency from
+   * an operational address, send issued currency from one XRPL account to another (as long as the payment only involves a single currency,
+   * i.e. is not cross-currency), or to redeem issued currency at the issuing address.
+   * The specific case depends on the relationship among the parameters.
    *
-   * @param sender
-   * @param destination
-   * @param issuedCurrency
+   * @param sender The Wallet from which issued currency will be sent, and that will sign the transaction.
+   * @param destinationAddress The destination address (recipient) for the payment, encoded as an X-address (see https://xrpaddress.info/).
+   * @param transferFee The transfer fee associated with the issuing account, expressed as a percentage (i.e. a value of .5 indicates a 0.5% transfer fee).
+   * @param currency The three-letter currency code of the issued currency being sent.
+   * @param issuer The issuing address of the issued currency being sent.
+   * @param value The amount of issued currency to send.
    */
   // TODO: (acorso) make this private if/when incorporated into higher level convenience methods
   // TODO: (acorso) consider using an object for long list of params
@@ -402,7 +408,6 @@ export default class IssuedCurrencyClient {
         'Destination address must be in X-address format.  See https://xrpaddress.info/.',
       )
     }
-    // TODO: (acorso) Don't we need to grab the destination tag here?  Or is this happening in the serializer?
 
     // TODO: (acorso) we don't need to convert back to a classic address once the ripple-binary-codec supports X-addresses for issued currencies.
     const issuerClassicAddress = XrpUtils.decodeXAddress(issuer)
@@ -447,10 +452,12 @@ export default class IssuedCurrencyClient {
 
     // Construct SendMax - value should be intended amount + relevant transfer fee
     // Note that a transfer fee doesn't apply if the source address (of this transaction) and the issuing address of the currency being
-    // sent are the same (i.e. issuer sending currency directly).  However, it also doesn't hurt to include a SendMax field, it just won't
-    // end up being used (added this to questions just to make sure).
+    // sent are the same (i.e. issuer sending currency directly) OR if the issuer of the currency and the destination are the same
+    // (i.e. redeeming an issued currency).
+    // However, it also doesn't hurt to include a SendMax field, it just won't nd up being used (added this to questions just to make sure).
+
     const numericValue = Number(value)
-    const sendMaxValue = (1 + transferFee) * numericValue
+    const sendMaxValue = (1 + transferFee / 100) * numericValue
 
     const sendMaxIssuedCurrencyAmount = new IssuedCurrencyAmount()
     sendMaxIssuedCurrencyAmount.setCurrency(currencyProto)
