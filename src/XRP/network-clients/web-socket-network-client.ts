@@ -77,7 +77,7 @@ export default class WebSocketNetworkClient {
     })
   }
 
-  private async apiRequest(
+  private async sendApiRequest(
     options: WebSocketRequestOptions,
   ): Promise<WebSocketStatusResponse> {
     while (this.socket.readyState === 0) {
@@ -95,27 +95,19 @@ export default class WebSocketNetworkClient {
     return response as WebSocketStatusResponse
   }
 
-  private addCallback(
-    account: string,
-    callback: (data: WebSocketTransactionResponse) => void,
-  ): void {
-    // TODO figure out if there are more exceptions
-    this.accountCallbacks.set(account, callback)
-  }
-
   public async subscribeToAccount(
     id: string,
     callback: (data: WebSocketTransactionResponse) => void,
     account: string,
     // TODO make multiple streams/callbacks an option??
   ): Promise<WebSocketStatusResponse> {
-    this.addCallback(account, callback)
+    this.accountCallbacks.set(account, callback)
     const options = {
       id,
       command: 'subscribe',
       accounts: [account],
     }
-    const response = await this.apiRequest(options)
+    const response = await this.sendApiRequest(options)
     if (response.status !== 'success') {
       console.error('Error subscribing: ', response)
       // TODO throw descriptive error
