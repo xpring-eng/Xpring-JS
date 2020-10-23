@@ -400,6 +400,8 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.currency, trustLineCurrency)
   })
 
+  // TODO: (acorso) add line comments to explain the other steps of these test cases
+  // TODO: (acorso) can any addresses be created in `before` and reused?  Can any test cases be combined?
   it('sendIssuedCurrency - issuing issued currency, combined cases', async function (): Promise<
     void
   > {
@@ -703,6 +705,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     console.log(transactionResult)
 
     // THEN the transaction fails.
+    // TODO: the actual status code from rippled here is tecPATH_PARTIAL - consider adding additional TransactionStatus case.
     assert.deepEqual(
       transactionResult,
       TransactionResult.getFinalTransactionResult(

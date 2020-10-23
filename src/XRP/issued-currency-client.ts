@@ -504,7 +504,7 @@ export default class IssuedCurrencyClient {
       // However, it also doesn't hurt to include a SendMax field, it just won't nd up being used (added this to questions just to make sure).
 
       const numericValue = Number(value)
-      const sendMaxValue = (1 + transferFee / 100) * numericValue
+      const sendMaxValue = Math.ceil((1 + transferFee / 100) * numericValue)
 
       const sendMaxIssuedCurrencyAmount = new IssuedCurrencyAmount()
       sendMaxIssuedCurrencyAmount.setCurrency(currencyProto)
