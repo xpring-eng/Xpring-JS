@@ -1,6 +1,6 @@
 import { assert } from 'chai'
 import { Wallet, WalletFactory, XrplNetwork, XrpUtils } from 'xpring-common-js'
-import { XrpClient, XrpError } from '../../src/XRP'
+import XrpError from '../../src/XRP/shared/xrp-error'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
@@ -10,6 +10,7 @@ import {
   XrpErrorType,
 } from '../../src/XRP/shared'
 import { WebSocketTransactionResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
+import XrpClient from '../../src/XRP/xrp-client'
 // import { WebSocketResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
 
 // A timeout for these tests.
@@ -48,8 +49,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     wallet2 = await XRPTestUtils.randomWalletFromFaucet()
   })
 
-  after(function () {
+  after(function (done) {
     issuedCurrencyClient.webSocketNetworkClient.close()
+    done()
   })
 
   it('getTrustLines - valid request', async function (): Promise<void> {
@@ -458,6 +460,15 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       assert.equal(data.transaction.Destination, xAddress)
       assert.equal(data.transaction.TransactionType, 'Payment')
     }
+
+    const waitUntilMessageReceived = async () => {
+      while (!messageReceived) {
+        await sleep(5)
+      }
+    }
+
+    const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
+
     // GIVEN a valid test address
     // WHEN monitorIncomingPayments is called for that address
     const response = await issuedCurrencyClient.monitorIncomingPayments(
@@ -470,13 +481,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(response.type, 'response')
     assert.equal(response.id, 'monitor_transactions_' + xAddress)
 
-    const waitUntilMessageReceived = async () => {
-      while (!messageReceived) {
-        await sleep(5)
-      }
-    }
 
-    const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
     await xrpClient.send(xrpAmount, xAddress, wallet2)
 
     await waitUntilMessageReceived()
