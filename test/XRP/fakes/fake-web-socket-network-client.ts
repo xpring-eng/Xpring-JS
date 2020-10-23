@@ -1,8 +1,8 @@
 import Result from '../../Common/Helpers/result'
 import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
 import {
-  WebSocketResponse,
   WebSocketStatusResponse,
+  WebSocketTransactionResponse,
 } from '../../../src/XRP/shared/rippled-web-socket-schema'
 
 /**
@@ -62,7 +62,7 @@ export class FakeWebSocketNetworkClient {
 
   subscribeToAccount(
     _id: string,
-    _callback: (data: WebSocketResponse) => void,
+    _callback: (data: WebSocketTransactionResponse) => void,
     _account: string,
   ): Promise<WebSocketStatusResponse> {
     const subscribeResponse = this.responses.getSubscribeResponse
