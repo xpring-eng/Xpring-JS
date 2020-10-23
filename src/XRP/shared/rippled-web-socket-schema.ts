@@ -29,7 +29,7 @@ interface WebSocketTransactionResponse {
   engine_result_message: string
   ledger_hash: string
   ledger_index: number
-  meta: unknown // TODO make this better
+  meta: any // TODO make this better
   status: string
   transaction: WebSocketTransaction
   type: string

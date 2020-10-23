@@ -9,8 +9,7 @@ import {
   TransactionStatus,
   XrpErrorType,
 } from '../../src/XRP/shared'
-import { WebSocketResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
-import { fail } from 'assert'
+import { WebSocketTransactionResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
 // import { WebSocketResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
 
 // A timeout for these tests.
@@ -439,17 +438,30 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   > {
     this.timeout(timeoutMs)
 
-    let messageReceived = false
-    const callback = (_data: WebSocketResponse) => {
-      messageReceived = true
-    }
-
     const xAddress = wallet.getAddress()
     const classicAddress = XrpUtils.decodeXAddress(xAddress)
-    if (classicAddress === undefined) {
-      fail('Address is not a valid classic address')
+    assert(classicAddress)
+    const address = classicAddress!.address
+
+    const xrpAmount = '100'
+
+    let messageReceived = false
+    const callback = (data: WebSocketTransactionResponse) => {
+      messageReceived = true
+      assert.equal(data.engine_result, 'tesSUCCESS')
+      assert.equal(data.engine_result_code, 0)
+      assert.equal(
+        data.engine_result_message,
+        'The transaction was applied. Only final in a validated ledger.',
+      )
+      assert.equal(data.meta.TransactionResult, 'tesSUCCESS')
+      assert.equal(data.status, 'closed')
+      assert.equal(data.type, 'transaction')
+      assert.equal(data.validated, true)
+      assert.equal(data.transaction.Amount, xrpAmount)
+      assert.equal(data.transaction.Destination, address)
+      assert.equal(data.transaction.TransactionType, 'Payment')
     }
-    const address = classicAddress.address
     // GIVEN a test address that has at least one trust line on testnet
     // WHEN monitorIncomingPayments is called for that address
     const response = await issuedCurrencyClient.monitorIncomingPayments(
@@ -458,7 +470,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
 
     // THEN the subscribe request is successfully submitted and received
-    assert(response.status === 'success')
+    assert.equal(response.status, 'success')
+    assert.equal(response.type, 'response')
+    assert.equal(response.id, 'monitor_transactions_' + address)
 
     const waitUntilMessageReceived = async () => {
       while (!messageReceived) {
@@ -467,7 +481,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     }
 
     const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
-    const xrpAmount = '100'
     await xrpClient.send(xrpAmount, xAddress, wallet2)
 
     await waitUntilMessageReceived()

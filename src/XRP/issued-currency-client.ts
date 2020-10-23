@@ -26,8 +26,8 @@ import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
 import TrustLine from './shared/trustline'
 import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
 import {
-  WebSocketResponse,
   WebSocketStatusResponse,
+  WebSocketTransactionResponse,
 } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
@@ -117,7 +117,7 @@ export default class IssuedCurrencyClient {
 
   public async monitorIncomingPayments(
     account: string,
-    callback: (data: WebSocketResponse) => void,
+    callback: (data: WebSocketTransactionResponse) => void,
   ): Promise<WebSocketStatusResponse> {
     const id = 'monitor_transactions_' + account
     return await this.webSocketNetworkClient.subscribeToAccount(
