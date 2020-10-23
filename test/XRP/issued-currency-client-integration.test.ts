@@ -483,4 +483,22 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     await waitUntilMessageReceived()
     assert(messageReceived)
   })
+
+  it('monitorIncomingPayments - bad address', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const xAddress = 'badAddress'
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const callback = (_data: WebSocketTransactionResponse) => {}
+    // GIVEN a test address that has at least one trust line on testnet
+    // WHEN monitorIncomingPayments is called for that address THEN an error is thrown.
+    try {
+      await issuedCurrencyClient.monitorIncomingPayments(xAddress, callback)
+    } catch (e) {
+      if (!(e instanceof XrpError)) {
+        assert.fail('wrong error')
+      }
+    }
+  })
 })
