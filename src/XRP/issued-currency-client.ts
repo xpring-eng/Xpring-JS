@@ -115,11 +115,21 @@ export default class IssuedCurrencyClient {
     return trustLines
   }
 
+  /**
+   * Subscribes to an account's incoming transactions, and triggers a callback upon recieving each transaction.
+   * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
+   * @see https://xrpl.org/subscribe.html
+   *
+   * @param account The account from which to subscribe to incoming transactions, encoded as an X-Address.
+   * @param callback The function to trigger upon recieving each transaction from the ledger.
+   * @returns The response from the websocket confirming the subscription.
+   */
   public async monitorIncomingPayments(
     account: string,
     callback: (data: WebSocketTransactionResponse) => void,
   ): Promise<WebSocketStatusResponse> {
     const id = 'monitor_transactions_' + account
+
     return await this.webSocketNetworkClient.subscribeToAccount(
       id,
       callback,

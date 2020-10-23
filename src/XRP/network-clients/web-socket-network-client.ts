@@ -1,4 +1,5 @@
 import WebSocket = require('ws')
+import { XrpError, XrpErrorType, XrpUtils } from '../shared'
 import {
   WebSocketRequestOptions,
   WebSocketResponse,
@@ -34,11 +35,14 @@ export default class WebSocketNetworkClient {
     this.accountCallbacks = new Map()
     this.callbacks = new Map()
     this.waiting = new Map()
+
     this.callbacks.set('response', (data: WebSocketResponse) => {
       const dataStatusResponse = data as WebSocketStatusResponse
       if (dataStatusResponse.id === undefined) {
-        console.log("Response somehow doesn't have an id")
-        return
+        throw new XrpError(
+          XrpErrorType.Unknown,
+          'Response type does not contain an id',
+        )
       }
       this.waiting[dataStatusResponse.id] = data
     })
@@ -49,20 +53,22 @@ export default class WebSocketNetworkClient {
       if (callback) {
         callback(dataTransaction)
       } else {
-        console.log('WTFFFFFFF', account, callback)
-        console.log(data)
+        throw new XrpError(
+          XrpErrorType.Unknown,
+          'Received a transaction for an account that has not been subscribed to: ' +
+            account,
+        )
       }
     })
 
     this.socket.addEventListener('message', (event) => {
-      const parsedData = JSON.parse(event.data)
-      const dataType: string = parsedData.type
+      const parsedData = JSON.parse(event.data) as WebSocketResponse
+      const dataType = parsedData.type
       const callback = this.callbacks.get(dataType)
       if (callback !== undefined) {
         callback(parsedData)
       } // else {
-      //   console.log('Unhandled message from server', parsedData)
-      //   // TODO handle this better
+      //   // TODO handle this better - maybe same as the error event listener
       // }
     })
 
@@ -77,44 +83,71 @@ export default class WebSocketNetworkClient {
     })
   }
 
+  /**
+   * Sends an API request over the websocket connection.
+   *
+   * @param request The object to send over the websocket.
+   * @returns The API response from the websocket.
+   */
   private async sendApiRequest(
-    options: WebSocketRequestOptions,
+    request: WebSocketRequestOptions,
   ): Promise<WebSocketStatusResponse> {
     while (this.socket.readyState === 0) {
       await this.sleep(5)
     }
-    this.socket.send(JSON.stringify(options))
+    // TODO add readtState === 1 check
+    this.socket.send(JSON.stringify(request))
 
-    this.waiting[options.id] = undefined
-    while (this.waiting[options.id] === undefined) {
+    this.waiting[request.id] = undefined
+    while (this.waiting[request.id] === undefined) {
       await this.sleep(5)
     }
-    const response = this.waiting[options.id]
-    this.waiting.delete(options.id)
+    const response = this.waiting[request.id]
+    this.waiting.delete(request.id)
 
     return response as WebSocketStatusResponse
   }
 
+  /**
+   * Subscribes to incoming transactions to a given account.
+   * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
+   *
+   * @param id The ID used for the subscription.
+   * @param callback The function called whenever a new transaction is received.
+   * @param account The account from which to subscribe to incoming transactions, encoded as an X-Address.
+   * @returns The response from the websocket confirming the subscription.
+   */
   public async subscribeToAccount(
     id: string,
     callback: (data: WebSocketTransactionResponse) => void,
     account: string,
     // TODO make multiple streams/callbacks an option??
   ): Promise<WebSocketStatusResponse> {
-    this.accountCallbacks.set(account, callback)
+    const classicAddress = XrpUtils.decodeXAddress(account)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+    const address = classicAddress.address
+
+    this.accountCallbacks.set(address, callback)
     const options = {
       id,
       command: 'subscribe',
-      accounts: [account],
+      accounts: [address],
     }
     const response = await this.sendApiRequest(options)
     if (response.status !== 'success') {
-      console.error('Error subscribing: ', response)
-      // TODO throw descriptive error
+      throw new XrpError(
+        XrpErrorType.Unknown,
+        'Subscription request for ' + account + ' failed',
+      )
     }
     return response
   }
 
+  /**
+   * Closes the socket.
+   */
   public close(): void {
     this.socket.close()
   }

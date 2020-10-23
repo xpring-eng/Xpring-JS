@@ -439,9 +439,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     const xAddress = wallet.getAddress()
-    const classicAddress = XrpUtils.decodeXAddress(xAddress)
-    assert(classicAddress)
-    const address = classicAddress!.address
 
     const xrpAmount = '100'
 
@@ -459,20 +456,20 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       assert.equal(data.type, 'transaction')
       assert.equal(data.validated, true)
       assert.equal(data.transaction.Amount, xrpAmount)
-      assert.equal(data.transaction.Destination, address)
+      assert.equal(data.transaction.Destination, xAddress)
       assert.equal(data.transaction.TransactionType, 'Payment')
     }
     // GIVEN a test address that has at least one trust line on testnet
     // WHEN monitorIncomingPayments is called for that address
     const response = await issuedCurrencyClient.monitorIncomingPayments(
-      address,
+      xAddress,
       callback,
     )
 
     // THEN the subscribe request is successfully submitted and received
     assert.equal(response.status, 'success')
     assert.equal(response.type, 'response')
-    assert.equal(response.id, 'monitor_transactions_' + address)
+    assert.equal(response.id, 'monitor_transactions_' + xAddress)
 
     const waitUntilMessageReceived = async () => {
       while (!messageReceived) {
