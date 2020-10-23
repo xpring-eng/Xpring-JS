@@ -33,8 +33,16 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   // A Wallet with some balance on Testnet.
   let wallet: Wallet
+
+  let issuerWallet: Wallet
+  let operationalWallet: Wallet
+  let customerWallet: Wallet
+
   before(async function () {
     wallet = await XRPTestUtils.randomWalletFromFaucet()
+    issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
+    operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
+    customerWallet = await XRPTestUtils.randomWalletFromFaucet()
   })
 
   it('getTrustLines - valid request', async function (): Promise<void> {
@@ -398,34 +406,70 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.currency, trustLineCurrency)
   })
 
-  // TODO: (acorso) Consider refactoring to re-use faucet wallets whenever possible to reduce test run time.
-  it('sendIssuedCurrency - success creating issued currency', async function (): Promise<
+  it('sendIssuedCurrency - issuing issued currency, combined cases', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
-    // GIVEN an existing testnet account and an issuer's wallet
-    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    // GIVEN two existing, funded testnet accounts serving as an issuing address and operational address, respectively
+    // WHEN there does not yet exist a trust line between the accounts, and the issuer attempts to issue an issued currency
+    let transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
+      issuerWallet,
+      operationalWallet.getAddress(),
+      'USD',
+      issuerWallet.getAddress(),
+      '200',
+    )
 
-    // AND a trustline that has been created to the issuer with a positive value
-    const trustLineLimit = '1000'
+    // THEN the transaction fails with claimed cost only.
+    assert.deepEqual(
+      transactionResult,
+      TransactionResult.getFinalTransactionResult(
+        transactionResult.hash,
+        TransactionStatus.ClaimedCostOnly,
+        true,
+      ),
+    )
+
+    // next, GIVEN a trust line created from the operational address to the issuer address, but with a limit that is too low
+    const trustLineLimit = '100'
     const trustLineCurrency = 'USD'
 
     await issuedCurrencyClient.createTrustLine(
-      issuer.getAddress(),
+      issuerWallet.getAddress(),
       trustLineCurrency,
       trustLineLimit,
-      wallet,
+      operationalWallet,
     )
 
-    // WHEN an issued currency payment is sent to the account that established the trust line THEN the payment succeeds.
-    const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
-      issuer,
-      wallet.getAddress(),
+    // WHEN the issuer attempts to issue an amount of issued currency above the trust line limit
+    transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
+      issuerWallet,
+      operationalWallet.getAddress(),
       'USD',
-      issuer.getAddress(),
+      issuerWallet.getAddress(),
       '200',
     )
-    assert.exists(transactionResult)
+
+    // THEN the transaction fails with claimed cost only
+    assert.deepEqual(
+      transactionResult,
+      TransactionResult.getFinalTransactionResult(
+        transactionResult.hash,
+        TransactionStatus.ClaimedCostOnly,
+        true,
+      ),
+    )
+
+    // but, WHEN the issuer attempts to issue an amount of issued currency at or below the trust line limit
+    transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
+      issuerWallet,
+      operationalWallet.getAddress(),
+      'USD',
+      issuerWallet.getAddress(),
+      '100',
+    )
+
+    // THEN the transaction finally succeeds.
     assert.deepEqual(
       transactionResult,
       TransactionResult.getFinalTransactionResult(
@@ -436,67 +480,49 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('sendIssuedCurrency - failure to create issued currency w/o trustline', async function (): Promise<
+  it('sendIssuedCurrency - sending from non-issuing account to another account, combined cases', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
-    // GIVEN an existing testnet account and an issuer's wallet, but no trust line between them
-    const issuer = await XRPTestUtils.randomWalletFromFaucet()
 
-    // WHEN an issued currency payment is sent to the account that established the trust line THEN the payment succeeds.
-    const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
-      issuer,
-      wallet.getAddress(),
-      'USD',
-      issuer.getAddress(),
-      '200',
-    )
-    assert.exists(transactionResult)
-    assert.deepEqual(
-      transactionResult,
-      TransactionResult.getFinalTransactionResult(
-        transactionResult.hash,
-        TransactionStatus.ClaimedCostOnly,
-        true,
-      ),
-    )
-  })
-
-  it('sendIssuedCurrency - failure to create issued currency above trust line limit', async function (): Promise<
-    void
-  > {
-    this.timeout(timeoutMs)
-    // GIVEN an existing testnet account and an issuer's wallet
-    const issuer = await XRPTestUtils.randomWalletFromFaucet()
-
-    // AND a trustline that has been created to the issuer with a positive value
-    const trustLineLimit = '100'
-    const trustLineCurrency = 'USD'
+    // GIVEN an operational address with some issued currency
+    const trustLineLimit = '1000'
+    const trustLineCurrency = 'FOO'
 
     await issuedCurrencyClient.createTrustLine(
-      issuer.getAddress(),
+      issuerWallet.getAddress(),
       trustLineCurrency,
       trustLineLimit,
-      wallet,
+      operationalWallet,
     )
 
-    // WHEN an issued currency payment is sent to the account that established the trust line THEN the payment succeeds.
-    const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
-      issuer,
-      wallet.getAddress(),
-      'USD',
-      issuer.getAddress(),
-      '200',
+    await issuedCurrencyClient.sendIssuedCurrency(
+      issuerWallet,
+      operationalWallet.getAddress(),
+      'FOO',
+      issuerWallet.getAddress(),
+      '500',
     )
-    assert.exists(transactionResult)
+
+    // WHEN an issued currency payment is made to another funded account
+    await issuedCurrencyClient.sendIssuedCurrency(
+      operationalWallet,
+      customerWallet.getAddress(),
+      'FOO',
+      issuerWallet.getAddress(),
+      '100',
+    )
+    /*
+    // THEN the transaction succeeds.
     assert.deepEqual(
       transactionResult,
       TransactionResult.getFinalTransactionResult(
         transactionResult.hash,
-        TransactionStatus.ClaimedCostOnly,
+        TransactionStatus.Succeeded,
         true,
       ),
     )
+    */
   })
 
   // TODO: (acorso) add test for sending issued currency where sender is not issuer (success)
