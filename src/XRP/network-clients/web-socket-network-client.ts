@@ -44,28 +44,19 @@ export default class WebSocketNetworkClient {
           'Response type does not contain an id',
         )
       }
+      const result = dataStatusResponse.result
+      if (result) {
+        this.handleTransaction(result)
+      }
       this.waiting[dataStatusResponse.id] = data
     })
-    this.callbacks.set('transaction', (data: WebSocketResponse) => {
-      const dataTransaction = data as WebSocketTransactionResponse
-      const account = dataTransaction.transaction.Destination
-      const callback = this.accountCallbacks.get(account)
-      if (callback) {
-        callback(dataTransaction)
-      } else {
-        throw new XrpError(
-          XrpErrorType.Unknown,
-          'Received a transaction for an account that has not been subscribed to: ' +
-            account,
-        )
-      }
-    })
+    this.callbacks.set('transaction', this.handleTransaction)
 
     this.socket.addEventListener('message', (event) => {
       const parsedData = JSON.parse(event.data) as WebSocketResponse
       const dataType = parsedData.type
       const callback = this.callbacks.get(dataType)
-      if (callback !== undefined) {
+      if (callback) {
         callback(parsedData)
       } // else {
       //   // TODO handle this better - maybe same as the error event listener
@@ -84,10 +75,30 @@ export default class WebSocketNetworkClient {
   }
 
   /**
-   * Sends an API request over the websocket connection.
+   * Properly handles incoming transactions from the web socket.
    *
-   * @param request The object to send over the websocket.
-   * @returns The API response from the websocket.
+   * @param data The web socket response received from the web socket.
+   */
+  private handleTransaction = (data: WebSocketResponse) => {
+    const dataTransaction = data as WebSocketTransactionResponse
+    const account = dataTransaction.transaction.Destination
+    const callback = this.accountCallbacks.get(account)
+    if (callback) {
+      callback(dataTransaction)
+    } else {
+      throw new XrpError(
+        XrpErrorType.Unknown,
+        'Received a transaction for an account that has not been subscribed to: ' +
+          account,
+      )
+    }
+  }
+
+  /**
+   * Sends an API request over the web socket connection.
+   *
+   * @param request The object to send over the web socket.
+   * @returns The API response from the web socket.
    */
   private async sendApiRequest(
     request: WebSocketRequestOptions,
@@ -117,7 +128,7 @@ export default class WebSocketNetworkClient {
    * @param id The ID used for the subscription.
    * @param callback The function called whenever a new transaction is received.
    * @param account The account from which to subscribe to incoming transactions, encoded as an X-Address.
-   * @returns The response from the websocket confirming the subscription.
+   * @returns The response from the web socket confirming the subscription.
    */
   public async subscribeToAccount(
     id: string,
