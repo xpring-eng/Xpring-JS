@@ -44,11 +44,11 @@ export default class WebSocketNetworkClient {
           'Response type does not contain an id',
         )
       }
+      this.waiting.set(dataStatusResponse.id, data)
       const result = dataStatusResponse.result
       if (result) {
         this.handleTransaction(result)
       }
-      this.waiting[dataStatusResponse.id] = data
     })
     this.callbacks.set('transaction', this.handleTransaction)
 
@@ -111,11 +111,11 @@ export default class WebSocketNetworkClient {
     }
     this.socket.send(JSON.stringify(request))
 
-    this.waiting[request.id] = undefined
-    while (this.waiting[request.id] === undefined) {
+    this.waiting.set(request.id, undefined)
+    while (this.waiting.get(request.id) === undefined) {
       await this.sleep(5)
     }
-    const response = this.waiting[request.id]
+    const response = this.waiting.get(request.id)
     this.waiting.delete(request.id)
 
     return response as WebSocketStatusResponse

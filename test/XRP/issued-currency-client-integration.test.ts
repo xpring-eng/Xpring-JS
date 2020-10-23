@@ -48,9 +48,8 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     wallet2 = await XRPTestUtils.randomWalletFromFaucet()
   })
 
-  after(function (done) {
+  after(function () {
     issuedCurrencyClient.webSocketNetworkClient.close()
-    done()
   })
 
   it('getTrustLines - valid request', async function (): Promise<void> {
@@ -459,7 +458,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       assert.equal(data.transaction.Destination, xAddress)
       assert.equal(data.transaction.TransactionType, 'Payment')
     }
-    // GIVEN a test address that has at least one trust line on testnet
+    // GIVEN a valid test address
     // WHEN monitorIncomingPayments is called for that address
     const response = await issuedCurrencyClient.monitorIncomingPayments(
       xAddress,
