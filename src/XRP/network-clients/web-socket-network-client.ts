@@ -95,7 +95,9 @@ export default class WebSocketNetworkClient {
     while (this.socket.readyState === 0) {
       await this.sleep(5)
     }
-    // TODO add readtState === 1 check
+    if (this.socket.readyState !== 1) {
+      throw new XrpError(XrpErrorType.Unknown, 'Socket is closed')
+    }
     this.socket.send(JSON.stringify(request))
 
     this.waiting[request.id] = undefined
@@ -121,7 +123,6 @@ export default class WebSocketNetworkClient {
     id: string,
     callback: (data: WebSocketTransactionResponse) => void,
     account: string,
-    // TODO make multiple streams/callbacks an option??
   ): Promise<WebSocketStatusResponse> {
     const classicAddress = XrpUtils.decodeXAddress(account)
     if (!classicAddress) {
