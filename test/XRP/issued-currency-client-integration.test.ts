@@ -440,6 +440,8 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     const xAddress = wallet.getAddress()
+    const classicAddress = XrpUtils.decodeXAddress(xAddress)
+    const address = classicAddress!.address
 
     const xrpAmount = '100'
 
@@ -457,7 +459,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       assert.equal(data.type, 'transaction')
       assert.equal(data.validated, true)
       assert.equal(data.transaction.Amount, xrpAmount)
-      assert.equal(data.transaction.Destination, xAddress)
+      assert.equal(data.transaction.Destination, address)
       assert.equal(data.transaction.TransactionType, 'Payment')
     }
 

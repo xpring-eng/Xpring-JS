@@ -128,12 +128,18 @@ export default class IssuedCurrencyClient {
     account: string,
     callback: (data: WebSocketTransactionResponse) => void,
   ): Promise<WebSocketStatusResponse> {
+    const classicAddress = XrpUtils.decodeXAddress(account)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+    const address = classicAddress.address
+
     const id = 'monitor_transactions_' + account
 
     return await this.webSocketNetworkClient.subscribeToAccount(
       id,
       callback,
-      account,
+      address,
     )
   }
 

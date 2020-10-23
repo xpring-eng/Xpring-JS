@@ -1,5 +1,5 @@
 import WebSocket = require('ws')
-import { XrpError, XrpErrorType, XrpUtils } from '../shared'
+import { XrpError, XrpErrorType } from '../shared'
 import {
   WebSocketRequestOptions,
   WebSocketResponse,
@@ -45,10 +45,6 @@ export default class WebSocketNetworkClient {
         )
       }
       this.waiting.set(dataStatusResponse.id, data)
-      const result = dataStatusResponse.result
-      if (result) {
-        this.handleTransaction(result)
-      }
     })
     this.callbacks.set('transaction', this.handleTransaction)
 
@@ -86,6 +82,7 @@ export default class WebSocketNetworkClient {
     if (callback) {
       callback(dataTransaction)
     } else {
+      console.log('bad transaction')
       throw new XrpError(
         XrpErrorType.Unknown,
         'Received a transaction for an account that has not been subscribed to: ' +
@@ -127,25 +124,19 @@ export default class WebSocketNetworkClient {
    *
    * @param id The ID used for the subscription.
    * @param callback The function called whenever a new transaction is received.
-   * @param account The account from which to subscribe to incoming transactions, encoded as an X-Address.
-   * @returns The response from the web socket confirming the subscription.
+   * @param account The account from which to subscribe to incoming transactions, encoded as a classic address.
+   * @returns The response from the websocket confirming the subscription.
    */
   public async subscribeToAccount(
     id: string,
     callback: (data: WebSocketTransactionResponse) => void,
     account: string,
   ): Promise<WebSocketStatusResponse> {
-    const classicAddress = XrpUtils.decodeXAddress(account)
-    if (!classicAddress) {
-      throw XrpError.xAddressRequired
-    }
-    const address = classicAddress.address
-
-    this.accountCallbacks.set(address, callback)
+    this.accountCallbacks.set(account, callback)
     const options = {
       id,
       command: 'subscribe',
-      accounts: [address],
+      accounts: [account],
     }
     const response = await this.sendApiRequest(options)
     if (response.status !== 'success') {
