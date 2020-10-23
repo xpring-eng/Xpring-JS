@@ -421,7 +421,7 @@ export default class IssuedCurrencyClient {
     transaction.setTrustSet(trustSet)
 
     const flags = new Flags()
-    // flags.setValue(TrustSetFlag.tfSetfAuth)
+    flags.setValue(65536)
     transaction.setFlags(flags)
 
     const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
