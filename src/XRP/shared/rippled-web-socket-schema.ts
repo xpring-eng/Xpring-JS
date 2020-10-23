@@ -11,14 +11,11 @@ interface WebSocketRequestOptions {
   accounts?: unknown[]
 }
 
-type WebSocketResponse =
-  | WebSocketStatusResponse
-  | WebSocketLedgerResponse
-  | WebSocketTransactionResponse
+type WebSocketResponse = WebSocketStatusResponse | WebSocketTransactionResponse
 
 interface WebSocketStatusResponse {
   id?: string
-  result: WebSocketLedgerResponse | WebSocketTransactionResponse | undefined
+  result: WebSocketTransactionResponse | undefined
   status: string
   type: string
 }
@@ -34,19 +31,6 @@ interface WebSocketTransactionResponse {
   transaction: WebSocketTransaction
   type: string
   validated: boolean
-}
-
-interface WebSocketLedgerResponse {
-  fee_base: number
-  fee_ref: number
-  ledger_hash: string
-  ledger_index: number
-  ledger_time: number
-  reserve_base: number
-  reserve_inc: number
-  txn_count: number
-  type: string
-  validated_ledgers: string
 }
 
 interface WebSocketTransaction {
