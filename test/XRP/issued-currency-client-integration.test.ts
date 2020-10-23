@@ -34,15 +34,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   // A Wallet with some balance on Testnet.
   let wallet: Wallet
 
-  let issuerWallet: Wallet
-  let operationalWallet: Wallet
-  let customerWallet: Wallet
-
   before(async function () {
+    this.timeout(timeoutMs)
     wallet = await XRPTestUtils.randomWalletFromFaucet()
-    issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
-    operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
-    customerWallet = await XRPTestUtils.randomWalletFromFaucet()
   })
 
   it('getTrustLines - valid request', async function (): Promise<void> {
@@ -411,6 +405,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   > {
     this.timeout(timeoutMs)
     // GIVEN two existing, funded testnet accounts serving as an issuing address and operational address, respectively
+    const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
+
     // WHEN there does not yet exist a trust line between the accounts, and the issuer attempts to issue an issued currency
     let transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
       issuerWallet,
@@ -480,12 +477,15 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('sendIssuedCurrency - sending from non-issuing account to another account, combined cases', async function (): Promise<
+  it('sendIssuedCurrency - failure to send from non-issuing account to customer account without rippling enabled on issuer', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
+    // GIVEN an operational address with some issued currency, and an issuing address that has not enabled rippling
+    const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const customerWallet = await XRPTestUtils.randomWalletFromFaucet()
 
-    // GIVEN an operational address with some issued currency
     const trustLineLimit = '1000'
     const trustLineCurrency = 'FOO'
 
@@ -504,15 +504,82 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       '500',
     )
 
+    // Must create trust line from customer account to issuing account such that rippling *could* happen through issuing account
+    // Even though it won't because the issuing account hasn't enabled rippling - just isolating effects.
+    await issuedCurrencyClient.createTrustLine(
+      issuerWallet.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      customerWallet,
+    )
+
     // WHEN an issued currency payment is made to another funded account
-    await issuedCurrencyClient.sendIssuedCurrency(
+    const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
       operationalWallet,
       customerWallet.getAddress(),
       'FOO',
       issuerWallet.getAddress(),
       '100',
     )
-    /*
+
+    // TODO: the actual error code here is tecPATH_DRY... that seems like important information, let's figure out how to incorporate this
+    // THEN the payment fails with a TransactionStatus.ClaimedCostOnly status
+    assert.deepEqual(
+      transactionResult,
+      TransactionResult.getFinalTransactionResult(
+        transactionResult.hash,
+        TransactionStatus.ClaimedCostOnly,
+        true,
+      ),
+    )
+  })
+
+  it('sendIssuedCurrency - success sending issued currency from non-issuing account to another account', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an operational address with some issued currency, and an issuing address that has enabled rippling
+    const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const customerWallet = await XRPTestUtils.randomWalletFromFaucet()
+
+    await issuedCurrencyClient.enableRippling(issuerWallet)
+
+    const trustLineLimit = '1000'
+    const trustLineCurrency = 'FOO'
+
+    await issuedCurrencyClient.createTrustLine(
+      issuerWallet.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      operationalWallet,
+    )
+
+    await issuedCurrencyClient.sendIssuedCurrency(
+      issuerWallet,
+      operationalWallet.getAddress(),
+      'FOO',
+      issuerWallet.getAddress(),
+      '500',
+    )
+
+    // Must create trust line from customer account to issuing account such that rippling can happen through issuing account
+    await issuedCurrencyClient.createTrustLine(
+      issuerWallet.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      customerWallet,
+    )
+
+    // WHEN an issued currency payment is made to another funded account
+    const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
+      operationalWallet,
+      customerWallet.getAddress(),
+      'FOO',
+      issuerWallet.getAddress(),
+      '100',
+    )
+
     // THEN the transaction succeeds.
     assert.deepEqual(
       transactionResult,
@@ -522,13 +589,199 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
         true,
       ),
     )
-    */
   })
 
-  // TODO: (acorso) add test for sending issued currency where sender is not issuer (success)
-  // TODO: (acorso) add test for sending issued currency where sender is not issuer AND they don't own the currency (failure)
-  // TODO: (acorso) add test for attempting to send an issued currency payment where the transfer fee argument is too low (lower than actual transfer fee, which will require setting the transfer fee)
-  // TODO: (acorso) add test for attempting to redeem an issued currency payment to the issuer (should succeed)
-  // TODO: (acorso) add test for attempting to send an issued currency payment to a user that doesn't have a trustline established with the issuer, AND issuer has enabledAuthorizedTrustlines (should fail)
+  it('sendIssuedCurrency - failure sending unowned issued currency from non-issuing account to another account', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an operational address with some issued currency, and an issuing address that has enabled rippling
+    const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const customerWallet = await XRPTestUtils.randomWalletFromFaucet()
+
+    await issuedCurrencyClient.enableRippling(issuerWallet)
+
+    const trustLineLimit = '1000'
+    const trustLineCurrency = 'FOO'
+
+    await issuedCurrencyClient.createTrustLine(
+      issuerWallet.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      operationalWallet,
+    )
+
+    await issuedCurrencyClient.sendIssuedCurrency(
+      issuerWallet,
+      operationalWallet.getAddress(),
+      'FOO',
+      issuerWallet.getAddress(),
+      '500',
+    )
+
+    // Must create trust line from customer account to issuing account such that rippling can happen through issuing account
+    await issuedCurrencyClient.createTrustLine(
+      issuerWallet.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      customerWallet,
+    )
+
+    // WHEN an issued currency payment is made to another funded account
+    const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
+      operationalWallet,
+      customerWallet.getAddress(),
+      'BAR',
+      issuerWallet.getAddress(),
+      '100',
+    )
+
+    console.log("Result of sending ic that operational doesn't have")
+    console.log(transactionResult)
+
+    // THEN the transaction fails with claimed cost only.
+    // NOTE: This is also a tecPATH_DRY error code from rippled
+    assert.deepEqual(
+      transactionResult,
+      TransactionResult.getFinalTransactionResult(
+        transactionResult.hash,
+        TransactionStatus.ClaimedCostOnly,
+        true,
+      ),
+    )
+  })
+
+  it('sendIssuedCurrency - sending issued currency with applicable transfer fees, combined cases', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs * 2)
+    // GIVEN an operational address with some issued currency, and an issuing address that has enabled rippling and established a transfer fee
+    const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const customerWallet = await XRPTestUtils.randomWalletFromFaucet()
+
+    await issuedCurrencyClient.enableRippling(issuerWallet)
+    await issuedCurrencyClient.setTransferFee(1005000000, issuerWallet)
+
+    const trustLineLimit = '1000'
+    const trustLineCurrency = 'FOO'
+
+    await issuedCurrencyClient.createTrustLine(
+      issuerWallet.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      operationalWallet,
+    )
+
+    await issuedCurrencyClient.sendIssuedCurrency(
+      issuerWallet,
+      operationalWallet.getAddress(),
+      'FOO',
+      issuerWallet.getAddress(),
+      '500',
+    )
+
+    // Must create trust line from customer account to issuing account such that rippling can happen through issuing account
+    await issuedCurrencyClient.createTrustLine(
+      issuerWallet.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      customerWallet,
+    )
+
+    // WHEN an issued currency payment is made to another funded account, without the transferFee argument supplied
+    let transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
+      operationalWallet,
+      customerWallet.getAddress(),
+      'FOO',
+      issuerWallet.getAddress(),
+      '100',
+    )
+
+    console.log('Result of sending transaction without sendmax')
+    console.log(transactionResult)
+
+    // THEN the transaction fails.
+    assert.deepEqual(
+      transactionResult,
+      TransactionResult.getFinalTransactionResult(
+        transactionResult.hash,
+        TransactionStatus.ClaimedCostOnly,
+        true,
+      ),
+    )
+
+    // but, WHEN an issued currency payment is made to another funded account with the correct transferFee supplied
+    transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
+      operationalWallet,
+      customerWallet.getAddress(),
+      'FOO',
+      issuerWallet.getAddress(),
+      '100',
+      0.5,
+    )
+
+    console.log('Result of sending transaction WITH sendmax')
+    console.log(transactionResult)
+
+    // THEN the transaction fails.
+    assert.deepEqual(
+      transactionResult,
+      TransactionResult.getFinalTransactionResult(
+        transactionResult.hash,
+        TransactionStatus.Succeeded,
+        true,
+      ),
+    )
+  })
+
+  it('sendIssuedCurrency - redeem issued currency to issuer', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an operational address with some issued currency, and an issuing address that has not enabled rippling
+    const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const customerWallet = await XRPTestUtils.randomWalletFromFaucet()
+
+    const trustLineLimit = '1000'
+    const trustLineCurrency = 'FOO'
+
+    await issuedCurrencyClient.createTrustLine(
+      issuerWallet.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      customerWallet,
+    )
+
+    await issuedCurrencyClient.sendIssuedCurrency(
+      issuerWallet,
+      customerWallet.getAddress(),
+      'FOO',
+      issuerWallet.getAddress(),
+      '500',
+    )
+
+    // WHEN an issued currency payment is made back to the issuer
+    const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
+      customerWallet,
+      issuerWallet.getAddress(),
+      'FOO',
+      issuerWallet.getAddress(),
+      '100',
+    )
+
+    // THEN the payment succeeds.
+    assert.deepEqual(
+      transactionResult,
+      TransactionResult.getFinalTransactionResult(
+        transactionResult.hash,
+        TransactionStatus.Succeeded,
+        true,
+      ),
+    )
+  })
+
+  // TODO: (acorso) add test for attempting to send an issued currency payment to a user that has a trustline established with the issuer, but has not been authorized AND issuer has enabledAuthorizedTrustlines (should fail)
   // TODO: (acorso) confirm that the presence of a SendMax when not necessary also doesn't cause any problems (i.e. include the argument)
 })
