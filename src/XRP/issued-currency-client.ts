@@ -1,10 +1,22 @@
 import { XrplNetwork, XrpUtils, Wallet } from 'xpring-common-js'
+
+import { LimitAmount } from './Generated/web/org/xrpl/rpc/v1/common_pb'
+import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
+import {
+  Currency,
+  CurrencyAmount,
+  IssuedCurrencyAmount,
+} from './Generated/web/org/xrpl/rpc/v1/amount_pb'
+import {
+  TrustSet,
+  AccountSet,
+} from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
+
+import isNode from '../Common/utils'
+import CoreXrplClient from './core-xrpl-client'
 import GrpcNetworkClient from './network-clients/grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
 import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
-import isNode from '../Common/utils'
-import CoreXrplClient from './core-xrpl-client'
-import TrustLine from './shared/trustline'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
 import {
   AccountLinesResponse,
@@ -15,8 +27,8 @@ import { XrpError, XrpErrorType } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
 import GatewayBalances from './shared/gateway-balances'
+import TrustLine from './shared/trustline'
 import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
-import { AccountSet } from './Generated/node/org/xrpl/rpc/v1/transaction_pb'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -368,6 +380,75 @@ export default class IssuedCurrencyClient {
     return this.coreXrplClient.changeFlag(
       AccountSetFlag.asfNoFreeze,
       true,
+      wallet,
+    )
+  }
+
+  /**
+   * Creates a trust line between this XRPL account and an issuer of an IssuedCurrency.
+   *
+   * @see https://xrpl.org/trustset.html
+   *
+   * TODO (tedkalaw): Implement qualityIn/qualityOut.
+   *
+   * @param issuerXAddress The X-Address of the issuer to extend trust to.
+   * @param currencyName The currency this trust line applies to, as a three-letter ISO 4217 Currency Code  or a 160-bit hex value according to currency format.
+   * @param amount Decimal representation of the limit to set on this trust line.
+   * @param wallet The wallet creating the trustline.
+   */
+  public async createTrustLine(
+    issuerXAddress: string,
+    currencyName: string,
+    amount: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    if (!XrpUtils.isValidXAddress(issuerXAddress)) {
+      throw XrpError.xAddressRequired
+    }
+    const classicAddress = XrpUtils.decodeXAddress(issuerXAddress)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    if (currencyName === 'XRP') {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'createTrustLine: Trust lines can only be created for Issued Currencies',
+      )
+    }
+
+    // TODO (tedkalaw): Use X-Address directly when ripple-binary-codec supports X-Addresses.
+    const issuerAccountAddress = new AccountAddress()
+    issuerAccountAddress.setAddress(classicAddress.address)
+
+    const currency = new Currency()
+    currency.setName(currencyName)
+
+    const issuedCurrencyAmount = new IssuedCurrencyAmount()
+    issuedCurrencyAmount.setCurrency(currency)
+    issuedCurrencyAmount.setIssuer(issuerAccountAddress)
+    // TODO (tedkalaw): Support other types of amounts (number, bigInt, etc)
+    issuedCurrencyAmount.setValue(amount)
+
+    const currencyAmount = new CurrencyAmount()
+    currencyAmount.setIssuedCurrencyAmount(issuedCurrencyAmount)
+
+    const limit = new LimitAmount()
+    limit.setValue(currencyAmount)
+
+    const trustSet = new TrustSet()
+    trustSet.setLimitAmount(limit)
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
+    transaction.setTrustSet(trustSet)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      wallet,
+    )
+
+    return await this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
       wallet,
     )
   }
