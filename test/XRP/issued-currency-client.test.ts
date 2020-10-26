@@ -54,7 +54,7 @@ describe('Issued Currency Client', function (): void {
     assert.deepEqual(trustLines, expectedTrustLines)
   })
 
-  it('getTrustLines - invalid account', function (done): void {
+  it('getTrustLines - invalid account', async function (done): Promise<void> {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -64,14 +64,18 @@ describe('Issued Currency Client', function (): void {
 
     // WHEN getTrustLines is called with an invalid address THEN an error is propagated.
     const address = 'malformedAddress'
-    issuedCurrencyClient.getTrustLines(address).catch((error) => {
+    try {
+      await issuedCurrencyClient.getTrustLines(address)
+    } catch (error) {
       assert.typeOf(error, 'Error')
       assert.equal(error, XrpError.xAddressRequired)
-      done()
-    })
+    }
+    done()
   })
 
-  it('getTrustLines - invalid peerAccount', function (done): void {
+  it('getTrustLines - invalid peerAccount', async function (done): Promise<
+    void
+  > {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -79,18 +83,20 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
-    // WHEN getTrustLines is called with an invalid peerAccount address THEN an error is propagated.
+    // WHEN getTrustLines is called with an invalid peerAccount address THEN an error is thrown.
     const peerAddress = 'malformedAddress'
-    issuedCurrencyClient
-      .getTrustLines(testAddress, peerAddress)
-      .catch((error) => {
-        assert.typeOf(error, 'Error')
-        assert.equal(error, XrpError.xAddressRequired)
-        done()
-      })
+    try {
+      await issuedCurrencyClient.getTrustLines(testAddress, peerAddress)
+    } catch (error) {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.xAddressRequired)
+    }
+    done()
   })
 
-  it('getTrustLines - account not found error response', function (done): void {
+  it('getTrustLines - account not found error response', async function (done): Promise<
+    void
+  > {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
     const accountNotFoundResponse: AccountLinesResponse = {
       result: {
@@ -109,15 +115,18 @@ describe('Issued Currency Client', function (): void {
       fakeErroringJsonClient,
       XrplNetwork.Test,
     )
-    // WHEN getTrustLines is called THEN an error is propagated.
-    issuedCurrencyClient.getTrustLines(testAddress).catch((error) => {
+    // WHEN getTrustLines is called THEN an error is thrown.
+    try {
+      await issuedCurrencyClient.getTrustLines(testAddress)
+    } catch (error) {
       assert.typeOf(error, 'Error')
-      assert.equal(error, XrpError.accountNotFound)
-      done()
-    })
+    }
+    done()
   })
 
-  it('getTrustLines - invalid params error response', function (done): void {
+  it('getTrustLines - invalid params error response', async function (done): Promise<
+    void
+  > {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
     const invalidParamsResponse: AccountLinesResponse = {
       result: {
@@ -136,18 +145,13 @@ describe('Issued Currency Client', function (): void {
       fakeErroringJsonClient,
       XrplNetwork.Test,
     )
-    // WHEN getTrustLines is called THEN an error is propagated.
-    issuedCurrencyClient.getTrustLines(testAddress).catch((error) => {
+    // WHEN getTrustLines is called THEN an error is thrown.
+    try {
+      await issuedCurrencyClient.getTrustLines(testAddress)
+    } catch (error) {
       assert.typeOf(error, 'Error')
-      // TODO: why doesn't this work?
-      // I get: AssertionError: expected [Error: invalidParams] to deeply equal [Error: invalidParams]
-      // ( and same when I use assert.equal instead of assert.deepEqual)
-      // assert.deepEqual(
-      //   error,
-      //   new XrpError(XrpErrorType.Unknown, 'invalidParams'),
-      // )
-      done()
-    })
+    }
+    done()
   })
 
   it('requireAuthorizedTrustlines - successful response', async function (): Promise<
