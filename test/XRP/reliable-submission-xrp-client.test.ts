@@ -17,7 +17,11 @@ const transactionHash = 'DEADBEEF'
 
 const fakedGetBalanceValue = bigInt(10)
 const fakedTransactionStatusValue = TransactionStatus.Succeeded
-const fakedSendValue = transactionHash
+const fakedSendValue = TransactionResult.createFinalTransactionResult(
+  transactionHash,
+  TransactionStatus.Succeeded,
+  true,
+)
 const fakedRawTransactionStatusLastLedgerSequenceValue = 20
 const fakedRawTransactionStatusValidatedValue = true
 const fakedRawTransactionStatusTransactionStatusCode = transactionStatusCodeSuccess
@@ -25,7 +29,7 @@ const fakedAccountExistsValue = true
 const fakedFullPaymentValue = true
 const fakedTransactionHistoryValue = [testXrpTransaction]
 const fakedGetPaymentValue = testXrpTransaction
-const fakedTransactionResultValue = TransactionResult.getFinalTransactionResult(
+const fakedTransactionResultValue = TransactionResult.createFinalTransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
   true,
@@ -66,7 +70,7 @@ describe('Reliable Submission XRP Client', function (): void {
     )
   })
 
-  it('Get Account Balance - Response Not Modified', async function () {
+  it('getAccountBalance - Response Not Modified', async function () {
     // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` WHEN a balance is retrieved.
     const returnedValue = await this.reliableSubmissionClient.getBalance(
       testAddress,
@@ -76,7 +80,7 @@ describe('Reliable Submission XRP Client', function (): void {
     assert.deepEqual(returnedValue, fakedGetBalanceValue)
   })
 
-  it('Get Payment Status - Response Not Modified', async function () {
+  it('getPaymentStatus - Response Not Modified', async function () {
     // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` WHEN a transaction status is retrieved.
     const returnedValue = await this.reliableSubmissionClient.getPaymentStatus(
       testAddress,
@@ -86,7 +90,7 @@ describe('Reliable Submission XRP Client', function (): void {
     assert.deepEqual(returnedValue, fakedTransactionStatusValue)
   })
 
-  it('Send - Returns when the transaction is validated', async function () {
+  it('sendXrp - Returns when the transaction is validated', async function () {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
     this.timeout(5000)
 
@@ -97,17 +101,17 @@ describe('Reliable Submission XRP Client', function (): void {
     const { wallet } = Wallet.generateRandomWallet()!
 
     // WHEN a reliable send is submitted
-    const transactionHash = await this.reliableSubmissionClient.send(
+    const transactionResult = await this.reliableSubmissionClient.sendXrp(
       '1',
       testAddress,
       wallet,
     )
 
     // THEN the function returns
-    assert.deepEqual(transactionHash, fakedSendValue)
+    assert.deepEqual(transactionResult, fakedSendValue)
   })
 
-  it('Payment History - Response Not Modified', async function () {
+  it('paymentHistory - Response Not Modified', async function () {
     // GIVEN a `ReliableSubmissionXrpClient` decorating a `FakeXrpClient` WHEN transaction history is retrieved.
     const returnedValue = await this.reliableSubmissionClient.paymentHistory(
       testAddress,
@@ -117,7 +121,7 @@ describe('Reliable Submission XRP Client', function (): void {
     assert.deepEqual(returnedValue, fakedTransactionHistoryValue)
   })
 
-  it('Enable Deposit Auth - Returns when the transaction is validated', async function () {
+  it('enableDepositAuth - Returns when the transaction is validated', async function () {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
     this.timeout(5000)
 
