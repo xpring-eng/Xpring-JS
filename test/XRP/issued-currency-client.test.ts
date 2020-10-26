@@ -632,19 +632,19 @@ describe('Issued Currency Client', function (): void {
     }
 
     // WHEN monitorIncomingPayments is called
-    const subscribeResponse = await issuedCurrencyClient.monitorIncomingPayments(
+    const monitorResponse = await issuedCurrencyClient.monitorIncomingPayments(
       testAddress,
       callback,
     )
-    const expectedSubscribeResponse = {
-      id: 'subscribe_transaction_' + testAddress,
+    const expectedMonitorResponse = {
+      id: 'monitor_transactions_' + testAddress,
       result: {},
       status: 'success',
       type: 'response',
     }
 
     // THEN the result is as expected
-    assert.deepEqual(subscribeResponse, expectedSubscribeResponse)
+    assert.deepEqual(monitorResponse, expectedMonitorResponse)
   })
 
   it('monitorIncomingPayments - submission failure', function (): void {

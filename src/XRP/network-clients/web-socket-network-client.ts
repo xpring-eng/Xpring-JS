@@ -7,6 +7,10 @@ import {
   WebSocketTransactionResponse,
 } from '../shared/rippled-web-socket-schema'
 
+const sleep = (ms: number): Promise<void> => {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 /**
  * A network client for interacting with the rippled WebSocket API.
  * @see https://xrpl.org/rippled-api.html
@@ -17,13 +21,8 @@ export default class WebSocketNetworkClient {
     string,
     (data: WebSocketTransactionResponse) => void
   >
-  private callbacks: Map<string, (data: WebSocketResponse) => void>
+  private messageCallbacks: Map<string, (data: WebSocketResponse) => void>
   private waiting: Map<string, WebSocketResponse | undefined>
-  private handleErrorMessage: (data: string) => void
-
-  sleep = (ms: number): Promise<void> => {
-    return new Promise((resolve) => setTimeout(resolve, ms))
-  }
 
   /**
    * Create a new WebSocketNetworkClient.
@@ -33,24 +32,23 @@ export default class WebSocketNetworkClient {
    */
   public constructor(
     webSocketUrl: string,
-    handleErrorMessage: (message: string) => void,
+    private handleErrorMessage: (message: string) => void,
   ) {
     this.socket = new WebSocket(webSocketUrl)
     this.accountCallbacks = new Map()
-    this.callbacks = new Map()
     this.waiting = new Map()
-    this.handleErrorMessage = handleErrorMessage
 
-    this.callbacks.set('response', (data: WebSocketResponse) => {
+    this.messageCallbacks = new Map()
+    this.messageCallbacks.set('response', (data: WebSocketResponse) => {
       const dataStatusResponse = data as WebSocketStatusResponse
       this.waiting.set(dataStatusResponse.id, data)
     })
-    this.callbacks.set('transaction', this.handleTransaction)
+    this.messageCallbacks.set('transaction', this.handleTransaction)
 
     this.socket.addEventListener('message', (event) => {
       const parsedData = JSON.parse(event.data) as WebSocketResponse
       const dataType = parsedData.type
-      const callback = this.callbacks.get(dataType)
+      const callback = this.messageCallbacks.get(dataType)
       if (callback) {
         callback(parsedData)
       } else {
@@ -78,15 +76,15 @@ export default class WebSocketNetworkClient {
    */
   private handleTransaction = (data: WebSocketResponse) => {
     const dataTransaction = data as WebSocketTransactionResponse
-    const account = dataTransaction.transaction.Destination
-    const callback = this.accountCallbacks.get(account)
+    const destinationAccount = dataTransaction.transaction.Destination
+    const callback = this.accountCallbacks.get(destinationAccount)
     if (callback) {
       callback(dataTransaction)
     } else {
       throw new XrpError(
         XrpErrorType.Unknown,
         'Received a transaction for an account that has not been subscribed to: ' +
-          account,
+          destinationAccount,
       )
     }
   }
@@ -101,7 +99,7 @@ export default class WebSocketNetworkClient {
     request: WebSocketRequestOptions,
   ): Promise<WebSocketStatusResponse> {
     while (this.socket.readyState === 0) {
-      await this.sleep(5)
+      await sleep(5)
     }
     if (this.socket.readyState !== 1) {
       throw new XrpError(XrpErrorType.Unknown, 'Socket is closed/closing')
@@ -110,7 +108,7 @@ export default class WebSocketNetworkClient {
 
     this.waiting.set(request.id, undefined)
     while (this.waiting.get(request.id) === undefined) {
-      await this.sleep(5)
+      await sleep(5)
     }
     const response = this.waiting.get(request.id)
     this.waiting.delete(request.id)

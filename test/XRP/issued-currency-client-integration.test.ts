@@ -16,7 +16,6 @@ import XrpClient from '../../src/XRP/xrp-client'
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
 const timeoutMs = 60 * 1000
-// const shortTimeoutMs = 10 * 1000
 
 // An address on TestNet that has a balance.
 const testAddressWithTrustLines =

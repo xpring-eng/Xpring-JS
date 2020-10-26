@@ -22,11 +22,5 @@ export interface WebSocketNetworkClientInterface {
     account: string,
   ): Promise<WebSocketStatusResponse>
 
-  // unsubscribe(
-  //   id: string,
-  //   stream: string,
-  //   // TODO make multiple streams/callbacks an option??
-  // ): Promise<void>
-
   close(): void
 }

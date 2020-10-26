@@ -5,10 +5,10 @@
  * @see https://xrpl.org/request-formatting.html
  */
 interface WebSocketRequestOptions {
-  command: unknown
+  command: string
   id: string
-  streams?: unknown[]
-  accounts?: unknown[]
+  streams?: string[]
+  accounts?: string[]
 }
 
 type WebSocketResponse = WebSocketStatusResponse | WebSocketTransactionResponse

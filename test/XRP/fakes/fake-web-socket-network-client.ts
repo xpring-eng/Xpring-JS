@@ -39,12 +39,12 @@ export class FakeWebSocketNetworkClientResponses {
   ) {}
 
   /**
-   * Construct a default response for getAccountLines request.
+   * Construct a default response for a subscribe request.
    */
   public static defaultSubscribeResponse(): WebSocketStatusResponse {
     return {
       id:
-        'subscribe_transaction_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
+        'monitor_transactions_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
       result: {},
       status: 'success',
       type: 'response',
