@@ -441,7 +441,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const [createdTrustLine] = trustLines
     const classicAddress = XrpUtils.decodeXAddress(accountToTrust.getAddress())!
 
-    // THEN a an authorized trust line is created between the wallet and the other account.
+    // THEN an authorized trust line is created between the wallet and the other account.
     assert.equal(createdTrustLine.account, classicAddress.address)
     assert.equal(createdTrustLine.limit, '0')
     assert.equal(createdTrustLine.currency, trustLineCurrency)
