@@ -400,7 +400,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.currency, trustLineCurrency)
   })
 
-  // TODO: (acorso) add line comments to explain the other steps of these test cases
   // TODO: (acorso) can any addresses be created in `before` and reused?  Can any test cases be combined?
   it('sendIssuedCurrency - issuing issued currency, combined cases', async function (): Promise<
     void
@@ -420,6 +419,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
 
     // THEN the transaction fails with claimed cost only.
+    // TODO: (acorso) What is the actual status code? -- do we need to update this once the enum is expanded?
     assert.deepEqual(
       transactionResult,
       TransactionResult.getFinalTransactionResult(
@@ -450,6 +450,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
 
     // THEN the transaction fails with claimed cost only
+    // TODO: (acorso) actual status code?
     assert.deepEqual(
       transactionResult,
       TransactionResult.getFinalTransactionResult(
@@ -488,9 +489,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
     const customerWallet = await XRPTestUtils.randomWalletFromFaucet()
 
+    // establish trust line between operational and issuing
     const trustLineLimit = '1000'
     const trustLineCurrency = 'FOO'
-
     await issuedCurrencyClient.createTrustLine(
       issuerWallet.getAddress(),
       trustLineCurrency,
@@ -498,6 +499,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       operationalWallet,
     )
 
+    // fund operational with issued currency
     await issuedCurrencyClient.sendIssuedCurrency(
       issuerWallet,
       operationalWallet.getAddress(),
@@ -507,7 +509,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
 
     // Must create trust line from customer account to issuing account such that rippling *could* happen through issuing account
-    // Even though it won't because the issuing account hasn't enabled rippling - just isolating effects.
+    // Even though it won't because the issuing account hasn't enabled rippling - just isolating what's being tested.
     await issuedCurrencyClient.createTrustLine(
       issuerWallet.getAddress(),
       trustLineCurrency,
@@ -545,11 +547,12 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
     const customerWallet = await XRPTestUtils.randomWalletFromFaucet()
 
+    // enable rippling
     await issuedCurrencyClient.enableRippling(issuerWallet)
 
+    // establish a trust line from operational to issuing
     const trustLineLimit = '1000'
     const trustLineCurrency = 'FOO'
-
     await issuedCurrencyClient.createTrustLine(
       issuerWallet.getAddress(),
       trustLineCurrency,
@@ -557,6 +560,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       operationalWallet,
     )
 
+    // fund operational with issued currency
     await issuedCurrencyClient.sendIssuedCurrency(
       issuerWallet,
       operationalWallet.getAddress(),
@@ -604,9 +608,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     await issuedCurrencyClient.enableRippling(issuerWallet)
 
+    // establish trust line from operational to issuing
     const trustLineLimit = '1000'
     const trustLineCurrency = 'FOO'
-
     await issuedCurrencyClient.createTrustLine(
       issuerWallet.getAddress(),
       trustLineCurrency,
@@ -614,6 +618,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       operationalWallet,
     )
 
+    // fund opertional with some FOO
     await issuedCurrencyClient.sendIssuedCurrency(
       issuerWallet,
       operationalWallet.getAddress(),
@@ -630,7 +635,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       customerWallet,
     )
 
-    // WHEN an issued currency payment is made to another funded account
+    // WHEN an issued currency payment of BAR is made to another funded account
     const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
       operationalWallet,
       customerWallet.getAddress(),
@@ -638,9 +643,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       issuerWallet.getAddress(),
       '100',
     )
-
-    console.log("Result of sending ic that operational doesn't have")
-    console.log(transactionResult)
 
     // THEN the transaction fails with claimed cost only.
     // NOTE: This is also a tecPATH_DRY error code from rippled
@@ -666,9 +668,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     await issuedCurrencyClient.enableRippling(issuerWallet)
     await issuedCurrencyClient.setTransferFee(1005000000, issuerWallet)
 
+    // establish trust line from operational to issuing
     const trustLineLimit = '1000'
     const trustLineCurrency = 'FOO'
-
     await issuedCurrencyClient.createTrustLine(
       issuerWallet.getAddress(),
       trustLineCurrency,
@@ -676,6 +678,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       operationalWallet,
     )
 
+    // fund operational with some FOO
     await issuedCurrencyClient.sendIssuedCurrency(
       issuerWallet,
       operationalWallet.getAddress(),
@@ -701,11 +704,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       '100',
     )
 
-    console.log('Result of sending transaction without sendmax')
-    console.log(transactionResult)
-
     // THEN the transaction fails.
     // TODO: the actual status code from rippled here is tecPATH_PARTIAL - consider adding additional TransactionStatus case.
+    // https://xrpl.org/tec-codes.html
     assert.deepEqual(
       transactionResult,
       TransactionResult.getFinalTransactionResult(
@@ -728,7 +729,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     console.log('Result of sending transaction WITH sendmax')
     console.log(transactionResult)
 
-    // THEN the transaction fails.
+    // THEN the transaction succeeds.
     assert.deepEqual(
       transactionResult,
       TransactionResult.getFinalTransactionResult(
@@ -747,9 +748,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
     const customerWallet = await XRPTestUtils.randomWalletFromFaucet()
 
+    // establish trust line from operational to issuing
     const trustLineLimit = '1000'
     const trustLineCurrency = 'FOO'
-
     await issuedCurrencyClient.createTrustLine(
       issuerWallet.getAddress(),
       trustLineCurrency,
@@ -757,6 +758,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       customerWallet,
     )
 
+    // fund a customer wallet directly with some FOO
     await issuedCurrencyClient.sendIssuedCurrency(
       issuerWallet,
       customerWallet.getAddress(),
@@ -786,5 +788,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   // TODO: (acorso) add test for attempting to send an issued currency payment to a user that has a trustline established with the issuer, but has not been authorized AND issuer has enabledAuthorizedTrustlines (should fail)
+  //  ^^ this is really under the category of testing that authorizedTrustLines is working?
   // TODO: (acorso) confirm that the presence of a SendMax when not necessary also doesn't cause any problems (i.e. include the argument)
 })
