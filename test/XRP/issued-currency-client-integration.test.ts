@@ -484,9 +484,14 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(response.type, 'response')
     assert.equal(response.id, 'monitor_transactions_' + xAddress)
 
+    await sleep(10)
+
+    // WHEN a payment is sent to that address
     await xrpClient.send(xrpAmount, xAddress, wallet2)
 
     await waitUntilMessageReceived()
+
+    //THEN the payment is successfully received
     assert(messageReceived)
   })
 
