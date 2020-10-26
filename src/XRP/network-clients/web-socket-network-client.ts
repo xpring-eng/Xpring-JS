@@ -76,7 +76,6 @@ export default class WebSocketNetworkClient {
     if (callback) {
       callback(dataTransaction)
     } else {
-      console.log('bad transaction')
       throw new XrpError(
         XrpErrorType.Unknown,
         'Received a transaction for an account that has not been subscribed to: ' +
@@ -98,7 +97,7 @@ export default class WebSocketNetworkClient {
       await this.sleep(5)
     }
     if (this.socket.readyState !== 1) {
-      throw new XrpError(XrpErrorType.Unknown, 'Socket is closed')
+      throw new XrpError(XrpErrorType.Unknown, 'Socket is closed/closing')
     }
     this.socket.send(JSON.stringify(request))
 
