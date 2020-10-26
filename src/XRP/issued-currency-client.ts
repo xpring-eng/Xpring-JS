@@ -435,7 +435,7 @@ export default class IssuedCurrencyClient {
    *                    The transfer fee associated with the issuing account, expressed as a percentage. (i.e. a value of .5 indicates a 0.5% transfer fee).
    */
   // TODO: (acorso) make this private if/when incorporated into higher level convenience methods
-  // TODO: (acorso) consider using an object for long list of params
+  // TODO: (acorso) consider using an object for potentially long list of params
   public async sendIssuedCurrency(
     sender: Wallet,
     destinationAddress: string,
