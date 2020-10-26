@@ -376,6 +376,14 @@ export default class IssuedCurrencyClient {
     )
   }
 
+  /**
+   * Prepares a TrustSet transaction to be sent and executed on the XRPL.
+   *
+   * @param accountToTrust The account to extend trust to with a trust line.
+   * @param currencyName The name of the currency to create a trust line for.
+   * @param amount The maximum amount of debt to allow on this trust line.
+   * @param wallet A wallet associated with the account extending trust.
+   */
   private async prepareTrustSetTransaction(
     accountToTrust: string,
     currencyName: string,
