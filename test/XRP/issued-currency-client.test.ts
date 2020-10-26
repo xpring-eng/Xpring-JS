@@ -12,7 +12,7 @@ import {
 } from './fakes/fake-json-network-client'
 import 'mocha'
 import TrustLine from '../../src/XRP/shared/trustline'
-import { XrpError } from '../../src/XRP'
+import { XrpError, XrpErrorType } from '../../src/XRP'
 import { AccountLinesResponse } from '../../src/XRP/shared/rippled-json-rpc-schema'
 
 const fakeSucceedingGrpcClient = new FakeXRPNetworkClient()
@@ -631,7 +631,7 @@ describe('Issued Currency Client', function (): void {
         0.5,
       )
       .catch((error) => {
-        assert.deepEqual(error, XrpError.xAddressRequired)
+        assert.equal(error.errorType, XrpErrorType.XAddressRequired)
       })
   })
 
