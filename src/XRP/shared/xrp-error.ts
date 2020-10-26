@@ -10,7 +10,6 @@ export enum XrpErrorType {
   SigningError,
   Unknown,
   XAddressRequired,
-  MalformedTransaction,
 }
 
 /**
