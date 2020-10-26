@@ -75,13 +75,13 @@ export default class XpringClient {
     )
 
     // Transact XRP to the resolved address.
-    const transactionHash = await this.xrpClient.sendWithDetails({
+    const transactionResult = await this.xrpClient.sendXrpWithDetails({
       amount,
       destination: destinationAddress,
       sender,
       memoList,
     })
 
-    return transactionHash
+    return transactionResult.hash
   }
 }

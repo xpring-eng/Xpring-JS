@@ -7,8 +7,11 @@ import {
  * The JsonNetworkClientInterface defines the calls available via the rippled JSON-RPC.
  */
 export interface JsonNetworkClientInterface {
-  getAccountLines(account: string): Promise<AccountLinesResponse>
-
+  getAccountLines(
+    account: string,
+    peerAccount?: string,
+  ): Promise<AccountLinesResponse>
+  
   /**
    * Submits a gateway_balances request to the rippled JSON RPC.
    * @see https://xrpl.org/gateway_balances.html

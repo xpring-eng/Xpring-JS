@@ -134,17 +134,17 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
-   * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
+   * @param amount A `BigInteger`, number or numeric string representing the number of drops of XRP to send.
    * @param destinationAddress A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
-   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   * @returns A promise which resolves to a TransactionResult representing the pending outcome of the submitted transaction.
    */
-  public async send(
+  public async sendXrp(
     amount: BigInteger | number | string,
     destinationAddress: string,
     sender: Wallet,
-  ): Promise<string> {
-    return this.sendWithDetails({
+  ): Promise<TransactionResult> {
+    return await this.sendXrpWithDetails({
       amount,
       destination: destinationAddress,
       sender,
@@ -156,11 +156,11 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * for additional details to be specified for use with supplementary features of the XRP ledger.
    *
    * @param sendXrpDetails - a wrapper object containing details for constructing a transaction.
-   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   * @returns A promise which resolves to a TransactionResult representing the pending outcome of the submitted transaction.
    */
-  public async sendWithDetails(
+  public async sendXrpWithDetails(
     sendXrpDetails: SendXrpDetails,
-  ): Promise<string> {
+  ): Promise<TransactionResult> {
     const {
       amount: drops,
       sender,
@@ -219,7 +219,15 @@ export default class DefaultXrpClient implements XrpClientDecorator {
         .forEach((memo) => transaction.addMemos(memo))
     }
 
-    return this.coreXrplClient.signAndSubmitTransaction(transaction, sender)
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      sender,
+    )
+    return TransactionResult.createPendingTransactionResult(
+      transactionHash,
+      TransactionStatus.Pending,
+      false,
+    )
   }
 
   /**

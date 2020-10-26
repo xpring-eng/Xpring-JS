@@ -301,7 +301,7 @@ describe('Default XRP Client', function (): void {
     const memoList = [iForgotToPickUpCarlMemo]
 
     // WHEN the account makes a transaction with a memo.
-    const transactionHash = await xrpClient.sendWithDetails({
+    const transactionResult = await xrpClient.sendXrpWithDetails({
       amount,
       destination: destinationAddress,
       sender: wallet,
@@ -313,8 +313,8 @@ describe('Default XRP Client', function (): void {
       FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
     )
 
-    assert.exists(transactionHash)
-    assert.strictEqual(transactionHash, expectedTransactionHash)
+    assert.exists(transactionResult.hash)
+    assert.strictEqual(transactionResult.hash, expectedTransactionHash)
   })
 
   it('Send XRP Transaction - success with BigInteger', async function () {
@@ -328,7 +328,7 @@ describe('Default XRP Client', function (): void {
     const amount = bigInt('10')
 
     // WHEN the account makes a transaction.
-    const transactionHash = await xrpClient.send(
+    const transactionResult = await xrpClient.sendXrp(
       amount,
       destinationAddress,
       wallet,
@@ -339,8 +339,8 @@ describe('Default XRP Client', function (): void {
       FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
     )
 
-    assert.exists(transactionHash)
-    assert.strictEqual(transactionHash, expectedTransactionHash)
+    assert.exists(transactionResult.hash)
+    assert.strictEqual(transactionResult.hash, expectedTransactionHash)
   })
 
   it('Send XRP Transaction - success with number', async function () {
@@ -354,7 +354,7 @@ describe('Default XRP Client', function (): void {
     const amount = 10
 
     // WHEN the account makes a transaction.
-    const transactionHash = await xrpClient.send(
+    const transactionResult = await xrpClient.sendXrp(
       amount,
       destinationAddress,
       wallet,
@@ -365,8 +365,8 @@ describe('Default XRP Client', function (): void {
       FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
     )
 
-    assert.exists(transactionHash)
-    assert.strictEqual(transactionHash, expectedTransactionHash)
+    assert.exists(transactionResult.hash)
+    assert.strictEqual(transactionResult.hash, expectedTransactionHash)
   })
 
   it('Send XRP Transaction - success with string', async function () {
@@ -380,7 +380,7 @@ describe('Default XRP Client', function (): void {
     const amount = '10'
 
     // WHEN the account makes a transaction.
-    const transactionHash = await xrpClient.send(
+    const transactionResult = await xrpClient.sendXrp(
       amount,
       destinationAddress,
       wallet,
@@ -391,8 +391,8 @@ describe('Default XRP Client', function (): void {
       FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
     )
 
-    assert.exists(transactionHash)
-    assert.strictEqual(transactionHash, expectedTransactionHash)
+    assert.exists(transactionResult.hash)
+    assert.strictEqual(transactionResult.hash, expectedTransactionHash)
   })
 
   it('Send XRP Transaction - failure with invalid string', function (done) {
@@ -406,7 +406,7 @@ describe('Default XRP Client', function (): void {
     const amount = 'not_a_number'
 
     // WHEN the account makes a transaction THEN an error is propagated.
-    xrpClient.send(amount, destinationAddress, wallet).catch((error) => {
+    xrpClient.sendXrp(amount, destinationAddress, wallet).catch((error) => {
       assert.typeOf(error, 'Error')
       done()
     })
@@ -431,7 +431,7 @@ describe('Default XRP Client', function (): void {
     const amount = bigInt('10')
 
     // WHEN a payment is attempted THEN an error is propagated.
-    xrpClient.send(amount, destinationAddress, wallet).catch((error) => {
+    xrpClient.sendXrp(amount, destinationAddress, wallet).catch((error) => {
       assert.typeOf(error, 'Error')
       assert.equal(
         error.message,
@@ -452,7 +452,7 @@ describe('Default XRP Client', function (): void {
     const amount = bigInt('10')
 
     // WHEN the account makes a transaction THEN an error is thrown.
-    xrpClient.send(amount, destinationAddress, wallet).catch((error) => {
+    xrpClient.sendXrp(amount, destinationAddress, wallet).catch((error) => {
       assert.equal((error as XrpError).errorType, XrpErrorType.XAddressRequired)
       done()
     })
@@ -477,7 +477,7 @@ describe('Default XRP Client', function (): void {
     const amount = bigInt('10')
 
     // WHEN a payment is attempted THEN an error is propagated.
-    xrpClient.send(amount, destinationAddress, wallet).catch((error) => {
+    xrpClient.sendXrp(amount, destinationAddress, wallet).catch((error) => {
       assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
       done()
     })
@@ -502,7 +502,7 @@ describe('Default XRP Client', function (): void {
     const amount = bigInt('10')
 
     // WHEN a payment is attempted THEN an error is propagated.
-    xrpClient.send(amount, destinationAddress, wallet).catch((error) => {
+    xrpClient.sendXrp(amount, destinationAddress, wallet).catch((error) => {
       assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
       done()
     })

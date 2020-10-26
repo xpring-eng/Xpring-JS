@@ -14,7 +14,7 @@ export default class TransactionResult {
    * @param status The result of the transaction.
    * @param validated Whether this transaction (and status) are included in a validated ledger.
    */
-  public static getPendingTransactionResult(
+  public static createPendingTransactionResult(
     hash: string,
     status: TransactionStatus,
     validated: boolean,
@@ -33,7 +33,7 @@ export default class TransactionResult {
    * @param status The result of the transaction.
    * @param validated Whether this transaction (and status) are included in a validated ledger.
    */
-  public static getFinalTransactionResult(
+  public static createFinalTransactionResult(
     hash: string,
     status: TransactionStatus,
     validated: boolean,
