@@ -54,7 +54,7 @@ describe('Issued Currency Client', function (): void {
     assert.deepEqual(trustLines, expectedTrustLines)
   })
 
-  it('getTrustLines - invalid account', async function (done): Promise<void> {
+  it('getTrustLines - invalid account', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -70,12 +70,9 @@ describe('Issued Currency Client', function (): void {
       assert.typeOf(error, 'Error')
       assert.equal(error, XrpError.xAddressRequired)
     }
-    done()
   })
 
-  it('getTrustLines - invalid peerAccount', async function (done): Promise<
-    void
-  > {
+  it('getTrustLines - invalid peerAccount', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -91,10 +88,9 @@ describe('Issued Currency Client', function (): void {
       assert.typeOf(error, 'Error')
       assert.equal(error, XrpError.xAddressRequired)
     }
-    done()
   })
 
-  it('getTrustLines - account not found error response', async function (done): Promise<
+  it('getTrustLines - account not found error response', async function (): Promise<
     void
   > {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
@@ -121,10 +117,9 @@ describe('Issued Currency Client', function (): void {
     } catch (error) {
       assert.typeOf(error, 'Error')
     }
-    done()
   })
 
-  it('getTrustLines - invalid params error response', async function (done): Promise<
+  it('getTrustLines - invalid params error response', async function (): Promise<
     void
   > {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
@@ -151,7 +146,6 @@ describe('Issued Currency Client', function (): void {
     } catch (error) {
       assert.typeOf(error, 'Error')
     }
-    done()
   })
 
   it('requireAuthorizedTrustlines - successful response', async function (): Promise<
