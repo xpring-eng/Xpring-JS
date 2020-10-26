@@ -10,6 +10,7 @@ import {
 import {
   TrustSet,
   AccountSet,
+  Transaction,
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 import isNode from '../Common/utils'
@@ -25,6 +26,7 @@ import TransactionResult from './shared/transaction-result'
 import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
 import TrustLine from './shared/trustline'
 import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
+import TrustSetFlag from './shared/trust-set-flag'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -329,13 +331,67 @@ export default class IssuedCurrencyClient {
     amount: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    if (!XrpUtils.isValidXAddress(issuerXAddress)) {
+    const trustSetTransaction = await this.prepareTrustSetTransaction(
+      issuerXAddress,
+      currencyName,
+      amount,
+      wallet,
+    )
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      trustSetTransaction,
+      wallet,
+    )
+
+    return await this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      wallet,
+    )
+  }
+
+  public async authorizeTrustLine(
+    accountToTrust: string,
+    currencyName: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const trustSetTransaction = await this.prepareTrustSetTransaction(
+      accountToTrust,
+      currencyName,
+      '0',
+      wallet,
+    )
+
+    const flags = new Flags()
+    flags.setValue(TrustSetFlag.tfSetfAuth)
+    trustSetTransaction.setFlags(flags)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      trustSetTransaction,
+      wallet,
+    )
+
+    return await this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      wallet,
+    )
+  }
+
+  private async prepareTrustSetTransaction(
+    accountToTrust: string,
+    currencyName: string,
+    amount: string,
+    wallet: Wallet,
+  ): Promise<Transaction> {
+    if (!XrpUtils.isValidXAddress(accountToTrust)) {
       throw XrpError.xAddressRequired
     }
-    const classicAddress = XrpUtils.decodeXAddress(issuerXAddress)
+    const classicAddress = XrpUtils.decodeXAddress(accountToTrust)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
+    // TODO (tedkalaw): Use X-Address directly when ripple-binary-codec supports X-Addresses.
+    const issuerAccountAddress = new AccountAddress()
+    issuerAccountAddress.setAddress(classicAddress.address)
 
     if (currencyName === 'XRP') {
       throw new XrpError(
@@ -343,11 +399,6 @@ export default class IssuedCurrencyClient {
         'createTrustLine: Trust lines can only be created for Issued Currencies',
       )
     }
-
-    // TODO (tedkalaw): Use X-Address directly when ripple-binary-codec supports X-Addresses.
-    const issuerAccountAddress = new AccountAddress()
-    issuerAccountAddress.setAddress(classicAddress.address)
-
     const currency = new Currency()
     currency.setName(currencyName)
 
@@ -369,69 +420,6 @@ export default class IssuedCurrencyClient {
     const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
     transaction.setTrustSet(trustSet)
 
-    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
-      transaction,
-      wallet,
-    )
-
-    return await this.coreXrplClient.getFinalTransactionResultAsync(
-      transactionHash,
-      wallet,
-    )
-  }
-
-  public async authorizeTrustLine(
-    accountToTrust: string,
-    currencyName: string,
-    wallet: Wallet,
-  ): Promise<TransactionResult> {
-    if (!XrpUtils.isValidXAddress(accountToTrust)) {
-      throw XrpError.xAddressRequired
-    }
-    const classicAddress = XrpUtils.decodeXAddress(accountToTrust)
-    if (!classicAddress) {
-      throw XrpError.xAddressRequired
-    }
-
-    // TODO (tedkalaw): Remove this when ripple-binary-codec supports X-Addresses.
-    const issuerAccountAddress = new AccountAddress()
-    issuerAccountAddress.setAddress(classicAddress.address)
-
-    const currency = new Currency()
-    currency.setName(currencyName)
-
-    const issuedCurrencyAmount = new IssuedCurrencyAmount()
-    issuedCurrencyAmount.setCurrency(currency)
-    issuedCurrencyAmount.setIssuer(issuerAccountAddress)
-
-    // When authorizing a trustline, set it to 0 first.
-    // TODO: Include doc.
-    issuedCurrencyAmount.setValue('0')
-
-    const currencyAmount = new CurrencyAmount()
-    currencyAmount.setIssuedCurrencyAmount(issuedCurrencyAmount)
-
-    const limit = new LimitAmount()
-    limit.setValue(currencyAmount)
-
-    const trustSet = new TrustSet()
-    trustSet.setLimitAmount(limit)
-
-    const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
-    transaction.setTrustSet(trustSet)
-
-    const flags = new Flags()
-    flags.setValue(65536)
-    transaction.setFlags(flags)
-
-    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
-      transaction,
-      wallet,
-    )
-
-    return await this.coreXrplClient.getFinalTransactionResultAsync(
-      transactionHash,
-      wallet,
-    )
+    return transaction
   }
 }
