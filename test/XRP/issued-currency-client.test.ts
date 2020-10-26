@@ -654,7 +654,7 @@ describe('Issued Currency Client', function (): void {
         0.5,
       )
       .catch((error) => {
-        assert.deepEqual(error, XrpError.xAddressRequired)
+        assert.equal(error.errorType, XrpErrorType.XAddressRequired)
       })
   })
 })
