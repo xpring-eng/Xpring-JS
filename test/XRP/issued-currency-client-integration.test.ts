@@ -421,37 +421,32 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   it.only('authorizeTrustline - valid account', async function (): Promise<
     void
   > {
-    console.log('in test')
     this.timeout(timeoutMs)
     const accountToTrust = await XRPTestUtils.randomWalletFromFaucet()
 
-    // GIVEN an existing testnet account and an issuer's wallet
-    // WHEN a trustline is created with the issuer with a positive value
-    const res = await issuedCurrencyClient.requireAuthorizedTrustlines(wallet)
-    console.log(res.hash)
-    const authRes = await issuedCurrencyClient.authorizeTrustLine(
+    // GIVEN an existing testnet account requiring authorized trust lines
+    // and another account
+    await issuedCurrencyClient.requireAuthorizedTrustlines(wallet)
+
+    const trustLineCurrency = 'USD'
+    // WHEN a trust line is authorized with another account
+    await issuedCurrencyClient.authorizeTrustLine(
       accountToTrust.getAddress(),
       'USD',
       wallet,
     )
 
-    console.log(authRes.hash)
-
-    console.log('about to call')
     const trustLines = await issuedCurrencyClient.getTrustLines(
       wallet.getAddress(),
     )
-    console.log('wallet trustlines', trustLines)
 
-    const accountToTrustTrustLines2 = await issuedCurrencyClient.getTrustLines(
-      accountToTrust.getAddress(),
-    )
-    console.log('accounttotrust', accountToTrustTrustLines2)
-    console.log('called')
+    const [createdTrustLine] = trustLines
+    const classicAddress = XrpUtils.decodeXAddress(accountToTrust.getAddress())!
 
-    // THEN a trustline is created between the wallet and the issuer.
-    assert.isArray(trustLines)
-    assert.isNotEmpty(trustLines)
-    console.log('finished the function')
+    // THEN a an authorized trust line is created between the wallet and the other account.
+    assert.equal(createdTrustLine.account, classicAddress.address)
+    assert.equal(createdTrustLine.limit, '0')
+    assert.equal(createdTrustLine.currency, trustLineCurrency)
+    assert.isTrue(createdTrustLine.authorized)
   })
 })

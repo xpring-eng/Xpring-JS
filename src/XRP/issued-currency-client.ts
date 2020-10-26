@@ -415,7 +415,7 @@ export default class IssuedCurrencyClient {
     if (currencyName === 'XRP') {
       throw new XrpError(
         XrpErrorType.InvalidInput,
-        'createTrustLine: Trust lines can only be created for Issued Currencies',
+        'prepareTrustSetTransaction',
       )
     }
     const currency = new Currency()
