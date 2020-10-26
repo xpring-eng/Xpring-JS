@@ -15,7 +15,7 @@ type WebSocketResponse = WebSocketStatusResponse | WebSocketTransactionResponse
 
 interface WebSocketStatusResponse {
   id: string
-  result: WebSocketTransactionResponse | undefined
+  result: WebSocketTransactionResponse | EmptyObject
   status: string
   type: string
 }
@@ -27,7 +27,7 @@ interface WebSocketTransactionResponse {
   ledger_hash: string
   ledger_index: number
   meta: {
-    AffectedNodes: ChangedNode[] // TODO fix this
+    AffectedNodes: ChangedNode[]
     TransactionIndex: number
     TransactionResult: string
     delivered_amount?: string
@@ -96,6 +96,10 @@ interface WebSocketTransaction {
   TxnSignature: string
   date: number
   hash: string
+}
+
+type EmptyObject = {
+  [K in any]: never
 }
 
 export {

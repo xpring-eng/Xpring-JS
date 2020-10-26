@@ -30,8 +30,7 @@ export class FakeWebSocketNetworkClientResponses {
   /**
    * Construct a new set of responses.
    *
-   * @param getSubscribeResponse The response or error that will be returned from the getAccountLines request.
-   *                                Default is the example at https://xrpl.org/account_lines.html#response-format for JSON-RPC.
+   * @param getSubscribeResponse The response or error that will be returned from the subscribe request.
    */
   public constructor(
     public readonly getSubscribeResponse: Result<
@@ -44,8 +43,9 @@ export class FakeWebSocketNetworkClientResponses {
    */
   public static defaultSubscribeResponse(): WebSocketStatusResponse {
     return {
-      id: 'subscribe_transaction',
-      result: undefined,
+      id:
+        'subscribe_transaction_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
+      result: {},
       status: 'success',
       type: 'response',
     }

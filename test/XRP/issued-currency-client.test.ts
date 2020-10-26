@@ -14,7 +14,10 @@ import 'mocha'
 import TrustLine from '../../src/XRP/shared/trustline'
 import { XrpError } from '../../src/XRP'
 import { AccountLinesResponse } from '../../src/XRP/shared/rippled-json-rpc-schema'
-import { FakeWebSocketNetworkClient } from './fakes/fake-web-socket-network-client'
+import {
+  FakeWebSocketNetworkClient,
+  FakeWebSocketNetworkClientResponses,
+} from './fakes/fake-web-socket-network-client'
 import { WebSocketResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
 
 const fakeSucceedingGrpcClient = new FakeXRPNetworkClient()
@@ -634,14 +637,44 @@ describe('Issued Currency Client', function (): void {
       callback,
     )
     const expectedSubscribeResponse = {
-      id: 'subscribe_transaction',
-      result: undefined,
+      id: 'subscribe_transaction_' + testAddress,
+      result: {},
       status: 'success',
       type: 'response',
     }
-    // TODO get the fake websocket client to handle the address too
 
     // THEN the result is as expected
     assert.deepEqual(subscribeResponse, expectedSubscribeResponse)
+  })
+
+  it('monitorIncomingPayments - submission failure', function (): void {
+    // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
+    const failureResponses = new FakeWebSocketNetworkClientResponses(
+      FakeWebSocketNetworkClientResponses.defaultError,
+    )
+
+    const callback = (_data: WebSocketResponse) => {
+      return
+    }
+
+    const failingNetworkClient = new FakeWebSocketNetworkClient(
+      failureResponses,
+    )
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      failingNetworkClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN monitorIncomingPayments is attempted THEN an error is propagated.
+    issuedCurrencyClient
+      .monitorIncomingPayments(testAddress, callback)
+      .catch((error) => {
+        assert.deepEqual(
+          error,
+          FakeWebSocketNetworkClientResponses.defaultError,
+        )
+      })
   })
 })
