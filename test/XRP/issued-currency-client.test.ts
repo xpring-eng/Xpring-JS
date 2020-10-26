@@ -62,7 +62,7 @@ describe('Issued Currency Client', function (): void {
     assert.deepEqual(trustLines, expectedTrustLines)
   })
 
-  it('getTrustLines - invalid account', function (done): void {
+  it('getTrustLines - invalid account', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -73,14 +73,35 @@ describe('Issued Currency Client', function (): void {
 
     // WHEN getTrustLines is called with an invalid address THEN an error is propagated.
     const address = 'malformedAddress'
-    issuedCurrencyClient.getTrustLines(address).catch((error) => {
+    try {
+      await issuedCurrencyClient.getTrustLines(address)
+    } catch (error) {
       assert.typeOf(error, 'Error')
       assert.equal(error, XrpError.xAddressRequired)
-      done()
-    })
+    }
   })
 
-  it('getTrustLines - account not found error response', function (done): void {
+  it('getTrustLines - invalid peerAccount', async function (): Promise<void> {
+    // GIVEN an IssuedCurrencyClient
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getTrustLines is called with an invalid peerAccount address THEN an error is thrown.
+    const peerAddress = 'malformedAddress'
+    try {
+      await issuedCurrencyClient.getTrustLines(testAddress, peerAddress)
+    } catch (error) {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.xAddressRequired)
+    }
+  })
+
+  it('getTrustLines - account not found error response', async function (): Promise<
+    void
+  > {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
     const accountNotFoundResponse: AccountLinesResponse = {
       result: {
@@ -100,12 +121,41 @@ describe('Issued Currency Client', function (): void {
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
-    // WHEN getTrustLines is called THEN an error is propagated.
-    issuedCurrencyClient.getTrustLines(testAddress).catch((error) => {
+    // WHEN getTrustLines is called THEN an error is thrown.
+    try {
+      await issuedCurrencyClient.getTrustLines(testAddress)
+    } catch (error) {
       assert.typeOf(error, 'Error')
-      assert.equal(error, XrpError.accountNotFound)
-      done()
-    })
+    }
+  })
+
+  it('getTrustLines - invalid params error response', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
+    const invalidParamsResponse: AccountLinesResponse = {
+      result: {
+        error: 'invalidParams',
+        status: 'error',
+      },
+    }
+    const fakeErroringJsonClientResponses = new FakeJsonNetworkClientResponses(
+      invalidParamsResponse,
+    )
+    const fakeErroringJsonClient = new FakeJsonNetworkClient(
+      fakeErroringJsonClientResponses,
+    )
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeErroringJsonClient,
+      XrplNetwork.Test,
+    )
+    // WHEN getTrustLines is called THEN an error is thrown.
+    try {
+      await issuedCurrencyClient.getTrustLines(testAddress)
+    } catch (error) {
+      assert.typeOf(error, 'Error')
+    }
   })
 
   it('requireAuthorizedTrustlines - successful response', async function (): Promise<
