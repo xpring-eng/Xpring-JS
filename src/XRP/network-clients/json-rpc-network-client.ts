@@ -3,12 +3,14 @@ import {
   JsonRpcRequestOptions,
 } from '../shared/rippled-json-rpc-schema'
 import axios, { AxiosInstance, AxiosResponse } from 'axios'
+import { JsonNetworkClientInterface } from './json-network-client-interface'
 
 /**
  * A network client for interacting with the rippled JSON RPC.
  * @see https://xrpl.org/rippled-api.html
  */
-export default class JsonRpcNetworkClient {
+export default class JsonRpcNetworkClient
+  implements JsonNetworkClientInterface {
   private readonly axiosInstance: AxiosInstance
 
   /**
