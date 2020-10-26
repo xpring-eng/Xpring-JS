@@ -26,11 +26,61 @@ interface WebSocketTransactionResponse {
   engine_result_message: string
   ledger_hash: string
   ledger_index: number
-  meta: any // TODO make this better
+  meta: {
+    AffectedNodes: ChangedNode[] // TODO fix this
+    TransactionIndex: number
+    TransactionResult: string
+    delivered_amount?: string
+  }
   status: string
   transaction: WebSocketTransaction
   type: string
   validated: boolean
+}
+
+type ChangedNode = CreatedNode | ModifiedNode | DeletedNode
+
+interface CreatedNode {
+  LedgerEntryType: string
+  LedgerIndex: string
+  NewFields: {
+    Account: string
+    Balance: string
+    Sequence: number
+  }
+}
+
+interface ModifiedNode {
+  FinalFields: {
+    Account: string
+    Balance: string
+    Flags: number
+    OwnerCount: number
+    Sequence: number
+  }
+  LedgerEntryType: string
+  LedgerIndex: string
+  PreviousFields: {
+    Balance: string
+    OwnerCount?: number
+    Sequence?: number
+  }
+  PreviousTxnID: string
+  PreviousTxnLgrSeq: number
+}
+
+interface DeletedNode {
+  FinalFields: {
+    ExchangeRate: string
+    Flags: number
+    RootIndex: string
+    TakerGetsCurrency: string
+    TakerGetsIssuer: string
+    TakerPaysCurrency: string
+    TakerPaysIssuer: string
+  }
+  LedgerEntryType: string
+  LedgerIndex: string
 }
 
 interface WebSocketTransaction {
