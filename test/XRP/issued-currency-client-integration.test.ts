@@ -418,9 +418,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.currency, trustLineCurrency)
   })
 
-  it.only('authorizeTrustline - valid account', async function (): Promise<
-    void
-  > {
+  it('authorizeTrustline - valid account', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const accountToTrust = await XRPTestUtils.randomWalletFromFaucet()
 
