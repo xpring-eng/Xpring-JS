@@ -331,20 +331,11 @@ export default class IssuedCurrencyClient {
     amount: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    const trustSetTransaction = await this.prepareTrustSetTransaction(
+    return await this.sendTrustSetTransaction(
       issuerXAddress,
       currencyName,
       amount,
-      wallet,
-    )
-
-    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
-      trustSetTransaction,
-      wallet,
-    )
-
-    return await this.coreXrplClient.getFinalTransactionResultAsync(
-      transactionHash,
+      undefined,
       wallet,
     )
   }
@@ -366,16 +357,37 @@ export default class IssuedCurrencyClient {
   ): Promise<TransactionResult> {
     // When authorizing a trust line, the value of the trust line is set to 0.
     // See https://xrpl.org/authorized-trust-lines.html#authorizing-trust-lines
-    const trustSetTransaction = await this.prepareTrustSetTransaction(
+    return await this.sendTrustSetTransaction(
       accountToAuthorize,
       currencyName,
       '0',
+      TrustSetFlag.tfSetfAuth,
       wallet,
     )
+  }
 
-    const flags = new Flags()
-    flags.setValue(TrustSetFlag.tfSetfAuth)
-    trustSetTransaction.setFlags(flags)
+  /*
+   * Creates and sends a TrustSet transaction to be sent and executed on the XRPL.
+   *
+   * @param accountToTrust The account to extend trust to with a trust line.
+   * @param currencyName The name of the currency to create a trust line for.
+   * @param amount The maximum amount of debt to allow on this trust line.
+   * @param wallet A wallet associated with the account extending trust.
+   */
+  private async sendTrustSetTransaction(
+    accountToTrust: string,
+    currencyName: string,
+    amount: string,
+    flags: number | undefined,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const trustSetTransaction = await this.prepareTrustSetTransaction(
+      accountToTrust,
+      currencyName,
+      amount,
+      flags,
+      wallet,
+    )
 
     const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
       trustSetTransaction,
@@ -400,6 +412,7 @@ export default class IssuedCurrencyClient {
     accountToTrust: string,
     currencyName: string,
     amount: string,
+    flags: number | undefined,
     wallet: Wallet,
   ): Promise<Transaction> {
     if (!XrpUtils.isValidXAddress(accountToTrust)) {
@@ -409,6 +422,7 @@ export default class IssuedCurrencyClient {
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
+
     // TODO (tedkalaw): Use X-Address directly when ripple-binary-codec supports X-Addresses.
     const issuerAccountAddress = new AccountAddress()
     issuerAccountAddress.setAddress(classicAddress.address)
@@ -439,6 +453,12 @@ export default class IssuedCurrencyClient {
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
     transaction.setTrustSet(trustSet)
+
+    if (flags !== undefined) {
+      const transactionFlags = new Flags()
+      transactionFlags.setValue(flags)
+      transaction.setFlags(transactionFlags)
+    }
 
     return transaction
   }
