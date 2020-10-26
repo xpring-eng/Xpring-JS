@@ -14,7 +14,7 @@ interface WebSocketRequestOptions {
 type WebSocketResponse = WebSocketStatusResponse | WebSocketTransactionResponse
 
 interface WebSocketStatusResponse {
-  id?: string
+  id: string
   result: WebSocketTransactionResponse | undefined
   status: string
   type: string

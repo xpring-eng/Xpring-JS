@@ -38,12 +38,6 @@ export default class WebSocketNetworkClient {
 
     this.callbacks.set('response', (data: WebSocketResponse) => {
       const dataStatusResponse = data as WebSocketStatusResponse
-      if (dataStatusResponse.id === undefined) {
-        throw new XrpError(
-          XrpErrorType.Unknown,
-          'Response type does not contain an id',
-        )
-      }
       this.waiting.set(dataStatusResponse.id, data)
     })
     this.callbacks.set('transaction', this.handleTransaction)
