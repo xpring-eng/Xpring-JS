@@ -279,7 +279,7 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
           transactionStatus,
           isValidated,
         )
-      : TransactionResult.getPendingTransactionResult(
+      : TransactionResult.createPendingTransactionResult(
           transactionHash,
           transactionStatus,
           isValidated,

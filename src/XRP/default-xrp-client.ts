@@ -223,7 +223,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
       transaction,
       sender,
     )
-    return TransactionResult.getPendingTransactionResult(
+    return TransactionResult.createPendingTransactionResult(
       transactionHash,
       TransactionStatus.Pending,
       false,
