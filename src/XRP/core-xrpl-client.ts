@@ -274,7 +274,7 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
     // TODO: add logic to this method to investigate the transaction's last ledger sequence,
     // the XRPL latest ledger sequence, and make a more granular distinction in case of yet-unvalidated txn??
     return isValidated
-      ? TransactionResult.getFinalTransactionResult(
+      ? TransactionResult.createFinalTransactionResult(
           transactionHash,
           transactionStatus,
           isValidated,
@@ -332,7 +332,7 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
     const finalStatus = lastLedgerPassed
       ? TransactionStatus.LastLedgerSequenceExpired
       : this.getFinalTransactionStatus(rawTransactionStatus)
-    return TransactionResult.getFinalTransactionResult(
+    return TransactionResult.createFinalTransactionResult(
       transactionHash,
       finalStatus,
       rawTransactionStatus.isValidated,
