@@ -17,7 +17,7 @@ const transactionHash = 'DEADBEEF'
 
 const fakedGetBalanceValue = bigInt(10)
 const fakedTransactionStatusValue = TransactionStatus.Succeeded
-const fakedSendValue = TransactionResult.getFinalTransactionResult(
+const fakedSendValue = TransactionResult.createFinalTransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
   true,
@@ -29,7 +29,7 @@ const fakedAccountExistsValue = true
 const fakedFullPaymentValue = true
 const fakedTransactionHistoryValue = [testXrpTransaction]
 const fakedGetPaymentValue = testXrpTransaction
-const fakedTransactionResultValue = TransactionResult.getFinalTransactionResult(
+const fakedTransactionResultValue = TransactionResult.createFinalTransactionResult(
   transactionHash,
   TransactionStatus.Succeeded,
   true,

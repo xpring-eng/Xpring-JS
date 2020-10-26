@@ -18,7 +18,7 @@ import TransactionResult from '../../src/XRP/shared/transaction-result'
 const fakeBalance = bigInt(10)
 const fakePaymentStatus = TransactionStatus.Succeeded
 const fakeTransactionHash = 'deadbeefdeadbeefdeadbeef'
-const fakeSendXrpValue = TransactionResult.getFinalTransactionResult(
+const fakeSendXrpValue = TransactionResult.createFinalTransactionResult(
   fakeTransactionHash,
   TransactionStatus.Succeeded,
   true,
@@ -26,7 +26,7 @@ const fakeSendXrpValue = TransactionResult.getFinalTransactionResult(
 const fakeAccountExistsResult = true
 const fakePaymentHistoryValue = []
 const fakeGetPaymentValue = testXrpTransaction
-const fakedSuccessfulTransactionResult = TransactionResult.getFinalTransactionResult(
+const fakedSuccessfulTransactionResult = TransactionResult.createFinalTransactionResult(
   fakeTransactionHash,
   TransactionStatus.Succeeded,
   true,
