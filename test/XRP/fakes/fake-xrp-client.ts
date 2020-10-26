@@ -12,13 +12,15 @@ class FakeXrpClient implements XrpClientDecorator {
   public constructor(
     public getBalanceValue: Result<BigInteger>,
     public getPaymentStatusValue: Result<TransactionStatus>,
-    public transactionHash: Result<string>,
+    public transactionResult: Result<TransactionResult>,
     public accountExistsValue: Result<boolean>,
     public paymentHistoryValue: Result<Array<XrpTransaction>>,
     public getPaymentValue: Result<XrpTransaction>,
     public enableDepositAuthValue: Result<TransactionResult>,
     public authorizeSendingAccountValue: Result<TransactionResult>,
     public unauthorizeSendingAccountValue: Result<TransactionResult>,
+    // TODO: remove `transactionHash` from constructor once `XpringClient` is deprecated and tests are removed.
+    public transactionHash: Result<string> = 'deadbeef',
     public readonly network: XrplNetwork = XrplNetwork.Test,
   ) {}
 
@@ -30,6 +32,7 @@ class FakeXrpClient implements XrpClientDecorator {
     return FakeXrpClient.returnOrThrow(this.getPaymentStatusValue)
   }
 
+  // TODO: remove `send` and `sendWithDetails` once `XpringClient` has been deprecated and tests removed.
   async send(
     _amount: BigInteger | number | string,
     _destination: string,
@@ -40,6 +43,20 @@ class FakeXrpClient implements XrpClientDecorator {
 
   async sendWithDetails(_sendXrpDetails: SendXrpDetails): Promise<string> {
     return FakeXrpClient.returnOrThrow(this.transactionHash)
+  }
+
+  async sendXrp(
+    _amount: BigInteger | number | string,
+    _destination: string,
+    _sender: Wallet,
+  ): Promise<TransactionResult> {
+    return FakeXrpClient.returnOrThrow(this.transactionResult)
+  }
+
+  async sendXrpWithDetails(
+    _sendXrpDetails: SendXrpDetails,
+  ): Promise<TransactionResult> {
+    return FakeXrpClient.returnOrThrow(this.transactionResult)
   }
 
   async accountExists(_address: string): Promise<boolean> {
