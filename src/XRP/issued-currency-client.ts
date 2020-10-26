@@ -349,13 +349,24 @@ export default class IssuedCurrencyClient {
     )
   }
 
+  /**
+   * Creates an authorized trust line between this XRPL account and another account.
+   *
+   * @see https://xrpl.org/authorized-trust-lines.html
+   *
+   * @param accountToAuthorize The X-Address of the address to authorize.
+   * @param currencyName The currency to authorize a trust line for.
+   * @param wallet The wallet creating the trust line.
+   */
   public async authorizeTrustLine(
-    accountToTrust: string,
+    accountToAuthorize: string,
     currencyName: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
+    // When authorizing a trust line, the value of the trust line is set to 0.
+    // See https://xrpl.org/authorized-trust-lines.html#authorizing-trust-lines
     const trustSetTransaction = await this.prepareTrustSetTransaction(
-      accountToTrust,
+      accountToAuthorize,
       currencyName,
       '0',
       wallet,
