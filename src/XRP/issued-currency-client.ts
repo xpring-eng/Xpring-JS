@@ -351,6 +351,7 @@ export default class IssuedCurrencyClient {
 
   /**
    * Creates an authorized trust line between this XRPL account and another account.
+   * An authorized trust line will only be created if `requiredAuthorizedTrustlines` is called first.
    *
    * @see https://xrpl.org/authorized-trust-lines.html
    *
