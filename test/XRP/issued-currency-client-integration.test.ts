@@ -8,6 +8,7 @@ import {
   AccountRootFlag,
   TransactionResult,
   TransactionStatus,
+  XrpErrorType,
 } from '../../src/XRP/shared'
 
 // A timeout for these tests.
@@ -344,6 +345,26 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       result,
       AccountRootFlag.LSF_NO_FREEZE,
     )
+  })
+
+  it('createTrustLine - creating a trustline with XRP', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    // GIVEN an existing testnet account and an issuer's wallet
+    // WHEN a trust line is created with the issuer with a value of 0
+    try {
+      await issuedCurrencyClient.createTrustLine(
+        issuer.getAddress(),
+        'XRP',
+        '0',
+        wallet,
+      )
+    } catch (error) {
+      // THEN an error is thrown.
+      assert.equal(error.errorType, XrpErrorType.InvalidInput)
+    }
   })
 
   it('createTrustLine - adding a trustline with 0 value', async function (): Promise<

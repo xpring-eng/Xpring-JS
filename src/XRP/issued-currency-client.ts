@@ -343,6 +343,13 @@ export default class IssuedCurrencyClient {
       throw XrpError.xAddressRequired
     }
 
+    if (currencyName === 'XRP') {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'createTrustLine: Trust lines can only be created for Issued Currencies',
+      )
+    }
+
     // TODO (tedkalaw): Use X-Address directly when ripple-binary-codec supports X-Addresses.
     const issuerAccountAddress = new AccountAddress()
     issuerAccountAddress.setAddress(classicAddress.address)
