@@ -1,5 +1,5 @@
 /**
- * Flags used in TrusetSet transactions.
+ * Flags used in TrustSet transactions.
  *
  * @see https://xrpl.org/trustset.html#trustset-flags
  */
