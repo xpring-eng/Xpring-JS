@@ -52,6 +52,7 @@ export default class IssuedCurrencyClient {
     grpcUrl: string,
     jsonUrl: string,
     webSocketUrl: string,
+    handleWebSocketErrorMessage: (data: string) => void,
     network: XrplNetwork,
     forceWeb = false,
   ): IssuedCurrencyClient {
@@ -62,7 +63,7 @@ export default class IssuedCurrencyClient {
     return new IssuedCurrencyClient(
       grpcNetworkClient,
       new JsonRpcNetworkClient(jsonUrl),
-      new WebSocketNetworkClient(webSocketUrl),
+      new WebSocketNetworkClient(webSocketUrl, handleWebSocketErrorMessage),
       network,
     )
   }

@@ -19,6 +19,7 @@ export default class WebSocketNetworkClient {
   >
   private callbacks: Map<string, (data: WebSocketResponse) => void>
   private waiting: Map<string, WebSocketResponse | undefined>
+  private handleErrorMessage: (data: string) => void
 
   sleep = (ms: number): Promise<void> => {
     return new Promise((resolve) => setTimeout(resolve, ms))
@@ -30,11 +31,15 @@ export default class WebSocketNetworkClient {
    * @param webSocketUrl The URL of the rippled node to query.
    * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
    */
-  public constructor(webSocketUrl: string) {
+  public constructor(
+    webSocketUrl: string,
+    handleErrorMessage: (message: string) => void,
+  ) {
     this.socket = new WebSocket(webSocketUrl)
     this.accountCallbacks = new Map()
     this.callbacks = new Map()
     this.waiting = new Map()
+    this.handleErrorMessage = handleErrorMessage
 
     this.callbacks.set('response', (data: WebSocketResponse) => {
       const dataStatusResponse = data as WebSocketStatusResponse
@@ -48,19 +53,21 @@ export default class WebSocketNetworkClient {
       const callback = this.callbacks.get(dataType)
       if (callback) {
         callback(parsedData)
-      } // else {
-      //   // TODO handle this better - maybe same as the error event listener
-      // }
+      } else {
+        this.handleErrorMessage(
+          'Received unhandlable message: ' + (event.data as string),
+        )
+      }
     })
 
     this.socket.addEventListener('close', (event) => {
-      console.log('Disconnected...', event.reason)
-      // TODO handle this better
+      this.handleErrorMessage(
+        'Web socket disconnected, ' + (event.reason as string),
+      )
     })
 
     this.socket.addEventListener('error', (event) => {
-      console.log('Error: ', event)
-      // TODO throw an error somehow - maybe passed into the constructor?
+      this.handleErrorMessage('Error: ' + (event as string))
     })
   }
 

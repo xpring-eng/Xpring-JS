@@ -30,6 +30,7 @@ const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoi
   rippledGrpcUrl,
   rippledJsonUrl,
   rippledWebSocketUrl,
+  console.log,
   XrplNetwork.Test,
 )
 
@@ -482,7 +483,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(response.status, 'success')
     assert.equal(response.type, 'response')
     assert.equal(response.id, 'monitor_transactions_' + xAddress)
-
 
     await xrpClient.send(xrpAmount, xAddress, wallet2)
 
