@@ -86,6 +86,7 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
+      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -148,6 +149,7 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeErroringJsonClient,
+      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
     // WHEN getTrustLines is called THEN an error is thrown.
