@@ -39,13 +39,13 @@ export default interface XrpClientDecorator {
    * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
    * @param destination A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
-   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   * @returns A promise which resolves to a TransactionResult representing the outcome of the submitted transaction.
    */
-  send(
+  sendXrp(
     amount: BigInteger | number | string,
     destination: string,
     sender: Wallet,
-  ): Promise<string>
+  ): Promise<TransactionResult>
 
   /**
    * Send the given amount of XRP from the source wallet to the destination PayID, allowing
@@ -53,9 +53,9 @@ export default interface XrpClientDecorator {
    * ledger.
    *
    * @param sendXrpDetails - a wrapper object containing details for constructing a transaction.
-   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   * @returns A promise which resolves to a TransactionResult representing the outcome of the submitted transaction.
    */
-  sendWithDetails(sendXrpDetails: SendXrpDetails): Promise<string>
+  sendXrpWithDetails(sendXrpDetails: SendXrpDetails): Promise<TransactionResult>
 
   /**
    * Check if an address exists on the XRP Ledger.

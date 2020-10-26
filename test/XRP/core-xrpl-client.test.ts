@@ -106,7 +106,7 @@ describe('Common XRPL Client', function (): void {
       wallet,
     )
     // THEN it returns and the result is as expected.
-    const expectedTransactionResult = TransactionResult.getFinalTransactionResult(
+    const expectedTransactionResult = TransactionResult.createFinalTransactionResult(
       transactionHash,
       TransactionStatus.Succeeded,
       true,
@@ -219,7 +219,7 @@ describe('Common XRPL Client', function (): void {
     )
 
     // THEN it returns and the result is as expected.
-    const expectedResult = TransactionResult.getFinalTransactionResult(
+    const expectedResult = TransactionResult.createFinalTransactionResult(
       transactionHash,
       TransactionStatus.LastLedgerSequenceExpired,
       false,

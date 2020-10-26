@@ -282,7 +282,7 @@ const destinationAddress = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
 const generationResult = Wallet.generateRandomWallet();
 const senderWallet = generationResult.wallet;
 
-const transactionHash = await xrpClient.send(amount, destinationAddress, senderWallet);
+const transactionResult = await xrpClient.sendXrp(amount, destinationAddress, senderWallet);
 ```
 
 **Note:** The above example will yield an "Account not found." error because
