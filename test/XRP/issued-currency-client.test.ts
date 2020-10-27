@@ -14,17 +14,10 @@ import 'mocha'
 import TrustLine from '../../src/XRP/shared/trustline'
 import { XrpError } from '../../src/XRP'
 import { AccountLinesResponse } from '../../src/XRP/shared/rippled-json-rpc-schema'
-import {
-  FakeWebSocketNetworkClient,
-  FakeWebSocketNetworkClientResponses,
-} from './fakes/fake-web-socket-network-client'
-import { WebSocketResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
 
 const fakeSucceedingGrpcClient = new FakeXRPNetworkClient()
 
 const fakeSucceedingJsonClient = new FakeJsonNetworkClient()
-
-const fakeSucceedingWebSocketClient = new FakeWebSocketNetworkClient()
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -40,7 +33,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -67,7 +59,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -86,7 +77,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -119,7 +109,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeErroringJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
     // WHEN getTrustLines is called THEN an error is thrown.
@@ -149,7 +138,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeErroringJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
     // WHEN getTrustLines is called THEN an error is thrown.
@@ -167,7 +155,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -197,7 +184,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -216,7 +202,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -246,7 +231,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -263,7 +247,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -291,7 +274,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -308,7 +290,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -336,7 +317,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -353,7 +333,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -381,7 +360,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -398,7 +376,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -428,7 +405,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -445,7 +421,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -473,7 +448,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -488,7 +462,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -521,7 +494,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -542,7 +514,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -570,7 +541,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -587,7 +557,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -615,7 +584,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -630,7 +598,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -658,7 +625,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
       fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -666,67 +632,5 @@ describe('Issued Currency Client', function (): void {
     issuedCurrencyClient.enableNoFreeze(this.wallet).catch((error) => {
       assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
     })
-  })
-
-  it('monitorIncomingPayments - successful response', async function (): Promise<
-    void
-  > {
-    // GIVEN an IssuedCurrencyClient.
-    const issuedCurrencyClient = new IssuedCurrencyClient(
-      fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
-      fakeSucceedingWebSocketClient,
-      XrplNetwork.Test,
-    )
-
-    const callback = (_data: WebSocketResponse) => {
-      return
-    }
-
-    // WHEN monitorIncomingPayments is called
-    const monitorResponse = await issuedCurrencyClient.monitorIncomingPayments(
-      testAddress,
-      callback,
-    )
-    const expectedMonitorResponse = {
-      id: 'monitor_transactions_' + testAddress,
-      result: {},
-      status: 'success',
-      type: 'response',
-    }
-
-    // THEN the result is as expected
-    assert.deepEqual(monitorResponse, expectedMonitorResponse)
-  })
-
-  it('monitorIncomingPayments - submission failure', function (): void {
-    // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
-    const failureResponses = new FakeWebSocketNetworkClientResponses(
-      FakeWebSocketNetworkClientResponses.defaultError,
-    )
-
-    const callback = (_data: WebSocketResponse) => {
-      return
-    }
-
-    const failingNetworkClient = new FakeWebSocketNetworkClient(
-      failureResponses,
-    )
-    const issuedCurrencyClient = new IssuedCurrencyClient(
-      fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
-      failingNetworkClient,
-      XrplNetwork.Test,
-    )
-
-    // WHEN monitorIncomingPayments is attempted THEN an error is propagated.
-    issuedCurrencyClient
-      .monitorIncomingPayments(testAddress, callback)
-      .catch((error) => {
-        assert.deepEqual(
-          error,
-          FakeWebSocketNetworkClientResponses.defaultError,
-        )
-      })
   })
 })
