@@ -22,10 +22,10 @@ import { JsonNetworkClientInterface } from './network-clients/json-network-clien
 import { XrpError, XrpErrorType } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
-import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
 import TrustLine from './shared/trustline'
 import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
 import {
+  WebSocketAccountLinesResponse,
   WebSocketStatusResponse,
   WebSocketTransactionResponse,
 } from './shared/rippled-web-socket-schema'
@@ -110,19 +110,16 @@ export default class IssuedCurrencyClient {
       }
     }
 
-    const accountLinesResponse: AccountLinesResponse = await this.webSocketNetworkClient.getAccountLines(
+    const accountLinesResponse: WebSocketAccountLinesResponse = await this.webSocketNetworkClient.getAccountLines(
       classicAddress.address,
       peerAccount,
     )
 
-    if (accountLinesResponse.result.error) {
-      if (accountLinesResponse.result.error === 'actNotFound') {
+    if (accountLinesResponse.error) {
+      if (accountLinesResponse.error === 'actNotFound') {
         throw XrpError.accountNotFound
       } else {
-        throw new XrpError(
-          XrpErrorType.Unknown,
-          accountLinesResponse.result.error,
-        )
+        throw new XrpError(XrpErrorType.Unknown, accountLinesResponse.error)
       }
     }
 

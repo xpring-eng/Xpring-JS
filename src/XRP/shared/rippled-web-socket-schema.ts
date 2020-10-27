@@ -56,10 +56,13 @@ interface WebSocketAccountLinesResponse {
   status: string
   type: string
   result: {
-    error?: string
     account?: string
     lines?: Array<TrustLineJson>
   }
+  error?: string
+  error_code?: number
+  error_message?: string
+  request?: AccountLinesRequest
 }
 
 type ChangedNode = CreatedNode | ModifiedNode | DeletedNode
