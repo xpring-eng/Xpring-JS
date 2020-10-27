@@ -18,10 +18,15 @@ import TransactionResult from '../../src/XRP/shared/transaction-result'
 const fakeBalance = bigInt(10)
 const fakePaymentStatus = TransactionStatus.Succeeded
 const fakeTransactionHash = 'deadbeefdeadbeefdeadbeef'
+const fakeSendXrpValue = TransactionResult.createFinalTransactionResult(
+  fakeTransactionHash,
+  TransactionStatus.Succeeded,
+  true,
+)
 const fakeAccountExistsResult = true
 const fakePaymentHistoryValue = []
 const fakeGetPaymentValue = testXrpTransaction
-const fakedSuccessfulTransactionResult = TransactionResult.getFinalTransactionResult(
+const fakedSuccessfulTransactionResult = TransactionResult.createFinalTransactionResult(
   fakeTransactionHash,
   TransactionStatus.Succeeded,
   true,
@@ -46,16 +51,18 @@ describe('Xpring Client', function (): void {
   it('send - success', async function (): Promise<void> {
     // GIVEN a XpringClient composed of a fake PayIDClient and a fake XrpClient which will both succeed.
     const expectedTransactionHash = fakeTransactionHash
+
     const xrpClient = new FakeXrpClient(
       fakeBalance,
       fakePaymentStatus,
-      expectedTransactionHash,
+      fakeSendXrpValue,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
       fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
+      expectedTransactionHash,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -72,11 +79,10 @@ describe('Xpring Client', function (): void {
 
   it('send - failure in PayID', function (done): void {
     // GIVEN a XpringClient composed of a PayIDClient which will throw an error.
-    const expectedTransactionHash = 'deadbeefdeadbeefdeadbeef'
     const xrpClient = new FakeXrpClient(
       fakeBalance,
       fakePaymentStatus,
-      expectedTransactionHash,
+      fakedSuccessfulTransactionResult,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
@@ -109,6 +115,7 @@ describe('Xpring Client', function (): void {
       fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
       fakedSuccessfulTransactionResult,
+      xrpError,
     )
 
     const resolvedXRPAddress = 'r123'
@@ -155,7 +162,7 @@ describe('Xpring Client', function (): void {
     const xrpClient = new FakeXrpClient(
       fakeBalance,
       fakePaymentStatus,
-      fakeTransactionHash,
+      fakedSuccessfulTransactionResult,
       fakeAccountExistsResult,
       fakePaymentHistoryValue,
       fakeGetPaymentValue,
