@@ -17,9 +17,9 @@ export interface WebSocketNetworkClientInterface {
    * @returns The response from the websocket confirming the subscription.
    */
   subscribeToAccount(
+    account: string,
     subscriptionId: string,
     callback: (data: WebSocketTransactionResponse) => void,
-    account: string,
   ): Promise<WebSocketStatusResponse>
 
   close(): void

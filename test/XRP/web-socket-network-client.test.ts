@@ -79,9 +79,9 @@ describe('WebSocket Tests', function (): void {
     // GIVEN a valid test address
     // WHEN subscribeToAccount is called for that address
     const response = await webSocketNetworkClient.subscribeToAccount(
+      address,
       subscriptionId,
       callback,
-      address,
     )
 
     // THEN the subscribe request is successfully submitted and received
@@ -107,10 +107,10 @@ describe('WebSocket Tests', function (): void {
     // WHEN monitorIncomingPayments is called for that address THEN an error is thrown.
     try {
       await webSocketNetworkClient.subscribeToAccount(
+        address,
         'subscribe_transaction_' + address,
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         (_data: WebSocketTransactionResponse) => {},
-        address,
       )
     } catch (e) {
       if (!(e instanceof XrpError)) {

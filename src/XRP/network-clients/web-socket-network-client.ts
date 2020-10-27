@@ -128,9 +128,9 @@ export default class WebSocketNetworkClient {
    * @returns The response from the websocket confirming the subscription.
    */
   public async subscribeToAccount(
+    account: string,
     subscriptionId: string,
     callback: (data: WebSocketTransactionResponse) => void,
-    account: string,
   ): Promise<WebSocketStatusResponse> {
     this.accountCallbacks.set(account, callback)
     const options = {
