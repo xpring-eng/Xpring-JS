@@ -14,7 +14,9 @@ import 'mocha'
 import TrustLine from '../../src/XRP/shared/trustline'
 import { XrpError } from '../../src/XRP'
 import { AccountLinesResponse } from '../../src/XRP/shared/rippled-json-rpc-schema'
-import GatewayBalances from '../../src/XRP/shared/gateway-balances'
+import GatewayBalances, {
+  gatewayBalancesFromResponse,
+} from '../../src/XRP/shared/gateway-balances'
 
 const fakeSucceedingGrpcClient = new FakeXRPNetworkClient()
 
@@ -384,7 +386,7 @@ describe('Issued Currency Client', function (): void {
     const gatewayBalances = await issuedCurrencyClient.getGatewayBalances(
       testAddress,
     )
-    const expectedGatewayBalances: GatewayBalances = new GatewayBalances(
+    const expectedGatewayBalances: GatewayBalances = gatewayBalancesFromResponse(
       await fakeSucceedingJsonClient.getGatewayBalances(testAddress),
     )
 

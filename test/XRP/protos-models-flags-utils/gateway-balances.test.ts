@@ -1,6 +1,8 @@
 import { assert } from 'chai'
 
-import GatewayBalances from '../../../src/XRP/shared/gateway-balances'
+import GatewayBalances, {
+  gatewayBalancesFromResponse,
+} from '../../../src/XRP/shared/gateway-balances'
 import 'mocha'
 import { GatewayBalancesResponse } from '../../../src/XRP/shared/rippled-json-rpc-schema'
 import { XrpUtils } from 'xpring-common-js'
@@ -57,7 +59,9 @@ describe('GatewayBalances Conversion Tests', function (): void {
       },
     }
     // WHEN a GatewayBalances object is constructed from it
-    const gatewayBalances = new GatewayBalances(testGatewayBalancesResponse)
+    const gatewayBalances = gatewayBalancesFromResponse(
+      testGatewayBalancesResponse,
+    )
 
     // THEN the result is as expected.
     const expectedAddress = XrpUtils.encodeXAddress(
@@ -142,7 +146,9 @@ describe('GatewayBalances Conversion Tests', function (): void {
       },
     }
     // WHEN a GatewayBalances object is constructed from it
-    const gatewayBalances = new GatewayBalances(testGatewayBalancesResponse)
+    const gatewayBalances = gatewayBalancesFromResponse(
+      testGatewayBalancesResponse,
+    )
 
     // THEN the result is as expected.
     const expectedAddress = XrpUtils.encodeXAddress(
@@ -210,7 +216,7 @@ describe('GatewayBalances Conversion Tests', function (): void {
     }
     // WHEN a GatewayBalances object is constructed from it THEN an error is thrown.
     assert.throws(() => {
-      new GatewayBalances(testGatewayBalancesResponse)
+      gatewayBalancesFromResponse(testGatewayBalancesResponse)
     })
   })
 
@@ -245,7 +251,7 @@ describe('GatewayBalances Conversion Tests', function (): void {
     }
     // WHEN a GatewayBalances object is constructed from it THEN an error is thrown.
     assert.throws(() => {
-      new GatewayBalances(testGatewayBalancesResponse)
+      gatewayBalancesFromResponse(testGatewayBalancesResponse)
     })
   })
 })
