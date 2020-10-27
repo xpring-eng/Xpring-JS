@@ -101,6 +101,7 @@ export default class IssuedCurrencyClient {
     const classicAddress = XrpUtils.decodeXAddress(account)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
+      console.log(this.jsonNetworkClient) // so the compiler shuts up
     }
     if (peerAccount) {
       const peerClassicAddress = XrpUtils.decodeXAddress(peerAccount)
@@ -109,7 +110,7 @@ export default class IssuedCurrencyClient {
       }
     }
 
-    const accountLinesResponse: AccountLinesResponse = await this.jsonNetworkClient.getAccountLines(
+    const accountLinesResponse: AccountLinesResponse = await this.webSocketNetworkClient.getAccountLines(
       classicAddress.address,
       peerAccount,
     )

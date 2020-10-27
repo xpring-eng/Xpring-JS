@@ -22,5 +22,7 @@ export interface WebSocketNetworkClientInterface {
     account: string,
   ): Promise<WebSocketStatusResponse>
 
+  getAccountLines(account: string, peerAccount?: string)
+
   close(): void
 }

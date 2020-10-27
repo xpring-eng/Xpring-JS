@@ -1,6 +1,7 @@
 import Result from '../../Common/Helpers/result'
 import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
 import {
+  WebSocketAccountLinesResponse,
   WebSocketStatusResponse,
   WebSocketTransactionResponse,
 } from '../../../src/XRP/shared/rippled-web-socket-schema'
@@ -36,6 +37,9 @@ export class FakeWebSocketNetworkClientResponses {
     public readonly getSubscribeResponse: Result<
       WebSocketStatusResponse
     > = FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
+    public readonly getAccountLinesResponse: Result<
+      WebSocketAccountLinesResponse
+    > = FakeWebSocketNetworkClientResponses.defaultGetAccountLinesResponse(),
   ) {}
 
   /**
@@ -48,6 +52,52 @@ export class FakeWebSocketNetworkClientResponses {
       result: {},
       status: 'success',
       type: 'response',
+    }
+  }
+
+  /**
+   * Construct a default response for getAccountLines request.
+   */
+  public static defaultGetAccountLinesResponse(): WebSocketAccountLinesResponse {
+    return {
+      id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+      type: 'response',
+      status: 'success',
+      result: {
+        account: 'r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+        lines: [
+          {
+            account: 'r3vi7mWxru9rJCxETCyA1CHvzL96eZWx5z',
+            balance: '0',
+            currency: 'ASP',
+            limit: '0',
+            limit_peer: '10',
+            quality_in: 0,
+            quality_out: 0,
+          },
+          {
+            account: 'r3vi7mWxru9rJCxETCyA1CHvzL96eZWx5z',
+            balance: '0',
+            currency: 'XAU',
+            limit: '0',
+            limit_peer: '0',
+            no_ripple: true,
+            no_ripple_peer: true,
+            quality_in: 0,
+            quality_out: 0,
+          },
+          {
+            account: 'rs9M85karFkCRjvc6KMWn8Coigm9cbcgcx',
+            balance: '0',
+            currency: '015841551A748AD2C1F76FF6ECB0CCCD00000000',
+            limit: '10.01037626125837',
+            limit_peer: '0',
+            no_ripple: true,
+            quality_in: 0,
+            quality_out: 0,
+          },
+        ],
+      },
     }
   }
 }
@@ -71,6 +121,15 @@ export class FakeWebSocketNetworkClient {
     }
 
     return Promise.resolve(subscribeResponse)
+  }
+
+  getAccountLines(_address: string): Promise<WebSocketAccountLinesResponse> {
+    const accountLinesResponse = this.responses.getAccountLinesResponse
+    if (accountLinesResponse instanceof Error) {
+      return Promise.reject(accountLinesResponse)
+    }
+
+    return Promise.resolve(accountLinesResponse)
   }
 
   close(): void {

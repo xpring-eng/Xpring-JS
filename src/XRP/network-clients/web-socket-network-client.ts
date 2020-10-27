@@ -147,6 +147,28 @@ export default class WebSocketNetworkClient {
   }
 
   /**
+   * Submits an account_lines request to the rippled JSON RPC.
+   *
+   * @param account The XRPL account to query for trust lines.
+   */
+  public async getAccountLines(
+    account: string,
+    peerAccount?: string,
+  ): Promise<WebSocketStatusResponse> {
+    const accountLinesRequest = {
+      id: 'account_lines_' + account,
+      command: 'account_lines',
+      account: account,
+      ledger_index: 'validated',
+      peer: peerAccount,
+    }
+    const accountLinesResponse: WebSocketStatusResponse = await this.sendApiRequest(
+      accountLinesRequest,
+    )
+    return accountLinesResponse
+  }
+
+  /**
    * Closes the socket.
    */
   public close(): void {

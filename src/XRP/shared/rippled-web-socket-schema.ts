@@ -4,14 +4,27 @@
  * The standard format for a request to the JSON RPC exposed by a rippled node.
  * @see https://xrpl.org/request-formatting.html
  */
-interface WebSocketRequestOptions {
-  command: string
+type WebSocketRequestOptions = SubscribeRequest | AccountLinesRequest
+
+interface SubscribeRequest {
   id: string
+  command: string
   streams?: string[]
   accounts?: string[]
 }
 
-type WebSocketResponse = WebSocketStatusResponse | WebSocketTransactionResponse
+interface AccountLinesRequest {
+  id: string
+  command: string
+  account: string
+  ledger_index: string
+  peer?: string
+}
+
+type WebSocketResponse =
+  | WebSocketStatusResponse
+  | WebSocketTransactionResponse
+  | WebSocketAccountLinesResponse
 
 interface WebSocketStatusResponse {
   id: string
@@ -36,6 +49,17 @@ interface WebSocketTransactionResponse {
   transaction: WebSocketTransaction
   type: string
   validated: boolean
+}
+
+interface WebSocketAccountLinesResponse {
+  id: number | string
+  status: string
+  type: string
+  result: {
+    error?: string
+    account?: string
+    lines?: Array<TrustLineJson>
+  }
 }
 
 type ChangedNode = CreatedNode | ModifiedNode | DeletedNode
@@ -98,6 +122,22 @@ interface WebSocketTransaction {
   hash: string
 }
 
+interface TrustLineJson {
+  account: string
+  balance: string
+  currency: string
+  limit: string
+  limit_peer: string
+  quality_in: number
+  quality_out: number
+  no_ripple?: boolean
+  no_ripple_peer?: boolean
+  authorized?: boolean
+  peer_authorized?: boolean
+  freeze?: boolean
+  freeze_peer?: boolean
+}
+
 type EmptyObject = {
   [K in any]: never
 }
@@ -108,4 +148,5 @@ export {
   WebSocketStatusResponse,
   WebSocketTransaction,
   WebSocketTransactionResponse,
+  WebSocketAccountLinesResponse,
 }
