@@ -103,7 +103,7 @@ describe('WebSocket Tests', function (): void {
 
     const address = 'badAddress'
 
-    // GIVEN a test address that has at least one trust line on testnet
+    // GIVEN a test address that is malformed.
     // WHEN monitorIncomingPayments is called for that address THEN an error is thrown.
     try {
       await webSocketNetworkClient.subscribeToAccount(

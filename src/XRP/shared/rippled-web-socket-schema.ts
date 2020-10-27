@@ -28,7 +28,10 @@ interface WebSocketRequestOptions {
   accounts?: string[]
 }
 
-type WebSocketResponse = WebSocketStatusResponse | WebSocketTransactionResponse
+type WebSocketResponse =
+  | WebSocketStatusResponse
+  | WebSocketTransactionResponse
+  | WebSocketStatusErrorResponse
 
 /**
  * The standard format for a response from the WebSocket API exposed by a rippled node.
@@ -39,6 +42,16 @@ interface WebSocketStatusResponse {
   result: WebSocketTransactionResponse | EmptyObject
   status: string
   type: string
+}
+
+interface WebSocketStatusErrorResponse {
+  id: string
+  status: string
+  type: string
+  error: string
+  error_code: number
+  error_message: string
+  request: WebSocketRequestOptions
 }
 
 /**
@@ -150,6 +163,7 @@ export {
   WebSocketRequestOptions,
   WebSocketResponse,
   WebSocketStatusResponse,
+  WebSocketStatusErrorResponse,
   WebSocketTransaction,
   WebSocketTransactionResponse,
 }

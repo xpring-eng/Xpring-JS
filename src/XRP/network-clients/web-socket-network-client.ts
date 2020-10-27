@@ -6,6 +6,7 @@ import {
   WebSocketRequestOptions,
   WebSocketResponse,
   WebSocketStatusResponse,
+  WebSocketStatusErrorResponse,
   WebSocketTransactionResponse,
 } from '../shared/rippled-web-socket-schema'
 
@@ -79,10 +80,19 @@ export default class WebSocketNetworkClient {
   private handleTransaction = (data: WebSocketResponse) => {
     const dataTransaction = data as WebSocketTransactionResponse
     const destinationAccount = dataTransaction.transaction.Destination
-    const callback = this.accountCallbacks.get(destinationAccount)
-    if (callback) {
-      callback(dataTransaction)
-    } else {
+    const destinationCallback = this.accountCallbacks.get(destinationAccount)
+
+    const senderAccount = dataTransaction.transaction.Account
+    const senderCallback = this.accountCallbacks.get(senderAccount)
+
+    if (destinationCallback) {
+      destinationCallback(dataTransaction)
+    }
+    if (senderCallback) {
+      senderCallback(dataTransaction)
+    }
+
+    if (!destinationCallback && !senderCallback) {
       throw new XrpError(
         XrpErrorType.Unknown,
         'Received a transaction for an account that has not been subscribed to: ' +
@@ -99,7 +109,7 @@ export default class WebSocketNetworkClient {
    */
   private async sendApiRequest(
     request: WebSocketRequestOptions,
-  ): Promise<WebSocketStatusResponse> {
+  ): Promise<WebSocketResponse> {
     while (this.socket.readyState === WebSocket.CONNECTING) {
       await sleep(5)
     }
@@ -109,17 +119,18 @@ export default class WebSocketNetworkClient {
     this.socket.send(JSON.stringify(request))
 
     this.waiting.set(request.id, undefined)
-    while (this.waiting.get(request.id) === undefined) {
+    let response = this.waiting.get(request.id)
+    while (response === undefined) {
       await sleep(5)
+      response = this.waiting.get(request.id)
     }
-    const response = this.waiting.get(request.id)
     this.waiting.delete(request.id)
 
-    return response as WebSocketStatusResponse
+    return response
   }
 
   /**
-   * Subscribes to incoming transactions to a given account.
+   * Subscribes for notification about every validated transaction that affects the given account.
    * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
    *
    * @param subscriptionId The ID used for the subscription.
@@ -132,7 +143,6 @@ export default class WebSocketNetworkClient {
     subscriptionId: string,
     callback: (data: WebSocketTransactionResponse) => void,
   ): Promise<WebSocketStatusResponse> {
-    this.accountCallbacks.set(account, callback)
     const options = {
       id: subscriptionId,
       command: RippledMethod.subscribe,
@@ -140,12 +150,14 @@ export default class WebSocketNetworkClient {
     }
     const response = await this.sendApiRequest(options)
     if (response.status !== 'success') {
+      const errorResponse = response as WebSocketStatusErrorResponse
       throw new XrpError(
         XrpErrorType.Unknown,
-        `Subscription request for ${account} failed`,
+        `Subscription request for ${account} failed, ${errorResponse.error_message}`,
       )
     }
-    return response
+    this.accountCallbacks.set(account, callback)
+    return response as WebSocketStatusResponse
   }
 
   /**
