@@ -33,7 +33,7 @@
     "@babel/preset-env": "^7.10.4",
     "@babel/preset-typescript": "^7.10.4",
     "@openapitools/openapi-generator-cli": "^2.0.2",
-    "@types/chai": "4.2.13",
+    "@types/chai": "4.2.14",
     "@types/google-protobuf": "^3.7.2",
     "@types/mocha": "8.0.3",
     "@types/node": "^14.0.1",
@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.1.1",
-    "axios": "^0.20.0",
+    "axios": "^0.21.0",
     "big-integer": "^1.6.48",
     "bignumber.js": "^9.0.0",
     "google-protobuf": "^3.12.2",
