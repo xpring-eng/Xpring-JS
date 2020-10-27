@@ -439,7 +439,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
 
     const trustLines = await issuedCurrencyClient.getTrustLines(
-      wallet.getAddress(),
+      issuer.getAddress(),
     )
 
     const [createdTrustLine] = trustLines
