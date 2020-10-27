@@ -29,6 +29,7 @@ import TransactionResult from './shared/transaction-result'
 import GatewayBalances from './shared/gateway-balances'
 import TrustLine from './shared/trustline'
 import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
+import RippledErrorMessages from './shared/rippled-error-messages'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -109,7 +110,10 @@ export default class IssuedCurrencyClient {
     )
 
     if (accountLinesResponse.result.error) {
-      if (accountLinesResponse.result.error === 'actNotFound') {
+      if (
+        accountLinesResponse.result.error ===
+        RippledErrorMessages.accountNotFound
+      ) {
         throw XrpError.accountNotFound
       } else {
         throw new XrpError(
@@ -136,14 +140,14 @@ export default class IssuedCurrencyClient {
    * @see https://xrpl.org/issuing-and-operational-addresses.html
    *
    * @param account The account for which to retrieve balance information, encoded as an X-Address.
-   * @param hotwallet (Optional) An operational address to exclude from the balances issued, or an array of such addresses,
+   * @param accountsToExclude (Optional) An operational address to exclude from the balances issued, or an array of such addresses,
    *                   encoded as X-Addresses.
    * @see https://xrpaddress.info/
    * @returns A GatewayBalances object containing information about an account's balances.
    */
   public async getGatewayBalances(
     account: string,
-    hotwallet?: string | Array<string>,
+    accountsToExclude?: string | Array<string>,
   ): Promise<GatewayBalances> {
     // check issuing account for X-Address format
     const classicAddress = XrpUtils.decodeXAddress(account)
@@ -151,41 +155,44 @@ export default class IssuedCurrencyClient {
       throw XrpError.xAddressRequired
     }
 
-    // check hotwallet addresses for X-Address format
-    const hotwalletArray: Array<string> = []
-    if (hotwallet !== undefined) {
-      if (typeof hotwallet == 'string') {
-        const hotwalletClassicAddress = XrpUtils.decodeXAddress(hotwallet)
-        if (!hotwalletClassicAddress) {
+    // check excludable addresses for X-Address format
+    const addressesToExcludeArray: Array<string> = []
+    if (accountsToExclude !== undefined) {
+      if (typeof accountsToExclude == 'string') {
+        const excludeClassicAddress = XrpUtils.decodeXAddress(accountsToExclude)
+        if (!excludeClassicAddress) {
           throw XrpError.xAddressRequired
         }
-        hotwalletArray.push(hotwalletClassicAddress.address)
+        addressesToExcludeArray.push(excludeClassicAddress.address)
       } else {
-        for (const address of hotwallet) {
-          const hotwalletClassicAddress = XrpUtils.decodeXAddress(address)
-          if (!hotwalletClassicAddress) {
+        for (const address of accountsToExclude) {
+          const excludeClassicAddress = XrpUtils.decodeXAddress(address)
+          if (!excludeClassicAddress) {
             throw XrpError.xAddressRequired
           }
-          hotwalletArray.push(hotwalletClassicAddress.address)
+          addressesToExcludeArray.push(excludeClassicAddress.address)
         }
       }
     }
-    // TODO: verify address format of hotwallet (and add test)
     const gatewayBalancesResponse: GatewayBalancesResponse = await this.jsonNetworkClient.getGatewayBalances(
       classicAddress.address,
-      hotwalletArray,
+      addressesToExcludeArray,
     )
 
     if (gatewayBalancesResponse.result.error) {
-      if (gatewayBalancesResponse.result.error == 'actNotFound') {
-        throw XrpError.accountNotFound
-      } else if (gatewayBalancesResponse.result.error == 'invalidHotwallet') {
-        throw XrpError.invalidHotwallet
-      } else {
-        throw new XrpError(
-          XrpErrorType.Unknown,
-          gatewayBalancesResponse.result.error,
-        )
+      switch (gatewayBalancesResponse.result.error) {
+        case RippledErrorMessages.accountNotFound:
+          throw XrpError.accountNotFound
+        case RippledErrorMessages.invalidExcludedAddress:
+          throw new XrpError(
+            XrpErrorType.InvalidInput,
+            'The address(es) supplied to for exclusion were invalid.',
+          )
+        default:
+          throw new XrpError(
+            XrpErrorType.Unknown,
+            gatewayBalancesResponse.result.error,
+          )
       }
     }
     return new GatewayBalances(gatewayBalancesResponse)

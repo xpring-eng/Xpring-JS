@@ -174,7 +174,7 @@ export class FakeJsonNetworkClient {
 
   getGatewayBalances(
     _address: string,
-    _hotwallet?: string | Array<string>,
+    _addressesToExclude?: string | Array<string>,
   ): Promise<GatewayBalancesResponse> {
     const gatewayBalancesResponse = this.responses.getGatewayBalancesReponse
     if (gatewayBalancesResponse instanceof Error) {

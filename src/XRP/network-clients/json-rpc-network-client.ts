@@ -75,7 +75,7 @@ export default class JsonRpcNetworkClient
       method: 'account_lines',
       params: [
         {
-          account: account,
+          account,
           ledger_index: 'validated',
           peer: peerAccount,
         },
@@ -93,19 +93,19 @@ export default class JsonRpcNetworkClient
    * @see https://xrpl.org/gateway_balances.html
    *
    * @param account The XRPL account for which to retrieve balances.
-   * @param hotwallet (Optional) An operational address to exclude from the balances issued, or an array of such addresses.
+   * @param addressesToExclude (Optional) An operational address to exclude from the balances issued, or an array of such addresses.
    * @see https://xrpl.org/issuing-and-operational-addresses.html
    */
   public async getGatewayBalances(
     account: string,
-    hotwallet?: string | Array<string>,
+    addressesToExclude?: string | Array<string>,
   ): Promise<GatewayBalancesResponse> {
     const gatewayBalancesRequest = {
       method: 'gateway_balances',
       params: [
         {
-          account: account,
-          hotwallet: hotwallet,
+          account,
+          hotwallet: addressesToExclude,
           ledger_index: 'validated',
           strict: 'true',
         },

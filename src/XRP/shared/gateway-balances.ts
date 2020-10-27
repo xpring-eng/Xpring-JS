@@ -37,7 +37,7 @@ export default class GatewayBalances {
   readonly assets?: { [account: string]: IssuedCurrencyValue[] }
 
   /**
-   * (Optional, omitted if empty) Amounts issued to the hotwallet addresses from the request.
+   * (Optional, omitted if empty) Amounts issued to the excluded addresses from the request.
    * The keys are addresses and the values are arrays of currency amounts they hold.
    */
   readonly balances?: { [account: string]: IssuedCurrencyValue[] }

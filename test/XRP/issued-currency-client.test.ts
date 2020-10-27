@@ -409,7 +409,7 @@ describe('Issued Currency Client', function (): void {
     })
   })
 
-  it('getGatewayBalances - invalid hotwallet, single address', function (done): void {
+  it('getGatewayBalances - invalid addressToExclude, single address', function (done): void {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -417,7 +417,7 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
-    // WHEN getGatewayBalances is called with a classic hotwallet address (no X-address) THEN an error is propagated.
+    // WHEN getGatewayBalances is called with a classic addressToExclude (no X-address) THEN an error is propagated.
     const classicAddress = 'rhhh49pFH96roGyuC4E5P4CHaNjS1k8gzM'
     issuedCurrencyClient
       .getGatewayBalances(testAddress, classicAddress)
@@ -428,7 +428,7 @@ describe('Issued Currency Client', function (): void {
       })
   })
 
-  it('getGatewayBalances - invalid hotwallet, multiple addresses', function (done): void {
+  it('getGatewayBalances - invalid addressToExclude, multiple addresses', function (done): void {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -436,7 +436,7 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
-    // WHEN getGatewayBalances is called with classic hotwallet addresses (no X-address) THEN an error is propagated.
+    // WHEN getGatewayBalances is called with classic addresses to exclude (no X-address) THEN an error is propagated.
     const classicAddress1 = 'rhhh49pFH96roGyuC4E5P4CHaNjS1k8gzM'
     const classicAddress2 = 'r4DymtkgUAh2wqRxVfdd3Xtswzim6eC6c5'
     issuedCurrencyClient
