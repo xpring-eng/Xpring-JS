@@ -14,7 +14,7 @@ export interface IssuedCurrencyValue {
  * Represents information about a gateway's issued currency balances on the XRPL, as of the most recent validated ledger version.
  * @see https://xrpl.org/gateway_balances.html
  */
-export default class GatewayBalances {
+export default interface GatewayBalances {
   /**
    * The address of the account that issued the balances, encoded as an X-Address.
    * @see https://xrpaddress.info/
@@ -40,32 +40,37 @@ export default class GatewayBalances {
 
   /** (May be omitted) The ledger index of the ledger version that was used to generate this response. */
   readonly ledgerHash?: string | undefined
+}
 
-  public constructor(gatewayBalancesResponse: GatewayBalancesResponse) {
-    if (gatewayBalancesResponse.result.validated === false) {
-      throw new XrpError(
-        XrpErrorType.MalformedResponse,
-        'Gateway Balances response indicates unvalidated ledger.',
-      )
-    }
-    const account = gatewayBalancesResponse.result.account
-    if (!account) {
-      throw new XrpError(
-        XrpErrorType.MalformedResponse,
-        'gatewayBalancesResponse is missing required field `account`.',
-      )
-    }
-    const xAddress = XrpUtils.encodeXAddress(account, undefined, true)
-    if (!xAddress) {
-      throw new XrpError(
-        XrpErrorType.MalformedResponse,
-        'Could not convert account to X-Address.',
-      )
-    }
-    this.account = xAddress
-    this.ledgerHash = gatewayBalancesResponse.result.ledger_hash
-    this.assets = gatewayBalancesResponse.result.assets
-    this.balances = gatewayBalancesResponse.result.balances
-    this.obligations = gatewayBalancesResponse.result.obligations
+export function gatewayBalancesFromResponse(
+  gatewayBalancesResponse: GatewayBalancesResponse,
+): GatewayBalances {
+  if (gatewayBalancesResponse.result.validated === false) {
+    throw new XrpError(
+      XrpErrorType.MalformedResponse,
+      'Gateway Balances response indicates unvalidated ledger.',
+    )
+  }
+  const account = gatewayBalancesResponse.result.account
+  if (!account) {
+    throw new XrpError(
+      XrpErrorType.MalformedResponse,
+      'gatewayBalancesResponse is missing required field `account`.',
+    )
+  }
+  const xAddress = XrpUtils.encodeXAddress(account, undefined, true)
+  if (!xAddress) {
+    throw new XrpError(
+      XrpErrorType.MalformedResponse,
+      'Could not convert account to X-Address.',
+    )
+  }
+
+  return {
+    account: xAddress,
+    ledgerHash: gatewayBalancesResponse.result.ledger_hash,
+    assets: gatewayBalancesResponse.result.assets,
+    balances: gatewayBalancesResponse.result.balances,
+    obligations: gatewayBalancesResponse.result.obligations,
   }
 }

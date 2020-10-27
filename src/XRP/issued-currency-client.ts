@@ -26,7 +26,9 @@ import { JsonNetworkClientInterface } from './network-clients/json-network-clien
 import { XrpError, XrpErrorType } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
-import GatewayBalances from './shared/gateway-balances'
+import GatewayBalances, {
+  gatewayBalancesFromResponse,
+} from './shared/gateway-balances'
 import TrustLine from './shared/trustline'
 import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
 import RippledErrorMessages from './shared/rippled-error-messages'
@@ -180,7 +182,7 @@ export default class IssuedCurrencyClient {
     )
 
     if (!gatewayBalancesResponse.result.error) {
-      return new GatewayBalances(gatewayBalancesResponse)
+      return gatewayBalancesFromResponse(gatewayBalancesResponse)
     } else {
       switch (gatewayBalancesResponse.result.error) {
         case RippledErrorMessages.accountNotFound:
