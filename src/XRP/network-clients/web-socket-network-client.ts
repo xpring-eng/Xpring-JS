@@ -165,7 +165,6 @@ export default class WebSocketNetworkClient {
     const accountLinesResponse: WebSocketStatusResponse = await this.sendApiRequest(
       accountLinesRequest,
     )
-    console.log(accountLinesResponse)
     return accountLinesResponse
   }
 
