@@ -1,22 +1,13 @@
 import { XrpUtils } from 'xpring-common-js'
 import { XrpError, XrpErrorType } from '.'
-import {
-  GatewayBalancesResponse,
-  CurrencyValuePair,
-} from './rippled-json-rpc-schema'
+import { GatewayBalancesResponse } from './rippled-json-rpc-schema'
 
 /**
  * Represents an amount of an Issued Currency.
  */
-export class IssuedCurrencyValue {
+export interface IssuedCurrencyValue {
   readonly currency: string
-
   readonly value: string
-
-  public constructor(currencyValuePair: CurrencyValuePair) {
-    this.currency = currencyValuePair.currency
-    this.value = currencyValuePair.value
-  }
 }
 
 /**

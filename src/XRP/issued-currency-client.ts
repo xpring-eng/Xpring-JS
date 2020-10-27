@@ -179,7 +179,9 @@ export default class IssuedCurrencyClient {
       addressesToExcludeArray,
     )
 
-    if (gatewayBalancesResponse.result.error) {
+    if (!gatewayBalancesResponse.result.error) {
+      return new GatewayBalances(gatewayBalancesResponse)
+    } else {
       switch (gatewayBalancesResponse.result.error) {
         case RippledErrorMessages.accountNotFound:
           throw XrpError.accountNotFound
@@ -195,7 +197,6 @@ export default class IssuedCurrencyClient {
           )
       }
     }
-    return new GatewayBalances(gatewayBalancesResponse)
   }
 
   /**
