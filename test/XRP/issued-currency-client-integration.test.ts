@@ -33,7 +33,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   // A Wallet with some balance on Testnet.
   let wallet: Wallet
-  beforeEach(async function () {
+  before(async function () {
     wallet = await XRPTestUtils.randomWalletFromFaucet()
   })
 
@@ -421,20 +421,21 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.currency, trustLineCurrency)
   })
 
-  it('authorizeTrustline - valid account', async function (): Promise<void> {
+  it('authorizeTrustLine - valid account', async function (): Promise<void> {
     this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
     const accountToTrust = await XRPTestUtils.randomWalletFromFaucet()
 
     // GIVEN an existing testnet account requiring authorized trust lines
     // and another account
-    await issuedCurrencyClient.requireAuthorizedTrustlines(wallet)
+    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
 
     const trustLineCurrency = 'USD'
     // WHEN a trust line is authorized with another account
     await issuedCurrencyClient.authorizeTrustLine(
       accountToTrust.getAddress(),
       'USD',
-      wallet,
+      issuer,
     )
 
     const trustLines = await issuedCurrencyClient.getTrustLines(

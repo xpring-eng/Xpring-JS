@@ -361,14 +361,17 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * Creates an authorized trust line between this XRPL account and another account.
-   * An authorized trust line will only be created if `requiredAuthorizedTrustlines` is called first.
+   * Creates an authorized trust line between this XRPL account (issuing account) and another account.
+   * Note that the other account must also create a trust line to this issuing account in order to establish a trust line with a non-zero limit.
+   * If this method is called before the other account creates a trust line, a trust line with a limit of 0 is created.
+   * However, this is only true if this issuing account has already required Authorized Trustlines (see https://xrpl.org/authorized-trust-lines.html),
+   * otherwise no trust line is created.
    *
    * @see https://xrpl.org/authorized-trust-lines.html
    *
-   * @param accountToAuthorize The X-Address of the address to authorize.
+   * @param accountToAuthorize The X-Address of the address with which to authorize a trust line.
    * @param currencyName The currency to authorize a trust line for.
-   * @param wallet The wallet creating the trust line.
+   * @param wallet The wallet creating the authorized trust line.
    */
   public async authorizeTrustLine(
     accountToAuthorize: string,
