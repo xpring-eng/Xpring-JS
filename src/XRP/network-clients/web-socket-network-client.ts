@@ -1,13 +1,15 @@
 import WebSocket = require('ws')
 import { XrpError, XrpErrorType } from '../shared'
 import {
+  WebSocketReadyState,
+  RippledMethod,
   WebSocketRequestOptions,
   WebSocketResponse,
   WebSocketStatusResponse,
   WebSocketTransactionResponse,
 } from '../shared/rippled-web-socket-schema'
 
-const sleep = (ms: number): Promise<void> => {
+function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
@@ -98,10 +100,10 @@ export default class WebSocketNetworkClient {
   private async sendApiRequest(
     request: WebSocketRequestOptions,
   ): Promise<WebSocketStatusResponse> {
-    while (this.socket.readyState === 0) {
+    while (this.socket.readyState === WebSocket.CONNECTING) {
       await sleep(5)
     }
-    if (this.socket.readyState !== 1) {
+    if (this.socket.readyState !== WebSocketReadyState.OPEN) {
       throw new XrpError(XrpErrorType.Unknown, 'Socket is closed/closing')
     }
     this.socket.send(JSON.stringify(request))
@@ -120,27 +122,27 @@ export default class WebSocketNetworkClient {
    * Subscribes to incoming transactions to a given account.
    * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
    *
-   * @param id The ID used for the subscription.
+   * @param subscriptionId The ID used for the subscription.
    * @param callback The function called whenever a new transaction is received.
    * @param account The account from which to subscribe to incoming transactions, encoded as a classic address.
    * @returns The response from the websocket confirming the subscription.
    */
   public async subscribeToAccount(
-    id: string,
+    subscriptionId: string,
     callback: (data: WebSocketTransactionResponse) => void,
     account: string,
   ): Promise<WebSocketStatusResponse> {
     this.accountCallbacks.set(account, callback)
     const options = {
-      id,
-      command: 'subscribe',
+      id: subscriptionId,
+      command: RippledMethod.subscribe,
       accounts: [account],
     }
     const response = await this.sendApiRequest(options)
     if (response.status !== 'success') {
       throw new XrpError(
         XrpErrorType.Unknown,
-        'Subscription request for ' + account + ' failed',
+        `Subscription request for ${account} failed`,
       )
     }
     return response

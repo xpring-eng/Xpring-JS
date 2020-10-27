@@ -102,16 +102,14 @@ describe('WebSocket Tests', function (): void {
     this.timeout(timeoutMs)
 
     const address = 'badAddress'
-    const subscriptionId = 'subscribe_transaction_' + address
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const callback = (_data: WebSocketTransactionResponse) => {}
     // GIVEN a test address that has at least one trust line on testnet
     // WHEN monitorIncomingPayments is called for that address THEN an error is thrown.
     try {
       await webSocketNetworkClient.subscribeToAccount(
-        subscriptionId,
-        callback,
+        'subscribe_transaction_' + address,
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        (_data: WebSocketTransactionResponse) => {},
         address,
       )
     } catch (e) {

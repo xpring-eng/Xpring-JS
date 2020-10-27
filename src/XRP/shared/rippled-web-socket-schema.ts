@@ -1,11 +1,22 @@
 /* Schema for adding type information to Web Socket objects. */
 
+enum WebSocketReadyState {
+  CONNECTING,
+  OPEN,
+  CLOSING,
+  CLOSED,
+}
+
+enum RippledMethod {
+  subscribe = 'subscribe',
+}
+
 /**
  * The standard format for a request to the JSON RPC exposed by a rippled node.
  * @see https://xrpl.org/request-formatting.html
  */
 interface WebSocketRequestOptions {
-  command: string
+  command: RippledMethod
   id: string
   streams?: string[]
   accounts?: string[]
@@ -98,11 +109,11 @@ interface WebSocketTransaction {
   hash: string
 }
 
-type EmptyObject = {
-  [K in any]: never
-}
+type EmptyObject = Record<never, never>
 
 export {
+  WebSocketReadyState,
+  RippledMethod,
   WebSocketRequestOptions,
   WebSocketResponse,
   WebSocketStatusResponse,
