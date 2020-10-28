@@ -19,6 +19,9 @@ import {
   FakeWebSocketNetworkClientResponses,
 } from './fakes/fake-web-socket-network-client'
 import { WebSocketResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
+import GatewayBalances, {
+  gatewayBalancesFromResponse,
+} from '../../src/XRP/shared/gateway-balances'
 
 const fakeSucceedingGrpcClient = new FakeXRPNetworkClient()
 
@@ -391,6 +394,129 @@ describe('Issued Currency Client', function (): void {
     })
   })
 
+  it('getGatewayBalances - successful response', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient with faked networking that will return successful responses.
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getBalances is called
+    const gatewayBalances = await issuedCurrencyClient.getGatewayBalances(
+      testAddress,
+    )
+    const expectedGatewayBalances: GatewayBalances = gatewayBalancesFromResponse(
+      await fakeSucceedingJsonClient.getGatewayBalances(testAddress),
+    )
+
+    // THEN the result is as expected
+    assert.deepEqual(gatewayBalances, expectedGatewayBalances)
+  })
+
+  it('getGatewayBalances - invalid account', async function (): Promise<void> {
+    // GIVEN an IssuedCurrencyClient
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getGatewayBalances is called with a classic address (no X-address) THEN an error is propagated.
+    const classicAddress = 'rhhh49pFH96roGyuC4E5P4CHaNjS1k8gzM'
+    try {
+      await issuedCurrencyClient.getGatewayBalances(classicAddress)
+    } catch (error) {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.xAddressRequired)
+    }
+  })
+
+  it('getGatewayBalances - invalid addressToExclude, single address', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getGatewayBalances is called with a classic addressToExclude (no X-address) THEN an error is propagated.
+    const classicAddress = 'rhhh49pFH96roGyuC4E5P4CHaNjS1k8gzM'
+    try {
+      await issuedCurrencyClient.getGatewayBalances(testAddress, [
+        classicAddress,
+      ])
+    } catch (error) {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.xAddressRequired)
+    }
+  })
+
+  it('getGatewayBalances - invalid addressToExclude, multiple addresses', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getGatewayBalances is called with classic addresses to exclude (no X-address) THEN an error is propagated.
+    const classicAddress1 = 'rhhh49pFH96roGyuC4E5P4CHaNjS1k8gzM'
+    const classicAddress2 = 'r4DymtkgUAh2wqRxVfdd3Xtswzim6eC6c5'
+    try {
+      await issuedCurrencyClient.getGatewayBalances(testAddress, [
+        classicAddress1,
+        classicAddress2,
+      ])
+    } catch (error) {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.xAddressRequired)
+    }
+  })
+
+  it('getGatewayBalances - account not found error response', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getGatewayBalances
+    const accountNotFoundResponse: AccountLinesResponse = {
+      result: {
+        error: 'actNotFound',
+        status: 'error',
+      },
+    }
+    const fakeErroringJsonClientResponses = new FakeJsonNetworkClientResponses(
+      FakeJsonNetworkClientResponses.defaultGetAccountLinesResponse(),
+      accountNotFoundResponse,
+    )
+    const fakeErroringJsonClient = new FakeJsonNetworkClient(
+      fakeErroringJsonClientResponses,
+    )
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeErroringJsonClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+    // WHEN getGatewayBalances is called THEN an error is propagated.
+    try {
+      await issuedCurrencyClient.getGatewayBalances(testAddress)
+    } catch (error) {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.accountNotFound)
+    }
+  })
+
   it('requireDestinationTags - successful response', async function (): Promise<
     void
   > {
@@ -401,7 +527,6 @@ describe('Issued Currency Client', function (): void {
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
-
     // WHEN requireDestinationTags is called
     const result = await issuedCurrencyClient.requireDestinationTags(
       this.wallet,
