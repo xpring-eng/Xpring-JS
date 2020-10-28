@@ -467,7 +467,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       issuer,
     )
 
-    // WHEN the trust line is frozen
+    // WHEN the issuer freezes the trustline
     await issuedCurrencyClient.freezeTrustLine(
       accountToTrust.getAddress(),
       trustLineCurrency,
