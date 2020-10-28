@@ -43,15 +43,15 @@ describe('Issued Currency Client', function (): void {
     // WHEN getTrustLines is called
     const trustLines = await issuedCurrencyClient.getTrustLines(testAddress)
     const expectedTrustLines: Array<TrustLine> = []
-    const trustlinesJson: WebSocketAccountLinesResponse = await fakeSucceedingWebSocketClient.getAccountLines(
+    const trustlinesResponse: WebSocketAccountLinesResponse = await fakeSucceedingWebSocketClient.getAccountLines(
       testAddress,
     )
-    const trustlinesSuccessfulJson = trustlinesJson as WebSocketAccountLinesSuccessfulResponse
-    if (trustlinesSuccessfulJson.result.lines === undefined) {
+    const trustlinesSuccessfulResponse = trustlinesResponse as WebSocketAccountLinesSuccessfulResponse
+    if (trustlinesSuccessfulResponse.result.lines === undefined) {
       throw XrpError.malformedResponse
     }
-    for (const trustLineJson of trustlinesSuccessfulJson.result.lines) {
-      const trustLine = new TrustLine(trustLineJson)
+    for (const trustLineResponse of trustlinesSuccessfulResponse.result.lines) {
+      const trustLine = new TrustLine(trustLineResponse)
       expectedTrustLines.push(trustLine)
     }
 

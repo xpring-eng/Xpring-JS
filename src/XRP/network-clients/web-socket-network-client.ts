@@ -147,7 +147,7 @@ export default class WebSocketNetworkClient {
   }
 
   /**
-   * Submits an account_lines request to the rippled JSON RPC.
+   * Submits an account_lines request to the rippled Web Socket API.
    *
    * @param account The XRPL account to query for trust lines.
    */

@@ -1,7 +1,7 @@
 /* Schema for adding type information to Web Socket objects. */
 
 /**
- * The standard format for a request to the JSON RPC exposed by a rippled node.
+ * The standard format for a request to the Web Socket API exposed by a rippled node.
  * @see https://xrpl.org/request-formatting.html
  */
 type WebSocketRequestOptions = SubscribeRequest | AccountLinesRequest
@@ -63,7 +63,7 @@ interface WebSocketAccountLinesSuccessfulResponse {
     account: string
     ledger_hash: string
     ledger_index: number
-    lines: Array<TrustLineJson>
+    lines: Array<TrustLineResponse>
     validated: boolean
   }
 }
@@ -138,7 +138,7 @@ interface WebSocketTransaction {
   hash: string
 }
 
-interface TrustLineJson {
+interface TrustLineResponse {
   account: string
   balance: string
   currency: string
@@ -167,4 +167,5 @@ export {
   WebSocketAccountLinesResponse,
   WebSocketAccountLinesSuccessfulResponse,
   WebSocketAccountLinesFailureResponse,
+  TrustLineResponse,
 }
