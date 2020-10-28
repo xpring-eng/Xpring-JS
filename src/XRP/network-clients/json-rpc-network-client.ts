@@ -65,7 +65,8 @@ export default class JsonRpcNetworkClient
    * Submits an account_lines request to the rippled JSON RPC.
    * @see https://xrpl.org/account_lines.html
    *
-   * @param account The XRPL account to query for trust lines.
+   * @param account The address of the account to query for trust lines.
+   * @param peerAccount (Optional) The address of a second account. If provided, show only trust lines connecting the two accounts.
    */
   public async getAccountLines(
     account: string,
@@ -93,12 +94,12 @@ export default class JsonRpcNetworkClient
    * @see https://xrpl.org/gateway_balances.html
    *
    * @param account The XRPL account for which to retrieve balances.
-   * @param addressesToExclude (Optional) An operational address to exclude from the balances issued, or an array of such addresses.
+   * @param addressesToExclude (Optional) An array of operational address to exclude from the balances issued.
    * @see https://xrpl.org/issuing-and-operational-addresses.html
    */
   public async getGatewayBalances(
     account: string,
-    addressesToExclude?: string | Array<string>,
+    addressesToExclude?: Array<string>,
   ): Promise<GatewayBalancesResponse> {
     const gatewayBalancesRequest = {
       method: 'gateway_balances',

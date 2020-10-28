@@ -31,7 +31,7 @@ import GatewayBalances, {
 } from './shared/gateway-balances'
 import TrustLine from './shared/trustline'
 import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
-import RippledErrorMessages from './shared/rippled-error-messages'
+import { RippledErrorMessages } from './shared/rippled-error-messages'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -87,7 +87,8 @@ export default class IssuedCurrencyClient {
    * @see https://xrpl.org/trust-lines-and-issuing.html
    *
    * @param account The account for which to retrieve associated trust lines, encoded as an X-Address.
-   * @param peerAccount (Optional) The address of a second account. If provided, show only trust lines connecting the two accounts.
+   * @param peerAccount (Optional) The address of a second account, encoded as an X-Address.
+   *                    If provided, show only trust lines connecting the two accounts.
    * @see https://xrpaddress.info/
    * @returns An array of TrustLine objects, representing all trust lines associated with this account.
    */
@@ -111,17 +112,12 @@ export default class IssuedCurrencyClient {
       peerAccount,
     )
 
-    if (accountLinesResponse.result.error) {
-      if (
-        accountLinesResponse.result.error ===
-        RippledErrorMessages.accountNotFound
-      ) {
+    const { error } = accountLinesResponse.result
+    if (error) {
+      if (error === RippledErrorMessages.accountNotFound) {
         throw XrpError.accountNotFound
       } else {
-        throw new XrpError(
-          XrpErrorType.Unknown,
-          accountLinesResponse.result.error,
-        )
+        throw new XrpError(XrpErrorType.Unknown, error)
       }
     }
 
@@ -142,14 +138,13 @@ export default class IssuedCurrencyClient {
    * @see https://xrpl.org/issuing-and-operational-addresses.html
    *
    * @param account The account for which to retrieve balance information, encoded as an X-Address.
-   * @param accountsToExclude (Optional) An operational address to exclude from the balances issued, or an array of such addresses,
-   *                   encoded as X-Addresses.
+   * @param accountsToExclude (Optional) An array of operational addresses to exclude from the balances issued, encoded as X-Addresses.
    * @see https://xrpaddress.info/
    * @returns A GatewayBalances object containing information about an account's balances.
    */
   public async getGatewayBalances(
     account: string,
-    accountsToExclude?: string | Array<string>,
+    accountsToExclude: Array<string> = [],
   ): Promise<GatewayBalances> {
     // check issuing account for X-Address format
     const classicAddress = XrpUtils.decodeXAddress(account)
@@ -158,46 +153,34 @@ export default class IssuedCurrencyClient {
     }
 
     // check excludable addresses for X-Address format
-    const addressesToExcludeArray: Array<string> = []
-    if (accountsToExclude !== undefined) {
-      if (typeof accountsToExclude == 'string') {
-        const excludeClassicAddress = XrpUtils.decodeXAddress(accountsToExclude)
-        if (!excludeClassicAddress) {
-          throw XrpError.xAddressRequired
-        }
-        addressesToExcludeArray.push(excludeClassicAddress.address)
-      } else {
-        for (const address of accountsToExclude) {
-          const excludeClassicAddress = XrpUtils.decodeXAddress(address)
-          if (!excludeClassicAddress) {
-            throw XrpError.xAddressRequired
-          }
-          addressesToExcludeArray.push(excludeClassicAddress.address)
-        }
+    const classicAddressesToExclude: Array<string> = []
+    accountsToExclude.map((xAddress) => {
+      const excludeClassicAddress = XrpUtils.decodeXAddress(xAddress)
+      if (!excludeClassicAddress) {
+        throw XrpError.xAddressRequired
       }
-    }
+      classicAddressesToExclude.push(excludeClassicAddress.address)
+    })
+
     const gatewayBalancesResponse: GatewayBalancesResponse = await this.jsonNetworkClient.getGatewayBalances(
       classicAddress.address,
-      addressesToExcludeArray,
+      classicAddressesToExclude,
     )
 
-    if (!gatewayBalancesResponse.result.error) {
+    const { error } = gatewayBalancesResponse.result
+    if (!error) {
       return gatewayBalancesFromResponse(gatewayBalancesResponse)
-    } else {
-      switch (gatewayBalancesResponse.result.error) {
-        case RippledErrorMessages.accountNotFound:
-          throw XrpError.accountNotFound
-        case RippledErrorMessages.invalidExcludedAddress:
-          throw new XrpError(
-            XrpErrorType.InvalidInput,
-            'The address(es) supplied to for exclusion were invalid.',
-          )
-        default:
-          throw new XrpError(
-            XrpErrorType.Unknown,
-            gatewayBalancesResponse.result.error,
-          )
-      }
+    }
+    switch (error) {
+      case RippledErrorMessages.accountNotFound:
+        throw XrpError.accountNotFound
+      case RippledErrorMessages.invalidExcludedAddress:
+        throw new XrpError(
+          XrpErrorType.InvalidInput,
+          'The address(es) supplied to for exclusion were invalid.',
+        )
+      default:
+        throw new XrpError(XrpErrorType.Unknown, error)
     }
   }
 

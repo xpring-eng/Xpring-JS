@@ -39,19 +39,21 @@ export default interface GatewayBalances {
   readonly obligations?: { [currencyCode: string]: string }
 
   /** (May be omitted) The ledger index of the ledger version that was used to generate this response. */
-  readonly ledgerHash?: string | undefined
+  readonly ledgerHash?: string
 }
 
 export function gatewayBalancesFromResponse(
   gatewayBalancesResponse: GatewayBalancesResponse,
 ): GatewayBalances {
-  if (gatewayBalancesResponse.result.validated === false) {
+  const { result } = gatewayBalancesResponse
+
+  if (!result.validated) {
     throw new XrpError(
       XrpErrorType.MalformedResponse,
       'Gateway Balances response indicates unvalidated ledger.',
     )
   }
-  const account = gatewayBalancesResponse.result.account
+  const account = result.account
   if (!account) {
     throw new XrpError(
       XrpErrorType.MalformedResponse,
@@ -68,9 +70,9 @@ export function gatewayBalancesFromResponse(
 
   return {
     account: xAddress,
-    ledgerHash: gatewayBalancesResponse.result.ledger_hash,
-    assets: gatewayBalancesResponse.result.assets,
-    balances: gatewayBalancesResponse.result.balances,
-    obligations: gatewayBalancesResponse.result.obligations,
+    ledgerHash: result.ledger_hash,
+    assets: result.assets,
+    balances: result.balances,
+    obligations: result.obligations,
   }
 }

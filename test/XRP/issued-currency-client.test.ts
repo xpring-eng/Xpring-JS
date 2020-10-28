@@ -422,7 +422,7 @@ describe('Issued Currency Client', function (): void {
     // WHEN getGatewayBalances is called with a classic addressToExclude (no X-address) THEN an error is propagated.
     const classicAddress = 'rhhh49pFH96roGyuC4E5P4CHaNjS1k8gzM'
     issuedCurrencyClient
-      .getGatewayBalances(testAddress, classicAddress)
+      .getGatewayBalances(testAddress, [classicAddress])
       .catch((error) => {
         assert.typeOf(error, 'Error')
         assert.equal(error, XrpError.xAddressRequired)
