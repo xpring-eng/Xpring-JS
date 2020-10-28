@@ -454,10 +454,10 @@ export default class IssuedCurrencyClient {
    *==================================================================================================================================
    *
    * @param sender The Wallet from which issued currency will be sent, and that will sign the transaction.
-   * @param destinationAddress The destination address (recipient) for the payment, encoded as an X-address (see https://xrpaddress.info/).
+   * @param destination The destination address (recipient) for the payment, encoded as an X-address (see https://xrpaddress.info/).
    * @param currency The three-letter currency code of the issued currency being sent.
    * @param issuer The issuing address of the issued currency being sent.
-   * @param value The amount of issued currency to send.
+   * @param amount The amount of issued currency to send.
    * @param transferFee Optional - can be omitted if sender address or destinationAddress are the same address as the issuer.
    *                    The transfer fee associated with the issuing account, expressed as a percentage. (i.e. a value of .5 indicates a 0.5% transfer fee).
    */
@@ -465,13 +465,13 @@ export default class IssuedCurrencyClient {
   // TODO: (acorso) consider using an object for potentially long list of params
   public async sendIssuedCurrency(
     sender: Wallet,
-    destinationAddress: string,
+    destination: string,
     currency: string,
     issuer: string,
-    value: string,
+    amount: string,
     transferFee?: number,
   ): Promise<TransactionResult> {
-    if (!XrpUtils.isValidXAddress(destinationAddress)) {
+    if (!XrpUtils.isValidXAddress(destination)) {
       throw new XrpError(
         XrpErrorType.XAddressRequired,
         'Destination address must be in X-address format.  See https://xrpaddress.info/.',
@@ -502,41 +502,49 @@ export default class IssuedCurrencyClient {
     const issuedCurrency = new IssuedCurrencyAmount()
     issuedCurrency.setCurrency(currencyProto)
     issuedCurrency.setIssuer(issuerAccountAddress)
-    issuedCurrency.setValue(value)
+    issuedCurrency.setValue(amount)
 
     const currencyAmount = new CurrencyAmount()
     currencyAmount.setIssuedCurrencyAmount(issuedCurrency)
 
-    const amount = new Amount()
-    amount.setValue(currencyAmount)
+    const amountProto = new Amount()
+    amountProto.setValue(currencyAmount)
 
     const destinationAccountAddress = new AccountAddress()
-    destinationAccountAddress.setAddress(destinationAddress)
+    destinationAccountAddress.setAddress(destination)
 
-    const destination = new Destination()
-    destination.setValue(destinationAccountAddress)
+    const destinationProto = new Destination()
+    destinationProto.setValue(destinationAccountAddress)
 
     // Construct Payment fields
     const payment = new Payment()
-    payment.setDestination(destination)
+    payment.setDestination(destinationProto)
     // Note that the destinationTag doesn't need to be explicitly set here, because the ripple-binary-codec will decode this X-Address and
     // assign the decoded destinationTag before signing.
-    payment.setAmount(amount)
+    payment.setAmount(amountProto)
 
-    if (!(transferFee === undefined)) {
+    if (transferFee !== undefined) {
       // Construct SendMax - value should be intended amount + relevant transfer fee
       // Note that a transfer fee doesn't apply if the source address (of this transaction) and the issuing address of the currency being
       // sent are the same (i.e. issuer sending currency directly) OR if the issuer of the currency and the destination are the same
       // (i.e. redeeming an issued currency).
-      // However, it also doesn't hurt to include a SendMax field, it just won't nd up being used (added this to questions just to make sure).
+      // However, it also doesn't hurt to include a SendMax field, it just won't end up being used (added this to questions just to make sure).
 
-      const numericValue = Number(value)
-      const sendMaxValue = Math.ceil((1 + transferFee / 100) * numericValue)
+      // This calculation determines the sendMaxValue by applying the transferFee to the amount being sent, and then rounding (up) only as
+      // much as necessary to fit the final value within the 15 decimal digit limit that applies to encoding issued currency amounts.
+      // See https://xrpl.org/currency-formats.html#issued-currency-precision
+      const numericValue = Number(amount)
+      const rawSendMaxValue = (1 + transferFee / 100) * numericValue
+      const numDigitsLeftOfDecimal = String(Math.ceil(rawSendMaxValue)).length
+      const allowedDigitsRightOfDecimal = 15 - numDigitsLeftOfDecimal
+      const sendMaxValue = String(
+        rawSendMaxValue.toFixed(allowedDigitsRightOfDecimal),
+      )
 
       const sendMaxIssuedCurrencyAmount = new IssuedCurrencyAmount()
       sendMaxIssuedCurrencyAmount.setCurrency(currencyProto)
       sendMaxIssuedCurrencyAmount.setIssuer(issuerAccountAddress)
-      sendMaxIssuedCurrencyAmount.setValue(String(sendMaxValue))
+      sendMaxIssuedCurrencyAmount.setValue(sendMaxValue)
 
       const sendMaxCurrencyAmount = new CurrencyAmount()
       sendMaxCurrencyAmount.setIssuedCurrencyAmount(sendMaxIssuedCurrencyAmount)

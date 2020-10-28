@@ -662,7 +662,40 @@ describe('Issued Currency Client', function (): void {
     assert.equal(transactionResult.hash, expectedTransactionHash)
   })
 
-  it('sendIssuedCurrency - classic destination address', function (): void {
+  it('sendIssuedCurrency - submission failure', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
+    const failureResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultError,
+    )
+    const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      failingNetworkClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN sendIssuedCurrency is called THEN an error is propagated.
+    try {
+      await issuedCurrencyClient.sendIssuedCurrency(
+        this.wallet,
+        testAddress,
+        'FOO',
+        testAddress,
+        '100',
+        0.5,
+      )
+    } catch (error) {
+      assert.equal(error, FakeXRPNetworkClientResponses.defaultError)
+    }
+  })
+
+  it('sendIssuedCurrency - classic destination address', async function (): Promise<
+    void
+  > {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -671,8 +704,8 @@ describe('Issued Currency Client', function (): void {
     )
 
     // WHEN sendIssuedCurrency is called with a classic address argument for destination THEN an error is thrown.
-    issuedCurrencyClient
-      .sendIssuedCurrency(
+    try {
+      await issuedCurrencyClient.sendIssuedCurrency(
         this.wallet,
         testClassicAddress,
         'FOO',
@@ -680,12 +713,14 @@ describe('Issued Currency Client', function (): void {
         '100',
         0.5,
       )
-      .catch((error) => {
-        assert.equal(error.errorType, XrpErrorType.XAddressRequired)
-      })
+    } catch (error) {
+      assert.equal(error.errorType, XrpErrorType.XAddressRequired)
+    }
   })
 
-  it('sendIssuedCurrency - classic issuer address', function (): void {
+  it('sendIssuedCurrency - classic issuer address', async function (): Promise<
+    void
+  > {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -694,8 +729,8 @@ describe('Issued Currency Client', function (): void {
     )
 
     // WHEN sendIssuedCurrency is called with a classic address argument for issuer THEN an error is thrown.
-    issuedCurrencyClient
-      .sendIssuedCurrency(
+    try {
+      await issuedCurrencyClient.sendIssuedCurrency(
         this.wallet,
         testAddress,
         'FOO',
@@ -703,8 +738,8 @@ describe('Issued Currency Client', function (): void {
         '100',
         0.5,
       )
-      .catch((error) => {
-        assert.equal(error.errorType, XrpErrorType.XAddressRequired)
-      })
+    } catch (error) {
+      assert.equal(error.errorType, XrpErrorType.XAddressRequired)
+    }
   })
 })

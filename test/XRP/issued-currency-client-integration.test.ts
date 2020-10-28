@@ -446,7 +446,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // TODO: (acorso) What is the actual status code? -- do we need to update this once the enum is expanded?
     assert.deepEqual(
       transactionResult,
-      TransactionResult.getFinalTransactionResult(
+      TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
         TransactionStatus.ClaimedCostOnly,
         true,
@@ -477,7 +477,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // TODO: (acorso) actual status code?
     assert.deepEqual(
       transactionResult,
-      TransactionResult.getFinalTransactionResult(
+      TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
         TransactionStatus.ClaimedCostOnly,
         true,
@@ -496,7 +496,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction finally succeeds.
     assert.deepEqual(
       transactionResult,
-      TransactionResult.getFinalTransactionResult(
+      TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
         TransactionStatus.Succeeded,
         true,
@@ -554,7 +554,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the payment fails with a TransactionStatus.ClaimedCostOnly status
     assert.deepEqual(
       transactionResult,
-      TransactionResult.getFinalTransactionResult(
+      TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
         TransactionStatus.ClaimedCostOnly,
         true,
@@ -613,7 +613,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction succeeds.
     assert.deepEqual(
       transactionResult,
-      TransactionResult.getFinalTransactionResult(
+      TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
         TransactionStatus.Succeeded,
         true,
@@ -672,7 +672,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // NOTE: This is also a tecPATH_DRY error code from rippled
     assert.deepEqual(
       transactionResult,
-      TransactionResult.getFinalTransactionResult(
+      TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
         TransactionStatus.ClaimedCostOnly,
         true,
@@ -733,7 +733,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // https://xrpl.org/tec-codes.html
     assert.deepEqual(
       transactionResult,
-      TransactionResult.getFinalTransactionResult(
+      TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
         TransactionStatus.ClaimedCostOnly,
         true,
@@ -750,13 +750,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       0.5,
     )
 
-    console.log('Result of sending transaction WITH sendmax')
-    console.log(transactionResult)
-
     // THEN the transaction succeeds.
     assert.deepEqual(
       transactionResult,
-      TransactionResult.getFinalTransactionResult(
+      TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
         TransactionStatus.Succeeded,
         true,
@@ -803,7 +800,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the payment succeeds.
     assert.deepEqual(
       transactionResult,
-      TransactionResult.getFinalTransactionResult(
+      TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
         TransactionStatus.Succeeded,
         true,
