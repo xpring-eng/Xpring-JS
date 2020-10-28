@@ -482,6 +482,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // THEN the trust line is frozen.
     assert.equal(frozenTrustLine.freeze, true)
-    assert.equal(frozenTrustLine.limit, 0)
+    assert.equal(frozenTrustLine.limit, '0')
   })
 })
