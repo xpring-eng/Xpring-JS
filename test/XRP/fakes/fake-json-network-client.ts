@@ -37,7 +37,7 @@ export class FakeJsonNetworkClientResponses {
     public readonly getAccountLinesResponse: Result<
       AccountLinesResponse
     > = FakeJsonNetworkClientResponses.defaultGetAccountLinesResponse(),
-    public readonly getGatewayBalancesReponse: Result<
+    public readonly getGatewayBalancesResponse: Result<
       GatewayBalancesResponse
     > = FakeJsonNetworkClientResponses.defaultGetGatewayBalancesResponse(),
   ) {}
@@ -176,7 +176,7 @@ export class FakeJsonNetworkClient {
     _address: string,
     _addressesToExclude?: string | Array<string>,
   ): Promise<GatewayBalancesResponse> {
-    const gatewayBalancesResponse = this.responses.getGatewayBalancesReponse
+    const gatewayBalancesResponse = this.responses.getGatewayBalancesResponse
     if (gatewayBalancesResponse instanceof Error) {
       return Promise.reject(gatewayBalancesResponse)
     }

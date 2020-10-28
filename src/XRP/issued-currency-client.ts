@@ -152,14 +152,13 @@ export default class IssuedCurrencyClient {
       throw XrpError.xAddressRequired
     }
 
-    // check excludable addresses for X-Address format
-    const classicAddressesToExclude: Array<string> = []
-    accountsToExclude.map((xAddress) => {
+    // check excludable addresses for X-Address format, and convert to classic addresses for request
+    const classicAddressesToExclude = accountsToExclude.map((xAddress) => {
       const excludeClassicAddress = XrpUtils.decodeXAddress(xAddress)
       if (!excludeClassicAddress) {
         throw XrpError.xAddressRequired
       }
-      classicAddressesToExclude.push(excludeClassicAddress.address)
+      return classicAddress.address
     })
 
     const gatewayBalancesResponse: GatewayBalancesResponse = await this.jsonNetworkClient.getGatewayBalances(
