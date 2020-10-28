@@ -57,6 +57,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.isTrue(trustLines.length > 0)
   })
 
+  // TODO: (amiecorso) implement an integration test that includes the peerAccount param when we have control over establishing
+  // specific trustlines.  Can't otherwise verify correctness.
+
   it('getTrustLines - account not found', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN a valid address that doesn't actually exist on the ledger
