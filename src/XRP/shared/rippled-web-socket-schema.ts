@@ -55,7 +55,7 @@ interface WebSocketAccountLinesResponse {
   id: number | string
   status: string
   type: string
-  result: {
+  result?: {
     account: string
     ledger_hash: string
     ledger_index: number

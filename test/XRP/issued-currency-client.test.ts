@@ -6,10 +6,7 @@ import {
   FakeXRPNetworkClient,
   FakeXRPNetworkClientResponses,
 } from './fakes/fake-xrp-network-client'
-import {
-  FakeJsonNetworkClient,
-  FakeJsonNetworkClientResponses,
-} from './fakes/fake-json-network-client'
+import { FakeJsonNetworkClient } from './fakes/fake-json-network-client'
 import 'mocha'
 import TrustLine from '../../src/XRP/shared/trustline'
 import { XrpError } from '../../src/XRP'
@@ -18,7 +15,10 @@ import {
   FakeWebSocketNetworkClient,
   FakeWebSocketNetworkClientResponses,
 } from './fakes/fake-web-socket-network-client'
-import { WebSocketResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
+import {
+  WebSocketAccountLinesResponse,
+  WebSocketResponse,
+} from '../../src/XRP/shared/rippled-web-socket-schema'
 
 const fakeSucceedingGrpcClient = new FakeXRPNetworkClient()
 
@@ -104,22 +104,31 @@ describe('Issued Currency Client', function (): void {
     void
   > {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
-    const accountNotFoundResponse: AccountLinesResponse = {
-      result: {
-        error: 'actNotFound',
-        status: 'error',
+    const accountNotFoundResponse: WebSocketAccountLinesResponse = {
+      error: 'actNotFound',
+      error_code: 19,
+      error_message: 'Account not found.',
+      id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+      request: {
+        account: 'r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+        command: 'account_lines',
+        id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+        ledger_index: 'validated',
       },
+      status: 'error',
+      type: 'response',
     }
-    const fakeErroringJsonClientResponses = new FakeJsonNetworkClientResponses(
+    const fakeErroringWebSocketClientResponses = new FakeWebSocketNetworkClientResponses(
+      FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
       accountNotFoundResponse,
     )
-    const fakeErroringJsonClient = new FakeJsonNetworkClient(
-      fakeErroringJsonClientResponses,
+    const fakeErroringWebSocketClient = new FakeWebSocketNetworkClient(
+      fakeErroringWebSocketClientResponses,
     )
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeErroringJsonClient,
-      fakeSucceedingWebSocketClient,
+      fakeSucceedingJsonClient,
+      fakeErroringWebSocketClient,
       XrplNetwork.Test,
     )
     // WHEN getTrustLines is called THEN an error is thrown.
@@ -134,22 +143,31 @@ describe('Issued Currency Client', function (): void {
     void
   > {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
-    const invalidParamsResponse: AccountLinesResponse = {
-      result: {
-        error: 'invalidParams',
-        status: 'error',
+    const invalidParamsResponse: WebSocketAccountLinesResponse = {
+      error: 'invalidParams',
+      error_code: 31,
+      error_message: "Missing field 'account'.",
+      id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+      request: {
+        account: 'r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+        command: 'account_lines',
+        id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+        ledger_index: 'validated',
       },
+      status: 'error',
+      type: 'response',
     }
-    const fakeErroringJsonClientResponses = new FakeJsonNetworkClientResponses(
+    const fakeErroringWebSocketClientResponses = new FakeWebSocketNetworkClientResponses(
+      FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
       invalidParamsResponse,
     )
-    const fakeErroringJsonClient = new FakeJsonNetworkClient(
-      fakeErroringJsonClientResponses,
+    const fakeErroringWebSocketClient = new FakeWebSocketNetworkClient(
+      fakeErroringWebSocketClientResponses,
     )
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeErroringJsonClient,
-      fakeSucceedingWebSocketClient,
+      fakeSucceedingJsonClient,
+      fakeErroringWebSocketClient,
       XrplNetwork.Test,
     )
     // WHEN getTrustLines is called THEN an error is thrown.
