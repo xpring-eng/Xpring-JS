@@ -390,7 +390,7 @@ export default class IssuedCurrencyClient {
   }
 
   /*
-   * Creates and sends a TrustSet transaction to be sent and executed on the XRPL.
+   * Creates and sends a TrustSet transaction to the XRPL.
    *
    * @param accountToTrust The account to extend trust to with a trust line.
    * @param currencyName The name of the currency to create a trust line for.
