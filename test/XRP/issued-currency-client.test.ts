@@ -10,13 +10,13 @@ import { FakeJsonNetworkClient } from './fakes/fake-json-network-client'
 import 'mocha'
 import TrustLine from '../../src/XRP/shared/trustline'
 import { XrpError } from '../../src/XRP'
-import { AccountLinesResponse } from '../../src/XRP/shared/rippled-json-rpc-schema'
 import {
   FakeWebSocketNetworkClient,
   FakeWebSocketNetworkClientResponses,
 } from './fakes/fake-web-socket-network-client'
 import {
   WebSocketAccountLinesResponse,
+  WebSocketAccountLinesSuccessfulResponse,
   WebSocketResponse,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
 
@@ -47,13 +47,14 @@ describe('Issued Currency Client', function (): void {
     // WHEN getTrustLines is called
     const trustLines = await issuedCurrencyClient.getTrustLines(testAddress)
     const expectedTrustLines: Array<TrustLine> = []
-    const trustlinesJson: AccountLinesResponse = await fakeSucceedingJsonClient.getAccountLines(
+    const trustlinesJson: WebSocketAccountLinesResponse = await fakeSucceedingWebSocketClient.getAccountLines(
       testAddress,
     )
-    if (trustlinesJson.result.lines === undefined) {
+    const trustlinesSuccessfulJson = trustlinesJson as WebSocketAccountLinesSuccessfulResponse
+    if (trustlinesSuccessfulJson.result.lines === undefined) {
       throw XrpError.malformedResponse
     }
-    for (const trustLineJson of trustlinesJson.result.lines) {
+    for (const trustLineJson of trustlinesSuccessfulJson.result.lines) {
       const trustLine = new TrustLine(trustLineJson)
       expectedTrustLines.push(trustLine)
     }

@@ -51,21 +51,31 @@ interface WebSocketTransactionResponse {
   validated: boolean
 }
 
-interface WebSocketAccountLinesResponse {
+type WebSocketAccountLinesResponse =
+  | WebSocketAccountLinesSuccessfulResponse
+  | WebSocketAccountLinesFailureResponse
+
+interface WebSocketAccountLinesSuccessfulResponse {
   id: number | string
   status: string
   type: string
-  result?: {
+  result: {
     account: string
     ledger_hash: string
     ledger_index: number
     lines: Array<TrustLineJson>
     validated: boolean
   }
-  error?: string
-  error_code?: number
-  error_message?: string
-  request?: AccountLinesRequest
+}
+
+interface WebSocketAccountLinesFailureResponse {
+  id: number | string
+  status: string
+  type: string
+  error: string
+  error_code: number
+  error_message: string
+  request: AccountLinesRequest
 }
 
 type ChangedNode = CreatedNode | ModifiedNode | DeletedNode
@@ -155,4 +165,6 @@ export {
   WebSocketTransaction,
   WebSocketTransactionResponse,
   WebSocketAccountLinesResponse,
+  WebSocketAccountLinesSuccessfulResponse,
+  WebSocketAccountLinesFailureResponse,
 }

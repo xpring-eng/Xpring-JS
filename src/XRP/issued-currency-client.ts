@@ -26,6 +26,8 @@ import TrustLine from './shared/trustline'
 import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
 import {
   WebSocketAccountLinesResponse,
+  WebSocketAccountLinesSuccessfulResponse,
+  WebSocketAccountLinesFailureResponse,
   WebSocketStatusResponse,
   WebSocketTransactionResponse,
 } from './shared/rippled-web-socket-schema'
@@ -115,15 +117,21 @@ export default class IssuedCurrencyClient {
       peerAccount,
     )
 
-    if (accountLinesResponse.error) {
-      if (accountLinesResponse.error === 'actNotFound') {
+    const accountLinesErrorResponse = accountLinesResponse as WebSocketAccountLinesFailureResponse
+    console.log(accountLinesErrorResponse)
+    if (accountLinesErrorResponse.error) {
+      if (accountLinesErrorResponse.error === 'actNotFound') {
         throw XrpError.accountNotFound
       } else {
-        throw new XrpError(XrpErrorType.Unknown, accountLinesResponse.error)
+        throw new XrpError(
+          XrpErrorType.Unknown,
+          accountLinesErrorResponse.error,
+        )
       }
     }
 
-    const rawTrustLines = accountLinesResponse.result.lines
+    const accountLinesSuccessfulResponse = accountLinesResponse as WebSocketAccountLinesSuccessfulResponse
+    const rawTrustLines = accountLinesSuccessfulResponse.result.lines
     if (rawTrustLines === undefined) {
       throw XrpError.malformedResponse
     }
