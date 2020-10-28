@@ -1,10 +1,10 @@
 /* Schema for adding type information to Web Socket objects. */
 
 enum WebSocketReadyState {
-  CONNECTING,
-  OPEN,
-  CLOSING,
-  CLOSED,
+  Connecting,
+  Open,
+  Closing,
+  Closed,
 }
 
 /**

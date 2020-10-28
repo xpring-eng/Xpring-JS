@@ -23,9 +23,12 @@ export default class WebSocketNetworkClient {
   private accountCallbacks: Map<
     string,
     (data: WebSocketTransactionResponse) => void
-  >
-  private messageCallbacks: Map<string, (data: WebSocketResponse) => void>
-  private waiting: Map<string, WebSocketResponse | undefined>
+  > = new Map()
+  private messageCallbacks: Map<
+    string,
+    (data: WebSocketResponse) => void
+  > = new Map()
+  private waiting: Map<string, WebSocketResponse | undefined> = new Map()
 
   /**
    * Create a new WebSocketNetworkClient.
@@ -38,37 +41,36 @@ export default class WebSocketNetworkClient {
     private handleErrorMessage: (message: string) => void,
   ) {
     this.socket = new WebSocket(webSocketUrl)
-    this.accountCallbacks = new Map()
-    this.waiting = new Map()
 
-    this.messageCallbacks = new Map()
     this.messageCallbacks.set('response', (data: WebSocketResponse) => {
       const dataStatusResponse = data as WebSocketStatusResponse
       this.waiting.set(dataStatusResponse.id, data)
     })
-    this.messageCallbacks.set('transaction', this.handleTransaction)
+    this.messageCallbacks.set('transaction', (data: WebSocketResponse) =>
+      this.handleTransaction(data as WebSocketTransactionResponse),
+    )
 
     this.socket.addEventListener('message', (event) => {
       const parsedData = JSON.parse(event.data) as WebSocketResponse
-      const dataType = parsedData.type
-      const callback = this.messageCallbacks.get(dataType)
+      const messageType = parsedData.type
+      const callback = this.messageCallbacks.get(messageType)
       if (callback) {
         callback(parsedData)
       } else {
         this.handleErrorMessage(
-          'Received unhandlable message: ' + (event.data as string),
+          'Received unhandlable message: ${event.data as string}',
         )
       }
     })
 
-    this.socket.addEventListener('close', (event) => {
-      this.handleErrorMessage(
-        'Web socket disconnected, ' + (event.reason as string),
-      )
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- variable used in string interpolation
+    this.socket.addEventListener('close', (event: CloseEvent) => {
+      this.handleErrorMessage('Web socket disconnected, ${event.reason}')
     })
 
-    this.socket.addEventListener('error', (event) => {
-      this.handleErrorMessage('Error: ' + (event as string))
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- variable used in string interpolation
+    this.socket.addEventListener('error', (event: ErrorEvent) => {
+      this.handleErrorMessage('Error: ${event as string}')
     })
   }
 
@@ -77,19 +79,18 @@ export default class WebSocketNetworkClient {
    *
    * @param data The web socket response received from the web socket.
    */
-  private handleTransaction = (data: WebSocketResponse) => {
-    const dataTransaction = data as WebSocketTransactionResponse
-    const destinationAccount = dataTransaction.transaction.Destination
+  private handleTransaction(data: WebSocketTransactionResponse) {
+    const destinationAccount = data.transaction.Destination
     const destinationCallback = this.accountCallbacks.get(destinationAccount)
 
-    const senderAccount = dataTransaction.transaction.Account
+    const senderAccount = data.transaction.Account
     const senderCallback = this.accountCallbacks.get(senderAccount)
 
     if (destinationCallback) {
-      destinationCallback(dataTransaction)
+      destinationCallback(data)
     }
     if (senderCallback) {
-      senderCallback(dataTransaction)
+      senderCallback(data)
     }
 
     if (!destinationCallback && !senderCallback) {
@@ -110,10 +111,10 @@ export default class WebSocketNetworkClient {
   private async sendApiRequest(
     request: WebSocketRequestOptions,
   ): Promise<WebSocketResponse> {
-    while (this.socket.readyState === WebSocket.CONNECTING) {
+    while (this.socket.readyState === WebSocketReadyState.Connecting) {
       await sleep(5)
     }
-    if (this.socket.readyState !== WebSocketReadyState.OPEN) {
+    if (this.socket.readyState !== WebSocketReadyState.Open) {
       throw new XrpError(XrpErrorType.Unknown, 'Socket is closed/closing')
     }
     this.socket.send(JSON.stringify(request))
@@ -133,9 +134,9 @@ export default class WebSocketNetworkClient {
    * Subscribes for notification about every validated transaction that affects the given account.
    * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
    *
+   * @param account The account from which to subscribe to incoming transactions, encoded as a classic address.
    * @param subscriptionId The ID used for the subscription.
    * @param callback The function called whenever a new transaction is received.
-   * @param account The account from which to subscribe to incoming transactions, encoded as a classic address.
    * @returns The response from the websocket confirming the subscription.
    */
   public async subscribeToAccount(
