@@ -811,4 +811,34 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   // TODO: (acorso) add test for attempting to send an issued currency payment to a user that has a trustline established with the issuer, but has not been authorized AND issuer has enabledAuthorizedTrustlines (should fail)
   //  ^^ this is really under the category of testing that authorizedTrustLines is working?
   // TODO: (acorso) confirm that the presence of a SendMax when not necessary also doesn't cause any problems (i.e. include the argument)
+  it('authorizeTrustLine - valid account', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    const accountToTrust = await XRPTestUtils.randomWalletFromFaucet()
+
+    // GIVEN an existing testnet account requiring authorized trust lines
+    // and another account
+    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
+
+    const trustLineCurrency = 'USD'
+    // WHEN a trust line is authorized with another account
+    await issuedCurrencyClient.authorizeTrustLine(
+      accountToTrust.getAddress(),
+      'USD',
+      issuer,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      issuer.getAddress(),
+    )
+
+    const [createdTrustLine] = trustLines
+    const classicAddress = XrpUtils.decodeXAddress(accountToTrust.getAddress())!
+
+    // THEN an authorized trust line is created between the wallet and the other account.
+    assert.equal(createdTrustLine.account, classicAddress.address)
+    assert.equal(createdTrustLine.limit, '0')
+    assert.equal(createdTrustLine.currency, trustLineCurrency)
+    assert.isTrue(createdTrustLine.authorized)
+  })
 })
