@@ -456,4 +456,35 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.limit, trustLineLimit)
     assert.equal(createdTrustLine.currency, trustLineCurrency)
   })
+
+  it('authorizeTrustLine - valid account', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    const accountToTrust = await XRPTestUtils.randomWalletFromFaucet()
+
+    // GIVEN an existing testnet account requiring authorized trust lines
+    // and another account
+    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
+
+    const trustLineCurrency = 'USD'
+    // WHEN a trust line is authorized with another account
+    await issuedCurrencyClient.authorizeTrustLine(
+      accountToTrust.getAddress(),
+      'USD',
+      issuer,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      issuer.getAddress(),
+    )
+
+    const [createdTrustLine] = trustLines
+    const classicAddress = XrpUtils.decodeXAddress(accountToTrust.getAddress())!
+
+    // THEN an authorized trust line is created between the wallet and the other account.
+    assert.equal(createdTrustLine.account, classicAddress.address)
+    assert.equal(createdTrustLine.limit, '0')
+    assert.equal(createdTrustLine.currency, trustLineCurrency)
+    assert.isTrue(createdTrustLine.authorized)
+  })
 })
