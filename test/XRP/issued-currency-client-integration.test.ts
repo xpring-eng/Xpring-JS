@@ -76,10 +76,8 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     // GIVEN a valid, funded address that doesn't have any trustlines
-    const address = 'XVgfuVNA3AdYotM4ymXciybXLpHUEVzuVmRE1KSLCemREG9'
-    // TODO: generate fresh funded account each time, once testnet faucet stops rejecting your certificate
-    //const wallet = await XRPTestUtils.randomWalletFromFaucet()
-    //onst address = wallet.getAddress()
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const address = wallet.getAddress()
 
     // WHEN getTrustLines is called for that addres
     const trustLines = await issuedCurrencyClient.getTrustLines(address)
@@ -238,6 +236,44 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction succeeds.
     assert.exists(transactionHash2)
     assert.equal(transactionStatus2, TransactionStatus.Succeeded)
+  })
+
+  // TODO: when SDK functionality is expanded, improve test specificity by creating trustlines/issued currencies first,
+  // which will also avoid the need for maintenance after a testnet reset.
+
+  // TODO: Implement an integration test for an account with balances/assets/obligations once functionality exists for first creating things.
+  it('getGatewayBalances - account not found', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN a valid address that doesn't actually exist on the ledger
+    const walletFactory = new WalletFactory(XrplNetwork.Test)
+    const address = (await walletFactory.generateRandomWallet())!.wallet.getAddress()
+
+    // WHEN getGatewayBalances is called for that address THEN an error is propagated.
+    issuedCurrencyClient.getGatewayBalances(address).catch((error) => {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.accountNotFound)
+    })
+  })
+
+  it('getGatewayBalances - account with no issued currencies', async function (): Promise<
+    void
+  > {
+    // GIVEN a valid, funded address that has not issued any currencies
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const address = wallet.getAddress()
+
+    // WHEN getGatewayBalances is called for that address
+    const gatewayBalances = await issuedCurrencyClient.getGatewayBalances(
+      address,
+    )
+
+    // THEN the result is as expected.
+    assert.equal(gatewayBalances.account, address)
+    assert.isUndefined(gatewayBalances.assets)
+    assert.isUndefined(gatewayBalances.balances)
+    assert.isUndefined(gatewayBalances.obligations)
   })
 
   it('setTransferFee - rippled', async function (): Promise<void> {
