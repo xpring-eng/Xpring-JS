@@ -397,8 +397,8 @@ export default class IssuedCurrencyClient {
     return await this.sendTrustSetTransaction(
       accountToFreeze,
       currencyName,
-      // TODO: Seems like there should still be an amount here? I honestly can't tell
-      // if that's what we want
+      // You can change the trust line when you freeze it, but an amount of 0
+      // would be the most conservative amount.
       '0',
       TrustSetFlag.tfSetFreeze,
       wallet,
