@@ -19,13 +19,20 @@ import GrpcNetworkClient from './network-clients/grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
 import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
+import {
+  AccountLinesResponse,
+  GatewayBalancesResponse,
+} from './shared/rippled-json-rpc-schema'
 import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
 import { XrpError, XrpErrorType } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
-import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
+import GatewayBalances, {
+  gatewayBalancesFromResponse,
+} from './shared/gateway-balances'
 import TrustLine from './shared/trustline'
 import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
+import { RippledErrorMessages } from './shared/rippled-error-messages'
 import TrustSetFlag from './shared/trust-set-flag'
 
 /**
@@ -82,7 +89,8 @@ export default class IssuedCurrencyClient {
    * @see https://xrpl.org/trust-lines-and-issuing.html
    *
    * @param account The account for which to retrieve associated trust lines, encoded as an X-Address.
-   * @param peerAccount (Optional) The address of a second account. If provided, show only trust lines connecting the two accounts.
+   * @param peerAccount (Optional) The address of a second account, encoded as an X-Address.
+   *                    If provided, show only trust lines connecting the two accounts.
    * @see https://xrpaddress.info/
    * @returns An array of TrustLine objects, representing all trust lines associated with this account.
    */
@@ -106,14 +114,12 @@ export default class IssuedCurrencyClient {
       peerAccount,
     )
 
-    if (accountLinesResponse.result.error) {
-      if (accountLinesResponse.result.error === 'actNotFound') {
+    const { error } = accountLinesResponse.result
+    if (error) {
+      if (error === RippledErrorMessages.accountNotFound) {
         throw XrpError.accountNotFound
       } else {
-        throw new XrpError(
-          XrpErrorType.Unknown,
-          accountLinesResponse.result.error,
-        )
+        throw new XrpError(XrpErrorType.Unknown, error)
       }
     }
 
@@ -126,6 +132,57 @@ export default class IssuedCurrencyClient {
       trustLines.push(new TrustLine(trustLineJson))
     })
     return trustLines
+  }
+
+  /**
+   * Returns information about the total balances issued by a given account,
+   * optionally excluding amounts held by operational addresses.
+   * @see https://xrpl.org/issuing-and-operational-addresses.html
+   *
+   * @param account The account for which to retrieve balance information, encoded as an X-Address.
+   * @param accountsToExclude (Optional) An array of operational addresses to exclude from the balances issued, encoded as X-Addresses.
+   * @see https://xrpaddress.info/
+   * @returns A GatewayBalances object containing information about an account's balances.
+   */
+  public async getGatewayBalances(
+    account: string,
+    accountsToExclude: Array<string> = [],
+  ): Promise<GatewayBalances> {
+    // check issuing account for X-Address format
+    const classicAddress = XrpUtils.decodeXAddress(account)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    // check excludable addresses for X-Address format, and convert to classic addresses for request
+    const classicAddressesToExclude = accountsToExclude.map((xAddress) => {
+      const excludeClassicAddress = XrpUtils.decodeXAddress(xAddress)
+      if (!excludeClassicAddress) {
+        throw XrpError.xAddressRequired
+      }
+      return classicAddress.address
+    })
+
+    const gatewayBalancesResponse: GatewayBalancesResponse = await this.jsonNetworkClient.getGatewayBalances(
+      classicAddress.address,
+      classicAddressesToExclude,
+    )
+
+    const { error } = gatewayBalancesResponse.result
+    if (!error) {
+      return gatewayBalancesFromResponse(gatewayBalancesResponse)
+    }
+    switch (error) {
+      case RippledErrorMessages.accountNotFound:
+        throw XrpError.accountNotFound
+      case RippledErrorMessages.invalidExcludedAddress:
+        throw new XrpError(
+          XrpErrorType.InvalidInput,
+          'The address(es) supplied to for exclusion were invalid.',
+        )
+      default:
+        throw new XrpError(XrpErrorType.Unknown, error)
+    }
   }
 
   /**
