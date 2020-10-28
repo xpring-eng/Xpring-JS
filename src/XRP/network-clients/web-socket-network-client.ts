@@ -63,14 +63,12 @@ export default class WebSocketNetworkClient {
       }
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- variable used in string interpolation
     this.socket.addEventListener('close', (event: CloseEvent) => {
-      this.handleErrorMessage('Web socket disconnected, ${event.reason}')
+      this.handleErrorMessage('Web socket disconnected, ' + event.reason)
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- variable used in string interpolation
     this.socket.addEventListener('error', (event: ErrorEvent) => {
-      this.handleErrorMessage('Error: ${event as string}')
+      this.handleErrorMessage('Error: ' + event.message)
     })
   }
 
