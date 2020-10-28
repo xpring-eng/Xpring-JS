@@ -56,8 +56,11 @@ interface WebSocketAccountLinesResponse {
   status: string
   type: string
   result: {
-    account?: string
-    lines?: Array<TrustLineJson>
+    account: string
+    ledger_hash: string
+    ledger_index: number
+    lines: Array<TrustLineJson>
+    validated: boolean
   }
   error?: string
   error_code?: number
