@@ -65,6 +65,10 @@ export class FakeWebSocketNetworkClientResponses {
       status: 'success',
       result: {
         account: 'r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+        ledger_hash:
+          '7866E9E228680D236FF0141D4E2EE9E2914FA35EFC20288DB590BAE0F3500142',
+        ledger_index: 11822601,
+        validated: true,
         lines: [
           {
             account: 'r3vi7mWxru9rJCxETCyA1CHvzL96eZWx5z',
