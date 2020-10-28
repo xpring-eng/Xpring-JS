@@ -1,6 +1,6 @@
 import { XrplNetwork, XrpUtils, Wallet } from 'xpring-common-js'
 
-import { LimitAmount } from './Generated/web/org/xrpl/rpc/v1/common_pb'
+import { Flags, LimitAmount } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
   Currency,
@@ -10,6 +10,7 @@ import {
 import {
   TrustSet,
   AccountSet,
+  Transaction,
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
 import isNode from '../Common/utils'
@@ -25,6 +26,7 @@ import TransactionResult from './shared/transaction-result'
 import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
 import TrustLine from './shared/trustline'
 import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
+import TrustSetFlag from './shared/trust-set-flag'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -349,25 +351,111 @@ export default class IssuedCurrencyClient {
     amount: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    if (!XrpUtils.isValidXAddress(issuerXAddress)) {
+    return await this.sendTrustSetTransaction(
+      issuerXAddress,
+      currencyName,
+      amount,
+      undefined,
+      wallet,
+    )
+  }
+
+  /**
+   * Creates an authorized trust line between this XRPL account (issuing account) and another account.
+   * Note that the other account must also create a trust line to this issuing account in order to establish a trust line with a non-zero limit.
+   * If this method is called before the other account creates a trust line, a trust line with a limit of 0 is created.
+   * However, this is only true if this issuing account has already required Authorized Trustlines (see https://xrpl.org/authorized-trust-lines.html),
+   * otherwise no trust line is created.
+   *
+   * @see https://xrpl.org/authorized-trust-lines.html
+   *
+   * @param accountToAuthorize The X-Address of the address with which to authorize a trust line.
+   * @param currencyName The currency to authorize a trust line for.
+   * @param wallet The wallet creating the authorized trust line.
+   */
+  public async authorizeTrustLine(
+    accountToAuthorize: string,
+    currencyName: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    // When authorizing a trust line, the value of the trust line is set to 0.
+    // See https://xrpl.org/authorized-trust-lines.html#authorizing-trust-lines
+    return await this.sendTrustSetTransaction(
+      accountToAuthorize,
+      currencyName,
+      '0',
+      TrustSetFlag.tfSetfAuth,
+      wallet,
+    )
+  }
+
+  /*
+   * Creates and sends a TrustSet transaction to the XRPL.
+   *
+   * @param accountToTrust The account to extend trust to with a trust line.
+   * @param currencyName The name of the currency to create a trust line for.
+   * @param amount The maximum amount of debt to allow on this trust line.
+   * @param wallet A wallet associated with the account extending trust.
+   */
+  private async sendTrustSetTransaction(
+    accountToTrust: string,
+    currencyName: string,
+    amount: string,
+    flags: number | undefined,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const trustSetTransaction = await this.prepareTrustSetTransaction(
+      accountToTrust,
+      currencyName,
+      amount,
+      flags,
+      wallet,
+    )
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      trustSetTransaction,
+      wallet,
+    )
+
+    return await this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      wallet,
+    )
+  }
+
+  /**
+   * Prepares a TrustSet transaction to be sent and executed on the XRPL.
+   *
+   * @param accountToTrust The account to extend trust to with a trust line.
+   * @param currencyName The name of the currency to create a trust line for.
+   * @param amount The maximum amount of debt to allow on this trust line.
+   * @param wallet A wallet associated with the account extending trust.
+   */
+  private async prepareTrustSetTransaction(
+    accountToTrust: string,
+    currencyName: string,
+    amount: string,
+    flags: number | undefined,
+    wallet: Wallet,
+  ): Promise<Transaction> {
+    if (!XrpUtils.isValidXAddress(accountToTrust)) {
       throw XrpError.xAddressRequired
     }
-    const classicAddress = XrpUtils.decodeXAddress(issuerXAddress)
+    const classicAddress = XrpUtils.decodeXAddress(accountToTrust)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
-    }
-
-    if (currencyName === 'XRP') {
-      throw new XrpError(
-        XrpErrorType.InvalidInput,
-        'createTrustLine: Trust lines can only be created for Issued Currencies',
-      )
     }
 
     // TODO (tedkalaw): Use X-Address directly when ripple-binary-codec supports X-Addresses.
     const issuerAccountAddress = new AccountAddress()
     issuerAccountAddress.setAddress(classicAddress.address)
 
+    if (currencyName === 'XRP') {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'prepareTrustSetTransaction: Trust lines can only be created for Issued Currencies',
+      )
+    }
     const currency = new Currency()
     currency.setName(currencyName)
 
@@ -389,14 +477,12 @@ export default class IssuedCurrencyClient {
     const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
     transaction.setTrustSet(trustSet)
 
-    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
-      transaction,
-      wallet,
-    )
+    if (flags !== undefined) {
+      const transactionFlags = new Flags()
+      transactionFlags.setValue(flags)
+      transaction.setFlags(transactionFlags)
+    }
 
-    return await this.coreXrplClient.getFinalTransactionResultAsync(
-      transactionHash,
-      wallet,
-    )
+    return transaction
   }
 }
