@@ -17,8 +17,6 @@ import CoreXrplClient from './core-xrpl-client'
 import GrpcNetworkClient from './network-clients/grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
 import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
-import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
-import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
 import { XrpError, XrpErrorType } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
@@ -52,7 +50,6 @@ export default class IssuedCurrencyClient {
    */
   public static issuedCurrencyClientWithEndpoint(
     grpcUrl: string,
-    jsonUrl: string,
     webSocketUrl: string,
     handleWebSocketErrorMessage: (data: string) => void,
     network: XrplNetwork,
@@ -64,7 +61,6 @@ export default class IssuedCurrencyClient {
         : new GrpcNetworkClientWeb(grpcUrl)
     return new IssuedCurrencyClient(
       grpcNetworkClient,
-      new JsonRpcNetworkClient(jsonUrl),
       new WebSocketNetworkClient(webSocketUrl, handleWebSocketErrorMessage),
       network,
     )
@@ -80,7 +76,6 @@ export default class IssuedCurrencyClient {
    */
   public constructor(
     grpcNetworkClient: GrpcNetworkClientInterface,
-    private readonly jsonNetworkClient: JsonNetworkClientInterface,
     readonly webSocketNetworkClient: WebSocketNetworkClientInterface,
     readonly network: XrplNetwork,
   ) {
@@ -103,7 +98,6 @@ export default class IssuedCurrencyClient {
     const classicAddress = XrpUtils.decodeXAddress(account)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
-      console.log(this.jsonNetworkClient) // so the compiler shuts up
     }
     if (peerAccount) {
       const peerClassicAddress = XrpUtils.decodeXAddress(peerAccount)
