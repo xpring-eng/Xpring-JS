@@ -389,6 +389,22 @@ export default class IssuedCurrencyClient {
     )
   }
 
+  public async freezeTrustLine(
+    accountToFreeze: string,
+    currencyName: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return await this.sendTrustSetTransaction(
+      accountToFreeze,
+      currencyName,
+      // TODO: Seems like there should still be an amount here? I honestly can't tell
+      // if that's what we want
+      '0',
+      TrustSetFlag.tfSetFreeze,
+      wallet,
+    )
+  }
+
   /*
    * Creates and sends a TrustSet transaction to the XRPL.
    *
