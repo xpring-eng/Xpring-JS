@@ -513,7 +513,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const address = classicAddress!.address
 
     const xrpAmount = '100'
-    const subscriptionId = 'subscribe_transaction_' + address
+    const subscriptionId = 'monitor_transactions_' + xAddress
 
     let messageReceived = false
     const callback = (data: WebSocketTransactionResponse) => {
