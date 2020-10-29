@@ -189,6 +189,8 @@ export default class DefaultXrpClient implements XrpClientDecorator {
 
     const payment = new Payment()
     payment.setDestination(destination)
+    // Note that the destinationTag doesn't need to be explicitly set here, because the ripple-binary-codec will decode this X-Address and
+    // assign the decoded destinationTag before signing.
     payment.setAmount(amount)
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)

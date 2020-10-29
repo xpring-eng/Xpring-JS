@@ -43,6 +43,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   let wallet: Wallet
   let wallet2: Wallet
   beforeEach(async function () {
+    this.timeout(timeoutMs)
     wallet = await XRPTestUtils.randomWalletFromFaucet()
     wallet2 = await XRPTestUtils.randomWalletFromFaucet()
   })
