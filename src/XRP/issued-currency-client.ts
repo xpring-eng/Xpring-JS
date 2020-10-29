@@ -497,7 +497,7 @@ export default class IssuedCurrencyClient {
     return await this.sendTrustSetTransaction(
       accountToUnfreeze,
       currencyName,
-      // You can change the trust line when you unfreeze it, but this would typically
+      // You can change the trust line amount when you unfreeze it, but this would typically
       // be used by gateways, who will maintain an amount of 0.
       '0',
       TrustSetFlag.tfClearFreeze,
