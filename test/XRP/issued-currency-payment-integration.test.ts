@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { XrplNetwork, XrpUtils } from 'xpring-common-js'
+import { XrplNetwork } from 'xpring-common-js'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
@@ -43,13 +43,12 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       '200',
     )
 
-    // THEN the transaction fails with claimed cost only.
-    // TODO: (acorso) What is the actual status code? -- do we need to update this once the enum is expanded?
+    // THEN the transaction fails with ClaimedCostOnly_PathDry.
     assert.deepEqual(
       transactionResult,
       TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
-        TransactionStatus.ClaimedCostOnly,
+        TransactionStatus.ClaimedCostOnly_PathDry,
         true,
       ),
     )
@@ -74,13 +73,12 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       '200',
     )
 
-    // THEN the transaction fails with claimed cost only
-    // TODO: (acorso) actual status code?
+    // THEN the transaction fails with ClaimedCostOnly_PathPartial
     assert.deepEqual(
       transactionResult,
       TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
-        TransactionStatus.ClaimedCostOnly,
+        TransactionStatus.ClaimedCostOnly_PathPartial,
         true,
       ),
     )
@@ -151,13 +149,12 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       '100',
     )
 
-    // TODO: the actual error code here is tecPATH_DRY... that seems like important information, let's figure out how to incorporate this
-    // THEN the payment fails with a TransactionStatus.ClaimedCostOnly status
+    // THEN the payment fails with CalimedCostOnly_PathDry
     assert.deepEqual(
       transactionResult,
       TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
-        TransactionStatus.ClaimedCostOnly,
+        TransactionStatus.ClaimedCostOnly_PathDry,
         true,
       ),
     )
@@ -269,13 +266,12 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       '100',
     )
 
-    // THEN the transaction fails with claimed cost only.
-    // NOTE: This is also a tecPATH_DRY error code from rippled
+    // THEN the transaction fails with ClaimedCostOnly_PathDry
     assert.deepEqual(
       transactionResult,
       TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
-        TransactionStatus.ClaimedCostOnly,
+        TransactionStatus.ClaimedCostOnly_PathDry,
         true,
       ),
     )
@@ -329,14 +325,12 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       '100',
     )
 
-    // THEN the transaction fails.
-    // TODO: the actual status code from rippled here is tecPATH_PARTIAL - consider adding additional TransactionStatus case.
-    // https://xrpl.org/tec-codes.html
+    // THEN the transaction fails with ClaimedCostOnly_PathPartial.
     assert.deepEqual(
       transactionResult,
       TransactionResult.createFinalTransactionResult(
         transactionResult.hash,
-        TransactionStatus.ClaimedCostOnly,
+        TransactionStatus.ClaimedCostOnly_PathPartial,
         true,
       ),
     )
@@ -407,39 +401,5 @@ describe('Issued Currency Payment Integration Tests', function (): void {
         true,
       ),
     )
-  })
-
-  // TODO: (acorso) add test for attempting to send an issued currency payment to a user that has a trustline established with the issuer, but has not been authorized AND issuer has enabledAuthorizedTrustlines (should fail)
-  //  ^^ this is really under the category of testing that authorizedTrustLines is working?
-  // TODO: (acorso) confirm that the presence of a SendMax when not necessary also doesn't cause any problems (i.e. include the argument)
-  it('authorizeTrustLine - valid account', async function (): Promise<void> {
-    this.timeout(timeoutMs)
-    const issuer = await XRPTestUtils.randomWalletFromFaucet()
-    const accountToTrust = await XRPTestUtils.randomWalletFromFaucet()
-
-    // GIVEN an existing testnet account requiring authorized trust lines
-    // and another account
-    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
-
-    const trustLineCurrency = 'USD'
-    // WHEN a trust line is authorized with another account
-    await issuedCurrencyClient.authorizeTrustLine(
-      accountToTrust.getAddress(),
-      'USD',
-      issuer,
-    )
-
-    const trustLines = await issuedCurrencyClient.getTrustLines(
-      issuer.getAddress(),
-    )
-
-    const [createdTrustLine] = trustLines
-    const classicAddress = XrpUtils.decodeXAddress(accountToTrust.getAddress())!
-
-    // THEN an authorized trust line is created between the wallet and the other account.
-    assert.equal(createdTrustLine.account, classicAddress.address)
-    assert.equal(createdTrustLine.limit, '0')
-    assert.equal(createdTrustLine.currency, trustLineCurrency)
-    assert.isTrue(createdTrustLine.authorized)
   })
 })

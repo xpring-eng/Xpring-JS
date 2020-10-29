@@ -754,7 +754,7 @@ describe('Issued Currency Client', function (): void {
     })
   })
 
-  it('sendIssuedCurrency - success', async function (): Promise<void> {
+  it('issuedCurrencyPayment - success', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -762,8 +762,8 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
-    // WHEN sendIssuedCurrency is called
-    const transactionResult = await issuedCurrencyClient.sendIssuedCurrency(
+    // WHEN issuedCurrencyPayment is called
+    const transactionResult = await issuedCurrencyClient.issuedCurrencyPayment(
       this.wallet,
       testAddress,
       'FOO',
@@ -781,7 +781,7 @@ describe('Issued Currency Client', function (): void {
     assert.equal(transactionResult.hash, expectedTransactionHash)
   })
 
-  it('sendIssuedCurrency - submission failure', async function (): Promise<
+  it('issuedCurrencyPayment - submission failure', async function (): Promise<
     void
   > {
     // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
@@ -797,9 +797,9 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
-    // WHEN sendIssuedCurrency is called THEN an error is propagated.
+    // WHEN issuedCurrencyPayment is called THEN an error is propagated.
     try {
-      await issuedCurrencyClient.sendIssuedCurrency(
+      await issuedCurrencyClient.issuedCurrencyPayment(
         this.wallet,
         testAddress,
         'FOO',
@@ -812,7 +812,7 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('sendIssuedCurrency - classic destination address', async function (): Promise<
+  it('issuedCurrencyPayment - classic destination address', async function (): Promise<
     void
   > {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
@@ -822,9 +822,9 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
-    // WHEN sendIssuedCurrency is called with a classic address argument for destination THEN an error is thrown.
+    // WHEN issuedCurrencyPayment is called with a classic address argument for destination THEN an error is thrown.
     try {
-      await issuedCurrencyClient.sendIssuedCurrency(
+      await issuedCurrencyClient.issuedCurrencyPayment(
         this.wallet,
         testClassicAddress,
         'FOO',
@@ -837,7 +837,7 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('sendIssuedCurrency - classic issuer address', async function (): Promise<
+  it('issuedCurrencyPayment - classic issuer address', async function (): Promise<
     void
   > {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
@@ -847,9 +847,9 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
-    // WHEN sendIssuedCurrency is called with a classic address argument for issuer THEN an error is thrown.
+    // WHEN issuedCurrencyPayment is called with a classic address argument for issuer THEN an error is thrown.
     try {
-      await issuedCurrencyClient.sendIssuedCurrency(
+      await issuedCurrencyClient.issuedCurrencyPayment(
         this.wallet,
         testAddress,
         'FOO',
