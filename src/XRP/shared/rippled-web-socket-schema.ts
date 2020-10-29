@@ -8,15 +8,6 @@ enum WebSocketReadyState {
 }
 
 /**
- * The standard format for a request to the Web Socket API exposed by a rippled node.
- * @see https://xrpl.org/request-formatting.html
- */
-type WebSocketRequestOptions =
-  | SubscribeRequest
-  | AccountLinesRequest
-  | GatewayBalancesRequest
-
-/**
  * The options for rippled methods (the `command` parameter in WebSocketRequestOptions)
  *
  * This is currently only the supported operations, but more will be added as they are supported.
@@ -25,6 +16,15 @@ type WebSocketRequestOptions =
 enum RippledMethod {
   subscribe = 'subscribe',
 }
+
+/**
+ * The standard format for a request to the Web Socket API exposed by a rippled node.
+ * @see https://xrpl.org/request-formatting.html
+ */
+type WebSocketRequestOptions =
+  | SubscribeRequest
+  | AccountLinesRequest
+  | GatewayBalancesRequest
 
 interface SubscribeRequest {
   id: number | string
