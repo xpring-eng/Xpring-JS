@@ -41,7 +41,7 @@ interface SubscribeRequest {
 }
 
 /**
- * The standard format for a `subscribe` request to the Web Socket API.
+ * The standard format for an `account_lines` request to the Web Socket API.
  * @see https://xrpl.org/account_lines.html
  */
 interface AccountLinesRequest {
@@ -53,7 +53,7 @@ interface AccountLinesRequest {
 }
 
 /**
- * The standard format for a `subscribe` request to the Web Socket API.
+ * The standard format for a `gateway_balances` request to the Web Socket API.
  * @see https://xrpl.org/gateway_balances.html
  */
 interface GatewayBalancesRequest {
