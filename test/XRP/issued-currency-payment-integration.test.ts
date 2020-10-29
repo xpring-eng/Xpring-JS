@@ -25,7 +25,6 @@ describe('Issued Currency Payment Integration Tests', function (): void {
   // Retry integration tests on failure.
   this.retries(3)
 
-  // TODO: (acorso) can any addresses be created in `before` and reused?  Can any test cases be combined?
   it('issuedCurrencyPayment - issuing issued currency, combined cases', async function (): Promise<
     void
   > {
