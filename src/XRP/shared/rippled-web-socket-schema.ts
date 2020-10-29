@@ -32,11 +32,22 @@ interface GatewayBalancesRequest extends BaseRequest {
   ledger_index: number | string
 }
 
-type WebSocketResponse =
-  | StatusResponse
-  | TransactionResponse
-  | AccountLinesResponse
-  | GatewayBalancesResponse
+/**
+ * The options for rippled methods (the `command` parameter in WebSocketRequestOptions)
+ *
+ * This is currently only the supported operations, but more will be added as they are supported.
+ * @see https://xrpl.org/public-rippled-methods.html
+ */
+enum RippledMethod {
+  subscribe = 'subscribe',
+}
+
+enum WebSocketReadyState {
+  Connecting,
+  Open,
+  Closing,
+  Closed,
+}
 
 interface BaseResponse {
   id: number | string
@@ -44,15 +55,27 @@ interface BaseResponse {
   type: string
 }
 
+type WebSocketResponse =
+  | StatusResponse
+  | TransactionResponse
+  | AccountLinesResponse
+  | GatewayBalancesResponse
+
+type StatusResponse = StatusSuccessfulResponse | WebSocketFailureResponse
+
+/**
+ * The standard format for a response from the WebSocket API exposed by a rippled node.
+ * @see https://xrpl.org/response-formatting.html
+ */
+interface StatusSuccessfulResponse extends BaseResponse {
+  result: TransactionResponse | EmptyObject
+}
+
 interface WebSocketFailureResponse extends BaseResponse {
   error: string
   error_code: number
   error_message: string
-  request: AccountLinesRequest | GatewayBalancesRequest
-}
-
-interface StatusResponse extends BaseResponse {
-  result: TransactionResponse | EmptyObject
+  request: WebSocketRequest
 }
 
 type AccountLinesResponse =
@@ -73,6 +96,10 @@ type GatewayBalancesResponse =
   | GatewayBalancesSuccessfulResponse
   | WebSocketFailureResponse
 
+/**
+ * The standard format for a response from the WebSocket API for a transaction on the ledger.
+ * @see https://xrpl.org/subscribe.html#transaction-streams
+ */
 interface TransactionResponse {
   engine_result: string
   engine_result_code: number
@@ -136,6 +163,10 @@ interface TrustLineResponse {
 
 type ChangedNode = CreatedNode | ModifiedNode | DeletedNode
 
+/**
+ * The standard format for a response from the WebSocket API about a new created node on the ledger.
+ * @see https://xrpl.org/subscribe.html#transaction-streams
+ */
 interface CreatedNode {
   LedgerEntryType: string
   LedgerIndex: string
@@ -146,6 +177,10 @@ interface CreatedNode {
   }
 }
 
+/**
+ * The standard format for a response from the WebSocket API about a modified node on the ledger.
+ * @see https://xrpl.org/subscribe.html#transaction-streams
+ */
 interface ModifiedNode {
   FinalFields: {
     Account: string
@@ -165,6 +200,10 @@ interface ModifiedNode {
   PreviousTxnLgrSeq: number
 }
 
+/**
+ * The standard format for a response from the WebSocket API about a deleted node on the ledger.
+ * @see https://xrpl.org/subscribe.html#transaction-streams
+ */
 interface DeletedNode {
   FinalFields: {
     ExchangeRate: string
@@ -184,9 +223,29 @@ interface CurrencyValuePair {
   value: string
 }
 
-type EmptyObject = {
-  [K in any]: never
+/**
+ * The standard format for a response from the WebSocket API about a transaction.
+ * @see https://xrpl.org/subscribe.html#transaction-streams
+ */
+interface WebSocketTransaction {
+  Account: string
+  Amount: string
+  Destination: string
+  Fee: string
+  Flags: number
+  LastLedgerSequence: number
+  Sequence: number
+  SigningPubKey: string
+  TransactionType: string
+  TxnSignature: string
+  date: number
+  hash: string
 }
+
+/**
+ * Helper type to signify {} (an empty type).
+ */
+type EmptyObject = Record<never, never>
 
 export {
   WebSocketRequest,
@@ -198,6 +257,8 @@ export {
   AccountLinesSuccessfulResponse,
   GatewayBalancesResponse,
   GatewayBalancesSuccessfulResponse,
+  WebSocketReadyState,
+  RippledMethod,
   WebSocketTransaction,
   TrustLineResponse,
 }

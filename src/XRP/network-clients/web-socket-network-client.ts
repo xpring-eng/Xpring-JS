@@ -4,12 +4,15 @@ import {
   AccountLinesResponse,
   GatewayBalancesResponse,
   WebSocketRequest,
-  WebSocketResponse,
   StatusResponse,
   TransactionResponse,
+  WebSocketReadyState,
+  RippledMethod,
+  WebSocketResponse,
+  WebSocketFailureResponse,
 } from '../shared/rippled-web-socket-schema'
 
-const sleep = (ms: number): Promise<void> => {
+function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
@@ -19,9 +22,18 @@ const sleep = (ms: number): Promise<void> => {
  */
 export default class WebSocketNetworkClient {
   private readonly socket: WebSocket
-  private accountCallbacks: Map<string, (data: TransactionResponse) => void>
-  private messageCallbacks: Map<string, (data: WebSocketResponse) => void>
-  private waiting: Map<number | string, WebSocketResponse | undefined>
+  private accountCallbacks: Map<
+    string,
+    (data: TransactionResponse) => void
+  > = new Map()
+  private messageCallbacks: Map<
+    string,
+    (data: WebSocketResponse) => void
+  > = new Map()
+  private waiting: Map<
+    number | string,
+    WebSocketResponse | undefined
+  > = new Map()
 
   /**
    * Create a new WebSocketNetworkClient.
@@ -34,37 +46,33 @@ export default class WebSocketNetworkClient {
     private handleErrorMessage: (message: string) => void,
   ) {
     this.socket = new WebSocket(webSocketUrl)
-    this.accountCallbacks = new Map()
-    this.waiting = new Map()
-
-    this.messageCallbacks = new Map()
     this.messageCallbacks.set('response', (data: WebSocketResponse) => {
       const dataStatusResponse = data as StatusResponse
       this.waiting.set(dataStatusResponse.id, data)
     })
-    this.messageCallbacks.set('transaction', this.handleTransaction)
+    this.messageCallbacks.set('transaction', (data: WebSocketResponse) =>
+      this.handleTransaction(data as TransactionResponse),
+    )
 
     this.socket.addEventListener('message', (event) => {
       const parsedData = JSON.parse(event.data) as WebSocketResponse
-      const dataType = parsedData.type
-      const callback = this.messageCallbacks.get(dataType)
+      const messageType = parsedData.type
+      const callback = this.messageCallbacks.get(messageType)
       if (callback) {
         callback(parsedData)
       } else {
         this.handleErrorMessage(
-          'Received unhandlable message: ' + (event.data as string),
+          'Received unhandlable message: ${event.data as string}',
         )
       }
     })
 
-    this.socket.addEventListener('close', (event) => {
-      this.handleErrorMessage(
-        'Web socket disconnected, ' + (event.reason as string),
-      )
+    this.socket.addEventListener('close', (event: CloseEvent) => {
+      this.handleErrorMessage('Web socket disconnected, ' + event.reason)
     })
 
-    this.socket.addEventListener('error', (event) => {
-      this.handleErrorMessage('Error: ' + (event as string))
+    this.socket.addEventListener('error', (event: ErrorEvent) => {
+      this.handleErrorMessage('Error: ' + event.message)
     })
   }
 
@@ -73,13 +81,21 @@ export default class WebSocketNetworkClient {
    *
    * @param data The web socket response received from the web socket.
    */
-  private handleTransaction = (data: WebSocketResponse) => {
-    const dataTransaction = data as TransactionResponse
-    const destinationAccount = dataTransaction.transaction.Destination
-    const callback = this.accountCallbacks.get(destinationAccount)
-    if (callback) {
-      callback(dataTransaction)
-    } else {
+  private handleTransaction(data: TransactionResponse) {
+    const destinationAccount = data.transaction.Destination
+    const destinationCallback = this.accountCallbacks.get(destinationAccount)
+
+    const senderAccount = data.transaction.Account
+    const senderCallback = this.accountCallbacks.get(senderAccount)
+
+    if (destinationCallback) {
+      destinationCallback(data)
+    }
+    if (senderCallback) {
+      senderCallback(data)
+    }
+
+    if (!destinationCallback && !senderCallback) {
       throw new XrpError(
         XrpErrorType.Unknown,
         'Received a transaction for an account that has not been subscribed to: ' +
@@ -97,51 +113,53 @@ export default class WebSocketNetworkClient {
   private async sendApiRequest(
     request: WebSocketRequest,
   ): Promise<WebSocketResponse> {
-    while (this.socket.readyState === 0) {
+    while (this.socket.readyState === WebSocketReadyState.Connecting) {
       await sleep(5)
     }
-    if (this.socket.readyState !== 1) {
+    if (this.socket.readyState !== WebSocketReadyState.Open) {
       throw new XrpError(XrpErrorType.Unknown, 'Socket is closed/closing')
     }
     this.socket.send(JSON.stringify(request))
 
     this.waiting.set(request.id, undefined)
-    while (this.waiting.get(request.id) === undefined) {
+    let response = this.waiting.get(request.id)
+    while (response === undefined) {
       await sleep(5)
+      response = this.waiting.get(request.id)
     }
-    const response = this.waiting.get(request.id)
     this.waiting.delete(request.id)
 
-    return response as WebSocketResponse
+    return response
   }
 
   /**
-   * Subscribes to incoming transactions to a given account.
+   * Subscribes for notification about every validated transaction that affects the given account.
    * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
    *
-   * @param id The ID used for the subscription.
-   * @param callback The function called whenever a new transaction is received.
    * @param account The account from which to subscribe to incoming transactions, encoded as a classic address.
+   * @param subscriptionId The ID used for the subscription.
+   * @param callback The function called whenever a new transaction is received.
    * @returns The response from the websocket confirming the subscription.
    */
   public async subscribeToAccount(
-    id: string,
-    callback: (data: TransactionResponse) => void,
     account: string,
+    subscriptionId: string,
+    callback: (data: TransactionResponse) => void,
   ): Promise<StatusResponse> {
-    this.accountCallbacks.set(account, callback)
     const options = {
-      id,
-      command: 'subscribe',
+      id: subscriptionId,
+      command: RippledMethod.subscribe,
       accounts: [account],
     }
     const response = await this.sendApiRequest(options)
     if (response.status !== 'success') {
+      const errorResponse = response as WebSocketFailureResponse
       throw new XrpError(
         XrpErrorType.Unknown,
-        'Subscription request for ' + account + ' failed',
+        `Subscription request for ${account} failed, ${errorResponse.error_message}`,
       )
     }
+    this.accountCallbacks.set(account, callback)
     return response as StatusResponse
   }
 
