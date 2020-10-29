@@ -8,6 +8,16 @@ enum WebSocketReadyState {
 }
 
 /**
+ * The options for rippled methods (the `command` parameter in WebSocketRequestOptions)
+ *
+ * This is currently only the supported operations, but more will be added as they are supported.
+ * @see https://xrpl.org/public-rippled-methods.html
+ */
+enum RippledMethod {
+  subscribe = 'subscribe',
+}
+
+/**
  * The standard format for a request to the Web Socket API exposed by a rippled node.
  * @see https://xrpl.org/request-formatting.html
  */
@@ -16,16 +26,6 @@ interface WebSocketRequestOptions {
   id: string
   streams?: string[]
   accounts?: string[]
-}
-
-/**
- * The options for rippled methods (the `command` parameter in WebSocketRequestOptions)
- *
- * This is currently only the supported operations, but more will be added as they are supported.
- * @see https://xrpl.org/public-rippled-methods.html
- */
-enum RippledMethod {
-  subscribe = 'subscribe',
 }
 
 type WebSocketResponse =
@@ -44,6 +44,10 @@ interface WebSocketStatusResponse {
   type: string
 }
 
+/**
+ * The standard format for an error response from the WebSocket API exposed by a rippled node.
+ * @see https://xrpl.org/response-formatting.html
+ */
 interface WebSocketStatusErrorResponse {
   id: string
   status: string
