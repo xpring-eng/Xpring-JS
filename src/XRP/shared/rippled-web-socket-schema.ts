@@ -1,4 +1,4 @@
-/* Schema for adding type information to Web Socket objects. */
+/* Schema for adding type information to WebSocket objects. */
 
 enum WebSocketReadyState {
   Connecting,
@@ -20,7 +20,7 @@ enum RippledMethod {
 }
 
 /**
- * The standard format for a request to the Web Socket API exposed by a rippled node.
+ * The standard format for a request to the WebSocket API exposed by a rippled node.
  * @see https://xrpl.org/request-formatting.html
  */
 type WebSocketRequest =

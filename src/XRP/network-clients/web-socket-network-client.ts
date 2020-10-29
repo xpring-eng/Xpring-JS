@@ -69,7 +69,7 @@ export default class WebSocketNetworkClient {
     })
 
     this.socket.addEventListener('close', (event: CloseEvent) => {
-      this.handleErrorMessage('Web socket disconnected, ' + event.reason)
+      this.handleErrorMessage('WebSocket disconnected, ' + event.reason)
     })
 
     this.socket.addEventListener('error', (event: ErrorEvent) => {
@@ -78,9 +78,9 @@ export default class WebSocketNetworkClient {
   }
 
   /**
-   * Properly handles incoming transactions from the web socket.
+   * Properly handles incoming transactions from the websocket.
    *
-   * @param data The web socket response received from the web socket.
+   * @param data The websocket response received from the websocket.
    */
   private handleTransaction(data: TransactionResponse) {
     const destinationAccount = data.transaction.Destination
@@ -106,10 +106,10 @@ export default class WebSocketNetworkClient {
   }
 
   /**
-   * Sends an API request over the web socket connection.
+   * Sends an API request over the websocket connection.
    *
-   * @param request The object to send over the web socket.
-   * @returns The API response from the web socket.
+   * @param request The object to send over the websocket.
+   * @returns The API response from the websocket.
    */
   private async sendApiRequest(
     request: WebSocketRequest,
@@ -165,7 +165,7 @@ export default class WebSocketNetworkClient {
   }
 
   /**
-   * Submits an account_lines request to the rippled Web Socket API.
+   * Submits an account_lines request to the rippled WebSocket API.
    *
    * @param account The XRPL account to query for trust lines.
    */
@@ -185,7 +185,7 @@ export default class WebSocketNetworkClient {
   }
 
   /**
-   * Submits a gateway_balances request to the rippled JSON RPC.
+   * Submits a gateway_balances request to the rippled WebSocket API.
    * @see https://xrpl.org/gateway_balances.html
    *
    * @param account The XRPL account for which to retrieve balances.
