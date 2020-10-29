@@ -1,6 +1,8 @@
 import WebSocket = require('ws')
 import { XrpError, XrpErrorType } from '../shared'
 import {
+  WebSocketAccountLinesResponse,
+  WebSocketGatewayBalancesResponse,
   WebSocketRequestOptions,
   WebSocketResponse,
   WebSocketStatusResponse,
@@ -22,7 +24,7 @@ export default class WebSocketNetworkClient {
     (data: WebSocketTransactionResponse) => void
   >
   private messageCallbacks: Map<string, (data: WebSocketResponse) => void>
-  private waiting: Map<string, WebSocketResponse | undefined>
+  private waiting: Map<number | string, WebSocketResponse | undefined>
 
   /**
    * Create a new WebSocketNetworkClient.
@@ -97,7 +99,7 @@ export default class WebSocketNetworkClient {
    */
   private async sendApiRequest(
     request: WebSocketRequestOptions,
-  ): Promise<WebSocketStatusResponse> {
+  ): Promise<WebSocketResponse> {
     while (this.socket.readyState === 0) {
       await sleep(5)
     }
@@ -113,7 +115,7 @@ export default class WebSocketNetworkClient {
     const response = this.waiting.get(request.id)
     this.waiting.delete(request.id)
 
-    return response as WebSocketStatusResponse
+    return response as WebSocketResponse
   }
 
   /**
@@ -143,7 +145,7 @@ export default class WebSocketNetworkClient {
         'Subscription request for ' + account + ' failed',
       )
     }
-    return response
+    return response as WebSocketStatusResponse
   }
 
   /**
@@ -154,18 +156,42 @@ export default class WebSocketNetworkClient {
   public async getAccountLines(
     account: string,
     peerAccount?: string,
-  ): Promise<WebSocketStatusResponse> {
+  ): Promise<WebSocketAccountLinesResponse> {
     const accountLinesRequest = {
       id: 'account_lines_' + account,
       command: 'account_lines',
-      account: account,
+      account,
       ledger_index: 'validated',
       peer: peerAccount,
     }
-    const accountLinesResponse: WebSocketStatusResponse = await this.sendApiRequest(
-      accountLinesRequest,
+    const accountLinesResponse = await this.sendApiRequest(accountLinesRequest)
+    return accountLinesResponse as WebSocketAccountLinesResponse
+  }
+
+  /**
+   * Submits a gateway_balances request to the rippled JSON RPC.
+   * @see https://xrpl.org/gateway_balances.html
+   *
+   * @param account The XRPL account for which to retrieve balances.
+   * @param addressesToExclude (Optional) An array of operational address to exclude from the balances issued.
+   * @see https://xrpl.org/issuing-and-operational-addresses.html
+   */
+  public async getGatewayBalances(
+    account: string,
+    addressesToExclude?: Array<string>,
+  ): Promise<WebSocketGatewayBalancesResponse> {
+    const gatewayBalancesRequest = {
+      id: 'gateway_balances_' + account,
+      command: 'gateway_balances',
+      account,
+      strict: 'true',
+      hotwallet: addressesToExclude,
+      ledger_index: 'validated',
+    }
+    const gatewayBalancesResponse = await this.sendApiRequest(
+      gatewayBalancesRequest,
     )
-    return accountLinesResponse
+    return gatewayBalancesResponse as WebSocketGatewayBalancesResponse
   }
 
   /**

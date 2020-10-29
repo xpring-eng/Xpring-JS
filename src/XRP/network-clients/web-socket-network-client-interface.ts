@@ -1,6 +1,8 @@
 import {
   WebSocketTransactionResponse,
   WebSocketStatusResponse,
+  WebSocketAccountLinesResponse,
+  WebSocketGatewayBalancesResponse,
 } from '../shared/rippled-web-socket-schema'
 
 /**
@@ -22,7 +24,30 @@ export interface WebSocketNetworkClientInterface {
     account: string,
   ): Promise<WebSocketStatusResponse>
 
-  getAccountLines(account: string, peerAccount?: string)
+  /**
+   * Submits an account_lines request to the rippled JSON RPC.
+   * @see https://xrpl.org/account_lines.html
+   *
+   * @param account The address of the account to query for trust lines.
+   * @param peerAccount (Optional) The address of a second account. If provided, show only trust lines connecting the two accounts.
+   */
+  getAccountLines(
+    account: string,
+    peerAccount?: string,
+  ): Promise<WebSocketAccountLinesResponse>
+
+  /**
+   * Submits a gateway_balances request to the rippled JSON RPC.
+   * @see https://xrpl.org/gateway_balances.html
+   *
+   * @param account The XRPL account for which to retrieve balances.
+   * @param addressesToExclude (Optional) An array of operational address to exclude from the balances issued.
+   * @see https://xrpl.org/issuing-and-operational-addresses.html
+   */
+  getGatewayBalances(
+    account: string,
+    addressesToExclude?: Array<string>,
+  ): Promise<WebSocketGatewayBalancesResponse>
 
   close(): void
 }

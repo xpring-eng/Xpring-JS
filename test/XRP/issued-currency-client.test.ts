@@ -17,7 +17,12 @@ import {
   WebSocketAccountLinesResponse,
   WebSocketAccountLinesSuccessfulResponse,
   WebSocketResponse,
+  WebSocketGatewayBalancesResponse,
+  WebSocketGatewayBalancesSuccessfulResponse,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
+import GatewayBalances, {
+  gatewayBalancesFromResponse,
+} from '../../src/XRP/shared/gateway-balances'
 
 const fakeSucceedingGrpcClient = new FakeXRPNetworkClient()
 
@@ -392,6 +397,139 @@ describe('Issued Currency Client', function (): void {
     })
   })
 
+  it('getGatewayBalances - successful response', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient with faked networking that will return successful responses.
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getBalances is called
+    const gatewayBalances = await issuedCurrencyClient.getGatewayBalances(
+      testAddress,
+    )
+    const expectedGatewayBalances: GatewayBalances = gatewayBalancesFromResponse(
+      (await fakeSucceedingWebSocketClient.getGatewayBalances(
+        testAddress,
+      )) as WebSocketGatewayBalancesSuccessfulResponse,
+    )
+
+    // THEN the result is as expected
+    assert.deepEqual(gatewayBalances, expectedGatewayBalances)
+  })
+
+  it('getGatewayBalances - invalid account', async function (): Promise<void> {
+    // GIVEN an IssuedCurrencyClient
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getGatewayBalances is called with a classic address (no X-address) THEN an error is propagated.
+    const classicAddress = 'rhhh49pFH96roGyuC4E5P4CHaNjS1k8gzM'
+    try {
+      await issuedCurrencyClient.getGatewayBalances(classicAddress)
+    } catch (error) {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.xAddressRequired)
+    }
+  })
+
+  it('getGatewayBalances - invalid addressToExclude, single address', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getGatewayBalances is called with a classic addressToExclude (no X-address) THEN an error is propagated.
+    const classicAddress = 'rhhh49pFH96roGyuC4E5P4CHaNjS1k8gzM'
+    try {
+      await issuedCurrencyClient.getGatewayBalances(testAddress, [
+        classicAddress,
+      ])
+    } catch (error) {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.xAddressRequired)
+    }
+  })
+
+  it('getGatewayBalances - invalid addressToExclude, multiple addresses', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getGatewayBalances is called with classic addresses to exclude (no X-address) THEN an error is propagated.
+    const classicAddress1 = 'rhhh49pFH96roGyuC4E5P4CHaNjS1k8gzM'
+    const classicAddress2 = 'r4DymtkgUAh2wqRxVfdd3Xtswzim6eC6c5'
+    try {
+      await issuedCurrencyClient.getGatewayBalances(testAddress, [
+        classicAddress1,
+        classicAddress2,
+      ])
+    } catch (error) {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.xAddressRequired)
+    }
+  })
+
+  it('getGatewayBalances - account not found error response', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getGatewayBalances
+    const accountNotFoundResponse: WebSocketGatewayBalancesResponse = {
+      error: 'actNotFound',
+      error_code: 19,
+      error_message: 'Account not found.',
+      id: 'gateway_balances_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
+      request: {
+        account: 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
+        command: 'gateway_balances',
+        hotwallet: [
+          'rKm4uWpg9tfwbVSeATv4KxDe6mpE9yPkgJ',
+          'ra7JkEzrgeKHdzKgo4EUUVBnxggY4z37kt',
+        ],
+        id: 'gateway_balances_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
+        ledger_index: 'validated',
+        strict: true,
+      },
+      status: 'error',
+      type: 'response',
+    }
+    const fakeErroringWebSocketClientResponses = new FakeWebSocketNetworkClientResponses(
+      FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
+      FakeWebSocketNetworkClientResponses.defaultGetAccountLinesResponse(),
+      accountNotFoundResponse,
+    )
+    const fakeErroringWebSocketClient = new FakeWebSocketNetworkClient(
+      fakeErroringWebSocketClientResponses,
+    )
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeErroringWebSocketClient,
+      XrplNetwork.Test,
+    )
+    // WHEN getGatewayBalances is called THEN an error is propagated.
+    try {
+      await issuedCurrencyClient.getGatewayBalances(testAddress)
+    } catch (error) {
+      assert.typeOf(error, 'Error')
+      assert.equal(error, XrpError.accountNotFound)
+    }
+  })
+
   it('requireDestinationTags - successful response', async function (): Promise<
     void
   > {
@@ -401,7 +539,6 @@ describe('Issued Currency Client', function (): void {
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
-
     // WHEN requireDestinationTags is called
     const result = await issuedCurrencyClient.requireDestinationTags(
       this.wallet,

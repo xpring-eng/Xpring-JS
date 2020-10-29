@@ -4,21 +4,33 @@
  * The standard format for a request to the Web Socket API exposed by a rippled node.
  * @see https://xrpl.org/request-formatting.html
  */
-type WebSocketRequestOptions = SubscribeRequest | AccountLinesRequest
+type WebSocketRequestOptions =
+  | SubscribeRequest
+  | AccountLinesRequest
+  | GatewayBalancesRequest
 
 interface SubscribeRequest {
-  id: string
+  id: number | string
   command: string
   streams?: string[]
   accounts?: string[]
 }
 
 interface AccountLinesRequest {
-  id: string
+  id: number | string
   command: string
   account: string
-  ledger_index: string
+  ledger_index?: string
   peer?: string
+}
+
+interface GatewayBalancesRequest {
+  id: number | string
+  command: string
+  account: string
+  strict: boolean
+  hotwallet: string | string[]
+  ledger_index: number | string
 }
 
 type WebSocketResponse =
@@ -27,7 +39,7 @@ type WebSocketResponse =
   | WebSocketAccountLinesResponse
 
 interface WebSocketStatusResponse {
-  id: string
+  id: number | string
   result: WebSocketTransactionResponse | EmptyObject
   status: string
   type: string
@@ -76,6 +88,35 @@ interface WebSocketAccountLinesFailureResponse {
   error_code: number
   error_message: string
   request: AccountLinesRequest
+}
+
+type WebSocketGatewayBalancesResponse =
+  | WebSocketGatewayBalancesSuccessfulResponse
+  | WebSocketGatewayBalancesFailureResponse
+
+interface WebSocketGatewayBalancesSuccessfulResponse {
+  id: number | string
+  status: string
+  type: string
+  result: {
+    account?: string
+    assets?: { [account: string]: CurrencyValuePair[] }
+    balances?: { [account: string]: CurrencyValuePair[] }
+    ledger_hash?: string
+    ledger_index?: number
+    obligations?: { [currencyCode: string]: string }
+    validated?: boolean
+  }
+}
+
+interface WebSocketGatewayBalancesFailureResponse {
+  id: number | string
+  status: string
+  type: string
+  error: string
+  error_code: number
+  error_message: string
+  request: GatewayBalancesRequest
 }
 
 type ChangedNode = CreatedNode | ModifiedNode | DeletedNode
@@ -154,6 +195,11 @@ interface TrustLineResponse {
   freeze_peer?: boolean
 }
 
+interface CurrencyValuePair {
+  currency: string
+  value: string
+}
+
 type EmptyObject = {
   [K in any]: never
 }
@@ -167,5 +213,8 @@ export {
   WebSocketAccountLinesResponse,
   WebSocketAccountLinesSuccessfulResponse,
   WebSocketAccountLinesFailureResponse,
+  WebSocketGatewayBalancesResponse,
+  WebSocketGatewayBalancesSuccessfulResponse,
+  WebSocketGatewayBalancesFailureResponse,
   TrustLineResponse,
 }
