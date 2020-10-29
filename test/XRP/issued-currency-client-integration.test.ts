@@ -33,7 +33,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   // A Wallet with some balance on Testnet.
   let wallet: Wallet
+
   before(async function () {
+    this.timeout(timeoutMs)
     wallet = await XRPTestUtils.randomWalletFromFaucet()
   })
 
