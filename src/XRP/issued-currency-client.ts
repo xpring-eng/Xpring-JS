@@ -601,6 +601,47 @@ export default class IssuedCurrencyClient {
     )
   }
 
+  /**
+   * Sends issued currency from one (non-issuing) account to another.
+   *
+   * @param sender The Wallet from which issued currency will be sent, and that will sign the transaction.
+   * @param destination The destination address (recipient) for the payment, encoded as an X-address (see https://xrpaddress.info/).
+   * @param currency The three-letter currency code of the issued currency being sent.
+   * @param issuer The issuing address of the issued currency being sent.
+   * @param amount The amount of issued currency to send.
+   * @param transferFee The transfer fee associated with the issuing account, expressed as a percentage. (i.e. a value of .5 indicates a 0.5% transfer fee).
+   *                    This will be used to calculate the maximum value this transaction may cost the sender.
+   */
+  public async sendIssuedCurrencyPayment(
+    sender: Wallet,
+    destination: string,
+    currency: string,
+    issuer: string,
+    amount: string,
+    transferFee?: number,
+  ): Promise<TransactionResult> {
+    if (sender.getAddress() == issuer) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'The sending address cannot be the same as the issuing address. To create issued currency, use `createIssuedCurrency`.',
+      )
+    }
+    if (destination == issuer) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'The destination address cannot be the same as the issuing address. To redeem issued currency, use `redeemIssuedCurrency`.',
+      )
+    }
+    return await this.issuedCurrencyPayment(
+      sender,
+      destination,
+      currency,
+      issuer,
+      amount,
+      transferFee,
+    )
+  }
+
   // TODO: (acorso) Make this method private and expose more opinionated public APIs.
   // TODO: (acorso) structure this like we have `sendXrp` v.s. `sendXrpWithDetails` to allow for additional optional fields, such as memos.
   //  as well as potentially:
@@ -628,6 +669,7 @@ export default class IssuedCurrencyClient {
     issuer: string,
     amount: string,
     transferFee?: number,
+    sendMaxValue?: string,
   ): Promise<TransactionResult> {
     if (!XrpUtils.isValidXAddress(destination)) {
       throw new XrpError(
