@@ -1,5 +1,8 @@
 /* Schema for adding type information to Web Socket objects. */
 
+/**
+ * The options for the `readyState` of a websocket.
+ */
 enum WebSocketReadyState {
   Connecting,
   Open,
@@ -26,6 +29,10 @@ type WebSocketRequestOptions =
   | AccountLinesRequest
   | GatewayBalancesRequest
 
+/**
+ * The standard format for a `subscribe` request to the Web Socket API.
+ * @see https://xrpl.org/subscribe.html
+ */
 interface SubscribeRequest {
   id: number | string
   command: RippledMethod
@@ -33,6 +40,10 @@ interface SubscribeRequest {
   accounts?: string[]
 }
 
+/**
+ * The standard format for a `subscribe` request to the Web Socket API.
+ * @see https://xrpl.org/account_lines.html
+ */
 interface AccountLinesRequest {
   id: number | string
   command: string
@@ -41,6 +52,10 @@ interface AccountLinesRequest {
   peer?: string
 }
 
+/**
+ * The standard format for a `subscribe` request to the Web Socket API.
+ * @see https://xrpl.org/gateway_balances.html
+ */
 interface GatewayBalancesRequest {
   id: number | string
   command: string
@@ -50,6 +65,10 @@ interface GatewayBalancesRequest {
   ledger_index: number | string
 }
 
+/**
+ * The standard format for a response from the WebSocket API exposed by a rippled node.
+ * @see https://xrpl.org/response-formatting.html
+ */
 type WebSocketResponse =
   | WebSocketStatusResponse
   | WebSocketTransactionResponse
@@ -57,7 +76,7 @@ type WebSocketResponse =
   | WebSocketStatusErrorResponse
 
 /**
- * The standard format for a response from the WebSocket API exposed by a rippled node.
+ * The standard format for a direct response from the WebSocket API to a request.
  * @see https://xrpl.org/response-formatting.html
  */
 interface WebSocketStatusResponse {
@@ -68,7 +87,7 @@ interface WebSocketStatusResponse {
 }
 
 /**
- * The standard format for an error response from the WebSocket API exposed by a rippled node.
+ * The standard format for an error response from the WebSocket API.
  * @see https://xrpl.org/response-formatting.html
  */
 interface WebSocketStatusErrorResponse {
@@ -78,7 +97,7 @@ interface WebSocketStatusErrorResponse {
   error: string
   error_code: number
   error_message: string
-  request: WebSocketRequestOptions
+  request: SubscribeRequest
 }
 
 /**
@@ -103,6 +122,10 @@ interface WebSocketTransactionResponse {
   validated: boolean
 }
 
+/**
+ * The standard format(s) for a response from the WebSocket API for an `account_lines` request.
+ * @see https://xrpl.org/account_lines.html
+ */
 type WebSocketAccountLinesResponse =
   | WebSocketAccountLinesSuccessfulResponse
   | WebSocketAccountLinesFailureResponse
@@ -130,6 +153,10 @@ interface WebSocketAccountLinesFailureResponse {
   request: AccountLinesRequest
 }
 
+/**
+ * The standard format(s) for a response from the WebSocket API for a `gateway_balances` request.
+ * @see https://xrpl.org/gateway_balances.html
+ */
 type WebSocketGatewayBalancesResponse =
   | WebSocketGatewayBalancesSuccessfulResponse
   | WebSocketGatewayBalancesFailureResponse
@@ -235,6 +262,10 @@ interface WebSocketTransaction {
   hash: string
 }
 
+/**
+ * The standard format for a response from the WebSocket API about a trustline.
+ * @see https://xrpl.org/account_lines.html
+ */
 interface TrustLineResponse {
   account: string
   balance: string
@@ -251,6 +282,9 @@ interface TrustLineResponse {
   freeze_peer?: boolean
 }
 
+/**
+ * Helper type to signify issued currency in a `gateway_balances` response.
+ */
 interface CurrencyValuePair {
   currency: string
   value: string
