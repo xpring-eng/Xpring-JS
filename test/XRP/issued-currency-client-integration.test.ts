@@ -523,7 +523,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(frozenTrustLine.limit, '0')
   })
 
-  it.only('unfreezeTrustLine', async function (): Promise<void> {
+  it('unfreezeTrustLine - unfreezes frozen account', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
     const accountToUnfreeze = await XRPTestUtils.randomWalletFromFaucet()
