@@ -61,9 +61,9 @@ export class FakeWebSocketNetworkClient {
   ) {}
 
   subscribeToAccount(
+    _account: string,
     _id: string,
     _callback: (data: WebSocketTransactionResponse) => void,
-    _account: string,
   ): Promise<WebSocketStatusResponse> {
     const subscribeResponse = this.responses.getSubscribeResponse
     if (subscribeResponse instanceof Error) {

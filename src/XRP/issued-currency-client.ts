@@ -224,9 +224,9 @@ export default class IssuedCurrencyClient {
     const id = 'monitor_transactions_' + account
 
     return await this.webSocketNetworkClient.subscribeToAccount(
+      address,
       id,
       callback,
-      address,
     )
   }
 
