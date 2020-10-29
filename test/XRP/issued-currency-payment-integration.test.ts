@@ -18,6 +18,9 @@ const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoi
   XrplNetwork.Test,
 )
 
+// TODO: (acorso) add test for attempting to send an issued currency payment to a user that has a trustline established with the issuer, but has not been authorized AND issuer has enabledAuthorizedTrustlines (should fail)
+//  ^^ this is really under the category of testing that authorizedTrustLines is working?
+// TODO: (acorso) confirm that the presence of a SendMax when not necessary also doesn't cause any problems (i.e. include the argument)
 describe('Issued Currency Payment Integration Tests', function (): void {
   // Retry integration tests on failure.
   this.retries(3)
