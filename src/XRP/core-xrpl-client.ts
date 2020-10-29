@@ -353,6 +353,16 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
       return TransactionStatus.MalformedTransaction
     }
 
+    if (rawTransactionStatus.transactionStatusCode.includes('tecPATH_DRY')) {
+      return TransactionStatus.ClaimedCostOnly_PathDry
+    }
+
+    if (
+      rawTransactionStatus.transactionStatusCode.includes('tecPATH_PARTIAL')
+    ) {
+      return TransactionStatus.ClaimedCostOnly_PathPartial
+    }
+
     if (rawTransactionStatus.transactionStatusCode.startsWith('tec')) {
       return TransactionStatus.ClaimedCostOnly
     }
