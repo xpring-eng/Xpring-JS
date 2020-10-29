@@ -103,24 +103,6 @@ interface WebSocketFailureResponse extends BaseResponse {
   request: WebSocketRequest
 }
 
-type AccountLinesResponse =
-  | AccountLinesSuccessfulResponse
-  | WebSocketFailureResponse
-
-interface AccountLinesSuccessfulResponse extends BaseResponse {
-  result: {
-    account: string
-    ledger_hash: string
-    ledger_index: number
-    lines: Array<TrustLineResponse>
-    validated: boolean
-  }
-}
-
-type GatewayBalancesResponse =
-  | GatewayBalancesSuccessfulResponse
-  | WebSocketFailureResponse
-
 /**
  * The standard format for a response from the WebSocket API for a transaction on the ledger.
  * @see https://xrpl.org/subscribe.html#transaction-streams
@@ -143,6 +125,32 @@ interface TransactionResponse {
   validated: boolean
 }
 
+/**
+ * The standard format(s) for a response from the WebSocket API for an `account_lines` request.
+ * @see https://xrpl.org/account_lines.html
+ */
+type AccountLinesResponse =
+  | AccountLinesSuccessfulResponse
+  | WebSocketFailureResponse
+
+interface AccountLinesSuccessfulResponse extends BaseResponse {
+  result: {
+    account: string
+    ledger_hash: string
+    ledger_index: number
+    lines: Array<TrustLineResponse>
+    validated: boolean
+  }
+}
+
+/**
+ * The standard format(s) for a response from the WebSocket API for a `gateway_balances` request.
+ * @see https://xrpl.org/gateway_balances.html
+ */
+type GatewayBalancesResponse =
+  | GatewayBalancesSuccessfulResponse
+  | WebSocketFailureResponse
+
 interface GatewayBalancesSuccessfulResponse extends BaseResponse {
   result: {
     account?: string
@@ -155,6 +163,10 @@ interface GatewayBalancesSuccessfulResponse extends BaseResponse {
   }
 }
 
+/**
+ * The standard format for a response from the WebSocket API about a transaction.
+ * @see https://xrpl.org/subscribe.html#transaction-streams
+ */
 interface WebSocketTransaction {
   Account: string
   Amount: string
@@ -230,25 +242,6 @@ interface DeletedNode {
 interface CurrencyValuePair {
   currency: string
   value: string
-}
-
-/**
- * The standard format for a response from the WebSocket API about a transaction.
- * @see https://xrpl.org/subscribe.html#transaction-streams
- */
-interface WebSocketTransaction {
-  Account: string
-  Amount: string
-  Destination: string
-  Fee: string
-  Flags: number
-  LastLedgerSequence: number
-  Sequence: number
-  SigningPubKey: string
-  TransactionType: string
-  TxnSignature: string
-  date: number
-  hash: string
 }
 
 /**
