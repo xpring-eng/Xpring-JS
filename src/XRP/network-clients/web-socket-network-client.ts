@@ -107,6 +107,7 @@ export default class WebSocketNetworkClient {
 
   /**
    * Sends an API request over the websocket connection.
+   * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
    *
    * @param request The object to send over the websocket.
    * @returns The API response from the websocket.
@@ -135,7 +136,7 @@ export default class WebSocketNetworkClient {
 
   /**
    * Subscribes for notification about every validated transaction that affects the given account.
-   * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
+   * @see https://xrpl.org/subscribe.html
    *
    * @param account The account from which to subscribe to incoming transactions, encoded as a classic address.
    * @param subscriptionId The ID used for the subscription.
@@ -166,6 +167,7 @@ export default class WebSocketNetworkClient {
 
   /**
    * Submits an account_lines request to the rippled WebSocket API.
+   * @see https://xrpl.org/account_lines.html
    *
    * @param account The XRPL account to query for trust lines.
    */

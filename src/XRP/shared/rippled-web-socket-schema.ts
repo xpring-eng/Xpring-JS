@@ -1,5 +1,8 @@
 /* Schema for adding type information to WebSocket objects. */
 
+/**
+ * The options for the `readyState` of a websocket.
+ */
 enum WebSocketReadyState {
   Connecting,
   Open,
@@ -33,17 +36,29 @@ interface BaseRequest {
   command: RippledMethod
 }
 
+/**
+ * The standard format for a `subscribe` request to the Web Socket API.
+ * @see https://xrpl.org/subscribe.html
+ */
 interface SubscribeRequest extends BaseRequest {
   streams?: string[]
   accounts?: string[]
 }
 
+/**
+ * The standard format for an `account_lines` request to the Web Socket API.
+ * @see https://xrpl.org/account_lines.html
+ */
 interface AccountLinesRequest extends BaseRequest {
   account: string
   ledger_index?: string
   peer?: string
 }
 
+/**
+ * The standard format for a `gateway_balances` request to the Web Socket API.
+ * @see https://xrpl.org/gateway_balances.html
+ */
 interface GatewayBalancesRequest extends BaseRequest {
   account: string
   strict: boolean
@@ -51,6 +66,10 @@ interface GatewayBalancesRequest extends BaseRequest {
   ledger_index: number | string
 }
 
+/**
+ * The standard elements in a response from the WebSocket API exposed by a rippled node.
+ * @see https://xrpl.org/response-formatting.html
+ */
 interface BaseResponse {
   id: number | string
   status: string
@@ -66,7 +85,7 @@ type WebSocketResponse =
 type StatusResponse = StatusSuccessfulResponse | WebSocketFailureResponse
 
 /**
- * The standard format for a response from the WebSocket API exposed by a rippled node.
+ * The standard format for a direct response from the WebSocket API to a request.
  * @see https://xrpl.org/response-formatting.html
  */
 interface StatusSuccessfulResponse extends BaseResponse {
@@ -74,7 +93,7 @@ interface StatusSuccessfulResponse extends BaseResponse {
 }
 
 /**
- * The standard format for an error response from the WebSocket API exposed by a rippled node.
+ * The standard format for an error response from the WebSocket API.
  * @see https://xrpl.org/response-formatting.html
  */
 interface WebSocketFailureResponse extends BaseResponse {
@@ -149,22 +168,6 @@ interface WebSocketTransaction {
   TxnSignature: string
   date: number
   hash: string
-}
-
-interface TrustLineResponse {
-  account: string
-  balance: string
-  currency: string
-  limit: string
-  limit_peer: string
-  quality_in: number
-  quality_out: number
-  no_ripple?: boolean
-  no_ripple_peer?: boolean
-  authorized?: boolean
-  peer_authorized?: boolean
-  freeze?: boolean
-  freeze_peer?: boolean
 }
 
 type ChangedNode = CreatedNode | ModifiedNode | DeletedNode
@@ -246,6 +249,34 @@ interface WebSocketTransaction {
   TxnSignature: string
   date: number
   hash: string
+}
+
+/**
+ * The standard format for a response from the WebSocket API about a trustline.
+ * @see https://xrpl.org/account_lines.html
+ */
+interface TrustLineResponse {
+  account: string
+  balance: string
+  currency: string
+  limit: string
+  limit_peer: string
+  quality_in: number
+  quality_out: number
+  no_ripple?: boolean
+  no_ripple_peer?: boolean
+  authorized?: boolean
+  peer_authorized?: boolean
+  freeze?: boolean
+  freeze_peer?: boolean
+}
+
+/**
+ * Helper type to signify issued currency in a `gateway_balances` response.
+ */
+interface CurrencyValuePair {
+  currency: string
+  value: string
 }
 
 /**
