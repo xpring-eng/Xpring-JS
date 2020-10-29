@@ -942,12 +942,12 @@ describe('Issued Currency Client', function (): void {
       return
     }
 
-    const failingNetworkClient = new FakeWebSocketNetworkClient(
+    const failingWebSocketClient = new FakeWebSocketNetworkClient(
       failureResponses,
     )
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      failingNetworkClient,
+      failingWebSocketClient,
       XrplNetwork.Test,
     )
 
