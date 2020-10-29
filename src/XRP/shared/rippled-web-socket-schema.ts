@@ -11,7 +11,7 @@ type WebSocketRequest =
 
 interface BaseRequest {
   id: number | string
-  command: string
+  command: RippledMethod
 }
 
 interface SubscribeRequest extends BaseRequest {
@@ -40,6 +40,8 @@ interface GatewayBalancesRequest extends BaseRequest {
  */
 enum RippledMethod {
   subscribe = 'subscribe',
+  accountLines = 'account_lines',
+  gatewayBalances = 'gateway_balances',
 }
 
 enum WebSocketReadyState {
