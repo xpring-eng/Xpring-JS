@@ -28,6 +28,11 @@ describe('Issued Currency Payment Integration Tests', function (): void {
   // Retry integration tests on failure.
   this.retries(3)
 
+  after(function (done) {
+    issuedCurrencyClient.webSocketNetworkClient.close()
+    done()
+  })
+
   it('issuedCurrencyPayment - issuing issued currency, combined cases', async function (): Promise<
     void
   > {
