@@ -1,5 +1,24 @@
 /* Schema for adding type information to Web Socket objects. */
 
+enum WebSocketReadyState {
+  Connecting,
+  Open,
+  Closing,
+  Closed,
+}
+
+/**
+ * The options for rippled methods (the `command` parameter in WebSocketRequestOptions)
+ *
+ * This is currently only the supported operations, but more will be added as they are supported.
+ * @see https://xrpl.org/public-rippled-methods.html
+ */
+enum RippledMethod {
+  subscribe = 'subscribe',
+  accountLines = 'account_lines',
+  gatewayBalances = 'gateway_balances',
+}
+
 /**
  * The standard format for a request to the Web Socket API exposed by a rippled node.
  * @see https://xrpl.org/request-formatting.html
@@ -32,25 +51,6 @@ interface GatewayBalancesRequest extends BaseRequest {
   ledger_index: number | string
 }
 
-/**
- * The options for rippled methods (the `command` parameter in WebSocketRequestOptions)
- *
- * This is currently only the supported operations, but more will be added as they are supported.
- * @see https://xrpl.org/public-rippled-methods.html
- */
-enum RippledMethod {
-  subscribe = 'subscribe',
-  accountLines = 'account_lines',
-  gatewayBalances = 'gateway_balances',
-}
-
-enum WebSocketReadyState {
-  Connecting,
-  Open,
-  Closing,
-  Closed,
-}
-
 interface BaseResponse {
   id: number | string
   status: string
@@ -73,6 +73,10 @@ interface StatusSuccessfulResponse extends BaseResponse {
   result: TransactionResponse | EmptyObject
 }
 
+/**
+ * The standard format for an error response from the WebSocket API exposed by a rippled node.
+ * @see https://xrpl.org/response-formatting.html
+ */
 interface WebSocketFailureResponse extends BaseResponse {
   error: string
   error_code: number

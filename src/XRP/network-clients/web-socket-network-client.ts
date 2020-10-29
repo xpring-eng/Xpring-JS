@@ -46,6 +46,7 @@ export default class WebSocketNetworkClient {
     private handleErrorMessage: (message: string) => void,
   ) {
     this.socket = new WebSocket(webSocketUrl)
+
     this.messageCallbacks.set('response', (data: WebSocketResponse) => {
       const dataStatusResponse = data as StatusResponse
       this.waiting.set(dataStatusResponse.id, data)

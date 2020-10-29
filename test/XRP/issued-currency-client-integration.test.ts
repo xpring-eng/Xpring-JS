@@ -11,7 +11,6 @@ import {
 } from '../../src/XRP/shared'
 import { TransactionResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
 import XrpClient from '../../src/XRP/xrp-client'
-// import { WebSocketResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -512,6 +511,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const address = classicAddress!.address
 
     const xrpAmount = '100'
+    const subscriptionId = 'monitor_transactions_' + xAddress
 
     let messageReceived = false
     const callback = (data: TransactionResponse) => {
@@ -540,7 +540,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
 
     // GIVEN a valid test address
-    // WHEN monitorIncomingPayments is called for that address
+    // WHEN subscribeToAccount is called for that address
     const response = await issuedCurrencyClient.monitorIncomingPayments(
       xAddress,
       callback,
@@ -549,7 +549,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the subscribe request is successfully submitted and received
     assert.equal(response.status, 'success')
     assert.equal(response.type, 'response')
-    assert.equal(response.id, 'monitor_transactions_' + xAddress)
+    assert.equal(response.id, subscriptionId)
 
     // WHEN a payment is sent to that address
     await xrpClient.send(xrpAmount, xAddress, wallet2)
@@ -563,14 +563,14 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   it('monitorIncomingPayments - bad address', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const xAddress = 'badAddress'
+    const address = 'badAddress'
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     const callback = (_data: TransactionResponse) => {}
-    // GIVEN a test address that has at least one trust line on testnet
+    // GIVEN a test address that is malformed.
     // WHEN monitorIncomingPayments is called for that address THEN an error is thrown.
     try {
-      await issuedCurrencyClient.monitorIncomingPayments(xAddress, callback)
+      await issuedCurrencyClient.monitorIncomingPayments(address, callback)
     } catch (e) {
       if (!(e instanceof XrpError)) {
         assert.fail('wrong error')
