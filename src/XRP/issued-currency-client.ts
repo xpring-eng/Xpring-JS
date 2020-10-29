@@ -550,52 +550,17 @@ export default class IssuedCurrencyClient {
     return transaction
   }
 
+  // TODO: (acorso) Make this method private and expose more opinionated public APIs.
+  // TODO: (acorso) structure this like we have `sendXrp` v.s. `sendXrpWithDetails` to allow for additional optional fields, such as memos.
+  //  as well as potentially:
+  // TODO: (acorso) learn about partial payments and whether they're essential to offer WRT to issued currencies (https://xrpl.org/payment.html#partial-payments)
+  // TODO: (acorso) learn about other payment flags and whether they're essential to offer WRT to issued currencies (https://xrpl.org/payment.html#payment-flags)
+
   /**
    * Sends issued currency from one account to another.  This method can be used to create issued currency, dispense issued currency from
    * an operational address, send issued currency from one XRPL account to another (as long as the payment only involves a single currency,
    * i.e. is not cross-currency), or to redeem issued currency at the issuing address.
-   * The specific case depends on the relationship among the parameters.
-   *
-   * TODO: (acorso) Remove this, and make that ^^ better.: ================================================================================
-   * Notes to reviewers:
-   *
-   * Case - ALL:
-   *      The destination address is NOT the same as the sending address of the transaction.
-   *      (This should only be true for currency exchange payments, which is a cross-currency payment to yourself.)
-   *
-   *      The SendMax field (if present) should always indicate the same currency and issuer as the Amount field... otherwise, it would
-   *      be considered a cross-currency payment (which are triggered by different currencies in Amount v.s. SendMax fields).
-   *      SendMax values are not parameterized here, and are instead derived from the provided values for issuer, currency, etc.
-   *       - therefore this method is incapable of initiating a cross-currency payment.
-   *
-   *
-   * Case - Creating an issued currency:
-   *      The sending address of the transaction is the same address as the issuer of the `Amount` field.
-   *
-   *      No SendMax field is required because the Transfer Fee doesn't apply to transactions in which
-   *              the originator or the destination address is the same as the issuer.
-   *               (you don't get charged to handle your own money, or let your customers redeem their money with you.)
-   *
-   *      ... does the destination address need to have a trustline established to the sender/issuer?
-   *
-   *
-   * Case - dispensing an issued currency from an operational address (https://xrpl.org/issuing-and-operational-addresses.html):
-   *      The sending address (an operational address) is not the same address as the issuer of the `Amount` field
-   *
-   *      Issuer needs to allow rippling (https://xrpl.org/rippling.html).
-   *
-   *      A SendMax field is required here, because the transfer fee will apply as the sender of this txn is not the issuer.
-   *
-   *
-   * Case - sending an issued currency payment from one XRPL address to another:
-   *      Identical to dispensing an issued currency from an operational address (which is just making an issued currency payment)
-   *
-   *
-   * Case - redeeming an issued currency with the issuer:
-   *      The destination address is the same address as the issuer of the `Amount` field.
-   *
-   *      No SendMax field is required because the Transfer Fee doesn't apply (see first Case above)
-   *==================================================================================================================================
+   * The specific case being executed is determined by the relationship among the parameters.
    *
    * @param sender The Wallet from which issued currency will be sent, and that will sign the transaction.
    * @param destination The destination address (recipient) for the payment, encoded as an X-address (see https://xrpaddress.info/).
@@ -605,9 +570,7 @@ export default class IssuedCurrencyClient {
    * @param transferFee Optional - can be omitted if sender address or destinationAddress are the same address as the issuer.
    *                    The transfer fee associated with the issuing account, expressed as a percentage. (i.e. a value of .5 indicates a 0.5% transfer fee).
    */
-  // TODO: (acorso) make this private if/when incorporated into higher level convenience methods
-  // TODO: (acorso) consider using an object for potentially long list of params
-  public async sendIssuedCurrency(
+  public async issuedCurrencyPayment(
     sender: Wallet,
     destination: string,
     currency: string,
@@ -672,7 +635,7 @@ export default class IssuedCurrencyClient {
       // Note that a transfer fee doesn't apply if the source address (of this transaction) and the issuing address of the currency being
       // sent are the same (i.e. issuer sending currency directly) OR if the issuer of the currency and the destination are the same
       // (i.e. redeeming an issued currency).
-      // However, it also doesn't hurt to include a SendMax field, it just won't end up being used (added this to questions just to make sure).
+      // However, it also doesn't hurt to include a SendMax field, it just won't end up being used.
 
       // This calculation determines the sendMaxValue by applying the transferFee to the amount being sent, and then rounding (up) only as
       // much as necessary to fit the final value within the 15 decimal digit limit that applies to encoding issued currency amounts.
@@ -701,11 +664,6 @@ export default class IssuedCurrencyClient {
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
     transaction.setPayment(payment)
-
-    // TODO: (acorso) structure this like we have `sendXrp` v.s. `sendXrpWithDetails` to allow for additional optional fields, such as memos.
-    //  as well as potentially:
-    // TODO: (acorso) learn about partial payments and whether they're essential to offer WRT to issued currencies (https://xrpl.org/payment.html#partial-payments)
-    // TODO: (acorso) learn about other payment flags and whether they're essential to offer WRT to issued currencies (https://xrpl.org/payment.html#payment-flags)
 
     const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
       transaction,
