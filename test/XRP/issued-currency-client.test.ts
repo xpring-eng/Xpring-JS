@@ -402,7 +402,6 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -946,13 +945,13 @@ describe('Issued Currency Client', function (): void {
       return
     }
 
-    const failingNetworkClient = new FakeWebSocketNetworkClient(
+    const failingWebSocketClient = new FakeWebSocketNetworkClient(
       failureResponses,
     )
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
-      failingNetworkClient,
+      failingWebSocketClient,
       XrplNetwork.Test,
     )
 
