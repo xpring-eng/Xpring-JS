@@ -551,8 +551,8 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * Creates new issued currency.  Note that the destination account must have a trustline established with the sender of
-   * this transaction or no issued currency will be created.
+   * Creates new issued currency on a trustline to the destination account. Note that the destination account must have a trustline
+   * extended to the sender of this transaction (the "issuer" of this issued currency) or no issued currency will be created.
    *
    * @param sender The Wallet creating the issued currency, and that will sign the transaction.
    * @param destination The destination address (recipient) of the issued currency, encoded as an X-address (see https://xrpaddress.info/).
