@@ -33,13 +33,13 @@ import GatewayBalances, {
 } from './shared/gateway-balances'
 import TrustLine from './shared/trustline'
 import {
-  WebSocketAccountLinesResponse,
+  AccountLinesResponse,
   AccountLinesSuccessfulResponse,
   WebSocketFailureResponse,
-  WebSocketStatusResponse,
-  WebSocketTransactionResponse,
-  WebSocketGatewayBalancesResponse,
-  WebSocketGatewayBalancesSuccessfulResponse,
+  StatusResponse,
+  TransactionResponse,
+  GatewayBalancesResponse,
+  GatewayBalancesSuccessfulResponse,
 } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
@@ -122,7 +122,7 @@ export default class IssuedCurrencyClient {
       }
     }
 
-    const accountLinesResponse: WebSocketAccountLinesResponse = await this.webSocketNetworkClient.getAccountLines(
+    const accountLinesResponse: AccountLinesResponse = await this.webSocketNetworkClient.getAccountLines(
       classicAddress.address,
       peerAccount,
     )
@@ -177,7 +177,7 @@ export default class IssuedCurrencyClient {
       return classicAddress.address
     })
 
-    const gatewayBalancesResponse: WebSocketGatewayBalancesResponse = await this.webSocketNetworkClient.getGatewayBalances(
+    const gatewayBalancesResponse: GatewayBalancesResponse = await this.webSocketNetworkClient.getGatewayBalances(
       classicAddress.address,
       classicAddressesToExclude,
     )
@@ -185,7 +185,7 @@ export default class IssuedCurrencyClient {
     const error = (gatewayBalancesResponse as WebSocketFailureResponse).error
     if (!error) {
       return gatewayBalancesFromResponse(
-        gatewayBalancesResponse as WebSocketGatewayBalancesSuccessfulResponse,
+        gatewayBalancesResponse as GatewayBalancesSuccessfulResponse,
       )
     }
     switch (error) {
@@ -212,8 +212,8 @@ export default class IssuedCurrencyClient {
    */
   public async monitorIncomingPayments(
     account: string,
-    callback: (data: WebSocketTransactionResponse) => void,
-  ): Promise<WebSocketStatusResponse> {
+    callback: (data: TransactionResponse) => void,
+  ): Promise<StatusResponse> {
     const classicAddress = XrpUtils.decodeXAddress(account)
     if (!classicAddress) {
       throw XrpError.xAddressRequired

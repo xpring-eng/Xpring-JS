@@ -1,12 +1,12 @@
 import WebSocket = require('ws')
 import { XrpError, XrpErrorType } from '../shared'
 import {
-  WebSocketAccountLinesResponse,
-  WebSocketGatewayBalancesResponse,
-  WebSocketRequestOptions,
+  AccountLinesResponse,
+  GatewayBalancesResponse,
+  WebSocketRequest,
   WebSocketResponse,
-  WebSocketStatusResponse,
-  WebSocketTransactionResponse,
+  StatusResponse,
+  TransactionResponse,
 } from '../shared/rippled-web-socket-schema'
 
 const sleep = (ms: number): Promise<void> => {
@@ -19,10 +19,7 @@ const sleep = (ms: number): Promise<void> => {
  */
 export default class WebSocketNetworkClient {
   private readonly socket: WebSocket
-  private accountCallbacks: Map<
-    string,
-    (data: WebSocketTransactionResponse) => void
-  >
+  private accountCallbacks: Map<string, (data: TransactionResponse) => void>
   private messageCallbacks: Map<string, (data: WebSocketResponse) => void>
   private waiting: Map<number | string, WebSocketResponse | undefined>
 
@@ -42,7 +39,7 @@ export default class WebSocketNetworkClient {
 
     this.messageCallbacks = new Map()
     this.messageCallbacks.set('response', (data: WebSocketResponse) => {
-      const dataStatusResponse = data as WebSocketStatusResponse
+      const dataStatusResponse = data as StatusResponse
       this.waiting.set(dataStatusResponse.id, data)
     })
     this.messageCallbacks.set('transaction', this.handleTransaction)
@@ -77,7 +74,7 @@ export default class WebSocketNetworkClient {
    * @param data The web socket response received from the web socket.
    */
   private handleTransaction = (data: WebSocketResponse) => {
-    const dataTransaction = data as WebSocketTransactionResponse
+    const dataTransaction = data as TransactionResponse
     const destinationAccount = dataTransaction.transaction.Destination
     const callback = this.accountCallbacks.get(destinationAccount)
     if (callback) {
@@ -98,7 +95,7 @@ export default class WebSocketNetworkClient {
    * @returns The API response from the web socket.
    */
   private async sendApiRequest(
-    request: WebSocketRequestOptions,
+    request: WebSocketRequest,
   ): Promise<WebSocketResponse> {
     while (this.socket.readyState === 0) {
       await sleep(5)
@@ -129,9 +126,9 @@ export default class WebSocketNetworkClient {
    */
   public async subscribeToAccount(
     id: string,
-    callback: (data: WebSocketTransactionResponse) => void,
+    callback: (data: TransactionResponse) => void,
     account: string,
-  ): Promise<WebSocketStatusResponse> {
+  ): Promise<StatusResponse> {
     this.accountCallbacks.set(account, callback)
     const options = {
       id,
@@ -145,7 +142,7 @@ export default class WebSocketNetworkClient {
         'Subscription request for ' + account + ' failed',
       )
     }
-    return response as WebSocketStatusResponse
+    return response as StatusResponse
   }
 
   /**
@@ -156,7 +153,7 @@ export default class WebSocketNetworkClient {
   public async getAccountLines(
     account: string,
     peerAccount?: string,
-  ): Promise<WebSocketAccountLinesResponse> {
+  ): Promise<AccountLinesResponse> {
     const accountLinesRequest = {
       id: 'account_lines_' + account,
       command: 'account_lines',
@@ -165,7 +162,7 @@ export default class WebSocketNetworkClient {
       peer: peerAccount,
     }
     const accountLinesResponse = await this.sendApiRequest(accountLinesRequest)
-    return accountLinesResponse as WebSocketAccountLinesResponse
+    return accountLinesResponse as AccountLinesResponse
   }
 
   /**
@@ -179,7 +176,7 @@ export default class WebSocketNetworkClient {
   public async getGatewayBalances(
     account: string,
     addressesToExclude?: Array<string>,
-  ): Promise<WebSocketGatewayBalancesResponse> {
+  ): Promise<GatewayBalancesResponse> {
     const gatewayBalancesRequest = {
       id: 'gateway_balances_' + account,
       command: 'gateway_balances',
@@ -191,7 +188,7 @@ export default class WebSocketNetworkClient {
     const gatewayBalancesResponse = await this.sendApiRequest(
       gatewayBalancesRequest,
     )
-    return gatewayBalancesResponse as WebSocketGatewayBalancesResponse
+    return gatewayBalancesResponse as GatewayBalancesResponse
   }
 
   /**

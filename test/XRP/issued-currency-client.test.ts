@@ -14,11 +14,11 @@ import {
   FakeWebSocketNetworkClientResponses,
 } from './fakes/fake-web-socket-network-client'
 import {
-  WebSocketAccountLinesResponse,
+  AccountLinesResponse,
   AccountLinesSuccessfulResponse,
   WebSocketResponse,
-  WebSocketGatewayBalancesResponse,
-  WebSocketGatewayBalancesSuccessfulResponse,
+  GatewayBalancesResponse,
+  GatewayBalancesSuccessfulResponse,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
 import GatewayBalances, {
   gatewayBalancesFromResponse,
@@ -49,7 +49,7 @@ describe('Issued Currency Client', function (): void {
     // WHEN getTrustLines is called
     const trustLines = await issuedCurrencyClient.getTrustLines(testAddress)
     const expectedTrustLines: Array<TrustLine> = []
-    const trustlinesResponse: WebSocketAccountLinesResponse = await fakeSucceedingWebSocketClient.getAccountLines(
+    const trustlinesResponse: AccountLinesResponse = await fakeSucceedingWebSocketClient.getAccountLines(
       testAddress,
     )
     const trustlinesSuccessfulResponse = trustlinesResponse as AccountLinesSuccessfulResponse
@@ -105,7 +105,7 @@ describe('Issued Currency Client', function (): void {
     void
   > {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
-    const accountNotFoundResponse: WebSocketAccountLinesResponse = {
+    const accountNotFoundResponse: AccountLinesResponse = {
       error: 'actNotFound',
       error_code: 19,
       error_message: 'Account not found.',
@@ -143,7 +143,7 @@ describe('Issued Currency Client', function (): void {
     void
   > {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
-    const invalidParamsResponse: WebSocketAccountLinesResponse = {
+    const invalidParamsResponse: AccountLinesResponse = {
       error: 'invalidParams',
       error_code: 31,
       error_message: "Missing field 'account'.",
@@ -415,7 +415,7 @@ describe('Issued Currency Client', function (): void {
     const expectedGatewayBalances: GatewayBalances = gatewayBalancesFromResponse(
       (await fakeSucceedingWebSocketClient.getGatewayBalances(
         testAddress,
-      )) as WebSocketGatewayBalancesSuccessfulResponse,
+      )) as GatewayBalancesSuccessfulResponse,
     )
 
     // THEN the result is as expected
@@ -490,7 +490,7 @@ describe('Issued Currency Client', function (): void {
     void
   > {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getGatewayBalances
-    const accountNotFoundResponse: WebSocketGatewayBalancesResponse = {
+    const accountNotFoundResponse: GatewayBalancesResponse = {
       error: 'actNotFound',
       error_code: 19,
       error_message: 'Account not found.',

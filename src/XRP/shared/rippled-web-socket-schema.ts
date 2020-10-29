@@ -189,15 +189,15 @@ type EmptyObject = {
 }
 
 export {
-  WebSocketRequest as WebSocketRequestOptions,
+  WebSocketRequest,
   WebSocketResponse,
   WebSocketFailureResponse,
-  StatusResponse as WebSocketStatusResponse,
-  TransactionResponse as WebSocketTransactionResponse,
-  AccountLinesResponse as WebSocketAccountLinesResponse,
+  StatusResponse,
+  TransactionResponse,
+  AccountLinesResponse,
   AccountLinesSuccessfulResponse,
-  GatewayBalancesResponse as WebSocketGatewayBalancesResponse,
-  GatewayBalancesSuccessfulResponse as WebSocketGatewayBalancesSuccessfulResponse,
+  GatewayBalancesResponse,
+  GatewayBalancesSuccessfulResponse,
   WebSocketTransaction,
   TrustLineResponse,
 }

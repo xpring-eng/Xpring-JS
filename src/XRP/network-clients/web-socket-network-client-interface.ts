@@ -1,8 +1,8 @@
 import {
-  WebSocketTransactionResponse,
-  WebSocketStatusResponse,
-  WebSocketAccountLinesResponse,
-  WebSocketGatewayBalancesResponse,
+  TransactionResponse,
+  StatusResponse,
+  AccountLinesResponse,
+  GatewayBalancesResponse,
 } from '../shared/rippled-web-socket-schema'
 
 /**
@@ -20,9 +20,9 @@ export interface WebSocketNetworkClientInterface {
    */
   subscribeToAccount(
     id: string,
-    callback: (data: WebSocketTransactionResponse) => void,
+    callback: (data: TransactionResponse) => void,
     account: string,
-  ): Promise<WebSocketStatusResponse>
+  ): Promise<StatusResponse>
 
   /**
    * Submits an account_lines request to the rippled JSON RPC.
@@ -34,7 +34,7 @@ export interface WebSocketNetworkClientInterface {
   getAccountLines(
     account: string,
     peerAccount?: string,
-  ): Promise<WebSocketAccountLinesResponse>
+  ): Promise<AccountLinesResponse>
 
   /**
    * Submits a gateway_balances request to the rippled JSON RPC.
@@ -47,7 +47,7 @@ export interface WebSocketNetworkClientInterface {
   getGatewayBalances(
     account: string,
     addressesToExclude?: Array<string>,
-  ): Promise<WebSocketGatewayBalancesResponse>
+  ): Promise<GatewayBalancesResponse>
 
   close(): void
 }
