@@ -590,13 +590,15 @@ export default class IssuedCurrencyClient {
     currency: string,
     amount: string,
   ): Promise<TransactionResult> {
-    // Redemption of issued currency is achieved by sending issued currency directly to the original issuer, so the destination
-    // field must be the same as the issuer.
+    // Redemption of issued currency is achieved by sending issued currency directly to the original issuer.
+    // However, the issuer field specified in the amount is treated as a special case in this circumstance, and should be
+    // set to the address of the account initiating the redemption.
+    // See: https://xrpl.org/payment.html#special-issuer-values-for-sendmax-and-amount
     return await this.issuedCurrencyPayment(
       sender,
       issuer,
       currency,
-      issuer,
+      sender.getAddress(),
       amount,
     )
   }
