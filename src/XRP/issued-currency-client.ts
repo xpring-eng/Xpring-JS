@@ -34,12 +34,11 @@ import GatewayBalances, {
 import TrustLine from './shared/trustline'
 import {
   WebSocketAccountLinesResponse,
-  WebSocketAccountLinesSuccessfulResponse,
-  WebSocketAccountLinesFailureResponse,
+  AccountLinesSuccessfulResponse,
+  WebSocketFailureResponse,
   WebSocketStatusResponse,
   WebSocketTransactionResponse,
   WebSocketGatewayBalancesResponse,
-  WebSocketGatewayBalancesFailureResponse,
   WebSocketGatewayBalancesSuccessfulResponse,
 } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
@@ -128,8 +127,7 @@ export default class IssuedCurrencyClient {
       peerAccount,
     )
 
-    const error = (accountLinesResponse as WebSocketAccountLinesFailureResponse)
-      .error
+    const error = (accountLinesResponse as WebSocketFailureResponse).error
     if (error) {
       if (error === RippledErrorMessages.accountNotFound) {
         throw XrpError.accountNotFound
@@ -138,7 +136,7 @@ export default class IssuedCurrencyClient {
       }
     }
 
-    const accountLinesSuccessfulResponse = accountLinesResponse as WebSocketAccountLinesSuccessfulResponse
+    const accountLinesSuccessfulResponse = accountLinesResponse as AccountLinesSuccessfulResponse
     const rawTrustLines = accountLinesSuccessfulResponse.result.lines
     if (rawTrustLines === undefined) {
       throw XrpError.malformedResponse
@@ -184,8 +182,7 @@ export default class IssuedCurrencyClient {
       classicAddressesToExclude,
     )
 
-    const error = (gatewayBalancesResponse as WebSocketGatewayBalancesFailureResponse)
-      .error
+    const error = (gatewayBalancesResponse as WebSocketFailureResponse).error
     if (!error) {
       return gatewayBalancesFromResponse(
         gatewayBalancesResponse as WebSocketGatewayBalancesSuccessfulResponse,

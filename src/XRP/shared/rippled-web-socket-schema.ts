@@ -4,29 +4,28 @@
  * The standard format for a request to the Web Socket API exposed by a rippled node.
  * @see https://xrpl.org/request-formatting.html
  */
-type WebSocketRequestOptions =
+type WebSocketRequest =
   | SubscribeRequest
   | AccountLinesRequest
   | GatewayBalancesRequest
 
-interface SubscribeRequest {
+interface BaseRequest {
   id: number | string
   command: string
+}
+
+interface SubscribeRequest extends BaseRequest {
   streams?: string[]
   accounts?: string[]
 }
 
-interface AccountLinesRequest {
-  id: number | string
-  command: string
+interface AccountLinesRequest extends BaseRequest {
   account: string
   ledger_index?: string
   peer?: string
 }
 
-interface GatewayBalancesRequest {
-  id: number | string
-  command: string
+interface GatewayBalancesRequest extends BaseRequest {
   account: string
   strict: boolean
   hotwallet: string | string[]
@@ -34,18 +33,47 @@ interface GatewayBalancesRequest {
 }
 
 type WebSocketResponse =
-  | WebSocketStatusResponse
-  | WebSocketTransactionResponse
-  | WebSocketAccountLinesResponse
+  | StatusResponse
+  | TransactionResponse
+  | AccountLinesResponse
+  | GatewayBalancesResponse
 
-interface WebSocketStatusResponse {
+interface BaseResponse {
   id: number | string
-  result: WebSocketTransactionResponse | EmptyObject
   status: string
   type: string
 }
 
-interface WebSocketTransactionResponse {
+interface WebSocketFailureResponse extends BaseResponse {
+  error: string
+  error_code: number
+  error_message: string
+  request: AccountLinesRequest | GatewayBalancesRequest
+}
+
+interface StatusResponse extends BaseResponse {
+  result: TransactionResponse | EmptyObject
+}
+
+type AccountLinesResponse =
+  | AccountLinesSuccessfulResponse
+  | WebSocketFailureResponse
+
+interface AccountLinesSuccessfulResponse extends BaseResponse {
+  result: {
+    account: string
+    ledger_hash: string
+    ledger_index: number
+    lines: Array<TrustLineResponse>
+    validated: boolean
+  }
+}
+
+type GatewayBalancesResponse =
+  | GatewayBalancesSuccessfulResponse
+  | WebSocketFailureResponse
+
+interface TransactionResponse {
   engine_result: string
   engine_result_code: number
   engine_result_message: string
@@ -63,41 +91,7 @@ interface WebSocketTransactionResponse {
   validated: boolean
 }
 
-type WebSocketAccountLinesResponse =
-  | WebSocketAccountLinesSuccessfulResponse
-  | WebSocketAccountLinesFailureResponse
-
-interface WebSocketAccountLinesSuccessfulResponse {
-  id: number | string
-  status: string
-  type: string
-  result: {
-    account: string
-    ledger_hash: string
-    ledger_index: number
-    lines: Array<TrustLineResponse>
-    validated: boolean
-  }
-}
-
-interface WebSocketAccountLinesFailureResponse {
-  id: number | string
-  status: string
-  type: string
-  error: string
-  error_code: number
-  error_message: string
-  request: AccountLinesRequest
-}
-
-type WebSocketGatewayBalancesResponse =
-  | WebSocketGatewayBalancesSuccessfulResponse
-  | WebSocketGatewayBalancesFailureResponse
-
-interface WebSocketGatewayBalancesSuccessfulResponse {
-  id: number | string
-  status: string
-  type: string
+interface GatewayBalancesSuccessfulResponse extends BaseResponse {
   result: {
     account?: string
     assets?: { [account: string]: CurrencyValuePair[] }
@@ -109,14 +103,35 @@ interface WebSocketGatewayBalancesSuccessfulResponse {
   }
 }
 
-interface WebSocketGatewayBalancesFailureResponse {
-  id: number | string
-  status: string
-  type: string
-  error: string
-  error_code: number
-  error_message: string
-  request: GatewayBalancesRequest
+interface WebSocketTransaction {
+  Account: string
+  Amount: string
+  Destination: string
+  Fee: string
+  Flags: number
+  LastLedgerSequence: number
+  Sequence: number
+  SigningPubKey: string
+  TransactionType: string
+  TxnSignature: string
+  date: number
+  hash: string
+}
+
+interface TrustLineResponse {
+  account: string
+  balance: string
+  currency: string
+  limit: string
+  limit_peer: string
+  quality_in: number
+  quality_out: number
+  no_ripple?: boolean
+  no_ripple_peer?: boolean
+  authorized?: boolean
+  peer_authorized?: boolean
+  freeze?: boolean
+  freeze_peer?: boolean
 }
 
 type ChangedNode = CreatedNode | ModifiedNode | DeletedNode
@@ -164,37 +179,6 @@ interface DeletedNode {
   LedgerIndex: string
 }
 
-interface WebSocketTransaction {
-  Account: string
-  Amount: string
-  Destination: string
-  Fee: string
-  Flags: number
-  LastLedgerSequence: number
-  Sequence: number
-  SigningPubKey: string
-  TransactionType: string
-  TxnSignature: string
-  date: number
-  hash: string
-}
-
-interface TrustLineResponse {
-  account: string
-  balance: string
-  currency: string
-  limit: string
-  limit_peer: string
-  quality_in: number
-  quality_out: number
-  no_ripple?: boolean
-  no_ripple_peer?: boolean
-  authorized?: boolean
-  peer_authorized?: boolean
-  freeze?: boolean
-  freeze_peer?: boolean
-}
-
 interface CurrencyValuePair {
   currency: string
   value: string
@@ -205,16 +189,15 @@ type EmptyObject = {
 }
 
 export {
-  WebSocketRequestOptions,
+  WebSocketRequest as WebSocketRequestOptions,
   WebSocketResponse,
-  WebSocketStatusResponse,
+  WebSocketFailureResponse,
+  StatusResponse as WebSocketStatusResponse,
+  TransactionResponse as WebSocketTransactionResponse,
+  AccountLinesResponse as WebSocketAccountLinesResponse,
+  AccountLinesSuccessfulResponse,
+  GatewayBalancesResponse as WebSocketGatewayBalancesResponse,
+  GatewayBalancesSuccessfulResponse as WebSocketGatewayBalancesSuccessfulResponse,
   WebSocketTransaction,
-  WebSocketTransactionResponse,
-  WebSocketAccountLinesResponse,
-  WebSocketAccountLinesSuccessfulResponse,
-  WebSocketAccountLinesFailureResponse,
-  WebSocketGatewayBalancesResponse,
-  WebSocketGatewayBalancesSuccessfulResponse,
-  WebSocketGatewayBalancesFailureResponse,
   TrustLineResponse,
 }

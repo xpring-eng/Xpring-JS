@@ -15,7 +15,7 @@ import {
 } from './fakes/fake-web-socket-network-client'
 import {
   WebSocketAccountLinesResponse,
-  WebSocketAccountLinesSuccessfulResponse,
+  AccountLinesSuccessfulResponse,
   WebSocketResponse,
   WebSocketGatewayBalancesResponse,
   WebSocketGatewayBalancesSuccessfulResponse,
@@ -52,7 +52,7 @@ describe('Issued Currency Client', function (): void {
     const trustlinesResponse: WebSocketAccountLinesResponse = await fakeSucceedingWebSocketClient.getAccountLines(
       testAddress,
     )
-    const trustlinesSuccessfulResponse = trustlinesResponse as WebSocketAccountLinesSuccessfulResponse
+    const trustlinesSuccessfulResponse = trustlinesResponse as AccountLinesSuccessfulResponse
     if (trustlinesSuccessfulResponse.result.lines === undefined) {
       throw XrpError.malformedResponse
     }
