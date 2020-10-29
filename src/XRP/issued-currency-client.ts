@@ -480,7 +480,7 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * Freezes the trust line between this account (issuing account) and another account.
+   * Unfreezes the trust line between this account (issuing account) and another account.
    * Note that the trust line's limit is set to 0.
    *
    * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
