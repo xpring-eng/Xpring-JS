@@ -550,6 +550,31 @@ export default class IssuedCurrencyClient {
     return transaction
   }
 
+  /**
+   * Creates new issued currency.  Note that the destination account must have a trustline established with the sender of
+   * this transaction or no issued currency will be created.
+   *
+   * @param sender The Wallet creating the issued currency, and that will sign the transaction.
+   * @param destination The destination address (recipient) of the issued currency, encoded as an X-address (see https://xrpaddress.info/).
+   * @param currency The three-letter currency code of the issued currency being created.
+   * @param amount The amount of issued currency to create.
+   */
+  public async createIssuedCurrency(
+    sender: Wallet,
+    destination: string,
+    currency: string,
+    amount: string,
+  ): Promise<TransactionResult> {
+    const issuer = sender.getAddress()
+    return await this.issuedCurrencyPayment(
+      sender,
+      destination,
+      currency,
+      issuer,
+      amount,
+    )
+  }
+
   // TODO: (acorso) Make this method private and expose more opinionated public APIs.
   // TODO: (acorso) structure this like we have `sendXrp` v.s. `sendXrpWithDetails` to allow for additional optional fields, such as memos.
   //  as well as potentially:
