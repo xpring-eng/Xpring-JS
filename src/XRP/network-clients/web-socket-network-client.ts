@@ -190,7 +190,7 @@ export default class WebSocketNetworkClient {
    * Submits a gateway_balances request to the rippled WebSocket API.
    * @see https://xrpl.org/gateway_balances.html
    *
-   * @param account The XRPL account for which to retrieve balances.
+   * @param account The XRPL account for which to retrieve issued currency balances.
    * @param addressesToExclude (Optional) An array of operational address to exclude from the balances issued.
    * @see https://xrpl.org/issuing-and-operational-addresses.html
    */
