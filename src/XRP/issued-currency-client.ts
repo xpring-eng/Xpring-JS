@@ -220,7 +220,7 @@ export default class IssuedCurrencyClient {
       throw XrpError.xAddressRequired
     }
 
-    const id = 'monitor_transactions_${account}'
+    const id = `monitor_transactions_${account}`
 
     return await this.webSocketNetworkClient.subscribeToAccount(
       classicAddress.address,
