@@ -71,9 +71,10 @@ interface GatewayBalancesRequest {
  */
 type WebSocketResponse =
   | WebSocketStatusResponse
+  | WebSocketStatusErrorResponse
   | WebSocketTransactionResponse
   | WebSocketAccountLinesResponse
-  | WebSocketStatusErrorResponse
+  | WebSocketGatewayBalancesResponse
 
 /**
  * The standard format for a direct response from the WebSocket API to a request.
