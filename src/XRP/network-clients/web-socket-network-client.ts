@@ -63,17 +63,17 @@ export default class WebSocketNetworkClient {
         callback(parsedData)
       } else {
         this.handleErrorMessage(
-          'Received unhandlable message: ${event.data as string}',
+          `Received unhandlable message: ${event.data as string}`,
         )
       }
     })
 
     this.socket.addEventListener('close', (event: CloseEvent) => {
-      this.handleErrorMessage('Web socket disconnected, ' + event.reason)
+      this.handleErrorMessage(`Web socket disconnected, ${event.reason}`)
     })
 
     this.socket.addEventListener('error', (event: ErrorEvent) => {
-      this.handleErrorMessage('Error: ' + event.message)
+      this.handleErrorMessage(`Error: ${event.message}`)
     })
   }
 

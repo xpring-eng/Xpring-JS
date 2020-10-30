@@ -541,7 +541,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // GIVEN a valid test address
     // WHEN subscribeToAccount is called for that address
-    const response = await issuedCurrencyClient.monitorIncomingPayments(
+    const response = await issuedCurrencyClient.monitorAccountTransactions(
       xAddress,
       callback,
     )
@@ -568,7 +568,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // GIVEN a test address that is malformed.
     // WHEN monitorIncomingPayments is called for that address THEN an error is thrown.
     try {
-      await issuedCurrencyClient.monitorIncomingPayments(
+      await issuedCurrencyClient.monitorAccountTransactions(
         address,
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         (_data: WebSocketTransactionResponse) => {},

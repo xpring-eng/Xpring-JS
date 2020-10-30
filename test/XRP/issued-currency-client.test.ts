@@ -917,7 +917,7 @@ describe('Issued Currency Client', function (): void {
     }
 
     // WHEN monitorIncomingPayments is called
-    const monitorResponse = await issuedCurrencyClient.monitorIncomingPayments(
+    const monitorResponse = await issuedCurrencyClient.monitorAccountTransactions(
       testAddress,
       callback,
     )
@@ -953,7 +953,7 @@ describe('Issued Currency Client', function (): void {
 
     // WHEN monitorIncomingPayments is attempted THEN an error is propagated.
     issuedCurrencyClient
-      .monitorIncomingPayments(testAddress, callback)
+      .monitorAccountTransactions(testAddress, callback)
       .catch((error) => {
         assert.deepEqual(
           error,
