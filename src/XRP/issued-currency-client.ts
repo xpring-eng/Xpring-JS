@@ -202,15 +202,16 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * Subscribes to an account's incoming transactions, and triggers a callback upon recieving each transaction.
+   * Subscribes to all transactions that affect the specified account, and triggers a callback upon
+   * receiving each transaction.
    * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
    * @see https://xrpl.org/subscribe.html
    *
-   * @param account The account from which to subscribe to incoming transactions, encoded as an X-Address.
-   * @param callback The function to trigger upon recieving each transaction from the ledger.
-   * @returns The response from the websocket confirming the subscription.
+   * @param account The account for which to subscribe to relevant transactions, encoded as an X-Address.
+   * @param callback The function to trigger upon receiving a transaction event from the ledger.
+   * @returns The response from the websocket indicating the result of the subscription request.
    */
-  public async monitorIncomingPayments(
+  public async monitorAccountTransactions(
     account: string,
     callback: (data: TransactionResponse) => void,
   ): Promise<StatusResponse> {
@@ -218,12 +219,11 @@ export default class IssuedCurrencyClient {
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
-    const address = classicAddress.address
 
-    const id = 'monitor_transactions_' + account
+    const id = `monitor_transactions_${account}`
 
     return await this.webSocketNetworkClient.subscribeToAccount(
-      address,
+      classicAddress.address,
       id,
       callback,
     )
@@ -585,6 +585,31 @@ export default class IssuedCurrencyClient {
     }
 
     return transaction
+  }
+
+  /**
+   * Creates new issued currency on a trustline to the destination account. Note that the destination account must have a trustline
+   * extended to the sender of this transaction (the "issuer" of this issued currency) or no issued currency will be created.
+   *
+   * @param sender The Wallet creating the issued currency, and that will sign the transaction.
+   * @param destination The destination address (recipient) of the issued currency, encoded as an X-address (see https://xrpaddress.info/).
+   * @param currency The three-letter currency code of the issued currency being created.
+   * @param amount The amount of issued currency to create.
+   */
+  public async createIssuedCurrency(
+    sender: Wallet,
+    destination: string,
+    currency: string,
+    amount: string,
+  ): Promise<TransactionResult> {
+    const issuer = sender.getAddress()
+    return await this.issuedCurrencyPayment(
+      sender,
+      destination,
+      currency,
+      issuer,
+      amount,
+    )
   }
 
   // TODO: (acorso) Make this method private and expose more opinionated public APIs.

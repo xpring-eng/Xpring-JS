@@ -541,7 +541,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // GIVEN a valid test address
     // WHEN subscribeToAccount is called for that address
-    const response = await issuedCurrencyClient.monitorIncomingPayments(
+    const response = await issuedCurrencyClient.monitorAccountTransactions(
       xAddress,
       callback,
     )
@@ -570,7 +570,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // GIVEN a test address that is malformed.
     // WHEN monitorIncomingPayments is called for that address THEN an error is thrown.
     try {
-      await issuedCurrencyClient.monitorIncomingPayments(address, callback)
+      await issuedCurrencyClient.monitorAccountTransactions(address, callback)
     } catch (e) {
       if (!(e instanceof XrpError)) {
         assert.fail('wrong error')
