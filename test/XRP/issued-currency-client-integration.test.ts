@@ -564,9 +564,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     const address = 'badAddress'
-
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const callback = (_data: TransactionResponse) => {}
+    const callback = () => {}
+
     // GIVEN a test address that is malformed.
     // WHEN monitorIncomingPayments is called for that address THEN an error is thrown.
     try {

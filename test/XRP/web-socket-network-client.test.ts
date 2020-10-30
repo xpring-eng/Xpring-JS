@@ -110,7 +110,7 @@ describe('WebSocket Tests', function (): void {
         address,
         'subscribe_transaction_' + address,
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        (_data: TransactionResponse) => {},
+        () => {},
       )
     } catch (e) {
       if (!(e instanceof XrpError)) {
