@@ -373,8 +373,8 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     // WHEN an issued currency payment is made back to the issuer
     const transactionResult = await issuedCurrencyClient.redeemIssuedCurrency(
       customerWallet,
-      issuerWallet.getAddress(),
       'FOO',
+      issuerWallet.getAddress(),
       '100',
     )
 
