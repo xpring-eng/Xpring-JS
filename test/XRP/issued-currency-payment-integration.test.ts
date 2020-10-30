@@ -33,20 +33,17 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     done()
   })
 
-  it('issuedCurrencyPayment - issuing issued currency, combined cases', async function (): Promise<
-    void
-  > {
+  it('createIssuedCurrency, combined cases', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN two existing, funded testnet accounts serving as an issuing address and operational address, respectively
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
     const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
 
-    // WHEN there does not yet exist a trust line between the accounts, and the issuer attempts to issue an issued currency
-    let transactionResult = await issuedCurrencyClient.issuedCurrencyPayment(
+    // WHEN there does not yet exist a trust line between the accounts, and the issuer attempts to create some issued currency
+    let transactionResult = await issuedCurrencyClient.createIssuedCurrency(
       issuerWallet,
       operationalWallet.getAddress(),
       'USD',
-      issuerWallet.getAddress(),
       '200',
     )
 
@@ -71,12 +68,11 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       operationalWallet,
     )
 
-    // WHEN the issuer attempts to issue an amount of issued currency above the trust line limit
-    transactionResult = await issuedCurrencyClient.issuedCurrencyPayment(
+    // WHEN the issuer attempts to create an amount of issued currency above the trust line limit
+    transactionResult = await issuedCurrencyClient.createIssuedCurrency(
       issuerWallet,
       operationalWallet.getAddress(),
       'USD',
-      issuerWallet.getAddress(),
       '200',
     )
 
@@ -90,12 +86,11 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       ),
     )
 
-    // but, WHEN the issuer attempts to issue an amount of issued currency at or below the trust line limit
-    transactionResult = await issuedCurrencyClient.issuedCurrencyPayment(
+    // but, WHEN the issuer attempts to create an amount of issued currency at or below the trust line limit
+    transactionResult = await issuedCurrencyClient.createIssuedCurrency(
       issuerWallet,
       operationalWallet.getAddress(),
       'USD',
-      issuerWallet.getAddress(),
       '100',
     )
 
