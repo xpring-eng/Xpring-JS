@@ -97,7 +97,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('issuedCurrencyPayment - failure to send from non-issuing account to customer account without rippling enabled on issuer', async function (): Promise<
+  it('sendIssuedCurrencyPayment - failure to send from non-issuing account to customer account without rippling enabled on issuer', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -117,11 +117,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // fund operational with issued currency
-    await issuedCurrencyClient.issuedCurrencyPayment(
+    await issuedCurrencyClient.createIssuedCurrency(
       issuerWallet,
       operationalWallet.getAddress(),
       'FOO',
-      issuerWallet.getAddress(),
       '500',
     )
 
@@ -135,7 +134,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // WHEN an issued currency payment is made to another funded account
-    const transactionResult = await issuedCurrencyClient.issuedCurrencyPayment(
+    const transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       operationalWallet,
       customerWallet.getAddress(),
       'FOO',
@@ -154,7 +153,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('issuedCurrencyPayment - success sending issued currency from non-issuing account to another account', async function (): Promise<
+  it('sendIssuedCurrencyPayment - success sending issued currency from non-issuing account to another account', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -177,11 +176,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // fund operational with issued currency
-    await issuedCurrencyClient.issuedCurrencyPayment(
+    await issuedCurrencyClient.createIssuedCurrency(
       issuerWallet,
       operationalWallet.getAddress(),
       'FOO',
-      issuerWallet.getAddress(),
       '500',
     )
 
@@ -194,7 +192,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // WHEN an issued currency payment is made to another funded account
-    const transactionResult = await issuedCurrencyClient.issuedCurrencyPayment(
+    const transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       operationalWallet,
       customerWallet.getAddress(),
       'FOO',
@@ -213,7 +211,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('issuedCurrencyPayment - failure sending unowned issued currency from non-issuing account to another account', async function (): Promise<
+  it('sendIssuedCurrencyPayment - failure sending unowned issued currency from non-issuing account to another account', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -235,11 +233,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // fund opertional with some FOO
-    await issuedCurrencyClient.issuedCurrencyPayment(
+    await issuedCurrencyClient.createIssuedCurrency(
       issuerWallet,
       operationalWallet.getAddress(),
       'FOO',
-      issuerWallet.getAddress(),
       '500',
     )
 
@@ -252,7 +249,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // WHEN an issued currency payment of BAR is made to another funded account
-    const transactionResult = await issuedCurrencyClient.issuedCurrencyPayment(
+    const transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       operationalWallet,
       customerWallet.getAddress(),
       'BAR',
@@ -271,7 +268,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('issuedCurrencyPayment - sending issued currency with applicable transfer fees, combined cases', async function (): Promise<
+  it('sendIssuedCurrencyPayment - sending issued currency with applicable transfer fees, combined cases', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs * 2)
@@ -294,11 +291,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // fund operational with some FOO
-    await issuedCurrencyClient.issuedCurrencyPayment(
+    await issuedCurrencyClient.createIssuedCurrency(
       issuerWallet,
       operationalWallet.getAddress(),
       'FOO',
-      issuerWallet.getAddress(),
       '500',
     )
 
@@ -311,7 +307,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // WHEN an issued currency payment is made to another funded account, without the transferFee argument supplied
-    let transactionResult = await issuedCurrencyClient.issuedCurrencyPayment(
+    let transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       operationalWallet,
       customerWallet.getAddress(),
       'FOO',
@@ -330,7 +326,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // but, WHEN an issued currency payment is made to another funded account with the correct transferFee supplied
-    transactionResult = await issuedCurrencyClient.issuedCurrencyPayment(
+    transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       operationalWallet,
       customerWallet.getAddress(),
       'FOO',
@@ -367,11 +363,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // fund a customer wallet directly with some FOO
-    await issuedCurrencyClient.issuedCurrencyPayment(
+    await issuedCurrencyClient.createIssuedCurrency(
       issuerWallet,
       customerWallet.getAddress(),
       'FOO',
-      issuerWallet.getAddress(),
       '500',
     )
 
