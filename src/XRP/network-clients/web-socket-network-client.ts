@@ -103,8 +103,7 @@ export default class WebSocketNetworkClient {
     if (!destinationCallback && !senderCallback) {
       throw new XrpError(
         XrpErrorType.Unknown,
-        'Received a transaction for an account that has not been subscribed to: ' +
-          destinationAccount,
+        `Received a transaction for an account that has not been subscribed to: ${destinationAccount}`,
       )
     }
   }
@@ -149,14 +148,14 @@ export default class WebSocketNetworkClient {
    */
   public async subscribeToAccount(
     account: string,
-    subscriptionId: string,
     callback: (data: TransactionResponse) => void,
   ): Promise<StatusResponse> {
     const subscribeRequest: SubscribeRequest = {
-      id: subscriptionId,
+      id: `monitor_transactions_${account}_${this.idNumber}`,
       command: RippledMethod.subscribe,
       accounts: [account],
     }
+    this.idNumber++
     const response = await this.sendApiRequest(subscribeRequest)
     if (response.status !== 'success') {
       const errorResponse = response as WebSocketFailureResponse

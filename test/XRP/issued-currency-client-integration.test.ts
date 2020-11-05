@@ -535,6 +535,47 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(frozenTrustLine.limit, '0')
   })
 
+  it('unfreezeTrustLine - unfreezes frozen account', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    const accountToUnfreeze = await XRPTestUtils.randomWalletFromFaucet()
+
+    // GIVEN an existing issuer account who has a frozen trust line with a counter-party
+    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
+
+    const trustLineCurrency = 'USD'
+    await issuedCurrencyClient.authorizeTrustLine(
+      accountToUnfreeze.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    await issuedCurrencyClient.freezeTrustLine(
+      accountToUnfreeze.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    // WHEN the issuer unfreezes the trustline
+    await issuedCurrencyClient.unfreezeTrustLine(
+      accountToUnfreeze.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      issuer.getAddress(),
+    )
+
+    const [unfrozenTrustLine] = trustLines
+
+    // THEN the trust line is not frozen.
+    assert.equal(unfrozenTrustLine.freeze, false)
+    assert.equal(unfrozenTrustLine.limit, '0')
+  })
+
   it('monitorIncomingPayments - valid request', async function (): Promise<
     void
   > {
@@ -545,7 +586,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const address = classicAddress!.address
 
     const xrpAmount = '100'
-    const subscriptionId = 'monitor_transactions_' + xAddress
 
     let messageReceived = false
     const callback = (data: TransactionResponse) => {
@@ -581,9 +621,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
 
     // THEN the subscribe request is successfully submitted and received
-    assert.equal(response.status, 'success')
-    assert.equal(response.type, 'response')
-    assert.equal(response.id, subscriptionId)
+    assert.isTrue(response)
 
     // WHEN a payment is sent to that address
     await xrpClient.send(xrpAmount, xAddress, wallet2)

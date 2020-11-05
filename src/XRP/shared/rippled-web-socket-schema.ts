@@ -93,7 +93,7 @@ interface StatusSuccessfulResponse extends BaseResponse {
 }
 
 /**
- * The standard format for an error response from the WebSocket API.
+ * The standard format for an error response from the WebSocket API exposed by a rippled node.
  * @see https://xrpl.org/response-formatting.html
  */
 interface WebSocketFailureResponse extends BaseResponse {
