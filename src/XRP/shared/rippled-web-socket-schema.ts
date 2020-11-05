@@ -48,7 +48,7 @@ interface SubscribeRequest {
  */
 interface AccountLinesRequest {
   id: number | string
-  command: string
+  command: RippledMethod
   account: string
   ledger_index?: string
   peer?: string
@@ -60,7 +60,7 @@ interface AccountLinesRequest {
  */
 interface GatewayBalancesRequest {
   id: number | string
-  command: string
+  command: RippledMethod
   account: string
   strict?: boolean
   hotwallet?: string | string[]

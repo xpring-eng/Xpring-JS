@@ -19,6 +19,7 @@ import {
   WebSocketResponse,
   WebSocketGatewayBalancesResponse,
   WebSocketGatewayBalancesSuccessfulResponse,
+  RippledMethod,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
 import GatewayBalances, {
   gatewayBalancesFromResponse,
@@ -112,7 +113,7 @@ describe('Issued Currency Client', function (): void {
       id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
       request: {
         account: 'r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
-        command: 'account_lines',
+        command: RippledMethod.accountLines,
         id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
         ledger_index: 'validated',
       },
@@ -150,7 +151,7 @@ describe('Issued Currency Client', function (): void {
       id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
       request: {
         account: 'r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
-        command: 'account_lines',
+        command: RippledMethod.accountLines,
         id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
         ledger_index: 'validated',
       },
@@ -497,7 +498,7 @@ describe('Issued Currency Client', function (): void {
       id: 'gateway_balances_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
       request: {
         account: 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
-        command: 'gateway_balances',
+        command: RippledMethod.gatewayBalances,
         hotwallet: [
           'rKm4uWpg9tfwbVSeATv4KxDe6mpE9yPkgJ',
           'ra7JkEzrgeKHdzKgo4EUUVBnxggY4z37kt',
