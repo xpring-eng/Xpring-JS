@@ -48,7 +48,6 @@ describe('WebSocket Tests', function (): void {
     const address = classicAddress!.address
 
     const xrpAmount = '100'
-    const subscriptionId = 'subscribe_transaction_' + address
 
     let messageReceived = false
     const callback = (data: WebSocketTransactionResponse) => {
@@ -80,14 +79,12 @@ describe('WebSocket Tests', function (): void {
     // WHEN subscribeToAccount is called for that address
     const response = await webSocketNetworkClient.subscribeToAccount(
       address,
-      subscriptionId,
       callback,
     )
 
     // THEN the subscribe request is successfully submitted and received
     assert.equal(response.status, 'success')
     assert.equal(response.type, 'response')
-    assert.equal(response.id, subscriptionId)
 
     // WHEN a payment is sent to that address
     await xrpClient.send(xrpAmount, xAddress, wallet2)
@@ -108,7 +105,6 @@ describe('WebSocket Tests', function (): void {
     try {
       await webSocketNetworkClient.subscribeToAccount(
         address,
-        'subscribe_transaction_' + address,
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         (_data: WebSocketTransactionResponse) => {},
       )

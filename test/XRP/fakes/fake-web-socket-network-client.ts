@@ -190,7 +190,6 @@ export class FakeWebSocketNetworkClient {
 
   subscribeToAccount(
     _account: string,
-    _id: string,
     _callback: (data: WebSocketTransactionResponse) => void,
   ): Promise<WebSocketStatusResponse> {
     const subscribeResponse = this.responses.getSubscribeResponse

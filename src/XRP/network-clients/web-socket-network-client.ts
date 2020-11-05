@@ -149,14 +149,14 @@ export default class WebSocketNetworkClient {
    */
   public async subscribeToAccount(
     account: string,
-    subscriptionId: string,
     callback: (data: WebSocketTransactionResponse) => void,
   ): Promise<WebSocketStatusResponse> {
     const subscribeRequest: SubscribeRequest = {
-      id: subscriptionId,
+      id: `monitor_transactions_${account}_${this.idNumber}`,
       command: RippledMethod.subscribe,
       accounts: [account],
     }
+    this.idNumber++
     const response = await this.sendApiRequest(subscribeRequest)
     if (response.status !== 'success') {
       const errorResponse = response as WebSocketStatusErrorResponse
