@@ -153,11 +153,11 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendIssuedCurrencyPayment - success sending issued currency from non-issuing account to another account', async function (): Promise<
+  it('sendIssuedCurrencyPayment - success sending issued currency from non-issuing account to another account, any valid issuer', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
-    // GIVEN an operational address with some issued currency, and an issuing address that has enabled rippling
+    // GIVEN an operational address with some issued currency, and an issuing address that has enabled rippling but set no transfer fees
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
     const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
     const customerWallet = await XRPTestUtils.randomWalletFromFaucet()
@@ -191,13 +191,16 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       customerWallet,
     )
 
-    // WHEN an issued currency payment is made to another funded account
+    // WHEN an issued currency payment is made to another funded account, while enabling the `useAnyValidIssuer` flag.
     const transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       operationalWallet,
       customerWallet.getAddress(),
       'FOO',
       issuerWallet.getAddress(),
       '100',
+      undefined,
+      undefined,
+      true,
     )
 
     // THEN the transaction succeeds.
