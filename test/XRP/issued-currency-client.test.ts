@@ -924,15 +924,9 @@ describe('Issued Currency Client', function (): void {
       testAddress,
       callback,
     )
-    const expectedMonitorResponse = {
-      id: 'monitor_transactions_' + testAddress,
-      result: {},
-      status: 'success',
-      type: 'response',
-    }
 
     // THEN the result is as expected
-    assert.deepEqual(monitorResponse, expectedMonitorResponse)
+    assert.isTrue(monitorResponse)
   })
 
   it('monitorIncomingPayments - submission failure', function (): void {

@@ -588,7 +588,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const address = classicAddress!.address
 
     const xrpAmount = '100'
-    const subscriptionId = 'monitor_transactions_' + xAddress
 
     let messageReceived = false
     const callback = (data: TransactionResponse) => {
@@ -624,9 +623,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
 
     // THEN the subscribe request is successfully submitted and received
-    assert.equal(response.status, 'success')
-    assert.equal(response.type, 'response')
-    assert.equal(response.id, subscriptionId)
+    assert.isTrue(response)
 
     // WHEN a payment is sent to that address
     await xrpClient.send(xrpAmount, xAddress, wallet2)

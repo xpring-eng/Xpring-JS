@@ -38,10 +38,7 @@ import GatewayBalances, {
   gatewayBalancesFromResponse,
 } from './shared/gateway-balances'
 import TrustLine from './shared/trustline'
-import {
-  WebSocketStatusResponse,
-  TransactionResponse,
-} from './shared/rippled-web-socket-schema'
+import { TransactionResponse } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
 import { SendMax } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
@@ -215,7 +212,7 @@ export default class IssuedCurrencyClient {
   public async monitorAccountTransactions(
     account: string,
     callback: (data: TransactionResponse) => void,
-  ): Promise<WebSocketStatusResponse> {
+  ): Promise<boolean> {
     const classicAddress = XrpUtils.decodeXAddress(account)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
@@ -223,11 +220,12 @@ export default class IssuedCurrencyClient {
 
     const id = `monitor_transactions_${account}`
 
-    return await this.webSocketNetworkClient.subscribeToAccount(
+    const response = await this.webSocketNetworkClient.subscribeToAccount(
       classicAddress.address,
       id,
       callback,
     )
+    return response.status === 'success'
   }
 
   /**
