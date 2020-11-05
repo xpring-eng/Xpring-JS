@@ -18,6 +18,8 @@ enum WebSocketReadyState {
  */
 enum RippledMethod {
   subscribe = 'subscribe',
+  accountLines = 'account_lines',
+  gatewayBalances = 'gateway_balances',
 }
 
 /**

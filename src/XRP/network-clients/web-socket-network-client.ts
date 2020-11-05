@@ -177,8 +177,8 @@ export default class WebSocketNetworkClient {
     peerAccount?: string,
   ): Promise<WebSocketAccountLinesResponse> {
     const accountLinesRequest = {
-      id: `account_lines_${account}_${this.idNumber}`,
-      command: 'account_lines',
+      id: `${RippledMethod.accountLines}_${account}_${this.idNumber}`,
+      command: RippledMethod.accountLines,
       account,
       ledger_index: 'validated',
       peer: peerAccount,
@@ -201,8 +201,8 @@ export default class WebSocketNetworkClient {
     addressesToExclude?: Array<string>,
   ): Promise<WebSocketGatewayBalancesResponse> {
     const gatewayBalancesRequest = {
-      id: `gateway_balances_${account}_${this.idNumber}`,
-      command: 'gateway_balances',
+      id: `${RippledMethod.gatewayBalances}_${account}_${this.idNumber}`,
+      command: RippledMethod.gatewayBalances,
       account,
       strict: 'true',
       hotwallet: addressesToExclude,
