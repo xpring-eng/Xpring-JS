@@ -5,6 +5,7 @@
  */
 enum TrustSetFlag {
   tfSetfAuth = 0x00010000,
+  tfSetNoRipple = 0x00020000,
   tfSetFreeze = 0x00100000,
   tfClearFreeze = 0x00200000,
 }
