@@ -62,9 +62,9 @@ interface GatewayBalancesRequest {
   id: number | string
   command: string
   account: string
-  strict: boolean
-  hotwallet: string | string[]
-  ledger_index: number | string
+  strict?: boolean
+  hotwallet?: string | string[]
+  ledger_index?: number | string
 }
 
 /**
@@ -302,6 +302,9 @@ export {
   WebSocketReadyState,
   RippledMethod,
   WebSocketRequestOptions,
+  SubscribeRequest,
+  AccountLinesRequest,
+  GatewayBalancesRequest,
   WebSocketResponse,
   WebSocketStatusResponse,
   WebSocketStatusErrorResponse,

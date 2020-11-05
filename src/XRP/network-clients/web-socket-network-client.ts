@@ -6,6 +6,9 @@ import {
   WebSocketReadyState,
   RippledMethod,
   WebSocketRequestOptions,
+  SubscribeRequest,
+  AccountLinesRequest,
+  GatewayBalancesRequest,
   WebSocketResponse,
   WebSocketStatusResponse,
   WebSocketStatusErrorResponse,
@@ -149,12 +152,12 @@ export default class WebSocketNetworkClient {
     subscriptionId: string,
     callback: (data: WebSocketTransactionResponse) => void,
   ): Promise<WebSocketStatusResponse> {
-    const options = {
+    const subscribeRequest: SubscribeRequest = {
       id: subscriptionId,
       command: RippledMethod.subscribe,
       accounts: [account],
     }
-    const response = await this.sendApiRequest(options)
+    const response = await this.sendApiRequest(subscribeRequest)
     if (response.status !== 'success') {
       const errorResponse = response as WebSocketStatusErrorResponse
       throw new XrpError(
@@ -176,7 +179,7 @@ export default class WebSocketNetworkClient {
     account: string,
     peerAccount?: string,
   ): Promise<WebSocketAccountLinesResponse> {
-    const accountLinesRequest = {
+    const accountLinesRequest: AccountLinesRequest = {
       id: `${RippledMethod.accountLines}_${account}_${this.idNumber}`,
       command: RippledMethod.accountLines,
       account,
@@ -184,8 +187,9 @@ export default class WebSocketNetworkClient {
       peer: peerAccount,
     }
     this.idNumber++
-    const accountLinesResponse = await this.sendApiRequest(accountLinesRequest)
-    return accountLinesResponse as WebSocketAccountLinesResponse
+    return (await this.sendApiRequest(
+      accountLinesRequest,
+    )) as WebSocketAccountLinesResponse
   }
 
   /**
@@ -200,11 +204,11 @@ export default class WebSocketNetworkClient {
     account: string,
     addressesToExclude?: Array<string>,
   ): Promise<WebSocketGatewayBalancesResponse> {
-    const gatewayBalancesRequest = {
+    const gatewayBalancesRequest: GatewayBalancesRequest = {
       id: `${RippledMethod.gatewayBalances}_${account}_${this.idNumber}`,
       command: RippledMethod.gatewayBalances,
       account,
-      strict: 'true',
+      strict: true,
       hotwallet: addressesToExclude,
       ledger_index: 'validated',
     }
