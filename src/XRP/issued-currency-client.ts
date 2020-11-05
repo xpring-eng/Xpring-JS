@@ -38,6 +38,9 @@ import GatewayBalances, {
   gatewayBalancesFromResponse,
 } from './shared/gateway-balances'
 import TrustLine from './shared/trustline'
+import { TransactionResponse } from './shared/rippled-web-socket-schema'
+import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
+import WebSocketNetworkClient from './network-clients/web-socket-network-client'
 import { SendMax } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
 import { RippledErrorMessages } from './shared/rippled-error-messages'
 import TrustSetFlag from './shared/trust-set-flag'
@@ -61,6 +64,8 @@ export default class IssuedCurrencyClient {
   public static issuedCurrencyClientWithEndpoint(
     grpcUrl: string,
     jsonUrl: string,
+    webSocketUrl: string,
+    handleWebSocketErrorMessage: (data: string) => void,
     network: XrplNetwork,
     forceWeb = false,
   ): IssuedCurrencyClient {
@@ -71,6 +76,7 @@ export default class IssuedCurrencyClient {
     return new IssuedCurrencyClient(
       grpcNetworkClient,
       new JsonRpcNetworkClient(jsonUrl),
+      new WebSocketNetworkClient(webSocketUrl, handleWebSocketErrorMessage),
       network,
     )
   }
@@ -86,6 +92,7 @@ export default class IssuedCurrencyClient {
   public constructor(
     grpcNetworkClient: GrpcNetworkClientInterface,
     private readonly jsonNetworkClient: JsonNetworkClientInterface,
+    readonly webSocketNetworkClient: WebSocketNetworkClientInterface,
     readonly network: XrplNetwork,
   ) {
     this.coreXrplClient = new CoreXrplClient(grpcNetworkClient, network)
@@ -190,6 +197,35 @@ export default class IssuedCurrencyClient {
       default:
         throw new XrpError(XrpErrorType.Unknown, error)
     }
+  }
+
+  /**
+   * Subscribes to all transactions that affect the specified account, and triggers a callback upon
+   * receiving each transaction.
+   * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
+   * @see https://xrpl.org/subscribe.html
+   *
+   * @param account The account for which to subscribe to relevant transactions, encoded as an X-Address.
+   * @param callback The function to trigger upon receiving a transaction event from the ledger.
+   * @returns The response from the websocket indicating the result of the subscription request.
+   */
+  public async monitorAccountTransactions(
+    account: string,
+    callback: (data: TransactionResponse) => void,
+  ): Promise<boolean> {
+    const classicAddress = XrpUtils.decodeXAddress(account)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const id = `monitor_transactions_${account}`
+
+    const response = await this.webSocketNetworkClient.subscribeToAccount(
+      classicAddress.address,
+      id,
+      callback,
+    )
+    return response.status === 'success'
   }
 
   /**

@@ -12,9 +12,12 @@ const timeoutMs = 60 * 1000
 // An IssuedCurrencyClient that makes requests.
 const rippledGrpcUrl = 'test.xrp.xpring.io:50051'
 const rippledJsonUrl = 'http://test.xrp.xpring.io:51234'
+const rippledWebSocketUrl = 'wss://wss.test.xrp.xpring.io'
 const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
   rippledGrpcUrl,
   rippledJsonUrl,
+  rippledWebSocketUrl,
+  console.log,
   XrplNetwork.Test,
 )
 
@@ -24,6 +27,11 @@ const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoi
 describe('Issued Currency Payment Integration Tests', function (): void {
   // Retry integration tests on failure.
   this.retries(3)
+
+  after(function (done) {
+    issuedCurrencyClient.webSocketNetworkClient.close()
+    done()
+  })
 
   it('createIssuedCurrency, combined cases', async function (): Promise<void> {
     this.timeout(timeoutMs)
