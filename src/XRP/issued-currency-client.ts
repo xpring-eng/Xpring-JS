@@ -1,6 +1,12 @@
 import { XrplNetwork, XrpUtils, Wallet } from 'xpring-common-js'
 
-import { Flags, LimitAmount } from './Generated/web/org/xrpl/rpc/v1/common_pb'
+import {
+  Flags,
+  LimitAmount,
+  Amount,
+  TransferRate,
+  Destination,
+} from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
   Currency,
@@ -10,6 +16,7 @@ import {
 import {
   TrustSet,
   AccountSet,
+  Payment,
   Transaction,
 } from './Generated/web/org/xrpl/rpc/v1/transaction_pb'
 
@@ -19,13 +26,20 @@ import GrpcNetworkClient from './network-clients/grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
 import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
 import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
+import {
+  AccountLinesResponse,
+  GatewayBalancesResponse,
+} from './shared/rippled-json-rpc-schema'
 import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
 import { XrpError, XrpErrorType } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
-import { AccountLinesResponse } from './shared/rippled-json-rpc-schema'
+import GatewayBalances, {
+  gatewayBalancesFromResponse,
+} from './shared/gateway-balances'
 import TrustLine from './shared/trustline'
-import { TransferRate } from './Generated/node/org/xrpl/rpc/v1/common_pb'
+import { SendMax } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
+import { RippledErrorMessages } from './shared/rippled-error-messages'
 import TrustSetFlag from './shared/trust-set-flag'
 
 /**
@@ -82,7 +96,8 @@ export default class IssuedCurrencyClient {
    * @see https://xrpl.org/trust-lines-and-issuing.html
    *
    * @param account The account for which to retrieve associated trust lines, encoded as an X-Address.
-   * @param peerAccount (Optional) The address of a second account. If provided, show only trust lines connecting the two accounts.
+   * @param peerAccount (Optional) The address of a second account, encoded as an X-Address.
+   *                    If provided, show only trust lines connecting the two accounts.
    * @see https://xrpaddress.info/
    * @returns An array of TrustLine objects, representing all trust lines associated with this account.
    */
@@ -106,14 +121,12 @@ export default class IssuedCurrencyClient {
       peerAccount,
     )
 
-    if (accountLinesResponse.result.error) {
-      if (accountLinesResponse.result.error === 'actNotFound') {
+    const { error } = accountLinesResponse.result
+    if (error) {
+      if (error === RippledErrorMessages.accountNotFound) {
         throw XrpError.accountNotFound
       } else {
-        throw new XrpError(
-          XrpErrorType.Unknown,
-          accountLinesResponse.result.error,
-        )
+        throw new XrpError(XrpErrorType.Unknown, error)
       }
     }
 
@@ -126,6 +139,57 @@ export default class IssuedCurrencyClient {
       trustLines.push(new TrustLine(trustLineJson))
     })
     return trustLines
+  }
+
+  /**
+   * Returns information about the total balances issued by a given account,
+   * optionally excluding amounts held by operational addresses.
+   * @see https://xrpl.org/issuing-and-operational-addresses.html
+   *
+   * @param account The account for which to retrieve balance information, encoded as an X-Address.
+   * @param accountsToExclude (Optional) An array of operational addresses to exclude from the balances issued, encoded as X-Addresses.
+   * @see https://xrpaddress.info/
+   * @returns A GatewayBalances object containing information about an account's balances.
+   */
+  public async getGatewayBalances(
+    account: string,
+    accountsToExclude: Array<string> = [],
+  ): Promise<GatewayBalances> {
+    // check issuing account for X-Address format
+    const classicAddress = XrpUtils.decodeXAddress(account)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    // check excludable addresses for X-Address format, and convert to classic addresses for request
+    const classicAddressesToExclude = accountsToExclude.map((xAddress) => {
+      const excludeClassicAddress = XrpUtils.decodeXAddress(xAddress)
+      if (!excludeClassicAddress) {
+        throw XrpError.xAddressRequired
+      }
+      return classicAddress.address
+    })
+
+    const gatewayBalancesResponse: GatewayBalancesResponse = await this.jsonNetworkClient.getGatewayBalances(
+      classicAddress.address,
+      classicAddressesToExclude,
+    )
+
+    const { error } = gatewayBalancesResponse.result
+    if (!error) {
+      return gatewayBalancesFromResponse(gatewayBalancesResponse)
+    }
+    switch (error) {
+      case RippledErrorMessages.accountNotFound:
+        throw XrpError.accountNotFound
+      case RippledErrorMessages.invalidExcludedAddress:
+        throw new XrpError(
+          XrpErrorType.InvalidInput,
+          'The address(es) supplied to for exclusion were invalid.',
+        )
+      default:
+        throw new XrpError(XrpErrorType.Unknown, error)
+    }
   }
 
   /**
@@ -389,6 +453,58 @@ export default class IssuedCurrencyClient {
     )
   }
 
+  /**
+   * Freezes the trust line between this account (issuing account) and another account.
+   * Note that the trust line's limit is set to 0.
+   *
+   * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
+   *
+   * @param trustLinePeerAccount The X-Address of the account involved in the trust line being frozen.
+   * @param currencyName The currency of the trust line to freeze.
+   * @param wallet The wallet freezing the trust line.
+   */
+  public async freezeTrustLine(
+    trustLinePeerAccount: string,
+    currencyName: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return await this.sendTrustSetTransaction(
+      trustLinePeerAccount,
+      currencyName,
+      // You can change the trust line when you freeze it, but an amount of 0
+      // would be the most conservative amount.
+      '0',
+      TrustSetFlag.tfSetFreeze,
+      wallet,
+    )
+  }
+
+  /**
+   * Unfreezes the trust line between this account (issuing account) and another account.
+   * Note that the trust line's limit is set to 0.
+   *
+   * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
+   *
+   * @param trustLinePeerAccount The X-Address of the account involved in the trust line being unfrozen.
+   * @param currencyName The currency of the trust line to unfreeze.
+   * @param wallet The wallet unfreezing the trust line.
+   */
+  public async unfreezeTrustLine(
+    trustLinePeerAccount: string,
+    currencyName: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return await this.sendTrustSetTransaction(
+      trustLinePeerAccount,
+      currencyName,
+      // You can change the trust line amount when you unfreeze it, but this would typically
+      // be used by gateways, who will maintain an amount of 0.
+      '0',
+      TrustSetFlag.tfClearFreeze,
+      wallet,
+    )
+  }
+
   /*
    * Creates and sends a TrustSet transaction to the XRPL.
    *
@@ -484,5 +600,155 @@ export default class IssuedCurrencyClient {
     }
 
     return transaction
+  }
+
+  /**
+   * Creates new issued currency on a trustline to the destination account. Note that the destination account must have a trustline
+   * extended to the sender of this transaction (the "issuer" of this issued currency) or no issued currency will be created.
+   *
+   * @param sender The Wallet creating the issued currency, and that will sign the transaction.
+   * @param destination The destination address (recipient) of the issued currency, encoded as an X-address (see https://xrpaddress.info/).
+   * @param currency The three-letter currency code of the issued currency being created.
+   * @param amount The amount of issued currency to create.
+   */
+  public async createIssuedCurrency(
+    sender: Wallet,
+    destination: string,
+    currency: string,
+    amount: string,
+  ): Promise<TransactionResult> {
+    const issuer = sender.getAddress()
+    return await this.issuedCurrencyPayment(
+      sender,
+      destination,
+      currency,
+      issuer,
+      amount,
+    )
+  }
+
+  // TODO: (acorso) Make this method private and expose more opinionated public APIs.
+  // TODO: (acorso) structure this like we have `sendXrp` v.s. `sendXrpWithDetails` to allow for additional optional fields, such as memos.
+  //  as well as potentially:
+  // TODO: (acorso) learn about partial payments and whether they're essential to offer WRT to issued currencies (https://xrpl.org/payment.html#partial-payments)
+  // TODO: (acorso) learn about other payment flags and whether they're essential to offer WRT to issued currencies (https://xrpl.org/payment.html#payment-flags)
+
+  /**
+   * Sends issued currency from one account to another.  This method can be used to create issued currency, dispense issued currency from
+   * an operational address, send issued currency from one XRPL account to another (as long as the payment only involves a single currency,
+   * i.e. is not cross-currency), or to redeem issued currency at the issuing address.
+   * The specific case being executed is determined by the relationship among the parameters.
+   *
+   * @param sender The Wallet from which issued currency will be sent, and that will sign the transaction.
+   * @param destination The destination address (recipient) for the payment, encoded as an X-address (see https://xrpaddress.info/).
+   * @param currency The three-letter currency code of the issued currency being sent.
+   * @param issuer The issuing address of the issued currency being sent.
+   * @param amount The amount of issued currency to send.
+   * @param transferFee Optional - can be omitted if sender address or destinationAddress are the same address as the issuer.
+   *                    The transfer fee associated with the issuing account, expressed as a percentage. (i.e. a value of .5 indicates a 0.5% transfer fee).
+   */
+  public async issuedCurrencyPayment(
+    sender: Wallet,
+    destination: string,
+    currency: string,
+    issuer: string,
+    amount: string,
+    transferFee?: number,
+  ): Promise<TransactionResult> {
+    if (!XrpUtils.isValidXAddress(destination)) {
+      throw new XrpError(
+        XrpErrorType.XAddressRequired,
+        'Destination address must be in X-address format.  See https://xrpaddress.info/.',
+      )
+    }
+
+    // TODO: (acorso) we don't need to convert back to a classic address once the ripple-binary-codec supports X-addresses for issued currencies.
+    const issuerClassicAddress = XrpUtils.decodeXAddress(issuer)
+    if (!issuerClassicAddress) {
+      throw new XrpError(
+        XrpErrorType.XAddressRequired,
+        'Issuer address must be in X-address format.  See https://xrpaddress.info/.',
+      )
+    }
+    if (!issuerClassicAddress.address) {
+      throw new XrpError(
+        XrpErrorType.XAddressRequired,
+        'Decoded classic address is missing address field.',
+      )
+    }
+
+    const currencyProto = new Currency()
+    currencyProto.setName(currency)
+
+    const issuerAccountAddress = new AccountAddress()
+    issuerAccountAddress.setAddress(issuerClassicAddress.address)
+
+    const issuedCurrency = new IssuedCurrencyAmount()
+    issuedCurrency.setCurrency(currencyProto)
+    issuedCurrency.setIssuer(issuerAccountAddress)
+    issuedCurrency.setValue(amount)
+
+    const currencyAmount = new CurrencyAmount()
+    currencyAmount.setIssuedCurrencyAmount(issuedCurrency)
+
+    const amountProto = new Amount()
+    amountProto.setValue(currencyAmount)
+
+    const destinationAccountAddress = new AccountAddress()
+    destinationAccountAddress.setAddress(destination)
+
+    const destinationProto = new Destination()
+    destinationProto.setValue(destinationAccountAddress)
+
+    // Construct Payment fields
+    const payment = new Payment()
+    payment.setDestination(destinationProto)
+    // Note that the destinationTag doesn't need to be explicitly set here, because the ripple-binary-codec will decode this X-Address and
+    // assign the decoded destinationTag before signing.
+    payment.setAmount(amountProto)
+
+    if (transferFee !== undefined) {
+      // Construct SendMax - value should be intended amount + relevant transfer fee
+      // Note that a transfer fee doesn't apply if the source address (of this transaction) and the issuing address of the currency being
+      // sent are the same (i.e. issuer sending currency directly) OR if the issuer of the currency and the destination are the same
+      // (i.e. redeeming an issued currency).
+      // However, it also doesn't hurt to include a SendMax field, it just won't end up being used.
+
+      // This calculation determines the sendMaxValue by applying the transferFee to the amount being sent, and then rounding (up) only as
+      // much as necessary to fit the final value within the 15 decimal digit limit that applies to encoding issued currency amounts.
+      // See https://xrpl.org/currency-formats.html#issued-currency-precision
+      const numericValue = Number(amount)
+      const rawSendMaxValue = (1 + transferFee / 100) * numericValue
+      const numDigitsLeftOfDecimal = String(Math.ceil(rawSendMaxValue)).length
+      const allowedDigitsRightOfDecimal = 15 - numDigitsLeftOfDecimal
+      const sendMaxValue = String(
+        rawSendMaxValue.toFixed(allowedDigitsRightOfDecimal),
+      )
+
+      const sendMaxIssuedCurrencyAmount = new IssuedCurrencyAmount()
+      sendMaxIssuedCurrencyAmount.setCurrency(currencyProto)
+      sendMaxIssuedCurrencyAmount.setIssuer(issuerAccountAddress)
+      sendMaxIssuedCurrencyAmount.setValue(sendMaxValue)
+
+      const sendMaxCurrencyAmount = new CurrencyAmount()
+      sendMaxCurrencyAmount.setIssuedCurrencyAmount(sendMaxIssuedCurrencyAmount)
+
+      const sendMax = new SendMax()
+      sendMax.setValue(sendMaxCurrencyAmount)
+
+      payment.setSendMax(sendMax)
+    }
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
+    transaction.setPayment(payment)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      sender,
+    )
+    return this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      sender,
+    )
   }
 }

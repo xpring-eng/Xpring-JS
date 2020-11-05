@@ -1,5 +1,17 @@
 /** Represents statuses of transactions. */
 enum TransactionStatus {
+  /** The transaction failed because the provided paths did not have enough liquidity to send anything at all.
+   * This could mean that the source and destination accounts are not linked by trust lines.
+   * The transaction cost was destroyed.
+   */
+  ClaimedCostOnly_PathDry,
+
+  /**
+   * The transaction failed because the provided paths did not have enough liquidity to send the full amount.
+   * The transaction cost was destroyed.
+   */
+  ClaimedCostOnly_PathPartial,
+
   /** The transaction did not achieve its intended purpose, but the transaction cost was destroyed. */
   ClaimedCostOnly,
 
