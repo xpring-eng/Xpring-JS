@@ -30,7 +30,7 @@ interface WebSocketRequestOptions {
 
 type WebSocketResponse =
   | WebSocketStatusResponse
-  | WebSocketTransactionResponse
+  | TransactionResponse
   | WebSocketStatusErrorResponse
 
 /**
@@ -39,11 +39,15 @@ type WebSocketResponse =
  */
 interface WebSocketStatusResponse {
   id: string
-  result: WebSocketTransactionResponse | EmptyObject
+  result: TransactionResponse | EmptyObject
   status: string
   type: string
 }
 
+/**
+ * The standard format for an error response from the WebSocket API exposed by a rippled node.
+ * @see https://xrpl.org/response-formatting.html
+ */
 interface WebSocketStatusErrorResponse {
   id: string
   status: string
@@ -58,7 +62,7 @@ interface WebSocketStatusErrorResponse {
  * The standard format for a response from the WebSocket API for a transaction on the ledger.
  * @see https://xrpl.org/subscribe.html#transaction-streams
  */
-interface WebSocketTransactionResponse {
+interface TransactionResponse {
   engine_result: string
   engine_result_code: number
   engine_result_message: string
@@ -165,5 +169,5 @@ export {
   WebSocketStatusResponse,
   WebSocketStatusErrorResponse,
   WebSocketTransaction,
-  WebSocketTransactionResponse,
+  TransactionResponse,
 }
