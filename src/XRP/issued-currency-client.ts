@@ -459,7 +459,7 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
    *
-   * @param accountToFreeze The X-Address of the account which to to freeze a trust line.
+   * @param accountToFreeze The X-Address of the account involved in the trust line being frozen.
    * @param currencyName The currency of the trust line to freeze.
    * @param wallet The wallet freezing the trust line.
    */
