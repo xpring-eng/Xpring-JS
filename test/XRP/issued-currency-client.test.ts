@@ -912,6 +912,7 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
+      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -937,6 +938,7 @@ describe('Issued Currency Client', function (): void {
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingJsonClient,
+      fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
 
@@ -953,7 +955,8 @@ describe('Issued Currency Client', function (): void {
     } catch (error) {
       assert.equal(error.errorType, XrpErrorType.InvalidInput)
     }
-    
+  })
+
   it('monitorIncomingPayments - successful response', async function (): Promise<
     void
   > {
