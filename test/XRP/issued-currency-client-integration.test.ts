@@ -489,4 +489,78 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.currency, trustLineCurrency)
     assert.isTrue(createdTrustLine.authorized)
   })
+
+  it('freezeTrustLine', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    const accountToTrust = await XRPTestUtils.randomWalletFromFaucet()
+
+    // GIVEN an existing issuer account who has a trustline with a counter-party
+    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
+
+    const trustLineCurrency = 'USD'
+    await issuedCurrencyClient.authorizeTrustLine(
+      accountToTrust.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    // WHEN the issuer freezes the trustline
+    await issuedCurrencyClient.freezeTrustLine(
+      accountToTrust.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      issuer.getAddress(),
+    )
+
+    const [frozenTrustLine] = trustLines
+
+    // THEN the trust line is frozen.
+    assert.equal(frozenTrustLine.freeze, true)
+    assert.equal(frozenTrustLine.limit, '0')
+  })
+
+  it('unfreezeTrustLine - unfreezes frozen account', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    const accountToUnfreeze = await XRPTestUtils.randomWalletFromFaucet()
+
+    // GIVEN an existing issuer account who has a frozen trust line with a counter-party
+    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
+
+    const trustLineCurrency = 'USD'
+    await issuedCurrencyClient.authorizeTrustLine(
+      accountToUnfreeze.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    await issuedCurrencyClient.freezeTrustLine(
+      accountToUnfreeze.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    // WHEN the issuer unfreezes the trustline
+    await issuedCurrencyClient.unfreezeTrustLine(
+      accountToUnfreeze.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      issuer.getAddress(),
+    )
+
+    const [unfrozenTrustLine] = trustLines
+
+    // THEN the trust line is not frozen.
+    assert.equal(unfrozenTrustLine.freeze, false)
+    assert.equal(unfrozenTrustLine.limit, '0')
+  })
 })
