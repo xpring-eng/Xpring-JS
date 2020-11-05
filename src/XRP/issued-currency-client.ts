@@ -459,7 +459,7 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
    *
-   * @param accountToFreeze The X-Address of the account which to to freeze a trust line.
+   * @param accountToFreeze The X-Address of the account involved in the trust line being frozen.
    * @param currencyName The currency of the trust line to freeze.
    * @param wallet The wallet freezing the trust line.
    */
@@ -600,6 +600,31 @@ export default class IssuedCurrencyClient {
     }
 
     return transaction
+  }
+
+  /**
+   * Creates new issued currency on a trustline to the destination account. Note that the destination account must have a trustline
+   * extended to the sender of this transaction (the "issuer" of this issued currency) or no issued currency will be created.
+   *
+   * @param sender The Wallet creating the issued currency, and that will sign the transaction.
+   * @param destination The destination address (recipient) of the issued currency, encoded as an X-address (see https://xrpaddress.info/).
+   * @param currency The three-letter currency code of the issued currency being created.
+   * @param amount The amount of issued currency to create.
+   */
+  public async createIssuedCurrency(
+    sender: Wallet,
+    destination: string,
+    currency: string,
+    amount: string,
+  ): Promise<TransactionResult> {
+    const issuer = sender.getAddress()
+    return await this.issuedCurrencyPayment(
+      sender,
+      destination,
+      currency,
+      issuer,
+      amount,
+    )
   }
 
   // TODO: (acorso) Make this method private and expose more opinionated public APIs.
