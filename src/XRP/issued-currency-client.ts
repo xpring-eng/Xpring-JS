@@ -516,7 +516,7 @@ export default class IssuedCurrencyClient {
    * @amount The maximum amount of debt to allow on this trust line.
    * @param wallet The wallet disabling rippling on the trust line.
    */
-  public async setNoRippling(
+  public async setNoRipple(
     trustLinePeerAccount: string,
     currencyName: string,
     amount: string,

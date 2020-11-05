@@ -584,7 +584,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const trustLineAmount = '1'
 
     // WHEN the issuer sets no rippling on the trust line
-    await issuedCurrencyClient.setNoRippling(
+    await issuedCurrencyClient.setNoRipple(
       trustLinePeerAccount.getAddress(),
       trustLineCurrency,
       trustLineAmount,
