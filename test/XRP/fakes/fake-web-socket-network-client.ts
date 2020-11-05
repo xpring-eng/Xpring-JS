@@ -4,7 +4,7 @@ import {
   WebSocketAccountLinesResponse,
   WebSocketGatewayBalancesResponse,
   WebSocketStatusResponse,
-  WebSocketTransactionResponse,
+  TransactionResponse,
 } from '../../../src/XRP/shared/rippled-web-socket-schema'
 
 /**
@@ -190,7 +190,7 @@ export class FakeWebSocketNetworkClient {
 
   subscribeToAccount(
     _account: string,
-    _callback: (data: WebSocketTransactionResponse) => void,
+    _callback: (data: TransactionResponse) => void,
   ): Promise<WebSocketStatusResponse> {
     const subscribeResponse = this.responses.getSubscribeResponse
     if (subscribeResponse instanceof Error) {

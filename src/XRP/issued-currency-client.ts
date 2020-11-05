@@ -36,8 +36,7 @@ import {
   WebSocketAccountLinesResponse,
   WebSocketAccountLinesSuccessfulResponse,
   WebSocketAccountLinesFailureResponse,
-  WebSocketStatusResponse,
-  WebSocketTransactionResponse,
+  TransactionResponse,
   WebSocketGatewayBalancesResponse,
   WebSocketGatewayBalancesFailureResponse,
   WebSocketGatewayBalancesSuccessfulResponse,
@@ -216,17 +215,18 @@ export default class IssuedCurrencyClient {
    */
   public async monitorAccountTransactions(
     account: string,
-    callback: (data: WebSocketTransactionResponse) => void,
-  ): Promise<WebSocketStatusResponse> {
+    callback: (data: TransactionResponse) => void,
+  ): Promise<boolean> {
     const classicAddress = XrpUtils.decodeXAddress(account)
     if (!classicAddress) {
       throw XrpError.xAddressRequired
     }
 
-    return await this.webSocketNetworkClient.subscribeToAccount(
+    const response = await this.webSocketNetworkClient.subscribeToAccount(
       classicAddress.address,
       callback,
     )
+    return response.status === 'success'
   }
 
   /**
@@ -496,22 +496,48 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
    *
-   * @param accountToFreeze The X-Address of the account involved in the trust line being frozen.
+   * @param trustLinePeerAccount The X-Address of the account involved in the trust line being frozen.
    * @param currencyName The currency of the trust line to freeze.
    * @param wallet The wallet freezing the trust line.
    */
   public async freezeTrustLine(
-    accountToFreeze: string,
+    trustLinePeerAccount: string,
     currencyName: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
     return await this.sendTrustSetTransaction(
-      accountToFreeze,
+      trustLinePeerAccount,
       currencyName,
       // You can change the trust line when you freeze it, but an amount of 0
       // would be the most conservative amount.
       '0',
       TrustSetFlag.tfSetFreeze,
+      wallet,
+    )
+  }
+
+  /**
+   * Unfreezes the trust line between this account (issuing account) and another account.
+   * Note that the trust line's limit is set to 0.
+   *
+   * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
+   *
+   * @param trustLinePeerAccount The X-Address of the account involved in the trust line being unfrozen.
+   * @param currencyName The currency of the trust line to unfreeze.
+   * @param wallet The wallet unfreezing the trust line.
+   */
+  public async unfreezeTrustLine(
+    trustLinePeerAccount: string,
+    currencyName: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return await this.sendTrustSetTransaction(
+      trustLinePeerAccount,
+      currencyName,
+      // You can change the trust line amount when you unfreeze it, but this would typically
+      // be used by gateways, who will maintain an amount of 0.
+      '0',
+      TrustSetFlag.tfClearFreeze,
       wallet,
     )
   }
@@ -634,6 +660,34 @@ export default class IssuedCurrencyClient {
       destination,
       currency,
       issuer,
+      amount,
+    )
+  }
+
+  /**
+   * Redeems issued currency back to the original issuer.
+   * Typically, this should trigger off-ledger action by the issuing institution.
+   *
+   * @param sender The Wallet redeeming the issued currency, and that will sign the transaction.
+   * @param issuer The original issuer of the issued currency, encoded as an X-address (see https://xrpaddress.info/).
+   * @param currency The three-letter currency code of the issued currency being redeemed.
+   * @param amount The amount of issued currency to redeem.
+   */
+  public async redeemIssuedCurrency(
+    sender: Wallet,
+    issuer: string,
+    currency: string,
+    amount: string,
+  ): Promise<TransactionResult> {
+    // Redemption of issued currency is achieved by sending issued currency directly to the original issuer.
+    // However, the issuer field specified in the amount is treated as a special case in this circumstance, and should be
+    // set to the address of the account initiating the redemption.
+    // See: https://xrpl.org/payment.html#special-issuer-values-for-sendmax-and-amount
+    return await this.issuedCurrencyPayment(
+      sender,
+      issuer,
+      currency,
+      sender.getAddress(),
       amount,
     )
   }

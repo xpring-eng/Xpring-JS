@@ -73,8 +73,9 @@ interface GatewayBalancesRequest {
  */
 type WebSocketResponse =
   | WebSocketStatusResponse
+  | TransactionResponse
   | WebSocketStatusErrorResponse
-  | WebSocketTransactionResponse
+  | TransactionResponse
   | WebSocketAccountLinesResponse
   | WebSocketGatewayBalancesResponse
 
@@ -84,7 +85,7 @@ type WebSocketResponse =
  */
 interface WebSocketStatusResponse {
   id: number | string
-  result: WebSocketTransactionResponse | EmptyObject
+  result: TransactionResponse | EmptyObject
   status: string
   type: string
 }
@@ -94,7 +95,7 @@ interface WebSocketStatusResponse {
  * @see https://xrpl.org/response-formatting.html
  */
 interface WebSocketStatusErrorResponse {
-  id: string
+  id: number | string
   status: string
   type: string
   error: string
@@ -107,7 +108,7 @@ interface WebSocketStatusErrorResponse {
  * The standard format for a response from the WebSocket API for a transaction on the ledger.
  * @see https://xrpl.org/subscribe.html#transaction-streams
  */
-interface WebSocketTransactionResponse {
+interface TransactionResponse {
   engine_result: string
   engine_result_code: number
   engine_result_message: string
@@ -309,7 +310,7 @@ export {
   WebSocketStatusResponse,
   WebSocketStatusErrorResponse,
   WebSocketTransaction,
-  WebSocketTransactionResponse,
+  TransactionResponse,
   WebSocketAccountLinesResponse,
   WebSocketAccountLinesSuccessfulResponse,
   WebSocketAccountLinesFailureResponse,

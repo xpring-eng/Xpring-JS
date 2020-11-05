@@ -1,5 +1,5 @@
 import {
-  WebSocketTransactionResponse,
+  TransactionResponse,
   WebSocketStatusResponse,
   WebSocketAccountLinesResponse,
   WebSocketGatewayBalancesResponse,
@@ -19,7 +19,7 @@ export interface WebSocketNetworkClientInterface {
    */
   subscribeToAccount(
     account: string,
-    callback: (data: WebSocketTransactionResponse) => void,
+    callback: (data: TransactionResponse) => void,
   ): Promise<WebSocketStatusResponse>
 
   /**
