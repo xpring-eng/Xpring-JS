@@ -374,6 +374,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     const transactionResult = await issuedCurrencyClient.redeemIssuedCurrency(
       customerWallet,
       'FOO',
+      issuerWallet.getAddress(),
       '100',
     )
 
