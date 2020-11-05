@@ -564,6 +564,32 @@ export default class IssuedCurrencyClient {
     )
   }
 
+  /**
+   * Re-enables rippling on the trust line between this account (issuing account) and another account.
+   * Note that the trust line's limit is set to 0.
+   *
+   * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
+   *
+   * @param trustLinePeerAccount The X-Address of the account involved in the trust line to re-enable rippling.
+   * @param currencyName The currency of the trust line to re-enable rippling.
+   * @amount The maximum amount of debt to allow on this trust line.
+   * @param wallet The wallet re-enabling rippling on the trust line.
+   */
+  public async clearNoRipple(
+    trustLinePeerAccount: string,
+    currencyName: string,
+    amount: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return await this.sendTrustSetTransaction(
+      trustLinePeerAccount,
+      currencyName,
+      amount,
+      TrustSetFlag.tfClearNoRipple,
+      wallet,
+    )
+  }
+
   /*
    * Creates and sends a TrustSet transaction to the XRPL.
    *
