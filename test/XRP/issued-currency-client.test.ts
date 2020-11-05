@@ -861,4 +861,54 @@ describe('Issued Currency Client', function (): void {
       assert.equal(error.errorType, XrpErrorType.XAddressRequired)
     }
   })
+
+  it('sendIssuedCurrencyPayment - errors with matching sender and issuer', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN sendIssuedCurrencyPayment is called with matching sender and issuer addresses, THEN an error is thrown.
+    try {
+      await issuedCurrencyClient.sendIssuedCurrencyPayment(
+        this.wallet,
+        testAddress,
+        'FOO',
+        this.wallet.getAddress(),
+        '100',
+        0.5,
+      )
+    } catch (error) {
+      assert.equal(error.errorType, XrpErrorType.InvalidInput)
+    }
+  })
+
+  it('sendIssuedCurrencyPayment - errors with matching destination and issuer', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingJsonClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN sendIssuedCurrencyPayment is called with matching sender and issuer addresses, THEN an error is thrown.
+    try {
+      await issuedCurrencyClient.sendIssuedCurrencyPayment(
+        this.wallet,
+        testAddress,
+        'FOO',
+        testAddress,
+        '100',
+        0.5,
+      )
+    } catch (error) {
+      assert.equal(error.errorType, XrpErrorType.InvalidInput)
+    }
+  })
 })
