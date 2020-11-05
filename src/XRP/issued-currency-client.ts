@@ -490,6 +490,32 @@ export default class IssuedCurrencyClient {
     )
   }
 
+  /**
+   * Freezes the trust line between this account (issuing account) and another account.
+   * Note that the trust line's limit is set to 0.
+   *
+   * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
+   *
+   * @param accountToFreeze The X-Address of the account involved in the trust line being frozen.
+   * @param currencyName The currency of the trust line to freeze.
+   * @param wallet The wallet freezing the trust line.
+   */
+  public async freezeTrustLine(
+    accountToFreeze: string,
+    currencyName: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return await this.sendTrustSetTransaction(
+      accountToFreeze,
+      currencyName,
+      // You can change the trust line when you freeze it, but an amount of 0
+      // would be the most conservative amount.
+      '0',
+      TrustSetFlag.tfSetFreeze,
+      wallet,
+    )
+  }
+
   /*
    * Creates and sends a TrustSet transaction to the XRPL.
    *

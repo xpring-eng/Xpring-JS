@@ -8,6 +8,9 @@ import {
   TransactionResponse,
   WebSocketReadyState,
   RippledMethod,
+  SubscribeRequest,
+  AccountLinesRequest,
+  GatewayBalancesRequest,
   WebSocketResponse,
   WebSocketFailureResponse,
 } from '../shared/rippled-web-socket-schema'
@@ -34,6 +37,7 @@ export default class WebSocketNetworkClient {
     number | string,
     WebSocketResponse | undefined
   > = new Map()
+  private idNumber = 0
 
   /**
    * Create a new WebSocketNetworkClient.
@@ -148,12 +152,12 @@ export default class WebSocketNetworkClient {
     subscriptionId: string,
     callback: (data: TransactionResponse) => void,
   ): Promise<StatusResponse> {
-    const options = {
+    const subscribeRequest: SubscribeRequest = {
       id: subscriptionId,
       command: RippledMethod.subscribe,
       accounts: [account],
     }
-    const response = await this.sendApiRequest(options)
+    const response = await this.sendApiRequest(subscribeRequest)
     if (response.status !== 'success') {
       const errorResponse = response as WebSocketFailureResponse
       throw new XrpError(
@@ -175,15 +179,17 @@ export default class WebSocketNetworkClient {
     account: string,
     peerAccount?: string,
   ): Promise<AccountLinesResponse> {
-    const accountLinesRequest = {
-      id: 'account_lines_' + account,
+    const accountLinesRequest: AccountLinesRequest = {
+      id: `${RippledMethod.accountLines}_${account}_${this.idNumber}`,
       command: RippledMethod.accountLines,
       account,
       ledger_index: 'validated',
       peer: peerAccount,
     }
-    const accountLinesResponse = await this.sendApiRequest(accountLinesRequest)
-    return accountLinesResponse as AccountLinesResponse
+    this.idNumber++
+    return (await this.sendApiRequest(
+      accountLinesRequest,
+    )) as AccountLinesResponse
   }
 
   /**
@@ -198,14 +204,15 @@ export default class WebSocketNetworkClient {
     account: string,
     addressesToExclude?: Array<string>,
   ): Promise<GatewayBalancesResponse> {
-    const gatewayBalancesRequest = {
-      id: 'gateway_balances_' + account,
+    const gatewayBalancesRequest: GatewayBalancesRequest = {
+      id: `${RippledMethod.gatewayBalances}_${account}_${this.idNumber}`,
       command: RippledMethod.gatewayBalances,
       account,
-      strict: 'true',
+      strict: true,
       hotwallet: addressesToExclude,
       ledger_index: 'validated',
     }
+    this.idNumber++
     const gatewayBalancesResponse = await this.sendApiRequest(
       gatewayBalancesRequest,
     )

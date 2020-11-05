@@ -61,9 +61,9 @@ interface AccountLinesRequest extends BaseRequest {
  */
 interface GatewayBalancesRequest extends BaseRequest {
   account: string
-  strict: boolean
-  hotwallet: string | string[]
-  ledger_index: number | string
+  strict?: boolean
+  hotwallet?: string | string[]
+  ledger_index?: number | string
 }
 
 /**
@@ -289,6 +289,9 @@ export {
   GatewayBalancesSuccessfulResponse,
   WebSocketReadyState,
   RippledMethod,
+  SubscribeRequest,
+  AccountLinesRequest,
+  GatewayBalancesRequest,
   WebSocketTransaction,
   TrustLineResponse,
 }
