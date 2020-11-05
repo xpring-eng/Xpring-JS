@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 import { Wallet, XrplNetwork, XrpUtils } from 'xpring-common-js'
 import WebSocketNetworkClient from '../../src/XRP/network-clients/web-socket-network-client'
-import { WebSocketTransactionResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
+import { TransactionResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
 import XrpError from '../../src/XRP/shared/xrp-error'
 import XrpClient from '../../src/XRP/xrp-client'
 
@@ -51,7 +51,7 @@ describe('WebSocket Tests', function (): void {
     const subscriptionId = 'subscribe_transaction_' + address
 
     let messageReceived = false
-    const callback = (data: WebSocketTransactionResponse) => {
+    const callback = (data: TransactionResponse) => {
       messageReceived = true
       assert.equal(data.engine_result, 'tesSUCCESS')
       assert.equal(data.engine_result_code, 0)
@@ -110,7 +110,7 @@ describe('WebSocket Tests', function (): void {
         address,
         'subscribe_transaction_' + address,
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        (_data: WebSocketTransactionResponse) => {},
+        (_data: TransactionResponse) => {},
       )
     } catch (e) {
       if (!(e instanceof XrpError)) {

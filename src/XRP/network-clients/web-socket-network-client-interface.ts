@@ -1,5 +1,5 @@
 import {
-  WebSocketTransactionResponse,
+  TransactionResponse,
   WebSocketStatusResponse,
 } from '../shared/rippled-web-socket-schema'
 
@@ -19,7 +19,7 @@ export interface WebSocketNetworkClientInterface {
   subscribeToAccount(
     account: string,
     subscriptionId: string,
-    callback: (data: WebSocketTransactionResponse) => void,
+    callback: (data: TransactionResponse) => void,
   ): Promise<WebSocketStatusResponse>
 
   close(): void

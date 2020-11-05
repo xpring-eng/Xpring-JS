@@ -40,7 +40,7 @@ import GatewayBalances, {
 import TrustLine from './shared/trustline'
 import {
   WebSocketStatusResponse,
-  WebSocketTransactionResponse,
+  TransactionResponse,
 } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
@@ -214,7 +214,7 @@ export default class IssuedCurrencyClient {
    */
   public async monitorAccountTransactions(
     account: string,
-    callback: (data: WebSocketTransactionResponse) => void,
+    callback: (data: TransactionResponse) => void,
   ): Promise<WebSocketStatusResponse> {
     const classicAddress = XrpUtils.decodeXAddress(account)
     if (!classicAddress) {

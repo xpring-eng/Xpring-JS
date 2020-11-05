@@ -9,7 +9,7 @@ import {
   TransactionStatus,
   XrpErrorType,
 } from '../../src/XRP/shared'
-import { WebSocketTransactionResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
+import { TransactionResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
 import XrpClient from '../../src/XRP/xrp-client'
 
 // A timeout for these tests.
@@ -550,7 +550,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const subscriptionId = 'monitor_transactions_' + xAddress
 
     let messageReceived = false
-    const callback = (data: WebSocketTransactionResponse) => {
+    const callback = (data: TransactionResponse) => {
       messageReceived = true
       assert.equal(data.engine_result, 'tesSUCCESS')
       assert.equal(data.engine_result_code, 0)
@@ -607,7 +607,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       await issuedCurrencyClient.monitorAccountTransactions(
         address,
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        (_data: WebSocketTransactionResponse) => {},
+        (_data: TransactionResponse) => {},
       )
     } catch (e) {
       if (!(e instanceof XrpError)) {

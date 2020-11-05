@@ -7,7 +7,7 @@ import {
   WebSocketResponse,
   WebSocketStatusResponse,
   WebSocketStatusErrorResponse,
-  WebSocketTransactionResponse,
+  TransactionResponse,
 } from '../shared/rippled-web-socket-schema'
 
 function sleep(ms: number): Promise<void> {
@@ -22,7 +22,7 @@ export default class WebSocketNetworkClient {
   private readonly socket: WebSocket
   private accountCallbacks: Map<
     string,
-    (data: WebSocketTransactionResponse) => void
+    (data: TransactionResponse) => void
   > = new Map()
   private messageCallbacks: Map<
     string,
@@ -47,7 +47,7 @@ export default class WebSocketNetworkClient {
       this.waiting.set(dataStatusResponse.id, data)
     })
     this.messageCallbacks.set('transaction', (data: WebSocketResponse) =>
-      this.handleTransaction(data as WebSocketTransactionResponse),
+      this.handleTransaction(data as TransactionResponse),
     )
 
     this.socket.addEventListener('message', (event) => {
@@ -77,7 +77,7 @@ export default class WebSocketNetworkClient {
    *
    * @param data The web socket response received from the web socket.
    */
-  private handleTransaction(data: WebSocketTransactionResponse) {
+  private handleTransaction(data: TransactionResponse) {
     const destinationAccount = data.transaction.Destination
     const destinationCallback = this.accountCallbacks.get(destinationAccount)
 
@@ -94,8 +94,7 @@ export default class WebSocketNetworkClient {
     if (!destinationCallback && !senderCallback) {
       throw new XrpError(
         XrpErrorType.Unknown,
-        'Received a transaction for an account that has not been subscribed to: ' +
-          destinationAccount,
+        `Received a transaction for an account that has not been subscribed to: ${destinationAccount}`,
       )
     }
   }
@@ -140,7 +139,7 @@ export default class WebSocketNetworkClient {
   public async subscribeToAccount(
     account: string,
     subscriptionId: string,
-    callback: (data: WebSocketTransactionResponse) => void,
+    callback: (data: TransactionResponse) => void,
   ): Promise<WebSocketStatusResponse> {
     const options = {
       id: subscriptionId,
