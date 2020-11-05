@@ -522,4 +522,45 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(frozenTrustLine.freeze, true)
     assert.equal(frozenTrustLine.limit, '0')
   })
+
+  it('unfreezeTrustLine - unfreezes frozen account', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    const accountToUnfreeze = await XRPTestUtils.randomWalletFromFaucet()
+
+    // GIVEN an existing issuer account who has a frozen trust line with a counter-party
+    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
+
+    const trustLineCurrency = 'USD'
+    await issuedCurrencyClient.authorizeTrustLine(
+      accountToUnfreeze.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    await issuedCurrencyClient.freezeTrustLine(
+      accountToUnfreeze.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    // WHEN the issuer unfreezes the trustline
+    await issuedCurrencyClient.unfreezeTrustLine(
+      accountToUnfreeze.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      issuer.getAddress(),
+    )
+
+    const [unfrozenTrustLine] = trustLines
+
+    // THEN the trust line is not frozen.
+    assert.equal(unfrozenTrustLine.freeze, false)
+    assert.equal(unfrozenTrustLine.limit, '0')
+  })
 })
