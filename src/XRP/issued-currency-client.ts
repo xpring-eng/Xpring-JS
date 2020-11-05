@@ -627,6 +627,34 @@ export default class IssuedCurrencyClient {
     )
   }
 
+  /**
+   * Redeems issued currency back to the original issuer.
+   * Typically, this should trigger off-ledger action by the issuing institution.
+   *
+   * @param sender The Wallet redeeming the issued currency, and that will sign the transaction.
+   * @param issuer The original issuer of the issued currency, encoded as an X-address (see https://xrpaddress.info/).
+   * @param currency The three-letter currency code of the issued currency being redeemed.
+   * @param amount The amount of issued currency to redeem.
+   */
+  public async redeemIssuedCurrency(
+    sender: Wallet,
+    issuer: string,
+    currency: string,
+    amount: string,
+  ): Promise<TransactionResult> {
+    // Redemption of issued currency is achieved by sending issued currency directly to the original issuer.
+    // However, the issuer field specified in the amount is treated as a special case in this circumstance, and should be
+    // set to the address of the account initiating the redemption.
+    // See: https://xrpl.org/payment.html#special-issuer-values-for-sendmax-and-amount
+    return await this.issuedCurrencyPayment(
+      sender,
+      issuer,
+      currency,
+      sender.getAddress(),
+      amount,
+    )
+  }
+
   // TODO: (acorso) Make this method private and expose more opinionated public APIs.
   // TODO: (acorso) structure this like we have `sendXrp` v.s. `sendXrpWithDetails` to allow for additional optional fields, such as memos.
   //  as well as potentially:
