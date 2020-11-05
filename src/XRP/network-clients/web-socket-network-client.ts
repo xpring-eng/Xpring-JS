@@ -34,6 +34,7 @@ export default class WebSocketNetworkClient {
     number | string,
     WebSocketResponse | undefined
   > = new Map()
+  private idNumber = 0
 
   /**
    * Create a new WebSocketNetworkClient.
@@ -176,12 +177,13 @@ export default class WebSocketNetworkClient {
     peerAccount?: string,
   ): Promise<WebSocketAccountLinesResponse> {
     const accountLinesRequest = {
-      id: 'account_lines_' + account,
+      id: `account_lines_${account}_${this.idNumber}`,
       command: 'account_lines',
       account,
       ledger_index: 'validated',
       peer: peerAccount,
     }
+    this.idNumber++
     const accountLinesResponse = await this.sendApiRequest(accountLinesRequest)
     return accountLinesResponse as WebSocketAccountLinesResponse
   }
@@ -199,13 +201,14 @@ export default class WebSocketNetworkClient {
     addressesToExclude?: Array<string>,
   ): Promise<WebSocketGatewayBalancesResponse> {
     const gatewayBalancesRequest = {
-      id: 'gateway_balances_' + account,
+      id: `gateway_balances_${account}_${this.idNumber}`,
       command: 'gateway_balances',
       account,
       strict: 'true',
       hotwallet: addressesToExclude,
       ledger_index: 'validated',
     }
+    this.idNumber++
     const gatewayBalancesResponse = await this.sendApiRequest(
       gatewayBalancesRequest,
     )
