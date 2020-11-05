@@ -485,7 +485,7 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
    *
-   * @param trustLinePeerAccount The X-Address of the account which to unfreeze a trust line.
+   * @param trustLinePeerAccount The X-Address of the account involved in the trust line being unfrozen.
    * @param currencyName The currency of the trust line to unfreeze.
    * @param wallet The wallet unfreezing the trust line.
    */
