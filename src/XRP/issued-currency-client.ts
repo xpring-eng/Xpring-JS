@@ -632,8 +632,8 @@ export default class IssuedCurrencyClient {
    * Typically, this should trigger off-ledger action by the issuing institution.
    *
    * @param sender The Wallet redeeming the issued currency, and that will sign the transaction.
-   * @param currency The three-letter currency code of the issued currency being redeemed.
    * @param issuer The original issuer of the issued currency, encoded as an X-address (see https://xrpaddress.info/).
+   * @param currency The three-letter currency code of the issued currency being redeemed.
    * @param amount The amount of issued currency to redeem.
    */
   public async redeemIssuedCurrency(
