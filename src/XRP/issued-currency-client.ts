@@ -683,13 +683,13 @@ export default class IssuedCurrencyClient {
     sendMaxValue?: string,
     useAnyValidIssuer = false,
   ): Promise<TransactionResult> {
-    if (sender.getAddress() == issuer) {
+    if (sender.getAddress() === issuer) {
       throw new XrpError(
         XrpErrorType.InvalidInput,
         'The sending address cannot be the same as the issuing address. To create issued currency, use `createIssuedCurrency`.',
       )
     }
-    if (destination == issuer) {
+    if (destination === issuer) {
       throw new XrpError(
         XrpErrorType.InvalidInput,
         'The destination address cannot be the same as the issuer. To redeem issued currency, use `redeemIssuedCurrency`.  \
