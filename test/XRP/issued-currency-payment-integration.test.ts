@@ -153,7 +153,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendIssuedCurrencyPayment - success sending issued currency from non-issuing account to another account, any valid issuer', async function (): Promise<
+  it('sendIssuedCurrencyPayment - success sending issued currency from non-issuing account to another account', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -191,16 +191,13 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       customerWallet,
     )
 
-    // WHEN an issued currency payment is made to another funded account, while enabling the `useAnyValidIssuer` flag.
+    // WHEN an issued currency payment is made to another funded account
     const transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       operationalWallet,
       customerWallet.getAddress(),
       'FOO',
       issuerWallet.getAddress(),
       '100',
-      undefined,
-      undefined,
-      true,
     )
 
     // THEN the transaction succeeds.

@@ -681,7 +681,6 @@ export default class IssuedCurrencyClient {
     amount: string,
     transferFee?: number,
     sendMaxValue?: string,
-    useAnyValidIssuer = false,
   ): Promise<TransactionResult> {
     if (sender.getAddress() === issuer) {
       throw new XrpError(
@@ -692,8 +691,7 @@ export default class IssuedCurrencyClient {
     if (destination === issuer) {
       throw new XrpError(
         XrpErrorType.InvalidInput,
-        'The destination address cannot be the same as the issuer. To redeem issued currency, use `redeemIssuedCurrency`.  \
-        To send issued currency from any accepted issuer, use the `useAnyValidIssuer` parameter.',
+        'The destination address cannot be the same as the issuer. To redeem issued currency, use `redeemIssuedCurrency`.',
       )
     }
     // TODO: (acorso) A payment like this might fail if:
@@ -702,19 +700,6 @@ export default class IssuedCurrencyClient {
     // We may want to decide if it's worth incurring the cost of querying for this information BEFORE sending a payment that will destroy
     // a transaction cost.  Or maybe we provide a different public method that can perform these checks if the user cares.
 
-    // Special case for `issuer` field of destination amount specification where issuer == destination address.
-    // See https://xrpl.org/payment.html#special-issuer-values-for-sendmax-and-amount
-    if (useAnyValidIssuer) {
-      return await this.issuedCurrencyPayment(
-        sender,
-        destination,
-        currency,
-        destination,
-        amount,
-        transferFee,
-        sendMaxValue,
-      )
-    }
     return await this.issuedCurrencyPayment(
       sender,
       destination,
