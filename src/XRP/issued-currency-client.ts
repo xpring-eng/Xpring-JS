@@ -497,22 +497,48 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
    *
-   * @param accountToFreeze The X-Address of the account involved in the trust line being frozen.
+   * @param trustLinePeerAccount The X-Address of the account involved in the trust line being frozen.
    * @param currencyName The currency of the trust line to freeze.
    * @param wallet The wallet freezing the trust line.
    */
   public async freezeTrustLine(
-    accountToFreeze: string,
+    trustLinePeerAccount: string,
     currencyName: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
     return await this.sendTrustSetTransaction(
-      accountToFreeze,
+      trustLinePeerAccount,
       currencyName,
       // You can change the trust line when you freeze it, but an amount of 0
       // would be the most conservative amount.
       '0',
       TrustSetFlag.tfSetFreeze,
+      wallet,
+    )
+  }
+
+  /**
+   * Unfreezes the trust line between this account (issuing account) and another account.
+   * Note that the trust line's limit is set to 0.
+   *
+   * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
+   *
+   * @param trustLinePeerAccount The X-Address of the account involved in the trust line being unfrozen.
+   * @param currencyName The currency of the trust line to unfreeze.
+   * @param wallet The wallet unfreezing the trust line.
+   */
+  public async unfreezeTrustLine(
+    trustLinePeerAccount: string,
+    currencyName: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return await this.sendTrustSetTransaction(
+      trustLinePeerAccount,
+      currencyName,
+      // You can change the trust line amount when you unfreeze it, but this would typically
+      // be used by gateways, who will maintain an amount of 0.
+      '0',
+      TrustSetFlag.tfClearFreeze,
       wallet,
     )
   }
