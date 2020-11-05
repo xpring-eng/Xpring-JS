@@ -513,17 +513,19 @@ export default class IssuedCurrencyClient {
    *
    * @param trustLinePeerAccount The X-Address of the account involved in the trust line to disable rippling.
    * @param currencyName The currency of the trust line to disable rippling.
+   * @amount The maximum amount of debt to allow on this trust line.
    * @param wallet The wallet disabling rippling on the trust line.
    */
   public async setNoRippling(
     trustLinePeerAccount: string,
     currencyName: string,
+    amount: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
     return await this.sendTrustSetTransaction(
       trustLinePeerAccount,
       currencyName,
-      '0',
+      amount,
       TrustSetFlag.tfSetNoRipple,
       wallet,
     )

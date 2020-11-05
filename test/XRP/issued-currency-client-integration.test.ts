@@ -563,4 +563,42 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(unfrozenTrustLine.freeze, false)
     assert.equal(unfrozenTrustLine.limit, '0')
   })
+
+  it('setNoRippling - sets no rippling on trust line', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    const trustLinePeerAccount = await XRPTestUtils.randomWalletFromFaucet()
+
+    // GIVEN an existing issuer account who has a trust line with a counter-party
+    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
+
+    const trustLineCurrency = 'USD'
+    await issuedCurrencyClient.authorizeTrustLine(
+      trustLinePeerAccount.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    const trustLineAmount = '1'
+
+    // WHEN the issuer sets no rippling on the trust line
+    await issuedCurrencyClient.setNoRippling(
+      trustLinePeerAccount.getAddress(),
+      trustLineCurrency,
+      trustLineAmount,
+      issuer,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      issuer.getAddress(),
+    )
+
+    const [trustLine] = trustLines
+
+    // THEN the trust line has noRipple enabled.
+    assert.equal(trustLine.noRipple, true)
+    assert.equal(trustLine.limit, trustLineAmount)
+  })
 })
