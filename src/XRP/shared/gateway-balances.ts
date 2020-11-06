@@ -1,6 +1,6 @@
 import { XrpUtils } from 'xpring-common-js'
 import { XrpError, XrpErrorType } from '.'
-import { GatewayBalancesResponse } from './rippled-json-rpc-schema'
+import { WebSocketGatewayBalancesSuccessfulResponse } from './rippled-web-socket-schema'
 
 /**
  * Represents an amount of an Issued Currency.
@@ -43,7 +43,7 @@ export default interface GatewayBalances {
 }
 
 export function gatewayBalancesFromResponse(
-  gatewayBalancesResponse: GatewayBalancesResponse,
+  gatewayBalancesResponse: WebSocketGatewayBalancesSuccessfulResponse,
 ): GatewayBalances {
   const { result } = gatewayBalancesResponse
 
