@@ -15,10 +15,8 @@ import {
 } from './fakes/fake-web-socket-network-client'
 import {
   WebSocketAccountLinesResponse,
-  WebSocketAccountLinesSuccessfulResponse,
   WebSocketResponse,
   WebSocketGatewayBalancesResponse,
-  WebSocketGatewayBalancesSuccessfulResponse,
   RippledMethod,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
 import GatewayBalances, {
@@ -53,7 +51,7 @@ describe('Issued Currency Client', function (): void {
     const trustlinesResponse: WebSocketAccountLinesResponse = await fakeSucceedingWebSocketClient.getAccountLines(
       testAddress,
     )
-    const trustlinesSuccessfulResponse = trustlinesResponse as WebSocketAccountLinesSuccessfulResponse
+    const trustlinesSuccessfulResponse = trustlinesResponse
     if (trustlinesSuccessfulResponse.result.lines === undefined) {
       throw XrpError.malformedResponse
     }
@@ -414,9 +412,7 @@ describe('Issued Currency Client', function (): void {
       testAddress,
     )
     const expectedGatewayBalances: GatewayBalances = gatewayBalancesFromResponse(
-      (await fakeSucceedingWebSocketClient.getGatewayBalances(
-        testAddress,
-      )) as WebSocketGatewayBalancesSuccessfulResponse,
+      await fakeSucceedingWebSocketClient.getGatewayBalances(testAddress),
     )
 
     // THEN the result is as expected
@@ -910,7 +906,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -936,7 +931,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
