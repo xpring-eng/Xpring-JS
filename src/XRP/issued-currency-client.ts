@@ -33,13 +33,12 @@ import GatewayBalances, {
 } from './shared/gateway-balances'
 import TrustLine from './shared/trustline'
 import {
-  WebSocketAccountLinesResponse,
-  WebSocketAccountLinesSuccessfulResponse,
-  WebSocketAccountLinesFailureResponse,
+  AccountLinesResponse,
+  AccountLinesSuccessfulResponse,
+  WebSocketFailureResponse,
   TransactionResponse,
-  WebSocketGatewayBalancesResponse,
-  WebSocketGatewayBalancesFailureResponse,
-  WebSocketGatewayBalancesSuccessfulResponse,
+  GatewayBalancesResponse,
+  GatewayBalancesSuccessfulResponse,
 } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
@@ -122,13 +121,12 @@ export default class IssuedCurrencyClient {
       }
     }
 
-    const accountLinesResponse: WebSocketAccountLinesResponse = await this.webSocketNetworkClient.getAccountLines(
+    const accountLinesResponse: AccountLinesResponse = await this.webSocketNetworkClient.getAccountLines(
       classicAddress.address,
       peerAccount,
     )
 
-    const error = (accountLinesResponse as WebSocketAccountLinesFailureResponse)
-      .error
+    const error = (accountLinesResponse as WebSocketFailureResponse).error
     if (error) {
       if (error === RippledErrorMessages.accountNotFound) {
         throw XrpError.accountNotFound
@@ -137,7 +135,7 @@ export default class IssuedCurrencyClient {
       }
     }
 
-    const accountLinesSuccessfulResponse = accountLinesResponse as WebSocketAccountLinesSuccessfulResponse
+    const accountLinesSuccessfulResponse = accountLinesResponse as AccountLinesSuccessfulResponse
     const rawTrustLines = accountLinesSuccessfulResponse.result.lines
     if (rawTrustLines === undefined) {
       throw XrpError.malformedResponse
@@ -178,16 +176,15 @@ export default class IssuedCurrencyClient {
       return classicAddress.address
     })
 
-    const gatewayBalancesResponse: WebSocketGatewayBalancesResponse = await this.webSocketNetworkClient.getGatewayBalances(
+    const gatewayBalancesResponse: GatewayBalancesResponse = await this.webSocketNetworkClient.getGatewayBalances(
       classicAddress.address,
       classicAddressesToExclude,
     )
 
-    const error = (gatewayBalancesResponse as WebSocketGatewayBalancesFailureResponse)
-      .error
+    const error = (gatewayBalancesResponse as WebSocketFailureResponse).error
     if (!error) {
       return gatewayBalancesFromResponse(
-        gatewayBalancesResponse as WebSocketGatewayBalancesSuccessfulResponse,
+        gatewayBalancesResponse as GatewayBalancesSuccessfulResponse,
       )
     }
     switch (error) {

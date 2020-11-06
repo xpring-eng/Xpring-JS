@@ -1,9 +1,9 @@
 import Result from '../../Common/Helpers/result'
 import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
 import {
-  WebSocketAccountLinesResponse,
-  WebSocketGatewayBalancesResponse,
-  WebSocketStatusResponse,
+  AccountLinesResponse,
+  GatewayBalancesResponse,
+  StatusResponse,
   TransactionResponse,
 } from '../../../src/XRP/shared/rippled-web-socket-schema'
 
@@ -36,20 +36,20 @@ export class FakeWebSocketNetworkClientResponses {
    */
   public constructor(
     public readonly getSubscribeResponse: Result<
-      WebSocketStatusResponse
+      StatusResponse
     > = FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
     public readonly getAccountLinesResponse: Result<
-      WebSocketAccountLinesResponse
+      AccountLinesResponse
     > = FakeWebSocketNetworkClientResponses.defaultGetAccountLinesResponse(),
     public readonly getGatewayBalancesResponse: Result<
-      WebSocketGatewayBalancesResponse
+      GatewayBalancesResponse
     > = FakeWebSocketNetworkClientResponses.defaultGetGatewayBalancesResponse(),
   ) {}
 
   /**
    * Construct a default response for a subscribe request.
    */
-  public static defaultSubscribeResponse(): WebSocketStatusResponse {
+  public static defaultSubscribeResponse(): StatusResponse {
     return {
       id:
         'monitor_transactions_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
@@ -62,7 +62,7 @@ export class FakeWebSocketNetworkClientResponses {
   /**
    * Construct a default response for getAccountLines request.
    */
-  public static defaultGetAccountLinesResponse(): WebSocketAccountLinesResponse {
+  public static defaultGetAccountLinesResponse(): AccountLinesResponse {
     return {
       id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
       type: 'response',
@@ -112,7 +112,7 @@ export class FakeWebSocketNetworkClientResponses {
   /**
    * Construct a default response for getGatewayBalances request.
    */
-  public static defaultGetGatewayBalancesResponse(): WebSocketGatewayBalancesResponse {
+  public static defaultGetGatewayBalancesResponse(): GatewayBalancesResponse {
     return {
       id: 'gateway_balances_rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',
       status: 'success',
@@ -191,7 +191,7 @@ export class FakeWebSocketNetworkClient {
   subscribeToAccount(
     _account: string,
     _callback: (data: TransactionResponse) => void,
-  ): Promise<WebSocketStatusResponse> {
+  ): Promise<StatusResponse> {
     const subscribeResponse = this.responses.getSubscribeResponse
     if (subscribeResponse instanceof Error) {
       return Promise.reject(subscribeResponse)
@@ -200,7 +200,7 @@ export class FakeWebSocketNetworkClient {
     return Promise.resolve(subscribeResponse)
   }
 
-  getAccountLines(_address: string): Promise<WebSocketAccountLinesResponse> {
+  getAccountLines(_address: string): Promise<AccountLinesResponse> {
     const accountLinesResponse = this.responses.getAccountLinesResponse
     if (accountLinesResponse instanceof Error) {
       return Promise.reject(accountLinesResponse)
@@ -212,7 +212,7 @@ export class FakeWebSocketNetworkClient {
   getGatewayBalances(
     _address: string,
     _addressesToExclude?: string | Array<string>,
-  ): Promise<WebSocketGatewayBalancesResponse> {
+  ): Promise<GatewayBalancesResponse> {
     const gatewayBalancesResponse = this.responses.getGatewayBalancesResponse
     if (gatewayBalancesResponse instanceof Error) {
       return Promise.reject(gatewayBalancesResponse)
