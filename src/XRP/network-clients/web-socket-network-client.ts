@@ -1,9 +1,14 @@
 import WebSocket = require('ws')
 import { XrpError, XrpErrorType } from '../shared'
 import {
+  WebSocketAccountLinesResponse,
+  WebSocketGatewayBalancesResponse,
   WebSocketReadyState,
   RippledMethod,
   WebSocketRequestOptions,
+  SubscribeRequest,
+  AccountLinesRequest,
+  GatewayBalancesRequest,
   WebSocketResponse,
   WebSocketStatusResponse,
   WebSocketStatusErrorResponse,
@@ -28,7 +33,11 @@ export default class WebSocketNetworkClient {
     string,
     (data: WebSocketResponse) => void
   > = new Map()
-  private waiting: Map<string, WebSocketResponse | undefined> = new Map()
+  private waiting: Map<
+    number | string,
+    WebSocketResponse | undefined
+  > = new Map()
+  private idNumber = 0 // added to web socket request IDs to ensure unique IDs
 
   /**
    * Create a new WebSocketNetworkClient.
@@ -101,6 +110,7 @@ export default class WebSocketNetworkClient {
 
   /**
    * Sends an API request over the web socket connection.
+   * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
    *
    * @param request The object to send over the web socket.
    * @returns The API response from the web socket.
@@ -129,7 +139,7 @@ export default class WebSocketNetworkClient {
 
   /**
    * Subscribes for notification about every validated transaction that affects the given account.
-   * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
+   * @see https://xrpl.org/subscribe.html
    *
    * @param account The account from which to subscribe to incoming transactions, encoded as a classic address.
    * @param subscriptionId The ID used for the subscription.
@@ -138,15 +148,15 @@ export default class WebSocketNetworkClient {
    */
   public async subscribeToAccount(
     account: string,
-    subscriptionId: string,
     callback: (data: TransactionResponse) => void,
   ): Promise<WebSocketStatusResponse> {
-    const options = {
-      id: subscriptionId,
+    const subscribeRequest: SubscribeRequest = {
+      id: `monitor_transactions_${account}_${this.idNumber}`,
       command: RippledMethod.subscribe,
       accounts: [account],
     }
-    const response = await this.sendApiRequest(options)
+    this.idNumber++
+    const response = await this.sendApiRequest(subscribeRequest)
     if (response.status !== 'success') {
       const errorResponse = response as WebSocketStatusErrorResponse
       throw new XrpError(
@@ -156,6 +166,56 @@ export default class WebSocketNetworkClient {
     }
     this.accountCallbacks.set(account, callback)
     return response as WebSocketStatusResponse
+  }
+
+  /**
+   * Submits an account_lines request to the rippled Web Socket API.
+   * @see https://xrpl.org/account_lines.html
+   *
+   * @param account The XRPL account to query for trust lines.
+   */
+  public async getAccountLines(
+    account: string,
+    peerAccount?: string,
+  ): Promise<WebSocketAccountLinesResponse> {
+    const accountLinesRequest: AccountLinesRequest = {
+      id: `${RippledMethod.accountLines}_${account}_${this.idNumber}`,
+      command: RippledMethod.accountLines,
+      account,
+      ledger_index: 'validated',
+      peer: peerAccount,
+    }
+    this.idNumber++
+    return (await this.sendApiRequest(
+      accountLinesRequest,
+    )) as WebSocketAccountLinesResponse
+  }
+
+  /**
+   * Submits a gateway_balances request to the rippled WebSocket API.
+   * @see https://xrpl.org/gateway_balances.html
+   *
+   * @param account The XRPL account for which to retrieve issued currency balances.
+   * @param addressesToExclude (Optional) An array of operational address to exclude from the balances issued.
+   * @see https://xrpl.org/issuing-and-operational-addresses.html
+   */
+  public async getGatewayBalances(
+    account: string,
+    addressesToExclude?: Array<string>,
+  ): Promise<WebSocketGatewayBalancesResponse> {
+    const gatewayBalancesRequest: GatewayBalancesRequest = {
+      id: `${RippledMethod.gatewayBalances}_${account}_${this.idNumber}`,
+      command: RippledMethod.gatewayBalances,
+      account,
+      strict: true,
+      hotwallet: addressesToExclude,
+      ledger_index: 'validated',
+    }
+    this.idNumber++
+    const gatewayBalancesResponse = await this.sendApiRequest(
+      gatewayBalancesRequest,
+    )
+    return gatewayBalancesResponse as WebSocketGatewayBalancesResponse
   }
 
   /**

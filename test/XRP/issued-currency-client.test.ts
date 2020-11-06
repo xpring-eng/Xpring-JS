@@ -6,26 +6,26 @@ import {
   FakeXRPNetworkClient,
   FakeXRPNetworkClientResponses,
 } from './fakes/fake-xrp-network-client'
-import {
-  FakeJsonNetworkClient,
-  FakeJsonNetworkClientResponses,
-} from './fakes/fake-json-network-client'
 import 'mocha'
 import TrustLine from '../../src/XRP/shared/trustline'
 import { XrpError, XrpErrorType } from '../../src/XRP'
-import { AccountLinesResponse } from '../../src/XRP/shared/rippled-json-rpc-schema'
 import {
   FakeWebSocketNetworkClient,
   FakeWebSocketNetworkClientResponses,
 } from './fakes/fake-web-socket-network-client'
-import { WebSocketResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
+import {
+  WebSocketAccountLinesResponse,
+  WebSocketAccountLinesSuccessfulResponse,
+  WebSocketResponse,
+  WebSocketGatewayBalancesResponse,
+  WebSocketGatewayBalancesSuccessfulResponse,
+  RippledMethod,
+} from '../../src/XRP/shared/rippled-web-socket-schema'
 import GatewayBalances, {
   gatewayBalancesFromResponse,
 } from '../../src/XRP/shared/gateway-balances'
 
 const fakeSucceedingGrpcClient = new FakeXRPNetworkClient()
-
-const fakeSucceedingJsonClient = new FakeJsonNetworkClient()
 
 const fakeSucceedingWebSocketClient = new FakeWebSocketNetworkClient()
 
@@ -43,7 +43,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient.
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -51,14 +50,15 @@ describe('Issued Currency Client', function (): void {
     // WHEN getTrustLines is called
     const trustLines = await issuedCurrencyClient.getTrustLines(testAddress)
     const expectedTrustLines: Array<TrustLine> = []
-    const trustlinesJson: AccountLinesResponse = await fakeSucceedingJsonClient.getAccountLines(
+    const trustlinesResponse: WebSocketAccountLinesResponse = await fakeSucceedingWebSocketClient.getAccountLines(
       testAddress,
     )
-    if (trustlinesJson.result.lines === undefined) {
+    const trustlinesSuccessfulResponse = trustlinesResponse as WebSocketAccountLinesSuccessfulResponse
+    if (trustlinesSuccessfulResponse.result.lines === undefined) {
       throw XrpError.malformedResponse
     }
-    for (const trustLineJson of trustlinesJson.result.lines) {
-      const trustLine = new TrustLine(trustLineJson)
+    for (const trustLineResponse of trustlinesSuccessfulResponse.result.lines) {
+      const trustLine = new TrustLine(trustLineResponse)
       expectedTrustLines.push(trustLine)
     }
 
@@ -70,7 +70,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -89,7 +88,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -108,22 +106,30 @@ describe('Issued Currency Client', function (): void {
     void
   > {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
-    const accountNotFoundResponse: AccountLinesResponse = {
-      result: {
-        error: 'actNotFound',
-        status: 'error',
+    const accountNotFoundResponse: WebSocketAccountLinesResponse = {
+      error: 'actNotFound',
+      error_code: 19,
+      error_message: 'Account not found.',
+      id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+      request: {
+        account: 'r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+        command: RippledMethod.accountLines,
+        id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+        ledger_index: 'validated',
       },
+      status: 'error',
+      type: 'response',
     }
-    const fakeErroringJsonClientResponses = new FakeJsonNetworkClientResponses(
+    const fakeErroringWebSocketClientResponses = new FakeWebSocketNetworkClientResponses(
+      FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
       accountNotFoundResponse,
     )
-    const fakeErroringJsonClient = new FakeJsonNetworkClient(
-      fakeErroringJsonClientResponses,
+    const fakeErroringWebSocketClient = new FakeWebSocketNetworkClient(
+      fakeErroringWebSocketClientResponses,
     )
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeErroringJsonClient,
-      fakeSucceedingWebSocketClient,
+      fakeErroringWebSocketClient,
       XrplNetwork.Test,
     )
     // WHEN getTrustLines is called THEN an error is thrown.
@@ -138,22 +144,30 @@ describe('Issued Currency Client', function (): void {
     void
   > {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
-    const invalidParamsResponse: AccountLinesResponse = {
-      result: {
-        error: 'invalidParams',
-        status: 'error',
+    const invalidParamsResponse: WebSocketAccountLinesResponse = {
+      error: 'invalidParams',
+      error_code: 31,
+      error_message: "Missing field 'account'.",
+      id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+      request: {
+        account: 'r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+        command: RippledMethod.accountLines,
+        id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+        ledger_index: 'validated',
       },
+      status: 'error',
+      type: 'response',
     }
-    const fakeErroringJsonClientResponses = new FakeJsonNetworkClientResponses(
+    const fakeErroringWebSocketClientResponses = new FakeWebSocketNetworkClientResponses(
+      FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
       invalidParamsResponse,
     )
-    const fakeErroringJsonClient = new FakeJsonNetworkClient(
-      fakeErroringJsonClientResponses,
+    const fakeErroringWebSocketClient = new FakeWebSocketNetworkClient(
+      fakeErroringWebSocketClientResponses,
     )
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeErroringJsonClient,
-      fakeSucceedingWebSocketClient,
+      fakeErroringWebSocketClient,
       XrplNetwork.Test,
     )
     // WHEN getTrustLines is called THEN an error is thrown.
@@ -170,7 +184,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -200,7 +213,6 @@ describe('Issued Currency Client', function (): void {
     const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -219,7 +231,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -249,7 +260,6 @@ describe('Issued Currency Client', function (): void {
     const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -266,7 +276,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -294,7 +303,6 @@ describe('Issued Currency Client', function (): void {
     const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -311,7 +319,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -339,7 +346,6 @@ describe('Issued Currency Client', function (): void {
     const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -356,7 +362,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -384,7 +389,6 @@ describe('Issued Currency Client', function (): void {
     const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -401,7 +405,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with faked networking that will return successful responses.
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -411,7 +414,9 @@ describe('Issued Currency Client', function (): void {
       testAddress,
     )
     const expectedGatewayBalances: GatewayBalances = gatewayBalancesFromResponse(
-      await fakeSucceedingJsonClient.getGatewayBalances(testAddress),
+      (await fakeSucceedingWebSocketClient.getGatewayBalances(
+        testAddress,
+      )) as WebSocketGatewayBalancesSuccessfulResponse,
     )
 
     // THEN the result is as expected
@@ -422,7 +427,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -443,7 +447,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -466,7 +469,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -489,23 +491,36 @@ describe('Issued Currency Client', function (): void {
     void
   > {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getGatewayBalances
-    const accountNotFoundResponse: AccountLinesResponse = {
-      result: {
-        error: 'actNotFound',
-        status: 'error',
+    const accountNotFoundResponse: WebSocketGatewayBalancesResponse = {
+      error: 'actNotFound',
+      error_code: 19,
+      error_message: 'Account not found.',
+      id: 'gateway_balances_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
+      request: {
+        account: 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
+        command: RippledMethod.gatewayBalances,
+        hotwallet: [
+          'rKm4uWpg9tfwbVSeATv4KxDe6mpE9yPkgJ',
+          'ra7JkEzrgeKHdzKgo4EUUVBnxggY4z37kt',
+        ],
+        id: 'gateway_balances_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
+        ledger_index: 'validated',
+        strict: true,
       },
+      status: 'error',
+      type: 'response',
     }
-    const fakeErroringJsonClientResponses = new FakeJsonNetworkClientResponses(
-      FakeJsonNetworkClientResponses.defaultGetAccountLinesResponse(),
+    const fakeErroringWebSocketClientResponses = new FakeWebSocketNetworkClientResponses(
+      FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
+      FakeWebSocketNetworkClientResponses.defaultGetAccountLinesResponse(),
       accountNotFoundResponse,
     )
-    const fakeErroringJsonClient = new FakeJsonNetworkClient(
-      fakeErroringJsonClientResponses,
+    const fakeErroringWebSocketClient = new FakeWebSocketNetworkClient(
+      fakeErroringWebSocketClientResponses,
     )
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeErroringJsonClient,
-      fakeSucceedingWebSocketClient,
+      fakeErroringWebSocketClient,
       XrplNetwork.Test,
     )
     // WHEN getGatewayBalances is called THEN an error is propagated.
@@ -523,7 +538,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -552,7 +566,6 @@ describe('Issued Currency Client', function (): void {
     const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -569,7 +582,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -597,7 +609,6 @@ describe('Issued Currency Client', function (): void {
     const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -612,7 +623,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -645,7 +655,6 @@ describe('Issued Currency Client', function (): void {
     const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -666,7 +675,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -694,7 +702,6 @@ describe('Issued Currency Client', function (): void {
     const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -711,7 +718,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -739,7 +745,6 @@ describe('Issued Currency Client', function (): void {
     const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -754,7 +759,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -782,7 +786,6 @@ describe('Issued Currency Client', function (): void {
     const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -797,7 +800,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -833,7 +835,6 @@ describe('Issued Currency Client', function (): void {
     const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
     const issuedCurrencyClient = new IssuedCurrencyClient(
       failingNetworkClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -859,7 +860,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -885,7 +885,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -910,7 +909,6 @@ describe('Issued Currency Client', function (): void {
     // GIVEN an IssuedCurrencyClient.
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
@@ -944,7 +942,6 @@ describe('Issued Currency Client', function (): void {
     )
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
-      fakeSucceedingJsonClient,
       failingWebSocketClient,
       XrplNetwork.Test,
     )
