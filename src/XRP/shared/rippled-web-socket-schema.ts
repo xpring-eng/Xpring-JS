@@ -67,7 +67,7 @@ interface GatewayBalancesRequest extends BaseRequest {
 }
 
 /**
- * The standard elements in a response from the WebSocket API exposed by a rippled node.
+ * The common elements in a response from the WebSocket API exposed by a rippled node.
  * @see https://xrpl.org/response-formatting.html
  */
 interface BaseResponse {
@@ -182,6 +182,26 @@ interface WebSocketTransaction {
   hash: string
 }
 
+/**
+ * The standard format for a response from the WebSocket API about a trustline.
+ * @see https://xrpl.org/account_lines.html
+ */
+interface TrustLineResponse {
+  account: string
+  balance: string
+  currency: string
+  limit: string
+  limit_peer: string
+  quality_in: number
+  quality_out: number
+  no_ripple?: boolean
+  no_ripple_peer?: boolean
+  authorized?: boolean
+  peer_authorized?: boolean
+  freeze?: boolean
+  freeze_peer?: boolean
+}
+
 type ChangedNode = CreatedNode | ModifiedNode | DeletedNode
 
 /**
@@ -239,34 +259,6 @@ interface DeletedNode {
   LedgerIndex: string
 }
 
-interface CurrencyValuePair {
-  currency: string
-  value: string
-}
-
-/**
- * The standard format for a response from the WebSocket API about a trustline.
- * @see https://xrpl.org/account_lines.html
- */
-interface TrustLineResponse {
-  account: string
-  balance: string
-  currency: string
-  limit: string
-  limit_peer: string
-  quality_in: number
-  quality_out: number
-  no_ripple?: boolean
-  no_ripple_peer?: boolean
-  authorized?: boolean
-  peer_authorized?: boolean
-  freeze?: boolean
-  freeze_peer?: boolean
-}
-
-/**
- * Helper type to signify issued currency in a `gateway_balances` response.
- */
 interface CurrencyValuePair {
   currency: string
   value: string
