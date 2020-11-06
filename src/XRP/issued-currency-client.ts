@@ -208,7 +208,7 @@ export default class IssuedCurrencyClient {
    *
    * @param account The account for which to subscribe to relevant transactions, encoded as an X-Address.
    * @param callback The function to trigger upon receiving a transaction event from the ledger.
-   * @returns The response from the websocket indicating the result of the subscription request.
+   * @returns Whether the request to subscribe succeeded.
    */
   public async monitorAccountTransactions(
     account: string,

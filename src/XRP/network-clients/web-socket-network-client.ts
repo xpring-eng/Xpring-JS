@@ -37,7 +37,7 @@ export default class WebSocketNetworkClient {
     number | string,
     WebSocketResponse | undefined
   > = new Map()
-  private idNumber = 0
+  private idNumber = 0 // added to web socket request IDs to ensure unique IDs
 
   /**
    * Create a new WebSocketNetworkClient.
