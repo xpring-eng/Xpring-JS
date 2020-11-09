@@ -354,11 +354,18 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/transfer-fees.html
    *
-   * @param address The address for which the transfer rate is requested.
+   * @param address The X-address for which the transfer rate is requested.
    * @returns A promise which resolves to a number that represents the transfer fee associated with that issuing account.
    */
   public async getTransferFee(address: string): Promise<number | undefined> {
-    const accountRoot = await this.coreXrplClient.getAccountData(address)
+    const classicAddress = XrpUtils.decodeXAddress(address)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const accountRoot = await this.coreXrplClient.getAccountData(
+      classicAddress.address,
+    )
     return accountRoot.getTransferRate()?.getValue()
   }
 
