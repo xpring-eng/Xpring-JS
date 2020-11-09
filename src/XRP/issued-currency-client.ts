@@ -25,12 +25,6 @@ import CoreXrplClient from './core-xrpl-client'
 import GrpcNetworkClient from './network-clients/grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
 import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
-import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
-import {
-  AccountLinesResponse,
-  GatewayBalancesResponse,
-} from './shared/rippled-json-rpc-schema'
-import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
 import { XrpError, XrpErrorType } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
@@ -38,6 +32,16 @@ import GatewayBalances, {
   gatewayBalancesFromResponse,
 } from './shared/gateway-balances'
 import TrustLine from './shared/trustline'
+import {
+  AccountLinesResponse,
+  AccountLinesSuccessfulResponse,
+  WebSocketFailureResponse,
+  TransactionResponse,
+  GatewayBalancesResponse,
+  GatewayBalancesSuccessfulResponse,
+} from './shared/rippled-web-socket-schema'
+import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
+import WebSocketNetworkClient from './network-clients/web-socket-network-client'
 import { SendMax } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
 import { RippledErrorMessages } from './shared/rippled-error-messages'
 import TrustSetFlag from './shared/trust-set-flag'
@@ -60,7 +64,8 @@ export default class IssuedCurrencyClient {
    */
   public static issuedCurrencyClientWithEndpoint(
     grpcUrl: string,
-    jsonUrl: string,
+    webSocketUrl: string,
+    handleWebSocketErrorMessage: (data: string) => void,
     network: XrplNetwork,
     forceWeb = false,
   ): IssuedCurrencyClient {
@@ -70,7 +75,7 @@ export default class IssuedCurrencyClient {
         : new GrpcNetworkClientWeb(grpcUrl)
     return new IssuedCurrencyClient(
       grpcNetworkClient,
-      new JsonRpcNetworkClient(jsonUrl),
+      new WebSocketNetworkClient(webSocketUrl, handleWebSocketErrorMessage),
       network,
     )
   }
@@ -85,7 +90,7 @@ export default class IssuedCurrencyClient {
    */
   public constructor(
     grpcNetworkClient: GrpcNetworkClientInterface,
-    private readonly jsonNetworkClient: JsonNetworkClientInterface,
+    readonly webSocketNetworkClient: WebSocketNetworkClientInterface,
     readonly network: XrplNetwork,
   ) {
     this.coreXrplClient = new CoreXrplClient(grpcNetworkClient, network)
@@ -116,12 +121,12 @@ export default class IssuedCurrencyClient {
       }
     }
 
-    const accountLinesResponse: AccountLinesResponse = await this.jsonNetworkClient.getAccountLines(
+    const accountLinesResponse: AccountLinesResponse = await this.webSocketNetworkClient.getAccountLines(
       classicAddress.address,
       peerAccount,
     )
 
-    const { error } = accountLinesResponse.result
+    const error = (accountLinesResponse as WebSocketFailureResponse).error
     if (error) {
       if (error === RippledErrorMessages.accountNotFound) {
         throw XrpError.accountNotFound
@@ -130,13 +135,14 @@ export default class IssuedCurrencyClient {
       }
     }
 
-    const rawTrustLines = accountLinesResponse.result.lines
+    const accountLinesSuccessfulResponse = accountLinesResponse as AccountLinesSuccessfulResponse
+    const rawTrustLines = accountLinesSuccessfulResponse.result.lines
     if (rawTrustLines === undefined) {
       throw XrpError.malformedResponse
     }
     const trustLines: Array<TrustLine> = []
-    rawTrustLines.map((trustLineJson) => {
-      trustLines.push(new TrustLine(trustLineJson))
+    rawTrustLines.map((trustline) => {
+      trustLines.push(new TrustLine(trustline))
     })
     return trustLines
   }
@@ -170,14 +176,16 @@ export default class IssuedCurrencyClient {
       return classicAddress.address
     })
 
-    const gatewayBalancesResponse: GatewayBalancesResponse = await this.jsonNetworkClient.getGatewayBalances(
+    const gatewayBalancesResponse: GatewayBalancesResponse = await this.webSocketNetworkClient.getGatewayBalances(
       classicAddress.address,
       classicAddressesToExclude,
     )
 
-    const { error } = gatewayBalancesResponse.result
+    const error = (gatewayBalancesResponse as WebSocketFailureResponse).error
     if (!error) {
-      return gatewayBalancesFromResponse(gatewayBalancesResponse)
+      return gatewayBalancesFromResponse(
+        gatewayBalancesResponse as GatewayBalancesSuccessfulResponse,
+      )
     }
     switch (error) {
       case RippledErrorMessages.accountNotFound:
@@ -190,6 +198,32 @@ export default class IssuedCurrencyClient {
       default:
         throw new XrpError(XrpErrorType.Unknown, error)
     }
+  }
+
+  /**
+   * Subscribes to all transactions that affect the specified account, and triggers a callback upon
+   * receiving each transaction.
+   * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
+   * @see https://xrpl.org/subscribe.html
+   *
+   * @param account The account for which to subscribe to relevant transactions, encoded as an X-Address.
+   * @param callback The function to trigger upon receiving a transaction event from the ledger.
+   * @returns Whether the request to subscribe succeeded.
+   */
+  public async monitorAccountTransactions(
+    account: string,
+    callback: (data: TransactionResponse) => void,
+  ): Promise<boolean> {
+    const classicAddress = XrpUtils.decodeXAddress(account)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const response = await this.webSocketNetworkClient.subscribeToAccount(
+      classicAddress.address,
+      callback,
+    )
+    return response.status === 'success'
   }
 
   /**
@@ -649,6 +683,34 @@ export default class IssuedCurrencyClient {
       destination,
       currency,
       issuer,
+      amount,
+    )
+  }
+
+  /**
+   * Redeems issued currency back to the original issuer.
+   * Typically, this should trigger off-ledger action by the issuing institution.
+   *
+   * @param sender The Wallet redeeming the issued currency, and that will sign the transaction.
+   * @param issuer The original issuer of the issued currency, encoded as an X-address (see https://xrpaddress.info/).
+   * @param currency The three-letter currency code of the issued currency being redeemed.
+   * @param amount The amount of issued currency to redeem.
+   */
+  public async redeemIssuedCurrency(
+    sender: Wallet,
+    issuer: string,
+    currency: string,
+    amount: string,
+  ): Promise<TransactionResult> {
+    // Redemption of issued currency is achieved by sending issued currency directly to the original issuer.
+    // However, the issuer field specified in the amount is treated as a special case in this circumstance, and should be
+    // set to the address of the account initiating the redemption.
+    // See: https://xrpl.org/payment.html#special-issuer-values-for-sendmax-and-amount
+    return await this.issuedCurrencyPayment(
+      sender,
+      issuer,
+      currency,
+      sender.getAddress(),
       amount,
     )
   }

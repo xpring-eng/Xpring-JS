@@ -11,10 +11,11 @@ const timeoutMs = 60 * 1000
 
 // An IssuedCurrencyClient that makes requests.
 const rippledGrpcUrl = 'test.xrp.xpring.io:50051'
-const rippledJsonUrl = 'http://test.xrp.xpring.io:51234'
+const rippledWebSocketUrl = 'wss://wss.test.xrp.xpring.io'
 const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
   rippledGrpcUrl,
-  rippledJsonUrl,
+  rippledWebSocketUrl,
+  console.log,
   XrplNetwork.Test,
 )
 
@@ -24,6 +25,11 @@ const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoi
 describe('Issued Currency Payment Integration Tests', function (): void {
   // Retry integration tests on failure.
   this.retries(3)
+
+  after(function (done) {
+    issuedCurrencyClient.webSocketNetworkClient.close()
+    done()
+  })
 
   it('createIssuedCurrency, combined cases', async function (): Promise<void> {
     this.timeout(timeoutMs)
@@ -350,15 +356,13 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('issuedCurrencyPayment - redeem issued currency to issuer', async function (): Promise<
-    void
-  > {
+  it('redeemIssuedCurrency', async function (): Promise<void> {
     this.timeout(timeoutMs)
-    // GIVEN an operational address with some issued currency, and an issuing address that has not enabled rippling
+    // GIVEN a customer account with some issued currency, and an issuing address
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
     const customerWallet = await XRPTestUtils.randomWalletFromFaucet()
 
-    // establish trust line from operational to issuing
+    // establish trust line from customer to issuer
     const trustLineLimit = '1000'
     const trustLineCurrency = 'FOO'
     await issuedCurrencyClient.createTrustLine(
@@ -378,11 +382,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // WHEN an issued currency payment is made back to the issuer
-    const transactionResult = await issuedCurrencyClient.issuedCurrencyPayment(
+    const transactionResult = await issuedCurrencyClient.redeemIssuedCurrency(
       customerWallet,
       issuerWallet.getAddress(),
       'FOO',
-      issuerWallet.getAddress(),
       '100',
     )
 

@@ -68,6 +68,9 @@ describe('GatewayBalances Conversion Tests', function (): void {
   it('GatewayBalances from GatewayBalancesResponse - all fields present', function (): void {
     // GIVEN a raw JSON GatewayBalancesResponse
     const testGatewayBalancesResponse = {
+      id: 'gateway_balances',
+      status: 'success',
+      type: 'response',
       result: {
         ...baseResult,
         assets: testAssets,
@@ -97,6 +100,9 @@ describe('GatewayBalances Conversion Tests', function (): void {
   it('GatewayBalances from GatewayBalancesResponse - missing some optional fields', function (): void {
     // GIVEN a raw JSON GatewayBalancesResponse
     const testGatewayBalancesResponse = {
+      id: 'gateway_balances',
+      status: 'success',
+      type: 'response',
       result: { ...baseResult, balances: testBalances, validated: true },
     }
 
@@ -119,6 +125,9 @@ describe('GatewayBalances Conversion Tests', function (): void {
   it('GatewayBalances from GatewayBalancesResponse - throws if ledger not validated', function (): void {
     // GIVEN a raw JSON GatewayBalancesResponse with validated field set to false
     const testGatewayBalancesResponse = {
+      id: 'gateway_balances',
+      status: 'success',
+      type: 'response',
       result: { ...baseResult, validated: false },
     }
 
@@ -131,7 +140,10 @@ describe('GatewayBalances Conversion Tests', function (): void {
   it('GatewayBalances from GatewayBalancesResponse - throws if account is missing', function (): void {
     // GIVEN a raw JSON GatewayBalancesResponse missing the account field
     const testGatewayBalancesResponse = {
-      result: { account: undefined, status: 'success', validated: true },
+      id: 'gateway_balances',
+      status: 'success',
+      type: 'response',
+      result: { account: undefined, validated: true },
     }
 
     // WHEN a GatewayBalances object is constructed from it THEN an error is thrown.

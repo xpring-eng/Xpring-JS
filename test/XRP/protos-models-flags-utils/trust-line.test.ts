@@ -2,12 +2,12 @@ import { assert } from 'chai'
 
 import TrustLine from '../../../src/XRP/shared/trustline'
 import 'mocha'
-import { TrustLineJson } from '../../../src/XRP/shared/rippled-json-rpc-schema'
+import { TrustLineResponse } from '../../../src/XRP/shared/rippled-web-socket-schema'
 
 describe('TrustLine Conversion Tests', function (): void {
-  it('TrustLine from JSON - all fields present', function (): void {
-    // GIVEN a raw JSON object representing a trust line on the XRPL
-    const testJsonTrustLineAllFields: TrustLineJson = {
+  it('TrustLine from Object - all fields present', function (): void {
+    // GIVEN a raw object representing a trust line on the XRPL
+    const testTrustLineAllFields: TrustLineResponse = {
       account: 'r3vi7mWxru9rJCxETCyA1CHvzL96eZWx5z',
       balance: '0',
       currency: 'USD',
@@ -24,7 +24,7 @@ describe('TrustLine Conversion Tests', function (): void {
     }
 
     // WHEN a TrustLine object is constructed from it
-    const trustLine = new TrustLine(testJsonTrustLineAllFields)
+    const trustLine = new TrustLine(testTrustLineAllFields)
 
     // THEN the result is as expected.
     assert.equal(trustLine.account, 'r3vi7mWxru9rJCxETCyA1CHvzL96eZWx5z')
@@ -42,9 +42,9 @@ describe('TrustLine Conversion Tests', function (): void {
     assert.equal(trustLine.freezePeer, true)
   })
 
-  it('TrustLine from JSON - missing some optional booleans', function (): void {
-    // GIVEN a raw JSON object representing a trust line on the XRPL with some missing optional fields
-    const testJsonTrustLineMissingOptionals: TrustLineJson = {
+  it('TrustLine from Object - missing some optional booleans', function (): void {
+    // GIVEN a raw object representing a trust line on the XRPL with some missing optional fields
+    const testTrustLineMissingOptionals: TrustLineResponse = {
       account: 'r3vi7mWxru9rJCxETCyA1CHvzL96eZWx5z',
       balance: '0',
       currency: 'USD',
@@ -55,7 +55,7 @@ describe('TrustLine Conversion Tests', function (): void {
     }
 
     // WHEN a TrustLine object is constructed from it
-    const trustLine = new TrustLine(testJsonTrustLineMissingOptionals)
+    const trustLine = new TrustLine(testTrustLineMissingOptionals)
 
     // THEN the result is as expected
     assert.equal(trustLine.account, 'r3vi7mWxru9rJCxETCyA1CHvzL96eZWx5z')
@@ -73,9 +73,9 @@ describe('TrustLine Conversion Tests', function (): void {
     assert.equal(trustLine.freezePeer, false)
   })
 
-  it('TrustLine from JSON - optional booleans presented as false', function (): void {
-    // GIVEN a raw JSON object representing a trust line on the XRPL with optional falsey booleans explicitly set to false
-    const testJsonTrustLineFalseOptionals: TrustLineJson = {
+  it('TrustLine from Object - optional booleans presented as false', function (): void {
+    // GIVEN a raw object representing a trust line on the XRPL with optional falsey booleans explicitly set to false
+    const testTrustLineFalseOptionals: TrustLineResponse = {
       account: 'r3vi7mWxru9rJCxETCyA1CHvzL96eZWx5z',
       balance: '0',
       currency: 'USD',
@@ -90,7 +90,7 @@ describe('TrustLine Conversion Tests', function (): void {
     }
 
     // WHEN a TrustLine object is constructed from it
-    const trustLine = new TrustLine(testJsonTrustLineFalseOptionals)
+    const trustLine = new TrustLine(testTrustLineFalseOptionals)
 
     // THEN the result is as expected
     assert.equal(trustLine.account, 'r3vi7mWxru9rJCxETCyA1CHvzL96eZWx5z')

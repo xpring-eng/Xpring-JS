@@ -1,5 +1,8 @@
-/* Schema for adding type information to Web Socket objects. */
+/* Schema for adding type information to WebSocket objects. */
 
+/**
+ * The options for the `readyState` of a websocket.
+ */
 enum WebSocketReadyState {
   Connecting,
   Open,
@@ -15,50 +18,96 @@ enum WebSocketReadyState {
  */
 enum RippledMethod {
   subscribe = 'subscribe',
+  accountLines = 'account_lines',
+  gatewayBalances = 'gateway_balances',
 }
 
 /**
- * The standard format for a request to the Web Socket API exposed by a rippled node.
+ * The standard format for a request to the WebSocket API exposed by a rippled node.
  * @see https://xrpl.org/request-formatting.html
  */
-interface WebSocketRequestOptions {
+type WebSocketRequest =
+  | SubscribeRequest
+  | AccountLinesRequest
+  | GatewayBalancesRequest
+
+interface BaseRequest {
+  id: number | string
   command: RippledMethod
-  id: string
+}
+
+/**
+ * The standard format for a `subscribe` request to the Web Socket API.
+ * @see https://xrpl.org/subscribe.html
+ */
+interface SubscribeRequest extends BaseRequest {
   streams?: string[]
   accounts?: string[]
 }
 
-type WebSocketResponse =
-  | WebSocketStatusResponse
-  | WebSocketTransactionResponse
-  | WebSocketStatusErrorResponse
+/**
+ * The standard format for an `account_lines` request to the Web Socket API.
+ * @see https://xrpl.org/account_lines.html
+ */
+interface AccountLinesRequest extends BaseRequest {
+  account: string
+  ledger_index?: string
+  peer?: string
+}
 
 /**
- * The standard format for a response from the WebSocket API exposed by a rippled node.
+ * The standard format for a `gateway_balances` request to the Web Socket API.
+ * @see https://xrpl.org/gateway_balances.html
+ */
+interface GatewayBalancesRequest extends BaseRequest {
+  account: string
+  strict?: boolean
+  hotwallet?: string | string[]
+  ledger_index?: number | string
+}
+
+/**
+ * The common elements in a response from the WebSocket API exposed by a rippled node.
  * @see https://xrpl.org/response-formatting.html
  */
-interface WebSocketStatusResponse {
-  id: string
-  result: WebSocketTransactionResponse | EmptyObject
+interface BaseResponse {
+  id: number | string
   status: string
   type: string
 }
 
-interface WebSocketStatusErrorResponse {
-  id: string
-  status: string
-  type: string
+type WebSocketResponse =
+  | StatusResponse
+  | TransactionResponse
+  | AccountLinesResponse
+  | GatewayBalancesResponse
+
+type StatusResponse = StatusSuccessfulResponse | WebSocketFailureResponse
+
+/**
+ * The standard format for a direct response from the WebSocket API to a request.
+ * @see https://xrpl.org/response-formatting.html
+ */
+interface StatusSuccessfulResponse extends BaseResponse {
+  result: TransactionResponse | EmptyObject
+}
+
+/**
+ * The standard format for an error response from the WebSocket API exposed by a rippled node.
+ * @see https://xrpl.org/response-formatting.html
+ */
+interface WebSocketFailureResponse extends BaseResponse {
   error: string
   error_code: number
   error_message: string
-  request: WebSocketRequestOptions
+  request: WebSocketRequest
 }
 
 /**
  * The standard format for a response from the WebSocket API for a transaction on the ledger.
  * @see https://xrpl.org/subscribe.html#transaction-streams
  */
-interface WebSocketTransactionResponse {
+interface TransactionResponse {
   engine_result: string
   engine_result_code: number
   engine_result_message: string
@@ -74,6 +123,83 @@ interface WebSocketTransactionResponse {
   transaction: WebSocketTransaction
   type: string
   validated: boolean
+}
+
+/**
+ * The standard format(s) for a response from the WebSocket API for an `account_lines` request.
+ * @see https://xrpl.org/account_lines.html
+ */
+type AccountLinesResponse =
+  | AccountLinesSuccessfulResponse
+  | WebSocketFailureResponse
+
+interface AccountLinesSuccessfulResponse extends BaseResponse {
+  result: {
+    account: string
+    ledger_hash: string
+    ledger_index: number
+    lines: Array<TrustLineResponse>
+    validated: boolean
+  }
+}
+
+/**
+ * The standard format(s) for a response from the WebSocket API for a `gateway_balances` request.
+ * @see https://xrpl.org/gateway_balances.html
+ */
+type GatewayBalancesResponse =
+  | GatewayBalancesSuccessfulResponse
+  | WebSocketFailureResponse
+
+interface GatewayBalancesSuccessfulResponse extends BaseResponse {
+  result: {
+    account?: string
+    assets?: { [account: string]: CurrencyValuePair[] }
+    balances?: { [account: string]: CurrencyValuePair[] }
+    ledger_hash?: string
+    ledger_index?: number
+    obligations?: { [currencyCode: string]: string }
+    validated?: boolean
+  }
+}
+
+/**
+ * The standard format for a response from the WebSocket API about a transaction.
+ * @see https://xrpl.org/subscribe.html#transaction-streams
+ */
+interface WebSocketTransaction {
+  Account: string
+  Amount: string
+  Destination: string
+  Fee: string
+  Flags: number
+  LastLedgerSequence: number
+  Sequence: number
+  SigningPubKey: string
+  TransactionType: string
+  TxnSignature: string
+  date: number
+  hash: string
+}
+
+/**
+ * The standard format for a response from the WebSocket API about a trustline.
+ * @see https://xrpl.org/account_lines.html
+ */
+interface TrustLineResponse {
+  account: string
+  balance: string
+  currency: string
+  limit: string
+  limit_peer: string
+  quality_in: number
+  quality_out: number
+  no_ripple?: boolean
+  no_ripple_peer?: boolean
+  authorized?: boolean
+  peer_authorized?: boolean
+  freeze?: boolean
+  freeze_peer?: boolean
 }
 
 type ChangedNode = CreatedNode | ModifiedNode | DeletedNode
@@ -133,23 +259,9 @@ interface DeletedNode {
   LedgerIndex: string
 }
 
-/**
- * The standard format for a response from the WebSocket API about a transaction.
- * @see https://xrpl.org/subscribe.html#transaction-streams
- */
-interface WebSocketTransaction {
-  Account: string
-  Amount: string
-  Destination: string
-  Fee: string
-  Flags: number
-  LastLedgerSequence: number
-  Sequence: number
-  SigningPubKey: string
-  TransactionType: string
-  TxnSignature: string
-  date: number
-  hash: string
+interface CurrencyValuePair {
+  currency: string
+  value: string
 }
 
 /**
@@ -158,12 +270,20 @@ interface WebSocketTransaction {
 type EmptyObject = Record<never, never>
 
 export {
+  WebSocketRequest,
+  WebSocketResponse,
+  WebSocketFailureResponse,
+  StatusResponse,
+  TransactionResponse,
+  AccountLinesResponse,
+  AccountLinesSuccessfulResponse,
+  GatewayBalancesResponse,
+  GatewayBalancesSuccessfulResponse,
   WebSocketReadyState,
   RippledMethod,
-  WebSocketRequestOptions,
-  WebSocketResponse,
-  WebSocketStatusResponse,
-  WebSocketStatusErrorResponse,
+  SubscribeRequest,
+  AccountLinesRequest,
+  GatewayBalancesRequest,
   WebSocketTransaction,
-  WebSocketTransactionResponse,
+  TrustLineResponse,
 }

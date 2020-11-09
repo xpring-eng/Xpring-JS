@@ -3,12 +3,14 @@ import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
 import {
   AccountLinesResponse,
   GatewayBalancesResponse,
-} from '../../../src/XRP/shared/rippled-json-rpc-schema'
+  StatusResponse,
+  TransactionResponse,
+} from '../../../src/XRP/shared/rippled-web-socket-schema'
 
 /**
  * A list of responses the fake network client will give.
  */
-export class FakeJsonNetworkClientResponses {
+export class FakeWebSocketNetworkClientResponses {
   /**
    * A default error.
    */
@@ -18,37 +20,59 @@ export class FakeJsonNetworkClientResponses {
   /**
    * A default set of responses that will always succeed.
    */
-  public static defaultSuccessfulResponses = new FakeJsonNetworkClientResponses()
+  public static defaultSuccessfulResponses = new FakeWebSocketNetworkClientResponses()
 
   /**
    * A default set of responses that will always fail.
    */
-  public static defaultErrorResponses = new FakeJsonNetworkClientResponses(
-    FakeJsonNetworkClientResponses.defaultError,
+  public static defaultErrorResponses = new FakeWebSocketNetworkClientResponses(
+    FakeWebSocketNetworkClientResponses.defaultError,
   )
 
   /**
    * Construct a new set of responses.
    *
-   * @param getAccountLinesResponse The response or error that will be returned from the getAccountLines request.
-   *                                Default is the example at https://xrpl.org/account_lines.html#response-format for JSON-RPC.
+   * @param getSubscribeResponse The response or error that will be returned from the subscribe request.
    */
   public constructor(
+    public readonly getSubscribeResponse: Result<
+      StatusResponse
+    > = FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
     public readonly getAccountLinesResponse: Result<
       AccountLinesResponse
-    > = FakeJsonNetworkClientResponses.defaultGetAccountLinesResponse(),
+    > = FakeWebSocketNetworkClientResponses.defaultGetAccountLinesResponse(),
     public readonly getGatewayBalancesResponse: Result<
       GatewayBalancesResponse
-    > = FakeJsonNetworkClientResponses.defaultGetGatewayBalancesResponse(),
+    > = FakeWebSocketNetworkClientResponses.defaultGetGatewayBalancesResponse(),
   ) {}
+
+  /**
+   * Construct a default response for a subscribe request.
+   */
+  public static defaultSubscribeResponse(): StatusResponse {
+    return {
+      id:
+        'monitor_transactions_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
+      result: {},
+      status: 'success',
+      type: 'response',
+    }
+  }
 
   /**
    * Construct a default response for getAccountLines request.
    */
   public static defaultGetAccountLinesResponse(): AccountLinesResponse {
     return {
+      id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+      type: 'response',
+      status: 'success',
       result: {
         account: 'r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
+        ledger_hash:
+          '7866E9E228680D236FF0141D4E2EE9E2914FA35EFC20288DB590BAE0F3500142',
+        ledger_index: 11822601,
+        validated: true,
         lines: [
           {
             account: 'r3vi7mWxru9rJCxETCyA1CHvzL96eZWx5z',
@@ -81,7 +105,6 @@ export class FakeJsonNetworkClientResponses {
             quality_out: 0,
           },
         ],
-        status: 'success',
       },
     }
   }
@@ -91,6 +114,9 @@ export class FakeJsonNetworkClientResponses {
    */
   public static defaultGetGatewayBalancesResponse(): GatewayBalancesResponse {
     return {
+      id: 'gateway_balances_rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',
+      status: 'success',
+      type: 'response',
       result: {
         account: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',
         assets: {
@@ -148,7 +174,6 @@ export class FakeJsonNetworkClientResponses {
           GBP: '4991.38706013193',
           USD: '1997134.20229482',
         },
-        status: 'success',
         validated: true,
       },
     }
@@ -158,10 +183,22 @@ export class FakeJsonNetworkClientResponses {
 /**
  * A fake network client which stubs network interaction.
  */
-export class FakeJsonNetworkClient {
+export class FakeWebSocketNetworkClient {
   public constructor(
-    private readonly responses: FakeJsonNetworkClientResponses = FakeJsonNetworkClientResponses.defaultSuccessfulResponses,
+    private readonly responses: FakeWebSocketNetworkClientResponses = FakeWebSocketNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
+
+  subscribeToAccount(
+    _account: string,
+    _callback: (data: TransactionResponse) => void,
+  ): Promise<StatusResponse> {
+    const subscribeResponse = this.responses.getSubscribeResponse
+    if (subscribeResponse instanceof Error) {
+      return Promise.reject(subscribeResponse)
+    }
+
+    return Promise.resolve(subscribeResponse)
+  }
 
   getAccountLines(_address: string): Promise<AccountLinesResponse> {
     const accountLinesResponse = this.responses.getAccountLinesResponse
@@ -182,5 +219,9 @@ export class FakeJsonNetworkClient {
     }
 
     return Promise.resolve(gatewayBalancesResponse)
+  }
+
+  close(): void {
+    return
   }
 }
