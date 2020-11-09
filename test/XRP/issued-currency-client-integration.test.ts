@@ -614,7 +614,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(trustLine.limit, trustLineAmount)
   })
 
-  it('clearNoRipple - clears noRipple on a trust line', async function (): Promise<
+  it('enableRipplingForTrustLine - clears noRipple on a trust line', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -634,7 +634,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     const trustLineAmount = '1'
 
-    await issuedCurrencyClient.setNoRipple(
+    await issuedCurrencyClient.disableRipplingForTrustLine(
       trustLinePeerAccount.getAddress(),
       trustLineCurrency,
       trustLineAmount,
@@ -642,7 +642,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
 
     // WHEN the issuer sets clears no rippling on the trust line
-    await issuedCurrencyClient.enableTrustLineRippling(
+    await issuedCurrencyClient.enableRipplingForTrustLine(
       trustLinePeerAccount.getAddress(),
       trustLineCurrency,
       trustLineAmount,
