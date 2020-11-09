@@ -571,7 +571,7 @@ export default class IssuedCurrencyClient {
    *
    * @param trustLinePeerAccount The X-Address of the account involved in the trust line to re-enable rippling.
    * @param currencyName The currency of the trust line to re-enable rippling.
-   * @amount The maximum amount of debt to allow on this trust line.
+   * @param amount The maximum amount of debt to allow on this trust line.
    * @param wallet The wallet re-enabling rippling on the trust line.
    */
   public async clearNoRipple(
