@@ -142,7 +142,6 @@ export default class WebSocketNetworkClient {
    * @see https://xrpl.org/subscribe.html
    *
    * @param account The account from which to subscribe to incoming transactions, encoded as a classic address.
-   * @param subscriptionId The ID used for the subscription.
    * @param callback The function called whenever a new transaction is received.
    * @returns The response from the websocket confirming the subscription.
    */
@@ -165,6 +164,35 @@ export default class WebSocketNetworkClient {
       )
     }
     this.accountCallbacks.set(account, callback)
+    return response as StatusResponse
+  }
+
+  /**
+   * Unsubscribes from notifications about every validated transaction that affects the given account.
+   * @see https://xrpl.org/subscribe.html
+   *
+   * @param account The account from which to unsubscribe from incoming transactions, encoded as a classic address.
+   * @param callback The function called whenever a new transaction is received.
+   * @returns The response from the websocket confirming the unsubscription.
+   */
+  public async unsubscribeFromAccount(
+    account: string,
+  ): Promise<StatusResponse> {
+    // TODO add check for if account is subscribed to
+    const unsubscribeRequest: SubscribeRequest = {
+      id: `unsubscribe_transactions_${account}_${this.idNumber}`,
+      command: RippledMethod.unsubscribe,
+      accounts: [account],
+    }
+    this.idNumber++
+    const response = await this.sendApiRequest(unsubscribeRequest)
+    if (response.status !== 'success') {
+      const errorResponse = response as WebSocketFailureResponse
+      throw new XrpError(
+        XrpErrorType.Unknown,
+        `Unsubscribe request for ${account} failed, ${errorResponse.error_message}`,
+      )
+    }
     return response as StatusResponse
   }
 
