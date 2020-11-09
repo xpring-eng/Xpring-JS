@@ -698,14 +698,11 @@ export default class IssuedCurrencyClient {
    * @param issuer The issuing address of the issued currency being sent, encoded as an X-address.
    * @param amount The amount of issued currency to pay to the destination.
    * @param transferFee (Optional) The transfer fee associated with the issuing account, expressed as a percentage. (i.e. a value of .5 indicates
-   *                    a 0.5% transfer fee).  Supply this field for automatic calculation of the sendMax value for this payment.
-   *                    Either this or sendMaxvalue may be specified, but not both.
+   *               a 0.5% transfer fee).  Supply this field for automatic calculation of the sendMax value for this payment.
+   *               Either this or sendMaxvalue may be specified, but not both.
    * @param sendMaxValue (Optional) A manual specification of the maximum amount of source currency this payment is allowed to cost,
-   *                      including transfer fees, exchange rates, and slippage. Does not include the XRP destroyed as a cost for submitting
-   *                      the transaction. Either this or transferFee may be specified, but not both.
-   * @param useAnyValidIssuer (Optional) Defaults to false. Whether to invoke the special case of sending currency issued by "any issuer that the destination accepts."
-   *                          This includes all addresses to which the destination has extended trust lines, as well as currencies issued by the destination.
-   *                          See https://xrpl.org/payment.html#special-issuer-values-for-sendmax-and-amount
+   *               including transfer fees, exchange rates, and slippage. Does not include the XRP destroyed as a cost for submitting
+   *               the transaction. Either this or transferFee may be specified, but not both.
    */
   public async sendIssuedCurrencyPayment(
     sender: Wallet,
@@ -728,11 +725,6 @@ export default class IssuedCurrencyClient {
         'The destination address cannot be the same as the issuer. To redeem issued currency, use `redeemIssuedCurrency`.',
       )
     }
-    // TODO: (acorso) A payment like this might fail if:
-    // - the issuer has not enabled rippling on its account
-    // - the issuer has enabled authorized trust lines, and the recipient of the payment does NOT have an authorized trust line to the issuer
-    // We may want to decide if it's worth incurring the cost of querying for this information BEFORE sending a payment that will destroy
-    // a transaction cost.  Or maybe we provide a different public method that can perform these checks if the user cares.
 
     return await this.issuedCurrencyPayment(
       sender,
