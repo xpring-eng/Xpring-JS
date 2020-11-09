@@ -290,7 +290,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.isUndefined(gatewayBalances.obligations)
   })
 
-  it('setTransferFee - rippled', async function (): Promise<void> {
+  it('getTransferFee/setTransferFee - rippled', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN setTransferFee is called
@@ -303,11 +305,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const transactionHash = result.hash
     const transactionStatus = result.status
 
-    const accountData = await XRPTestUtils.getAccountData(
-      wallet,
-      rippledGrpcUrl,
+    const transferRate = await issuedCurrencyClient.getTransferFee(
+      wallet.getAddress(),
     )
-    const transferRate = accountData.getTransferRate()?.getValue()
 
     // THEN the transaction was successfully submitted and the correct transfer rate was set on the account.
     assert.exists(transactionHash)

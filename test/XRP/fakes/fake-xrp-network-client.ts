@@ -38,6 +38,7 @@ import {
   testTransactionPaymentAllFields,
 } from './fake-xrp-protobufs'
 import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
+import { TransferRate } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
 
 /**
  * A list of responses the fake network client will give.
@@ -104,8 +105,12 @@ export class FakeXRPNetworkClientResponses {
     const balance = new Balance()
     balance.setValue(currencyAmount)
 
+    const transferRate = new TransferRate()
+    transferRate.setValue(1000000012)
+
     const accountRoot = new AccountRoot()
     accountRoot.setBalance(balance)
+    accountRoot.setTransferRate(transferRate)
 
     const accountInfo = new GetAccountInfoResponse()
     accountInfo.setAccountData(accountRoot)
