@@ -566,9 +566,8 @@ export default class IssuedCurrencyClient {
 
   /**
    * Re-enables rippling on the trust line between this account (issuing account) and another account.
-   * Note that the trust line's limit is set to 0.
    *
-   * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
+   * @see https://xrpl.org/rippling.html#enabling-disabling-no-ripple
    *
    * @param trustLinePeerAccount The X-Address of the account involved in the trust line to re-enable rippling.
    * @param currencyName The currency of the trust line to re-enable rippling.
