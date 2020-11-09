@@ -642,7 +642,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
 
     // WHEN the issuer sets clears no rippling on the trust line
-    await issuedCurrencyClient.clearNoRipple(
+    await issuedCurrencyClient.enableTrustLineRippling(
       trustLinePeerAccount.getAddress(),
       trustLineCurrency,
       trustLineAmount,
