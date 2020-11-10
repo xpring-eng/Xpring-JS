@@ -804,11 +804,11 @@ export default class IssuedCurrencyClient {
    *               Typically (but not always) the original issuer of the currency.  See https://xrpl.org/payment.html#special-issuer-values-for-sendmax-and-amount.
    * @param amount The amount of issued currency to pay to the destination.
    * @param transferFee (Optional) The transfer fee associated with the issuing account, expressed as a percentage. (i.e. a value of .5 indicates
-   *                    a 0.5% transfer fee).  Supply this field for automatic calculation of the sendMax value for this payment.
-   *                    Either this or sendMaxvalue may be specified, but not both.
+   *               a 0.5% transfer fee).  Supply this field for automatic calculation of the sendMax value for this payment.
+   *               Either this or sendMaxvalue may be specified, but not both.
    * @param sendMaxValue (Optional) A manual specification of the maximum amount of source currency this payment is allowed to cost,
-   *                      including transfer fees, exchange rates, and slippage. Does not include the XRP destroyed as a cost for submitting \
-   *                      the transaction. Either this or transferFee may be specified, but not both.
+   *               including transfer fees, exchange rates, and slippage. Does not include the XRP destroyed as a cost for submitting \
+   *               the transaction. Either this or transferFee may be specified, but not both.
    */
   public async issuedCurrencyPayment(
     sender: Wallet,
