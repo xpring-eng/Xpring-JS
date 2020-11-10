@@ -4,7 +4,6 @@ import WebSocketNetworkClient from '../../src/XRP/network-clients/web-socket-net
 import {
   TransactionResponse,
   RipplePathFindSuccessfulResponse,
-  IssuedCurrency,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
 import XrpError from '../../src/XRP/shared/xrp-error'
 import XrpClient from '../../src/XRP/xrp-client'
