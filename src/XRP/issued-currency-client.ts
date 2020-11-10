@@ -928,13 +928,15 @@ export default class IssuedCurrencyClient {
         'Transfer Fee must be positive.',
       )
     }
+    // maximum allowed decimal precision for issued currency values.
+    const maxDecimalPrecision = 15
     const numericAmount = new BigNumber(amount)
     const transferRate = new BigNumber(1 + transferFee / 100)
 
     // calculate the total sendMaxValue with any number of decimal places.
     const rawSendMaxValue: BigNumber = numericAmount.multipliedBy(transferRate)
 
-    if (rawSendMaxValue.toFixed().length <= 15) {
+    if (rawSendMaxValue.toFixed().length <= maxDecimalPrecision) {
       return rawSendMaxValue.toFixed()
     }
 
