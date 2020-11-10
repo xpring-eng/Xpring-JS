@@ -90,7 +90,7 @@ describe('WebSocket Tests', function (): void {
     assert.equal(response.type, 'response')
 
     // WHEN a payment is sent to that address
-    await xrpClient.send(xrpAmount, xAddress, wallet2)
+    await xrpClient.sendXrp(xrpAmount, xAddress, wallet2)
 
     await waitUntilMessageReceived()
 
