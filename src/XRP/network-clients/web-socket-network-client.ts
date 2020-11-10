@@ -1,18 +1,21 @@
 import WebSocket = require('ws')
 import { XrpError, XrpErrorType } from '../shared'
 import {
-  AccountLinesResponse,
-  GatewayBalancesResponse,
-  WebSocketRequest,
-  StatusResponse,
-  TransactionResponse,
   WebSocketReadyState,
   RippledMethod,
+  WebSocketRequest,
   SubscribeRequest,
   AccountLinesRequest,
   GatewayBalancesRequest,
+  RipplePathFindRequest,
   WebSocketResponse,
   WebSocketFailureResponse,
+  StatusResponse,
+  TransactionResponse,
+  AccountLinesResponse,
+  GatewayBalancesResponse,
+  RipplePathFindResponse,
+  CurrencyValuePair,
 } from '../shared/rippled-web-socket-schema'
 
 function sleep(ms: number): Promise<void> {
@@ -216,6 +219,31 @@ export default class WebSocketNetworkClient {
       gatewayBalancesRequest,
     )
     return gatewayBalancesResponse as GatewayBalancesResponse
+  }
+
+  /**
+   * Submits a ripple_path_find request to the rippled WebSocket API.
+   * @see https://xrpl.org/ripple_path_find.html
+   *
+   * @param sourceAccount
+   */
+  public async findRipplePath(
+    sourceAccount: string,
+    destinationAccount: string,
+    destinationAmount: string | CurrencyValuePair,
+  ): Promise<RipplePathFindResponse> {
+    const ripplePathFindRequest: RipplePathFindRequest = {
+      id: `${RippledMethod.ripplePathFind}_${sourceAccount}_${this.idNumber}`,
+      command: RippledMethod.ripplePathFind,
+      source_account: sourceAccount,
+      destination_account: destinationAccount,
+      destination_amount: destinationAmount,
+    }
+    this.idNumber++
+    const ripplePathFindResponse = await this.sendApiRequest(
+      ripplePathFindRequest,
+    )
+    return ripplePathFindResponse as RipplePathFindResponse
   }
 
   /**

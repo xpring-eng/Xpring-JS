@@ -20,6 +20,7 @@ enum RippledMethod {
   subscribe = 'subscribe',
   accountLines = 'account_lines',
   gatewayBalances = 'gateway_balances',
+  ripplePathFind = 'ripple_path_find',
 }
 
 /**
@@ -30,6 +31,7 @@ type WebSocketRequest =
   | SubscribeRequest
   | AccountLinesRequest
   | GatewayBalancesRequest
+  | RipplePathFindRequest
 
 interface BaseRequest {
   id: number | string
@@ -67,6 +69,17 @@ interface GatewayBalancesRequest extends BaseRequest {
 }
 
 /**
+ * The standard format for a `ripple_path_find` request to the Web Socket API.
+ * @see https://xrpl.org/ripple_path_find.html
+ */
+interface RipplePathFindRequest extends BaseRequest {
+  source_account: string
+  destination_account: string
+  destination_amount: string | CurrencyValuePair // TODO: check object format
+  // TODO: check with @amiecorso on what else is needed
+}
+
+/**
  * The common elements in a response from the WebSocket API exposed by a rippled node.
  * @see https://xrpl.org/response-formatting.html
  */
@@ -81,6 +94,7 @@ type WebSocketResponse =
   | TransactionResponse
   | AccountLinesResponse
   | GatewayBalancesResponse
+  | RipplePathFindResponse
 
 type StatusResponse = StatusSuccessfulResponse | WebSocketFailureResponse
 
@@ -164,6 +178,22 @@ interface GatewayBalancesSuccessfulResponse extends BaseResponse {
 }
 
 /**
+ * The standard format(s) for a response from the WebSocket API for a `ripple_path_find` request.
+ * @see https://xrpl.org/ripple_path_find.html
+ */
+type RipplePathFindResponse =
+  | RipplePathFindSuccessfulResponse
+  | WebSocketFailureResponse
+
+interface RipplePathFindSuccessfulResponse extends BaseResponse {
+  result: {
+    alternatives: PossiblePath[] // TODO: fill this in
+    destination_account: string
+    destination_currencies: string[]
+  }
+}
+
+/**
  * The standard format for a response from the WebSocket API about a transaction.
  * @see https://xrpl.org/subscribe.html#transaction-streams
  */
@@ -200,6 +230,17 @@ interface TrustLineResponse {
   peer_authorized?: boolean
   freeze?: boolean
   freeze_peer?: boolean
+}
+
+interface PossiblePath {
+  paths_computed: PathElement[][]
+  source_amount: string | CurrencyValuePair
+}
+
+interface PathElement {
+  account?: string
+  currency?: string
+  issuer?: string
 }
 
 type ChangedNode = CreatedNode | ModifiedNode | DeletedNode
@@ -270,7 +311,13 @@ interface CurrencyValuePair {
 type EmptyObject = Record<never, never>
 
 export {
+  WebSocketReadyState,
+  RippledMethod,
   WebSocketRequest,
+  SubscribeRequest,
+  AccountLinesRequest,
+  GatewayBalancesRequest,
+  RipplePathFindRequest,
   WebSocketResponse,
   WebSocketFailureResponse,
   StatusResponse,
@@ -279,11 +326,8 @@ export {
   AccountLinesSuccessfulResponse,
   GatewayBalancesResponse,
   GatewayBalancesSuccessfulResponse,
-  WebSocketReadyState,
-  RippledMethod,
-  SubscribeRequest,
-  AccountLinesRequest,
-  GatewayBalancesRequest,
+  RipplePathFindResponse,
   WebSocketTransaction,
   TrustLineResponse,
+  CurrencyValuePair,
 }
