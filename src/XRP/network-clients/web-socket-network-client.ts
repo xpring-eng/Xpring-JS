@@ -178,7 +178,12 @@ export default class WebSocketNetworkClient {
   public async unsubscribeFromAccount(
     account: string,
   ): Promise<StatusResponse> {
-    // TODO add check for if account is subscribed to
+    if (!this.accountCallbacks.has(account)) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        `Not currently subscribed to ${account}, do not need to unsubscribe`,
+      )
+    }
     const unsubscribeRequest: SubscribeRequest = {
       id: `unsubscribe_transactions_${account}_${this.idNumber}`,
       command: RippledMethod.unsubscribe,
