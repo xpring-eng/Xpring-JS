@@ -19,7 +19,7 @@ const timeoutMs = 60 * 1000
 // An address on TestNet that has a balance.
 const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
 
-// An XrpClient that makes requests. Ssends the requests to an HTTP envoy emulating how the browser would behave.
+// An XrpClient that makes requests. Sends the requests to an HTTP envoy emulating how the browser would behave.
 const grpcWebUrl = 'https://envoy.test.xrp.xpring.io'
 const xrpWebClient = new XrpClient(grpcWebUrl, XrplNetwork.Test, true)
 
@@ -43,33 +43,29 @@ describe('XrpClient Integration Tests', function (): void {
   it('Get Transaction Status - Web Shim', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const transactionHash = await xrpWebClient.send(
+    const transactionResult = await xrpWebClient.sendXrp(
       amount,
       recipientAddress,
       wallet,
     )
-    const transactionStatus = await xrpWebClient.getPaymentStatus(
-      transactionHash,
-    )
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
+    assert.deepEqual(transactionResult.status, TransactionStatus.Succeeded)
   })
 
   it('Get Transaction Status - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const transactionHash = await xrpClient.send(
+    const transactionResult = await xrpClient.sendXrp(
       amount,
       recipientAddress,
       wallet,
     )
-    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
+    assert.deepEqual(transactionResult.status, TransactionStatus.Succeeded)
   })
 
   it('Send XRP - Web Shim', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const result = await xrpWebClient.send(amount, recipientAddress, wallet)
+    const result = await xrpWebClient.sendXrp(amount, recipientAddress, wallet)
     assert.exists(result)
   })
 
@@ -82,15 +78,15 @@ describe('XrpClient Integration Tests', function (): void {
       noFormatMemo,
       noTypeMemo,
     ]
-    const result = await xrpWebClient.sendWithDetails({
+    const transactionResult = await xrpWebClient.sendXrpWithDetails({
       amount,
       destination: recipientAddress,
       sender: wallet,
       memoList,
     })
-    assert.exists(result)
+    assert.exists(transactionResult)
 
-    const transaction = await xrpClient.getPayment(result)
+    const transaction = await xrpClient.getPayment(transactionResult.hash)
 
     assert.deepEqual(transaction?.memos, [
       iForgotToPickUpCarlMemo,
@@ -103,7 +99,7 @@ describe('XrpClient Integration Tests', function (): void {
   it('Send XRP - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const result = await xrpClient.send(amount, recipientAddress, wallet)
+    const result = await xrpClient.sendXrp(amount, recipientAddress, wallet)
     assert.exists(result)
   })
 
@@ -115,15 +111,15 @@ describe('XrpClient Integration Tests', function (): void {
       noFormatMemo,
       noTypeMemo,
     ]
-    const result = await xrpClient.sendWithDetails({
+    const transactionResult = await xrpClient.sendXrpWithDetails({
       amount,
       destination: recipientAddress,
       sender: wallet,
       memoList,
     })
-    assert.exists(result)
+    assert.exists(transactionResult)
 
-    const transaction = await xrpClient.getPayment(result)
+    const transaction = await xrpClient.getPayment(transactionResult.hash)
 
     assert.deepEqual(transaction?.memos, [
       iForgotToPickUpCarlMemo,
@@ -174,13 +170,13 @@ describe('XrpClient Integration Tests', function (): void {
   it('Get Transaction - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const transactionHash = await xrpClient.send(
+    const transactionResult = await xrpClient.sendXrp(
       amount,
       recipientAddress,
       wallet,
     )
 
-    const transaction = await xrpClient.getPayment(transactionHash)
+    const transaction = await xrpClient.getPayment(transactionResult.hash)
 
     assert.exists(transaction)
   })
@@ -209,15 +205,17 @@ describe('XrpClient Integration Tests', function (): void {
 
     // WHEN an account that is not authorized sends XRP
     const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
-    const transactionHash = await xrpClient.send(
+    const transactionResult = await xrpClient.sendXrp(
       amount,
       wallet.getAddress(),
       sendingWallet,
     )
 
     // THEN the transaction fails.
-    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
-    assert.deepEqual(transactionStatus, TransactionStatus.Failed)
+    assert.deepEqual(
+      transactionResult.status,
+      TransactionStatus.ClaimedCostOnly,
+    )
   })
 
   it('Authorize Sending Account - failure on authorizing self', async function (): Promise<
@@ -274,15 +272,14 @@ describe('XrpClient Integration Tests', function (): void {
     await xrpClient.authorizeSendingAccount(sendingWallet.getAddress(), wallet)
 
     // WHEN the authorized account sends XRP
-    const transactionHash = await xrpClient.send(
+    const transactionResult = await xrpClient.sendXrp(
       amount,
       wallet.getAddress(),
       sendingWallet,
     )
 
     // THEN the transaction succeeds.
-    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
+    assert.deepEqual(transactionResult.status, TransactionStatus.Succeeded)
   })
 
   it('Unauthorize Sending Account - failure on unauthorizing self', async function (): Promise<
@@ -348,16 +345,16 @@ describe('XrpClient Integration Tests', function (): void {
       wallet,
     )
 
-    const transactionHash = await xrpClient.send(
+    const transactionResult = await xrpClient.sendXrp(
       amount,
       wallet.getAddress(),
       sendingWallet,
     )
 
     // THEN the transaction fails.
-    const transactionStatus = await xrpWebClient.getPaymentStatus(
-      transactionHash,
+    assert.deepEqual(
+      transactionResult.status,
+      TransactionStatus.ClaimedCostOnly,
     )
-    assert.deepEqual(transactionStatus, TransactionStatus.Failed)
   })
 })
