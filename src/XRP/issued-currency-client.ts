@@ -25,12 +25,6 @@ import CoreXrplClient from './core-xrpl-client'
 import GrpcNetworkClient from './network-clients/grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
 import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
-import JsonRpcNetworkClient from './network-clients/json-rpc-network-client'
-import {
-  AccountLinesResponse,
-  GatewayBalancesResponse,
-} from './shared/rippled-json-rpc-schema'
-import { JsonNetworkClientInterface } from './network-clients/json-network-client-interface'
 import { XrpError, XrpErrorType } from './shared'
 import { AccountSetFlag } from './shared/account-set-flag'
 import TransactionResult from './shared/transaction-result'
@@ -38,7 +32,14 @@ import GatewayBalances, {
   gatewayBalancesFromResponse,
 } from './shared/gateway-balances'
 import TrustLine from './shared/trustline'
-import { TransactionResponse } from './shared/rippled-web-socket-schema'
+import {
+  AccountLinesResponse,
+  AccountLinesSuccessfulResponse,
+  WebSocketFailureResponse,
+  TransactionResponse,
+  GatewayBalancesResponse,
+  GatewayBalancesSuccessfulResponse,
+} from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
 import { SendMax } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
@@ -63,7 +64,6 @@ export default class IssuedCurrencyClient {
    */
   public static issuedCurrencyClientWithEndpoint(
     grpcUrl: string,
-    jsonUrl: string,
     webSocketUrl: string,
     handleWebSocketErrorMessage: (data: string) => void,
     network: XrplNetwork,
@@ -75,7 +75,6 @@ export default class IssuedCurrencyClient {
         : new GrpcNetworkClientWeb(grpcUrl)
     return new IssuedCurrencyClient(
       grpcNetworkClient,
-      new JsonRpcNetworkClient(jsonUrl),
       new WebSocketNetworkClient(webSocketUrl, handleWebSocketErrorMessage),
       network,
     )
@@ -91,7 +90,6 @@ export default class IssuedCurrencyClient {
    */
   public constructor(
     grpcNetworkClient: GrpcNetworkClientInterface,
-    private readonly jsonNetworkClient: JsonNetworkClientInterface,
     readonly webSocketNetworkClient: WebSocketNetworkClientInterface,
     readonly network: XrplNetwork,
   ) {
@@ -123,12 +121,12 @@ export default class IssuedCurrencyClient {
       }
     }
 
-    const accountLinesResponse: AccountLinesResponse = await this.jsonNetworkClient.getAccountLines(
+    const accountLinesResponse: AccountLinesResponse = await this.webSocketNetworkClient.getAccountLines(
       classicAddress.address,
       peerAccount,
     )
 
-    const { error } = accountLinesResponse.result
+    const error = (accountLinesResponse as WebSocketFailureResponse).error
     if (error) {
       if (error === RippledErrorMessages.accountNotFound) {
         throw XrpError.accountNotFound
@@ -137,13 +135,14 @@ export default class IssuedCurrencyClient {
       }
     }
 
-    const rawTrustLines = accountLinesResponse.result.lines
+    const accountLinesSuccessfulResponse = accountLinesResponse as AccountLinesSuccessfulResponse
+    const rawTrustLines = accountLinesSuccessfulResponse.result.lines
     if (rawTrustLines === undefined) {
       throw XrpError.malformedResponse
     }
     const trustLines: Array<TrustLine> = []
-    rawTrustLines.map((trustLineJson) => {
-      trustLines.push(new TrustLine(trustLineJson))
+    rawTrustLines.map((trustline) => {
+      trustLines.push(new TrustLine(trustline))
     })
     return trustLines
   }
@@ -177,14 +176,16 @@ export default class IssuedCurrencyClient {
       return classicAddress.address
     })
 
-    const gatewayBalancesResponse: GatewayBalancesResponse = await this.jsonNetworkClient.getGatewayBalances(
+    const gatewayBalancesResponse: GatewayBalancesResponse = await this.webSocketNetworkClient.getGatewayBalances(
       classicAddress.address,
       classicAddressesToExclude,
     )
 
-    const { error } = gatewayBalancesResponse.result
+    const error = (gatewayBalancesResponse as WebSocketFailureResponse).error
     if (!error) {
-      return gatewayBalancesFromResponse(gatewayBalancesResponse)
+      return gatewayBalancesFromResponse(
+        gatewayBalancesResponse as GatewayBalancesSuccessfulResponse,
+      )
     }
     switch (error) {
       case RippledErrorMessages.accountNotFound:
@@ -207,7 +208,7 @@ export default class IssuedCurrencyClient {
    *
    * @param account The account for which to subscribe to relevant transactions, encoded as an X-Address.
    * @param callback The function to trigger upon receiving a transaction event from the ledger.
-   * @returns The response from the websocket indicating the result of the subscription request.
+   * @returns Whether the request to subscribe succeeded.
    */
   public async monitorAccountTransactions(
     account: string,
@@ -218,11 +219,8 @@ export default class IssuedCurrencyClient {
       throw XrpError.xAddressRequired
     }
 
-    const id = `monitor_transactions_${account}`
-
     const response = await this.webSocketNetworkClient.subscribeToAccount(
       classicAddress.address,
-      id,
       callback,
     )
     return response.status === 'success'
@@ -348,6 +346,28 @@ export default class IssuedCurrencyClient {
       false,
       wallet,
     )
+  }
+
+  /**
+   * Set the Transfer Fees for a given issuing account.
+   * The Transfer Fee is a percentage to charge when two users transfer an issuer's IOUs on the XRPL.
+   *
+   * @see https://xrpl.org/transfer-fees.html
+   *
+   * @param address The X-address for which the transfer rate is requested.
+   * @returns A promise which resolves to a number that represents the transfer fee associated with that issuing account,
+   *          or undefined if one is not specified.
+   */
+  public async getTransferFee(address: string): Promise<number | undefined> {
+    const classicAddress = XrpUtils.decodeXAddress(address)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const accountRoot = await this.coreXrplClient.getAccountData(
+      classicAddress.address,
+    )
+    return accountRoot.getTransferRate()?.getValue()
   }
 
   /**
@@ -537,6 +557,31 @@ export default class IssuedCurrencyClient {
       // be used by gateways, who will maintain an amount of 0.
       '0',
       TrustSetFlag.tfClearFreeze,
+      wallet,
+    )
+  }
+
+  /**
+   * Disables rippling on the trust line between this account (issuing account) and another account.
+   *
+   * @see https://xrpl.org/rippling.html#enabling-disabling-no-ripple
+   *
+   * @param trustLinePeerAccount The X-Address of the account involved in the trust line to disable rippling.
+   * @param currencyName The currency of the trust line to disable rippling.
+   * @param amount The maximum amount of debt to allow on this trust line.
+   * @param wallet The wallet disabling rippling on the trust line.
+   */
+  public async disableRipplingForTrustLine(
+    trustLinePeerAccount: string,
+    currencyName: string,
+    amount: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return await this.sendTrustSetTransaction(
+      trustLinePeerAccount,
+      currencyName,
+      amount,
+      TrustSetFlag.tfSetNoRipple,
       wallet,
     )
   }

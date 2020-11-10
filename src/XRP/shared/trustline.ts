@@ -1,4 +1,4 @@
-import { TrustLineJson } from './rippled-json-rpc-schema'
+import { TrustLineResponse } from './rippled-web-socket-schema'
 
 /**
  * Represents a trust line on the XRP Ledger.
@@ -71,19 +71,19 @@ export default class TrustLine {
    */
   readonly freezePeer: boolean
 
-  public constructor(trustLineJson: TrustLineJson) {
-    this.account = trustLineJson.account
-    this.balance = trustLineJson.balance
-    this.currency = trustLineJson.currency
-    this.limit = trustLineJson.limit
-    this.limitPeer = trustLineJson.limit_peer
-    this.qualityIn = trustLineJson.quality_in
-    this.qualityOut = trustLineJson.quality_out
-    this.noRipple = !!trustLineJson.no_ripple
-    this.noRipplePeer = !!trustLineJson.no_ripple_peer
-    this.authorized = !!trustLineJson.authorized
-    this.peerAuthorized = !!trustLineJson.peer_authorized
-    this.freeze = !!trustLineJson.freeze
-    this.freezePeer = !!trustLineJson.freeze_peer
+  public constructor(trustLineResponse: TrustLineResponse) {
+    this.account = trustLineResponse.account
+    this.balance = trustLineResponse.balance
+    this.currency = trustLineResponse.currency
+    this.limit = trustLineResponse.limit
+    this.limitPeer = trustLineResponse.limit_peer
+    this.qualityIn = trustLineResponse.quality_in
+    this.qualityOut = trustLineResponse.quality_out
+    this.noRipple = !!trustLineResponse.no_ripple
+    this.noRipplePeer = !!trustLineResponse.no_ripple_peer
+    this.authorized = !!trustLineResponse.authorized
+    this.peerAuthorized = !!trustLineResponse.peer_authorized
+    this.freeze = !!trustLineResponse.freeze
+    this.freezePeer = !!trustLineResponse.freeze_peer
   }
 }

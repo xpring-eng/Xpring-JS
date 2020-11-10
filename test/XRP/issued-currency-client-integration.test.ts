@@ -22,11 +22,9 @@ const testAddressWithTrustLines =
 
 // An IssuedCurrencyClient that makes requests.
 const rippledGrpcUrl = 'test.xrp.xpring.io:50051'
-const rippledJsonUrl = 'http://test.xrp.xpring.io:51234'
 const rippledWebSocketUrl = 'wss://wss.test.xrp.xpring.io'
 const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
   rippledGrpcUrl,
-  rippledJsonUrl,
   rippledWebSocketUrl,
   console.log,
   XrplNetwork.Test,
@@ -292,7 +290,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.isUndefined(gatewayBalances.obligations)
   })
 
-  it('setTransferFee - rippled', async function (): Promise<void> {
+  it('getTransferFee/setTransferFee - rippled', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN setTransferFee is called
@@ -305,11 +305,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const transactionHash = result.hash
     const transactionStatus = result.status
 
-    const accountData = await XRPTestUtils.getAccountData(
-      wallet,
-      rippledGrpcUrl,
+    const transferRate = await issuedCurrencyClient.getTransferFee(
+      wallet.getAddress(),
     )
-    const transferRate = accountData.getTransferRate()?.getValue()
 
     // THEN the transaction was successfully submitted and the correct transfer rate was set on the account.
     assert.exists(transactionHash)
@@ -578,6 +576,44 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(unfrozenTrustLine.limit, '0')
   })
 
+  it('disableRipplingForTrustLine - sets no rippling on trust line', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    const trustLinePeerAccount = await XRPTestUtils.randomWalletFromFaucet()
+
+    // GIVEN an existing issuer account who has a trust line with a counter-party
+    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
+
+    const trustLineCurrency = 'USD'
+    await issuedCurrencyClient.authorizeTrustLine(
+      trustLinePeerAccount.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    const trustLineAmount = '1'
+
+    // WHEN the issuer sets no rippling on the trust line
+    await issuedCurrencyClient.disableRipplingForTrustLine(
+      trustLinePeerAccount.getAddress(),
+      trustLineCurrency,
+      trustLineAmount,
+      issuer,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      issuer.getAddress(),
+    )
+
+    const [trustLine] = trustLines
+
+    // THEN the trust line has noRipple enabled.
+    assert.equal(trustLine.noRipple, true)
+    assert.equal(trustLine.limit, trustLineAmount)
+  })
+
   it('monitorIncomingPayments - valid request', async function (): Promise<
     void
   > {
@@ -638,15 +674,13 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
 
     const address = 'badAddress'
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const callback = () => {}
 
     // GIVEN a test address that is malformed.
     // WHEN monitorIncomingPayments is called for that address THEN an error is thrown.
     try {
-      await issuedCurrencyClient.monitorAccountTransactions(
-        address,
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        (_data: TransactionResponse) => {},
-      )
+      await issuedCurrencyClient.monitorAccountTransactions(address, callback)
     } catch (e) {
       if (!(e instanceof XrpError)) {
         assert.fail('wrong error')
