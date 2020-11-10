@@ -75,8 +75,8 @@ interface GatewayBalancesRequest extends BaseRequest {
 interface RipplePathFindRequest extends BaseRequest {
   source_account: string
   destination_account: string
-  destination_amount: string | CurrencyValuePair // TODO: check object format
-  send_max?: string | CurrencyValuePair // TODO: check object format
+  destination_amount: string | IssuedCurrency
+  send_max?: string | IssuedCurrency
 }
 
 /**
@@ -187,9 +187,11 @@ type RipplePathFindResponse =
 
 interface RipplePathFindSuccessfulResponse extends BaseResponse {
   result: {
-    alternatives: PossiblePath[] // TODO: fill this in
+    alternatives: PossiblePath[]
     destination_account: string
+    destination_amount?: string | IssuedCurrency
     destination_currencies: string[]
+    source_account: string
   }
 }
 
@@ -234,7 +236,7 @@ interface TrustLineResponse {
 
 interface PossiblePath {
   paths_computed: PathElement[][]
-  source_amount: string | CurrencyValuePair
+  source_amount: string | IssuedCurrency
 }
 
 interface PathElement {
@@ -305,6 +307,12 @@ interface CurrencyValuePair {
   value: string
 }
 
+interface IssuedCurrency {
+  value: string
+  currency: string
+  issuer: string
+}
+
 /**
  * Helper type to signify {} (an empty type).
  */
@@ -327,7 +335,8 @@ export {
   GatewayBalancesResponse,
   GatewayBalancesSuccessfulResponse,
   RipplePathFindResponse,
+  RipplePathFindSuccessfulResponse,
   WebSocketTransaction,
   TrustLineResponse,
-  CurrencyValuePair,
+  IssuedCurrency,
 }
