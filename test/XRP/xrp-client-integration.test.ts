@@ -48,10 +48,7 @@ describe('XrpClient Integration Tests', function (): void {
       recipientAddress,
       wallet,
     )
-    const transactionStatus = await xrpWebClient.getPaymentStatus(
-      transactionResult.hash,
-    )
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
+    assert.deepEqual(transactionResult.status, TransactionStatus.Succeeded)
   })
 
   it('Get Transaction Status - rippled', async function (): Promise<void> {
@@ -62,10 +59,7 @@ describe('XrpClient Integration Tests', function (): void {
       recipientAddress,
       wallet,
     )
-    const transactionStatus = await xrpClient.getPaymentStatus(
-      transactionResult.hash,
-    )
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
+    assert.deepEqual(transactionResult.status, TransactionStatus.Succeeded)
   })
 
   it('Send XRP - Web Shim', async function (): Promise<void> {
@@ -218,10 +212,7 @@ describe('XrpClient Integration Tests', function (): void {
     )
 
     // THEN the transaction fails.
-    const transactionStatus = await xrpClient.getPaymentStatus(
-      transactionResult.hash,
-    )
-    assert.deepEqual(transactionStatus, TransactionStatus.Failed)
+    assert.deepEqual(transactionResult.status, TransactionStatus.Failed)
   })
 
   it('Authorize Sending Account - failure on authorizing self', async function (): Promise<
@@ -285,10 +276,7 @@ describe('XrpClient Integration Tests', function (): void {
     )
 
     // THEN the transaction succeeds.
-    const transactionStatus = await xrpClient.getPaymentStatus(
-      transactionResult.hash,
-    )
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
+    assert.deepEqual(transactionResult.status, TransactionStatus.Succeeded)
   })
 
   it('Unauthorize Sending Account - failure on unauthorizing self', async function (): Promise<
@@ -361,9 +349,6 @@ describe('XrpClient Integration Tests', function (): void {
     )
 
     // THEN the transaction fails.
-    const transactionStatus = await xrpWebClient.getPaymentStatus(
-      transactionResult.hash,
-    )
-    assert.deepEqual(transactionStatus, TransactionStatus.Failed)
+    assert.deepEqual(transactionResult.status, TransactionStatus.Failed)
   })
 })
