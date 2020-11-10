@@ -112,10 +112,8 @@ describe('WebSocket Tests', function (): void {
     // WHEN a payment is sent to that address
     await xrpClient.send(xrpAmount, xAddress, wallet2)
 
-    await waitUntilMessageReceived()
-
     // THEN the payment is not received by the callback
-    // (will call fail in the callback)
+    // (If a payment is recieved, fail will be called in the callback)
   })
 
   it('subscribeToAccount - bad address', async function (): Promise<void> {
