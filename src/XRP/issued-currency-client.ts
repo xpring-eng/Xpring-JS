@@ -350,6 +350,28 @@ export default class IssuedCurrencyClient {
   }
 
   /**
+   * Set the Transfer Fees for a given issuing account.
+   * The Transfer Fee is a percentage to charge when two users transfer an issuer's IOUs on the XRPL.
+   *
+   * @see https://xrpl.org/transfer-fees.html
+   *
+   * @param address The X-address for which the transfer rate is requested.
+   * @returns A promise which resolves to a number that represents the transfer fee associated with that issuing account,
+   *          or undefined if one is not specified.
+   */
+  public async getTransferFee(address: string): Promise<number | undefined> {
+    const classicAddress = XrpUtils.decodeXAddress(address)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const accountRoot = await this.coreXrplClient.getAccountData(
+      classicAddress.address,
+    )
+    return accountRoot.getTransferRate()?.getValue()
+  }
+
+  /**
    * Set the Transfer Fees for an issuing account.
    * The Transfer Fee is a percentage to charge when two users transfer an issuer's IOUs on the XRPL.
    *
@@ -536,6 +558,31 @@ export default class IssuedCurrencyClient {
       // be used by gateways, who will maintain an amount of 0.
       '0',
       TrustSetFlag.tfClearFreeze,
+      wallet,
+    )
+  }
+
+  /**
+   * Disables rippling on the trust line between this account (issuing account) and another account.
+   *
+   * @see https://xrpl.org/rippling.html#enabling-disabling-no-ripple
+   *
+   * @param trustLinePeerAccount The X-Address of the account involved in the trust line to disable rippling.
+   * @param currencyName The currency of the trust line to disable rippling.
+   * @param amount The maximum amount of debt to allow on this trust line.
+   * @param wallet The wallet disabling rippling on the trust line.
+   */
+  public async disableRipplingForTrustLine(
+    trustLinePeerAccount: string,
+    currencyName: string,
+    amount: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return await this.sendTrustSetTransaction(
+      trustLinePeerAccount,
+      currencyName,
+      amount,
+      TrustSetFlag.tfSetNoRipple,
       wallet,
     )
   }

@@ -619,6 +619,64 @@ describe('Issued Currency Client', function (): void {
     })
   })
 
+  it('getTransferFee - successful response', async function (): Promise<void> {
+    // GIVEN an IssuedCurrencyClient with mocked networking that will successfully return information from a `getAccountInfo` call
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    const expectedTransferFee = 1000000012
+
+    // WHEN getTransferFee is called
+    const transferFee = await issuedCurrencyClient.getTransferFee(
+      this.wallet.getAddress(),
+    )
+
+    // THEN the expected transfer rate value is returned.
+    assert.exists(transferFee)
+    assert.equal(transferFee, expectedTransferFee)
+  })
+
+  it('getTransferFee - bad address', function (): void {
+    // GIVEN an IssuedCurrencyClient with mocked networking that will succeed
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    const badAddress = 'badAddress'
+
+    // WHEN getTransferFee is attempted THEN an error is propagated.
+    issuedCurrencyClient.getTransferFee(badAddress).catch((error) => {
+      assert.deepEqual(error, XrpError.xAddressRequired)
+    })
+  })
+
+  it('getTransferFee - submission failure', function (): void {
+    // GIVEN an IssuedCurrencyClient with mocked networking that will fail to make a `getAccountInfo` request
+    const failureResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultError,
+    )
+    const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      failingNetworkClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN getTransferFee is attempted THEN an error is propagated.
+    issuedCurrencyClient
+      .getTransferFee(this.wallet.getAddress())
+      .catch((error) => {
+        assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
+      })
+  })
+
   it('setTransferFee - successful response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
