@@ -128,6 +128,7 @@ describe('WebSocket Tests', function (): void {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {},
       )
+      assert.fail('Method call should fail')
     } catch (e) {
       if (!(e instanceof XrpError)) {
         assert.fail('wrong error')
@@ -148,6 +149,7 @@ describe('WebSocket Tests', function (): void {
     // WHEN unsubscribeFromAccount is called for that address THEN an error is thrown.
     try {
       await webSocketNetworkClient.unsubscribeFromAccount(address)
+      assert.fail('Method call should fail')
     } catch (e) {
       if (!(e instanceof XrpError)) {
         assert.fail('wrong error')
@@ -164,6 +166,7 @@ describe('WebSocket Tests', function (): void {
     // WHEN unsubscribeFromAccount is called for that address THEN an error is thrown.
     try {
       await webSocketNetworkClient.unsubscribeFromAccount(address)
+      assert.fail('Method call should fail')
     } catch (e) {
       if (!(e instanceof XrpError)) {
         assert.fail('wrong error')
