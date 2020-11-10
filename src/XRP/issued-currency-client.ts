@@ -349,6 +349,28 @@ export default class IssuedCurrencyClient {
   }
 
   /**
+   * Set the Transfer Fees for a given issuing account.
+   * The Transfer Fee is a percentage to charge when two users transfer an issuer's IOUs on the XRPL.
+   *
+   * @see https://xrpl.org/transfer-fees.html
+   *
+   * @param address The X-address for which the transfer rate is requested.
+   * @returns A promise which resolves to a number that represents the transfer fee associated with that issuing account,
+   *          or undefined if one is not specified.
+   */
+  public async getTransferFee(address: string): Promise<number | undefined> {
+    const classicAddress = XrpUtils.decodeXAddress(address)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const accountRoot = await this.coreXrplClient.getAccountData(
+      classicAddress.address,
+    )
+    return accountRoot.getTransferRate()?.getValue()
+  }
+
+  /**
    * Set the Transfer Fees for an issuing account.
    * The Transfer Fee is a percentage to charge when two users transfer an issuer's IOUs on the XRPL.
    *
