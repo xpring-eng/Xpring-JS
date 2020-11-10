@@ -191,6 +191,7 @@ export default class WebSocketNetworkClient {
     }
     this.idNumber++
     const response = await this.sendApiRequest(unsubscribeRequest)
+    console.log(response)
     if (response.status !== 'success') {
       const errorResponse = response as WebSocketFailureResponse
       throw new XrpError(
