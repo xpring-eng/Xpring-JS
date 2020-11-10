@@ -141,7 +141,7 @@ describe('WebSocket Tests', function (): void {
   > {
     this.timeout(timeoutMs)
 
-    const xAddress = wallet.getAddress()
+    const xAddress = wallet2.getAddress()
     const classicAddress = XrpUtils.decodeXAddress(xAddress)
     const address = classicAddress!.address
 
