@@ -830,44 +830,17 @@ export default class IssuedCurrencyClient {
     // assign the decoded destinationTag before signing.
     payment.setAmount(amountProto)
 
-    // calculated specification of sendMax
-    if (transferFee !== undefined) {
-      // Construct SendMax - value should be intended amount + relevant transfer fee
-      // Note that a transfer fee doesn't apply if the source address (of this transaction) and the issuing address of the currency being
-      // sent are the same (i.e. issuer sending currency directly) OR if the issuer of the currency and the destination are the same
-      // (i.e. redeeming an issued currency).
-      // However, it also doesn't hurt to include a SendMax field, it just won't end up being used.
+    // If transferFee was supplied, calculate the sendMax value, otherwise use the manual override sendMaxValue.
+    // Either or both may be undefined.
+    const calculatedSendMaxValue = transferFee
+      ? this.calculateSendMaxValue(amount, transferFee)
+      : sendMaxValue
 
-      // This calculation determines the sendMaxValue by applying the transferFee to the amount being sent, and then rounding (up) only as
-      // much as necessary to fit the final value within the 15 decimal digit limit that applies to encoding issued currency amounts.
-      // See https://xrpl.org/currency-formats.html#issued-currency-precision
-      const numericValue = Number(amount)
-      const rawSendMaxValue = (1 + transferFee / 100) * numericValue
-      const numDigitsLeftOfDecimal = String(Math.ceil(rawSendMaxValue)).length
-      const allowedDigitsRightOfDecimal = 15 - numDigitsLeftOfDecimal
-      const calculatedSendMaxValue = String(
-        rawSendMaxValue.toFixed(allowedDigitsRightOfDecimal),
-      )
-
+    if (calculatedSendMaxValue) {
       const sendMaxIssuedCurrencyAmount = new IssuedCurrencyAmount()
       sendMaxIssuedCurrencyAmount.setCurrency(currencyProto)
       sendMaxIssuedCurrencyAmount.setIssuer(issuerAccountAddress)
       sendMaxIssuedCurrencyAmount.setValue(calculatedSendMaxValue)
-
-      const sendMaxCurrencyAmount = new CurrencyAmount()
-      sendMaxCurrencyAmount.setIssuedCurrencyAmount(sendMaxIssuedCurrencyAmount)
-
-      const sendMax = new SendMax()
-      sendMax.setValue(sendMaxCurrencyAmount)
-
-      payment.setSendMax(sendMax)
-    }
-    // manual specification of sendMax value
-    if (sendMaxValue !== undefined) {
-      const sendMaxIssuedCurrencyAmount = new IssuedCurrencyAmount()
-      sendMaxIssuedCurrencyAmount.setCurrency(currencyProto)
-      sendMaxIssuedCurrencyAmount.setIssuer(issuerAccountAddress)
-      sendMaxIssuedCurrencyAmount.setValue(sendMaxValue)
 
       const sendMaxCurrencyAmount = new CurrencyAmount()
       sendMaxCurrencyAmount.setIssuedCurrencyAmount(sendMaxIssuedCurrencyAmount)
@@ -889,5 +862,28 @@ export default class IssuedCurrencyClient {
       transactionHash,
       sender,
     )
+  }
+
+  /**
+   * Calculates the sendMaxValue by applying the transferFee to the amount being sent and ensuring the total amount
+   * fits within maximum decimal precision.
+   * @see https://xrpl.org/currency-formats.html#issued-currency-precision
+   *
+   * @param amount The amount of issued currency to pay to the destination.
+   * @param transferFee The transfer fee associated with the issuing account, expressed as a percentage.
+   *                    (i.e. a value of .5 indicates a 0.5% transfer fee).
+   */
+  private calculateSendMaxValue(amount: string, transferFee: number) {
+    //and then rounding (up) only as
+    // much as necessary to fit the final value within the 15 decimal digit limit that applies to encoding issued currency amounts.
+    const numericValue = Number(amount)
+    // calculate the total sendMaxValue with any number of decimal places.
+    const rawSendMaxValue = (1 + transferFee / 100) * numericValue
+    // calculate number of digits left of decimal place
+    const numDigitsLeftOfDecimal = String(Math.floor(rawSendMaxValue)).length
+    // allowed digits to right of decimal must keep total length below 15 digits
+    const allowedDigitsRightOfDecimal = 15 - numDigitsLeftOfDecimal
+    // use toFixed to truncate decimal digits to maximum allowed length
+    return rawSendMaxValue.toFixed(allowedDigitsRightOfDecimal).toString()
   }
 }
