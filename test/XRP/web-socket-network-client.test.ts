@@ -1,4 +1,3 @@
-import { fail } from 'assert'
 import { assert } from 'chai'
 import { Wallet, XrplNetwork, XrpUtils } from 'xpring-common-js'
 import WebSocketNetworkClient from '../../src/XRP/network-clients/web-socket-network-client'
@@ -55,7 +54,7 @@ describe('WebSocket Tests', function (): void {
     let messageReceived = false
     const callback = (data: TransactionResponse) => {
       if (messageReceived) {
-        fail('Second message should not be recieved after unsubscribing')
+        assert.fail('Second message should not be recieved after unsubscribing')
       }
       messageReceived = true
       assert.equal(data.engine_result, 'tesSUCCESS')
@@ -122,13 +121,49 @@ describe('WebSocket Tests', function (): void {
     const address = 'badAddress'
 
     // GIVEN a test address that is malformed.
-    // WHEN monitorIncomingPayments is called for that address THEN an error is thrown.
+    // WHEN subscribeToAccount is called for that address THEN an error is thrown.
     try {
       await webSocketNetworkClient.subscribeToAccount(
         address,
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {},
       )
+    } catch (e) {
+      if (!(e instanceof XrpError)) {
+        assert.fail('wrong error')
+      }
+    }
+  })
+
+  it('unsubscribeFromAccount - not-subscribed address', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    const xAddress = wallet.getAddress()
+    const classicAddress = XrpUtils.decodeXAddress(xAddress)
+    const address = classicAddress!.address
+
+    // GIVEN a test address that is not subscribed to.
+    // WHEN unsubscribeFromAccount is called for that address THEN an error is thrown.
+    try {
+      await webSocketNetworkClient.unsubscribeFromAccount(address)
+    } catch (e) {
+      if (!(e instanceof XrpError)) {
+        assert.fail('wrong error')
+      }
+    }
+  })
+
+  it('unsubscribeFromAccount - bad address', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const address = 'badAddress'
+
+    // GIVEN a test address that is malformed.
+    // WHEN unsubscribeFromAccount is called for that address THEN an error is thrown.
+    try {
+      await webSocketNetworkClient.unsubscribeFromAccount(address)
     } catch (e) {
       if (!(e instanceof XrpError)) {
         assert.fail('wrong error')
