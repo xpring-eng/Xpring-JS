@@ -1,7 +1,4 @@
-* @sarahkevinking @amiecorso @tedkalaw @mvadari
+* @amiecorso @tedkalaw @mvadari
 
 # Docs team owns markdown files
 *.md @ryangyoung
-
-# Allow anyone in DevX reviewers to approve automated dependency updates from Dependabot.
-package* @xpring-eng/devx-reviewers
