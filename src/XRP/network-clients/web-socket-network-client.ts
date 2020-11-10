@@ -198,6 +198,7 @@ export default class WebSocketNetworkClient {
         `Unsubscribe request for ${account} failed, ${errorResponse.error_message}`,
       )
     }
+    this.accountCallbacks.delete(account)
     return response as StatusResponse
   }
 
