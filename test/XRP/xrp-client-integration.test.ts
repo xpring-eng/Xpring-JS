@@ -212,7 +212,10 @@ describe('XrpClient Integration Tests', function (): void {
     )
 
     // THEN the transaction fails.
-    assert.deepEqual(transactionResult.status, TransactionStatus.Failed)
+    assert.deepEqual(
+      transactionResult.status,
+      TransactionStatus.ClaimedCostOnly,
+    )
   })
 
   it('Authorize Sending Account - failure on authorizing self', async function (): Promise<
@@ -349,6 +352,9 @@ describe('XrpClient Integration Tests', function (): void {
     )
 
     // THEN the transaction fails.
-    assert.deepEqual(transactionResult.status, TransactionStatus.Failed)
+    assert.deepEqual(
+      transactionResult.status,
+      TransactionStatus.ClaimedCostOnly,
+    )
   })
 })

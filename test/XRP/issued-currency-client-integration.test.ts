@@ -231,7 +231,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // THEN the transaction fails.
     assert.exists(transactionResult.hash)
-    assert.equal(transactionResult.status, TransactionStatus.Failed)
+    assert.equal(transactionResult.status, TransactionStatus.ClaimedCostOnly)
 
     // GIVEN an existing testnet account with requireDestinationTags unset
     await issuedCurrencyClient.allowNoDestinationTag(wallet)
