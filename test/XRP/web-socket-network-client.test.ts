@@ -54,7 +54,7 @@ describe('WebSocket Tests', function (): void {
     let messageReceived = false
     const callback = (data: TransactionResponse) => {
       if (messageReceived) {
-        assert.fail('Second message should not be recieved after unsubscribing')
+        assert.fail('Second message should not be received after unsubscribing')
       }
       messageReceived = true
       assert.equal(data.engine_result, 'tesSUCCESS')
@@ -112,7 +112,7 @@ describe('WebSocket Tests', function (): void {
     await xrpClient.send(xrpAmount, xAddress, wallet2)
 
     // THEN the payment is not received by the callback
-    // (If a payment is recieved, fail will be called in the callback)
+    // (If a payment is received, fail will be called in the callback)
   })
 
   it('subscribeToAccount - bad address', async function (): Promise<void> {
