@@ -169,7 +169,7 @@ export default class WebSocketNetworkClient {
 
   /**
    * Unsubscribes from notifications about every validated transaction that affects the given account.
-   * @see https://xrpl.org/subscribe.html
+   * @see https://xrpl.org/unsubscribe.html
    *
    * @param account The account from which to unsubscribe from incoming transactions, encoded as a classic address.
    * @param callback The function called whenever a new transaction is received.
