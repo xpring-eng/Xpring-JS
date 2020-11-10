@@ -14,13 +14,22 @@ export interface WebSocketNetworkClientInterface {
    * @see https://xrpl.org/monitor-incoming-payments-with-websocket.html
    *
    * @param account The account from which to subscribe to incoming transactions, encoded as a classic address.
-   * @param callback The function called whenever a new transaction is received.
    * @returns The response from the websocket confirming the subscription.
    */
   subscribeToAccount(
     account: string,
     callback: (data: TransactionResponse) => void,
   ): Promise<StatusResponse>
+
+  /**
+   * Unsubscribes from notifications about every validated transaction that affects the given account.
+   * @see https://xrpl.org/unsubscribe.html
+   *
+   * @param account The account from which to unsubscribe from incoming transactions, encoded as a classic address.
+   * @param callback The function called whenever a new transaction is received.
+   * @returns The response from the websocket confirming the unsubscription.
+   */
+  unsubscribeFromAccount(account: string): Promise<StatusResponse>
 
   /**
    * Submits an account_lines request to the rippled WebSocket API.
