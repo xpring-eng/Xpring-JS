@@ -736,6 +736,17 @@ export default class IssuedCurrencyClient {
     )
   }
 
+  public async sendCrossCurrencyPayment(
+    sender: Wallet,
+    destination: string,
+    issuer: string,
+    currency: string,
+    amount: string,
+    sourceIssuer: string,
+    sourceCurrency: string,
+    sourceAmount: string,
+  ): Promise<TransactionResult> {}
+
   // TODO: (acorso) Make this method private and expose more opinionated public APIs.
   // TODO: (acorso) structure this like we have `sendXrp` v.s. `sendXrpWithDetails` to allow for additional optional fields, such as memos.
   //  as well as potentially:
@@ -763,6 +774,8 @@ export default class IssuedCurrencyClient {
     issuer: string,
     amount: string,
     transferFee?: number,
+    sourceCurrency?: string,
+    sourceIssuer?: string,
   ): Promise<TransactionResult> {
     if (!XrpUtils.isValidXAddress(destination)) {
       throw new XrpError(
