@@ -231,6 +231,7 @@ export default class WebSocketNetworkClient {
     sourceAccount: string,
     destinationAccount: string,
     destinationAmount: string | CurrencyValuePair,
+    sendMax?: string | CurrencyValuePair,
   ): Promise<RipplePathFindResponse> {
     const ripplePathFindRequest: RipplePathFindRequest = {
       id: `${RippledMethod.ripplePathFind}_${sourceAccount}_${this.idNumber}`,
@@ -238,6 +239,7 @@ export default class WebSocketNetworkClient {
       source_account: sourceAccount,
       destination_account: destinationAccount,
       destination_amount: destinationAmount,
+      send_max: sendMax,
     }
     this.idNumber++
     const ripplePathFindResponse = await this.sendApiRequest(

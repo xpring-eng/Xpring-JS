@@ -76,7 +76,7 @@ interface RipplePathFindRequest extends BaseRequest {
   source_account: string
   destination_account: string
   destination_amount: string | CurrencyValuePair // TODO: check object format
-  // TODO: check with @amiecorso on what else is needed
+  send_max?: string | CurrencyValuePair // TODO: check object format
 }
 
 /**
