@@ -45,6 +45,7 @@ import WebSocketNetworkClient from './network-clients/web-socket-network-client'
 import { SendMax } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
 import { RippledErrorMessages } from './shared/rippled-error-messages'
 import TrustSetFlag from './shared/trust-set-flag'
+import { BigNumber } from 'bignumber.js'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -873,17 +874,24 @@ export default class IssuedCurrencyClient {
    * @param transferFee The transfer fee associated with the issuing account, expressed as a percentage.
    *                    (i.e. a value of .5 indicates a 0.5% transfer fee).
    */
-  private calculateSendMaxValue(amount: string, transferFee: number) {
-    //and then rounding (up) only as
-    // much as necessary to fit the final value within the 15 decimal digit limit that applies to encoding issued currency amounts.
-    const numericValue = Number(amount)
+  public calculateSendMaxValue(amount: string, transferFee: number): string {
+    if (transferFee < 0) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'Transfer Fee must be positive.',
+      )
+    }
+    const numericAmount = new BigNumber(amount)
+    const transferRate = new BigNumber(1 + transferFee / 100)
+
     // calculate the total sendMaxValue with any number of decimal places.
-    const rawSendMaxValue = (1 + transferFee / 100) * numericValue
-    // calculate number of digits left of decimal place
-    const numDigitsLeftOfDecimal = String(Math.floor(rawSendMaxValue)).length
-    // allowed digits to right of decimal must keep total length below 15 digits
-    const allowedDigitsRightOfDecimal = 15 - numDigitsLeftOfDecimal
-    // use toFixed to truncate decimal digits to maximum allowed length
-    return rawSendMaxValue.toFixed(allowedDigitsRightOfDecimal).toString()
+    const rawSendMaxValue: BigNumber = numericAmount.multipliedBy(transferRate)
+
+    if (rawSendMaxValue.toFixed().length <= 15) {
+      return rawSendMaxValue.toFixed()
+    }
+
+    // If we have too many digits of precision, express with scientific notation but fit within decimal precision.
+    return rawSendMaxValue.toExponential(14, 0).replace(/e\+/, 'e')
   }
 }

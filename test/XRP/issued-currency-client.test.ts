@@ -1007,4 +1007,101 @@ describe('Issued Currency Client', function (): void {
         )
       })
   })
+
+  it('calculateSendMaxValue - negative transferFee throws', function (): void {
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    const amount = '1000'
+    const transferFee = -0.05
+
+    try {
+      issuedCurrencyClient.calculateSendMaxValue(amount, transferFee)
+    } catch (error) {
+      assert.typeOf(error, 'Error')
+      assert.equal(error.errorType, XrpErrorType.InvalidInput)
+    }
+  })
+
+  it('calculateSendMaxValue - zero transferFee equals amount', function (): void {
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    const amount = '1000'
+    const transferFee = 0
+
+    const calculatedSendMaxValue = issuedCurrencyClient.calculateSendMaxValue(
+      amount,
+      transferFee,
+    )
+    const expectedSendMaxValue = amount
+
+    assert.equal(calculatedSendMaxValue, expectedSendMaxValue)
+  })
+
+  it('calculateSendMaxValue - simple value, no scientific notation', function (): void {
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    const amount = '1000'
+    const transferFee = 5
+
+    const calculatedSendMaxValue = issuedCurrencyClient.calculateSendMaxValue(
+      amount,
+      transferFee,
+    )
+    const expectedSendMaxValue = '1050'
+
+    assert.equal(calculatedSendMaxValue, expectedSendMaxValue)
+  })
+
+  it('calculateSendMaxValue - large value, precision overflow', function (): void {
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    const amount = '1234567890123456'
+    const transferFee = 5.43
+
+    const calculatedSendMaxValue = issuedCurrencyClient.calculateSendMaxValue(
+      amount,
+      transferFee,
+    )
+    // Without rounding, expected value is: 1.3016049265571596608e15, 20 digits of precision (calculated on Wolfram Alpha)
+    const expectedSendMaxValue = '1.30160492655716e15'
+
+    assert.equal(calculatedSendMaxValue, expectedSendMaxValue)
+  })
+
+  it('calculateSendMaxValue - small value, precision overflow', function (): void {
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    const amount = '0.00001234567890123456'
+    const transferFee = 3.1
+
+    const calculatedSendMaxValue = issuedCurrencyClient.calculateSendMaxValue(
+      amount,
+      transferFee,
+    )
+
+    // Without rounding, expected value is: 1.272839494717283e-5, 16 digits of precision (calculated on Wolfram Alpha)
+    const expectedSendMaxValue = '1.27283949471729e-5'
+
+    assert.equal(calculatedSendMaxValue, expectedSendMaxValue)
+  })
 })
