@@ -610,6 +610,52 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(trustLine.limit, trustLineAmount)
   })
 
+  it('enableRipplingForTrustLine - clears noRipple on a trust line', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    const trustLinePeerAccount = await XRPTestUtils.randomWalletFromFaucet()
+
+    // GIVEN an existing issuer account who has a trust line with a counter-party,
+    // with noRipple set
+    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
+
+    const trustLineCurrency = 'USD'
+    await issuedCurrencyClient.authorizeTrustLine(
+      trustLinePeerAccount.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    const trustLineAmount = '1'
+
+    await issuedCurrencyClient.disableRipplingForTrustLine(
+      trustLinePeerAccount.getAddress(),
+      trustLineCurrency,
+      trustLineAmount,
+      issuer,
+    )
+
+    // WHEN the issuer sets clears no rippling on the trust line
+    await issuedCurrencyClient.enableRipplingForTrustLine(
+      trustLinePeerAccount.getAddress(),
+      trustLineCurrency,
+      trustLineAmount,
+      issuer,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      issuer.getAddress(),
+    )
+
+    const [trustLine] = trustLines
+
+    // THEN the trust line has noRipple enabled.
+    assert.equal(trustLine.noRipple, false)
+    assert.equal(trustLine.limit, trustLineAmount)
+  })
+
   it('monitorIncomingPayments - valid request', async function (): Promise<
     void
   > {
