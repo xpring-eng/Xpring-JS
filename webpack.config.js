@@ -31,13 +31,15 @@ module.exports = {
   resolve: {
     extensions: moduleFileExtensions.map((ext) => `.${ext}`),
     fallback: {
-      module: 'empty',
+      module: false,
       dns: 'mock',
-      fs: 'empty',
-      http2: 'empty',
-      net: 'empty',
-      tls: 'empty',
-      child_process: 'empty',
+      fs: false,
+      http2: false,
+      net: false,
+      tls: false,
+      child_process: false,
+      util: require.resolve('util/'),
+      assert: require.resolve('assert/'),
     },
   },
   // Some libraries import Node modules but don't use them in the browser.
