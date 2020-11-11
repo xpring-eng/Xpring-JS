@@ -460,12 +460,14 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/trustset.html
    *
-   * TODO (tedkalaw): Implement qualityIn/qualityOut.
-   *
    * @param issuerXAddress The X-Address of the issuer to extend trust to.
    * @param currencyName The currency this trust line applies to, as a three-letter ISO 4217 Currency Code  or a 160-bit hex value according to currency format.
    * @param amount Decimal representation of the limit to set on this trust line.
    * @param wallet The wallet creating the trustline.
+   * @param qualityIn (Optional) Value incoming balances on this trust line at the ratio of this number per 1,000,000,000 units.
+   *                  A value of 0 is shorthand for treating balances at face value.
+   * @param qualityOut (Optional) Value outgoing balances on this trust line at the ratio of this number per 1,000,000,000 units.
+   *                  A value of 0 is shorthand for treating balances at face value.
    */
   public async createTrustLine(
     issuerXAddress: string,
@@ -599,6 +601,10 @@ export default class IssuedCurrencyClient {
    * @param currencyName The name of the currency to create a trust line for.
    * @param amount The maximum amount of debt to allow on this trust line.
    * @param wallet A wallet associated with the account extending trust.
+   * @param qualityIn (Optional) Value incoming balances on this trust line at the ratio of this number per 1,000,000,000 units.
+   *                  A value of 0 is shorthand for treating balances at face value.
+   * @param qualityOut (Optional) Value outgoing balances on this trust line at the ratio of this number per 1,000,000,000 units.
+   *                  A value of 0 is shorthand for treating balances at face value.
    */
   private async sendTrustSetTransaction(
     accountToTrust: string,
@@ -637,6 +643,10 @@ export default class IssuedCurrencyClient {
    * @param currencyName The name of the currency to create a trust line for.
    * @param amount The maximum amount of debt to allow on this trust line.
    * @param wallet A wallet associated with the account extending trust.
+   * @param qualityIn (Optional) Value incoming balances on this trust line at the ratio of this number per 1,000,000,000 units.
+   *                  A value of 0 is shorthand for treating balances at face value.
+   * @param qualityOut (Optional) Value outgoing balances on this trust line at the ratio of this number per 1,000,000,000 units.
+   *                  A value of 0 is shorthand for treating balances at face value.
    */
   private async prepareTrustSetTransaction(
     accountToTrust: string,
