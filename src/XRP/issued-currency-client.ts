@@ -785,6 +785,18 @@ export default class IssuedCurrencyClient {
     )
   }
 
+  /**
+   * TODO: doc me!
+   *
+   * @param sender
+   * @param destination
+   * @param issuer
+   * @param currency
+   * @param amount
+   * @param sourceIssuer
+   * @param sourceCurrency
+   * @param maxSourceAmount
+   */
   public async sendCrossCurrencyPayment(
     sender: Wallet,
     destination: string,
@@ -793,8 +805,113 @@ export default class IssuedCurrencyClient {
     amount: string,
     sourceIssuer: string,
     sourceCurrency: string,
-    sourceAmount: string,
-  ): Promise<TransactionResult> {}
+    maxSourceAmount: string,
+  ): Promise<TransactionResult> {
+    if (!XrpUtils.isValidXAddress(destination)) {
+      throw new XrpError(
+        XrpErrorType.XAddressRequired,
+        'Destination address must be in X-address format.  See https://xrpaddress.info/.',
+      )
+    }
+
+    // TODO: (acorso) we don't need to convert back to a classic address once the ripple-binary-codec supports X-addresses for issued currencies.
+    const issuerClassicAddress = XrpUtils.decodeXAddress(issuer)
+    if (!issuerClassicAddress) {
+      throw new XrpError(
+        XrpErrorType.XAddressRequired,
+        'Issuer address must be in X-address format.  See https://xrpaddress.info/.',
+      )
+    }
+
+    if (!issuerClassicAddress.address) {
+      throw new XrpError(
+        XrpErrorType.XAddressRequired,
+        'Decoded classic address is missing address field.',
+      )
+    }
+
+    const sourceIssuerClassicAddress = XrpUtils.decodeXAddress(sourceIssuer)
+    if (!sourceIssuerClassicAddress) {
+      throw new XrpError(
+        XrpErrorType.XAddressRequired,
+        'Source issuer address must be in X-address format.  See https://xrpaddress.info/.',
+      )
+    }
+
+    if (!sourceIssuerClassicAddress.address) {
+      throw new XrpError(
+        XrpErrorType.XAddressRequired,
+        'Decoded classic address is missing address field.',
+      )
+    }
+
+    // Determine if there is a viable path
+    //const pathFindResponse = this.webSocketNetworkClient
+
+    // Create representation of the currency to DELIVER
+    const currencyProto = new Currency()
+    currencyProto.setName(currency)
+
+    const issuerAccountAddress = new AccountAddress()
+    issuerAccountAddress.setAddress(issuerClassicAddress.address)
+
+    const issuedCurrency = new IssuedCurrencyAmount()
+    issuedCurrency.setCurrency(currencyProto)
+    issuedCurrency.setIssuer(issuerAccountAddress)
+    issuedCurrency.setValue(amount)
+
+    const currencyAmount = new CurrencyAmount()
+    currencyAmount.setIssuedCurrencyAmount(issuedCurrency)
+
+    const amountProto = new Amount()
+    amountProto.setValue(currencyAmount)
+
+    // Create representation of the currency to SEND
+    const sourceCurrencyProto = new Currency()
+    sourceCurrencyProto.setName(sourceCurrency)
+
+    const sourceIssuerAccountAddress = new AccountAddress()
+    sourceIssuerAccountAddress.setAddress(sourceIssuerClassicAddress.address)
+
+    const sourceIssuedCurrency = new IssuedCurrencyAmount()
+    sourceIssuedCurrency.setCurrency(sourceCurrencyProto)
+    sourceIssuedCurrency.setIssuer(sourceIssuerAccountAddress)
+    sourceIssuedCurrency.setValue(maxSourceAmount)
+
+    const sourceCurrencyAmount = new CurrencyAmount()
+    sourceCurrencyAmount.setIssuedCurrencyAmount(sourceIssuedCurrency)
+
+    // Create destination proto
+    const destinationAccountAddress = new AccountAddress()
+    destinationAccountAddress.setAddress(destination)
+
+    const destinationProto = new Destination()
+    destinationProto.setValue(destinationAccountAddress)
+
+    // Construct Payment fields
+    const payment = new Payment()
+    payment.setDestination(destinationProto)
+    // Note that the destinationTag doesn't need to be explicitly set here, because the ripple-binary-codec will decode this X-Address and
+    // assign the decoded destinationTag before signing.
+    payment.setAmount(amountProto)
+
+    // Assign sourceCurrencyAmount as sendMax for Payment
+    const sendMax = new SendMax()
+    sendMax.setValue(sourceCurrencyAmount)
+    payment.setSendMax(sendMax)
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
+    transaction.setPayment(payment)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      sender,
+    )
+    return this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      sender,
+    )
+  }
 
   // TODO: (acorso) Make this method private and expose more opinionated public APIs.
   // TODO: (acorso) structure this like we have `sendXrp` v.s. `sendXrpWithDetails` to allow for additional optional fields, such as memos.
@@ -829,9 +946,6 @@ export default class IssuedCurrencyClient {
     amount: string,
     transferFee?: number,
     sendMaxValue?: string,
-    sourceCurrency?: string,
-    sourceIssuer?: string,
-    sourceAmount?: string,
   ): Promise<TransactionResult> {
     if (transferFee && sendMaxValue) {
       throw new XrpError(
