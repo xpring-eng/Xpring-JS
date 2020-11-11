@@ -775,9 +775,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   > {
     this.timeout(timeoutMs)
 
+    // GIVEN a test address that is malformed.
     const address = 'badAddress'
 
-    // GIVEN a test address that is malformed.
     // WHEN stopMonitoringAccountTransactions is called for that address THEN an error is thrown.
     try {
       await issuedCurrencyClient.stopMonitoringAccountTransactions(address)
