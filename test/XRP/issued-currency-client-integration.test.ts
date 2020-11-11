@@ -471,7 +471,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.currency, trustLineCurrency)
   })
 
-  it.only('createTrustLine - adding a trustline with non-zero value and qualityIn + qualityOut', async function (): Promise<
+  it('createTrustLine - adding a trustline with non-zero value and qualityIn + qualityOut', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -505,6 +505,8 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.account, classicAddress.address)
     assert.equal(createdTrustLine.limit, trustLineLimit)
     assert.equal(createdTrustLine.currency, trustLineCurrency)
+    assert.equal(createdTrustLine.qualityIn, qualityInAmount)
+    assert.equal(createdTrustLine.qualityOut, qualityOutAmount)
   })
 
   it('authorizeTrustLine - valid account', async function (): Promise<void> {
