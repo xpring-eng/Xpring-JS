@@ -63,9 +63,11 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.1.1",
+    "assert": "^2.0.0",
     "axios": "^0.21.0",
     "big-integer": "^1.6.48",
     "bignumber.js": "^9.0.0",
+    "buffer": "^6.0.2",
     "crypto-browserify": "^3.12.0",
     "google-protobuf": "^3.12.2",
     "grpc-web": "1.2.1",
