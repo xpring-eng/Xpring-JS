@@ -6,6 +6,8 @@ import {
   Amount,
   TransferRate,
   Destination,
+  QualityIn,
+  QualityOut,
 } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
@@ -470,6 +472,8 @@ export default class IssuedCurrencyClient {
     currencyName: string,
     amount: string,
     wallet: Wallet,
+    qualityIn?: number,
+    qualityOut?: number,
   ): Promise<TransactionResult> {
     return await this.sendTrustSetTransaction(
       issuerXAddress,
@@ -477,6 +481,8 @@ export default class IssuedCurrencyClient {
       amount,
       undefined,
       wallet,
+      qualityIn,
+      qualityOut,
     )
   }
 
@@ -600,6 +606,8 @@ export default class IssuedCurrencyClient {
     amount: string,
     flags: number | undefined,
     wallet: Wallet,
+    qualityIn?: number,
+    qualityOut?: number,
   ): Promise<TransactionResult> {
     const trustSetTransaction = await this.prepareTrustSetTransaction(
       accountToTrust,
@@ -607,6 +615,8 @@ export default class IssuedCurrencyClient {
       amount,
       flags,
       wallet,
+      qualityIn,
+      qualityOut,
     )
 
     const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
@@ -634,6 +644,8 @@ export default class IssuedCurrencyClient {
     amount: string,
     flags: number | undefined,
     wallet: Wallet,
+    qualityInAmount?: number,
+    qualityOutAmount?: number,
   ): Promise<Transaction> {
     if (!XrpUtils.isValidXAddress(accountToTrust)) {
       throw XrpError.xAddressRequired
@@ -670,6 +682,18 @@ export default class IssuedCurrencyClient {
 
     const trustSet = new TrustSet()
     trustSet.setLimitAmount(limit)
+
+    if (qualityInAmount) {
+      const qualityIn = new QualityIn()
+      qualityIn.setValue(qualityInAmount)
+      trustSet.setQualityIn(qualityIn)
+    }
+
+    if (qualityOutAmount) {
+      const qualityOut = new QualityOut()
+      qualityOut.setValue(qualityOutAmount)
+      trustSet.setQualityOut(qualityOut)
+    }
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
     transaction.setTrustSet(trustSet)
