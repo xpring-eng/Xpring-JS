@@ -11,6 +11,7 @@ import {
 } from '../../src/XRP/shared'
 import { TransactionResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
 import XrpClient from '../../src/XRP/xrp-client'
+import IssuedCurrency from '../../src/XRP/shared/issued-currency'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -682,5 +683,60 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
         assert.fail('wrong error')
       }
     }
+  })
+
+  it('createOffer - success', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    // enable rippling on issuer
+    await issuedCurrencyClient.enableRippling(wallet)
+
+    // // extend trust from operational to issuer
+    const fakeIssuedCurrencyName = 'FAK'
+    // const issuedCurrencyAmount = '1000'
+
+    // await issuedCurrencyClient.createTrustLine(
+    //   wallet.getAddress(),
+    //   fakeIssuedCurrencyName,
+    //   issuedCurrencyAmount,
+    //   wallet2,
+    // )
+
+    // // send some issued currency to the second wallet
+    // await issuedCurrencyClient.createIssuedCurrency(
+    //   wallet,
+    //   wallet2.getAddress(),
+    //   fakeIssuedCurrencyName,
+    //   issuedCurrencyAmount,
+    // )
+
+    // Can we create offers with currency that we ourselves issue? / haven't yet issued?
+    const issuerClassicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
+    if (!issuerClassicAddress) {
+      throw XrpError.xAddressRequired
+    }
+    const takerGetsIssuedCurrency: IssuedCurrency = {
+      issuer: issuerClassicAddress.address,
+      currency: fakeIssuedCurrencyName,
+      value: '100',
+    }
+    const takerPaysXrp = '50'
+
+    const offerSequenceNumber = 1
+
+    const rippleEpochStartTimeSeconds = 946684800
+    const currentTimeUnixEpochSeconds = Date.now() / 1000 // 1000 ms/sec
+    const currentTimeRippleEpochSeconds =
+      currentTimeUnixEpochSeconds - rippleEpochStartTimeSeconds
+    const expiration = currentTimeRippleEpochSeconds + 60 * 60 // roughly one hour in future
+
+    const transactionResult = await issuedCurrencyClient.createOffer(
+      wallet,
+      takerGetsIssuedCurrency,
+      takerPaysXrp,
+      offerSequenceNumber,
+      expiration,
+    )
+    // TODO: assert success
   })
 })
