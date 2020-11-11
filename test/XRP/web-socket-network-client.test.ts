@@ -1,7 +1,10 @@
 import { assert } from 'chai'
 import { Wallet, XrplNetwork, XrpUtils } from 'xpring-common-js'
 import WebSocketNetworkClient from '../../src/XRP/network-clients/web-socket-network-client'
-import { TransactionResponse } from '../../src/XRP/shared/rippled-web-socket-schema'
+import {
+  TransactionResponse,
+  ResponseStatus,
+} from '../../src/XRP/shared/rippled-web-socket-schema'
 import XrpError from '../../src/XRP/shared/xrp-error'
 import XrpClient from '../../src/XRP/xrp-client'
 
@@ -88,7 +91,7 @@ describe('WebSocket Tests', function (): void {
     )
 
     // THEN the subscribe request is successfully submitted and received
-    assert.equal(subscribeResponse.status, 'success')
+    assert.equal(subscribeResponse.status, ResponseStatus.success)
     assert.equal(subscribeResponse.type, 'response')
 
     // WHEN a payment is sent to that address
@@ -105,7 +108,7 @@ describe('WebSocket Tests', function (): void {
     )
 
     // THEN the unsubscribe request is successfully submitted and received
-    assert.equal(unsubscribeResponse.status, 'success')
+    assert.equal(unsubscribeResponse.status, ResponseStatus.success)
     assert.equal(unsubscribeResponse.type, 'response')
 
     // WHEN a payment is sent to that address

@@ -3,6 +3,7 @@ import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
 import {
   AccountLinesResponse,
   GatewayBalancesResponse,
+  ResponseStatus,
   StatusResponse,
   TransactionResponse,
 } from '../../../src/XRP/shared/rippled-web-socket-schema'
@@ -57,7 +58,7 @@ export class FakeWebSocketNetworkClientResponses {
       id:
         'monitor_transactions_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
       result: {},
-      status: 'success',
+      status: ResponseStatus.success,
       type: 'response',
     }
   }
@@ -70,7 +71,7 @@ export class FakeWebSocketNetworkClientResponses {
       id:
         'unsubscribe_transactions_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
       result: {},
-      status: 'success',
+      status: ResponseStatus.success,
       type: 'response',
     }
   }
@@ -82,7 +83,7 @@ export class FakeWebSocketNetworkClientResponses {
     return {
       id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
       type: 'response',
-      status: 'success',
+      status: ResponseStatus.success,
       result: {
         account: 'r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
         ledger_hash:
@@ -131,7 +132,7 @@ export class FakeWebSocketNetworkClientResponses {
   public static defaultGetGatewayBalancesResponse(): GatewayBalancesResponse {
     return {
       id: 'gateway_balances_rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',
-      status: 'success',
+      status: ResponseStatus.success,
       type: 'response',
       result: {
         account: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',

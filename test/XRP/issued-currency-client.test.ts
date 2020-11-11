@@ -20,6 +20,7 @@ import {
   RippledMethod,
   AccountLinesSuccessfulResponse,
   GatewayBalancesSuccessfulResponse,
+  ResponseStatus,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
 import GatewayBalances, {
   gatewayBalancesFromResponse,
@@ -117,7 +118,7 @@ describe('Issued Currency Client', function (): void {
         id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
         ledger_index: 'validated',
       },
-      status: 'error',
+      status: ResponseStatus.error,
       type: 'response',
     }
     const fakeErroringWebSocketClientResponses = new FakeWebSocketNetworkClientResponses(
@@ -155,7 +156,7 @@ describe('Issued Currency Client', function (): void {
         id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
         ledger_index: 'validated',
       },
-      status: 'error',
+      status: ResponseStatus.error,
       type: 'response',
     }
     const fakeErroringWebSocketClientResponses = new FakeWebSocketNetworkClientResponses(
@@ -507,7 +508,7 @@ describe('Issued Currency Client', function (): void {
         ledger_index: 'validated',
         strict: true,
       },
-      status: 'error',
+      status: ResponseStatus.error,
       type: 'response',
     }
     const fakeErroringWebSocketClientResponses = new FakeWebSocketNetworkClientResponses(

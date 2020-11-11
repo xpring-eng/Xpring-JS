@@ -39,6 +39,7 @@ import {
   TransactionResponse,
   GatewayBalancesResponse,
   GatewayBalancesSuccessfulResponse,
+  ResponseStatus,
 } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
@@ -224,7 +225,7 @@ export default class IssuedCurrencyClient {
       classicAddress.address,
       callback,
     )
-    return response.status === 'success'
+    return response.status === ResponseStatus.success
   }
 
   /**
@@ -245,7 +246,7 @@ export default class IssuedCurrencyClient {
     const response = await this.webSocketNetworkClient.unsubscribeFromAccount(
       classicAddress.address,
     )
-    return response.status === 'success'
+    return response.status === ResponseStatus.success
   }
 
   /**
