@@ -6,12 +6,14 @@ import {
   Amount,
   TransferRate,
   Destination,
+  TakerPays,
 } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
   Currency,
   CurrencyAmount,
   IssuedCurrencyAmount,
+  XRPDropsAmount,
 } from './Generated/web/org/xrpl/rpc/v1/amount_pb'
 import {
   TrustSet,
@@ -42,10 +44,17 @@ import {
 } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
-import { SendMax } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
+import {
+  Expiration,
+  OfferSequence,
+  SendMax,
+  TakerGets,
+} from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
 import { RippledErrorMessages } from './shared/rippled-error-messages'
 import TrustSetFlag from './shared/trust-set-flag'
 import { BigNumber } from 'bignumber.js'
+import { OfferCreate } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/transaction_pb'
+import IssuedCurrency from './shared/issued-currency'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -942,5 +951,108 @@ export default class IssuedCurrencyClient {
 
     // If we have too many digits of precision, express with scientific notation but fit within decimal precision.
     return rawSendMaxValue.toExponential(14, 0).replace(/e\+/, 'e')
+  }
+
+  /**
+   * Creates an offer on the XRP Ledger.
+   * @see https://xrpl.org/offers.html
+   * @see https://xrpl.org/offercreate.html#offercreate
+   *
+   * @param sender The Wallet creating this offer, and that will sign the transaction.
+   * @param takerGetsAmount The amount and type of currency being provided by the offer creator.
+   *               Use a string to specify XRP, or an IssuedCurrency object to specify an issued currency.
+   * @param takerPaysAmount The amount and type of currency being requested by the offer creator.
+   *               Use a string to specify XRP, or an IssuedCurrency object to specify an issued currency.
+   * @param offerSequence (Optional) An offer to delete first, specified by the sequence number of a previous OfferCreate transaction.
+   *               If specified, cancel any offer object in the ledger that was created by that transaction.
+   *               It is not considered an error if the offer specified does not exist.
+   * @param expiration (Optional) Time after which the offer is no longer active, in seconds since the Ripple Epoch.
+   *               (See https://xrpl.org/basic-data-types.html#specifying-time)
+   */
+  public async createOffer(
+    sender: Wallet,
+    takerGetsAmount: string | IssuedCurrency,
+    takerPaysAmount: string | IssuedCurrency,
+    offerSequence?: number,
+    expiration?: number,
+  ): Promise<TransactionResult> {
+    // construct TakerGets
+    const takerGetsCurrencyAmount = new CurrencyAmount()
+    if (typeof takerGetsAmount == 'string') {
+      const takerGetsXrpDropsAmount = new XRPDropsAmount()
+      takerGetsXrpDropsAmount.setDrops(takerGetsAmount)
+      takerGetsCurrencyAmount.setXrpAmount(takerGetsXrpDropsAmount)
+    } else {
+      const takerGetsCurrency = new Currency()
+      takerGetsCurrency.setName(takerGetsAmount.currency)
+
+      const takerGetsAccountAddress = new AccountAddress()
+      takerGetsAccountAddress.setAddress(takerGetsAmount.issuer)
+
+      const takerGetsIssuedCurrencyAmount = new IssuedCurrencyAmount()
+      takerGetsIssuedCurrencyAmount.setIssuer(takerGetsAccountAddress)
+      takerGetsIssuedCurrencyAmount.setCurrency(takerGetsCurrency)
+      takerGetsIssuedCurrencyAmount.setValue(takerGetsAmount.value)
+
+      takerGetsCurrencyAmount.setIssuedCurrencyAmount(
+        takerGetsIssuedCurrencyAmount,
+      )
+    }
+    const takerGets = new TakerGets()
+    takerGets.setValue(takerGetsCurrencyAmount)
+
+    // construct TakerPays
+    const takerPaysCurrencyAmount = new CurrencyAmount()
+    if (typeof takerPaysAmount == 'string') {
+      const takerPaysXrpDropsAmount = new XRPDropsAmount()
+      takerPaysXrpDropsAmount.setDrops(takerPaysAmount)
+      takerPaysCurrencyAmount.setXrpAmount(takerPaysXrpDropsAmount)
+    } else {
+      const takerPaysCurrency = new Currency()
+      takerPaysCurrency.setName(takerPaysAmount.currency)
+
+      const takerPaysAccountAddress = new AccountAddress()
+      takerPaysAccountAddress.setAddress(takerPaysAmount.issuer)
+
+      const takerPaysIssuedCurrencyAmount = new IssuedCurrencyAmount()
+      takerPaysIssuedCurrencyAmount.setIssuer(takerPaysAccountAddress)
+      takerPaysIssuedCurrencyAmount.setCurrency(takerPaysCurrency)
+      takerPaysIssuedCurrencyAmount.setValue(takerPaysAmount.value)
+
+      takerPaysCurrencyAmount.setIssuedCurrencyAmount(
+        takerPaysIssuedCurrencyAmount,
+      )
+    }
+    const takerPays = new TakerPays()
+    takerPays.setValue(takerPaysCurrencyAmount)
+
+    const offerCreate = new OfferCreate()
+    offerCreate.setTakerGets(takerGets)
+    offerCreate.setTakerPays(takerPays)
+
+    if (offerSequence) {
+      const offerSequenceProto = new OfferSequence()
+      offerSequenceProto.setValue(offerSequence)
+      offerCreate.setOfferSequence(offerSequenceProto)
+    }
+
+    if (expiration) {
+      const expirationProto = new Expiration()
+      expirationProto.setValue(expiration)
+      offerCreate.setExpiration(expirationProto)
+    }
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
+    transaction.setOfferCreate(offerCreate)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      sender,
+    )
+
+    return this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      sender,
+    )
   }
 }
