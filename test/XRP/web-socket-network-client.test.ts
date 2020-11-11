@@ -157,7 +157,7 @@ describe('WebSocket Tests', function (): void {
       .address
 
     // const xrpAmount = '100'
-    const destinationAmount = {
+    const destinationAmount: IssuedCurrency = {
       issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA',
       currency: 'CNY',
       value: '50',
