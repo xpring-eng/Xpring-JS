@@ -1,9 +1,8 @@
 import bigInt from 'big-integer'
 import { assert } from 'chai'
-import { XrplNetwork, XrpUtils } from 'xpring-common-js'
+import { XrplNetwork } from 'xpring-common-js'
 import TransactionStatus from '../../src/XRP/shared/transaction-status'
 import XrpClient from '../../src/XRP/xrp-client'
-import GrpcNetworkClient from '../../src/XRP/network-clients/grpc-xrp-network-client'
 
 import XRPTestUtils, {
   iForgotToPickUpCarlMemo,
@@ -11,8 +10,6 @@ import XRPTestUtils, {
   noFormatMemo,
   noTypeMemo,
 } from './helpers/xrp-test-utils'
-import { LedgerSpecifier } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger_pb'
-import { XrpError } from '../../src/XRP'
 import { AccountRootFlag } from '../../src/XRP/shared'
 
 // A timeout for these tests.
@@ -22,7 +19,7 @@ const timeoutMs = 60 * 1000
 // An address on TestNet that has a balance.
 const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
 
-// An XrpClient that makes requests. Ssends the requests to an HTTP envoy emulating how the browser would behave.
+// An XrpClient that makes requests. Sends the requests to an HTTP envoy emulating how the browser would behave.
 const grpcWebUrl = 'https://envoy.test.xrp.xpring.io'
 const xrpWebClient = new XrpClient(grpcWebUrl, XrplNetwork.Test, true)
 
@@ -46,33 +43,29 @@ describe('XrpClient Integration Tests', function (): void {
   it('Get Transaction Status - Web Shim', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const transactionHash = await xrpWebClient.send(
+    const transactionResult = await xrpWebClient.sendXrp(
       amount,
       recipientAddress,
       wallet,
     )
-    const transactionStatus = await xrpWebClient.getPaymentStatus(
-      transactionHash,
-    )
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
+    assert.deepEqual(transactionResult.status, TransactionStatus.Succeeded)
   })
 
   it('Get Transaction Status - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const transactionHash = await xrpClient.send(
+    const transactionResult = await xrpClient.sendXrp(
       amount,
       recipientAddress,
       wallet,
     )
-    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
-    assert.deepEqual(transactionStatus, TransactionStatus.Succeeded)
+    assert.deepEqual(transactionResult.status, TransactionStatus.Succeeded)
   })
 
   it('Send XRP - Web Shim', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const result = await xrpWebClient.send(amount, recipientAddress, wallet)
+    const result = await xrpWebClient.sendXrp(amount, recipientAddress, wallet)
     assert.exists(result)
   })
 
@@ -85,15 +78,15 @@ describe('XrpClient Integration Tests', function (): void {
       noFormatMemo,
       noTypeMemo,
     ]
-    const result = await xrpWebClient.sendWithDetails({
+    const transactionResult = await xrpWebClient.sendXrpWithDetails({
       amount,
       destination: recipientAddress,
       sender: wallet,
       memoList,
     })
-    assert.exists(result)
+    assert.exists(transactionResult)
 
-    const transaction = await xrpClient.getPayment(result)
+    const transaction = await xrpClient.getPayment(transactionResult.hash)
 
     assert.deepEqual(transaction?.memos, [
       iForgotToPickUpCarlMemo,
@@ -106,7 +99,7 @@ describe('XrpClient Integration Tests', function (): void {
   it('Send XRP - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const result = await xrpClient.send(amount, recipientAddress, wallet)
+    const result = await xrpClient.sendXrp(amount, recipientAddress, wallet)
     assert.exists(result)
   })
 
@@ -118,15 +111,15 @@ describe('XrpClient Integration Tests', function (): void {
       noFormatMemo,
       noTypeMemo,
     ]
-    const result = await xrpClient.sendWithDetails({
+    const transactionResult = await xrpClient.sendXrpWithDetails({
       amount,
       destination: recipientAddress,
       sender: wallet,
       memoList,
     })
-    assert.exists(result)
+    assert.exists(transactionResult)
 
-    const transaction = await xrpClient.getPayment(result)
+    const transaction = await xrpClient.getPayment(transactionResult.hash)
 
     assert.deepEqual(transaction?.memos, [
       iForgotToPickUpCarlMemo,
@@ -177,13 +170,13 @@ describe('XrpClient Integration Tests', function (): void {
   it('Get Transaction - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const transactionHash = await xrpClient.send(
+    const transactionResult = await xrpClient.sendXrp(
       amount,
       recipientAddress,
       wallet,
     )
 
-    const transaction = await xrpClient.getPayment(transactionHash)
+    const transaction = await xrpClient.getPayment(transactionResult.hash)
 
     assert.exists(transaction)
   })
@@ -195,38 +188,173 @@ describe('XrpClient Integration Tests', function (): void {
     const result = await xrpClient.enableDepositAuth(wallet)
 
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
+    await XRPTestUtils.verifyFlagModification(
+      wallet,
+      rippledUrl,
+      result,
+      AccountRootFlag.LSF_DEPOSIT_AUTH,
+    )
+  })
+
+  it('Enable Deposit Auth - sending by unauthorized account fails after enabled', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account with DepositAuth enabled
+    await xrpClient.enableDepositAuth(wallet)
+
+    // WHEN an account that is not authorized sends XRP
+    const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const transactionResult = await xrpClient.sendXrp(
+      amount,
+      wallet.getAddress(),
+      sendingWallet,
+    )
+
+    // THEN the transaction fails.
+    assert.deepEqual(
+      transactionResult.status,
+      TransactionStatus.ClaimedCostOnly,
+    )
+  })
+
+  it('Authorize Sending Account - failure on authorizing self', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN authorizeSendingAccount is called with the account's own address
+    const result = await xrpClient.authorizeSendingAccount(
+      wallet.getAddress(),
+      wallet,
+    )
+
+    // THEN the transaction fails due to a malformed transaction.
     const transactionHash = result.hash
     const transactionStatus = result.status
 
-    // get the account data and check the flag bitmap
-    const networkClient = new GrpcNetworkClient(rippledUrl)
-    const account = networkClient.AccountAddress()
-    const classicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
-    account.setAddress(classicAddress!.address)
+    assert.exists(transactionHash)
+    assert.deepEqual(transactionStatus, TransactionStatus.MalformedTransaction)
+  })
 
-    const request = networkClient.GetAccountInfoRequest()
-    request.setAccount(account)
+  it('Authorize Sending Account - failure on authorizing already authorized account', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account that has authorized another account to send funds to it
+    const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
+    await xrpClient.enableDepositAuth(wallet)
+    await xrpClient.authorizeSendingAccount(sendingWallet.getAddress(), wallet)
 
-    const ledger = new LedgerSpecifier()
-    ledger.setShortcut(LedgerSpecifier.Shortcut.SHORTCUT_VALIDATED)
-    request.setLedger(ledger)
+    // WHEN authorizeSendingAccount is called on the already authorized account
+    const result = await xrpClient.authorizeSendingAccount(
+      sendingWallet.getAddress(),
+      wallet,
+    )
 
-    const accountInfo = await networkClient.getAccountInfo(request)
-    if (!accountInfo) {
-      throw XrpError.malformedResponse
-    }
-
-    const accountData = accountInfo.getAccountData()
-    if (!accountData) {
-      throw XrpError.malformedResponse
-    }
-
-    const flags = accountData.getFlags()?.getValue()
+    // THEN the transaction fails and the cost of the transaction is claimed by the network.
+    const transactionHash = result.hash
+    const transactionStatus = result.status
 
     assert.exists(transactionHash)
-    assert.equal(transactionStatus, TransactionStatus.Succeeded)
-    assert.isTrue(
-      AccountRootFlag.checkFlag(AccountRootFlag.LSF_DEPOSIT_AUTH, flags!),
+    assert.deepEqual(transactionStatus, TransactionStatus.ClaimedCostOnly)
+  })
+
+  it('Authorize Sending Account - can send funds after authorize', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account that has authorized another account to send XRP to it
+    const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
+
+    await xrpClient.enableDepositAuth(wallet)
+
+    await xrpClient.authorizeSendingAccount(sendingWallet.getAddress(), wallet)
+
+    // WHEN the authorized account sends XRP
+    const transactionResult = await xrpClient.sendXrp(
+      amount,
+      wallet.getAddress(),
+      sendingWallet,
+    )
+
+    // THEN the transaction succeeds.
+    assert.deepEqual(transactionResult.status, TransactionStatus.Succeeded)
+  })
+
+  it('Unauthorize Sending Account - failure on unauthorizing self', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account
+    // WHEN unauthorizeSendingAccount is called with the account's own address
+    const result = await xrpClient.unauthorizeSendingAccount(
+      wallet.getAddress(),
+      wallet,
+    )
+
+    // THEN the transaction fails due to a malformed transaction.
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+
+    assert.exists(transactionHash)
+    // Note that this is different from what the docs suggest: https://xrpl.org/depositpreauth.html
+    // The code being returned in this case is actually a `tecNO_ENTRY`, which is what
+    // should be returned if the account to unauthorize was never authorized in the first place.
+    // This seems literally true, so we're resting for that.
+    // Note, however, that authorizing self above does in fact return a TransactionStatus.MalformedTransaction.
+    assert.equal(transactionStatus, TransactionStatus.ClaimedCostOnly)
+  })
+
+  it('Unauthorize Sending Account - failure on unauthorizing account that is not authorized', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account that has not authorized any accounts
+    await xrpClient.enableDepositAuth(wallet)
+
+    // WHEN unauthorizeSendingAccount is called on an account that is not authorized
+    const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const result = await xrpClient.unauthorizeSendingAccount(
+      sendingWallet.getAddress(),
+      wallet,
+    )
+
+    // THEN the transaction fails and the cost of the transaction is claimed by the network.
+    const transactionHash = result.hash
+    const transactionStatus = result.status
+
+    assert.exists(transactionHash)
+    assert.equal(transactionStatus, TransactionStatus.ClaimedCostOnly)
+  })
+
+  it('Unauthorize Sending Account - cannot send funds after an authorized account is unauthorized', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN an existing testnet account that has authorized another account to send XRP to it
+    const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
+
+    await xrpClient.enableDepositAuth(wallet)
+
+    await xrpClient.authorizeSendingAccount(sendingWallet.getAddress(), wallet)
+
+    // WHEN the sender's account is unauthorized and a payment is sent.
+    await xrpClient.unauthorizeSendingAccount(
+      sendingWallet.getAddress(),
+      wallet,
+    )
+
+    const transactionResult = await xrpClient.sendXrp(
+      amount,
+      wallet.getAddress(),
+      sendingWallet,
+    )
+
+    // THEN the transaction fails.
+    assert.deepEqual(
+      transactionResult.status,
+      TransactionStatus.ClaimedCostOnly,
     )
   })
 })

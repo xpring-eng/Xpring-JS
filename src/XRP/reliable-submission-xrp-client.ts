@@ -68,32 +68,32 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
     return this.decoratedClient.getPaymentStatus(transactionHash)
   }
 
-  public async send(
+  public async sendXrp(
     amount: string | number | BigInteger,
     destination: string,
     sender: Wallet,
-  ): Promise<string> {
-    return this.sendWithDetails({
+  ): Promise<TransactionResult> {
+    return this.sendXrpWithDetails({
       amount,
       destination,
       sender,
     })
   }
 
-  public async sendWithDetails(
+  public async sendXrpWithDetails(
     sendXrpDetails: SendXrpDetails,
-  ): Promise<string> {
+  ): Promise<TransactionResult> {
     const { sender } = sendXrpDetails
 
-    const transactionHash = await this.decoratedClient.sendWithDetails(
+    const pendingTransactionResult = await this.decoratedClient.sendXrpWithDetails(
       sendXrpDetails,
     )
-    await this.coreXrplClient.waitForFinalTransactionOutcome(
-      transactionHash,
+    const finalTransactionResult = await this.coreXrplClient.getFinalTransactionResultAsync(
+      pendingTransactionResult.hash,
       sender,
     )
 
-    return transactionHash
+    return finalTransactionResult
   }
 
   public async accountExists(address: string): Promise<boolean> {
@@ -122,6 +122,20 @@ export default class ReliableSubmissionXrpClient implements XrpClientDecorator {
   ): Promise<TransactionResult> {
     const result = await this.decoratedClient.authorizeSendingAccount(
       xAddressToAuthorize,
+      wallet,
+    )
+    return await this.coreXrplClient.getFinalTransactionResultAsync(
+      result.hash,
+      wallet,
+    )
+  }
+
+  public async unauthorizeSendingAccount(
+    xAddressToUnauthorize: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    const result = await this.decoratedClient.unauthorizeSendingAccount(
+      xAddressToUnauthorize,
       wallet,
     )
     return await this.coreXrplClient.getFinalTransactionResultAsync(

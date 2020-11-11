@@ -63,6 +63,8 @@ export default class XrpClient implements XrpClientInterface {
   }
 
   /**
+   * @deprecated Use method `sendXrp` instead.
+   *
    * Send the given amount of XRP from the source wallet to the destination address.
    *
    * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
@@ -75,14 +77,17 @@ export default class XrpClient implements XrpClientInterface {
     destination: string,
     sender: Wallet,
   ): Promise<string> {
-    return this.sendWithDetails({
+    const transactionResult = await this.sendXrpWithDetails({
       amount,
       destination,
       sender,
     })
+    return transactionResult.hash
   }
 
   /**
+   * @deprecated Use method `sendXrpWithDetails` instead.
+   *
    * Send the given amount of XRP from the source wallet to the destination PayID, allowing
    * for additional details to be specified for use with supplementary features of the XRP
    * ledger.
@@ -93,7 +98,44 @@ export default class XrpClient implements XrpClientInterface {
   public async sendWithDetails(
     sendXrpDetails: SendXrpDetails,
   ): Promise<string> {
-    return this.decoratedClient.sendWithDetails(sendXrpDetails)
+    const transactionResult = await this.decoratedClient.sendXrpWithDetails(
+      sendXrpDetails,
+    )
+    return transactionResult.hash
+  }
+
+  /**
+   * Send the given amount of XRP from the source wallet to the destination address.
+   *
+   * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
+   * @param destination A destination address to send the drops to.
+   * @param sender The wallet that XRP will be sent from and which will sign the request.
+   * @returns A promise which resolves to a TransactionResult representing the final outcome of the submitted transaction.
+   */
+  public async sendXrp(
+    amount: BigInteger | number | string,
+    destination: string,
+    sender: Wallet,
+  ): Promise<TransactionResult> {
+    return this.sendXrpWithDetails({
+      amount,
+      destination,
+      sender,
+    })
+  }
+
+  /**
+   * Send the given amount of XRP from the source wallet to a destination, allowing
+   * for additional details to be specified for use with supplementary features of the XRP
+   * ledger.
+   *
+   * @param sendXrpDetails - a wrapper object containing details for constructing a transaction.
+   * @returns A promise which resolves to a TransactionResult representing the final outcome of the submitted transaction.
+   */
+  public async sendXrpWithDetails(
+    sendXrpDetails: SendXrpDetails,
+  ): Promise<TransactionResult> {
+    return this.decoratedClient.sendXrpWithDetails(sendXrpDetails)
   }
 
   /**
@@ -144,5 +186,41 @@ export default class XrpClient implements XrpClientInterface {
    */
   enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
     return this.decoratedClient.enableDepositAuth(wallet)
+  }
+
+  /**
+   * Authorizes an XRPL account to send to this XRPL account.
+   *
+   * @see https://xrpl.org/depositpreauth.html
+   *
+   * @param xAddressToAuthorize The X-Address of the account to authorize as a sender.
+   * @param wallet The wallet associated with the XRPL account authorizing a sender, and that will sign the request.
+   */
+  authorizeSendingAccount(
+    xAddressToAuthorize: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return this.decoratedClient.authorizeSendingAccount(
+      xAddressToAuthorize,
+      wallet,
+    )
+  }
+
+  /**
+   * Unauthorizes an XRPL account to send to this XRPL account.
+   *
+   * @see https://xrpl.org/depositpreauth.html
+   *
+   * @param xAddressToUnauthorize The X-Address of the account to unauthorize as a sender.
+   * @param wallet The wallet associated with the XRPL account unauthorizing a sender, and that will sign the request.
+   */
+  unauthorizeSendingAccount(
+    xAddressToUnauthorize: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return this.decoratedClient.unauthorizeSendingAccount(
+      xAddressToUnauthorize,
+      wallet,
+    )
   }
 }

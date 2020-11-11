@@ -12,12 +12,10 @@ import {
   MemoData,
   MemoFormat,
   MemoType,
-  SetFlag,
   Authorize,
   Unauthorize,
 } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import {
-  AccountSet,
   Memo,
   Payment,
   Transaction,
@@ -29,7 +27,7 @@ import TransactionStatus from './shared/transaction-status'
 import XrpTransaction from './protobuf-wrappers/xrp-transaction'
 import GrpcNetworkClient from './network-clients/grpc-xrp-network-client'
 import GrpcNetworkClientWeb from './network-clients/grpc-xrp-network-client.web'
-import { XrpNetworkClient } from './network-clients/xrp-network-client'
+import { GrpcNetworkClientInterface } from './network-clients/grpc-network-client-interface'
 import isNode from '../Common/utils'
 import XrpError from './shared/xrp-error'
 import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
@@ -72,7 +70,7 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @param network The network this XrpClient is connecting to.
    */
   public constructor(
-    private readonly networkClient: XrpNetworkClient,
+    private readonly networkClient: GrpcNetworkClientInterface,
     readonly network: XrplNetwork,
   ) {
     this.coreXrplClient = new CoreXrplClient(networkClient, network)
@@ -136,17 +134,17 @@ export default class DefaultXrpClient implements XrpClientDecorator {
   /**
    * Send the given amount of XRP from the source wallet to the destination address.
    *
-   * @param amount A `BigInteger`, number or numeric string representing the number of drops to send.
+   * @param amount A `BigInteger`, number or numeric string representing the number of drops of XRP to send.
    * @param destinationAddress A destination address to send the drops to.
    * @param sender The wallet that XRP will be sent from and which will sign the request.
-   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   * @returns A promise which resolves to a TransactionResult representing the pending outcome of the submitted transaction.
    */
-  public async send(
+  public async sendXrp(
     amount: BigInteger | number | string,
     destinationAddress: string,
     sender: Wallet,
-  ): Promise<string> {
-    return this.sendWithDetails({
+  ): Promise<TransactionResult> {
+    return await this.sendXrpWithDetails({
       amount,
       destination: destinationAddress,
       sender,
@@ -158,11 +156,11 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * for additional details to be specified for use with supplementary features of the XRP ledger.
    *
    * @param sendXrpDetails - a wrapper object containing details for constructing a transaction.
-   * @returns A promise which resolves to a string representing the hash of the submitted transaction.
+   * @returns A promise which resolves to a TransactionResult representing the pending outcome of the submitted transaction.
    */
-  public async sendWithDetails(
+  public async sendXrpWithDetails(
     sendXrpDetails: SendXrpDetails,
-  ): Promise<string> {
+  ): Promise<TransactionResult> {
     const {
       amount: drops,
       sender,
@@ -191,6 +189,8 @@ export default class DefaultXrpClient implements XrpClientDecorator {
 
     const payment = new Payment()
     payment.setDestination(destination)
+    // Note that the destinationTag doesn't need to be explicitly set here, because the ripple-binary-codec will decode this X-Address and
+    // assign the decoded destinationTag before signing.
     payment.setAmount(amount)
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
@@ -221,7 +221,15 @@ export default class DefaultXrpClient implements XrpClientDecorator {
         .forEach((memo) => transaction.addMemos(memo))
     }
 
-    return this.coreXrplClient.signAndSubmitTransaction(transaction, sender)
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      sender,
+    )
+    return TransactionResult.createPendingTransactionResult(
+      transactionHash,
+      TransactionStatus.Pending,
+      false,
+    )
   }
 
   /**
@@ -322,25 +330,14 @@ export default class DefaultXrpClient implements XrpClientDecorator {
    * @see https://xrpl.org/depositauth.html
    *
    * @param wallet The wallet associated with the XRPL account enabling Deposit Authorization and that will sign the request.
-   * @returns A promise which resolves to a TransactionResult object that contains the hash of the submitted AccountSet transaction,
-   *          the preliminary status, and whether the transaction has been included in a validated ledger yet.
+   * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
    */
   public async enableDepositAuth(wallet: Wallet): Promise<TransactionResult> {
-    const setFlag = new SetFlag()
-    setFlag.setValue(AccountSetFlag.asfDepositAuth)
-
-    const accountSet = new AccountSet()
-    accountSet.setSetFlag(setFlag)
-
-    const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
-    transaction.setAccountSet(accountSet)
-
-    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
-      transaction,
+    return this.coreXrplClient.changeFlag(
+      AccountSetFlag.asfDepositAuth,
+      true,
       wallet,
     )
-
-    return await this.coreXrplClient.getTransactionResult(transactionHash)
   }
 
   /**

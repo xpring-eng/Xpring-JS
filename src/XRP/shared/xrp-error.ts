@@ -6,6 +6,7 @@ export enum XrpErrorType {
   PaymentConversionFailure,
   MalformedProtobuf,
   MalformedResponse,
+  AccountNotFound,
   SigningError,
   Unknown,
   XAddressRequired,
@@ -28,7 +29,7 @@ export default class XrpError extends Error {
    */
   static paymentConversionFailure = new XrpError(
     XrpErrorType.PaymentConversionFailure,
-    'Could not convert payment transaction: (transaction). Please file a bug at https://github.com/xpring-eng/Xpring-JS/issues',
+    'Could not convert payment transaction: (transaction). Please file a bug at https://github.com/xpring-eng/Xpring-JS/issues.',
   )
 
   /**
@@ -45,7 +46,15 @@ export default class XrpError extends Error {
    */
   static malformedResponse = new XrpError(
     XrpErrorType.MalformedResponse,
-    'The response from the remote service was malformed or in an unexpected format',
+    'The response from the remote service was malformed or in an unexpected format.',
+  )
+
+  /**
+   * The account could not be found on the XRPL.
+   */
+  static accountNotFound = new XrpError(
+    XrpErrorType.AccountNotFound,
+    'The requested account could not be found on the XRPL.',
   )
 
   /**
@@ -53,7 +62,7 @@ export default class XrpError extends Error {
    */
   static signingError = new XrpError(
     XrpErrorType.SigningError,
-    'There was an error signing the transaction',
+    'There was an error signing the transaction.',
   )
 
   /**

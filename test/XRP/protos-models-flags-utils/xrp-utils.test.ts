@@ -7,8 +7,8 @@ import 'mocha'
 import { BigNumber } from 'bignumber.js'
 import { assert } from 'chai'
 
-import { XrpUtils, XrplNetwork, XrpClient } from '../../src'
-import XrpTestUtils from '../XRP/helpers/xrp-test-utils'
+import { XrpUtils, XrplNetwork, XrpClient } from '../../../src'
+import XrpTestUtils from '../../XRP/helpers/xrp-test-utils'
 import bigInt from 'big-integer'
 
 describe('xrp-drops-conversion', function (): void {

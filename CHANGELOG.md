@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Method `sendXrp` of class `XrpClient` replaces now deprecated `send`. `sendXrp` returns a `TransactionResult` that
+  contains more granular information about the final outcome of a submitted transaction.
+
+- Method `sendXrpWithDetails` of class `XrpClient` replaces now deprecated `sendWithDetails`.  `sendXrpWithDetails` returns
+  a `TransactionResult` that contains more granular infomration about the final outcome of a submitted transaction.
+
+### Deprecated
+
+- Method `send` of class `XrpClient` is deprecated and will be removed in two release cycles.
+  Use `sendXrp` instead.
+
+- Method `sendWithDetails` of class `XrpClient` is deprecated and will be removed in two release cycles.
+  Use `sendXrpWithDetails` instead.
+
+## 5.2.0 - 2020-10-15
+
+- A new method `unauthorizeSendingAccount` is added to `XrpClient` which unauthorizes
+  a sender to send XRP to the specified XRPL account that has enabled Deposit Authorization.
+  (See https://xrpl.org/depositpreauth.html)
+
+- A new method `authorizeSendingAccount` is added to `XrpClient` which authorizes a
+  sender to send XRP to the specified XRPL account that has enabled Deposit Authorization.
+  (See https://xrpl.org/depositpreauth.html)
+
 ## 5.1.2 - 2020-10-02
 
 This release contains updated dependencies for stability and security.
