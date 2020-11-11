@@ -30,18 +30,18 @@ module.exports = {
   },
   resolve: {
     extensions: moduleFileExtensions.map((ext) => `.${ext}`),
+    fallback: {
+      module: 'empty',
+      dns: 'mock',
+      fs: 'empty',
+      http2: 'empty',
+      net: 'empty',
+      tls: 'empty',
+      child_process: 'empty',
+    },
   },
   // Some libraries import Node modules but don't use them in the browser.
   // Tell webpack to provide empty mocks for them so importing them works.
-  node: {
-    module: 'empty',
-    dns: 'mock',
-    fs: 'empty',
-    http2: 'empty',
-    net: 'empty',
-    tls: 'empty',
-    child_process: 'empty',
-  },
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'dist'),
