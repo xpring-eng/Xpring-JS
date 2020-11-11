@@ -146,4 +146,35 @@ describe('WebSocket Tests', function (): void {
     assert.equal(result.source_account, sourceAddress)
     assert.include(result.destination_currencies, 'XRP')
   })
+
+  it('findRipplePath - all fields', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
+    const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
+      .address
+
+    const xrpAmount = '100'
+    const sendMaxAmount = '100'
+
+    // GIVEN two valid test addresses
+    // WHEN findRipplePath is called between those addresses
+    const response = await webSocketNetworkClient.findRipplePath(
+      sourceAddress,
+      destinationAddress,
+      xrpAmount,
+      sendMaxAmount,
+    )
+
+    // THEN the request is successfully submitted and received
+    assert.equal(response.status, 'success')
+    assert.equal(response.type, 'response')
+
+    const result = (response as RipplePathFindSuccessfulResponse).result
+
+    assert.equal(result.destination_account, destinationAddress)
+    assert.equal(result.destination_amount, xrpAmount)
+    assert.equal(result.source_account, sourceAddress)
+    assert.include(result.destination_currencies, 'XRP')
+  })
 })
