@@ -10,6 +10,7 @@ export enum XrpErrorType {
   SigningError,
   Unknown,
   XAddressRequired,
+  NoViablePaths,
 }
 
 /**

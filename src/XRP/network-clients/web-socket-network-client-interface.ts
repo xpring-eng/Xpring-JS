@@ -3,6 +3,8 @@ import {
   StatusResponse,
   AccountLinesResponse,
   GatewayBalancesResponse,
+  IssuedCurrency,
+  RipplePathFindResponse,
 } from '../shared/rippled-web-socket-schema'
 
 /**
@@ -46,6 +48,19 @@ export interface WebSocketNetworkClientInterface {
     account: string,
     addressesToExclude?: Array<string>,
   ): Promise<GatewayBalancesResponse>
+
+  /**
+   * Submits a ripple_path_find request to the rippled WebSocket API.
+   * @see https://xrpl.org/ripple_path_find.html
+   *
+   * @param sourceAccount TODO: (mvadari) fill this out
+   */
+  findRipplePath(
+    sourceAccount: string,
+    destinationAccount: string,
+    destinationAmount: string | IssuedCurrency,
+    sendMax?: string | IssuedCurrency,
+  ): Promise<RipplePathFindResponse>
 
   close(): void
 }

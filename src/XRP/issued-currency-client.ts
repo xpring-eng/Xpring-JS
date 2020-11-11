@@ -39,6 +39,8 @@ import {
   TransactionResponse,
   GatewayBalancesResponse,
   GatewayBalancesSuccessfulResponse,
+  IssuedCurrency,
+  RipplePathFindSuccessfulResponse,
 } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
@@ -846,7 +848,63 @@ export default class IssuedCurrencyClient {
     }
 
     // Determine if there is a viable path
-    //const pathFindResponse = this.webSocketNetworkClient
+    const destinationAmount: IssuedCurrency = {
+      value: amount,
+      currency,
+      issuer,
+    }
+    const sendAmount: IssuedCurrency = {
+      value: maxSourceAmount,
+      currency: sourceCurrency,
+      issuer: sourceIssuer,
+    }
+    let pathFindResponse = await this.webSocketNetworkClient.findRipplePath(
+      sender.getAddress(),
+      destination,
+      destinationAmount,
+      sendAmount,
+    )
+
+    // If failure response from websocket, throw
+    if (pathFindResponse.status != 'success') {
+      pathFindResponse = pathFindResponse as WebSocketFailureResponse
+      throw new XrpError(XrpErrorType.Unknown, pathFindResponse.error_message)
+    }
+
+    pathFindResponse = pathFindResponse as RipplePathFindSuccessfulResponse
+    const pathAlternatives = pathFindResponse.result.alternatives
+
+    // If no viable paths exist, throw
+    if (pathAlternatives.length == 0) {
+      throw new XrpError(
+        XrpErrorType.NoViablePaths,
+        'No paths exist to execute cross-currency payment.',
+      )
+    }
+
+    // Otherwise, find the cheapest path
+    let currentBestPath = pathAlternatives[0].paths_computed
+    let currentCheapestSourceAmount = new BigNumber(
+      (pathAlternatives[0].source_amount as IssuedCurrency).value,
+    )
+    pathAlternatives.forEach((possiblePath) => {
+      const numericSourceAmount = new BigNumber(
+        (possiblePath.source_amount as IssuedCurrency).value,
+      )
+      if (numericSourceAmount < currentCheapestSourceAmount) {
+        currentBestPath = possiblePath.paths_computed
+        currentCheapestSourceAmount = numericSourceAmount
+      }
+    })
+
+    // Determine if the cheapest path is cheap enough, otherwise throw
+    const numericMaxSourceAmount = new BigNumber(maxSourceAmount)
+    if (currentCheapestSourceAmount > numericMaxSourceAmount) {
+      throw new XrpError(
+        XrpErrorType.NoViablePaths,
+        'Best viable path is too expensive.',
+      )
+    }
 
     // Create representation of the currency to DELIVER
     const currencyProto = new Currency()
@@ -899,6 +957,15 @@ export default class IssuedCurrencyClient {
     const sendMax = new SendMax()
     sendMax.setValue(sourceCurrencyAmount)
     payment.setSendMax(sendMax)
+
+    // // Assign best path
+    // TODO: create a helper for constructing path elements from JSON
+    // const pathElementProto = new Payment.PathElement()
+    // pathElementProto.setAccount()
+
+    // const pathProto = new Payment.Path()
+    // pathProto.addElements()
+    // payment.addPaths()
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
     transaction.setPayment(payment)
