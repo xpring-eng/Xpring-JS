@@ -38,6 +38,9 @@ export class FakeWebSocketNetworkClientResponses {
     public readonly getSubscribeResponse: Result<
       StatusResponse
     > = FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
+    public readonly getUnsubscribeResponse: Result<
+      StatusResponse
+    > = FakeWebSocketNetworkClientResponses.defaultUnsubscribeResponse(),
     public readonly getAccountLinesResponse: Result<
       AccountLinesResponse
     > = FakeWebSocketNetworkClientResponses.defaultGetAccountLinesResponse(),
@@ -53,6 +56,19 @@ export class FakeWebSocketNetworkClientResponses {
     return {
       id:
         'monitor_transactions_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
+      result: {},
+      status: 'success',
+      type: 'response',
+    }
+  }
+
+  /**
+   * Construct a default response for an unsubscribe request.
+   */
+  public static defaultUnsubscribeResponse(): StatusResponse {
+    return {
+      id:
+        'unsubscribe_transactions_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
       result: {},
       status: 'success',
       type: 'response',
@@ -198,6 +214,15 @@ export class FakeWebSocketNetworkClient {
     }
 
     return Promise.resolve(subscribeResponse)
+  }
+
+  unsubscribeFromAccount(_account: string): Promise<StatusResponse> {
+    const unsubscribeResponse = this.responses.getUnsubscribeResponse
+    if (unsubscribeResponse instanceof Error) {
+      return Promise.reject(unsubscribeResponse)
+    }
+
+    return Promise.resolve(unsubscribeResponse)
   }
 
   getAccountLines(_address: string): Promise<AccountLinesResponse> {

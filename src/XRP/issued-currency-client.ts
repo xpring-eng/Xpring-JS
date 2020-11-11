@@ -228,6 +228,27 @@ export default class IssuedCurrencyClient {
   }
 
   /**
+   * Unsubscribes from transactions that affect the specified account.
+   * @see https://xrpl.org/unsubscribe.html
+   *
+   * @param account The account from which to unsubscribe from, encoded as an X-Address.
+   * @returns Whether the request to unsubscribe succeeded.
+   */
+  public async stopMonitoringAccountTransactions(
+    account: string,
+  ): Promise<boolean> {
+    const classicAddress = XrpUtils.decodeXAddress(account)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const response = await this.webSocketNetworkClient.unsubscribeFromAccount(
+      classicAddress.address,
+    )
+    return response.status === 'success'
+  }
+
+  /**
    * Enable Require Authorization for this XRPL account.
    *
    * @see https://xrpl.org/become-an-xrp-ledger-gateway.html#require-auth
