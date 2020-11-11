@@ -33,13 +33,13 @@ export class FakeWebSocketNetworkClientResponses {
   /**
    * Construct a new set of responses.
    *
-   * @param getSubscribeResponse The response or error that will be returned from the subscribe request.
+   * @param subscribeResponse The response or error that will be returned from the subscribe request.
    */
   public constructor(
-    public readonly getSubscribeResponse: Result<
+    public readonly subscribeResponse: Result<
       StatusResponse
     > = FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
-    public readonly getUnsubscribeResponse: Result<
+    public readonly unsubscribeResponse: Result<
       StatusResponse
     > = FakeWebSocketNetworkClientResponses.defaultUnsubscribeResponse(),
     public readonly getAccountLinesResponse: Result<
@@ -209,7 +209,7 @@ export class FakeWebSocketNetworkClient {
     _account: string,
     _callback: (data: TransactionResponse) => void,
   ): Promise<StatusResponse> {
-    const subscribeResponse = this.responses.getSubscribeResponse
+    const subscribeResponse = this.responses.subscribeResponse
     if (subscribeResponse instanceof Error) {
       return Promise.reject(subscribeResponse)
     }
@@ -218,7 +218,7 @@ export class FakeWebSocketNetworkClient {
   }
 
   unsubscribeFromAccount(_account: string): Promise<StatusResponse> {
-    const unsubscribeResponse = this.responses.getUnsubscribeResponse
+    const unsubscribeResponse = this.responses.unsubscribeResponse
     if (unsubscribeResponse instanceof Error) {
       return Promise.reject(unsubscribeResponse)
     }
