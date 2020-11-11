@@ -4,6 +4,7 @@ import WebSocketNetworkClient from '../../src/XRP/network-clients/web-socket-net
 import {
   TransactionResponse,
   RipplePathFindSuccessfulResponse,
+  IssuedCurrency,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
 import XrpError from '../../src/XRP/shared/xrp-error'
 import XrpClient from '../../src/XRP/xrp-client'
@@ -139,6 +140,7 @@ describe('WebSocket Tests', function (): void {
     assert.equal(response.status, 'success')
     assert.equal(response.type, 'response')
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     const result = (response as RipplePathFindSuccessfulResponse).result
 
     assert.equal(result.destination_account, destinationAddress)
@@ -154,7 +156,12 @@ describe('WebSocket Tests', function (): void {
     const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
       .address
 
-    const xrpAmount = '100'
+    // const xrpAmount = '100'
+    const destinationAmount = {
+      issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA',
+      currency: 'CNY',
+      value: '50',
+    }
     const sendMaxAmount = '100'
 
     // GIVEN two valid test addresses
@@ -162,18 +169,20 @@ describe('WebSocket Tests', function (): void {
     const response = await webSocketNetworkClient.findRipplePath(
       sourceAddress,
       destinationAddress,
-      xrpAmount,
+      destinationAmount,
       sendMaxAmount,
     )
 
+    console.log(response)
     // THEN the request is successfully submitted and received
     assert.equal(response.status, 'success')
     assert.equal(response.type, 'response')
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     const result = (response as RipplePathFindSuccessfulResponse).result
 
     assert.equal(result.destination_account, destinationAddress)
-    assert.equal(result.destination_amount, xrpAmount)
+    assert.equal(result.destination_amount, destinationAmount)
     assert.equal(result.source_account, sourceAddress)
     assert.include(result.destination_currencies, 'XRP')
   })
