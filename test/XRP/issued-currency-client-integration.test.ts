@@ -499,7 +499,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     const [createdTrustLine] = trustLines
     const classicAddress = XrpUtils.decodeXAddress(issuer.getAddress())!
-    console.log(createdTrustLine)
 
     // THEN a trust line was created with the issuing account.
     assert.equal(createdTrustLine.account, classicAddress.address)
