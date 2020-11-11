@@ -350,7 +350,7 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * Set the Transfer Fees for a given issuing account.
+   * Get the Transfer Fees for a given issuing account.
    * The Transfer Fee is a percentage to charge when two users transfer an issuer's IOUs on the XRPL.
    *
    * @see https://xrpl.org/transfer-fees.html

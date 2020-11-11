@@ -44,7 +44,9 @@ describe('WebSocket Tests', function (): void {
     done()
   })
 
-  it('subscribeToAccount - valid request', async function (): Promise<void> {
+  it('subscribeToAccount/unsubscribeFromAccount - valid request', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
 
     const xAddress = wallet.getAddress()
@@ -55,6 +57,9 @@ describe('WebSocket Tests', function (): void {
 
     let messageReceived = false
     const callback = (data: TransactionResponse) => {
+      if (messageReceived) {
+        assert.fail('Second message should not be received after unsubscribing')
+      }
       messageReceived = true
       assert.equal(data.engine_result, 'tesSUCCESS')
       assert.equal(data.engine_result_code, 0)
@@ -81,22 +86,37 @@ describe('WebSocket Tests', function (): void {
 
     // GIVEN a valid test address
     // WHEN subscribeToAccount is called for that address
-    const response = await webSocketNetworkClient.subscribeToAccount(
+    const subscribeResponse = await webSocketNetworkClient.subscribeToAccount(
       address,
       callback,
     )
 
     // THEN the subscribe request is successfully submitted and received
-    assert.equal(response.status, 'success')
-    assert.equal(response.type, 'response')
+    assert.equal(subscribeResponse.status, 'success')
+    assert.equal(subscribeResponse.type, 'response')
 
     // WHEN a payment is sent to that address
     await xrpClient.sendXrp(xrpAmount, xAddress, wallet2)
 
     await waitUntilMessageReceived()
 
-    //THEN the payment is successfully received
+    // THEN the payment is successfully received
     assert(messageReceived)
+
+    // WHEN unsubscribe is called for that address
+    const unsubscribeResponse = await webSocketNetworkClient.unsubscribeFromAccount(
+      address,
+    )
+
+    // THEN the unsubscribe request is successfully submitted and received
+    assert.equal(unsubscribeResponse.status, 'success')
+    assert.equal(unsubscribeResponse.type, 'response')
+
+    // WHEN a payment is sent to that address
+    await xrpClient.send(xrpAmount, xAddress, wallet2)
+
+    // THEN the payment is not received by the callback
+    // (If a payment is received, fail will be called in the callback)
   })
 
   it('subscribeToAccount - bad address', async function (): Promise<void> {
@@ -105,13 +125,52 @@ describe('WebSocket Tests', function (): void {
     const address = 'badAddress'
 
     // GIVEN a test address that is malformed.
-    // WHEN monitorIncomingPayments is called for that address THEN an error is thrown.
+    // WHEN subscribeToAccount is called for that address THEN an error is thrown.
     try {
       await webSocketNetworkClient.subscribeToAccount(
         address,
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {},
       )
+      assert.fail('Method call should fail')
+    } catch (e) {
+      if (!(e instanceof XrpError)) {
+        assert.fail('wrong error')
+      }
+    }
+  })
+
+  it('unsubscribeFromAccount - not-subscribed address', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    const xAddress = wallet2.getAddress()
+    const classicAddress = XrpUtils.decodeXAddress(xAddress)
+    const address = classicAddress!.address
+
+    // GIVEN a test address that is not subscribed to.
+    // WHEN unsubscribeFromAccount is called for that address THEN an error is thrown.
+    try {
+      await webSocketNetworkClient.unsubscribeFromAccount(address)
+      assert.fail('Method call should fail')
+    } catch (e) {
+      if (!(e instanceof XrpError)) {
+        assert.fail('wrong error')
+      }
+    }
+  })
+
+  it('unsubscribeFromAccount - bad address', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const address = 'badAddress'
+
+    // GIVEN a test address that is malformed.
+    // WHEN unsubscribeFromAccount is called for that address THEN an error is thrown.
+    try {
+      await webSocketNetworkClient.unsubscribeFromAccount(address)
+      assert.fail('Method call should fail')
     } catch (e) {
       if (!(e instanceof XrpError)) {
         assert.fail('wrong error')
