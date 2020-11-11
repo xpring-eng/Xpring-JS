@@ -41,6 +41,7 @@ import {
   GatewayBalancesSuccessfulResponse,
   IssuedCurrency,
   RipplePathFindSuccessfulResponse,
+  PathElement,
 } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
@@ -883,7 +884,7 @@ export default class IssuedCurrencyClient {
     }
 
     // Otherwise, find the cheapest path
-    let currentBestPath = pathAlternatives[0].paths_computed
+    let currentBestPathset = pathAlternatives[0].paths_computed
     let currentCheapestSourceAmount = new BigNumber(
       (pathAlternatives[0].source_amount as IssuedCurrency).value,
     )
@@ -892,7 +893,7 @@ export default class IssuedCurrencyClient {
         (possiblePath.source_amount as IssuedCurrency).value,
       )
       if (numericSourceAmount < currentCheapestSourceAmount) {
-        currentBestPath = possiblePath.paths_computed
+        currentBestPathset = possiblePath.paths_computed
         currentCheapestSourceAmount = numericSourceAmount
       }
     })
@@ -958,14 +959,30 @@ export default class IssuedCurrencyClient {
     sendMax.setValue(sourceCurrencyAmount)
     payment.setSendMax(sendMax)
 
-    // // Assign best path
-    // TODO: create a helper for constructing path elements from JSON
-    // const pathElementProto = new Payment.PathElement()
-    // pathElementProto.setAccount()
-
-    // const pathProto = new Payment.Path()
-    // pathProto.addElements()
-    // payment.addPaths()
+    // Assign best pathset to Payment protobuf
+    currentBestPathset.forEach((path: PathElement[]) => {
+      const pathProto = new Payment.Path()
+      path.forEach((pathElement: PathElement) => {
+        const pathElementProto = new Payment.PathElement()
+        if (pathElement.account) {
+          const accountAddressProto = new AccountAddress()
+          accountAddressProto.setAddress(pathElement.account)
+          pathElementProto.setAccount(accountAddressProto)
+        }
+        if (pathElement.currency) {
+          const currencyProto = new Currency()
+          currencyProto.setName(pathElement.currency)
+          pathElementProto.setCurrency(currencyProto)
+        }
+        if (pathElement.issuer) {
+          const issuerAccountAddressProto = new AccountAddress()
+          issuerAccountAddressProto.setAddress(pathElement.issuer)
+          pathElementProto.setIssuer(issuerAccountAddressProto)
+        }
+        pathProto.addElements(pathElementProto)
+      })
+      payment.addPaths(pathProto)
+    })
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
     transaction.setPayment(payment)

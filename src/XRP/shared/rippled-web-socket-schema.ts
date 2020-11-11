@@ -339,4 +339,5 @@ export {
   WebSocketTransaction,
   TrustLineResponse,
   IssuedCurrency,
+  PathElement,
 }
