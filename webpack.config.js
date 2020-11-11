@@ -40,6 +40,8 @@ module.exports = {
       net: false,
       tls: false,
       child_process: false,
+      // Webpack no longer auto-polyfills for node core modules.
+      // These are the polyfills for the necessary modules.
       assert: 'assert',
       buffer: 'buffer',
       crypto: 'crypto-browserify',
