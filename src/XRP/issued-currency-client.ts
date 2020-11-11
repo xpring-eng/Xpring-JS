@@ -45,6 +45,7 @@ import WebSocketNetworkClient from './network-clients/web-socket-network-client'
 import { SendMax } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
 import { RippledErrorMessages } from './shared/rippled-error-messages'
 import TrustSetFlag from './shared/trust-set-flag'
+import { BigNumber } from 'bignumber.js'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -744,8 +745,8 @@ export default class IssuedCurrencyClient {
    */
   public async redeemIssuedCurrency(
     sender: Wallet,
-    issuer: string,
     currency: string,
+    issuer: string,
     amount: string,
   ): Promise<TransactionResult> {
     // Redemption of issued currency is achieved by sending issued currency directly to the original issuer.
@@ -758,6 +759,54 @@ export default class IssuedCurrencyClient {
       currency,
       sender.getAddress(),
       amount,
+    )
+  }
+
+  /**
+   * Sends issued currency from one (non-issuing) account to another.
+   *
+   * @param sender The Wallet from which issued currency will be sent, and that will sign the transaction.
+   * @param destination The destination address for the payment, encoded as an X-address (see https://xrpaddress.info/).
+   * @param currency The three-letter currency code of the issued currency being sent.
+   * @param issuer The issuing address of the issued currency being sent, encoded as an X-address.
+   * @param amount The amount of issued currency to pay to the destination.
+   * @param transferFee (Optional) The transfer fee associated with the issuing account, expressed as a percentage. (i.e. a value of .5 indicates
+   *               a 0.5% transfer fee).  Supply this field for automatic calculation of the sendMax value for this payment.
+   *               Either this or sendMaxvalue may be specified, but not both.
+   * @param sendMaxValue (Optional) A manual specification of the maximum amount of source currency this payment is allowed to cost,
+   *               including transfer fees, exchange rates, and slippage. Does not include the XRP destroyed as a cost for submitting
+   *               the transaction. Either this or transferFee may be specified, but not both.
+   */
+  public async sendIssuedCurrencyPayment(
+    sender: Wallet,
+    destination: string,
+    currency: string,
+    issuer: string,
+    amount: string,
+    transferFee?: number,
+    sendMaxValue?: string,
+  ): Promise<TransactionResult> {
+    if (sender.getAddress() === issuer) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'The sending address cannot be the same as the issuing address. To create issued currency, use `createIssuedCurrency`.',
+      )
+    }
+    if (destination === issuer) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'The destination address cannot be the same as the issuer. To redeem issued currency, use `redeemIssuedCurrency`.',
+      )
+    }
+
+    return await this.issuedCurrencyPayment(
+      sender,
+      destination,
+      currency,
+      issuer,
+      amount,
+      transferFee,
+      sendMaxValue,
     )
   }
 
@@ -776,10 +825,15 @@ export default class IssuedCurrencyClient {
    * @param sender The Wallet from which issued currency will be sent, and that will sign the transaction.
    * @param destination The destination address (recipient) for the payment, encoded as an X-address (see https://xrpaddress.info/).
    * @param currency The three-letter currency code of the issued currency being sent.
-   * @param issuer The issuing address of the issued currency being sent.
-   * @param amount The amount of issued currency to send.
-   * @param transferFee Optional - can be omitted if sender address or destinationAddress are the same address as the issuer.
-   *                    The transfer fee associated with the issuing account, expressed as a percentage. (i.e. a value of .5 indicates a 0.5% transfer fee).
+   * @param issuer The issuer to specify in the destination amount field of the payment, encoded as an X-address.
+   *               Typically (but not always) the original issuer of the currency.  See https://xrpl.org/payment.html#special-issuer-values-for-sendmax-and-amount.
+   * @param amount The amount of issued currency to pay to the destination.
+   * @param transferFee (Optional) The transfer fee associated with the issuing account, expressed as a percentage. (i.e. a value of .5 indicates
+   *               a 0.5% transfer fee).  Supply this field for automatic calculation of the sendMax value for this payment.
+   *               Either this or sendMaxvalue may be specified, but not both.
+   * @param sendMaxValue (Optional) A manual specification of the maximum amount of source currency this payment is allowed to cost,
+   *               including transfer fees, exchange rates, and slippage. Does not include the XRP destroyed as a cost for submitting \
+   *               the transaction. Either this or transferFee may be specified, but not both.
    */
   public async issuedCurrencyPayment(
     sender: Wallet,
@@ -788,7 +842,14 @@ export default class IssuedCurrencyClient {
     issuer: string,
     amount: string,
     transferFee?: number,
+    sendMaxValue?: string,
   ): Promise<TransactionResult> {
+    if (transferFee && sendMaxValue) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'Specify the `transferFee` or `sendMaxValue` fields, but not both.',
+      )
+    }
     if (!XrpUtils.isValidXAddress(destination)) {
       throw new XrpError(
         XrpErrorType.XAddressRequired,
@@ -804,6 +865,7 @@ export default class IssuedCurrencyClient {
         'Issuer address must be in X-address format.  See https://xrpaddress.info/.',
       )
     }
+
     if (!issuerClassicAddress.address) {
       throw new XrpError(
         XrpErrorType.XAddressRequired,
@@ -841,28 +903,17 @@ export default class IssuedCurrencyClient {
     // assign the decoded destinationTag before signing.
     payment.setAmount(amountProto)
 
-    if (transferFee !== undefined) {
-      // Construct SendMax - value should be intended amount + relevant transfer fee
-      // Note that a transfer fee doesn't apply if the source address (of this transaction) and the issuing address of the currency being
-      // sent are the same (i.e. issuer sending currency directly) OR if the issuer of the currency and the destination are the same
-      // (i.e. redeeming an issued currency).
-      // However, it also doesn't hurt to include a SendMax field, it just won't end up being used.
+    // If transferFee was supplied, calculate the sendMax value, otherwise use the manual override sendMaxValue.
+    // Either or both may be undefined.
+    const calculatedSendMaxValue = transferFee
+      ? this.calculateSendMaxValue(amount, transferFee)
+      : sendMaxValue
 
-      // This calculation determines the sendMaxValue by applying the transferFee to the amount being sent, and then rounding (up) only as
-      // much as necessary to fit the final value within the 15 decimal digit limit that applies to encoding issued currency amounts.
-      // See https://xrpl.org/currency-formats.html#issued-currency-precision
-      const numericValue = Number(amount)
-      const rawSendMaxValue = (1 + transferFee / 100) * numericValue
-      const numDigitsLeftOfDecimal = String(Math.ceil(rawSendMaxValue)).length
-      const allowedDigitsRightOfDecimal = 15 - numDigitsLeftOfDecimal
-      const sendMaxValue = String(
-        rawSendMaxValue.toFixed(allowedDigitsRightOfDecimal),
-      )
-
+    if (calculatedSendMaxValue) {
       const sendMaxIssuedCurrencyAmount = new IssuedCurrencyAmount()
       sendMaxIssuedCurrencyAmount.setCurrency(currencyProto)
       sendMaxIssuedCurrencyAmount.setIssuer(issuerAccountAddress)
-      sendMaxIssuedCurrencyAmount.setValue(sendMaxValue)
+      sendMaxIssuedCurrencyAmount.setValue(calculatedSendMaxValue)
 
       const sendMaxCurrencyAmount = new CurrencyAmount()
       sendMaxCurrencyAmount.setIssuedCurrencyAmount(sendMaxIssuedCurrencyAmount)
@@ -884,5 +935,37 @@ export default class IssuedCurrencyClient {
       transactionHash,
       sender,
     )
+  }
+
+  /**
+   * Calculates the sendMaxValue by applying the transferFee to the amount being sent and ensuring the total amount
+   * fits within maximum decimal precision.
+   * @see https://xrpl.org/currency-formats.html#issued-currency-precision
+   *
+   * @param amount The amount of issued currency to pay to the destination.
+   * @param transferFee The transfer fee associated with the issuing account, expressed as a percentage.
+   *                    (i.e. a value of .5 indicates a 0.5% transfer fee).
+   */
+  public calculateSendMaxValue(amount: string, transferFee: number): string {
+    if (transferFee < 0) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'Transfer Fee must be positive.',
+      )
+    }
+    // maximum allowed decimal precision for issued currency values.
+    const maxDecimalPrecision = 15
+    const numericAmount = new BigNumber(amount)
+    const transferRate = new BigNumber(1 + transferFee / 100)
+
+    // calculate the total sendMaxValue with any number of decimal places.
+    const rawSendMaxValue: BigNumber = numericAmount.multipliedBy(transferRate)
+
+    if (rawSendMaxValue.toFixed().length <= maxDecimalPrecision) {
+      return rawSendMaxValue.toFixed()
+    }
+
+    // If we have too many digits of precision, express with scientific notation but fit within decimal precision.
+    return rawSendMaxValue.toExponential(14, 0).replace(/e\+/, 'e')
   }
 }

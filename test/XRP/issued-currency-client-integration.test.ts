@@ -223,33 +223,29 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // WHEN a transaction is sent to the account without a destination tag
     const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
     const xrpAmount = '100'
-    const transactionHash = await xrpClient.send(
+    const transactionResult = await xrpClient.sendXrp(
       xrpAmount,
       wallet.getAddress(),
       wallet2,
     )
-    const transactionStatus = await xrpClient.getPaymentStatus(transactionHash)
 
     // THEN the transaction fails.
-    assert.exists(transactionHash)
-    assert.equal(transactionStatus, TransactionStatus.Failed)
+    assert.exists(transactionResult.hash)
+    assert.equal(transactionResult.status, TransactionStatus.ClaimedCostOnly)
 
     // GIVEN an existing testnet account with requireDestinationTags unset
     await issuedCurrencyClient.allowNoDestinationTag(wallet)
 
     // WHEN a transaction is sent to the account without a destination tag
-    const transactionHash2 = await xrpClient.send(
+    const transactionResult2 = await xrpClient.sendXrp(
       xrpAmount,
       wallet.getAddress(),
       wallet2,
     )
-    const transactionStatus2 = await xrpClient.getPaymentStatus(
-      transactionHash2,
-    )
 
     // THEN the transaction succeeds.
-    assert.exists(transactionHash2)
-    assert.equal(transactionStatus2, TransactionStatus.Succeeded)
+    assert.exists(transactionResult2.hash)
+    assert.equal(transactionResult2.status, TransactionStatus.Succeeded)
   })
 
   // TODO: when SDK functionality is expanded, improve test specificity by creating trustlines/issued currencies first,
@@ -708,7 +704,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.isTrue(response)
 
     // WHEN a payment is sent to that address
-    await xrpClient.send(xrpAmount, xAddress, wallet2)
+    await xrpClient.sendXrp(xrpAmount, xAddress, wallet2)
 
     await waitUntilMessageReceived()
 
