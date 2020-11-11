@@ -30,6 +30,8 @@ module.exports = {
   },
   resolve: {
     extensions: moduleFileExtensions.map((ext) => `.${ext}`),
+    // Some libraries import Node modules but don't use them in the browser.
+    // Tell webpack to provide empty mocks for them so importing them works.
     fallback: {
       module: false,
       dns: 'mock',
@@ -38,15 +40,12 @@ module.exports = {
       net: false,
       tls: false,
       child_process: false,
-      util: require.resolve('util/'),
-      assert: require.resolve('assert/'),
+      util: 'util',
+      assert: 'assert',
     },
   },
-  // Some libraries import Node modules but don't use them in the browser.
-  // Tell webpack to provide empty mocks for them so importing them works.
   output: {
     filename: 'index.js',
-    path: path.resolve(__dirname, 'dist'),
     library: 'XpringJS',
     libraryTarget: 'umd',
     globalObject: "(typeof self !== 'undefined' ? self : this)",
