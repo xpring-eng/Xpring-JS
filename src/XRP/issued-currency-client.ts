@@ -567,8 +567,8 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/rippling.html#enabling-disabling-no-ripple
    *
-   * @param trustLinePeerAccount The X-Address of the account involved in the trust line to disable rippling.
-   * @param currencyName The currency of the trust line to disable rippling.
+   * @param trustLinePeerAccount The X-Address of the account involved in the trust line being disabled to ripple.
+   * @param currencyName The currency of the trust line being disbaled to ripple.
    * @param amount The maximum amount of debt to allow on this trust line.
    * @param wallet The wallet disabling rippling on the trust line.
    */
@@ -583,6 +583,31 @@ export default class IssuedCurrencyClient {
       currencyName,
       amount,
       TrustSetFlag.tfSetNoRipple,
+      wallet,
+    )
+  }
+
+  /**
+   * Re-enables rippling on the trust line between this account (issuing account) and another account.
+   *
+   * @see https://xrpl.org/rippling.html#enabling-disabling-no-ripple
+   *
+   * @param trustLinePeerAccount trustLinePeerAccount The X-Address of the account involved in the trust line being re-enabled to ripple.
+   * @param currencyName The currency of the trust line being re-enabled to ripple.
+   * @param amount The maximum amount of debt to allow on this trust line.
+   * @param wallet The wallet re-enabling rippling on the trust line.
+   */
+  public async enableRipplingForTrustLine(
+    trustLinePeerAccount: string,
+    currencyName: string,
+    amount: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return await this.sendTrustSetTransaction(
+      trustLinePeerAccount,
+      currencyName,
+      amount,
+      TrustSetFlag.tfClearNoRipple,
       wallet,
     )
   }
