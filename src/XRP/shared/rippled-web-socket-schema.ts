@@ -18,8 +18,14 @@ enum WebSocketReadyState {
  */
 enum RippledMethod {
   subscribe = 'subscribe',
+  unsubscribe = 'unsubscribe',
   accountLines = 'account_lines',
   gatewayBalances = 'gateway_balances',
+}
+
+enum ResponseStatus {
+  success = 'success',
+  error = 'error',
 }
 
 /**
@@ -72,7 +78,7 @@ interface GatewayBalancesRequest extends BaseRequest {
  */
 interface BaseResponse {
   id: number | string
-  status: string
+  status: ResponseStatus
   type: string
 }
 
@@ -281,6 +287,7 @@ export {
   GatewayBalancesSuccessfulResponse,
   WebSocketReadyState,
   RippledMethod,
+  ResponseStatus,
   SubscribeRequest,
   AccountLinesRequest,
   GatewayBalancesRequest,
