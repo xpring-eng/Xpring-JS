@@ -5,6 +5,7 @@ import GatewayBalances, {
 } from '../../../src/XRP/shared/gateway-balances'
 import 'mocha'
 import { XrpUtils } from 'xpring-common-js'
+import { ResponseStatus } from '../../../src/XRP/shared/rippled-web-socket-schema'
 
 const testLedgerHash =
   '980FECF48CA4BFDEC896692C31A50D484BDFE865EC101B00259C413AA3DBD672'
@@ -69,7 +70,7 @@ describe('GatewayBalances Conversion Tests', function (): void {
     // GIVEN a raw JSON GatewayBalancesResponse
     const testGatewayBalancesResponse = {
       id: 'gateway_balances',
-      status: 'success',
+      status: ResponseStatus.success,
       type: 'response',
       result: {
         ...baseResult,
@@ -101,7 +102,7 @@ describe('GatewayBalances Conversion Tests', function (): void {
     // GIVEN a raw JSON GatewayBalancesResponse
     const testGatewayBalancesResponse = {
       id: 'gateway_balances',
-      status: 'success',
+      status: ResponseStatus.success,
       type: 'response',
       result: { ...baseResult, balances: testBalances, validated: true },
     }
@@ -126,7 +127,7 @@ describe('GatewayBalances Conversion Tests', function (): void {
     // GIVEN a raw JSON GatewayBalancesResponse with validated field set to false
     const testGatewayBalancesResponse = {
       id: 'gateway_balances',
-      status: 'success',
+      status: ResponseStatus.success,
       type: 'response',
       result: { ...baseResult, validated: false },
     }
@@ -141,7 +142,7 @@ describe('GatewayBalances Conversion Tests', function (): void {
     // GIVEN a raw JSON GatewayBalancesResponse missing the account field
     const testGatewayBalancesResponse = {
       id: 'gateway_balances',
-      status: 'success',
+      status: ResponseStatus.success,
       type: 'response',
       result: { account: undefined, validated: true },
     }

@@ -3,6 +3,7 @@ import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
 import {
   AccountLinesResponse,
   GatewayBalancesResponse,
+  ResponseStatus,
   StatusResponse,
   TransactionResponse,
 } from '../../../src/XRP/shared/rippled-web-socket-schema'
@@ -32,12 +33,15 @@ export class FakeWebSocketNetworkClientResponses {
   /**
    * Construct a new set of responses.
    *
-   * @param getSubscribeResponse The response or error that will be returned from the subscribe request.
+   * @param subscribeResponse The response or error that will be returned from the subscribe request.
    */
   public constructor(
-    public readonly getSubscribeResponse: Result<
+    public readonly subscribeResponse: Result<
       StatusResponse
     > = FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
+    public readonly unsubscribeResponse: Result<
+      StatusResponse
+    > = FakeWebSocketNetworkClientResponses.defaultUnsubscribeResponse(),
     public readonly getAccountLinesResponse: Result<
       AccountLinesResponse
     > = FakeWebSocketNetworkClientResponses.defaultGetAccountLinesResponse(),
@@ -54,7 +58,20 @@ export class FakeWebSocketNetworkClientResponses {
       id:
         'monitor_transactions_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
       result: {},
-      status: 'success',
+      status: ResponseStatus.success,
+      type: 'response',
+    }
+  }
+
+  /**
+   * Construct a default response for an unsubscribe request.
+   */
+  public static defaultUnsubscribeResponse(): StatusResponse {
+    return {
+      id:
+        'unsubscribe_transactions_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
+      result: {},
+      status: ResponseStatus.success,
       type: 'response',
     }
   }
@@ -66,7 +83,7 @@ export class FakeWebSocketNetworkClientResponses {
     return {
       id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
       type: 'response',
-      status: 'success',
+      status: ResponseStatus.success,
       result: {
         account: 'r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
         ledger_hash:
@@ -115,7 +132,7 @@ export class FakeWebSocketNetworkClientResponses {
   public static defaultGetGatewayBalancesResponse(): GatewayBalancesResponse {
     return {
       id: 'gateway_balances_rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',
-      status: 'success',
+      status: ResponseStatus.success,
       type: 'response',
       result: {
         account: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',
@@ -192,12 +209,21 @@ export class FakeWebSocketNetworkClient {
     _account: string,
     _callback: (data: TransactionResponse) => void,
   ): Promise<StatusResponse> {
-    const subscribeResponse = this.responses.getSubscribeResponse
+    const subscribeResponse = this.responses.subscribeResponse
     if (subscribeResponse instanceof Error) {
       return Promise.reject(subscribeResponse)
     }
 
     return Promise.resolve(subscribeResponse)
+  }
+
+  unsubscribeFromAccount(_account: string): Promise<StatusResponse> {
+    const unsubscribeResponse = this.responses.unsubscribeResponse
+    if (unsubscribeResponse instanceof Error) {
+      return Promise.reject(unsubscribeResponse)
+    }
+
+    return Promise.resolve(unsubscribeResponse)
   }
 
   getAccountLines(_address: string): Promise<AccountLinesResponse> {

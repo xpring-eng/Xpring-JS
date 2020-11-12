@@ -3,6 +3,7 @@ import { XrpError, XrpErrorType } from '../shared'
 import {
   WebSocketReadyState,
   RippledMethod,
+  ResponseStatus,
   WebSocketRequest,
   SubscribeRequest,
   AccountLinesRequest,
@@ -159,7 +160,7 @@ export default class WebSocketNetworkClient {
     }
     this.idNumber++
     const response = await this.sendApiRequest(subscribeRequest)
-    if (response.status !== 'success') {
+    if (response.status !== ResponseStatus.success) {
       const errorResponse = response as WebSocketFailureResponse
       throw new XrpError(
         XrpErrorType.Unknown,
@@ -193,7 +194,7 @@ export default class WebSocketNetworkClient {
     }
     this.idNumber++
     const response = await this.sendApiRequest(unsubscribeRequest)
-    if (response.status !== 'success') {
+    if (response.status !== ResponseStatus.success) {
       const errorResponse = response as WebSocketFailureResponse
       throw new XrpError(
         XrpErrorType.Unknown,

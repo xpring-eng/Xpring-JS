@@ -24,6 +24,11 @@ enum RippledMethod {
   ripplePathFind = 'ripple_path_find',
 }
 
+enum ResponseStatus {
+  success = 'success',
+  error = 'error',
+}
+
 /**
  * The standard format for a request to the WebSocket API exposed by a rippled node.
  * @see https://xrpl.org/request-formatting.html
@@ -86,7 +91,7 @@ interface RipplePathFindRequest extends BaseRequest {
  */
 interface BaseResponse {
   id: number | string
-  status: string
+  status: ResponseStatus
   type: string
 }
 
@@ -337,6 +342,7 @@ export {
   GatewayBalancesSuccessfulResponse,
   RipplePathFindResponse,
   RipplePathFindSuccessfulResponse,
+  ResponseStatus,
   WebSocketTransaction,
   TrustLineResponse,
   IssuedCurrency,

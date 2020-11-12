@@ -656,7 +656,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(trustLine.limit, trustLineAmount)
   })
 
-  it('monitorIncomingPayments - valid request', async function (): Promise<
+  it('monitorAccountTransactions/stopMonitoringAccountTransactions - valid request', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -669,6 +669,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     let messageReceived = false
     const callback = (data: TransactionResponse) => {
+      if (messageReceived) {
+        assert.fail('Second message should not be received after unsubscribing')
+      }
       messageReceived = true
       assert.equal(data.engine_result, 'tesSUCCESS')
       assert.equal(data.engine_result_code, 0)
@@ -710,9 +713,25 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     //THEN the payment is successfully received
     assert(messageReceived)
+
+    // WHEN unsubscribe is called for that address
+    const unsubscribeResponse = await issuedCurrencyClient.stopMonitoringAccountTransactions(
+      xAddress,
+    )
+
+    // THEN the unsubscribe request is successfully submitted and received
+    assert.isTrue(unsubscribeResponse)
+
+    // WHEN a payment is sent to that address
+    await xrpClient.send(xrpAmount, xAddress, wallet2)
+
+    // THEN the payment is not received by the callback
+    // (If a payment is received, fail will be called in the callback)
   })
 
-  it('monitorIncomingPayments - bad address', async function (): Promise<void> {
+  it('monitorAccountTransactions - bad address', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
 
     const address = 'badAddress'
@@ -720,9 +739,49 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const callback = () => {}
 
     // GIVEN a test address that is malformed.
-    // WHEN monitorIncomingPayments is called for that address THEN an error is thrown.
+    // WHEN monitorAccountTransactions is called for that address THEN an error is thrown.
     try {
       await issuedCurrencyClient.monitorAccountTransactions(address, callback)
+    } catch (e) {
+      if (!(e instanceof XrpError)) {
+        assert.fail('wrong error')
+      }
+    }
+  })
+
+  it('stopMonitoringAccountTransactions - not-subscribed address', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    const xAddress = wallet2.getAddress()
+    const classicAddress = XrpUtils.decodeXAddress(xAddress)
+    const address = classicAddress!.address
+
+    // GIVEN a test address that is not subscribed to.
+    // WHEN stopMonitoringAccountTransactions is called for that address THEN an error is thrown.
+    try {
+      await issuedCurrencyClient.stopMonitoringAccountTransactions(address)
+      assert.fail('Method call should fail')
+    } catch (e) {
+      if (!(e instanceof XrpError)) {
+        assert.fail('wrong error')
+      }
+    }
+  })
+
+  it('stopMonitoringAccountTransactions - bad address', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    // GIVEN a test address that is malformed.
+    const address = 'badAddress'
+
+    // WHEN stopMonitoringAccountTransactions is called for that address THEN an error is thrown.
+    try {
+      await issuedCurrencyClient.stopMonitoringAccountTransactions(address)
+      assert.fail('Method call should fail')
     } catch (e) {
       if (!(e instanceof XrpError)) {
         assert.fail('wrong error')
