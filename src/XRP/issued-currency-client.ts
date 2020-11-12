@@ -39,6 +39,7 @@ import {
   TransactionResponse,
   GatewayBalancesResponse,
   GatewayBalancesSuccessfulResponse,
+  ResponseStatus,
 } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
@@ -224,7 +225,28 @@ export default class IssuedCurrencyClient {
       classicAddress.address,
       callback,
     )
-    return response.status === 'success'
+    return response.status === ResponseStatus.success
+  }
+
+  /**
+   * Unsubscribes from transactions that affect the specified account.
+   * @see https://xrpl.org/unsubscribe.html
+   *
+   * @param account The account from which to unsubscribe from, encoded as an X-Address.
+   * @returns Whether the request to unsubscribe succeeded.
+   */
+  public async stopMonitoringAccountTransactions(
+    account: string,
+  ): Promise<boolean> {
+    const classicAddress = XrpUtils.decodeXAddress(account)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const response = await this.webSocketNetworkClient.unsubscribeFromAccount(
+      classicAddress.address,
+    )
+    return response.status === ResponseStatus.success
   }
 
   /**

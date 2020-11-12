@@ -23,6 +23,11 @@ enum RippledMethod {
   gatewayBalances = 'gateway_balances',
 }
 
+enum ResponseStatus {
+  success = 'success',
+  error = 'error',
+}
+
 /**
  * The standard format for a request to the WebSocket API exposed by a rippled node.
  * @see https://xrpl.org/request-formatting.html
@@ -73,7 +78,7 @@ interface GatewayBalancesRequest extends BaseRequest {
  */
 interface BaseResponse {
   id: number | string
-  status: string
+  status: ResponseStatus
   type: string
 }
 
@@ -282,6 +287,7 @@ export {
   GatewayBalancesSuccessfulResponse,
   WebSocketReadyState,
   RippledMethod,
+  ResponseStatus,
   SubscribeRequest,
   AccountLinesRequest,
   GatewayBalancesRequest,
