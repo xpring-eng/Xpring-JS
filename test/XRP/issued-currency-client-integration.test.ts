@@ -786,7 +786,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       }
     }
   })
-  
+
   it('stopMonitoringAccountTransactions - not-subscribed address', async function (): Promise<
     void
   > {
@@ -826,7 +826,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       }
     }
   })
-  
+
   it('createOffer - success', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
