@@ -30,21 +30,30 @@ module.exports = {
   },
   resolve: {
     extensions: moduleFileExtensions.map((ext) => `.${ext}`),
-  },
-  // Some libraries import Node modules but don't use them in the browser.
-  // Tell webpack to provide empty mocks for them so importing them works.
-  node: {
-    module: 'empty',
-    dns: 'mock',
-    fs: 'empty',
-    http2: 'empty',
-    net: 'empty',
-    tls: 'empty',
-    child_process: 'empty',
+    // Some libraries import Node modules but don't use them in the browser.
+    // Tell webpack to provide empty mocks for them so importing them works.
+    fallback: {
+      module: false,
+      dns: 'mock',
+      fs: false,
+      http2: false,
+      net: false,
+      tls: false,
+      child_process: false,
+      // Webpack no longer auto-polyfills for node core modules.
+      // These are the polyfills for the necessary modules.
+      assert: 'assert',
+      buffer: 'buffer',
+      crypto: 'crypto-browserify',
+      os: 'os-browserify/browser',
+      stream: 'stream-browserify',
+      url: 'url',
+      util: 'util',
+      zlib: 'browserify-zlib',
+    },
   },
   output: {
     filename: 'index.js',
-    path: path.resolve(__dirname, 'dist'),
     library: 'XpringJS',
     libraryTarget: 'umd',
     globalObject: "(typeof self !== 'undefined' ? self : this)",

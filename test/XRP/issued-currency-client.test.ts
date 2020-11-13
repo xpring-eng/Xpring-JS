@@ -20,6 +20,7 @@ import {
   RippledMethod,
   AccountLinesSuccessfulResponse,
   GatewayBalancesSuccessfulResponse,
+  ResponseStatus,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
 import GatewayBalances, {
   gatewayBalancesFromResponse,
@@ -118,7 +119,7 @@ describe('Issued Currency Client', function (): void {
         id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
         ledger_index: 'validated',
       },
-      status: 'error',
+      status: ResponseStatus.error,
       type: 'response',
     }
     const fakeErroringWebSocketClientResponses = new FakeWebSocketNetworkClientResponses(
@@ -156,7 +157,7 @@ describe('Issued Currency Client', function (): void {
         id: 'account_lines_r9cZA1mLK5R5Am25ArfXFmqgNwjZgnfk59',
         ledger_index: 'validated',
       },
-      status: 'error',
+      status: ResponseStatus.error,
       type: 'response',
     }
     const fakeErroringWebSocketClientResponses = new FakeWebSocketNetworkClientResponses(
@@ -508,7 +509,7 @@ describe('Issued Currency Client', function (): void {
         ledger_index: 'validated',
         strict: true,
       },
-      status: 'error',
+      status: ResponseStatus.error,
       type: 'response',
     }
     const fakeErroringWebSocketClientResponses = new FakeWebSocketNetworkClientResponses(
@@ -1013,7 +1014,7 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('monitorIncomingPayments - successful response', async function (): Promise<
+  it('monitorAccountTransactions - successful response', async function (): Promise<
     void
   > {
     // GIVEN an IssuedCurrencyClient.
@@ -1027,7 +1028,7 @@ describe('Issued Currency Client', function (): void {
       return
     }
 
-    // WHEN monitorIncomingPayments is called
+    // WHEN monitorAccountTransactions is called
     const monitorResponse = await issuedCurrencyClient.monitorAccountTransactions(
       testAddress,
       callback,
@@ -1037,7 +1038,7 @@ describe('Issued Currency Client', function (): void {
     assert.isTrue(monitorResponse)
   })
 
-  it('monitorIncomingPayments - submission failure', function (): void {
+  it('monitorAccountTransactions - submission failure', function (): void {
     // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
     const failureResponses = new FakeWebSocketNetworkClientResponses(
       FakeWebSocketNetworkClientResponses.defaultError,
@@ -1056,9 +1057,53 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
-    // WHEN monitorIncomingPayments is attempted THEN an error is propagated.
+    // WHEN monitorAccountTransactions is attempted THEN an error is propagated.
     issuedCurrencyClient
       .monitorAccountTransactions(testAddress, callback)
+      .catch((error) => {
+        assert.deepEqual(
+          error,
+          FakeWebSocketNetworkClientResponses.defaultError,
+        )
+      })
+  })
+
+  it('stopMonitoringAccountTransactions - successful response', async function (): Promise<
+    void
+  > {
+    // GIVEN an IssuedCurrencyClient.
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN stopMonitoringAccountTransactions is called
+    const monitorResponse = await issuedCurrencyClient.stopMonitoringAccountTransactions(
+      testAddress,
+    )
+
+    // THEN the result is as expected
+    assert.isTrue(monitorResponse)
+  })
+
+  it('stopMonitoringAccountTransactions - submission failure', function (): void {
+    // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
+    const failureResponses = new FakeWebSocketNetworkClientResponses(
+      FakeWebSocketNetworkClientResponses.defaultError,
+    )
+    const failingWebSocketClient = new FakeWebSocketNetworkClient(
+      failureResponses,
+    )
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      failingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN stopMonitoringAccountTransactions is attempted THEN an error is propagated.
+    issuedCurrencyClient
+      .stopMonitoringAccountTransactions(testAddress)
       .catch((error) => {
         assert.deepEqual(
           error,

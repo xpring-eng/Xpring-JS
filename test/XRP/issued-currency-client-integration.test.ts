@@ -468,6 +468,43 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.currency, trustLineCurrency)
   })
 
+  it('createTrustLine - adding a trustline with non-zero value and qualityIn + qualityOut', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+
+    const trustLineLimit = '1'
+    const trustLineCurrency = 'USD'
+    const qualityInAmount = 20
+    const qualityOutAmount = 100
+
+    // GIVEN an existing testnet account and an issuer's wallet
+    // WHEN a trustline is created with the issuer with a positive value
+    await issuedCurrencyClient.createTrustLine(
+      issuer.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      wallet,
+      qualityInAmount,
+      qualityOutAmount,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      wallet.getAddress(),
+    )
+
+    const [createdTrustLine] = trustLines
+    const classicAddress = XrpUtils.decodeXAddress(issuer.getAddress())!
+
+    // THEN a trust line was created with the issuing account.
+    assert.equal(createdTrustLine.account, classicAddress.address)
+    assert.equal(createdTrustLine.limit, trustLineLimit)
+    assert.equal(createdTrustLine.currency, trustLineCurrency)
+    assert.equal(createdTrustLine.qualityIn, qualityInAmount)
+    assert.equal(createdTrustLine.qualityOut, qualityOutAmount)
+  })
+
   it('authorizeTrustLine - valid account', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
@@ -611,7 +648,53 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(trustLine.limit, trustLineAmount)
   })
 
-  it('monitorIncomingPayments - valid request', async function (): Promise<
+  it('enableRipplingForTrustLine - clears noRipple on a trust line', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+    const trustLinePeerAccount = await XRPTestUtils.randomWalletFromFaucet()
+
+    // GIVEN an existing issuer account who has a trust line with a counter-party,
+    // with noRipple set
+    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
+
+    const trustLineCurrency = 'USD'
+    await issuedCurrencyClient.authorizeTrustLine(
+      trustLinePeerAccount.getAddress(),
+      trustLineCurrency,
+      issuer,
+    )
+
+    const trustLineAmount = '1'
+
+    await issuedCurrencyClient.disableRipplingForTrustLine(
+      trustLinePeerAccount.getAddress(),
+      trustLineCurrency,
+      trustLineAmount,
+      issuer,
+    )
+
+    // WHEN the issuer sets clears no rippling on the trust line
+    await issuedCurrencyClient.enableRipplingForTrustLine(
+      trustLinePeerAccount.getAddress(),
+      trustLineCurrency,
+      trustLineAmount,
+      issuer,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      issuer.getAddress(),
+    )
+
+    const [trustLine] = trustLines
+
+    // THEN the trust line has noRipple enabled.
+    assert.equal(trustLine.noRipple, false)
+    assert.equal(trustLine.limit, trustLineAmount)
+  })
+
+  it('monitorAccountTransactions/stopMonitoringAccountTransactions - valid request', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
@@ -624,6 +707,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     let messageReceived = false
     const callback = (data: TransactionResponse) => {
+      if (messageReceived) {
+        assert.fail('Second message should not be received after unsubscribing')
+      }
       messageReceived = true
       assert.equal(data.engine_result, 'tesSUCCESS')
       assert.equal(data.engine_result_code, 0)
@@ -665,9 +751,25 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     //THEN the payment is successfully received
     assert(messageReceived)
+
+    // WHEN unsubscribe is called for that address
+    const unsubscribeResponse = await issuedCurrencyClient.stopMonitoringAccountTransactions(
+      xAddress,
+    )
+
+    // THEN the unsubscribe request is successfully submitted and received
+    assert.isTrue(unsubscribeResponse)
+
+    // WHEN a payment is sent to that address
+    await xrpClient.send(xrpAmount, xAddress, wallet2)
+
+    // THEN the payment is not received by the callback
+    // (If a payment is received, fail will be called in the callback)
   })
 
-  it('monitorIncomingPayments - bad address', async function (): Promise<void> {
+  it('monitorAccountTransactions - bad address', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
 
     const address = 'badAddress'
@@ -675,7 +777,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const callback = () => {}
 
     // GIVEN a test address that is malformed.
-    // WHEN monitorIncomingPayments is called for that address THEN an error is thrown.
+    // WHEN monitorAccountTransactions is called for that address THEN an error is thrown.
     try {
       await issuedCurrencyClient.monitorAccountTransactions(address, callback)
     } catch (e) {
@@ -684,7 +786,47 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       }
     }
   })
+  
+  it('stopMonitoringAccountTransactions - not-subscribed address', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
 
+    const xAddress = wallet2.getAddress()
+    const classicAddress = XrpUtils.decodeXAddress(xAddress)
+    const address = classicAddress!.address
+
+    // GIVEN a test address that is not subscribed to.
+    // WHEN stopMonitoringAccountTransactions is called for that address THEN an error is thrown.
+    try {
+      await issuedCurrencyClient.stopMonitoringAccountTransactions(address)
+      assert.fail('Method call should fail')
+    } catch (e) {
+      if (!(e instanceof XrpError)) {
+        assert.fail('wrong error')
+      }
+    }
+  })
+
+  it('stopMonitoringAccountTransactions - bad address', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    // GIVEN a test address that is malformed.
+    const address = 'badAddress'
+
+    // WHEN stopMonitoringAccountTransactions is called for that address THEN an error is thrown.
+    try {
+      await issuedCurrencyClient.stopMonitoringAccountTransactions(address)
+      assert.fail('Method call should fail')
+    } catch (e) {
+      if (!(e instanceof XrpError)) {
+        assert.fail('wrong error')
+      }
+    }
+  })
+  
   it('createOffer - success', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
