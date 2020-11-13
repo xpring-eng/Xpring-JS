@@ -688,36 +688,20 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   it('createOffer - success', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    // enable rippling on issuer
-    await issuedCurrencyClient.enableRippling(wallet)
-
-    // // extend trust from operational to issuer
-    const fakeIssuedCurrencyName = 'FAK'
-    // const issuedCurrencyAmount = '1000'
-
-    // await issuedCurrencyClient.createTrustLine(
-    //   wallet.getAddress(),
-    //   fakeIssuedCurrencyName,
-    //   issuedCurrencyAmount,
-    //   wallet2,
-    // )
-
-    // // send some issued currency to the second wallet
-    // await issuedCurrencyClient.createIssuedCurrency(
-    //   wallet,
-    //   wallet2.getAddress(),
-    //   fakeIssuedCurrencyName,
-    //   issuedCurrencyAmount,
-    // )
+    // Note that this integration test:
+    // - doesn't enable rippling on the issuer
+    // - doesn't use a pre-existing issued currency, but the txn signer and the issuer are the same
+    // - seems to succeed anyway, confirmed with look on testnet explorer
 
     // Can we create offers with currency that we ourselves issue? / haven't yet issued?
     const issuerClassicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
     if (!issuerClassicAddress) {
       throw XrpError.xAddressRequired
     }
+
     const takerGetsIssuedCurrency: IssuedCurrency = {
       issuer: issuerClassicAddress.address,
-      currency: fakeIssuedCurrencyName,
+      currency: 'FAK',
       value: '100',
     }
     const takerPaysXrp = '50'
@@ -737,6 +721,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       offerSequenceNumber,
       expiration,
     )
-    // TODO: assert success
+
+    // TODO: confirm success using book_offers or account_offers API when implemented?
+    assert.equal(transactionResult.status, TransactionStatus.Succeeded)
+    assert.equal(transactionResult.validated, true)
+    assert.equal(transactionResult.final, true)
   })
 })
