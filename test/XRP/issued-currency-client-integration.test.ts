@@ -467,6 +467,43 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.currency, trustLineCurrency)
   })
 
+  it('createTrustLine - adding a trustline with non-zero value and qualityIn + qualityOut', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    const issuer = await XRPTestUtils.randomWalletFromFaucet()
+
+    const trustLineLimit = '1'
+    const trustLineCurrency = 'USD'
+    const qualityInAmount = 20
+    const qualityOutAmount = 100
+
+    // GIVEN an existing testnet account and an issuer's wallet
+    // WHEN a trustline is created with the issuer with a positive value
+    await issuedCurrencyClient.createTrustLine(
+      issuer.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      wallet,
+      qualityInAmount,
+      qualityOutAmount,
+    )
+
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      wallet.getAddress(),
+    )
+
+    const [createdTrustLine] = trustLines
+    const classicAddress = XrpUtils.decodeXAddress(issuer.getAddress())!
+
+    // THEN a trust line was created with the issuing account.
+    assert.equal(createdTrustLine.account, classicAddress.address)
+    assert.equal(createdTrustLine.limit, trustLineLimit)
+    assert.equal(createdTrustLine.currency, trustLineCurrency)
+    assert.equal(createdTrustLine.qualityIn, qualityInAmount)
+    assert.equal(createdTrustLine.qualityOut, qualityOutAmount)
+  })
+
   it('authorizeTrustLine - valid account', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
