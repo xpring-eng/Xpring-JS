@@ -6,12 +6,16 @@ import {
   Amount,
   TransferRate,
   Destination,
+  TakerPays,
+  QualityIn,
+  QualityOut,
 } from './Generated/web/org/xrpl/rpc/v1/common_pb'
 import { AccountAddress } from './Generated/web/org/xrpl/rpc/v1/account_pb'
 import {
   Currency,
   CurrencyAmount,
   IssuedCurrencyAmount,
+  XRPDropsAmount,
 } from './Generated/web/org/xrpl/rpc/v1/amount_pb'
 import {
   TrustSet,
@@ -42,13 +46,24 @@ import {
   IssuedCurrency,
   RipplePathFindSuccessfulResponse,
   PathElement,
+  ResponseStatus,
 } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
-import { SendMax } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
+import {
+  Expiration,
+  OfferSequence,
+  SendMax,
+  TakerGets,
+} from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/common_pb'
 import { RippledErrorMessages } from './shared/rippled-error-messages'
 import TrustSetFlag from './shared/trust-set-flag'
 import { BigNumber } from 'bignumber.js'
+import {
+  OfferCancel,
+  OfferCreate,
+} from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/transaction_pb'
+import { IssuedCurrency as IssuedCurrencyInterface } from './shared/issued-currency'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -227,7 +242,28 @@ export default class IssuedCurrencyClient {
       classicAddress.address,
       callback,
     )
-    return response.status === 'success'
+    return response.status === ResponseStatus.success
+  }
+
+  /**
+   * Unsubscribes from transactions that affect the specified account.
+   * @see https://xrpl.org/unsubscribe.html
+   *
+   * @param account The account from which to unsubscribe from, encoded as an X-Address.
+   * @returns Whether the request to unsubscribe succeeded.
+   */
+  public async stopMonitoringAccountTransactions(
+    account: string,
+  ): Promise<boolean> {
+    const classicAddress = XrpUtils.decodeXAddress(account)
+    if (!classicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const response = await this.webSocketNetworkClient.unsubscribeFromAccount(
+      classicAddress.address,
+    )
+    return response.status === ResponseStatus.success
   }
 
   /**
@@ -353,7 +389,7 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * Set the Transfer Fees for a given issuing account.
+   * Get the Transfer Fees for a given issuing account.
    * The Transfer Fee is a percentage to charge when two users transfer an issuer's IOUs on the XRPL.
    *
    * @see https://xrpl.org/transfer-fees.html
@@ -462,18 +498,22 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/trustset.html
    *
-   * TODO (tedkalaw): Implement qualityIn/qualityOut.
-   *
    * @param issuerXAddress The X-Address of the issuer to extend trust to.
    * @param currencyName The currency this trust line applies to, as a three-letter ISO 4217 Currency Code  or a 160-bit hex value according to currency format.
    * @param amount Decimal representation of the limit to set on this trust line.
    * @param wallet The wallet creating the trustline.
+   * @param qualityIn (Optional) Value incoming balances on this trust line at the ratio of this number per 1,000,000,000 units.
+   *                  A value of 0 is shorthand for treating balances at face value.
+   * @param qualityOut (Optional) Value outgoing balances on this trust line at the ratio of this number per 1,000,000,000 units.
+   *                  A value of 0 is shorthand for treating balances at face value.
    */
   public async createTrustLine(
     issuerXAddress: string,
     currencyName: string,
     amount: string,
     wallet: Wallet,
+    qualityIn?: number,
+    qualityOut?: number,
   ): Promise<TransactionResult> {
     return await this.sendTrustSetTransaction(
       issuerXAddress,
@@ -481,6 +521,8 @@ export default class IssuedCurrencyClient {
       amount,
       undefined,
       wallet,
+      qualityIn,
+      qualityOut,
     )
   }
 
@@ -570,8 +612,8 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/rippling.html#enabling-disabling-no-ripple
    *
-   * @param trustLinePeerAccount The X-Address of the account involved in the trust line to disable rippling.
-   * @param currencyName The currency of the trust line to disable rippling.
+   * @param trustLinePeerAccount The X-Address of the account involved in the trust line being disabled to ripple.
+   * @param currencyName The currency of the trust line being disbaled to ripple.
    * @param amount The maximum amount of debt to allow on this trust line.
    * @param wallet The wallet disabling rippling on the trust line.
    */
@@ -590,6 +632,31 @@ export default class IssuedCurrencyClient {
     )
   }
 
+  /**
+   * Re-enables rippling on the trust line between this account (issuing account) and another account.
+   *
+   * @see https://xrpl.org/rippling.html#enabling-disabling-no-ripple
+   *
+   * @param trustLinePeerAccount trustLinePeerAccount The X-Address of the account involved in the trust line being re-enabled to ripple.
+   * @param currencyName The currency of the trust line being re-enabled to ripple.
+   * @param amount The maximum amount of debt to allow on this trust line.
+   * @param wallet The wallet re-enabling rippling on the trust line.
+   */
+  public async enableRipplingForTrustLine(
+    trustLinePeerAccount: string,
+    currencyName: string,
+    amount: string,
+    wallet: Wallet,
+  ): Promise<TransactionResult> {
+    return await this.sendTrustSetTransaction(
+      trustLinePeerAccount,
+      currencyName,
+      amount,
+      TrustSetFlag.tfClearNoRipple,
+      wallet,
+    )
+  }
+
   /*
    * Creates and sends a TrustSet transaction to the XRPL.
    *
@@ -597,6 +664,10 @@ export default class IssuedCurrencyClient {
    * @param currencyName The name of the currency to create a trust line for.
    * @param amount The maximum amount of debt to allow on this trust line.
    * @param wallet A wallet associated with the account extending trust.
+   * @param qualityIn (Optional) Value incoming balances on this trust line at the ratio of this number per 1,000,000,000 units.
+   *                  A value of 0 is shorthand for treating balances at face value.
+   * @param qualityOut (Optional) Value outgoing balances on this trust line at the ratio of this number per 1,000,000,000 units.
+   *                  A value of 0 is shorthand for treating balances at face value.
    */
   private async sendTrustSetTransaction(
     accountToTrust: string,
@@ -604,6 +675,8 @@ export default class IssuedCurrencyClient {
     amount: string,
     flags: number | undefined,
     wallet: Wallet,
+    qualityIn?: number,
+    qualityOut?: number,
   ): Promise<TransactionResult> {
     const trustSetTransaction = await this.prepareTrustSetTransaction(
       accountToTrust,
@@ -611,6 +684,8 @@ export default class IssuedCurrencyClient {
       amount,
       flags,
       wallet,
+      qualityIn,
+      qualityOut,
     )
 
     const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
@@ -631,6 +706,10 @@ export default class IssuedCurrencyClient {
    * @param currencyName The name of the currency to create a trust line for.
    * @param amount The maximum amount of debt to allow on this trust line.
    * @param wallet A wallet associated with the account extending trust.
+   * @param qualityIn (Optional) Value incoming balances on this trust line at the ratio of this number per 1,000,000,000 units.
+   *                  A value of 0 is shorthand for treating balances at face value.
+   * @param qualityOut (Optional) Value outgoing balances on this trust line at the ratio of this number per 1,000,000,000 units.
+   *                  A value of 0 is shorthand for treating balances at face value.
    */
   private async prepareTrustSetTransaction(
     accountToTrust: string,
@@ -638,6 +717,8 @@ export default class IssuedCurrencyClient {
     amount: string,
     flags: number | undefined,
     wallet: Wallet,
+    qualityInAmount?: number,
+    qualityOutAmount?: number,
   ): Promise<Transaction> {
     if (!XrpUtils.isValidXAddress(accountToTrust)) {
       throw XrpError.xAddressRequired
@@ -674,6 +755,18 @@ export default class IssuedCurrencyClient {
 
     const trustSet = new TrustSet()
     trustSet.setLimitAmount(limit)
+
+    if (qualityInAmount) {
+      const qualityIn = new QualityIn()
+      qualityIn.setValue(qualityInAmount)
+      trustSet.setQualityIn(qualityIn)
+    }
+
+    if (qualityOutAmount) {
+      const qualityOut = new QualityOut()
+      qualityOut.setValue(qualityOutAmount)
+      trustSet.setQualityOut(qualityOut)
+    }
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(wallet)
     transaction.setTrustSet(trustSet)
@@ -1154,5 +1247,142 @@ export default class IssuedCurrencyClient {
 
     // If we have too many digits of precision, express with scientific notation but fit within decimal precision.
     return rawSendMaxValue.toExponential(14, 0).replace(/e\+/, 'e')
+  }
+
+  /**
+   * Creates an offer on the XRP Ledger.
+   * @see https://xrpl.org/offers.html
+   * @see https://xrpl.org/offercreate.html#offercreate
+   *
+   * @param sender The Wallet creating this offer, and that will sign the transaction.
+   * @param takerGetsAmount The amount and type of currency being provided by the offer creator.
+   *               Use a string to specify XRP, or an IssuedCurrency object to specify an issued currency.
+   * @param takerPaysAmount The amount and type of currency being requested by the offer creator.
+   *               Use a string to specify XRP, or an IssuedCurrency object to specify an issued currency.
+   * @param offerSequence (Optional) An offer to delete first, specified by the sequence number of a previous OfferCreate transaction.
+   *               If specified, cancel any offer object in the ledger that was created by that transaction.
+   *               It is not considered an error if the offer specified does not exist.
+   * @param expiration (Optional) Time after which the offer is no longer active, in seconds since the Ripple Epoch.
+   *               (See https://xrpl.org/basic-data-types.html#specifying-time)
+   */
+  public async createOffer(
+    sender: Wallet,
+    takerGetsAmount: string | IssuedCurrency,
+    takerPaysAmount: string | IssuedCurrency,
+    offerSequence?: number,
+    expiration?: number,
+  ): Promise<TransactionResult> {
+    // construct TakerGets
+    const takerGetsCurrencyAmount = new CurrencyAmount()
+    if (typeof takerGetsAmount == 'string') {
+      const takerGetsXrpDropsAmount = new XRPDropsAmount()
+      takerGetsXrpDropsAmount.setDrops(takerGetsAmount)
+      takerGetsCurrencyAmount.setXrpAmount(takerGetsXrpDropsAmount)
+    } else {
+      const takerGetsCurrency = new Currency()
+      takerGetsCurrency.setName(takerGetsAmount.currency)
+
+      const takerGetsAccountAddress = new AccountAddress()
+      takerGetsAccountAddress.setAddress(takerGetsAmount.issuer)
+
+      const takerGetsIssuedCurrencyAmount = new IssuedCurrencyAmount()
+      takerGetsIssuedCurrencyAmount.setIssuer(takerGetsAccountAddress)
+      takerGetsIssuedCurrencyAmount.setCurrency(takerGetsCurrency)
+      takerGetsIssuedCurrencyAmount.setValue(takerGetsAmount.value)
+
+      takerGetsCurrencyAmount.setIssuedCurrencyAmount(
+        takerGetsIssuedCurrencyAmount,
+      )
+    }
+    const takerGets = new TakerGets()
+    takerGets.setValue(takerGetsCurrencyAmount)
+
+    // construct TakerPays
+    const takerPaysCurrencyAmount = new CurrencyAmount()
+    if (typeof takerPaysAmount == 'string') {
+      const takerPaysXrpDropsAmount = new XRPDropsAmount()
+      takerPaysXrpDropsAmount.setDrops(takerPaysAmount)
+      takerPaysCurrencyAmount.setXrpAmount(takerPaysXrpDropsAmount)
+    } else {
+      const takerPaysCurrency = new Currency()
+      takerPaysCurrency.setName(takerPaysAmount.currency)
+
+      const takerPaysAccountAddress = new AccountAddress()
+      takerPaysAccountAddress.setAddress(takerPaysAmount.issuer)
+
+      const takerPaysIssuedCurrencyAmount = new IssuedCurrencyAmount()
+      takerPaysIssuedCurrencyAmount.setIssuer(takerPaysAccountAddress)
+      takerPaysIssuedCurrencyAmount.setCurrency(takerPaysCurrency)
+      takerPaysIssuedCurrencyAmount.setValue(takerPaysAmount.value)
+
+      takerPaysCurrencyAmount.setIssuedCurrencyAmount(
+        takerPaysIssuedCurrencyAmount,
+      )
+    }
+    const takerPays = new TakerPays()
+    takerPays.setValue(takerPaysCurrencyAmount)
+
+    const offerCreate = new OfferCreate()
+    offerCreate.setTakerGets(takerGets)
+    offerCreate.setTakerPays(takerPays)
+
+    if (offerSequence) {
+      const offerSequenceProto = new OfferSequence()
+      offerSequenceProto.setValue(offerSequence)
+      offerCreate.setOfferSequence(offerSequenceProto)
+    }
+
+    if (expiration) {
+      const expirationProto = new Expiration()
+      expirationProto.setValue(expiration)
+      offerCreate.setExpiration(expirationProto)
+    }
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
+    transaction.setOfferCreate(offerCreate)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      sender,
+    )
+
+    return this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      sender,
+    )
+  }
+
+  /**
+   * Cancels an offer on the XRP Ledger.
+   * @see https://xrpl.org/offers.html
+   * @see https://xrpl.org/offercancel.html#offercancel
+   *
+   * @param sender The Wallet cancelling this offer, and that will sign the transaction.
+   * @param offerSequence The sequence number of a previous OfferCreate transaction.
+   *               If specified, cancel any offer object in the ledger that was created by that transaction.
+   *               It is not considered an error if the offer specified does not exist.
+   */
+  public async cancelOffer(
+    sender: Wallet,
+    offerSequence: number,
+  ): Promise<TransactionResult> {
+    const offerSequenceProto = new OfferSequence()
+    offerSequenceProto.setValue(offerSequence)
+
+    const offerCancel = new OfferCancel()
+    offerCancel.setOfferSequence(offerSequenceProto)
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
+    transaction.setOfferCancel(offerCancel)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      sender,
+    )
+
+    return this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      sender,
+    )
   }
 }
