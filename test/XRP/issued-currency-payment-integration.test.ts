@@ -394,4 +394,49 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       ),
     )
   })
+
+  it('sendCrossCurrencyPayment - SANDBOX', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN a customer account with some issued currency, and an issuing address
+    const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
+    const customerWallet1 = await XRPTestUtils.randomWalletFromFaucet()
+    const customerWallet2 = await XRPTestUtils.randomWalletFromFaucet()
+
+    // establish trust line from customers to issuer
+    const trustLineLimit = '1000'
+    const trustLineCurrency = 'FOO'
+    await issuedCurrencyClient.createTrustLine(
+      issuerWallet.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      customerWallet1,
+    )
+
+    await issuedCurrencyClient.createTrustLine(
+      issuerWallet.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      customerWallet2,
+    )
+
+    // fund first customer wallet directly with some FOO
+    await issuedCurrencyClient.createIssuedCurrency(
+      issuerWallet,
+      customerWallet1.getAddress(),
+      'FOO',
+      '500',
+    )
+
+    // WHEN
+
+    // THEN the cross currency payment succeeds.
+    assert.deepEqual(
+      transactionResult,
+      TransactionResult.createFinalTransactionResult(
+        transactionResult.hash,
+        TransactionStatus.Succeeded,
+        true,
+      ),
+    )
+  })
 })
