@@ -827,7 +827,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     }
   })
 
-  it('createOffer - success', async function (): Promise<void> {
+  it('createOffer - success, taker gets issued currency taker pays xrp', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
 
     // Note that this integration test:
@@ -869,13 +871,53 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(transactionResult.final, true)
   })
 
-  it('cancelOffer - success', async function (): Promise<void> {
+  it('createOffer - success, taker gets xrp taker pays issued currency', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
 
+    // Note that this integration test:
+    // - doesn't enable rippling on the issuer
+    // - doesn't use a pre-existing issued currency, but the txn signer and the issuer are the same
+    // - seems to succeed anyway, confirmed with look on testnet explorer
+
+    // Can we create offers with currency that we ourselves issue? / haven't yet issued?
     const issuerClassicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
     if (!issuerClassicAddress) {
       throw XrpError.xAddressRequired
     }
+
+    const takerPaysIssuedCurrency: IssuedCurrency = {
+      issuer: issuerClassicAddress.address,
+      currency: 'FAK',
+      value: '100',
+    }
+    const takerGetsXrp = '50'
+
+    const offerSequenceNumber = 1
+
+    const rippleEpochStartTimeSeconds = 946684800
+    const currentTimeUnixEpochSeconds = Date.now() / 1000 // 1000 ms/sec
+    const currentTimeRippleEpochSeconds =
+      currentTimeUnixEpochSeconds - rippleEpochStartTimeSeconds
+    const expiration = currentTimeRippleEpochSeconds + 60 * 60 // roughly one hour in future
+
+    const transactionResult = await issuedCurrencyClient.createOffer(
+      wallet,
+      takerGetsXrp,
+      takerPaysIssuedCurrency,
+      offerSequenceNumber,
+      expiration,
+    )
+
+    // TODO: confirm success using book_offers or account_offers API when implemented?
+    assert.equal(transactionResult.status, TransactionStatus.Succeeded)
+    assert.equal(transactionResult.validated, true)
+    assert.equal(transactionResult.final, true)
+  })
+
+  it('cancelOffer - success', async function (): Promise<void> {
+    this.timeout(timeoutMs)
 
     const offerSequenceNumber = 1
 
@@ -884,7 +926,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       offerSequenceNumber,
     )
 
-    // TODO: confirm success using book_offers or account_offers API when implemented?
     assert.equal(transactionResult.status, TransactionStatus.Succeeded)
     assert.equal(transactionResult.validated, true)
     assert.equal(transactionResult.final, true)
