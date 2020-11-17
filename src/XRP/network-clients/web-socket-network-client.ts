@@ -3,11 +3,8 @@ import { XrpError, XrpErrorType } from '../shared'
 import {
   WebSocketReadyState,
   RippledMethod,
-<<<<<<< HEAD
   WebSocketRequest,
-=======
   ResponseStatus,
->>>>>>> ac/cancelOffer
   SubscribeRequest,
   AccountLinesRequest,
   GatewayBalancesRequest,
