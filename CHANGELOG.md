@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 5.3.0 - 2020-11-17
+
 ### Added
 
 - Method `sendXrp` of class `XrpClient` replaces now deprecated `send`. `sendXrp` returns a `TransactionResult` that
