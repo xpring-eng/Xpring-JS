@@ -1279,4 +1279,52 @@ describe('Issued Currency Client', function (): void {
       assert.equal(error, FakeXRPNetworkClientResponses.defaultError)
     }
   })
+
+  it('cancelOffer - success', async function (): Promise<void> {
+    // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN cancelOffer is called
+    const offerSequenceNumber = 1
+
+    const transactionResult = await issuedCurrencyClient.cancelOffer(
+      this.wallet,
+      offerSequenceNumber,
+    )
+
+    // THEN a transaction hash exists and is the expected hash
+    const expectedTransactionHash = Utils.toHex(
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
+    )
+    assert.exists(transactionResult.hash)
+    assert.strictEqual(transactionResult.hash, expectedTransactionHash)
+  })
+
+  it('cancelOffer - submission failure', async function (): Promise<void> {
+    // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
+    const failureResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultError,
+    )
+    const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      failingNetworkClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN cancelOffer is called THEN an error is propagated.
+    const offerSequenceNumber = 1
+
+    try {
+      await issuedCurrencyClient.cancelOffer(this.wallet, offerSequenceNumber)
+    } catch (error) {
+      assert.equal(error, FakeXRPNetworkClientResponses.defaultError)
+    }
+  })
 })

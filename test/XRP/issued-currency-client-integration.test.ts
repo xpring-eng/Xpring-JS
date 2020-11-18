@@ -837,7 +837,6 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // - doesn't use a pre-existing issued currency, but the txn signer and the issuer are the same
     // - seems to succeed anyway, confirmed with look on testnet explorer
 
-    // Can we create offers with currency that we ourselves issue? / haven't yet issued?
     const issuerClassicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
     if (!issuerClassicAddress) {
       throw XrpError.xAddressRequired
@@ -912,6 +911,21 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
 
     // TODO: confirm success using book_offers or account_offers API when implemented?
+    assert.equal(transactionResult.status, TransactionStatus.Succeeded)
+    assert.equal(transactionResult.validated, true)
+    assert.equal(transactionResult.final, true)
+  })
+
+  it('cancelOffer - success', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const offerSequenceNumber = 1
+
+    const transactionResult = await issuedCurrencyClient.cancelOffer(
+      wallet,
+      offerSequenceNumber,
+    )
+
     assert.equal(transactionResult.status, TransactionStatus.Succeeded)
     assert.equal(transactionResult.validated, true)
     assert.equal(transactionResult.final, true)
