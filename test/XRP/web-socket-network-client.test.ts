@@ -257,4 +257,21 @@ describe('WebSocket Tests', function (): void {
 
     issuedCurrencyClient.webSocketNetworkClient.close()
   })
+
+  it('getAccountOffers - bad address', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    // GIVEN a test address that is malformed.
+    const address = 'badAddress'
+
+    // WHEN getAccountOffers is called for that address THEN an error is thrown.
+    try {
+      await webSocketNetworkClient.getAccountOffers(address)
+      assert.fail('Method call should fail')
+    } catch (e) {
+      if (!(e instanceof XrpError)) {
+        assert.fail('wrong error')
+      }
+    }
+  })
 })
