@@ -25,6 +25,7 @@ import {
 import GatewayBalances, {
   gatewayBalancesFromResponse,
 } from '../../src/XRP/shared/gateway-balances'
+import IssuedCurrency from '../../src/XRP/shared/issued-currency'
 
 const fakeSucceedingGrpcClient = new FakeXRPNetworkClient()
 
@@ -1206,5 +1207,76 @@ describe('Issued Currency Client', function (): void {
     const expectedSendMaxValue = '1.27283949471729e-5'
 
     assert.equal(calculatedSendMaxValue, expectedSendMaxValue)
+  })
+
+  it('createOffer - success', async function (): Promise<void> {
+    // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      fakeSucceedingGrpcClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN createOffer is called
+    const takerGetsIssuedCurrency: IssuedCurrency = {
+      issuer: testClassicAddress,
+      currency: 'FAK',
+      value: '100',
+    }
+    const takerPaysXrp = '50'
+    const offerSequenceNumber = 1
+    const expiration = 1946684800
+
+    const transactionResult = await issuedCurrencyClient.createOffer(
+      this.wallet,
+      takerGetsIssuedCurrency,
+      takerPaysXrp,
+      offerSequenceNumber,
+      expiration,
+    )
+
+    // THEN a transaction hash exists and is the expected hash
+    const expectedTransactionHash = Utils.toHex(
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
+    )
+    assert.exists(transactionResult.hash)
+    assert.strictEqual(transactionResult.hash, expectedTransactionHash)
+  })
+
+  it('createOffer - submission failure', async function (): Promise<void> {
+    // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
+    const failureResponses = new FakeXRPNetworkClientResponses(
+      FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+      FakeXRPNetworkClientResponses.defaultFeeResponse(),
+      FakeXRPNetworkClientResponses.defaultError,
+    )
+    const failingNetworkClient = new FakeXRPNetworkClient(failureResponses)
+    const issuedCurrencyClient = new IssuedCurrencyClient(
+      failingNetworkClient,
+      fakeSucceedingWebSocketClient,
+      XrplNetwork.Test,
+    )
+
+    // WHEN createOffer is called THEN an error is propagated.
+    const takerGetsIssuedCurrency: IssuedCurrency = {
+      issuer: testClassicAddress,
+      currency: 'FAK',
+      value: '100',
+    }
+    const takerPaysXrp = '50'
+    const offerSequenceNumber = 1
+    const expiration = 1946684800
+
+    try {
+      await issuedCurrencyClient.createOffer(
+        this.wallet,
+        takerGetsIssuedCurrency,
+        takerPaysXrp,
+        offerSequenceNumber,
+        expiration,
+      )
+    } catch (error) {
+      assert.equal(error, FakeXRPNetworkClientResponses.defaultError)
+    }
   })
 })
