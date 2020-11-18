@@ -254,5 +254,7 @@ describe('WebSocket Tests', function (): void {
     console.log(result)
     assert.equal(result.account, address)
     assert.isEmpty(result.offers)
+
+    issuedCurrencyClient.webSocketNetworkClient.close()
   })
 })
