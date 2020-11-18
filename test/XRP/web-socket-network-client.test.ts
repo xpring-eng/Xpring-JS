@@ -4,9 +4,12 @@ import WebSocketNetworkClient from '../../src/XRP/network-clients/web-socket-net
 import {
   TransactionResponse,
   ResponseStatus,
+  AccountOffersSuccessfulResponse,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
 import XrpError from '../../src/XRP/shared/xrp-error'
 import XrpClient from '../../src/XRP/xrp-client'
+import IssuedCurrency from '../../src/XRP/shared/issued-currency'
+import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
 
@@ -112,7 +115,7 @@ describe('WebSocket Tests', function (): void {
     assert.equal(unsubscribeResponse.type, 'response')
 
     // WHEN a payment is sent to that address
-    await xrpClient.send(xrpAmount, xAddress, wallet2)
+    await xrpClient.sendXrp(xrpAmount, xAddress, wallet2)
 
     // THEN the payment is not received by the callback
     // (If a payment is received, fail will be called in the callback)
@@ -175,5 +178,81 @@ describe('WebSocket Tests', function (): void {
         assert.fail('wrong error')
       }
     }
+  })
+
+  it('getAccountOffers - valid request', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    // GIVEN a valid test address
+    const xAddress = wallet.getAddress()
+    const classicAddress = XrpUtils.decodeXAddress(xAddress)
+    const address = classicAddress!.address
+
+    // WHEN getAccountOffers is called for that address
+    const accountOfferResponse = await webSocketNetworkClient.getAccountOffers(
+      address,
+    )
+
+    assert.equal(accountOfferResponse.status, ResponseStatus.success)
+    assert.equal(accountOfferResponse.type, 'response')
+
+    const result = (accountOfferResponse as AccountOffersSuccessfulResponse)
+      .result
+
+    assert.equal(result.account, address)
+    assert.isEmpty(result.offers)
+  })
+
+  it('getAccountOffers - has offers', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
+      rippledGrpcUrl,
+      rippledWebSocketUrl,
+      console.log,
+      XrplNetwork.Test,
+    )
+
+    // GIVEN a valid test address with an offer
+    const xAddress = wallet.getAddress()
+    const classicAddress = XrpUtils.decodeXAddress(xAddress)
+    const address = classicAddress!.address
+
+    const takerGetsIssuedCurrency: IssuedCurrency = {
+      issuer: address,
+      currency: 'FAK',
+      value: '100',
+    }
+    const takerPaysXrp = '50'
+
+    const offerSequenceNumber = 1
+
+    const rippleEpochStartTimeSeconds = 946684800
+    const currentTimeUnixEpochSeconds = Date.now() / 1000 // 1000 ms/sec
+    const currentTimeRippleEpochSeconds =
+      currentTimeUnixEpochSeconds - rippleEpochStartTimeSeconds
+    const expiration = currentTimeRippleEpochSeconds + 60 * 60 // roughly one hour in future
+
+    await issuedCurrencyClient.createOffer(
+      wallet,
+      takerGetsIssuedCurrency,
+      takerPaysXrp,
+      offerSequenceNumber,
+      expiration,
+    )
+
+    // WHEN getAccountOffers is called for that address
+    const accountOfferResponse = await webSocketNetworkClient.getAccountOffers(
+      address,
+    )
+
+    assert.equal(accountOfferResponse.status, ResponseStatus.success)
+    assert.equal(accountOfferResponse.type, 'response')
+
+    const result = (accountOfferResponse as AccountOffersSuccessfulResponse)
+      .result
+    console.log(result)
+    assert.equal(result.account, address)
+    assert.isEmpty(result.offers)
   })
 })

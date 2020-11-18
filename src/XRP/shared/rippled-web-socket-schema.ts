@@ -333,6 +333,7 @@ export {
   GatewayBalancesResponse,
   GatewayBalancesSuccessfulResponse,
   AccountOffersResponse,
+  AccountOffersSuccessfulResponse,
   WebSocketTransaction,
   TrustLineResponse,
 }
