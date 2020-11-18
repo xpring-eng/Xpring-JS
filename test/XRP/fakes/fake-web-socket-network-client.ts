@@ -3,10 +3,13 @@ import XrpError, { XrpErrorType } from '../../../src/XRP/shared/xrp-error'
 import {
   AccountLinesResponse,
   GatewayBalancesResponse,
+  IssuedCurrency,
   ResponseStatus,
+  RipplePathFindResponse,
   StatusResponse,
   TransactionResponse,
 } from '../../../src/XRP/shared/rippled-web-socket-schema'
+import { WebSocketNetworkClientInterface } from '../../../src/XRP/network-clients/web-socket-network-client-interface'
 
 /**
  * A list of responses the fake network client will give.
@@ -200,10 +203,19 @@ export class FakeWebSocketNetworkClientResponses {
 /**
  * A fake network client which stubs network interaction.
  */
-export class FakeWebSocketNetworkClient {
+export class FakeWebSocketNetworkClient
+  implements WebSocketNetworkClientInterface {
   public constructor(
     private readonly responses: FakeWebSocketNetworkClientResponses = FakeWebSocketNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
+  findRipplePath(
+    _sourceAccount: string,
+    _destinationAccount: string,
+    _destinationAmount: string | IssuedCurrency,
+    _sendMax?: string | IssuedCurrency,
+  ): Promise<RipplePathFindResponse> {
+    throw new Error('Method not implemented.')
+  }
 
   subscribeToAccount(
     _account: string,
