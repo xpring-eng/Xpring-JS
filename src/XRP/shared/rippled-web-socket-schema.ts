@@ -314,9 +314,9 @@ interface CurrencyValuePair {
 }
 
 interface IssuedCurrency {
-  value: string
-  currency: string
-  issuer: string
+  value?: string
+  currency?: string
+  issuer?: string
 }
 
 /**
