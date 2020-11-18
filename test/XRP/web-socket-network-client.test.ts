@@ -276,17 +276,30 @@ describe('WebSocket Tests', function (): void {
   //   const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
   //     .address
 
+  //   const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
+  //     rippledGrpcUrl,
+  //     rippledWebSocketUrl,
+  //     console.log,
+  //     XrplNetwork.Test,
+  //   )
+
+  //   // GIVEN two valid test addresses with a trust line between them
+  //   const trustLineLimit = '200'
+  //   const trustLineCurrency = 'USD'
+  //   await issuedCurrencyClient.createTrustLine(
+  //     wallet.getAddress(),
+  //     trustLineCurrency,
+  //     trustLineLimit,
+  //     wallet2,
+  //   )
+
   //   // const destinationAmount = '1'
   //   const destinationAmount: IssuedCurrency = {
-  //     issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA',
-  //     currency: 'cny',
+  //     issuer: destinationAddress,
+  //     currency: 'USD',
   //     value: '50',
   //   }
-  //   const sendMaxAmount: IssuedCurrency = {
-  //     issuer: sourceAddress,
-  //     currency: 'cny',
-  //     value: '50',
-  //   }
+  //   const sendMaxAmount = '3000'
 
   //   // GIVEN two valid test addresses
   //   // WHEN findRipplePath is called between those addresses
@@ -306,9 +319,9 @@ describe('WebSocket Tests', function (): void {
   //   const result = (response as RipplePathFindSuccessfulResponse).result
 
   //   assert.equal(result.destination_account, destinationAddress)
-  //   assert.equal(result.destination_amount, destinationAmount)
+  //   assert.deepEqual(result.destination_amount, destinationAmount)
   //   assert.equal(result.source_account, sourceAddress)
-  //   assert.include(result.destination_currencies, 'XRP')
+  //   // assert.include(result.destination_currencies, 'XRP')
   // })
 
   it('findRipplePath - special sendMax case', async function (): Promise<void> {
