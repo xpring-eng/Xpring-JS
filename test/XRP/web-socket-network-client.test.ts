@@ -51,10 +51,6 @@ describe('WebSocket Tests', function (): void {
   > {
     this.timeout(timeoutMs)
 
-    const xAddress = wallet.getAddress()
-    const classicAddress = XrpUtils.decodeXAddress(xAddress)
-    const address = classicAddress!.address
-
     const xrpAmount = '100'
 
     let messageReceived = false
@@ -87,6 +83,10 @@ describe('WebSocket Tests', function (): void {
     const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
 
     // GIVEN a valid test address
+    const xAddress = wallet.getAddress()
+    const classicAddress = XrpUtils.decodeXAddress(xAddress)
+    const address = classicAddress!.address
+
     // WHEN subscribeToAccount is called for that address
     const subscribeResponse = await webSocketNetworkClient.subscribeToAccount(
       address,
@@ -124,9 +124,9 @@ describe('WebSocket Tests', function (): void {
   it('subscribeToAccount - bad address', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
+    // GIVEN a test address that is malformed.
     const address = 'badAddress'
 
-    // GIVEN a test address that is malformed.
     // WHEN subscribeToAccount is called for that address THEN an error is thrown.
     try {
       await webSocketNetworkClient.subscribeToAccount(
@@ -147,11 +147,11 @@ describe('WebSocket Tests', function (): void {
   > {
     this.timeout(timeoutMs)
 
+    // GIVEN a test address that is not subscribed to.
     const xAddress = wallet2.getAddress()
     const classicAddress = XrpUtils.decodeXAddress(xAddress)
     const address = classicAddress!.address
 
-    // GIVEN a test address that is not subscribed to.
     // WHEN unsubscribeFromAccount is called for that address THEN an error is thrown.
     try {
       await webSocketNetworkClient.unsubscribeFromAccount(address)
@@ -166,9 +166,9 @@ describe('WebSocket Tests', function (): void {
   it('unsubscribeFromAccount - bad address', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
+    // GIVEN a test address that is malformed.
     const address = 'badAddress'
 
-    // GIVEN a test address that is malformed.
     // WHEN unsubscribeFromAccount is called for that address THEN an error is thrown.
     try {
       await webSocketNetworkClient.unsubscribeFromAccount(address)
@@ -180,30 +180,7 @@ describe('WebSocket Tests', function (): void {
     }
   })
 
-  it('getAccountOffers - valid request', async function (): Promise<void> {
-    this.timeout(timeoutMs)
-
-    // GIVEN a valid test address
-    const xAddress = wallet.getAddress()
-    const classicAddress = XrpUtils.decodeXAddress(xAddress)
-    const address = classicAddress!.address
-
-    // WHEN getAccountOffers is called for that address
-    const accountOfferResponse = await webSocketNetworkClient.getAccountOffers(
-      address,
-    )
-
-    assert.equal(accountOfferResponse.status, ResponseStatus.success)
-    assert.equal(accountOfferResponse.type, 'response')
-
-    const result = (accountOfferResponse as AccountOffersSuccessfulResponse)
-      .result
-
-    assert.equal(result.account, address)
-    assert.isEmpty(result.offers)
-  })
-
-  it('getAccountOffers - has offers', async function (): Promise<void> {
+  it('getAccountOffers - valid requests', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
@@ -213,11 +190,28 @@ describe('WebSocket Tests', function (): void {
       XrplNetwork.Test,
     )
 
-    // GIVEN a valid test address with an offer
+    // GIVEN a valid test address with no offers
     const xAddress = wallet.getAddress()
     const classicAddress = XrpUtils.decodeXAddress(xAddress)
     const address = classicAddress!.address
 
+    // WHEN getAccountOffers is called for that address
+    const accountOfferResponse = await webSocketNetworkClient.getAccountOffers(
+      address,
+    )
+
+    // THEN the request is successfully submitted and received, with no listed offers
+    assert.equal(accountOfferResponse.status, ResponseStatus.success)
+    assert.equal(accountOfferResponse.type, 'response')
+
+    const result = (accountOfferResponse as AccountOffersSuccessfulResponse)
+      .result
+
+    assert.equal(result.account, address)
+    assert.isEmpty(result.offers)
+    this.timeout(timeoutMs)
+
+    // GIVEN a valid test address with an offer
     const takerGetsIssuedCurrency: IssuedCurrency = {
       issuer: address,
       currency: 'FAK',
@@ -242,21 +236,21 @@ describe('WebSocket Tests', function (): void {
     )
 
     // WHEN getAccountOffers is called for that address
-    const accountOfferResponse = await webSocketNetworkClient.getAccountOffers(
+    const accountOfferResponse2 = await webSocketNetworkClient.getAccountOffers(
       address,
     )
 
-    assert.equal(accountOfferResponse.status, ResponseStatus.success)
-    assert.equal(accountOfferResponse.type, 'response')
+    // THEN the request is successfully submitted and received, with the one listed offer
+    assert.equal(accountOfferResponse2.status, ResponseStatus.success)
+    assert.equal(accountOfferResponse2.type, 'response')
 
-    const result = (accountOfferResponse as AccountOffersSuccessfulResponse)
+    const result2 = (accountOfferResponse2 as AccountOffersSuccessfulResponse)
       .result
-    console.log(result)
 
-    assert.equal(result.account, address)
-    assert.isNotEmpty(result.offers)
+    assert.equal(result2.account, address)
+    assert.isNotEmpty(result2.offers)
 
-    const offer = result.offers[0]
+    const offer = result2.offers[0]
 
     assert.equal(offer.taker_pays, takerPaysXrp)
     assert.deepEqual(offer.taker_gets, takerGetsIssuedCurrency)
