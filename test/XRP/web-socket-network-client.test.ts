@@ -252,8 +252,14 @@ describe('WebSocket Tests', function (): void {
     const result = (accountOfferResponse as AccountOffersSuccessfulResponse)
       .result
     console.log(result)
+
     assert.equal(result.account, address)
-    assert.isEmpty(result.offers)
+    assert.isNotEmpty(result.offers)
+
+    const offer = result.offers[0]
+
+    assert.equal(offer.taker_pays, takerPaysXrp)
+    assert.deepEqual(offer.taker_gets, takerGetsIssuedCurrency)
 
     issuedCurrencyClient.webSocketNetworkClient.close()
   })
