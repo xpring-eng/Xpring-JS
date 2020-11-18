@@ -1060,53 +1060,11 @@ export default class IssuedCurrencyClient {
     offerSequence?: number,
     expiration?: number,
   ): Promise<TransactionResult> {
-    // construct TakerGets
-    const takerGetsCurrencyAmount = new CurrencyAmount()
-    if (typeof takerGetsAmount == 'string') {
-      const takerGetsXrpDropsAmount = new XRPDropsAmount()
-      takerGetsXrpDropsAmount.setDrops(takerGetsAmount)
-      takerGetsCurrencyAmount.setXrpAmount(takerGetsXrpDropsAmount)
-    } else {
-      const takerGetsCurrency = new Currency()
-      takerGetsCurrency.setName(takerGetsAmount.currency)
-
-      const takerGetsAccountAddress = new AccountAddress()
-      takerGetsAccountAddress.setAddress(takerGetsAmount.issuer)
-
-      const takerGetsIssuedCurrencyAmount = new IssuedCurrencyAmount()
-      takerGetsIssuedCurrencyAmount.setIssuer(takerGetsAccountAddress)
-      takerGetsIssuedCurrencyAmount.setCurrency(takerGetsCurrency)
-      takerGetsIssuedCurrencyAmount.setValue(takerGetsAmount.value)
-
-      takerGetsCurrencyAmount.setIssuedCurrencyAmount(
-        takerGetsIssuedCurrencyAmount,
-      )
-    }
+    const takerGetsCurrencyAmount = this.createCurrencyAmount(takerGetsAmount)
     const takerGets = new TakerGets()
     takerGets.setValue(takerGetsCurrencyAmount)
 
-    // construct TakerPays
-    const takerPaysCurrencyAmount = new CurrencyAmount()
-    if (typeof takerPaysAmount == 'string') {
-      const takerPaysXrpDropsAmount = new XRPDropsAmount()
-      takerPaysXrpDropsAmount.setDrops(takerPaysAmount)
-      takerPaysCurrencyAmount.setXrpAmount(takerPaysXrpDropsAmount)
-    } else {
-      const takerPaysCurrency = new Currency()
-      takerPaysCurrency.setName(takerPaysAmount.currency)
-
-      const takerPaysAccountAddress = new AccountAddress()
-      takerPaysAccountAddress.setAddress(takerPaysAmount.issuer)
-
-      const takerPaysIssuedCurrencyAmount = new IssuedCurrencyAmount()
-      takerPaysIssuedCurrencyAmount.setIssuer(takerPaysAccountAddress)
-      takerPaysIssuedCurrencyAmount.setCurrency(takerPaysCurrency)
-      takerPaysIssuedCurrencyAmount.setValue(takerPaysAmount.value)
-
-      takerPaysCurrencyAmount.setIssuedCurrencyAmount(
-        takerPaysIssuedCurrencyAmount,
-      )
-    }
+    const takerPaysCurrencyAmount = this.createCurrencyAmount(takerPaysAmount)
     const takerPays = new TakerPays()
     takerPays.setValue(takerPaysCurrencyAmount)
 
@@ -1172,5 +1130,36 @@ export default class IssuedCurrencyClient {
       transactionHash,
       sender,
     )
+  }
+
+  /**
+   * Constructs and returns a CurrencyAmount protobuf that represents either and XRP drops amount or Issued Currency amount, which can then be
+   * assigned to a higher order protobuf that requires a CurrencyAmount.
+   *
+   * @param amount The string (for XRP amounts) or IssuedCurrency object (for issued currencies) from which to construct a CurrencyAmount protobuf.
+   */
+  private createCurrencyAmount(
+    amount: string | IssuedCurrency,
+  ): CurrencyAmount {
+    const currencyAmount = new CurrencyAmount()
+    if (typeof amount == 'string') {
+      const xrpDropsAmount = new XRPDropsAmount()
+      xrpDropsAmount.setDrops(amount)
+      currencyAmount.setXrpAmount(xrpDropsAmount)
+    } else {
+      const currency = new Currency()
+      currency.setName(amount.currency)
+
+      const accountAddress = new AccountAddress()
+      accountAddress.setAddress(amount.issuer)
+
+      const issuedCurrencyAmount = new IssuedCurrencyAmount()
+      issuedCurrencyAmount.setIssuer(accountAddress)
+      issuedCurrencyAmount.setCurrency(currency)
+      issuedCurrencyAmount.setValue(amount.value)
+
+      currencyAmount.setIssuedCurrencyAmount(issuedCurrencyAmount)
+    }
+    return currencyAmount
   }
 }
