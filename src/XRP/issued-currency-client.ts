@@ -56,7 +56,10 @@ import {
 import { RippledErrorMessages } from './shared/rippled-error-messages'
 import TrustSetFlag from './shared/trust-set-flag'
 import { BigNumber } from 'bignumber.js'
-import { OfferCreate } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/transaction_pb'
+import {
+  OfferCancel,
+  OfferCreate,
+} from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/transaction_pb'
 import IssuedCurrency from './shared/issued-currency'
 
 /**
@@ -1083,6 +1086,40 @@ export default class IssuedCurrencyClient {
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
     transaction.setOfferCreate(offerCreate)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      sender,
+    )
+
+    return this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      sender,
+    )
+  }
+
+  /**
+   * Cancels an offer on the XRP Ledger.
+   * @see https://xrpl.org/offers.html
+   * @see https://xrpl.org/offercancel.html#offercancel
+   *
+   * @param sender The Wallet cancelling this offer, and that will sign the transaction.
+   * @param offerSequence The sequence number of a previous OfferCreate transaction.
+   *               If specified, cancel any offer object in the ledger that was created by that transaction.
+   *               It is not considered an error if the offer specified does not exist.
+   */
+  public async cancelOffer(
+    sender: Wallet,
+    offerSequence: number,
+  ): Promise<TransactionResult> {
+    const offerSequenceProto = new OfferSequence()
+    offerSequenceProto.setValue(offerSequence)
+
+    const offerCancel = new OfferCancel()
+    offerCancel.setOfferSequence(offerSequenceProto)
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
+    transaction.setOfferCancel(offerCancel)
 
     const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
       transaction,
