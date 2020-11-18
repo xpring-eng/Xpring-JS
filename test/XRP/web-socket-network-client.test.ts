@@ -265,6 +265,8 @@ describe('WebSocket Tests', function (): void {
     assert.equal(result.source_account, sourceAddress)
     assert.include(result.destination_currencies, 'USD')
     assert(result.alternatives.length >= 1)
+
+    issuedCurrencyClient.webSocketNetworkClient.close()
   })
 
   // it('findRipplePath - all fields', async function (): Promise<void> {
