@@ -2,12 +2,14 @@ import { assert } from 'chai'
 import { Wallet, XrplNetwork, XrpUtils } from 'xpring-common-js'
 import WebSocketNetworkClient from '../../src/XRP/network-clients/web-socket-network-client'
 import {
+  ResponseStatus,
   TransactionResponse,
   RipplePathFindSuccessfulResponse,
-  ResponseStatus,
+  IssuedCurrency,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
 import XrpError from '../../src/XRP/shared/xrp-error'
 import XrpClient from '../../src/XRP/xrp-client'
+import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
 
@@ -185,14 +187,68 @@ describe('WebSocket Tests', function (): void {
     const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
       .address
 
-    const xrpAmount = '100'
+    const destinationAmount: IssuedCurrency = {
+      currency: 'CNY',
+      issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA',
+      value: '50',
+    }
 
     // GIVEN two valid test addresses
     // WHEN findRipplePath is called between those addresses
     const response = await webSocketNetworkClient.findRipplePath(
       sourceAddress,
       destinationAddress,
-      xrpAmount,
+      destinationAmount,
+    )
+
+    // THEN the request is successfully submitted and received
+    assert.equal(response.status, 'success')
+    assert.equal(response.type, 'response')
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+    const result = (response as RipplePathFindSuccessfulResponse).result
+
+    assert.equal(result.destination_account, destinationAddress)
+    assert.deepEqual(result.destination_amount, destinationAmount)
+    assert.equal(result.source_account, sourceAddress)
+    assert.include(result.destination_currencies, 'XRP')
+  })
+
+  it('findRipplePath - successful path', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
+    const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
+      .address
+
+    const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
+      rippledGrpcUrl,
+      rippledWebSocketUrl,
+      console.log,
+      XrplNetwork.Test,
+    )
+
+    // GIVEN two valid test addresses with a trust line between them
+    const trustLineLimit = '200'
+    const trustLineCurrency = 'USD'
+    await issuedCurrencyClient.createTrustLine(
+      wallet.getAddress(),
+      trustLineCurrency,
+      trustLineLimit,
+      wallet2,
+    )
+
+    const destinationAmount: IssuedCurrency = {
+      issuer: destinationAddress,
+      currency: 'USD',
+      value: '50',
+    }
+
+    // WHEN findRipplePath is called between those addresses
+    const response = await webSocketNetworkClient.findRipplePath(
+      sourceAddress,
+      destinationAddress,
+      destinationAmount,
     )
 
     // THEN the request is successfully submitted and received
@@ -202,7 +258,102 @@ describe('WebSocket Tests', function (): void {
     const result = (response as RipplePathFindSuccessfulResponse).result
 
     assert.equal(result.destination_account, destinationAddress)
-    assert.equal(result.destination_amount, xrpAmount)
+    assert.deepEqual(
+      result.destination_amount as IssuedCurrency,
+      destinationAmount,
+    )
+    assert.equal(result.source_account, sourceAddress)
+    assert.include(result.destination_currencies, 'USD')
+    assert(result.alternatives.length >= 1)
+  })
+
+  // it('findRipplePath - all fields', async function (): Promise<void> {
+  //   this.timeout(timeoutMs)
+
+  //   const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
+  //   const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
+  //     .address
+
+  //   const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
+  //     rippledGrpcUrl,
+  //     rippledWebSocketUrl,
+  //     console.log,
+  //     XrplNetwork.Test,
+  //   )
+
+  //   // GIVEN two valid test addresses with a trust line between them
+  //   const trustLineLimit = '200'
+  //   const trustLineCurrency = 'USD'
+  //   await issuedCurrencyClient.createTrustLine(
+  //     wallet.getAddress(),
+  //     trustLineCurrency,
+  //     trustLineLimit,
+  //     wallet2,
+  //   )
+
+  //   // const destinationAmount = '1'
+  //   const destinationAmount: IssuedCurrency = {
+  //     issuer: destinationAddress,
+  //     currency: 'USD',
+  //     value: '50',
+  //   }
+  //   const sendMaxAmount = '3000'
+
+  //   // GIVEN two valid test addresses
+  //   // WHEN findRipplePath is called between those addresses
+  //   const response = await webSocketNetworkClient.findRipplePath(
+  //     sourceAddress,
+  //     destinationAddress,
+  //     destinationAmount,
+  //     sendMaxAmount,
+  //   )
+
+  //   console.log(response)
+  //   // THEN the request is successfully submitted and received
+  //   assert.equal(response.status, 'success')
+  //   assert.equal(response.type, 'response')
+
+  //   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  //   const result = (response as RipplePathFindSuccessfulResponse).result
+
+  //   assert.equal(result.destination_account, destinationAddress)
+  //   assert.deepEqual(result.destination_amount, destinationAmount)
+  //   assert.equal(result.source_account, sourceAddress)
+  //   // assert.include(result.destination_currencies, 'XRP')
+  // })
+
+  it('findRipplePath - special sendMax case', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
+    const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
+      .address
+
+    const destinationAmount = '-1'
+    const sendMaxAmount: IssuedCurrency = {
+      issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA',
+      currency: 'CNY',
+      value: '50',
+    }
+
+    // GIVEN two valid test addresses
+    // WHEN findRipplePath is called between those addresses
+    const response = await webSocketNetworkClient.findRipplePath(
+      sourceAddress,
+      destinationAddress,
+      destinationAmount,
+      sendMaxAmount,
+    )
+
+    // THEN the request is successfully submitted and received
+    assert.equal(response.status, 'success')
+    assert.equal(response.type, 'response')
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+    const result = (response as RipplePathFindSuccessfulResponse).result
+
+    assert.equal(result.destination_account, destinationAddress)
+    assert.equal(result.destination_amount, destinationAmount)
     assert.equal(result.source_account, sourceAddress)
     assert.include(result.destination_currencies, 'XRP')
   })

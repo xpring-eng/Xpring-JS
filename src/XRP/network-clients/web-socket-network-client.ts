@@ -3,8 +3,13 @@ import { XrpError, XrpErrorType } from '../shared'
 import {
   WebSocketReadyState,
   RippledMethod,
+<<<<<<< HEAD
   WebSocketRequest,
   ResponseStatus,
+=======
+  ResponseStatus,
+  WebSocketRequest,
+>>>>>>> ripple-path-find
   SubscribeRequest,
   AccountLinesRequest,
   GatewayBalancesRequest,
