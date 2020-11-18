@@ -3,7 +3,7 @@
  * @see https://xrpl.org/currency-formats.html#issued-currency-amounts
  */
 export default interface IssuedCurrency {
-  issuer: string
   currency: string
+  issuer: string
   value: string
 }
