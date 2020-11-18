@@ -201,8 +201,6 @@ describe('WebSocket Tests', function (): void {
       destinationAmount,
     )
 
-    console.log(response)
-
     // THEN the request is successfully submitted and received
     assert.equal(response.status, 'success')
     assert.equal(response.type, 'response')
@@ -347,7 +345,6 @@ describe('WebSocket Tests', function (): void {
       sendMaxAmount,
     )
 
-    console.log(response)
     // THEN the request is successfully submitted and received
     assert.equal(response.status, 'success')
     assert.equal(response.type, 'response')
