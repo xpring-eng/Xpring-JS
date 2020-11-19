@@ -221,20 +221,10 @@ describe('WebSocket Tests', function (): void {
     }
     const takerPaysXrp = '50'
 
-    const offerSequenceNumber = 1
-
-    const rippleEpochStartTimeSeconds = 946684800
-    const currentTimeUnixEpochSeconds = Date.now() / 1000 // 1000 ms/sec
-    const currentTimeRippleEpochSeconds =
-      currentTimeUnixEpochSeconds - rippleEpochStartTimeSeconds
-    const expiration = currentTimeRippleEpochSeconds + 60 * 60 // roughly one hour in future
-
     await issuedCurrencyClient.createOffer(
       wallet,
       takerGetsIssuedCurrency,
       takerPaysXrp,
-      offerSequenceNumber,
-      expiration,
     )
 
     // WHEN getAccountOffers is called for that address
