@@ -3,7 +3,12 @@ import { XrplNetwork } from 'xpring-common-js'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
-import { TransactionResult, TransactionStatus } from '../../src/XRP/shared'
+import {
+  TransactionResult,
+  TransactionStatus,
+  XrpUtils,
+} from '../../src/XRP/shared'
+import { IssuedCurrency } from '../../src/XRP/shared/rippled-web-socket-schema'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -24,7 +29,7 @@ const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoi
 // TODO: (acorso) confirm that the presence of a SendMax when not necessary also doesn't cause any problems (i.e. include the argument)
 describe('Issued Currency Payment Integration Tests', function (): void {
   // Retry integration tests on failure.
-  this.retries(3)
+  // this.retries(3)
 
   after(function (done) {
     issuedCurrencyClient.webSocketNetworkClient.close()
@@ -405,29 +410,64 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     // establish trust line from customers to issuer
     const trustLineLimit = '1000'
     const trustLineCurrency = 'FOO'
-    await issuedCurrencyClient.createTrustLine(
+    const trustlineCreationResult1 = await issuedCurrencyClient.createTrustLine(
       issuerWallet.getAddress(),
       trustLineCurrency,
       trustLineLimit,
       customerWallet1,
     )
+    console.log('Result of creating trustline1: ')
+    console.log(trustlineCreationResult1)
 
-    await issuedCurrencyClient.createTrustLine(
+    const trustlineCreationResult2 = await issuedCurrencyClient.createTrustLine(
       issuerWallet.getAddress(),
       trustLineCurrency,
       trustLineLimit,
       customerWallet2,
     )
+    console.log('Result of creating trustline2: ')
+    console.log(trustlineCreationResult2)
 
-    // fund first customer wallet directly with some FOO
-    await issuedCurrencyClient.createIssuedCurrency(
+    // create an offer by Issuer to exchange XRP for FOO:
+    const issuerClassicAddress = XrpUtils.decodeXAddress(
+      issuerWallet.getAddress()!,
+    )
+    const takerGetsAmount: IssuedCurrency = {
+      currency: trustLineCurrency,
+      issuer: issuerClassicAddress!.address,
+      value: '100',
+    }
+    const takerPaysAmount = '100000000' // drops of XRP = 100 XRP
+
+    const offerCreateResult = await issuedCurrencyClient.createOffer(
       issuerWallet,
-      customerWallet1.getAddress(),
-      'FOO',
-      '500',
+      takerGetsAmount,
+      takerPaysAmount,
     )
 
+    console.log('result of creating offer: ')
+    console.log(offerCreateResult)
+
     // WHEN
+    const sourceAmount = '100000000' // spend up to 100 XRP
+    const deliverAmount = {
+      currency: trustLineCurrency,
+      issuer: issuerClassicAddress!.address,
+      value: '80',
+    }
+
+    try {
+      const transactionResult = await issuedCurrencyClient.sendCrossCurrencyPayment(
+        customerWallet1,
+        customerWallet2.getAddress(),
+        sourceAmount,
+        deliverAmount,
+      )
+
+      console.log(transactionResult)
+    } catch (error) {
+      console.log(error)
+    }
 
     // THEN the cross currency payment succeeds.
     // assert.deepEqual(

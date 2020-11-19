@@ -882,26 +882,18 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * TODO: doc me!
+   * TODO: doc me
    *
    * @param sender
    * @param destination
-   * @param issuer
-   * @param currency
-   * @param amount
-   * @param sourceIssuer
-   * @param sourceCurrency
-   * @param maxSourceAmount
+   * @param sourceAmount
+   * @param deliverAmount
    */
   public async sendCrossCurrencyPayment(
     sender: Wallet,
     destination: string,
-    issuer: string,
-    currency: string,
-    amount: string,
-    sourceIssuer: string,
-    sourceCurrency: string,
-    maxSourceAmount: string,
+    sourceAmount: string | IssuedCurrency,
+    deliverAmount: string | IssuedCurrency,
   ): Promise<TransactionResult> {
     if (!XrpUtils.isValidXAddress(destination)) {
       throw new XrpError(
@@ -910,53 +902,49 @@ export default class IssuedCurrencyClient {
       )
     }
 
+    // TODO: verify address formats for issuers in IssuedCurrency specifications
     // TODO: (acorso) we don't need to convert back to a classic address once the ripple-binary-codec supports X-addresses for issued currencies.
-    const issuerClassicAddress = XrpUtils.decodeXAddress(issuer)
-    if (!issuerClassicAddress) {
+
+    // Both source amount and deliver amount can't both be XRP:
+    if (typeof deliverAmount == 'string' && typeof sourceAmount == 'string') {
       throw new XrpError(
-        XrpErrorType.XAddressRequired,
-        'Issuer address must be in X-address format.  See https://xrpaddress.info/.',
+        XrpErrorType.InvalidInput,
+        'A Cross Currency payment should involve at least one issued currency.',
       )
     }
 
-    if (!issuerClassicAddress.address) {
-      throw new XrpError(
-        XrpErrorType.XAddressRequired,
-        'Decoded classic address is missing address field.',
-      )
-    }
+    // Create representation of the currency to SOURCE
+    const sourceAmountProto = this.createCurrencyAmount(sourceAmount)
 
-    const sourceIssuerClassicAddress = XrpUtils.decodeXAddress(sourceIssuer)
-    if (!sourceIssuerClassicAddress) {
-      throw new XrpError(
-        XrpErrorType.XAddressRequired,
-        'Source issuer address must be in X-address format.  See https://xrpaddress.info/.',
-      )
-    }
+    // Create representation of the currency to DELIVER
+    const deliverAmountProto = this.createAmount(deliverAmount)
 
-    if (!sourceIssuerClassicAddress.address) {
-      throw new XrpError(
-        XrpErrorType.XAddressRequired,
-        'Decoded classic address is missing address field.',
-      )
-    }
+    // Create destination proto
+    const destinationAccountAddress = new AccountAddress()
+    destinationAccountAddress.setAddress(destination)
+
+    const destinationProto = new Destination()
+    destinationProto.setValue(destinationAccountAddress)
+
+    // Construct Payment fields
+    const payment = new Payment()
+    payment.setDestination(destinationProto)
+    // Note that the destinationTag doesn't need to be explicitly set here, because the ripple-binary-codec will decode this X-Address and
+    // assign the decoded destinationTag before signing.
+
+    payment.setAmount(deliverAmountProto)
+
+    // Assign sourceCurrencyAmount as sendMax for Payment
+    const sendMax = new SendMax()
+    sendMax.setValue(sourceAmountProto)
+    payment.setSendMax(sendMax)
 
     // Determine if there is a viable path
-    const destinationAmount: IssuedCurrency = {
-      value: amount,
-      currency,
-      issuer,
-    }
-    const sendAmount: IssuedCurrency = {
-      value: maxSourceAmount,
-      currency: sourceCurrency,
-      issuer: sourceIssuer,
-    }
     let pathFindResponse = await this.webSocketNetworkClient.findRipplePath(
       sender.getAddress(),
       destination,
-      destinationAmount,
-      sendAmount,
+      deliverAmount,
+      sourceAmount,
     )
 
     // If failure response from websocket, throw
@@ -992,65 +980,13 @@ export default class IssuedCurrencyClient {
     })
 
     // Determine if the cheapest path is cheap enough, otherwise throw
-    const numericMaxSourceAmount = new BigNumber(maxSourceAmount)
-    if (currentCheapestSourceAmount > numericMaxSourceAmount) {
-      throw new XrpError(
-        XrpErrorType.NoViablePaths,
-        'Best viable path is too expensive.',
-      )
-    }
-
-    // Create representation of the currency to DELIVER
-    const currencyProto = new Currency()
-    currencyProto.setName(currency)
-
-    const issuerAccountAddress = new AccountAddress()
-    issuerAccountAddress.setAddress(issuerClassicAddress.address)
-
-    const issuedCurrency = new IssuedCurrencyAmount()
-    issuedCurrency.setCurrency(currencyProto)
-    issuedCurrency.setIssuer(issuerAccountAddress)
-    issuedCurrency.setValue(amount)
-
-    const currencyAmount = new CurrencyAmount()
-    currencyAmount.setIssuedCurrencyAmount(issuedCurrency)
-
-    const amountProto = new Amount()
-    amountProto.setValue(currencyAmount)
-
-    // Create representation of the currency to SEND
-    const sourceCurrencyProto = new Currency()
-    sourceCurrencyProto.setName(sourceCurrency)
-
-    const sourceIssuerAccountAddress = new AccountAddress()
-    sourceIssuerAccountAddress.setAddress(sourceIssuerClassicAddress.address)
-
-    const sourceIssuedCurrency = new IssuedCurrencyAmount()
-    sourceIssuedCurrency.setCurrency(sourceCurrencyProto)
-    sourceIssuedCurrency.setIssuer(sourceIssuerAccountAddress)
-    sourceIssuedCurrency.setValue(maxSourceAmount)
-
-    const sourceCurrencyAmount = new CurrencyAmount()
-    sourceCurrencyAmount.setIssuedCurrencyAmount(sourceIssuedCurrency)
-
-    // Create destination proto
-    const destinationAccountAddress = new AccountAddress()
-    destinationAccountAddress.setAddress(destination)
-
-    const destinationProto = new Destination()
-    destinationProto.setValue(destinationAccountAddress)
-
-    // Construct Payment fields
-    const payment = new Payment()
-    payment.setDestination(destinationProto)
-    // Note that the destinationTag doesn't need to be explicitly set here, because the ripple-binary-codec will decode this X-Address and
-    // assign the decoded destinationTag before signing.
-    payment.setAmount(amountProto)
-
-    // Assign sourceCurrencyAmount as sendMax for Payment
-    const sendMax = new SendMax()
-    sendMax.setValue(sourceCurrencyAmount)
-    payment.setSendMax(sendMax)
+    // const numericMaxSourceAmount = new BigNumber(sourceAmount)
+    // if (currentCheapestSourceAmount > numericMaxSourceAmount) {
+    //   throw new XrpError(
+    //     XrpErrorType.NoViablePaths,
+    //     'Best viable path is too expensive.',
+    //   )
+    // }
 
     // Assign best pathset to Payment protobuf
     currentBestPathset.forEach((path: PathElement[]) => {
@@ -1345,7 +1281,7 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * Constructs and returns a CurrencyAmount protobuf that represents either and XRP drops amount or Issued Currency amount, which can then be
+   * Constructs and returns a CurrencyAmount protobuf that represents either an XRP drops amount or Issued Currency amount, which can then be
    * assigned to a higher order protobuf that requires a CurrencyAmount.
    *
    * @param amount The string (for XRP amounts) or IssuedCurrency object (for issued currencies) from which to construct a CurrencyAmount protobuf.
@@ -1373,5 +1309,17 @@ export default class IssuedCurrencyClient {
       currencyAmount.setIssuedCurrencyAmount(issuedCurrencyAmount)
     }
     return currencyAmount
+  }
+
+  /**
+   * Constructs and returns an Amount protocol buffer object with all sub-objects such as an XRPDropsAmount or IssuedCurrencyAmount.
+   *
+   * @param amount The string (for XRP amounts) or IssuedCurrency object (for issued currencies) from which to construct a Amount protobuf.
+   */
+  private createAmount(amount: string | IssuedCurrency): Amount {
+    const currencyAmount = this.createCurrencyAmount(amount)
+    const amountProto = new Amount()
+    amountProto.setValue(currencyAmount)
+    return amountProto
   }
 }
