@@ -137,6 +137,14 @@ export default class WebSocketNetworkClient {
     }
     this.waiting.delete(request.id)
 
+    if (response.status !== ResponseStatus.success) {
+      const errorResponse = response as WebSocketFailureResponse
+      throw new XrpError(
+        XrpErrorType.Unknown,
+        `API request failed. ${errorResponse.error_message}`,
+      )
+    }
+
     return response
   }
 
@@ -159,13 +167,6 @@ export default class WebSocketNetworkClient {
     }
     this.idNumber++
     const response = await this.sendApiRequest(subscribeRequest)
-    if (response.status !== ResponseStatus.success) {
-      const errorResponse = response as WebSocketFailureResponse
-      throw new XrpError(
-        XrpErrorType.Unknown,
-        `Subscription request for ${account} failed, ${errorResponse.error_message}`,
-      )
-    }
     this.accountCallbacks.set(account, callback)
     return response as StatusResponse
   }
@@ -193,13 +194,6 @@ export default class WebSocketNetworkClient {
     }
     this.idNumber++
     const response = await this.sendApiRequest(unsubscribeRequest)
-    if (response.status !== ResponseStatus.success) {
-      const errorResponse = response as WebSocketFailureResponse
-      throw new XrpError(
-        XrpErrorType.Unknown,
-        `Unsubscribe request for ${account} failed, ${errorResponse.error_message}`,
-      )
-    }
     this.accountCallbacks.delete(account)
     return response as StatusResponse
   }
