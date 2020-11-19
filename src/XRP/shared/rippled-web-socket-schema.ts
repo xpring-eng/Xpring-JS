@@ -83,6 +83,7 @@ interface RipplePathFindRequest extends BaseRequest {
   destination_account: string
   destination_amount: string | IssuedCurrency
   send_max?: string | IssuedCurrency
+  source_currencies?: SourceCurrency[]
 }
 
 /**
@@ -314,8 +315,13 @@ interface CurrencyValuePair {
 }
 
 interface IssuedCurrency {
-  value?: string
-  currency?: string
+  currency: string
+  issuer: string
+  value: string
+}
+
+interface SourceCurrency {
+  currency: string
   issuer?: string
 }
 
@@ -346,4 +352,5 @@ export {
   WebSocketTransaction,
   TrustLineResponse,
   IssuedCurrency,
+  SourceCurrency,
 }
