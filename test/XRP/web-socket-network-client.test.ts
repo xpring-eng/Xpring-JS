@@ -5,6 +5,7 @@ import {
   TransactionResponse,
   ResponseStatus,
   AccountOffersSuccessfulResponse,
+  WebSocketFailureResponse,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
 import XrpError from '../../src/XRP/shared/xrp-error'
 import XrpClient from '../../src/XRP/xrp-client'
@@ -12,6 +13,7 @@ import IssuedCurrency from '../../src/XRP/shared/issued-currency'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
+import { RippledErrorMessages } from '../../src/XRP/shared/rippled-error-messages'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -265,13 +267,13 @@ describe('WebSocket Tests', function (): void {
     const address = 'badAddress'
 
     // WHEN getAccountOffers is called for that address THEN an error is thrown.
-    try {
-      await webSocketNetworkClient.getAccountOffers(address)
-      assert.fail('Method call should fail')
-    } catch (e) {
-      if (!(e instanceof XrpError)) {
-        assert.fail('wrong error')
-      }
-    }
+    const response = await webSocketNetworkClient.getAccountOffers(address)
+
+    assert.equal(response.status, ResponseStatus.error)
+    assert.equal(response.type, 'response')
+
+    const errorResponse = response as WebSocketFailureResponse
+
+    assert.equal(errorResponse.error, RippledErrorMessages.accountNotFound)
   })
 })
