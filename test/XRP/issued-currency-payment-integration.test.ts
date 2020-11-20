@@ -404,6 +404,8 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     this.timeout(timeoutMs)
     // GIVEN a customer account with some issued currency, and an issuing address
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
+    await issuedCurrencyClient.enableRippling(issuerWallet)
+
     const customerWallet1 = await XRPTestUtils.randomWalletFromFaucet()
     const customerWallet2 = await XRPTestUtils.randomWalletFromFaucet()
 
@@ -456,8 +458,9 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       value: '80',
     }
 
+    let transactionResult
     try {
-      const transactionResult = await issuedCurrencyClient.sendCrossCurrencyPayment(
+      transactionResult = await issuedCurrencyClient.sendCrossCurrencyPayment(
         customerWallet1,
         customerWallet2.getAddress(),
         sourceAmount,
@@ -470,13 +473,13 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     }
 
     // THEN the cross currency payment succeeds.
-    // assert.deepEqual(
-    //   transactionResult,
-    //   TransactionResult.createFinalTransactionResult(
-    //     transactionResult.hash,
-    //     TransactionStatus.Succeeded,
-    //     true,
-    //   ),
-    // )
+    assert.deepEqual(
+      transactionResult,
+      TransactionResult.createFinalTransactionResult(
+        transactionResult.hash,
+        TransactionStatus.Succeeded,
+        true,
+      ),
+    )
   })
 })

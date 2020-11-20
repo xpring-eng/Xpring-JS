@@ -47,6 +47,7 @@ import {
   RipplePathFindSuccessfulResponse,
   PathElement,
   ResponseStatus,
+  SourceCurrency,
 } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
@@ -940,11 +941,42 @@ export default class IssuedCurrencyClient {
     payment.setSendMax(sendMax)
 
     // Determine if there is a viable path
+    const sourceCurrency: SourceCurrency = {
+      currency: 'XRP',
+    }
+    const sourceCurrencies = [sourceCurrency]
+
+    const sourceClassicAddress = XrpUtils.decodeXAddress(sender.getAddress())
+    if (!sourceClassicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const destinationClassicAddress = XrpUtils.decodeXAddress(destination)
+    if (!destinationClassicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
     let pathFindResponse = await this.webSocketNetworkClient.findRipplePath(
-      sender.getAddress(),
-      destination,
+      sourceClassicAddress.address,
+      destinationClassicAddress.address,
       deliverAmount,
-      sourceAmount,
+      undefined,
+      sourceCurrencies,
+    )
+
+    console.log('pathFindResponse: ')
+    console.log(pathFindResponse)
+
+    console.log('alternatives:')
+    console.log(
+      (pathFindResponse as RipplePathFindSuccessfulResponse).result
+        .alternatives[0],
+    )
+
+    console.log('paths computed:')
+    console.log(
+      (pathFindResponse as RipplePathFindSuccessfulResponse).result
+        .alternatives[0].paths_computed[0],
     )
 
     // If failure response from websocket, throw
@@ -979,7 +1011,7 @@ export default class IssuedCurrencyClient {
       }
     })
 
-    // Determine if the cheapest path is cheap enough, otherwise throw
+    // // Determine if the cheapest path is cheap enough, otherwise throw
     // const numericMaxSourceAmount = new BigNumber(sourceAmount)
     // if (currentCheapestSourceAmount > numericMaxSourceAmount) {
     //   throw new XrpError(
@@ -989,6 +1021,8 @@ export default class IssuedCurrencyClient {
     // }
 
     // Assign best pathset to Payment protobuf
+    console.log('\ncurrent best pathset')
+    console.log(currentBestPathset)
     currentBestPathset.forEach((path: PathElement[]) => {
       const pathProto = new Payment.Path()
       path.forEach((pathElement: PathElement) => {
@@ -1009,6 +1043,12 @@ export default class IssuedCurrencyClient {
           pathElementProto.setIssuer(issuerAccountAddressProto)
         }
         pathProto.addElements(pathElementProto)
+      })
+      console.log('\npath proto elements list: ')
+      pathProto.getElementsList().forEach((element: Payment.PathElement) => {
+        console.log(element.getAccount()?.getAddress())
+        console.log(element.getCurrency()?.getName())
+        console.log(element.getIssuer()?.getAddress())
       })
       payment.addPaths(pathProto)
     })

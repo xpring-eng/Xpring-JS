@@ -5,6 +5,7 @@ import {
   GatewayBalancesResponse,
   IssuedCurrency,
   RipplePathFindResponse,
+  SourceCurrency,
 } from '../shared/rippled-web-socket-schema'
 
 /**
@@ -68,6 +69,7 @@ export interface WebSocketNetworkClientInterface {
     destinationAccount: string,
     destinationAmount: string | IssuedCurrency,
     sendMax?: string | IssuedCurrency,
+    sourceCurrencies?: SourceCurrency[],
   ): Promise<RipplePathFindResponse>
 
   close(): void
