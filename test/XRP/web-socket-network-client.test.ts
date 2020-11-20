@@ -32,7 +32,7 @@ function sleep(ms: number) {
 
 describe('WebSocket Tests', function (): void {
   // Retry integration tests on failure.
-  //this.retries(3)
+  this.retries(3)
 
   // A Wallet with some balance on Testnet.
   let wallet: Wallet
@@ -316,13 +316,11 @@ describe('WebSocket Tests', function (): void {
     }
 
     const takerPaysAmount = '200000000' // 200 XRP, 1:1 exchange rate
-    const offerCreateResult = await issuedCurrencyClient.createOffer(
+    await issuedCurrencyClient.createOffer(
       issuerWallet,
       takerGetsAmount,
       takerPaysAmount,
     )
-    console.log('result of creating offer: ')
-    console.log(offerCreateResult)
 
     // WHEN findRipplePath is called between the two non-issuing addresses, offering to spend XRP and deliver FOO
     const destinationAmount: IssuedCurrency = {
@@ -345,7 +343,6 @@ describe('WebSocket Tests', function (): void {
       sourceCurrencies,
     )
 
-    console.log(response)
     // THEN the request is successfully submitted and received
     assert.equal(response.status, 'success')
     assert.equal(response.type, 'response')
@@ -418,13 +415,11 @@ describe('WebSocket Tests', function (): void {
     }
 
     const takerPaysAmount = '200000000' // 200 XRP, 1:1 exchange rate
-    const offerCreateResult = await issuedCurrencyClient.createOffer(
+    await issuedCurrencyClient.createOffer(
       offerCreatorWallet,
       takerGetsAmount,
       takerPaysAmount,
     )
-    console.log('result of creating offer: ')
-    console.log(offerCreateResult)
 
     // WHEN findRipplePath is called between the two non-issuing addresses, offering to spend XRP and deliver FOO
     const destinationAmount: IssuedCurrency = {
@@ -447,7 +442,6 @@ describe('WebSocket Tests', function (): void {
       sourceCurrencies,
     )
 
-    console.log(response)
     // THEN the request is successfully submitted and received
     assert.equal(response.status, 'success')
     assert.equal(response.type, 'response')

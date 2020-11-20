@@ -349,9 +349,6 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
   private getFinalTransactionStatus(
     rawTransactionStatus: RawTransactionStatus,
   ): TransactionStatus {
-    console.log('RAW STATUS CODE: ')
-    console.log(rawTransactionStatus.transactionStatusCode)
-
     if (rawTransactionStatus.transactionStatusCode.startsWith('tem')) {
       return TransactionStatus.MalformedTransaction
     }

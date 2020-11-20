@@ -941,8 +941,10 @@ export default class IssuedCurrencyClient {
     payment.setSendMax(sendMax)
 
     // Determine if there is a viable path
+    const sourceCurrencyName =
+      typeof sourceAmount == 'string' ? 'XRP' : sourceAmount.currency
     const sourceCurrency: SourceCurrency = {
-      currency: 'XRP',
+      currency: sourceCurrencyName,
     }
     const sourceCurrencies = [sourceCurrency]
 
@@ -964,20 +966,21 @@ export default class IssuedCurrencyClient {
       sourceCurrencies,
     )
 
-    console.log('pathFindResponse: ')
-    console.log(pathFindResponse)
+    // TODO: remote these
+    // console.log('pathFindResponse: ')
+    // console.log(pathFindResponse)
 
-    console.log('alternatives:')
-    console.log(
-      (pathFindResponse as RipplePathFindSuccessfulResponse).result
-        .alternatives[0],
-    )
+    // console.log('alternatives:')
+    // console.log(
+    //   (pathFindResponse as RipplePathFindSuccessfulResponse).result
+    //     .alternatives[0],
+    // )
 
-    console.log('paths computed:')
-    console.log(
-      (pathFindResponse as RipplePathFindSuccessfulResponse).result
-        .alternatives[0].paths_computed[0],
-    )
+    // console.log('paths computed:')
+    // console.log(
+    //   (pathFindResponse as RipplePathFindSuccessfulResponse).result
+    //     .alternatives[0].paths_computed[0],
+    // )
 
     // If failure response from websocket, throw
     if (pathFindResponse.status != 'success') {
@@ -1021,8 +1024,6 @@ export default class IssuedCurrencyClient {
     // }
 
     // Assign best pathset to Payment protobuf
-    console.log('\ncurrent best pathset')
-    console.log(currentBestPathset)
     currentBestPathset.forEach((path: PathElement[]) => {
       const pathProto = new Payment.Path()
       path.forEach((pathElement: PathElement) => {
@@ -1044,12 +1045,12 @@ export default class IssuedCurrencyClient {
         }
         pathProto.addElements(pathElementProto)
       })
-      console.log('\npath proto elements list: ')
-      pathProto.getElementsList().forEach((element: Payment.PathElement) => {
-        console.log(element.getAccount()?.getAddress())
-        console.log(element.getCurrency()?.getName())
-        console.log(element.getIssuer()?.getAddress())
-      })
+      // console.log('\npath proto elements list: ')
+      // pathProto.getElementsList().forEach((element: Payment.PathElement) => {
+      //   console.log(element.getAccount()?.getAddress())
+      //   console.log(element.getCurrency()?.getName())
+      //   console.log(element.getIssuer()?.getAddress())
+      // })
       payment.addPaths(pathProto)
     })
 

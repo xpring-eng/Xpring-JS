@@ -280,9 +280,6 @@ export default class WebSocketNetworkClient {
     }
     this.idNumber++
 
-    console.log('ripplePathFindRequest: ')
-    console.log(ripplePathFindRequest)
-
     const ripplePathFindResponse = await this.sendApiRequest(
       ripplePathFindRequest,
     )
