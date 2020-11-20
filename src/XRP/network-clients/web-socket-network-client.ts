@@ -17,6 +17,7 @@ import {
   GatewayBalancesResponse,
   RipplePathFindResponse,
   IssuedCurrency,
+  SourceCurrency,
 } from '../shared/rippled-web-socket-schema'
 
 function sleep(ms: number): Promise<void> {
@@ -266,6 +267,7 @@ export default class WebSocketNetworkClient {
     destinationAccount: string,
     destinationAmount: string | IssuedCurrency,
     sendMax?: string | IssuedCurrency,
+    sourceCurrencies?: SourceCurrency[],
   ): Promise<RipplePathFindResponse> {
     const ripplePathFindRequest: RipplePathFindRequest = {
       id: `${RippledMethod.ripplePathFind}_${sourceAccount}_${this.idNumber}`,
@@ -274,11 +276,17 @@ export default class WebSocketNetworkClient {
       destination_account: destinationAccount,
       destination_amount: destinationAmount,
       send_max: sendMax,
+      source_currencies: sourceCurrencies,
     }
     this.idNumber++
+
+    console.log('ripplePathFindRequest: ')
+    console.log(ripplePathFindRequest)
+
     const ripplePathFindResponse = await this.sendApiRequest(
       ripplePathFindRequest,
     )
+
     return ripplePathFindResponse as RipplePathFindResponse
   }
 
