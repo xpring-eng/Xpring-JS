@@ -1,6 +1,7 @@
 import { assert } from 'chai'
 import { Wallet, XrplNetwork, XrpUtils } from 'xpring-common-js'
 import WebSocketNetworkClient from '../../src/XRP/network-clients/web-socket-network-client'
+import GrpcNetworkClient from '../../src/XRP/network-clients/grpc-xrp-network-client'
 import {
   ResponseStatus,
   TransactionResponse,
@@ -26,6 +27,8 @@ const webSocketNetworkClient = new WebSocketNetworkClient(
   console.log,
 )
 
+const grpcNetworkClient = new GrpcNetworkClient(rippledGrpcUrl)
+
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
@@ -37,9 +40,15 @@ describe('WebSocket Tests', function (): void {
   // A Wallet with some balance on Testnet.
   let wallet: Wallet
   let wallet2: Wallet
+  let issuedCurrencyClient: IssuedCurrencyClient
   before(async function () {
     wallet = await XRPTestUtils.randomWalletFromFaucet()
     wallet2 = await XRPTestUtils.randomWalletFromFaucet()
+    issuedCurrencyClient = new IssuedCurrencyClient(
+      grpcNetworkClient,
+      webSocketNetworkClient,
+      XrplNetwork.Test,
+    )
   })
 
   after(function (done) {
@@ -226,13 +235,6 @@ describe('WebSocket Tests', function (): void {
     const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
       .address
 
-    const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
-      rippledGrpcUrl,
-      rippledWebSocketUrl,
-      console.log,
-      XrplNetwork.Test,
-    )
-
     // GIVEN two valid test addresses with a trust line between them
     const trustLineLimit = '200'
     const trustLineCurrency = 'FOO'
@@ -270,8 +272,6 @@ describe('WebSocket Tests', function (): void {
     assert.equal(result.source_account, sourceAddress)
     assert.include(result.destination_currencies, trustLineCurrency)
     assert(result.alternatives.length >= 1)
-
-    issuedCurrencyClient.webSocketNetworkClient.close()
   })
 
   it('findRipplePath - successful path through issuers own offer', async function (): Promise<
@@ -286,13 +286,6 @@ describe('WebSocket Tests', function (): void {
     const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
     const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
       .address
-
-    const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
-      rippledGrpcUrl,
-      rippledWebSocketUrl,
-      console.log,
-      XrplNetwork.Test,
-    )
 
     // GIVEN two valid test addresses, an issuing address, a trust line from one test address (wallet2) to the issuer
     // and an offer on the dex to exchange XRP for some this issuer's issued currency.
@@ -373,13 +366,6 @@ describe('WebSocket Tests', function (): void {
     const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
     const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
       .address
-
-    const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
-      rippledGrpcUrl,
-      rippledWebSocketUrl,
-      console.log,
-      XrplNetwork.Test,
-    )
 
     // GIVEN two valid test addresses, an issuing address, a trust line from one test address (wallet2) to the issuer
     // and an offer on the dex to exchange XRP for some this issuer's issued currency.
