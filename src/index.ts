@@ -9,7 +9,13 @@ export {
 } from 'xpring-common-js'
 
 /** XRP Functionality. */
-export { XrpClient } from './XRP'
+export {
+  XrpClient,
+  IssuedCurrencyClient,
+  TrustLine,
+  GatewayBalances,
+} from './XRP'
+// export { IssuedCurrency } from './XRP'
 export {
   XrpCurrencyAmount,
   XrpCurrency,
