@@ -527,7 +527,7 @@ describe('***** Issued Currency Payment Integration Tests', function (): void {
     void
   > {
     this.timeout(timeoutMs * 2)
-    // GIVEN TODO
+    // GIVEN TODO: amiecorso
     // create a trustline ot FOO issuer and then offer by third party to take FOO and provide XRP:
     const offererWallet = await XRPTestUtils.randomWalletFromFaucet()
 
@@ -664,4 +664,7 @@ describe('***** Issued Currency Payment Integration Tests', function (): void {
       ),
     )
   })
+
+  // TODO: (amiecorso) Failing test w/ no viable paths
+  // TODO: (amiecorso) Failing test w/ viable path that is more expensive than sendMax
 })

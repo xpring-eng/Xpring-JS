@@ -883,17 +883,23 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * TODO: doc me
+   * Send a cross-currency payment. Note that the source and destination currencies cannot both be XRP.
    *
-   * @param sender
-   * @param destination
-   * @param sourceAmount
-   * @param deliverAmount
+   * @see https://xrpl.org/cross-currency-payments.html
+   *
+   * @param sender The wallet from which currency will be sent, and that will sign the transaction.
+   * @param destination The address of the payment's recipient, encoded as an X-Address.
+   * @param maxSourceAmount Highest amount of source currency this transaction is allowed to cost, including transfer fees,
+   *               exchange rates, and slippage. Does not include the XRP destroyed as a cost for submitting the transaction.
+   *               For XRP, specify amount as a string of drops.
+   *               For issued currencies, specify an Issued Currency object with currency, issuer, and value fields.
+   * @param deliverAmount The amount of currency to deliver. For XRP, specify amount as a string of drops.  For issued currencies,
+   *               specify an Issued Currency object with currency, issuer, and value fields.
    */
   public async sendCrossCurrencyPayment(
     sender: Wallet,
     destination: string,
-    sourceAmount: string | IssuedCurrency,
+    maxSourceAmount: string | IssuedCurrency,
     deliverAmount: string | IssuedCurrency,
   ): Promise<TransactionResult> {
     if (!XrpUtils.isValidXAddress(destination)) {
@@ -907,7 +913,10 @@ export default class IssuedCurrencyClient {
     // TODO: (acorso) we don't need to convert back to a classic address once the ripple-binary-codec supports X-addresses for issued currencies.
 
     // Both source amount and deliver amount can't both be XRP:
-    if (typeof deliverAmount == 'string' && typeof sourceAmount == 'string') {
+    if (
+      typeof deliverAmount == 'string' &&
+      typeof maxSourceAmount == 'string'
+    ) {
       throw new XrpError(
         XrpErrorType.InvalidInput,
         'A Cross Currency payment should involve at least one issued currency.',
@@ -915,7 +924,7 @@ export default class IssuedCurrencyClient {
     }
 
     // Create representation of the currency to SOURCE
-    const sourceAmountProto = this.createCurrencyAmount(sourceAmount)
+    const sourceAmountProto = this.createCurrencyAmount(maxSourceAmount)
 
     // Create representation of the currency to DELIVER
     const deliverAmountProto = this.createAmount(deliverAmount)
@@ -942,7 +951,7 @@ export default class IssuedCurrencyClient {
 
     // Determine if there is a viable path
     const sourceCurrencyName =
-      typeof sourceAmount == 'string' ? 'XRP' : sourceAmount.currency
+      typeof maxSourceAmount == 'string' ? 'XRP' : maxSourceAmount.currency
     const sourceCurrency: SourceCurrency = {
       currency: sourceCurrencyName,
     }
