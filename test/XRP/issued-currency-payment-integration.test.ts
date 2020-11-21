@@ -686,12 +686,12 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     await issuedCurrencyClient.createTrustLine(
       freshIssuerWallet.getAddress(),
       'BAZ',
-      freshIssuerClassicAddress,
+      trustLineLimit,
       customerWalletFOO,
     )
     await issuedCurrencyClient.createIssuedCurrency(
       freshIssuerWallet,
-      customerWalletFOO,
+      customerWalletFOO.getAddress(),
       'BAZ',
       '500',
     )

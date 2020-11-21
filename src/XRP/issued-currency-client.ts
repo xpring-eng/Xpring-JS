@@ -984,6 +984,7 @@ export default class IssuedCurrencyClient {
       throw new XrpError(XrpErrorType.Unknown, pathFindResponse.error_message)
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     pathFindResponse = pathFindResponse as RipplePathFindSuccessfulResponse
     const pathAlternatives = pathFindResponse.result.alternatives
 
@@ -998,6 +999,7 @@ export default class IssuedCurrencyClient {
     // Otherwise, find the cheapest path
     let currentBestPathset = pathAlternatives[0].paths_computed
     let currentCheapestSourceAmount = new BigNumber(
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       (pathAlternatives[0].source_amount as IssuedCurrency).value,
     )
     pathAlternatives.forEach((possiblePath) => {
