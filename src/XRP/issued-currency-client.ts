@@ -1012,17 +1012,6 @@ export default class IssuedCurrencyClient {
       }
     })
 
-    const numericMaxSourceAmount =
-      typeof maxSourceAmount == 'string'
-        ? new BigNumber(maxSourceAmount)
-        : new BigNumber(maxSourceAmount.value)
-    if (currentCheapestSourceAmount > numericMaxSourceAmount) {
-      throw new XrpError(
-        XrpErrorType.NoViablePaths,
-        'Best viable path costs more than maximum specified source amount.',
-      )
-    }
-
     // Assign best pathset to Payment protobuf
     currentBestPathset.forEach((path: PathElement[]) => {
       const pathProto = new Payment.Path()
