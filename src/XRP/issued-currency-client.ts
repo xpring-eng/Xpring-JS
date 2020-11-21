@@ -884,6 +884,9 @@ export default class IssuedCurrencyClient {
 
   /**
    * Send a cross-currency payment. Note that the source and destination currencies cannot both be XRP.
+   * The XRPL is queried for viable paths as part of transaction construction.  If no paths are found, or
+   * if the cheapest path option exceeds the maximum source amount specified, an error is thrown and
+   * no transaction is submitted.
    *
    * @see https://xrpl.org/cross-currency-payments.html
    *
@@ -909,7 +912,8 @@ export default class IssuedCurrencyClient {
       )
     }
 
-    // TODO: verify address formats for issuers in IssuedCurrency specifications
+    // TODO: verify address formats for issuers in IssuedCurrency specifications.  They need to be classic addresses.
+    //        Do we want to take them in as classic addresses?? Or force them to be X-addresses like elsewhere?
     // TODO: (acorso) we don't need to convert back to a classic address once the ripple-binary-codec supports X-addresses for issued currencies.
 
     // Both source amount and deliver amount can't both be XRP:
@@ -975,22 +979,6 @@ export default class IssuedCurrencyClient {
       sourceCurrencies,
     )
 
-    // TODO: remote these
-    // console.log('pathFindResponse: ')
-    // console.log(pathFindResponse)
-
-    // console.log('alternatives:')
-    // console.log(
-    //   (pathFindResponse as RipplePathFindSuccessfulResponse).result
-    //     .alternatives[0],
-    // )
-
-    // console.log('paths computed:')
-    // console.log(
-    //   (pathFindResponse as RipplePathFindSuccessfulResponse).result
-    //     .alternatives[0].paths_computed[0],
-    // )
-
     // If failure response from websocket, throw
     if (pathFindResponse.status != 'success') {
       pathFindResponse = pathFindResponse as WebSocketFailureResponse
@@ -1023,14 +1011,17 @@ export default class IssuedCurrencyClient {
       }
     })
 
-    // // Determine if the cheapest path is cheap enough, otherwise throw
-    // const numericMaxSourceAmount = new BigNumber(sourceAmount)
-    // if (currentCheapestSourceAmount > numericMaxSourceAmount) {
-    //   throw new XrpError(
-    //     XrpErrorType.NoViablePaths,
-    //     'Best viable path is too expensive.',
-    //   )
-    // }
+    // Determine if the cheapest path is cheap enough, otherwise throw
+    const numericMaxSourceAmount =
+      typeof maxSourceAmount == 'string'
+        ? new BigNumber(maxSourceAmount)
+        : new BigNumber(maxSourceAmount.value)
+    if (currentCheapestSourceAmount > numericMaxSourceAmount) {
+      throw new XrpError(
+        XrpErrorType.NoViablePaths,
+        'Best viable path costs more than maximum specified source amount.',
+      )
+    }
 
     // Assign best pathset to Payment protobuf
     currentBestPathset.forEach((path: PathElement[]) => {
@@ -1054,12 +1045,6 @@ export default class IssuedCurrencyClient {
         }
         pathProto.addElements(pathElementProto)
       })
-      // console.log('\npath proto elements list: ')
-      // pathProto.getElementsList().forEach((element: Payment.PathElement) => {
-      //   console.log(element.getAccount()?.getAddress())
-      //   console.log(element.getCurrency()?.getName())
-      //   console.log(element.getIssuer()?.getAddress())
-      // })
       payment.addPaths(pathProto)
     })
 

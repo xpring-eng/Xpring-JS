@@ -6,6 +6,7 @@ import XRPTestUtils from './helpers/xrp-test-utils'
 import {
   TransactionResult,
   TransactionStatus,
+  XrpError,
   XrpUtils,
 } from '../../src/XRP/shared'
 import { IssuedCurrency } from '../../src/XRP/shared/rippled-web-socket-schema'
@@ -26,10 +27,9 @@ const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoi
 
 // TODO: (acorso) add test for attempting to send an issued currency payment to a user that has a trustline established with the issuer, but has not been authorized AND issuer has enabledAuthorizedTrustlines (should fail)
 //  ^^ this is really under the category of testing that authorizedTrustLines is working?
-// TODO: (acorso) confirm that the presence of a SendMax when not necessary also doesn't cause any problems (i.e. include the argument)
-describe('***** Issued Currency Payment Integration Tests', function (): void {
+describe('Issued Currency Payment Integration Tests', function (): void {
   // Retry integration tests on failure.
-  // this.retries(3)
+  this.retries(3)
 
   const currencyNameFOO = 'FOO'
   const currencyNameBAR = 'BAR'
@@ -481,8 +481,10 @@ describe('***** Issued Currency Payment Integration Tests', function (): void {
   it('sendCrossCurrencyPayment - success, XRP -> Issued Currency with default path', async function (): Promise<
     void
   > {
-    this.timeout(timeoutMs * 2)
-    // GIVEN a customer account with some issued currency, and an issuing address that has enabled rippling
+    this.timeout(timeoutMs)
+    // GIVEN a customer account with some issued currency, an issuing address that has enabled rippling, and an offer to exchange
+    // XRP for FOO
+
     // create an offer by Issuer of FOO to exchange XRP for FOO:
     const takerGetsAmount: IssuedCurrency = {
       currency: currencyNameFOO,
@@ -527,8 +529,10 @@ describe('***** Issued Currency Payment Integration Tests', function (): void {
     void
   > {
     this.timeout(timeoutMs * 2)
-    // GIVEN TODO: amiecorso
-    // create a trustline ot FOO issuer and then offer by third party to take FOO and provide XRP:
+    // GIVEN two different issued currencies by two different issuers, and order books for each currency to exchange with XRP,
+    // a payer who wants to pay in FOO, and a payee who wants to receive BAR
+
+    // create a trustline to FOO issuer and then an offer by third party to take FOO and provide XRP:
     const offererWallet = await XRPTestUtils.randomWalletFromFaucet()
 
     await issuedCurrencyClient.createTrustLine(
@@ -606,8 +610,9 @@ describe('***** Issued Currency Payment Integration Tests', function (): void {
   it('sendCrossCurrencyPayment - success, Issued Currency -> XRP with default path', async function (): Promise<
     void
   > {
-    this.timeout(timeoutMs * 2)
-    // GIVEN a customer account with some issued currency, and an issuing address that has enabled rippling
+    this.timeout(timeoutMs)
+    // GIVEN a customer account with some issued FOO, an issuing address that has enabled rippling, a recipient interested
+    // in being paid in XRP, and a third party offer to exchange the two
     const offererWallet = await XRPTestUtils.randomWalletFromFaucet()
 
     await issuedCurrencyClient.createTrustLine(
@@ -665,6 +670,81 @@ describe('***** Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  // TODO: (amiecorso) Failing test w/ no viable paths
-  // TODO: (amiecorso) Failing test w/ viable path that is more expensive than sendMax
+  it('sendCrossCurrencyPayment - failure, XRP -> Issued Currency with too expensive path', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN a customer account, an issuing address that has enabled rippling, a recipient looking to be paid in FOO,
+    // and an existing offer to provide FOO in exchange for XRP at a worse than 1:1 exchange rate
+
+    // create an offer by Issuer of FOO to exchange XRP for FOO:
+    const takerGetsAmount: IssuedCurrency = {
+      currency: currencyNameFOO,
+      issuer: issuerFOOClassicAddress,
+      value: '100',
+    }
+    const takerPaysAmount = '200000000' // drops of XRP = 200 XRP, 2:1 exchange rate 2 XRP per FOO
+
+    await issuedCurrencyClient.createOffer(
+      issuerWalletFOO,
+      takerGetsAmount,
+      takerPaysAmount,
+    )
+
+    // WHEN a cross currency payment is made that sends XRP and delivers FOO.
+    const sourceAmount = '100000000' // spend up to 100 XRP
+    // to deliver 80 FOO
+    const deliverAmount = {
+      currency: currencyNameFOO,
+      issuer: issuerFOOClassicAddress,
+      value: '80',
+    }
+
+    // THEN the cross currency payment fails with an error indicating that the best viable path was too expensive.
+    try {
+      await issuedCurrencyClient.sendCrossCurrencyPayment(
+        customerWalletBAR,
+        customerWalletFOO.getAddress(),
+        sourceAmount,
+        deliverAmount,
+      )
+    } catch (error) {
+      assert(error instanceof XrpError)
+      assert(
+        error.message ==
+          'Best viable path costs more than maximum specified source amount.',
+      )
+    }
+  })
+
+  it('sendCrossCurrencyPayment - failure, XRP -> Issued Currency with no viable path', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+    // GIVEN a customer account, an issuing address that has enabled rippling, a recipient looking to be paid in FOO,
+    // but no offers for exchange.
+
+    // WHEN a cross currency payment is made that sends XRP and delivers FOO.
+    const sourceAmount = '100000000'
+    const deliverAmount = {
+      currency: currencyNameFOO,
+      issuer: issuerFOOClassicAddress,
+      value: '80',
+    }
+
+    // THEN the cross currency payment fails with an error indicating that no paths exist.
+    try {
+      await issuedCurrencyClient.sendCrossCurrencyPayment(
+        customerWalletBAR,
+        customerWalletFOO.getAddress(),
+        sourceAmount,
+        deliverAmount,
+      )
+    } catch (error) {
+      assert(error instanceof XrpError)
+      assert(
+        error.message == 'No paths exist to execute cross-currency payment.',
+      )
+    }
+  })
 })
