@@ -63,6 +63,6 @@ jobs:
 
       - run:
           name: 'Run Tests'
-          no_output_timeout: 20m
+          no_output_timeout: 30m
           command: |
             nyc npm test
