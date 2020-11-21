@@ -884,9 +884,8 @@ export default class IssuedCurrencyClient {
 
   /**
    * Send a cross-currency payment. Note that the source and destination currencies cannot both be XRP.
-   * The XRPL is queried for viable paths as part of transaction construction.  If no paths are found, or
-   * if the cheapest path option exceeds the maximum source amount specified, an error is thrown and
-   * no transaction is submitted.
+   * The XRPL is queried for viable paths as part of transaction construction.  If no paths are found,
+   * an error is thrown and no transaction is submitted.
    *
    * @see https://xrpl.org/cross-currency-payments.html
    *
@@ -1011,7 +1010,6 @@ export default class IssuedCurrencyClient {
       }
     })
 
-    // Determine if the cheapest path is cheap enough, otherwise throw
     const numericMaxSourceAmount =
       typeof maxSourceAmount == 'string'
         ? new BigNumber(maxSourceAmount)

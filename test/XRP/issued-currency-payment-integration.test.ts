@@ -670,73 +670,45 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendCrossCurrencyPayment - failure, XRP -> Issued Currency with too expensive path', async function (): Promise<
+  it('sendCrossCurrencyPayment - failure, Issued Currency -> XRP with no viable path', async function (): Promise<
     void
   > {
     this.timeout(timeoutMs)
-    // GIVEN a customer account, an issuing address that has enabled rippling, a recipient looking to be paid in FOO,
-    // and an existing offer to provide FOO in exchange for XRP at a worse than 1:1 exchange rate
+    // GIVEN a customer account trying to spend BAZ, an issuing address for BAZ that has enabled rippling,
+    // a recipient looking to be paid in XRP, but no offers for exchange.
+    const freshIssuerWallet = await XRPTestUtils.randomWalletFromFaucet()
+    await issuedCurrencyClient.enableRippling(freshIssuerWallet)
+    const freshIssuerClassicAddress = XrpUtils.decodeXAddress(
+      freshIssuerWallet.getAddress(),
+    )!.address
 
-    // create an offer by Issuer of FOO to exchange XRP for FOO:
-    const takerGetsAmount: IssuedCurrency = {
-      currency: currencyNameFOO,
-      issuer: issuerFOOClassicAddress,
-      value: '100',
-    }
-    const takerPaysAmount = '200000000' // drops of XRP = 200 XRP, 2:1 exchange rate 2 XRP per FOO
-
-    await issuedCurrencyClient.createOffer(
-      issuerWalletFOO,
-      takerGetsAmount,
-      takerPaysAmount,
+    // fund customer with some BAZ
+    await issuedCurrencyClient.createTrustLine(
+      freshIssuerWallet.getAddress(),
+      'BAZ',
+      freshIssuerClassicAddress,
+      customerWalletFOO,
+    )
+    await issuedCurrencyClient.createIssuedCurrency(
+      freshIssuerWallet,
+      customerWalletFOO,
+      'BAZ',
+      '500',
     )
 
-    // WHEN a cross currency payment is made that sends XRP and delivers FOO.
-    const sourceAmount = '100000000' // spend up to 100 XRP
-    // to deliver 80 FOO
-    const deliverAmount = {
-      currency: currencyNameFOO,
-      issuer: issuerFOOClassicAddress,
+    // WHEN a cross currency payment is made that tries to send BAZ and deliver XRP.
+    const sourceAmount = {
+      currency: 'BAZ',
+      issuer: freshIssuerClassicAddress,
       value: '80',
     }
-
-    // THEN the cross currency payment fails with an error indicating that the best viable path was too expensive.
-    try {
-      await issuedCurrencyClient.sendCrossCurrencyPayment(
-        customerWalletBAR,
-        customerWalletFOO.getAddress(),
-        sourceAmount,
-        deliverAmount,
-      )
-    } catch (error) {
-      assert(error instanceof XrpError)
-      assert(
-        error.message ==
-          'Best viable path costs more than maximum specified source amount.',
-      )
-    }
-  })
-
-  it('sendCrossCurrencyPayment - failure, XRP -> Issued Currency with no viable path', async function (): Promise<
-    void
-  > {
-    this.timeout(timeoutMs)
-    // GIVEN a customer account, an issuing address that has enabled rippling, a recipient looking to be paid in FOO,
-    // but no offers for exchange.
-
-    // WHEN a cross currency payment is made that sends XRP and delivers FOO.
-    const sourceAmount = '100000000'
-    const deliverAmount = {
-      currency: currencyNameFOO,
-      issuer: issuerFOOClassicAddress,
-      value: '80',
-    }
+    const deliverAmount = '100000000'
 
     // THEN the cross currency payment fails with an error indicating that no paths exist.
     try {
       await issuedCurrencyClient.sendCrossCurrencyPayment(
-        customerWalletBAR,
-        customerWalletFOO.getAddress(),
+        customerWalletFOO,
+        customerWalletBAR.getAddress(),
         sourceAmount,
         deliverAmount,
       )
