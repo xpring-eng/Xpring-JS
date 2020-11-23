@@ -9,4 +9,4 @@ brew cask install adoptopenjdk11
 brew install protobuf
 
 # Run tests
-npm test
+# npm test
