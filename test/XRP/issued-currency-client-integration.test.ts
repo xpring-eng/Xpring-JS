@@ -738,7 +738,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.isTrue(response)
 
     // WHEN a payment is sent to that address
-    await xrpClient.sendXrp(xrpAmount, xAddress, walletNeverAnyTrustLines)
+    await xrpClient.sendXrp(xrpAmount, xAddress, walletMightHaveTrustLines)
 
     await waitUntilMessageReceived()
 
@@ -754,7 +754,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.isTrue(unsubscribeResponse)
 
     // WHEN a payment is sent to that address
-    await xrpClient.sendXrp(xrpAmount, xAddress, walletNeverAnyTrustLines)
+    await xrpClient.sendXrp(xrpAmount, xAddress, walletMightHaveTrustLines)
 
     // THEN the payment is not received by the callback
     // (If a payment is received, fail will be called in the callback)
