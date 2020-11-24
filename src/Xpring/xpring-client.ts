@@ -63,23 +63,15 @@ export default class XpringClient {
   public async sendWithDetails(
     sendXrpDetails: SendXrpDetails,
   ): Promise<string> {
-    const {
-      amount,
-      destination: destinationPayID,
-      sender,
-      memoList,
-    } = sendXrpDetails
     // Resolve the destination address to an XRP address.
     const destinationAddress = await this.payIdClient.xrpAddressForPayId(
-      destinationPayID,
+      sendXrpDetails.destination,
     )
 
     // Transact XRP to the resolved address.
     const transactionResult = await this.xrpClient.sendXrpWithDetails({
-      amount,
+      ...sendXrpDetails,
       destination: destinationAddress,
-      sender,
-      memoList,
     })
 
     return transactionResult.hash

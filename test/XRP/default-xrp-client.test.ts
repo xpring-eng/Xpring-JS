@@ -54,10 +54,10 @@ const fakeErroringNetworkClient = new FakeXRPNetworkClient(
  * @param validated Whether the txResponse is validated.
  * @param resultCode The result code.
  */
-function makeGetTransactionResponse(
+const makeGetTransactionResponse = (
   validated: boolean,
   resultCode: string,
-): GetTransactionResponse {
+): GetTransactionResponse => {
   const transactionResult = new TransactionResult()
   transactionResult.setResult(resultCode)
 
@@ -296,6 +296,34 @@ describe('Default XRP Client', function (): void {
       destination: destinationAddress,
       sender: wallet,
       memoList,
+    })
+
+    // THEN the transaction hash exists and finds the transaction with the memo.
+    const expectedTransactionHash = Utils.toHex(
+      FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse().getHash_asU8(),
+    )
+
+    assert.exists(transactionResult.hash)
+    assert.strictEqual(transactionResult.hash, expectedTransactionHash)
+  })
+
+  it('Send XRP Transaction - success with maxFee', async function () {
+    // GIVEN a DefaultXrpClient, a wallet, a BigInteger denominated amount, and a maxFee
+    const xrpClient = new DefaultXrpClient(
+      fakeSucceedingNetworkClient,
+      XrplNetwork.Test,
+    )
+    const { wallet } = Wallet.generateRandomWallet()!
+    const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
+    const amount = bigInt('10')
+    const maxFee = 1
+
+    // WHEN the account makes a transaction with a maxFee
+    const transactionResult = await xrpClient.sendXrpWithDetails({
+      amount,
+      destination: destinationAddress,
+      sender: wallet,
+      maxFee,
     })
 
     // THEN the transaction hash exists and finds the transaction with the memo.

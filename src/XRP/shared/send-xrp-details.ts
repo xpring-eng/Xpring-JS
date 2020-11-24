@@ -11,6 +11,6 @@ export default interface SendXrpDetails {
   amount: BigInteger | number | string
   destination: string
   sender: Wallet
-
+  maxFee?: BigInteger | number | string
   memoList?: Array<XrpMemo>
 }

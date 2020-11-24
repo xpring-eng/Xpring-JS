@@ -165,21 +165,12 @@ export default class DefaultXrpClient implements XrpClientDecorator {
       amount: drops,
       sender,
       destination: destinationAddress,
+      maxFee,
       memoList,
     } = sendXrpDetails
     if (!XrpUtils.isValidXAddress(destinationAddress)) {
       throw XrpError.xAddressRequired
     }
-
-    const normalizedDrops = drops.toString()
-    const xrpDropsAmount = new XRPDropsAmount()
-    xrpDropsAmount.setDrops(normalizedDrops)
-
-    const currencyAmount = new CurrencyAmount()
-    currencyAmount.setXrpAmount(xrpDropsAmount)
-
-    const amount = new Amount()
-    amount.setValue(currencyAmount)
 
     const destinationAccountAddress = new AccountAddress()
     destinationAccountAddress.setAddress(destinationAddress)
@@ -188,13 +179,17 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     destination.setValue(destinationAccountAddress)
 
     const payment = new Payment()
-    payment.setDestination(destination)
     // Note that the destinationTag doesn't need to be explicitly set here, because the ripple-binary-codec will decode this X-Address and
     // assign the decoded destinationTag before signing.
-    payment.setAmount(amount)
+    payment.setDestination(destination)
+    payment.setAmount(DefaultXrpClient.valueToAmount(drops))
 
     const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
     transaction.setPayment(payment)
+
+    if (maxFee) {
+      transaction.setFee(DefaultXrpClient.valueToDrops(maxFee))
+    }
 
     if (memoList && memoList.length) {
       memoList
@@ -410,5 +405,21 @@ export default class DefaultXrpClient implements XrpClientDecorator {
       wallet,
     )
     return await this.coreXrplClient.getTransactionResult(transactionHash)
+  }
+
+  private static valueToDrops(value: BigInteger | number | string) {
+    const xrpDropsAmount = new XRPDropsAmount()
+    xrpDropsAmount.setDrops(value.toString())
+    return xrpDropsAmount
+  }
+
+  private static valueToAmount(value: BigInteger | number | string) {
+    const currencyAmount = new CurrencyAmount()
+    currencyAmount.setXrpAmount(DefaultXrpClient.valueToDrops(value))
+
+    const amount = new Amount()
+    amount.setValue(currencyAmount)
+
+    return amount
   }
 }
