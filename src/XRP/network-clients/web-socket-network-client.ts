@@ -3,7 +3,6 @@ import { XrpError, XrpErrorType } from '../shared'
 import {
   WebSocketReadyState,
   RippledMethod,
-  ResponseStatus,
   WebSocketRequest,
   SubscribeRequest,
   AccountLinesRequest,
@@ -12,6 +11,7 @@ import {
   RipplePathFindRequest,
   WebSocketResponse,
   WebSocketFailureResponse,
+  ResponseStatus,
   AccountLinesResponse,
   GatewayBalancesResponse,
   StatusResponse,
@@ -259,6 +259,27 @@ export default class WebSocketNetworkClient {
   }
 
   /**
+   * Submits an account_offers request to the rippled WebSocket API.
+   * @see https://xrpl.org/account_offers.html
+   *
+   * @param account The XRPL account for which to retrieve a list of outstanding offers.
+   */
+  public async getAccountOffers(
+    account: string,
+  ): Promise<AccountOffersResponse> {
+    const accountOffersRequest: AccountOffersRequest = {
+      id: `${RippledMethod.accountOffers}_${account}_${this.idNumber}`,
+      command: RippledMethod.accountOffers,
+      account,
+    }
+    this.idNumber++
+    const accountOffersResponse = await this.sendApiRequest(
+      accountOffersRequest,
+    )
+    return accountOffersResponse as AccountOffersResponse
+  }
+
+  /**
    * Submits a ripple_path_find request to the rippled WebSocket API.
    * @see https://xrpl.org/ripple_path_find.html
    *
@@ -290,27 +311,6 @@ export default class WebSocketNetworkClient {
     )
 
     return ripplePathFindResponse as RipplePathFindResponse
-  }
-
-  /**
-   * Submits an account_offers request to the rippled WebSocket API.
-   * @see https://xrpl.org/account_offers.html
-   *
-   * @param account The XRPL account for which to retrieve a list of outstanding offers.
-   */
-  public async getAccountOffers(
-    account: string,
-  ): Promise<AccountOffersResponse> {
-    const accountOffersRequest: AccountOffersRequest = {
-      id: `${RippledMethod.accountOffers}_${account}_${this.idNumber}`,
-      command: RippledMethod.accountOffers,
-      account,
-    }
-    this.idNumber++
-    const accountOffersResponse = await this.sendApiRequest(
-      accountOffersRequest,
-    )
-    return accountOffersResponse as AccountOffersResponse
   }
 
   /**

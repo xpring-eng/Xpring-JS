@@ -4,10 +4,10 @@ import WebSocketNetworkClient from '../../src/XRP/network-clients/web-socket-net
 import GrpcNetworkClient from '../../src/XRP/network-clients/grpc-xrp-network-client'
 import {
   ResponseStatus,
-  TransactionResponse,
-  RipplePathFindSuccessfulResponse,
-  AccountOffersSuccessfulResponse,
   WebSocketFailureResponse,
+  TransactionResponse,
+  AccountOffersSuccessfulResponse,
+  RipplePathFindSuccessfulResponse,
   SourceCurrency,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
 import XrpError from '../../src/XRP/shared/xrp-error'
