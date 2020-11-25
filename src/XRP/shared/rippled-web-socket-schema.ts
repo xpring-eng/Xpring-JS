@@ -1,5 +1,7 @@
 /* Schema for adding type information to WebSocket objects. */
 
+import IssuedCurrency from './issued-currency'
+
 /**
  * The options for the `readyState` of a websocket.
  */
@@ -21,6 +23,7 @@ enum RippledMethod {
   unsubscribe = 'unsubscribe',
   accountLines = 'account_lines',
   gatewayBalances = 'gateway_balances',
+  accountOffers = 'account_offers',
   ripplePathFind = 'ripple_path_find',
 }
 
@@ -37,6 +40,7 @@ type WebSocketRequest =
   | SubscribeRequest
   | AccountLinesRequest
   | GatewayBalancesRequest
+  | AccountOffersRequest
   | RipplePathFindRequest
 
 interface BaseRequest {
@@ -75,6 +79,14 @@ interface GatewayBalancesRequest extends BaseRequest {
 }
 
 /**
+ * The standard format for an `account_offers` request to the Web Socket API.
+ * @see https://xrpl.org/account_offers.html
+ */
+interface AccountOffersRequest extends BaseRequest {
+  account: string
+}
+
+/**
  * The standard format for a `ripple_path_find` request to the Web Socket API.
  * @see https://xrpl.org/ripple_path_find.html
  */
@@ -101,6 +113,7 @@ type WebSocketResponse =
   | TransactionResponse
   | AccountLinesResponse
   | GatewayBalancesResponse
+  | AccountOffersResponse
   | RipplePathFindResponse
 
 type StatusResponse = StatusSuccessfulResponse | WebSocketFailureResponse
@@ -185,6 +198,24 @@ interface GatewayBalancesSuccessfulResponse extends BaseResponse {
 }
 
 /**
+ * The standard format(s) for a response from the WebSocket API for an `account_offers` request.
+ * @see https://xrpl.org/account_offers.html
+ */
+type AccountOffersResponse =
+  | AccountOffersSuccessfulResponse
+  | WebSocketFailureResponse
+
+interface AccountOffersSuccessfulResponse extends BaseResponse {
+  result: {
+    account: string
+    offers: AccountOffer[]
+    ledger_current_index?: number
+    ledger_index?: number
+    ledger_hash?: string
+  }
+}
+
+/**
  * The standard format(s) for a response from the WebSocket API for a `ripple_path_find` request.
  * @see https://xrpl.org/ripple_path_find.html
  */
@@ -219,6 +250,15 @@ interface WebSocketTransaction {
   TxnSignature: string
   date: number
   hash: string
+}
+
+interface AccountOffer {
+  flags: number
+  quality: string
+  seq: number
+  taker_gets: string | IssuedCurrency
+  taker_pays: string | IssuedCurrency
+  expiration?: number
 }
 
 /**
@@ -314,12 +354,6 @@ interface CurrencyValuePair {
   value: string
 }
 
-interface IssuedCurrency {
-  currency: string
-  issuer: string
-  value: string
-}
-
 interface SourceCurrency {
   currency: string
   issuer?: string
@@ -337,8 +371,10 @@ export {
   SubscribeRequest,
   AccountLinesRequest,
   GatewayBalancesRequest,
+  AccountOffersRequest,
   RipplePathFindRequest,
   WebSocketResponse,
+  ResponseStatus,
   WebSocketFailureResponse,
   StatusResponse,
   TransactionResponse,
@@ -346,9 +382,10 @@ export {
   AccountLinesSuccessfulResponse,
   GatewayBalancesResponse,
   GatewayBalancesSuccessfulResponse,
+  AccountOffersResponse,
+  AccountOffersSuccessfulResponse,
   RipplePathFindResponse,
   RipplePathFindSuccessfulResponse,
-  ResponseStatus,
   WebSocketTransaction,
   TrustLineResponse,
   IssuedCurrency,
