@@ -1,19 +1,21 @@
 import WebSocket = require('ws')
 import { XrpError, XrpErrorType } from '../shared'
 import {
-  AccountLinesResponse,
-  GatewayBalancesResponse,
-  WebSocketRequest,
-  StatusResponse,
-  TransactionResponse,
   WebSocketReadyState,
   RippledMethod,
-  ResponseStatus,
+  WebSocketRequest,
   SubscribeRequest,
   AccountLinesRequest,
   GatewayBalancesRequest,
+  AccountOffersRequest,
   WebSocketResponse,
   WebSocketFailureResponse,
+  ResponseStatus,
+  AccountLinesResponse,
+  GatewayBalancesResponse,
+  StatusResponse,
+  TransactionResponse,
+  AccountOffersResponse,
 } from '../shared/rippled-web-socket-schema'
 
 function sleep(ms: number): Promise<void> {
@@ -250,6 +252,27 @@ export default class WebSocketNetworkClient {
       gatewayBalancesRequest,
     )
     return gatewayBalancesResponse as GatewayBalancesResponse
+  }
+
+  /**
+   * Submits an account_offers request to the rippled WebSocket API.
+   * @see https://xrpl.org/account_offers.html
+   *
+   * @param account The XRPL account for which to retrieve a list of outstanding offers.
+   */
+  public async getAccountOffers(
+    account: string,
+  ): Promise<AccountOffersResponse> {
+    const accountOffersRequest: AccountOffersRequest = {
+      id: `${RippledMethod.accountOffers}_${account}_${this.idNumber}`,
+      command: RippledMethod.accountOffers,
+      account,
+    }
+    this.idNumber++
+    const accountOffersResponse = await this.sendApiRequest(
+      accountOffersRequest,
+    )
+    return accountOffersResponse as AccountOffersResponse
   }
 
   /**
