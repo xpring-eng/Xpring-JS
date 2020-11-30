@@ -311,6 +311,42 @@ describe('WebSocket Tests', function (): void {
     assert.include(result.destination_currencies, 'XRP')
   })
 
+  it('findRipplePath - failure, both sendMax and sourceCurrencies', async function (): Promise<
+    void
+  > {
+    this.timeout(timeoutMs)
+
+    const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
+    const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
+      .address
+
+    const destinationAmount: IssuedCurrency = {
+      currency: 'CNY',
+      issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA',
+      value: '50',
+    }
+    const sendMaxAmount = '100'
+
+    const sourceCurrency: SourceCurrency = { currency: 'USD' }
+
+    // GIVEN two valid test addresses
+    // WHEN findRipplePath is called between those addresses THEN an error is thrown.
+    try {
+      await webSocketNetworkClient.findRipplePath(
+        sourceAddress,
+        destinationAddress,
+        destinationAmount,
+        sendMaxAmount,
+        [sourceCurrency],
+      )
+      assert.fail('Method call should fail')
+    } catch (e) {
+      if (!(e instanceof XrpError)) {
+        assert.fail('wrong error')
+      }
+    }
+  })
+
   it('findRipplePath - successful direct path', async function (): Promise<
     void
   > {

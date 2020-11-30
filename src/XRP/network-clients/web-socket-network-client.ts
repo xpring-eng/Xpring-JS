@@ -297,6 +297,12 @@ export default class WebSocketNetworkClient {
     sendMax?: string | IssuedCurrency,
     sourceCurrencies?: SourceCurrency[],
   ): Promise<RipplePathFindResponse> {
+    if (sendMax && sourceCurrencies) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'Cannot provide values for both `sendMax` and `sourceCurrencies`',
+      )
+    }
     const ripplePathFindRequest: RipplePathFindRequest = {
       id: `${RippledMethod.ripplePathFind}_${sourceAccount}_${this.idNumber}`,
       command: RippledMethod.ripplePathFind,
