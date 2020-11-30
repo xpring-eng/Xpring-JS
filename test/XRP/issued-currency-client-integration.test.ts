@@ -86,9 +86,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     })
   })
 
-  it('getTrustLines - account with no trust lines', async function (): Promise<
-    void
-  > {
+  it('getTrustLines - account with no trust lines', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // GIVEN a valid, funded address that doesn't have any trustlines
@@ -103,9 +101,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.isEmpty(trustLines)
   })
 
-  it('requireAuthorizedTrustlines/allowUnauthorizedTrustlines - rippled', async function (): Promise<
-    void
-  > {
+  it('requireAuthorizedTrustlines/allowUnauthorizedTrustlines - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN requireAuthorizedTrustlines is called
@@ -152,9 +148,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('disallowIncomingXrp/allowIncomingXrp - rippled', async function (): Promise<
-    void
-  > {
+  it('disallowIncomingXrp/allowIncomingXrp - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN disallowIncomingXrp is called
@@ -184,9 +178,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   // TODO: Once required IOU functionality exists in SDK, add integration tests that successfully establish an unauthorized trustline to this account.
 
-  it('requireDestinationTags/allowNoDestinationTag - rippled', async function (): Promise<
-    void
-  > {
+  it('requireDestinationTags/allowNoDestinationTag - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN requireDestinationTags is called
@@ -214,9 +206,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('requireDestinationTags/allowNoDestinationTag - transaction without destination tags', async function (): Promise<
-    void
-  > {
+  it('requireDestinationTags/allowNoDestinationTag - transaction without destination tags', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account with requireDestinationTags set
     await issuedCurrencyClient.requireDestinationTags(wallet)
@@ -253,9 +243,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   // which will also avoid the need for maintenance after a testnet reset.
 
   // TODO: Implement an integration test for an account with balances/assets/obligations once functionality exists for first creating things.
-  it('getGatewayBalances - account not found', async function (): Promise<
-    void
-  > {
+  it('getGatewayBalances - account not found', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN a valid address that doesn't actually exist on the ledger
     const walletFactory = new WalletFactory(XrplNetwork.Test)
@@ -268,9 +256,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     })
   })
 
-  it('getGatewayBalances - account with no issued currencies', async function (): Promise<
-    void
-  > {
+  it('getGatewayBalances - account with no issued currencies', async function (): Promise<void> {
     // GIVEN a valid, funded address that has not issued any currencies
     const wallet = await XRPTestUtils.randomWalletFromFaucet()
     const address = wallet.getAddress()
@@ -287,9 +273,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.isUndefined(gatewayBalances.obligations)
   })
 
-  it('getTransferFee/setTransferFee - rippled', async function (): Promise<
-    void
-  > {
+  it('getTransferFee/setTransferFee - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN setTransferFee is called
@@ -312,9 +296,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(transferRate, expectedTransferFee)
   })
 
-  it('setTransferFee - bad transferRate values', async function (): Promise<
-    void
-  > {
+  it('setTransferFee - bad transferRate values', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const lowTransferFee = 12345
@@ -349,9 +331,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(transactionStatus2, TransactionStatus.MalformedTransaction)
   })
 
-  it('enableGlobalFreeze/disableGlobalFreeze - rippled', async function (): Promise<
-    void
-  > {
+  it('enableGlobalFreeze/disableGlobalFreeze - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN enableGlobalFreeze is called
@@ -394,9 +374,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
   })
 
-  it('createTrustLine - creating a trustline with XRP', async function (): Promise<
-    void
-  > {
+  it('createTrustLine - creating a trustline with XRP', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
     // GIVEN an existing testnet account and an issuer's wallet
@@ -414,9 +392,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     }
   })
 
-  it('createTrustLine - adding a trustline with 0 value', async function (): Promise<
-    void
-  > {
+  it('createTrustLine - adding a trustline with 0 value', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
     // GIVEN an existing testnet account and an issuer's wallet
@@ -437,9 +413,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.isEmpty(trustLines)
   })
 
-  it('createTrustLine - adding a trustline with non-zero value', async function (): Promise<
-    void
-  > {
+  it('createTrustLine - adding a trustline with non-zero value', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
 
@@ -468,9 +442,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(createdTrustLine.currency, trustLineCurrency)
   })
 
-  it('createTrustLine - adding a trustline with non-zero value and qualityIn + qualityOut', async function (): Promise<
-    void
-  > {
+  it('createTrustLine - adding a trustline with non-zero value and qualityIn + qualityOut', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
 
@@ -569,9 +541,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(frozenTrustLine.limit, '0')
   })
 
-  it('unfreezeTrustLine - unfreezes frozen account', async function (): Promise<
-    void
-  > {
+  it('unfreezeTrustLine - unfreezes frozen account', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
     const accountToUnfreeze = await XRPTestUtils.randomWalletFromFaucet()
@@ -610,9 +580,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(unfrozenTrustLine.limit, '0')
   })
 
-  it('disableRipplingForTrustLine - sets no rippling on trust line', async function (): Promise<
-    void
-  > {
+  it('disableRipplingForTrustLine - sets no rippling on trust line', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
     const trustLinePeerAccount = await XRPTestUtils.randomWalletFromFaucet()
@@ -648,9 +616,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(trustLine.limit, trustLineAmount)
   })
 
-  it('enableRipplingForTrustLine - clears noRipple on a trust line', async function (): Promise<
-    void
-  > {
+  it('enableRipplingForTrustLine - clears noRipple on a trust line', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const issuer = await XRPTestUtils.randomWalletFromFaucet()
     const trustLinePeerAccount = await XRPTestUtils.randomWalletFromFaucet()
@@ -694,9 +660,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(trustLine.limit, trustLineAmount)
   })
 
-  it('monitorAccountTransactions/stopMonitoringAccountTransactions - valid request', async function (): Promise<
-    void
-  > {
+  it('monitorAccountTransactions/stopMonitoringAccountTransactions - valid request', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const xAddress = wallet.getAddress()
@@ -767,9 +731,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // (If a payment is received, fail will be called in the callback)
   })
 
-  it('monitorAccountTransactions - bad address', async function (): Promise<
-    void
-  > {
+  it('monitorAccountTransactions - bad address', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const address = 'badAddress'
@@ -787,9 +749,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     }
   })
 
-  it('stopMonitoringAccountTransactions - not-subscribed address', async function (): Promise<
-    void
-  > {
+  it('stopMonitoringAccountTransactions - not-subscribed address', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const xAddress = wallet2.getAddress()
@@ -808,9 +768,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     }
   })
 
-  it('stopMonitoringAccountTransactions - bad address', async function (): Promise<
-    void
-  > {
+  it('stopMonitoringAccountTransactions - bad address', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // GIVEN a test address that is malformed.
@@ -827,9 +785,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     }
   })
 
-  it('createOffer - success, taker gets issued currency taker pays xrp', async function (): Promise<
-    void
-  > {
+  it('createOffer - success, taker gets issued currency taker pays xrp', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // Note that this integration test:
@@ -871,9 +827,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(transactionResult.final, true)
   })
 
-  it('createOffer - success, taker gets xrp taker pays issued currency', async function (): Promise<
-    void
-  > {
+  it('createOffer - success, taker gets xrp taker pays issued currency', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // Note that this integration test:

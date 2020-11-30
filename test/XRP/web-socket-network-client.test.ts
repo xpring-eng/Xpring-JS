@@ -37,9 +37,6 @@ function sleep(ms: number) {
 }
 
 describe('WebSocket Tests', function (): void {
-  // Retry integration tests on failure.
-  this.retries(3)
-
   // A Wallet with some balance on Testnet.
   let wallet: Wallet
   let wallet2: Wallet
@@ -59,9 +56,7 @@ describe('WebSocket Tests', function (): void {
     done()
   })
 
-  it('subscribeToAccount/unsubscribeFromAccount - valid request', async function (): Promise<
-    void
-  > {
+  it('subscribeToAccount/unsubscribeFromAccount - valid request', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const xrpAmount = '100'
@@ -155,9 +150,7 @@ describe('WebSocket Tests', function (): void {
     }
   })
 
-  it('unsubscribeFromAccount - not-subscribed address', async function (): Promise<
-    void
-  > {
+  it('unsubscribeFromAccount - not-subscribed address', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // GIVEN a test address that is not subscribed to.
@@ -278,9 +271,7 @@ describe('WebSocket Tests', function (): void {
     assert.equal(errorResponse.error, RippledErrorMessages.accountNotFound)
   })
 
-  it('findRipplePath - success, mandatory fields', async function (): Promise<
-    void
-  > {
+  it('findRipplePath - success, mandatory fields', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
@@ -314,9 +305,41 @@ describe('WebSocket Tests', function (): void {
     assert.include(result.destination_currencies, 'XRP')
   })
 
-  it('findRipplePath - successful direct path', async function (): Promise<
-    void
-  > {
+  it('findRipplePath - failure, both sendMax and sourceCurrencies', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
+    const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
+      .address
+
+    const destinationAmount: IssuedCurrency = {
+      currency: 'CNY',
+      issuer: 'razqQKzJRdB4UxFPWf5NEpEG3WMkmwgcXA',
+      value: '50',
+    }
+    const sendMaxAmount = '100'
+
+    const sourceCurrency: SourceCurrency = { currency: 'USD' }
+
+    // GIVEN two valid test addresses
+    // WHEN findRipplePath is called between those addresses THEN an error is thrown.
+    try {
+      await webSocketNetworkClient.findRipplePath(
+        sourceAddress,
+        destinationAddress,
+        destinationAmount,
+        sendMaxAmount,
+        [sourceCurrency],
+      )
+      assert.fail('Method call should fail')
+    } catch (e) {
+      if (!(e instanceof XrpError)) {
+        assert.fail('wrong error')
+      }
+    }
+  })
+
+  it('findRipplePath - successful direct path', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
@@ -350,6 +373,7 @@ describe('WebSocket Tests', function (): void {
     assert.equal(response.status, 'success')
     assert.equal(response.type, 'response')
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     const result = (response as RipplePathFindSuccessfulResponse).result
 
     assert.equal(result.destination_account, destinationAddress)
@@ -362,9 +386,7 @@ describe('WebSocket Tests', function (): void {
     assert(result.alternatives.length >= 1)
   })
 
-  it('findRipplePath - successful path through issuers own offer', async function (): Promise<
-    void
-  > {
+  it('findRipplePath - successful path through issuers own offer', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
 
@@ -438,9 +460,7 @@ describe('WebSocket Tests', function (): void {
     assert(result.alternatives.length >= 1)
   })
 
-  it('findRipplePath - successful path through third-party offer', async function (): Promise<
-    void
-  > {
+  it('findRipplePath - successful path through third-party offer', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
     const offerCreatorWallet = await XRPTestUtils.randomWalletFromFaucet()
