@@ -283,7 +283,12 @@ export default class WebSocketNetworkClient {
    * Submits a ripple_path_find request to the rippled WebSocket API.
    * @see https://xrpl.org/ripple_path_find.html
    *
-   * @param sourceAccount
+   * @param sourceAccount The XRPL account at the start of the desired path, as a classic address.
+   * @param destinationAccount The XRPL account at the end of the desired path, as a classic address.
+   * @param destinationAmount The currency amount that the destination account would receive in a transaction
+   *                          (-1 if the path should deliver as much as possible).
+   * @param sendMax The currency amount that would be spent in the transaction (cannot be used with sourceCurrencies).
+   * @param sourceCurrencies An array of currencies that the source account might want to spend (cannot be used with sendMax).
    */
   public async findRipplePath(
     sourceAccount: string,
@@ -302,9 +307,6 @@ export default class WebSocketNetworkClient {
       source_currencies: sourceCurrencies,
     }
     this.idNumber++
-
-    console.log('ripplePathFindRequest: ')
-    console.log(ripplePathFindRequest)
 
     const ripplePathFindResponse = await this.sendApiRequest(
       ripplePathFindRequest,
