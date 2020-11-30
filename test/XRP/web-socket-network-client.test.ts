@@ -1,18 +1,22 @@
 import { assert } from 'chai'
 import { Wallet, XrplNetwork, XrpUtils } from 'xpring-common-js'
 import WebSocketNetworkClient from '../../src/XRP/network-clients/web-socket-network-client'
+import GrpcNetworkClient from '../../src/XRP/network-clients/grpc-xrp-network-client'
 import {
   ResponseStatus,
+  WebSocketFailureResponse,
   TransactionResponse,
+  AccountOffersSuccessfulResponse,
   RipplePathFindSuccessfulResponse,
-  IssuedCurrency,
   SourceCurrency,
 } from '../../src/XRP/shared/rippled-web-socket-schema'
 import XrpError from '../../src/XRP/shared/xrp-error'
 import XrpClient from '../../src/XRP/xrp-client'
+import IssuedCurrency from '../../src/XRP/shared/issued-currency'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
+import { RippledErrorMessages } from '../../src/XRP/shared/rippled-error-messages'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -26,6 +30,8 @@ const webSocketNetworkClient = new WebSocketNetworkClient(
   console.log,
 )
 
+const grpcNetworkClient = new GrpcNetworkClient(rippledGrpcUrl)
+
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
@@ -37,9 +43,15 @@ describe('WebSocket Tests', function (): void {
   // A Wallet with some balance on Testnet.
   let wallet: Wallet
   let wallet2: Wallet
+  let issuedCurrencyClient: IssuedCurrencyClient
   before(async function () {
     wallet = await XRPTestUtils.randomWalletFromFaucet()
     wallet2 = await XRPTestUtils.randomWalletFromFaucet()
+    issuedCurrencyClient = new IssuedCurrencyClient(
+      grpcNetworkClient,
+      webSocketNetworkClient,
+      XrplNetwork.Test,
+    )
   })
 
   after(function (done) {
@@ -51,10 +63,6 @@ describe('WebSocket Tests', function (): void {
     void
   > {
     this.timeout(timeoutMs)
-
-    const xAddress = wallet.getAddress()
-    const classicAddress = XrpUtils.decodeXAddress(xAddress)
-    const address = classicAddress!.address
 
     const xrpAmount = '100'
 
@@ -88,6 +96,10 @@ describe('WebSocket Tests', function (): void {
     const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
 
     // GIVEN a valid test address
+    const xAddress = wallet.getAddress()
+    const classicAddress = XrpUtils.decodeXAddress(xAddress)
+    const address = classicAddress!.address
+
     // WHEN subscribeToAccount is called for that address
     const subscribeResponse = await webSocketNetworkClient.subscribeToAccount(
       address,
@@ -116,7 +128,7 @@ describe('WebSocket Tests', function (): void {
     assert.equal(unsubscribeResponse.type, 'response')
 
     // WHEN a payment is sent to that address
-    await xrpClient.send(xrpAmount, xAddress, wallet2)
+    await xrpClient.sendXrp(xrpAmount, xAddress, wallet2)
 
     // THEN the payment is not received by the callback
     // (If a payment is received, fail will be called in the callback)
@@ -125,9 +137,9 @@ describe('WebSocket Tests', function (): void {
   it('subscribeToAccount - bad address', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
+    // GIVEN a test address that is malformed.
     const address = 'badAddress'
 
-    // GIVEN a test address that is malformed.
     // WHEN subscribeToAccount is called for that address THEN an error is thrown.
     try {
       await webSocketNetworkClient.subscribeToAccount(
@@ -148,11 +160,11 @@ describe('WebSocket Tests', function (): void {
   > {
     this.timeout(timeoutMs)
 
+    // GIVEN a test address that is not subscribed to.
     const xAddress = wallet2.getAddress()
     const classicAddress = XrpUtils.decodeXAddress(xAddress)
     const address = classicAddress!.address
 
-    // GIVEN a test address that is not subscribed to.
     // WHEN unsubscribeFromAccount is called for that address THEN an error is thrown.
     try {
       await webSocketNetworkClient.unsubscribeFromAccount(address)
@@ -167,9 +179,9 @@ describe('WebSocket Tests', function (): void {
   it('unsubscribeFromAccount - bad address', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
+    // GIVEN a test address that is malformed.
     const address = 'badAddress'
 
-    // GIVEN a test address that is malformed.
     // WHEN unsubscribeFromAccount is called for that address THEN an error is thrown.
     try {
       await webSocketNetworkClient.unsubscribeFromAccount(address)
@@ -179,6 +191,91 @@ describe('WebSocket Tests', function (): void {
         assert.fail('wrong error')
       }
     }
+  })
+
+  it('getAccountOffers - valid requests', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
+      rippledGrpcUrl,
+      rippledWebSocketUrl,
+      console.log,
+      XrplNetwork.Test,
+    )
+
+    // GIVEN a valid test address with no offers
+    const xAddress = wallet.getAddress()
+    const classicAddress = XrpUtils.decodeXAddress(xAddress)
+    const address = classicAddress!.address
+
+    // WHEN getAccountOffers is called for that address
+    const accountOfferResponse = await webSocketNetworkClient.getAccountOffers(
+      address,
+    )
+
+    // THEN the request is successfully submitted and received, with no listed offers
+    assert.equal(accountOfferResponse.status, ResponseStatus.success)
+    assert.equal(accountOfferResponse.type, 'response')
+
+    const result = (accountOfferResponse as AccountOffersSuccessfulResponse)
+      .result
+
+    assert.equal(result.account, address)
+    assert.isEmpty(result.offers)
+    this.timeout(timeoutMs)
+
+    // GIVEN a valid test address with an offer
+    const takerGetsIssuedCurrency: IssuedCurrency = {
+      issuer: address,
+      currency: 'FAK',
+      value: '100',
+    }
+    const takerPaysXrp = '50'
+
+    await issuedCurrencyClient.createOffer(
+      wallet,
+      takerGetsIssuedCurrency,
+      takerPaysXrp,
+    )
+
+    // WHEN getAccountOffers is called for that address
+    const accountOfferResponse2 = await webSocketNetworkClient.getAccountOffers(
+      address,
+    )
+
+    // THEN the request is successfully submitted and received, with the one listed offer
+    assert.equal(accountOfferResponse2.status, ResponseStatus.success)
+    assert.equal(accountOfferResponse2.type, 'response')
+
+    const result2 = (accountOfferResponse2 as AccountOffersSuccessfulResponse)
+      .result
+
+    assert.equal(result2.account, address)
+    assert.isNotEmpty(result2.offers)
+
+    const offer = result2.offers[0]
+
+    assert.equal(offer.taker_pays, takerPaysXrp)
+    assert.deepEqual(offer.taker_gets, takerGetsIssuedCurrency)
+
+    issuedCurrencyClient.webSocketNetworkClient.close()
+  })
+
+  it('getAccountOffers - bad address', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+
+    // GIVEN a test address that is malformed.
+    const address = 'badAddress'
+
+    // WHEN getAccountOffers is called for that address THEN an error is thrown.
+    const response = await webSocketNetworkClient.getAccountOffers(address)
+
+    assert.equal(response.status, ResponseStatus.error)
+    assert.equal(response.type, 'response')
+
+    const errorResponse = response as WebSocketFailureResponse
+
+    assert.equal(errorResponse.error, RippledErrorMessages.accountNotFound)
   })
 
   it('findRipplePath - success, mandatory fields', async function (): Promise<
@@ -226,13 +323,6 @@ describe('WebSocket Tests', function (): void {
     const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
       .address
 
-    const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
-      rippledGrpcUrl,
-      rippledWebSocketUrl,
-      console.log,
-      XrplNetwork.Test,
-    )
-
     // GIVEN two valid test addresses with a trust line between them
     const trustLineLimit = '200'
     const trustLineCurrency = 'FOO'
@@ -270,8 +360,6 @@ describe('WebSocket Tests', function (): void {
     assert.equal(result.source_account, sourceAddress)
     assert.include(result.destination_currencies, trustLineCurrency)
     assert(result.alternatives.length >= 1)
-
-    issuedCurrencyClient.webSocketNetworkClient.close()
   })
 
   it('findRipplePath - successful path through issuers own offer', async function (): Promise<
@@ -286,13 +374,6 @@ describe('WebSocket Tests', function (): void {
     const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
     const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
       .address
-
-    const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
-      rippledGrpcUrl,
-      rippledWebSocketUrl,
-      console.log,
-      XrplNetwork.Test,
-    )
 
     // GIVEN two valid test addresses, an issuing address, a trust line from one test address (wallet2) to the issuer
     // and an offer on the dex to exchange XRP for some this issuer's issued currency.
@@ -370,13 +451,6 @@ describe('WebSocket Tests', function (): void {
     const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
     const destinationAddress = XrpUtils.decodeXAddress(wallet2.getAddress())!
       .address
-
-    const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
-      rippledGrpcUrl,
-      rippledWebSocketUrl,
-      console.log,
-      XrplNetwork.Test,
-    )
 
     // GIVEN two valid test addresses, an issuing address, a trust line from one test address (wallet2) to the issuer
     // and an offer on the dex to exchange XRP for some this issuer's issued currency.

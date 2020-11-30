@@ -8,17 +8,20 @@ import {
   SubscribeRequest,
   AccountLinesRequest,
   GatewayBalancesRequest,
+  AccountOffersRequest,
   RipplePathFindRequest,
   WebSocketResponse,
   WebSocketFailureResponse,
-  StatusResponse,
-  TransactionResponse,
+  ResponseStatus,
   AccountLinesResponse,
   GatewayBalancesResponse,
+  StatusResponse,
+  TransactionResponse,
+  AccountOffersResponse,
   RipplePathFindResponse,
-  IssuedCurrency,
   SourceCurrency,
 } from '../shared/rippled-web-socket-schema'
+import IssuedCurrency from '../shared/issued-currency'
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -254,6 +257,27 @@ export default class WebSocketNetworkClient {
       gatewayBalancesRequest,
     )
     return gatewayBalancesResponse as GatewayBalancesResponse
+  }
+
+  /**
+   * Submits an account_offers request to the rippled WebSocket API.
+   * @see https://xrpl.org/account_offers.html
+   *
+   * @param account The XRPL account for which to retrieve a list of outstanding offers.
+   */
+  public async getAccountOffers(
+    account: string,
+  ): Promise<AccountOffersResponse> {
+    const accountOffersRequest: AccountOffersRequest = {
+      id: `${RippledMethod.accountOffers}_${account}_${this.idNumber}`,
+      command: RippledMethod.accountOffers,
+      account,
+    }
+    this.idNumber++
+    const accountOffersResponse = await this.sendApiRequest(
+      accountOffersRequest,
+    )
+    return accountOffersResponse as AccountOffersResponse
   }
 
   /**
