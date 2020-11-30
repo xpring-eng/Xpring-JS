@@ -39,18 +39,10 @@ export class FakeWebSocketNetworkClientResponses {
    * @param subscribeResponse The response or error that will be returned from the subscribe request.
    */
   public constructor(
-    public readonly subscribeResponse: Result<
-      StatusResponse
-    > = FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
-    public readonly unsubscribeResponse: Result<
-      StatusResponse
-    > = FakeWebSocketNetworkClientResponses.defaultUnsubscribeResponse(),
-    public readonly getAccountLinesResponse: Result<
-      AccountLinesResponse
-    > = FakeWebSocketNetworkClientResponses.defaultGetAccountLinesResponse(),
-    public readonly getGatewayBalancesResponse: Result<
-      GatewayBalancesResponse
-    > = FakeWebSocketNetworkClientResponses.defaultGetGatewayBalancesResponse(),
+    public readonly subscribeResponse: Result<StatusResponse> = FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
+    public readonly unsubscribeResponse: Result<StatusResponse> = FakeWebSocketNetworkClientResponses.defaultUnsubscribeResponse(),
+    public readonly getAccountLinesResponse: Result<AccountLinesResponse> = FakeWebSocketNetworkClientResponses.defaultGetAccountLinesResponse(),
+    public readonly getGatewayBalancesResponse: Result<GatewayBalancesResponse> = FakeWebSocketNetworkClientResponses.defaultGetGatewayBalancesResponse(),
   ) {}
 
   /**

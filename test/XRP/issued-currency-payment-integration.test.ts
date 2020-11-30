@@ -470,9 +470,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendCrossCurrencyPayment - success, XRP -> Issued Currency with default path', async function (): Promise<
-    void
-  > {
+  it('sendCrossCurrencyPayment - success, XRP -> Issued Currency with default path', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN a customer account with some issued currency, an issuing address that has enabled rippling, and an offer to exchange
     // XRP for FOO
@@ -517,9 +515,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendCrossCurrencyPayment - success, Issued Currency -> Issued Currency with no default path', async function (): Promise<
-    void
-  > {
+  it('sendCrossCurrencyPayment - success, Issued Currency -> Issued Currency with no default path', async function (): Promise<void> {
     this.timeout(timeoutMs * 2)
     // GIVEN two different issued currencies by two different issuers, and order books for each currency to exchange with XRP,
     // a payer who wants to pay in FOO, and a payee who wants to receive BAR
@@ -599,9 +595,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendCrossCurrencyPayment - success, Issued Currency -> XRP with default path', async function (): Promise<
-    void
-  > {
+  it('sendCrossCurrencyPayment - success, Issued Currency -> XRP with default path', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN a customer account with some issued FOO, an issuing address that has enabled rippling, a recipient interested
     // in being paid in XRP, and a third party offer to exchange the two
@@ -662,9 +656,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendCrossCurrencyPayment - failure, Issued Currency -> XRP with no viable path', async function (): Promise<
-    void
-  > {
+  it('sendCrossCurrencyPayment - failure, Issued Currency -> XRP with no viable path', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN a customer account trying to spend BAZ, an issuing address for BAZ that has enabled rippling,
     // a recipient looking to be paid in XRP, but no offers for exchange.
