@@ -567,12 +567,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       issuerWalletAuthTrustLines.getAddress(),
     )
 
-    let frozenTrustLine
-    trustLines.forEach((trustLine) => {
-      if (trustLine.currency === trustLineCurrency) {
-        frozenTrustLine = trustLine
-      }
-    })
+    const frozenTrustLine = trustLines.find(
+      (trustLine) => trustLine.currency === trustLineCurrency,
+    )
 
     // THEN the trust line is frozen.
     assert.equal(frozenTrustLine.freeze, true)
@@ -606,12 +603,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       issuerWalletAuthTrustLines.getAddress(),
     )
 
-    let unfrozenTrustLine
-    trustLines.forEach((trustLine) => {
-      if (trustLine.currency === trustLineCurrency) {
-        unfrozenTrustLine = trustLine
-      }
-    })
+    const unfrozenTrustLine = trustLines.find(
+      (trustLine) => trustLine.currency === trustLineCurrency,
+    )
 
     // THEN the trust line is not frozen.
     assert.equal(unfrozenTrustLine.freeze, false)
@@ -642,12 +636,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       issuerWalletAuthTrustLines.getAddress(),
     )
 
-    let noRippleTrustLine
-    trustLines.forEach((trustLine) => {
-      if (trustLine.currency === trustLineCurrency) {
-        noRippleTrustLine = trustLine
-      }
-    })
+    const noRippleTrustLine = trustLines.find(
+      (trustLine) => trustLine.currency === trustLineCurrency,
+    )
 
     // THEN the trust line has noRipple enabled.
     assert.equal(noRippleTrustLine.noRipple, true)
@@ -665,12 +656,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       issuerWalletAuthTrustLines.getAddress(),
     )
 
-    let enabledRippleTrustLine
-    trustLines.forEach((trustLine) => {
-      if (trustLine.currency === trustLineCurrency) {
-        enabledRippleTrustLine = trustLine
-      }
-    })
+    const enabledRippleTrustLine = trustLines.find(
+      (trustLine) => trustLine.currency === trustLineCurrency,
+    )
 
     // THEN the trust line has noRipple enabled.
     assert.equal(enabledRippleTrustLine.noRipple, false)
