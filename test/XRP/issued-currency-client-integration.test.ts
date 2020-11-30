@@ -569,7 +569,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     const frozenTrustLine = trustLines.find(
       (trustLine) => trustLine.currency === trustLineCurrency,
-    )
+    )!
 
     // THEN the trust line is frozen.
     assert.equal(frozenTrustLine.freeze, true)
@@ -605,7 +605,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     const unfrozenTrustLine = trustLines.find(
       (trustLine) => trustLine.currency === trustLineCurrency,
-    )
+    )!
 
     // THEN the trust line is not frozen.
     assert.equal(unfrozenTrustLine.freeze, false)
@@ -638,7 +638,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     const noRippleTrustLine = trustLines.find(
       (trustLine) => trustLine.currency === trustLineCurrency,
-    )
+    )!
 
     // THEN the trust line has noRipple enabled.
     assert.equal(noRippleTrustLine.noRipple, true)
@@ -658,7 +658,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     const enabledRippleTrustLine = trustLines.find(
       (trustLine) => trustLine.currency === trustLineCurrency,
-    )
+    )!
 
     // THEN the trust line has noRipple enabled.
     assert.equal(enabledRippleTrustLine.noRipple, false)
