@@ -103,9 +103,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendIssuedCurrencyPayment - failure to send from non-issuing account to customer account without rippling enabled on issuer', async function (): Promise<
-    void
-  > {
+  it('sendIssuedCurrencyPayment - failure to send from non-issuing account to customer account without rippling enabled on issuer', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an operational address with some issued currency, and an issuing address that has not enabled rippling
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
@@ -159,9 +157,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendIssuedCurrencyPayment - success sending issued currency from non-issuing account to another account', async function (): Promise<
-    void
-  > {
+  it('sendIssuedCurrencyPayment - success sending issued currency from non-issuing account to another account', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an operational address with some issued currency, and an issuing address that has enabled rippling but set no transfer fees
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
@@ -217,9 +213,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendIssuedCurrencyPayment - failure sending unowned issued currency from non-issuing account to another account', async function (): Promise<
-    void
-  > {
+  it('sendIssuedCurrencyPayment - failure sending unowned issued currency from non-issuing account to another account', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an operational address with some issued currency, and an issuing address that has enabled rippling
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
@@ -274,9 +268,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendIssuedCurrencyPayment - sending issued currency with applicable transfer fees, combined cases', async function (): Promise<
-    void
-  > {
+  it('sendIssuedCurrencyPayment - sending issued currency with applicable transfer fees, combined cases', async function (): Promise<void> {
     this.timeout(timeoutMs * 2)
     // GIVEN an operational address with some issued currency, and an issuing address that has enabled rippling and established a transfer fee
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()

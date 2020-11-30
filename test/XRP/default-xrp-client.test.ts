@@ -75,9 +75,7 @@ function makeGetTransactionResponse(
 }
 
 describe('Default XRP Client', function (): void {
-  it('Get Account Balance - successful response', async function (): Promise<
-    void
-  > {
+  it('Get Account Balance - successful response', async function (): Promise<void> {
     // GIVEN a DefaultXrpClient.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
@@ -143,9 +141,7 @@ describe('Default XRP Client', function (): void {
     })
   })
 
-  it('Get Payment Status - Unvalidated Transaction and Failure Code', async function (): Promise<
-    void
-  > {
+  it('Get Payment Status - Unvalidated Transaction and Failure Code', async function (): Promise<void> {
     // Iterate over different types of transaction status codes which represent failures.
     /* eslint-disable no-await-in-loop */
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
@@ -180,9 +176,7 @@ describe('Default XRP Client', function (): void {
     /* eslint-enable no-await-in-loop */
   })
 
-  it('Get Payment Status - Unvalidated Transaction and Success Code', async function (): Promise<
-    void
-  > {
+  it('Get Payment Status - Unvalidated Transaction and Success Code', async function (): Promise<void> {
     // GIVEN a DefaultXrpClient which will return an unvalidated transaction with a success code.
     const transactionStatusResponse = makeGetTransactionResponse(
       false,
@@ -206,9 +200,7 @@ describe('Default XRP Client', function (): void {
     assert.deepEqual(transactionStatus, TransactionStatus.Pending)
   })
 
-  it('Get Payment Status - Validated Transaction and Failure Code', async function (): Promise<
-    void
-  > {
+  it('Get Payment Status - Validated Transaction and Failure Code', async function (): Promise<void> {
     // Iterate over different types of transaction status codes which represent failures.
     /* eslint-disable no-await-in-loop */
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
@@ -243,9 +235,7 @@ describe('Default XRP Client', function (): void {
     /* eslint-enable no-await-in-loop */
   })
 
-  it('Get Payment Status - Validated Transaction and Success Code', async function (): Promise<
-    void
-  > {
+  it('Get Payment Status - Validated Transaction and Success Code', async function (): Promise<void> {
     // GIVEN a DefaultXrpClient which will return an validated transaction with a success code.
     const transactionStatusResponse = makeGetTransactionResponse(
       true,
@@ -633,9 +623,7 @@ describe('Default XRP Client', function (): void {
     })
   })
 
-  it('Payment History - non-payment transactions', async function (): Promise<
-    void
-  > {
+  it('Payment History - non-payment transactions', async function (): Promise<void> {
     // GIVEN a DefaultXrpClient client which will return a transaction history which contains non-payment transactions
 
     // Generate expected transactions from the default response, which only contains payments.
@@ -746,9 +734,7 @@ describe('Default XRP Client', function (): void {
     })
   })
 
-  it('Get Payment - malformed payment transaction', async function (): Promise<
-    void
-  > {
+  it('Get Payment - malformed payment transaction', async function (): Promise<void> {
     // GIVEN a DefaultXrpClient with mocked networking that will return a malformed payment transaction.
     const fakeNetworkResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -768,9 +754,7 @@ describe('Default XRP Client', function (): void {
     }
   })
 
-  it('Get Payment - unsupported transaction type', async function (): Promise<
-    void
-  > {
+  it('Get Payment - unsupported transaction type', async function (): Promise<void> {
     // GIVEN a DefaultXrpClient with mocked networking that will return an unsupported transaction type.
     const fakeNetworkResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -790,9 +774,7 @@ describe('Default XRP Client', function (): void {
     }
   })
 
-  it('Enable Deposit Auth - successful response', async function (): Promise<
-    void
-  > {
+  it('Enable Deposit Auth - successful response', async function (): Promise<void> {
     // GIVEN a DefaultXrpClient with mocked networking that will return a successful hash for submitTransaction
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
@@ -835,9 +817,7 @@ describe('Default XRP Client', function (): void {
     })
   })
 
-  it('Authorize DepositPreauth - successful response', async function (): Promise<
-    void
-  > {
+  it('Authorize DepositPreauth - successful response', async function (): Promise<void> {
     // GIVEN a DefaultXrpClient with mocked networking that will return a successful hash for submitTransaction.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
@@ -909,9 +889,7 @@ describe('Default XRP Client', function (): void {
       })
   })
 
-  it('unauthorizeSendingAccount - successful response', async function (): Promise<
-    void
-  > {
+  it('unauthorizeSendingAccount - successful response', async function (): Promise<void> {
     // GIVEN a DefaultXrpClient with mocked networking that will return a successful hash for submitTransaction.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
