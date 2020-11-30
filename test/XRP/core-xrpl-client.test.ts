@@ -59,9 +59,7 @@ function makeAccountInfoResponse(
 }
 
 describe('Common XRPL Client', function (): void {
-  it('getFinalTransactionResultAsync - returns when transaction is validated', async function (): Promise<
-    void
-  > {
+  it('getFinalTransactionResultAsync - returns when transaction is validated', async function (): Promise<void> {
     // GIVEN a CoreXrplClient with fake networking that will succeed with a not-yet-validated transaction response
     const getTransactionResponse = FakeXRPNetworkClientResponses.defaultGetTransactionResponse()
     getTransactionResponse.setValidated(false)
@@ -150,9 +148,7 @@ describe('Common XRPL Client', function (): void {
       .catch(() => done())
   })
 
-  it('getFinalTransactionResultAsync - Returns when the lastLedgerSequence has been passed', async function (): Promise<
-    void
-  > {
+  it('getFinalTransactionResultAsync - Returns when the lastLedgerSequence has been passed', async function (): Promise<void> {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
     this.timeout(10000)
 
