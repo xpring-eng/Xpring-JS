@@ -56,9 +56,7 @@ describe('WebSocket Tests', function (): void {
     done()
   })
 
-  it('subscribeToAccount/unsubscribeFromAccount - valid request', async function (): Promise<
-    void
-  > {
+  it('subscribeToAccount/unsubscribeFromAccount - valid request', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const xrpAmount = '100'
@@ -152,9 +150,7 @@ describe('WebSocket Tests', function (): void {
     }
   })
 
-  it('unsubscribeFromAccount - not-subscribed address', async function (): Promise<
-    void
-  > {
+  it('unsubscribeFromAccount - not-subscribed address', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // GIVEN a test address that is not subscribed to.
