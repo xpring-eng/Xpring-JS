@@ -1,4 +1,4 @@
-import WebSocket = require('ws')
+import WebSocket = require('isomorphic-ws')
 import { XrpError, XrpErrorType } from '../shared'
 import {
   AccountLinesResponse,
