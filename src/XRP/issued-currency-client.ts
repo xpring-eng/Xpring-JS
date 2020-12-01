@@ -436,7 +436,7 @@ export default class IssuedCurrencyClient {
       wallet,
     )
 
-    return await this.coreXrplClient.getFinalTransactionResultAsync(
+    return this.coreXrplClient.getFinalTransactionResultAsync(
       transactionHash,
       wallet,
     )
@@ -512,7 +512,7 @@ export default class IssuedCurrencyClient {
     qualityIn?: number,
     qualityOut?: number,
   ): Promise<TransactionResult> {
-    return await this.sendTrustSetTransaction(
+    return this.sendTrustSetTransaction(
       issuerXAddress,
       currencyName,
       amount,
@@ -543,7 +543,7 @@ export default class IssuedCurrencyClient {
   ): Promise<TransactionResult> {
     // When authorizing a trust line, the value of the trust line is set to 0.
     // See https://xrpl.org/authorized-trust-lines.html#authorizing-trust-lines
-    return await this.sendTrustSetTransaction(
+    return this.sendTrustSetTransaction(
       accountToAuthorize,
       currencyName,
       '0',
@@ -567,7 +567,7 @@ export default class IssuedCurrencyClient {
     currencyName: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    return await this.sendTrustSetTransaction(
+    return this.sendTrustSetTransaction(
       trustLinePeerAccount,
       currencyName,
       // You can change the trust line when you freeze it, but an amount of 0
@@ -593,7 +593,7 @@ export default class IssuedCurrencyClient {
     currencyName: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    return await this.sendTrustSetTransaction(
+    return this.sendTrustSetTransaction(
       trustLinePeerAccount,
       currencyName,
       // You can change the trust line amount when you unfreeze it, but this would typically
@@ -620,7 +620,7 @@ export default class IssuedCurrencyClient {
     amount: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    return await this.sendTrustSetTransaction(
+    return this.sendTrustSetTransaction(
       trustLinePeerAccount,
       currencyName,
       amount,
@@ -645,7 +645,7 @@ export default class IssuedCurrencyClient {
     amount: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    return await this.sendTrustSetTransaction(
+    return this.sendTrustSetTransaction(
       trustLinePeerAccount,
       currencyName,
       amount,
@@ -690,7 +690,7 @@ export default class IssuedCurrencyClient {
       wallet,
     )
 
-    return await this.coreXrplClient.getFinalTransactionResultAsync(
+    return this.coreXrplClient.getFinalTransactionResultAsync(
       transactionHash,
       wallet,
     )
@@ -798,7 +798,7 @@ export default class IssuedCurrencyClient {
       issuer,
       value: amount,
     }
-    return await this.issuedCurrencyPayment(sender, destination, issuedCurrency)
+    return this.issuedCurrencyPayment(sender, destination, issuedCurrency)
   }
 
   /**
@@ -823,7 +823,7 @@ export default class IssuedCurrencyClient {
       issuer: sender.getAddress(),
       value: issuedCurrency.value,
     }
-    return await this.issuedCurrencyPayment(
+    return this.issuedCurrencyPayment(
       sender,
       issuedCurrency.issuer,
       specialIssuedCurrency,
@@ -863,7 +863,7 @@ export default class IssuedCurrencyClient {
       )
     }
 
-    return await this.issuedCurrencyPayment(
+    return this.issuedCurrencyPayment(
       sender,
       destination,
       issuedCurrency,
