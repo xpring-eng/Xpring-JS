@@ -17,10 +17,6 @@ import IssuedCurrency from '../../src/XRP/shared/issued-currency'
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
 const timeoutMs = 60 * 1000
 
-// An address on TestNet that has a balance.
-const testAddressWithTrustLines =
-  'X7CSDUqZmWR7ggg9K2rTKDmEN53DH1x1j9MHK2foabFzapf'
-
 // An IssuedCurrencyClient that makes requests.
 const rippledGrpcUrl = 'test.xrp.xpring.io:50051'
 const rippledWebSocketUrl = 'wss://wss.test.xrp.xpring.io'
@@ -39,13 +35,40 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   // Retry integration tests on failure.
   this.retries(3)
 
-  // A Wallet with some balance on Testnet.
-  let wallet: Wallet
-  let wallet2: Wallet
-  beforeEach(async function () {
+  // Some testnet wallets with invariant properties.
+  let walletMightHaveTrustLines: Wallet
+  let walletNeverAnyTrustLines: Wallet
+  let issuerWallet: Wallet
+  let issuerWalletAuthTrustLines: Wallet
+
+  before(async function () {
     this.timeout(timeoutMs)
-    wallet = await XRPTestUtils.randomWalletFromFaucet()
-    wallet2 = await XRPTestUtils.randomWalletFromFaucet()
+    const walletPromise1 = XRPTestUtils.randomWalletFromFaucet().then(
+      (wallet) => {
+        walletMightHaveTrustLines = wallet
+      },
+    )
+    const walletPromise2 = XRPTestUtils.randomWalletFromFaucet().then(
+      (wallet) => {
+        walletNeverAnyTrustLines = wallet
+      },
+    )
+    const walletPromise3 = XRPTestUtils.randomWalletFromFaucet().then(
+      (wallet) => {
+        issuerWallet = wallet
+      },
+    )
+    const walletPromise4 = XRPTestUtils.randomWalletFromFaucet().then(
+      (wallet) => {
+        issuerWalletAuthTrustLines = wallet
+      },
+    )
+    await Promise.all([
+      walletPromise1,
+      walletPromise2,
+      walletPromise3,
+      walletPromise4,
+    ])
   })
 
   after(function (done) {
@@ -55,18 +78,21 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   it('getTrustLines - valid request', async function (): Promise<void> {
     this.timeout(timeoutMs)
-    // TODO: When SDK functionality is expanded, improve this integration test by first CREATING a trust line between two accounts,
-    // which will avoid the need for maintenance after a testnet reset.
-
-    // GIVEN a test address that has at least one trust line on testnet
-    // WHEN getTrustLines is called for that address
-    const trustLines = await issuedCurrencyClient.getTrustLines(
-      testAddressWithTrustLines,
+    // GIVEN a testnet wallet that has created at least one trustline
+    await issuedCurrencyClient.createTrustLine(
+      issuerWallet.getAddress(),
+      'FOO',
+      '100',
+      walletMightHaveTrustLines,
     )
 
-    // THEN there is a successful non-empty result
+    // WHEN getTrustLines is called for that address
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      walletMightHaveTrustLines.getAddress(),
+    )
+
+    // THEN there are trustlines in the response.
     assert.exists(trustLines)
-    // TODO improve the specificity of this test once necessary methods have been implemented on IssuedCurrencyClient
     assert.isTrue(trustLines.length > 0)
   })
 
@@ -88,13 +114,11 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   it('getTrustLines - account with no trust lines', async function (): Promise<void> {
     this.timeout(timeoutMs)
-
     // GIVEN a valid, funded address that doesn't have any trustlines
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
-    const address = wallet.getAddress()
-
     // WHEN getTrustLines is called for that addres
-    const trustLines = await issuedCurrencyClient.getTrustLines(address)
+    const trustLines = await issuedCurrencyClient.getTrustLines(
+      walletNeverAnyTrustLines.getAddress(),
+    )
 
     // THEN the result is an empty array.
     assert.isArray(trustLines)
@@ -106,12 +130,12 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // GIVEN an existing testnet account
     // WHEN requireAuthorizedTrustlines is called
     const result = await issuedCurrencyClient.requireAuthorizedTrustlines(
-      wallet,
+      walletNeverAnyTrustLines,
     )
 
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     await XRPTestUtils.verifyFlagModification(
-      wallet,
+      walletNeverAnyTrustLines,
       rippledGrpcUrl,
       result,
       AccountRootFlag.LSF_REQUIRE_AUTH,
@@ -120,12 +144,12 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // GIVEN an existing testnet account with Require Authorization enabled
     // WHEN allowUnauthorizedTrustlines is called
     const result2 = await issuedCurrencyClient.allowUnauthorizedTrustlines(
-      wallet,
+      walletNeverAnyTrustLines,
     )
 
     // THEN the transaction was successfully submitted and the correct flag was unset on the account.
     await XRPTestUtils.verifyFlagModification(
-      wallet,
+      walletNeverAnyTrustLines,
       rippledGrpcUrl,
       result2,
       AccountRootFlag.LSF_REQUIRE_AUTH,
@@ -137,11 +161,13 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN enableRippling is called
-    const result = await issuedCurrencyClient.enableRippling(wallet)
+    const result = await issuedCurrencyClient.enableRippling(
+      walletNeverAnyTrustLines,
+    )
 
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     await XRPTestUtils.verifyFlagModification(
-      wallet,
+      walletNeverAnyTrustLines,
       rippledGrpcUrl,
       result,
       AccountRootFlag.LSF_DEFAULT_RIPPLE,
@@ -152,11 +178,13 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN disallowIncomingXrp is called
-    const result = await issuedCurrencyClient.disallowIncomingXrp(wallet)
+    const result = await issuedCurrencyClient.disallowIncomingXrp(
+      walletNeverAnyTrustLines,
+    )
 
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     await XRPTestUtils.verifyFlagModification(
-      wallet,
+      walletNeverAnyTrustLines,
       rippledGrpcUrl,
       result,
       AccountRootFlag.LSF_DISALLOW_XRP,
@@ -164,11 +192,13 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // GIVEN an existing testnet account with Disallow XRP enabled
     // WHEN allowIncomingXrp is called
-    const result2 = await issuedCurrencyClient.allowIncomingXrp(wallet)
+    const result2 = await issuedCurrencyClient.allowIncomingXrp(
+      walletNeverAnyTrustLines,
+    )
 
     // THEN the transaction was successfully submitted and the flag should not be set on the account.
     await XRPTestUtils.verifyFlagModification(
-      wallet,
+      walletNeverAnyTrustLines,
       rippledGrpcUrl,
       result2,
       AccountRootFlag.LSF_DISALLOW_XRP,
@@ -182,11 +212,13 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN requireDestinationTags is called
-    const result = await issuedCurrencyClient.requireDestinationTags(wallet)
+    const result = await issuedCurrencyClient.requireDestinationTags(
+      walletNeverAnyTrustLines,
+    )
 
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     await XRPTestUtils.verifyFlagModification(
-      wallet,
+      walletNeverAnyTrustLines,
       rippledGrpcUrl,
       result,
       AccountRootFlag.LSF_REQUIRE_DEST_TAG,
@@ -194,11 +226,13 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // GIVEN an existing testnet account with Require Destination Tags enabled
     // WHEN allowNoDestinationTag is called
-    const result2 = await issuedCurrencyClient.allowNoDestinationTag(wallet)
+    const result2 = await issuedCurrencyClient.allowNoDestinationTag(
+      walletNeverAnyTrustLines,
+    )
 
     // THEN both transactions were successfully submitted and there should be no flag set on the account.
     await XRPTestUtils.verifyFlagModification(
-      wallet,
+      walletNeverAnyTrustLines,
       rippledGrpcUrl,
       result2,
       AccountRootFlag.LSF_REQUIRE_DEST_TAG,
@@ -209,15 +243,15 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   it('requireDestinationTags/allowNoDestinationTag - transaction without destination tags', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account with requireDestinationTags set
-    await issuedCurrencyClient.requireDestinationTags(wallet)
+    await issuedCurrencyClient.requireDestinationTags(walletNeverAnyTrustLines)
 
     // WHEN a transaction is sent to the account without a destination tag
     const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
     const xrpAmount = '100'
     const transactionResult = await xrpClient.sendXrp(
       xrpAmount,
-      wallet.getAddress(),
-      wallet2,
+      walletNeverAnyTrustLines.getAddress(),
+      walletMightHaveTrustLines,
     )
 
     // THEN the transaction fails.
@@ -225,13 +259,13 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(transactionResult.status, TransactionStatus.ClaimedCostOnly)
 
     // GIVEN an existing testnet account with requireDestinationTags unset
-    await issuedCurrencyClient.allowNoDestinationTag(wallet)
+    await issuedCurrencyClient.allowNoDestinationTag(walletNeverAnyTrustLines)
 
     // WHEN a transaction is sent to the account without a destination tag
     const transactionResult2 = await xrpClient.sendXrp(
       xrpAmount,
-      wallet.getAddress(),
-      wallet2,
+      walletNeverAnyTrustLines.getAddress(),
+      walletMightHaveTrustLines,
     )
 
     // THEN the transaction succeeds.
@@ -258,8 +292,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   it('getGatewayBalances - account with no issued currencies', async function (): Promise<void> {
     // GIVEN a valid, funded address that has not issued any currencies
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
-    const address = wallet.getAddress()
+    const address = walletNeverAnyTrustLines.getAddress()
 
     // WHEN getGatewayBalances is called for that address
     const gatewayBalances = await issuedCurrencyClient.getGatewayBalances(
@@ -280,14 +313,14 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const expectedTransferFee = 1000000123
     const result = await issuedCurrencyClient.setTransferFee(
       expectedTransferFee,
-      wallet,
+      walletMightHaveTrustLines,
     )
 
     const transactionHash = result.hash
     const transactionStatus = result.status
 
     const transferRate = await issuedCurrencyClient.getTransferFee(
-      wallet.getAddress(),
+      walletMightHaveTrustLines.getAddress(),
     )
 
     // THEN the transaction was successfully submitted and the correct transfer rate was set on the account.
@@ -306,7 +339,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // WHEN setTransferFee is called on a too-low transfer fee
     const result = await issuedCurrencyClient.setTransferFee(
       lowTransferFee,
-      wallet,
+      walletMightHaveTrustLines,
     )
 
     const transactionHash = result.hash
@@ -320,7 +353,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // WHEN setTransferFee is called on a too-high transfer fee
     const result2 = await issuedCurrencyClient.setTransferFee(
       highTransferFee,
-      wallet,
+      walletMightHaveTrustLines,
     )
 
     const transactionHash2 = result2.hash
@@ -335,11 +368,13 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN enableGlobalFreeze is called
-    const result = await issuedCurrencyClient.enableGlobalFreeze(wallet)
+    const result = await issuedCurrencyClient.enableGlobalFreeze(
+      walletMightHaveTrustLines,
+    )
 
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     await XRPTestUtils.verifyFlagModification(
-      wallet,
+      walletMightHaveTrustLines,
       rippledGrpcUrl,
       result,
       AccountRootFlag.LSF_GLOBAL_FREEZE,
@@ -347,11 +382,13 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // GIVEN an existing testnet account with Global Freeze enabled
     // WHEN disableGlobalFreeze is called
-    const result2 = await issuedCurrencyClient.disableGlobalFreeze(wallet)
+    const result2 = await issuedCurrencyClient.disableGlobalFreeze(
+      walletMightHaveTrustLines,
+    )
 
     // THEN both transactions were successfully submitted and there should be no flag set on the account.
     await XRPTestUtils.verifyFlagModification(
-      wallet,
+      walletMightHaveTrustLines,
       rippledGrpcUrl,
       result2,
       AccountRootFlag.LSF_GLOBAL_FREEZE,
@@ -363,11 +400,13 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN enableNoFreeze is called
-    const result = await issuedCurrencyClient.enableNoFreeze(wallet)
+    const result = await issuedCurrencyClient.enableNoFreeze(
+      walletNeverAnyTrustLines,
+    )
 
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     await XRPTestUtils.verifyFlagModification(
-      wallet,
+      walletNeverAnyTrustLines,
       rippledGrpcUrl,
       result,
       AccountRootFlag.LSF_NO_FREEZE,
@@ -376,15 +415,14 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   it('createTrustLine - creating a trustline with XRP', async function (): Promise<void> {
     this.timeout(timeoutMs)
-    const issuer = await XRPTestUtils.randomWalletFromFaucet()
     // GIVEN an existing testnet account and an issuer's wallet
     // WHEN a trust line is created with the issuer with a value of 0
     try {
       await issuedCurrencyClient.createTrustLine(
-        issuer.getAddress(),
+        issuerWallet.getAddress(),
         'XRP',
         '0',
-        wallet,
+        walletMightHaveTrustLines,
       )
     } catch (error) {
       // THEN an error is thrown.
@@ -394,18 +432,19 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   it('createTrustLine - adding a trustline with 0 value', async function (): Promise<void> {
     this.timeout(timeoutMs)
-    const issuer = await XRPTestUtils.randomWalletFromFaucet()
     // GIVEN an existing testnet account and an issuer's wallet
+    const freshWallet = await XRPTestUtils.randomWalletFromFaucet()
+
     // WHEN a trust line is created with the issuer with a value of 0
     await issuedCurrencyClient.createTrustLine(
-      issuer.getAddress(),
+      issuerWallet.getAddress(),
       'USD',
       '0',
-      wallet,
+      freshWallet,
     )
 
     const trustLines = await issuedCurrencyClient.getTrustLines(
-      wallet.getAddress(),
+      freshWallet.getAddress(),
     )
 
     // THEN no trustlines were created.
@@ -415,26 +454,25 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   it('createTrustLine - adding a trustline with non-zero value', async function (): Promise<void> {
     this.timeout(timeoutMs)
-    const issuer = await XRPTestUtils.randomWalletFromFaucet()
-
+    const freshWallet = await XRPTestUtils.randomWalletFromFaucet()
     const trustLineLimit = '1'
     const trustLineCurrency = 'USD'
 
     // GIVEN an existing testnet account and an issuer's wallet
     // WHEN a trustline is created with the issuer with a positive value
     await issuedCurrencyClient.createTrustLine(
-      issuer.getAddress(),
+      issuerWallet.getAddress(),
       trustLineCurrency,
       trustLineLimit,
-      wallet,
+      freshWallet,
     )
 
     const trustLines = await issuedCurrencyClient.getTrustLines(
-      wallet.getAddress(),
+      freshWallet.getAddress(),
     )
 
     const [createdTrustLine] = trustLines
-    const classicAddress = XrpUtils.decodeXAddress(issuer.getAddress())!
+    const classicAddress = XrpUtils.decodeXAddress(issuerWallet.getAddress())!
 
     // THEN a trust line was created with the issuing account.
     assert.equal(createdTrustLine.account, classicAddress.address)
@@ -444,30 +482,30 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   it('createTrustLine - adding a trustline with non-zero value and qualityIn + qualityOut', async function (): Promise<void> {
     this.timeout(timeoutMs)
-    const issuer = await XRPTestUtils.randomWalletFromFaucet()
-
     const trustLineLimit = '1'
     const trustLineCurrency = 'USD'
     const qualityInAmount = 20
     const qualityOutAmount = 100
 
     // GIVEN an existing testnet account and an issuer's wallet
+    const freshWallet = await XRPTestUtils.randomWalletFromFaucet()
+
     // WHEN a trustline is created with the issuer with a positive value
     await issuedCurrencyClient.createTrustLine(
-      issuer.getAddress(),
+      issuerWallet.getAddress(),
       trustLineCurrency,
       trustLineLimit,
-      wallet,
+      freshWallet,
       qualityInAmount,
       qualityOutAmount,
     )
 
     const trustLines = await issuedCurrencyClient.getTrustLines(
-      wallet.getAddress(),
+      freshWallet.getAddress(),
     )
 
     const [createdTrustLine] = trustLines
-    const classicAddress = XrpUtils.decodeXAddress(issuer.getAddress())!
+    const classicAddress = XrpUtils.decodeXAddress(issuerWallet.getAddress())!
 
     // THEN a trust line was created with the issuing account.
     assert.equal(createdTrustLine.account, classicAddress.address)
@@ -479,23 +517,23 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   it('authorizeTrustLine - valid account', async function (): Promise<void> {
     this.timeout(timeoutMs)
-    const issuer = await XRPTestUtils.randomWalletFromFaucet()
-    const accountToTrust = await XRPTestUtils.randomWalletFromFaucet()
-
     // GIVEN an existing testnet account requiring authorized trust lines
     // and another account
-    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
+    const accountToTrust = await XRPTestUtils.randomWalletFromFaucet()
+    await issuedCurrencyClient.requireAuthorizedTrustlines(
+      issuerWalletAuthTrustLines,
+    )
 
     const trustLineCurrency = 'USD'
     // WHEN a trust line is authorized with another account
     await issuedCurrencyClient.authorizeTrustLine(
       accountToTrust.getAddress(),
       'USD',
-      issuer,
+      issuerWalletAuthTrustLines,
     )
 
     const trustLines = await issuedCurrencyClient.getTrustLines(
-      issuer.getAddress(),
+      issuerWalletAuthTrustLines.getAddress(),
     )
 
     const [createdTrustLine] = trustLines
@@ -510,31 +548,28 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   it('freezeTrustLine', async function (): Promise<void> {
     this.timeout(timeoutMs)
-    const issuer = await XRPTestUtils.randomWalletFromFaucet()
-    const accountToTrust = await XRPTestUtils.randomWalletFromFaucet()
-
     // GIVEN an existing issuer account who has a trustline with a counter-party
-    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
-
-    const trustLineCurrency = 'USD'
+    const trustLineCurrency = 'NEW'
     await issuedCurrencyClient.authorizeTrustLine(
-      accountToTrust.getAddress(),
+      walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
-      issuer,
+      issuerWalletAuthTrustLines,
     )
 
     // WHEN the issuer freezes the trustline
     await issuedCurrencyClient.freezeTrustLine(
-      accountToTrust.getAddress(),
+      walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
-      issuer,
+      issuerWalletAuthTrustLines,
     )
 
     const trustLines = await issuedCurrencyClient.getTrustLines(
-      issuer.getAddress(),
+      issuerWalletAuthTrustLines.getAddress(),
     )
 
-    const [frozenTrustLine] = trustLines
+    const frozenTrustLine = trustLines.find(
+      (trustLine) => trustLine.currency === trustLineCurrency,
+    )!
 
     // THEN the trust line is frozen.
     assert.equal(frozenTrustLine.freeze, true)
@@ -543,127 +578,97 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   it('unfreezeTrustLine - unfreezes frozen account', async function (): Promise<void> {
     this.timeout(timeoutMs)
-    const issuer = await XRPTestUtils.randomWalletFromFaucet()
-    const accountToUnfreeze = await XRPTestUtils.randomWalletFromFaucet()
-
     // GIVEN an existing issuer account who has a frozen trust line with a counter-party
-    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
-
-    const trustLineCurrency = 'USD'
+    const trustLineCurrency = 'FRZ'
     await issuedCurrencyClient.authorizeTrustLine(
-      accountToUnfreeze.getAddress(),
+      walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
-      issuer,
+      issuerWalletAuthTrustLines,
     )
 
     await issuedCurrencyClient.freezeTrustLine(
-      accountToUnfreeze.getAddress(),
+      walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
-      issuer,
+      issuerWalletAuthTrustLines,
     )
 
     // WHEN the issuer unfreezes the trustline
     await issuedCurrencyClient.unfreezeTrustLine(
-      accountToUnfreeze.getAddress(),
+      walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
-      issuer,
+      issuerWalletAuthTrustLines,
     )
 
     const trustLines = await issuedCurrencyClient.getTrustLines(
-      issuer.getAddress(),
+      issuerWalletAuthTrustLines.getAddress(),
     )
 
-    const [unfrozenTrustLine] = trustLines
+    const unfrozenTrustLine = trustLines.find(
+      (trustLine) => trustLine.currency === trustLineCurrency,
+    )!
 
     // THEN the trust line is not frozen.
     assert.equal(unfrozenTrustLine.freeze, false)
     assert.equal(unfrozenTrustLine.limit, '0')
   })
 
-  it('disableRipplingForTrustLine - sets no rippling on trust line', async function (): Promise<void> {
+  it('disableRipplingForTrustLine/enableRipplingForTrustLine', async function (): Promise<void> {
     this.timeout(timeoutMs)
-    const issuer = await XRPTestUtils.randomWalletFromFaucet()
-    const trustLinePeerAccount = await XRPTestUtils.randomWalletFromFaucet()
-
     // GIVEN an existing issuer account who has a trust line with a counter-party
-    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
-
-    const trustLineCurrency = 'USD'
+    const trustLineCurrency = 'NRP'
     await issuedCurrencyClient.authorizeTrustLine(
-      trustLinePeerAccount.getAddress(),
+      walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
-      issuer,
+      issuerWalletAuthTrustLines,
     )
 
     const trustLineAmount = '1'
 
     // WHEN the issuer sets no rippling on the trust line
     await issuedCurrencyClient.disableRipplingForTrustLine(
-      trustLinePeerAccount.getAddress(),
+      walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
       trustLineAmount,
-      issuer,
+      issuerWalletAuthTrustLines,
     )
 
-    const trustLines = await issuedCurrencyClient.getTrustLines(
-      issuer.getAddress(),
+    let trustLines = await issuedCurrencyClient.getTrustLines(
+      issuerWalletAuthTrustLines.getAddress(),
     )
 
-    const [trustLine] = trustLines
+    const noRippleTrustLine = trustLines.find(
+      (trustLine) => trustLine.currency === trustLineCurrency,
+    )!
 
     // THEN the trust line has noRipple enabled.
-    assert.equal(trustLine.noRipple, true)
-    assert.equal(trustLine.limit, trustLineAmount)
-  })
+    assert.equal(noRippleTrustLine.noRipple, true)
+    assert.equal(noRippleTrustLine.limit, trustLineAmount)
 
-  it('enableRipplingForTrustLine - clears noRipple on a trust line', async function (): Promise<void> {
-    this.timeout(timeoutMs)
-    const issuer = await XRPTestUtils.randomWalletFromFaucet()
-    const trustLinePeerAccount = await XRPTestUtils.randomWalletFromFaucet()
-
-    // GIVEN an existing issuer account who has a trust line with a counter-party,
-    // with noRipple set
-    await issuedCurrencyClient.requireAuthorizedTrustlines(issuer)
-
-    const trustLineCurrency = 'USD'
-    await issuedCurrencyClient.authorizeTrustLine(
-      trustLinePeerAccount.getAddress(),
-      trustLineCurrency,
-      issuer,
-    )
-
-    const trustLineAmount = '1'
-
-    await issuedCurrencyClient.disableRipplingForTrustLine(
-      trustLinePeerAccount.getAddress(),
-      trustLineCurrency,
-      trustLineAmount,
-      issuer,
-    )
-
-    // WHEN the issuer sets clears no rippling on the trust line
+    // WHEN the issuer re-enables rippling on the trust line
     await issuedCurrencyClient.enableRipplingForTrustLine(
-      trustLinePeerAccount.getAddress(),
+      walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
       trustLineAmount,
-      issuer,
+      issuerWalletAuthTrustLines,
     )
 
-    const trustLines = await issuedCurrencyClient.getTrustLines(
-      issuer.getAddress(),
+    trustLines = await issuedCurrencyClient.getTrustLines(
+      issuerWalletAuthTrustLines.getAddress(),
     )
 
-    const [trustLine] = trustLines
+    const enabledRippleTrustLine = trustLines.find(
+      (trustLine) => trustLine.currency === trustLineCurrency,
+    )!
 
     // THEN the trust line has noRipple enabled.
-    assert.equal(trustLine.noRipple, false)
-    assert.equal(trustLine.limit, trustLineAmount)
+    assert.equal(enabledRippleTrustLine.noRipple, false)
+    assert.equal(enabledRippleTrustLine.limit, trustLineAmount)
   })
 
   it('monitorAccountTransactions/stopMonitoringAccountTransactions - valid request', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const xAddress = wallet.getAddress()
+    const xAddress = walletNeverAnyTrustLines.getAddress()
     const classicAddress = XrpUtils.decodeXAddress(xAddress)
     const address = classicAddress!.address
 
@@ -709,7 +714,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.isTrue(response)
 
     // WHEN a payment is sent to that address
-    await xrpClient.sendXrp(xrpAmount, xAddress, wallet2)
+    await xrpClient.sendXrp(xrpAmount, xAddress, walletMightHaveTrustLines)
 
     await waitUntilMessageReceived()
 
@@ -725,7 +730,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.isTrue(unsubscribeResponse)
 
     // WHEN a payment is sent to that address
-    await xrpClient.send(xrpAmount, xAddress, wallet2)
+    await xrpClient.sendXrp(xrpAmount, xAddress, walletMightHaveTrustLines)
 
     // THEN the payment is not received by the callback
     // (If a payment is received, fail will be called in the callback)
@@ -752,7 +757,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   it('stopMonitoringAccountTransactions - not-subscribed address', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    const xAddress = wallet2.getAddress()
+    const xAddress = walletNeverAnyTrustLines.getAddress()
     const classicAddress = XrpUtils.decodeXAddress(xAddress)
     const address = classicAddress!.address
 
@@ -788,12 +793,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   it('createOffer - success, taker gets issued currency taker pays xrp', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
-    // Note that this integration test:
-    // - doesn't enable rippling on the issuer
-    // - doesn't use a pre-existing issued currency, but the txn signer and the issuer are the same
-    // - seems to succeed anyway, confirmed with look on testnet explorer
-
-    const issuerClassicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
+    // GIVEN a funded issuer wallet
+    const issuerClassicAddress = XrpUtils.decodeXAddress(
+      issuerWallet.getAddress(),
+    )
     if (!issuerClassicAddress) {
       throw XrpError.xAddressRequired
     }
@@ -813,14 +816,16 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       currentTimeUnixEpochSeconds - rippleEpochStartTimeSeconds
     const expiration = currentTimeRippleEpochSeconds + 60 * 60 // roughly one hour in future
 
+    // WHEN the issuer creates an offer to exchange XRP for their issued currency
     const transactionResult = await issuedCurrencyClient.createOffer(
-      wallet,
+      issuerWallet,
       takerGetsIssuedCurrency,
       takerPaysXrp,
       offerSequenceNumber,
       expiration,
     )
 
+    // THEN the offer is successfully created.
     // TODO: confirm success using book_offers or account_offers API when implemented?
     assert.equal(transactionResult.status, TransactionStatus.Succeeded)
     assert.equal(transactionResult.validated, true)
@@ -829,14 +834,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   it('createOffer - success, taker gets xrp taker pays issued currency', async function (): Promise<void> {
     this.timeout(timeoutMs)
-
-    // Note that this integration test:
-    // - doesn't enable rippling on the issuer
-    // - doesn't use a pre-existing issued currency, but the txn signer and the issuer are the same
-    // - seems to succeed anyway, confirmed with look on testnet explorer
-
-    // Can we create offers with currency that we ourselves issue? / haven't yet issued?
-    const issuerClassicAddress = XrpUtils.decodeXAddress(wallet.getAddress())
+    // GIVEN a wallet with XRP
+    const issuerClassicAddress = XrpUtils.decodeXAddress(
+      issuerWallet.getAddress(),
+    )
     if (!issuerClassicAddress) {
       throw XrpError.xAddressRequired
     }
@@ -856,14 +857,16 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       currentTimeUnixEpochSeconds - rippleEpochStartTimeSeconds
     const expiration = currentTimeRippleEpochSeconds + 60 * 60 // roughly one hour in future
 
+    // WHEN the wallet creates an offer to exchange (receive) their own issued currency for their XRP (deliver)
     const transactionResult = await issuedCurrencyClient.createOffer(
-      wallet,
+      issuerWallet,
       takerGetsXrp,
       takerPaysIssuedCurrency,
       offerSequenceNumber,
       expiration,
     )
 
+    // THEN the offer is successfully created.
     // TODO: confirm success using book_offers or account_offers API when implemented?
     assert.equal(transactionResult.status, TransactionStatus.Succeeded)
     assert.equal(transactionResult.validated, true)
@@ -876,10 +879,12 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const offerSequenceNumber = 1
 
     const transactionResult = await issuedCurrencyClient.cancelOffer(
-      wallet,
+      issuerWallet,
       offerSequenceNumber,
     )
 
+    // TODO: verify this better? An OfferCancel transaction is considered successful even if there was no offer to cancel.
+    // At least we know it's well-formed.
     assert.equal(transactionResult.status, TransactionStatus.Succeeded)
     assert.equal(transactionResult.validated, true)
     assert.equal(transactionResult.final, true)
