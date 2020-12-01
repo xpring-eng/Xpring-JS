@@ -2,7 +2,6 @@ module.exports = {
   root: true,
 
   parser: '@typescript-eslint/parser', // Make ESLint compatible with TypeScript
-  // ignorePatterns: ['.eslintrc.js'],
   parserOptions: {
     // Enable linting rules with type information from our tsconfig
     tsconfigRootDir: __dirname,
