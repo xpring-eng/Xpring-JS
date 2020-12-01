@@ -8,6 +8,7 @@ import TransactionStatus from '../../src/XRP/shared/transaction-status'
 import { testXrpTransaction } from './fakes/fake-xrp-protobufs'
 import TransactionResult from '../../src/XRP/shared/transaction-result'
 import FakeCoreXrplClient from './fakes/fake-core-xrpl-client'
+import XRPTestUtils from './helpers/xrp-test-utils'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -98,7 +99,7 @@ describe('Reliable Submission XRP Client', function (): void {
     setTimeout(() => {
       this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
 
     // WHEN a reliable send is submitted
     const transactionResult = await this.reliableSubmissionClient.sendXrp(
@@ -129,7 +130,7 @@ describe('Reliable Submission XRP Client', function (): void {
     setTimeout(() => {
       this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
 
     // WHEN enableDepositAuth is called
     const result = await this.reliableSubmissionClient.enableDepositAuth(wallet)
@@ -146,7 +147,7 @@ describe('Reliable Submission XRP Client', function (): void {
     setTimeout(() => {
       this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
 
     // WHEN authorizeSendingAccount is called
     const result = await this.reliableSubmissionClient.authorizeSendingAccount(
@@ -166,7 +167,7 @@ describe('Reliable Submission XRP Client', function (): void {
     setTimeout(() => {
       this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
 
     // WHEN unauthorizeSendingAccount is called
     const result = await this.reliableSubmissionClient.unauthorizeSendingAccount(

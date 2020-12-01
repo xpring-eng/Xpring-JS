@@ -285,7 +285,7 @@ describe('Default XRP Client', function (): void {
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
     const memoList = [iForgotToPickUpCarlMemo]
@@ -313,7 +313,7 @@ describe('Default XRP Client', function (): void {
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
 
@@ -339,7 +339,7 @@ describe('Default XRP Client', function (): void {
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = 10
 
@@ -365,7 +365,7 @@ describe('Default XRP Client', function (): void {
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = '10'
 
@@ -385,13 +385,13 @@ describe('Default XRP Client', function (): void {
     assert.strictEqual(transactionResult.hash, expectedTransactionHash)
   })
 
-  it('Send XRP Transaction - failure with invalid string', function (done) {
+  it('Send XRP Transaction - failure with invalid string', async function (done) {
     // GIVEN a DefaultXrpClient, a wallet and an amount that is invalid.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = 'not_a_number'
 
@@ -402,7 +402,7 @@ describe('Default XRP Client', function (): void {
     })
   })
 
-  it('Send XRP Transaction - get fee failure', function (done) {
+  it('Send XRP Transaction - get fee failure', async function (done) {
     // GIVEN a DefaultXrpClient which will fail to retrieve a fee.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -416,7 +416,7 @@ describe('Default XRP Client', function (): void {
       feeFailingNetworkClient,
       XrplNetwork.Test,
     )
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
 
@@ -431,13 +431,13 @@ describe('Default XRP Client', function (): void {
     })
   })
 
-  it('Send XRP Transaction - failure with classic address', function (done) {
+  it('Send XRP Transaction - failure with classic address', async function (done) {
     // GIVEN a DefaultXrpClient, a wallet, and a classic address as the destination.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
     const destinationAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
     const amount = bigInt('10')
 
@@ -448,7 +448,7 @@ describe('Default XRP Client', function (): void {
     })
   })
 
-  it('Send XRP Transaction - get account info failure', function (done) {
+  it('Send XRP Transaction - get account info failure', async function (done) {
     // GIVEN a DefaultXrpClient which will fail to retrieve account info.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultError,
@@ -462,7 +462,7 @@ describe('Default XRP Client', function (): void {
       feeFailingNetworkClient,
       XrplNetwork.Test,
     )
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
 
@@ -473,7 +473,7 @@ describe('Default XRP Client', function (): void {
     })
   })
 
-  it('Send XRP Transaction - submission failure', function (done) {
+  it('Send XRP Transaction - submission failure', async function (done) {
     // GIVEN a DefaultXrpClient which will fail to submit a transaction.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -487,7 +487,7 @@ describe('Default XRP Client', function (): void {
       feeFailingNetworkClient,
       XrplNetwork.Test,
     )
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
 
@@ -781,7 +781,7 @@ describe('Default XRP Client', function (): void {
       XrplNetwork.Test,
     )
 
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
 
     // WHEN enableDepositAuth is called
     const result = await xrpClient.enableDepositAuth(wallet)
@@ -796,7 +796,7 @@ describe('Default XRP Client', function (): void {
     assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
-  it('Enable Deposit Auth - submission failure', function (done): void {
+  it('Enable Deposit Auth - submission failure', async function (done): Promise<void> {
     // GIVEN a DefaultXrpClient which will fail to submit a transaction.
     const failureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -808,7 +808,7 @@ describe('Default XRP Client', function (): void {
       failingNetworkClient,
       XrplNetwork.Test,
     )
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
 
     // WHEN enableDepositAuth is attempted THEN an error is propagated.
     xrpClient.enableDepositAuth(wallet).catch((error) => {
@@ -826,7 +826,7 @@ describe('Default XRP Client', function (): void {
 
     const xAddressToAuthorize =
       'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
 
     // WHEN authorizeSendingAccount is called.
     const result = await xrpClient.authorizeSendingAccount(
@@ -844,7 +844,7 @@ describe('Default XRP Client', function (): void {
     assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
-  it('authorizeSendingAccount - submission failure', function (done): void {
+  it('authorizeSendingAccount - submission failure', async function (done): Promise<void> {
     // GIVEN a DefaultXrpClient which will fail to submit a transaction.
     const failureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -859,7 +859,7 @@ describe('Default XRP Client', function (): void {
 
     const xAddressToAuthorize =
       'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
 
     // WHEN authorizeSendingAccount is attempted THEN an error is propagated.
     xrpClient
@@ -870,7 +870,7 @@ describe('Default XRP Client', function (): void {
       })
   })
 
-  it('authorizeSendingAccount - failure with malformed sender X-Address', function (done): void {
+  it('authorizeSendingAccount - failure with malformed sender X-Address', async function (done): Promise<void> {
     // GIVEN a DefaultXrpClient with mocked networking.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
@@ -878,7 +878,7 @@ describe('Default XRP Client', function (): void {
     )
 
     const xAddressToAuthorize = 'notanxaddress'
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
 
     // WHEN authorizeSendingAccount is attempted THEN an error is propagated.
     xrpClient
@@ -898,7 +898,7 @@ describe('Default XRP Client', function (): void {
 
     const xAddressToUnauthorize =
       'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
 
     // WHEN unauthorizeSendingAccount is called.
     const result = await xrpClient.unauthorizeSendingAccount(
@@ -916,7 +916,7 @@ describe('Default XRP Client', function (): void {
     assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
-  it('unauthorizeSendingAccount - submission failure', function (done): void {
+  it('unauthorizeSendingAccount - submission failure', async function (done): Promise<void> {
     // GIVEN a DefaultXrpClient which will fail to submit a transaction.
     const failureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -931,7 +931,7 @@ describe('Default XRP Client', function (): void {
 
     const xAddressToUnauthorize =
       'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
 
     // WHEN unauthorizeSendingAccount is attempted THEN an error is propagated.
     xrpClient
@@ -942,7 +942,7 @@ describe('Default XRP Client', function (): void {
       })
   })
 
-  it('unauthorizeSendingAccount - failure with malformed sender X-Address', function (done): void {
+  it('unauthorizeSendingAccount - failure with malformed sender X-Address', async function (done): Promise<void> {
     // GIVEN a DefaultXrpClient with mocked networking
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
@@ -950,7 +950,7 @@ describe('Default XRP Client', function (): void {
     )
 
     const xAddressToUnauthorize = 'notanxaddress'
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = await XRPTestUtils.randomWalletFromFaucet()
 
     // WHEN unauthorizeSendingAccount is attempted THEN an error is propagated.
     xrpClient
