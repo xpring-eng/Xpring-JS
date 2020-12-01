@@ -56,9 +56,7 @@ describe('WebSocket Tests', function (): void {
     done()
   })
 
-  it('subscribeToAccount/unsubscribeFromAccount - valid request', async function (): Promise<
-    void
-  > {
+  it('subscribeToAccount/unsubscribeFromAccount - valid request', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const xrpAmount = '100'
@@ -152,9 +150,7 @@ describe('WebSocket Tests', function (): void {
     }
   })
 
-  it('unsubscribeFromAccount - not-subscribed address', async function (): Promise<
-    void
-  > {
+  it('unsubscribeFromAccount - not-subscribed address', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // GIVEN a test address that is not subscribed to.
@@ -275,9 +271,7 @@ describe('WebSocket Tests', function (): void {
     assert.equal(errorResponse.error, RippledErrorMessages.accountNotFound)
   })
 
-  it('findRipplePath - success, mandatory fields', async function (): Promise<
-    void
-  > {
+  it('findRipplePath - success, mandatory fields', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
@@ -311,9 +305,7 @@ describe('WebSocket Tests', function (): void {
     assert.include(result.destination_currencies, 'XRP')
   })
 
-  it('findRipplePath - failure, both sendMax and sourceCurrencies', async function (): Promise<
-    void
-  > {
+  it('findRipplePath - failure, both sendMax and sourceCurrencies', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
@@ -347,9 +339,7 @@ describe('WebSocket Tests', function (): void {
     }
   })
 
-  it('findRipplePath - successful direct path', async function (): Promise<
-    void
-  > {
+  it('findRipplePath - successful direct path', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const sourceAddress = XrpUtils.decodeXAddress(wallet.getAddress())!.address
@@ -395,9 +385,7 @@ describe('WebSocket Tests', function (): void {
     assert(result.alternatives.length >= 1)
   })
 
-  it('findRipplePath - successful path through issuers own offer', async function (): Promise<
-    void
-  > {
+  it('findRipplePath - successful path through issuers own offer', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
 
@@ -471,9 +459,7 @@ describe('WebSocket Tests', function (): void {
     assert(result.alternatives.length >= 1)
   })
 
-  it('findRipplePath - successful path through third-party offer', async function (): Promise<
-    void
-  > {
+  it('findRipplePath - successful path through third-party offer', async function (): Promise<void> {
     this.timeout(timeoutMs)
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
     const offerCreatorWallet = await XRPTestUtils.randomWalletFromFaucet()
