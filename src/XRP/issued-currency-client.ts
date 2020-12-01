@@ -917,12 +917,25 @@ export default class IssuedCurrencyClient {
 
     // Both source amount and deliver amount can't both be XRP:
     if (
-      typeof deliverAmount == 'string' &&
-      typeof maxSourceAmount == 'string'
+      typeof deliverAmount === 'string' &&
+      typeof maxSourceAmount === 'string'
     ) {
       throw new XrpError(
         XrpErrorType.InvalidInput,
         'A Cross Currency payment should involve at least one issued currency.',
+      )
+    }
+    if (
+      this.instanceOfIssuedCurrency(deliverAmount) &&
+      this.instanceOfIssuedCurrency(maxSourceAmount) &&
+      (deliverAmount as IssuedCurrency).currency ===
+        (maxSourceAmount as IssuedCurrency).currency &&
+      (deliverAmount as IssuedCurrency).issuer ===
+        (maxSourceAmount as IssuedCurrency).issuer
+    ) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'A Cross Currency payment must specify different currencies for deliverAmount and maxSourceAmount.',
       )
     }
 
@@ -1345,5 +1358,15 @@ export default class IssuedCurrencyClient {
     const amountProto = new Amount()
     amountProto.setValue(currencyAmount)
     return amountProto
+  }
+
+  /**
+   * A type guard for the IssuedCurrency interface.
+   *
+   * @param object The object to check for conformance to the IssuedCurrency interface.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private instanceOfIssuedCurrency(object: any): boolean {
+    return 'currency' in object && 'issuer' in object && 'value' in object
   }
 }
