@@ -2,7 +2,7 @@
 import { assert } from 'chai'
 
 import bigInt from 'big-integer'
-import { Utils, Wallet, XrplNetwork } from 'xpring-common-js'
+import { Utils, XrplNetwork } from 'xpring-common-js'
 import { StatusCode as grpcStatusCode } from 'grpc-web'
 import FakeGRPCError from '../Common/Fakes/fake-grpc-error'
 import XRPTestUtils, { iForgotToPickUpCarlMemo } from './helpers/xrp-test-utils'

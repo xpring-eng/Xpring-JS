@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { Wallet, XrplNetwork } from 'xpring-common-js'
+import { XrplNetwork } from 'xpring-common-js'
 import bigInt from 'big-integer'
 import FakeXrpClient from './fakes/fake-xrp-client'
 import ReliableSubmissionXrpClient from '../../src/XRP/reliable-submission-xrp-client'
