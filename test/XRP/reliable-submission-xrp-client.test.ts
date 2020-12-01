@@ -93,7 +93,7 @@ describe('Reliable Submission XRP Client', function (): void {
 
   it('sendXrp - Returns when the transaction is validated', async function () {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
-    this.timeout(5000)
+    this.timeout(10000)
 
     // GIVEN A transaction that will validate itself in 200ms.
     setTimeout(() => {
@@ -124,7 +124,7 @@ describe('Reliable Submission XRP Client', function (): void {
 
   it('enableDepositAuth - Returns when the transaction is validated', async function () {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
-    this.timeout(5000)
+    this.timeout(10000)
 
     // GIVEN A transaction that will validate itself in 200ms.
     setTimeout(() => {
@@ -141,7 +141,7 @@ describe('Reliable Submission XRP Client', function (): void {
 
   it('authorizeSendingAccount - Returns when the transaction is validated', async function () {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
-    this.timeout(5000)
+    this.timeout(10000)
 
     // GIVEN A transaction that will validate itself in 200ms.
     setTimeout(() => {
@@ -161,7 +161,7 @@ describe('Reliable Submission XRP Client', function (): void {
 
   it('unauthorizeSendingAccount - Returns when the transaction is validated', async function () {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
-    this.timeout(5000)
+    this.timeout(10000)
 
     // GIVEN A transaction that will validate itself in 200ms.
     setTimeout(() => {
