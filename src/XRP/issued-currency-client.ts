@@ -819,9 +819,8 @@ export default class IssuedCurrencyClient {
     // set to the address of the account initiating the redemption.
     // See: https://xrpl.org/payment.html#special-issuer-values-for-sendmax-and-amount
     const specialIssuedCurrency: IssuedCurrency = {
-      currency: issuedCurrency.currency,
+      ...issuedCurrency,
       issuer: sender.getAddress(),
-      value: issuedCurrency.value,
     }
     return this.issuedCurrencyPayment(
       sender,
