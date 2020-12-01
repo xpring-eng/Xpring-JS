@@ -385,7 +385,7 @@ describe('Default XRP Client', function (): void {
     assert.strictEqual(transactionResult.hash, expectedTransactionHash)
   })
 
-  it('Send XRP Transaction - failure with invalid string', async function (done) {
+  it('Send XRP Transaction - failure with invalid string', async function () {
     // GIVEN a DefaultXrpClient, a wallet and an amount that is invalid.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
@@ -398,11 +398,10 @@ describe('Default XRP Client', function (): void {
     // WHEN the account makes a transaction THEN an error is propagated.
     xrpClient.sendXrp(amount, destinationAddress, wallet).catch((error) => {
       assert.typeOf(error, 'Error')
-      done()
     })
   })
 
-  it('Send XRP Transaction - get fee failure', async function (done) {
+  it('Send XRP Transaction - get fee failure', async function () {
     // GIVEN a DefaultXrpClient which will fail to retrieve a fee.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -427,11 +426,10 @@ describe('Default XRP Client', function (): void {
         error.message,
         FakeXRPNetworkClientResponses.defaultError.message,
       )
-      done()
     })
   })
 
-  it('Send XRP Transaction - failure with classic address', async function (done) {
+  it('Send XRP Transaction - failure with classic address', async function () {
     // GIVEN a DefaultXrpClient, a wallet, and a classic address as the destination.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
@@ -444,11 +442,10 @@ describe('Default XRP Client', function (): void {
     // WHEN the account makes a transaction THEN an error is thrown.
     xrpClient.sendXrp(amount, destinationAddress, wallet).catch((error) => {
       assert.equal((error as XrpError).errorType, XrpErrorType.XAddressRequired)
-      done()
     })
   })
 
-  it('Send XRP Transaction - get account info failure', async function (done) {
+  it('Send XRP Transaction - get account info failure', async function () {
     // GIVEN a DefaultXrpClient which will fail to retrieve account info.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultError,
@@ -469,11 +466,10 @@ describe('Default XRP Client', function (): void {
     // WHEN a payment is attempted THEN an error is propagated.
     xrpClient.sendXrp(amount, destinationAddress, wallet).catch((error) => {
       assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
-      done()
     })
   })
 
-  it('Send XRP Transaction - submission failure', async function (done) {
+  it('Send XRP Transaction - submission failure', async function () {
     // GIVEN a DefaultXrpClient which will fail to submit a transaction.
     const feeFailureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -494,7 +490,6 @@ describe('Default XRP Client', function (): void {
     // WHEN a payment is attempted THEN an error is propagated.
     xrpClient.sendXrp(amount, destinationAddress, wallet).catch((error) => {
       assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
-      done()
     })
   })
 
@@ -796,7 +791,7 @@ describe('Default XRP Client', function (): void {
     assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
-  it('Enable Deposit Auth - submission failure', async function (done): Promise<void> {
+  it('Enable Deposit Auth - submission failure', async function () {
     // GIVEN a DefaultXrpClient which will fail to submit a transaction.
     const failureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -813,7 +808,6 @@ describe('Default XRP Client', function (): void {
     // WHEN enableDepositAuth is attempted THEN an error is propagated.
     xrpClient.enableDepositAuth(wallet).catch((error) => {
       assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
-      done()
     })
   })
 
@@ -844,7 +838,7 @@ describe('Default XRP Client', function (): void {
     assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
-  it('authorizeSendingAccount - submission failure', async function (done): Promise<void> {
+  it('authorizeSendingAccount - submission failure', async function () {
     // GIVEN a DefaultXrpClient which will fail to submit a transaction.
     const failureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -866,11 +860,10 @@ describe('Default XRP Client', function (): void {
       .authorizeSendingAccount(xAddressToAuthorize, wallet)
       .catch((error) => {
         assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
-        done()
       })
   })
 
-  it('authorizeSendingAccount - failure with malformed sender X-Address', async function (done): Promise<void> {
+  it('authorizeSendingAccount - failure with malformed sender X-Address', async function () {
     // GIVEN a DefaultXrpClient with mocked networking.
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
@@ -885,7 +878,6 @@ describe('Default XRP Client', function (): void {
       .authorizeSendingAccount(xAddressToAuthorize, wallet)
       .catch((error) => {
         assert.deepEqual(error, XrpError.xAddressRequired)
-        done()
       })
   })
 
@@ -916,7 +908,7 @@ describe('Default XRP Client', function (): void {
     assert.strictEqual(transactionHash, expectedTransactionHash)
   })
 
-  it('unauthorizeSendingAccount - submission failure', async function (done): Promise<void> {
+  it('unauthorizeSendingAccount - submission failure', async function () {
     // GIVEN a DefaultXrpClient which will fail to submit a transaction.
     const failureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -938,11 +930,10 @@ describe('Default XRP Client', function (): void {
       .unauthorizeSendingAccount(xAddressToUnauthorize, wallet)
       .catch((error) => {
         assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
-        done()
       })
   })
 
-  it('unauthorizeSendingAccount - failure with malformed sender X-Address', async function (done): Promise<void> {
+  it('unauthorizeSendingAccount - failure with malformed sender X-Address', async function () {
     // GIVEN a DefaultXrpClient with mocked networking
     const xrpClient = new DefaultXrpClient(
       fakeSucceedingNetworkClient,
@@ -957,7 +948,6 @@ describe('Default XRP Client', function (): void {
       .unauthorizeSendingAccount(xAddressToUnauthorize, wallet)
       .catch((error) => {
         assert.deepEqual(error, XrpError.xAddressRequired)
-        done()
       })
   })
 })
