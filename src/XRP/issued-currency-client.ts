@@ -43,7 +43,6 @@ import {
   TransactionResponse,
   GatewayBalancesResponse,
   GatewayBalancesSuccessfulResponse,
-  IssuedCurrency,
   RipplePathFindSuccessfulResponse,
   PathElement,
   ResponseStatus,
@@ -64,7 +63,7 @@ import {
   OfferCancel,
   OfferCreate,
 } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/transaction_pb'
-// import { IssuedCurrency as IssuedCurrencyInterface } from './shared/issued-currency'
+import IssuedCurrency from './shared/issued-currency'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
