@@ -904,10 +904,6 @@ export default class IssuedCurrencyClient {
       )
     }
 
-    // TODO: verify address formats for issuers in IssuedCurrency specifications.  They need to be classic addresses.
-    //        Do we want to take them in as classic addresses?? Or force them to be X-addresses like elsewhere?
-    // TODO: (acorso) we don't need to convert back to a classic address once the ripple-binary-codec supports X-addresses for issued currencies.
-
     // Both source amount and deliver amount can't both be XRP:
     if (
       XrpUtils.isString(deliverAmount) &&
