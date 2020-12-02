@@ -540,6 +540,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
         deliverAmount,
       )
     } catch (error) {
+      console.log(error)
       assert(error instanceof XrpError)
       assert(
         error.message == 'No paths exist to execute cross-currency payment.',
