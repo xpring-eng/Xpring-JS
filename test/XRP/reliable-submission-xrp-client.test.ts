@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { Wallet, XrplNetwork } from 'xpring-common-js'
+import { WalletFactory, XrplNetwork } from 'xpring-common-js'
 import bigInt from 'big-integer'
 import FakeXrpClient from './fakes/fake-xrp-client'
 import ReliableSubmissionXrpClient from '../../src/XRP/reliable-submission-xrp-client'
@@ -34,6 +34,8 @@ const fakedTransactionResultValue = TransactionResult.createFinalTransactionResu
   TransactionStatus.Succeeded,
   true,
 )
+
+const walletFactory = new WalletFactory(XrplNetwork.Test)
 
 describe('Reliable Submission XRP Client', function (): void {
   beforeEach(function () {
@@ -92,13 +94,13 @@ describe('Reliable Submission XRP Client', function (): void {
 
   it('sendXrp - Returns when the transaction is validated', async function () {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
-    this.timeout(5000)
+    this.timeout(10000)
 
     // GIVEN A transaction that will validate itself in 200ms.
     setTimeout(() => {
       this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = (await walletFactory.generateRandomWallet())!.wallet
 
     // WHEN a reliable send is submitted
     const transactionResult = await this.reliableSubmissionClient.sendXrp(
@@ -123,13 +125,13 @@ describe('Reliable Submission XRP Client', function (): void {
 
   it('enableDepositAuth - Returns when the transaction is validated', async function () {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
-    this.timeout(5000)
+    this.timeout(10000)
 
     // GIVEN A transaction that will validate itself in 200ms.
     setTimeout(() => {
       this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = (await walletFactory.generateRandomWallet())!.wallet
 
     // WHEN enableDepositAuth is called
     const result = await this.reliableSubmissionClient.enableDepositAuth(wallet)
@@ -140,13 +142,13 @@ describe('Reliable Submission XRP Client', function (): void {
 
   it('authorizeSendingAccount - Returns when the transaction is validated', async function () {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
-    this.timeout(5000)
+    this.timeout(10000)
 
     // GIVEN A transaction that will validate itself in 200ms.
     setTimeout(() => {
       this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = (await walletFactory.generateRandomWallet())!.wallet
 
     // WHEN authorizeSendingAccount is called
     const result = await this.reliableSubmissionClient.authorizeSendingAccount(
@@ -160,13 +162,13 @@ describe('Reliable Submission XRP Client', function (): void {
 
   it('unauthorizeSendingAccount - Returns when the transaction is validated', async function () {
     // Increase timeout because `setTimeout` is only accurate to 1500ms.
-    this.timeout(5000)
+    this.timeout(10000)
 
     // GIVEN A transaction that will validate itself in 200ms.
     setTimeout(() => {
       this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
-    const { wallet } = Wallet.generateRandomWallet()!
+    const wallet = (await walletFactory.generateRandomWallet())!.wallet
 
     // WHEN unauthorizeSendingAccount is called
     const result = await this.reliableSubmissionClient.unauthorizeSendingAccount(
