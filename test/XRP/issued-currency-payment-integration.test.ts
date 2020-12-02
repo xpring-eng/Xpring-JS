@@ -215,12 +215,15 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // WHEN an issued currency payment is made to another funded account
+    const issuedCurrency: IssuedCurrency = {
+      currency: trustLineCurrency,
+      issuer: issuerWalletNoRippling.getAddress(),
+      value: '100',
+    }
     const transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       operationalWallet,
       customerWallet1.getAddress(),
-      trustLineCurrency,
-      issuerWalletNoRippling.getAddress(),
-      '100',
+      issuedCurrency,
     )
 
     // THEN the payment fails with CalimedCostOnly_PathDry
@@ -247,12 +250,15 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // WHEN an issued currency payment is made to another funded account
+    const issuedCurrency: IssuedCurrency = {
+      currency: currencyNameFOO,
+      issuer: issuerWalletFOO.getAddress(),
+      value: '100',
+    }
     const transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       customerWallet1,
       customerWallet2.getAddress(),
-      currencyNameFOO,
-      issuerWalletFOO.getAddress(),
-      '100',
+      issuedCurrency,
     )
 
     // THEN the transaction succeeds.
@@ -303,12 +309,16 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // WHEN an issued currency payment is made to another funded account, without the transferFee argument supplied
+    const issuedCurrency: IssuedCurrency = {
+      currency: currencyNameFOO,
+      issuer: issuerWalletWithTransferFee.getAddress(),
+      value: '100',
+    }
+
     let transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       customerWallet1,
       customerWallet2.getAddress(),
-      currencyNameFOO,
-      issuerWalletWithTransferFee.getAddress(),
-      '100',
+      issuedCurrency,
     )
 
     // THEN the transaction fails with ClaimedCostOnly_PathPartial.
@@ -325,9 +335,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       customerWallet1,
       customerWallet2.getAddress(),
-      currencyNameFOO,
-      issuerWalletWithTransferFee.getAddress(),
-      '100',
+      issuedCurrency,
       0.5,
     )
 
@@ -354,11 +362,14 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
 
     // WHEN an issued currency payment is made back to the issuer
+    const issuedCurrency: IssuedCurrency = {
+      currency: currencyNameFOO,
+      issuer: issuerWalletFOO.getAddress(),
+      value: '100',
+    }
     const transactionResult = await issuedCurrencyClient.redeemIssuedCurrency(
       customerWallet1,
-      currencyNameFOO,
-      issuerWalletFOO.getAddress(),
-      '100',
+      issuedCurrency,
     )
 
     // THEN the payment succeeds.
