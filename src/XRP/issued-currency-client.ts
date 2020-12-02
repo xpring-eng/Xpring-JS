@@ -1366,6 +1366,9 @@ export default class IssuedCurrencyClient {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private instanceOfIssuedCurrency(object: any): boolean {
-    return 'currency' in object && 'issuer' in object && 'value' in object
+    if (typeof object !== 'string') {
+      return 'currency' in object && 'issuer' in object && 'value' in object
+    }
+    return false
   }
 }
