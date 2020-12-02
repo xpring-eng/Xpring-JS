@@ -4,6 +4,7 @@ import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
 import { TransactionResult, TransactionStatus } from '../../src/XRP/shared'
+import IssuedCurrency from '../../src/XRP/shared/issued-currency'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
@@ -137,13 +138,17 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       customerWallet,
     )
 
+    const issuedCurrency: IssuedCurrency = {
+      issuer: issuerWallet.getAddress(),
+      value: '100',
+      currency: 'FOO',
+    }
+
     // WHEN an issued currency payment is made to another funded account
     const transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       operationalWallet,
       customerWallet.getAddress(),
-      'FOO',
-      issuerWallet.getAddress(),
-      '100',
+      issuedCurrency,
     )
 
     // THEN the payment fails with CalimedCostOnly_PathDry
@@ -193,13 +198,17 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       customerWallet,
     )
 
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'FOO',
+      issuer: issuerWallet.getAddress(),
+      value: '100',
+    }
+
     // WHEN an issued currency payment is made to another funded account
     const transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       operationalWallet,
       customerWallet.getAddress(),
-      'FOO',
-      issuerWallet.getAddress(),
-      '100',
+      issuedCurrency,
     )
 
     // THEN the transaction succeeds.
@@ -248,13 +257,17 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       customerWallet,
     )
 
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'BAR',
+      issuer: issuerWallet.getAddress(),
+      value: '100',
+    }
+
     // WHEN an issued currency payment of BAR is made to another funded account
     const transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       operationalWallet,
       customerWallet.getAddress(),
-      'BAR',
-      issuerWallet.getAddress(),
-      '100',
+      issuedCurrency,
     )
 
     // THEN the transaction fails with ClaimedCostOnly_PathDry
@@ -304,13 +317,17 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       customerWallet,
     )
 
+    const issuedCurrency = {
+      currency: 'FOO',
+      issuer: issuerWallet.getAddress(),
+      value: '100',
+    }
+
     // WHEN an issued currency payment is made to another funded account, without the transferFee argument supplied
     let transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       operationalWallet,
       customerWallet.getAddress(),
-      'FOO',
-      issuerWallet.getAddress(),
-      '100',
+      issuedCurrency,
     )
 
     // THEN the transaction fails with ClaimedCostOnly_PathPartial.
@@ -327,9 +344,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     transactionResult = await issuedCurrencyClient.sendIssuedCurrencyPayment(
       operationalWallet,
       customerWallet.getAddress(),
-      'FOO',
-      issuerWallet.getAddress(),
-      '100',
+      issuedCurrency,
       0.5,
     )
 
@@ -368,12 +383,16 @@ describe('Issued Currency Payment Integration Tests', function (): void {
       '500',
     )
 
+    const issuedCurrency = {
+      currency: 'FOO',
+      issuer: issuerWallet.getAddress(),
+      value: '100',
+    }
+
     // WHEN an issued currency payment is made back to the issuer
     const transactionResult = await issuedCurrencyClient.redeemIssuedCurrency(
       customerWallet,
-      'FOO',
-      issuerWallet.getAddress(),
-      '100',
+      issuedCurrency,
     )
 
     // THEN the payment succeeds.
