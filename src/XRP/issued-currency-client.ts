@@ -919,8 +919,8 @@ export default class IssuedCurrencyClient {
       )
     }
     if (
-      this.instanceOfIssuedCurrency(deliverAmount) &&
-      this.instanceOfIssuedCurrency(maxSourceAmount) &&
+      XrpUtils.isIssuedCurrency(deliverAmount) &&
+      XrpUtils.isIssuedCurrency(maxSourceAmount) &&
       (deliverAmount as IssuedCurrency).currency ===
         (maxSourceAmount as IssuedCurrency).currency &&
       (deliverAmount as IssuedCurrency).issuer ===
@@ -1347,18 +1347,5 @@ export default class IssuedCurrencyClient {
     const amountProto = new Amount()
     amountProto.setValue(currencyAmount)
     return amountProto
-  }
-
-  /**
-   * A type guard for the IssuedCurrency interface.
-   *
-   * @param object The object to check for conformance to the IssuedCurrency interface.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private instanceOfIssuedCurrency(object: any): boolean {
-    if (!XrpUtils.isString(object)) {
-      return 'currency' in object && 'issuer' in object && 'value' in object
-    }
-    return false
   }
 }
