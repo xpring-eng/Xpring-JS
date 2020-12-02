@@ -8,6 +8,7 @@ import {
   AccountLinesRequest,
   GatewayBalancesRequest,
   AccountOffersRequest,
+  RipplePathFindRequest,
   WebSocketResponse,
   WebSocketFailureResponse,
   ResponseStatus,
@@ -16,7 +17,10 @@ import {
   StatusResponse,
   TransactionResponse,
   AccountOffersResponse,
+  RipplePathFindResponse,
+  SourceCurrency,
 } from '../shared/rippled-web-socket-schema'
+import IssuedCurrency from '../shared/issued-currency'
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -273,6 +277,48 @@ export default class WebSocketNetworkClient {
       accountOffersRequest,
     )
     return accountOffersResponse as AccountOffersResponse
+  }
+
+  /**
+   * Submits a ripple_path_find request to the rippled WebSocket API.
+   * @see https://xrpl.org/ripple_path_find.html
+   *
+   * @param sourceAccount The XRPL account at the start of the desired path, as a classic address.
+   * @param destinationAccount The XRPL account at the end of the desired path, as a classic address.
+   * @param destinationAmount The currency amount that the destination account would receive in a transaction
+   *                          (-1 if the path should deliver as much as possible).
+   * @param sendMax The currency amount that would be spent in the transaction (cannot be used with sourceCurrencies).
+   * @param sourceCurrencies An array of currencies that the source account might want to spend (cannot be used with sendMax).
+   */
+  public async findRipplePath(
+    sourceAccount: string,
+    destinationAccount: string,
+    destinationAmount: string | IssuedCurrency,
+    sendMax?: string | IssuedCurrency,
+    sourceCurrencies?: SourceCurrency[],
+  ): Promise<RipplePathFindResponse> {
+    if (sendMax && sourceCurrencies) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'Cannot provide values for both `sendMax` and `sourceCurrencies`',
+      )
+    }
+    const ripplePathFindRequest: RipplePathFindRequest = {
+      id: `${RippledMethod.ripplePathFind}_${sourceAccount}_${this.idNumber}`,
+      command: RippledMethod.ripplePathFind,
+      source_account: sourceAccount,
+      destination_account: destinationAccount,
+      destination_amount: destinationAmount,
+      send_max: sendMax,
+      source_currencies: sourceCurrencies,
+    }
+    this.idNumber++
+
+    const ripplePathFindResponse = await this.sendApiRequest(
+      ripplePathFindRequest,
+    )
+
+    return ripplePathFindResponse as RipplePathFindResponse
   }
 
   /**
