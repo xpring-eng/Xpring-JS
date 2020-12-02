@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import { assert } from 'chai'
 
-import { Wallet, XrplNetwork } from 'xpring-common-js'
+import { Wallet, WalletFactory, XrplNetwork } from 'xpring-common-js'
 import {
   FakeXRPNetworkClient,
   FakeXRPNetworkClientResponses,
@@ -26,7 +26,8 @@ import {
 import { AccountRoot } from '../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger_objects_pb'
 import TransactionResult from '../../src/XRP/shared/transaction-result'
 import TransactionStatus from '../../src/XRP/shared/transaction-status'
-import XRPTestUtils from './helpers/xrp-test-utils'
+
+const walletFactory = new WalletFactory(XrplNetwork.Test)
 
 // The network layer is faked, so this is a perfunctory argument
 const transactionHash = 'DEADBEEF'
@@ -61,7 +62,7 @@ function makeAccountInfoResponse(
 describe('Common XRPL Client', function (): void {
   let wallet: Wallet
   before(async function () {
-    wallet = await XRPTestUtils.randomWalletFromFaucet()
+    wallet = (await walletFactory.generateRandomWallet()!).wallet
   })
   it('getFinalTransactionResultAsync - returns when transaction is validated', async function (): Promise<void> {
     // GIVEN a CoreXrplClient with fake networking that will succeed with a not-yet-validated transaction response

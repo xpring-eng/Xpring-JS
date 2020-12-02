@@ -1,5 +1,5 @@
 import { assert } from 'chai'
-import { XrplNetwork } from 'xpring-common-js'
+import { WalletFactory, XrplNetwork } from 'xpring-common-js'
 import bigInt from 'big-integer'
 import FakeXrpClient from './fakes/fake-xrp-client'
 import ReliableSubmissionXrpClient from '../../src/XRP/reliable-submission-xrp-client'
@@ -8,7 +8,6 @@ import TransactionStatus from '../../src/XRP/shared/transaction-status'
 import { testXrpTransaction } from './fakes/fake-xrp-protobufs'
 import TransactionResult from '../../src/XRP/shared/transaction-result'
 import FakeCoreXrplClient from './fakes/fake-core-xrpl-client'
-import XRPTestUtils from './helpers/xrp-test-utils'
 
 const testAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
 
@@ -35,6 +34,8 @@ const fakedTransactionResultValue = TransactionResult.createFinalTransactionResu
   TransactionStatus.Succeeded,
   true,
 )
+
+const walletFactory = new WalletFactory(XrplNetwork.Test)
 
 describe('Reliable Submission XRP Client', function (): void {
   beforeEach(function () {
@@ -99,7 +100,7 @@ describe('Reliable Submission XRP Client', function (): void {
     setTimeout(() => {
       this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
 
     // WHEN a reliable send is submitted
     const transactionResult = await this.reliableSubmissionClient.sendXrp(
@@ -130,7 +131,7 @@ describe('Reliable Submission XRP Client', function (): void {
     setTimeout(() => {
       this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
 
     // WHEN enableDepositAuth is called
     const result = await this.reliableSubmissionClient.enableDepositAuth(wallet)
@@ -147,7 +148,7 @@ describe('Reliable Submission XRP Client', function (): void {
     setTimeout(() => {
       this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
 
     // WHEN authorizeSendingAccount is called
     const result = await this.reliableSubmissionClient.authorizeSendingAccount(
@@ -167,7 +168,7 @@ describe('Reliable Submission XRP Client', function (): void {
     setTimeout(() => {
       this.fakedRawTransactionStatusValue.isValidated = true
     }, 200)
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
 
     // WHEN unauthorizeSendingAccount is called
     const result = await this.reliableSubmissionClient.unauthorizeSendingAccount(

@@ -2,7 +2,7 @@
 import { assert } from 'chai'
 
 import bigInt from 'big-integer'
-import { Utils, XrplNetwork } from 'xpring-common-js'
+import { Utils, WalletFactory, XrplNetwork } from 'xpring-common-js'
 import { StatusCode as grpcStatusCode } from 'grpc-web'
 import FakeGRPCError from '../Common/Fakes/fake-grpc-error'
 import XRPTestUtils, { iForgotToPickUpCarlMemo } from './helpers/xrp-test-utils'
@@ -42,6 +42,8 @@ const transactionStatusFailureCodes = [
 ]
 
 const transactionHash = 'DEADBEEF'
+
+const walletFactory = new WalletFactory(XrplNetwork.Test)
 
 const fakeSucceedingNetworkClient = new FakeXRPNetworkClient()
 const fakeErroringNetworkClient = new FakeXRPNetworkClient(
@@ -285,7 +287,7 @@ describe('Default XRP Client', function (): void {
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
     const memoList = [iForgotToPickUpCarlMemo]
@@ -313,7 +315,7 @@ describe('Default XRP Client', function (): void {
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
 
@@ -339,7 +341,7 @@ describe('Default XRP Client', function (): void {
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = 10
 
@@ -365,7 +367,7 @@ describe('Default XRP Client', function (): void {
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = '10'
 
@@ -391,7 +393,7 @@ describe('Default XRP Client', function (): void {
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = 'not_a_number'
 
@@ -415,7 +417,7 @@ describe('Default XRP Client', function (): void {
       feeFailingNetworkClient,
       XrplNetwork.Test,
     )
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
 
@@ -435,7 +437,7 @@ describe('Default XRP Client', function (): void {
       fakeSucceedingNetworkClient,
       XrplNetwork.Test,
     )
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
     const destinationAddress = 'rsegqrgSP8XmhCYwL9enkZ9BNDNawfPZnn'
     const amount = bigInt('10')
 
@@ -459,7 +461,7 @@ describe('Default XRP Client', function (): void {
       feeFailingNetworkClient,
       XrplNetwork.Test,
     )
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
 
@@ -483,7 +485,7 @@ describe('Default XRP Client', function (): void {
       feeFailingNetworkClient,
       XrplNetwork.Test,
     )
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
     const destinationAddress = 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
     const amount = bigInt('10')
 
@@ -776,7 +778,7 @@ describe('Default XRP Client', function (): void {
       XrplNetwork.Test,
     )
 
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
 
     // WHEN enableDepositAuth is called
     const result = await xrpClient.enableDepositAuth(wallet)
@@ -803,7 +805,7 @@ describe('Default XRP Client', function (): void {
       failingNetworkClient,
       XrplNetwork.Test,
     )
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
 
     // WHEN enableDepositAuth is attempted THEN an error is propagated.
     xrpClient.enableDepositAuth(wallet).catch((error) => {
@@ -820,7 +822,7 @@ describe('Default XRP Client', function (): void {
 
     const xAddressToAuthorize =
       'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
 
     // WHEN authorizeSendingAccount is called.
     const result = await xrpClient.authorizeSendingAccount(
@@ -853,7 +855,7 @@ describe('Default XRP Client', function (): void {
 
     const xAddressToAuthorize =
       'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
 
     // WHEN authorizeSendingAccount is attempted THEN an error is propagated.
     xrpClient
@@ -871,7 +873,7 @@ describe('Default XRP Client', function (): void {
     )
 
     const xAddressToAuthorize = 'notanxaddress'
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
 
     // WHEN authorizeSendingAccount is attempted THEN an error is propagated.
     xrpClient
@@ -890,7 +892,7 @@ describe('Default XRP Client', function (): void {
 
     const xAddressToUnauthorize =
       'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
 
     // WHEN unauthorizeSendingAccount is called.
     const result = await xrpClient.unauthorizeSendingAccount(
@@ -923,7 +925,7 @@ describe('Default XRP Client', function (): void {
 
     const xAddressToUnauthorize =
       'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH'
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
 
     // WHEN unauthorizeSendingAccount is attempted THEN an error is propagated.
     xrpClient
@@ -941,7 +943,7 @@ describe('Default XRP Client', function (): void {
     )
 
     const xAddressToUnauthorize = 'notanxaddress'
-    const wallet = await XRPTestUtils.randomWalletFromFaucet()
+    const { wallet } = await walletFactory.generateRandomWallet()!
 
     // WHEN unauthorizeSendingAccount is attempted THEN an error is propagated.
     xrpClient
