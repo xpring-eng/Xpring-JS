@@ -111,4 +111,8 @@ function xrpToDrops(xrp: BigNumber.Value): string {
     .toString(10)
 }
 
-export default { dropsToXrp, xrpToDrops, ...XrpUtils }
+function isString(value: unknown): boolean {
+  return typeof value === 'string'
+}
+
+export default { dropsToXrp, xrpToDrops, isString, ...XrpUtils }

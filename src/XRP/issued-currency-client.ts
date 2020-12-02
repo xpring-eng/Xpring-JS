@@ -1,4 +1,4 @@
-import { XrplNetwork, XrpUtils, Wallet } from 'xpring-common-js'
+import { XrplNetwork, Wallet } from 'xpring-common-js'
 
 import {
   Flags,
@@ -64,6 +64,7 @@ import {
   OfferCreate,
 } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/transaction_pb'
 import IssuedCurrency from './shared/issued-currency'
+import XrpUtils from './shared/xrp-utils'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -916,8 +917,8 @@ export default class IssuedCurrencyClient {
 
     // Both source amount and deliver amount can't both be XRP:
     if (
-      typeof deliverAmount === 'string' &&
-      typeof maxSourceAmount === 'string'
+      XrpUtils.isString(deliverAmount) &&
+      XrpUtils.isString(maxSourceAmount)
     ) {
       throw new XrpError(
         XrpErrorType.InvalidInput,
@@ -965,8 +966,9 @@ export default class IssuedCurrencyClient {
     payment.setSendMax(sendMax)
 
     // Determine if there is a viable path
-    const sourceCurrencyName =
-      typeof maxSourceAmount === 'string' ? 'XRP' : maxSourceAmount.currency
+    const sourceCurrencyName = XrpUtils.isString(maxSourceAmount)
+      ? 'XRP'
+      : (maxSourceAmount as IssuedCurrency).currency
     const sourceCurrency: SourceCurrency = {
       currency: sourceCurrencyName,
     }
@@ -1326,21 +1328,21 @@ export default class IssuedCurrencyClient {
     amount: string | IssuedCurrency,
   ): CurrencyAmount {
     const currencyAmount = new CurrencyAmount()
-    if (typeof amount == 'string') {
+    if (XrpUtils.isString(amount)) {
       const xrpDropsAmount = new XRPDropsAmount()
-      xrpDropsAmount.setDrops(amount)
+      xrpDropsAmount.setDrops(amount as string)
       currencyAmount.setXrpAmount(xrpDropsAmount)
     } else {
       const currency = new Currency()
-      currency.setName(amount.currency)
+      currency.setName((amount as IssuedCurrency).currency)
 
       const accountAddress = new AccountAddress()
-      accountAddress.setAddress(amount.issuer)
+      accountAddress.setAddress((amount as IssuedCurrency).issuer)
 
       const issuedCurrencyAmount = new IssuedCurrencyAmount()
       issuedCurrencyAmount.setIssuer(accountAddress)
       issuedCurrencyAmount.setCurrency(currency)
-      issuedCurrencyAmount.setValue(amount.value)
+      issuedCurrencyAmount.setValue((amount as IssuedCurrency).value)
 
       currencyAmount.setIssuedCurrencyAmount(issuedCurrencyAmount)
     }
@@ -1366,7 +1368,7 @@ export default class IssuedCurrencyClient {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private instanceOfIssuedCurrency(object: any): boolean {
-    if (typeof object !== 'string') {
+    if (XrpUtils.isString(object)) {
       return 'currency' in object && 'issuer' in object && 'value' in object
     }
     return false
