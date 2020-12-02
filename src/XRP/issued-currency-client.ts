@@ -967,7 +967,7 @@ export default class IssuedCurrencyClient {
 
     // Determine if there is a viable path
     const sourceCurrencyName =
-      typeof maxSourceAmount == 'string' ? 'XRP' : maxSourceAmount.currency
+      typeof maxSourceAmount === 'string' ? 'XRP' : maxSourceAmount.currency
     const sourceCurrency: SourceCurrency = {
       currency: sourceCurrencyName,
     }
@@ -1002,7 +1002,7 @@ export default class IssuedCurrencyClient {
     const pathAlternatives = pathFindResponse.result.alternatives
 
     // If no viable paths exist, throw
-    if (pathAlternatives.length == 0) {
+    if (pathAlternatives.length === 0) {
       throw new XrpError(
         XrpErrorType.NoViablePaths,
         'No paths exist to execute cross-currency payment.',
