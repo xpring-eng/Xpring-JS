@@ -340,9 +340,9 @@ interface DeletedNode {
     ExchangeRate: string
     Flags: number
     RootIndex: string
-    TakerGetsCurrency: string
+    TakerGetsCurrency: string | IssuedCurrency
     TakerGetsIssuer: string
-    TakerPaysCurrency: string
+    TakerPaysCurrency: string | IssuedCurrency
     TakerPaysIssuer: string
   }
   LedgerEntryType: string

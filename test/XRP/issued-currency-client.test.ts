@@ -836,13 +836,17 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'FOO',
+      issuer: testAddress,
+      value: '100',
+    }
+
     // WHEN issuedCurrencyPayment is called
     const transactionResult = await issuedCurrencyClient.issuedCurrencyPayment(
       this.wallet,
       testAddress,
-      'FOO',
-      testAddress,
-      '100',
+      issuedCurrency,
       0.5,
     )
 
@@ -869,14 +873,18 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'FOO',
+      issuer: testAddress,
+      value: '100',
+    }
+
     // WHEN issuedCurrencyPayment is called THEN an error is propagated.
     try {
       await issuedCurrencyClient.issuedCurrencyPayment(
         this.wallet,
         testAddress,
-        'FOO',
-        testAddress,
-        '100',
+        issuedCurrency,
         0.5,
       )
     } catch (error) {
@@ -892,14 +900,18 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'FOO',
+      issuer: testAddress,
+      value: '100',
+    }
+
     // WHEN issuedCurrencyPayment is called with a classic address argument for destination THEN an error is thrown.
     try {
       await issuedCurrencyClient.issuedCurrencyPayment(
         this.wallet,
         testClassicAddress,
-        'FOO',
-        testAddress,
-        '100',
+        issuedCurrency,
         0.5,
       )
     } catch (error) {
@@ -915,14 +927,18 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'FOO',
+      issuer: testClassicAddress,
+      value: '100',
+    }
+
     // WHEN issuedCurrencyPayment is called with a classic address argument for issuer THEN an error is thrown.
     try {
       await issuedCurrencyClient.issuedCurrencyPayment(
         this.wallet,
         testAddress,
-        'FOO',
-        testClassicAddress,
-        '100',
+        issuedCurrency,
         0.5,
       )
     } catch (error) {
@@ -938,14 +954,18 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'FOO',
+      issuer: this.wallet.getAddress(),
+      value: '100',
+    }
+
     // WHEN sendIssuedCurrencyPayment is called with matching sender and issuer addresses, THEN an error is thrown.
     try {
       await issuedCurrencyClient.sendIssuedCurrencyPayment(
         this.wallet,
         testAddress,
-        'FOO',
-        this.wallet.getAddress(),
-        '100',
+        issuedCurrency,
         0.5,
       )
     } catch (error) {
@@ -961,14 +981,18 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'FOO',
+      issuer: testAddress,
+      value: '100',
+    }
+
     // WHEN sendIssuedCurrencyPayment is called with matching sender and issuer addresses, THEN an error is thrown.
     try {
       await issuedCurrencyClient.sendIssuedCurrencyPayment(
         this.wallet,
         testAddress,
-        'FOO',
-        testAddress,
-        '100',
+        issuedCurrency,
         0.5,
       )
     } catch (error) {
