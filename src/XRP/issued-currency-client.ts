@@ -922,7 +922,7 @@ export default class IssuedCurrencyClient {
     ) {
       throw new XrpError(
         XrpErrorType.InvalidInput,
-        'A Cross Currency payment should involve at least one issued currency.',
+        'A cross-currency payment should involve at least one issued currency.',
       )
     }
     if (
