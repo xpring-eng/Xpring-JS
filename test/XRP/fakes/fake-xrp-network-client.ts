@@ -75,21 +75,11 @@ export class FakeXRPNetworkClientResponses {
    * @param getTransactionHistoryResponse The response or error that will be returned from the getTransactionHistory request. Default to the default transaction history response.
    */
   public constructor(
-    public readonly getAccountInfoResponse: Result<
-      GetAccountInfoResponse
-    > = FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
-    public readonly getFeeResponse: Result<
-      GetFeeResponse
-    > = FakeXRPNetworkClientResponses.defaultFeeResponse(),
-    public readonly submitransactionResponse: Result<
-      SubmitTransactionResponse
-    > = FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse(),
-    public readonly getTransactionStatusResponse: Result<
-      GetTransactionResponse
-    > = FakeXRPNetworkClientResponses.defaultGetTransactionResponse(),
-    public readonly getTransactionHistoryResponse: Result<
-      GetAccountTransactionHistoryResponse
-    > = FakeXRPNetworkClientResponses.defaultGetTransactionHistoryResponse(),
+    public readonly getAccountInfoResponse: Result<GetAccountInfoResponse> = FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
+    public readonly getFeeResponse: Result<GetFeeResponse> = FakeXRPNetworkClientResponses.defaultFeeResponse(),
+    public readonly submitransactionResponse: Result<SubmitTransactionResponse> = FakeXRPNetworkClientResponses.defaultSubmitTransactionResponse(),
+    public readonly getTransactionStatusResponse: Result<GetTransactionResponse> = FakeXRPNetworkClientResponses.defaultGetTransactionResponse(),
+    public readonly getTransactionHistoryResponse: Result<GetAccountTransactionHistoryResponse> = FakeXRPNetworkClientResponses.defaultGetTransactionHistoryResponse(),
   ) {}
 
   /**
