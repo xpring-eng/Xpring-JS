@@ -62,7 +62,7 @@ function makeAccountInfoResponse(
 describe('Common XRPL Client', function (): void {
   let wallet: Wallet
   before(async function () {
-    wallet = (await walletFactory.generateRandomWallet()!).wallet
+    wallet = (await walletFactory.generateRandomWallet())!.wallet
   })
   it('getFinalTransactionResultAsync - returns when transaction is validated', async function (): Promise<void> {
     // GIVEN a CoreXrplClient with fake networking that will succeed with a not-yet-validated transaction response
