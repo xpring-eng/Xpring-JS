@@ -9,7 +9,7 @@ import {
   XrpError,
   XrpUtils,
 } from '../../src/XRP/shared'
-import { IssuedCurrency } from '../../src/XRP/shared/rippled-web-socket-schema'
+import IssuedCurrency from '../../src/XRP/shared/issued-currency'
 
 // A timeout for these tests.
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
