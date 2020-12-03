@@ -31,7 +31,7 @@ enum TransactionStatus {
   /** The transaction's last ledger sequence has been surpassed; the transaction will never be included in a validated ledger. */
   LastLedgerSequenceExpired,
 
-  /** The transaction was included in a finalized ledger and succeeded. */
+  /** The transaction status is unknown. */
   Unknown,
 }
 

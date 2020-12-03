@@ -307,9 +307,28 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
       return TransactionStatus.Pending
     }
 
-    return transactionStatus.transactionStatusCode?.startsWith('tes')
-      ? TransactionStatus.Succeeded
-      : TransactionStatus.Failed
+    const statusCode = transactionStatus.transactionStatusCode
+    const statusPrefix = statusCode.substr(0, 3)
+
+    switch (statusPrefix) {
+      case 'tes':
+        return TransactionStatus.Succeeded
+      case 'tem':
+        return TransactionStatus.MalformedTransaction
+      case 'tef':
+        return TransactionStatus.Failed
+      case 'tec':
+        switch (statusCode) {
+          case 'tecPATH_PARTIAL':
+            return TransactionStatus.ClaimedCostOnly_PathPartial
+          case 'tecPATH_DRY':
+            return TransactionStatus.ClaimedCostOnly_PathDry
+          default:
+            return TransactionStatus.ClaimedCostOnly
+        }
+      default:
+        return TransactionStatus.Unknown
+    }
   }
 
   /**
