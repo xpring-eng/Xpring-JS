@@ -203,6 +203,14 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Get Payment Status - Validated Transaction and Failure Code', async function (): Promise<void> {
+    const expectedTransactionStatusFailureCodeResponses: number[] = [
+      TransactionStatus.Failed,
+      TransactionStatus.ClaimedCostOnly,
+      TransactionStatus.Unknown,
+      TransactionStatus.MalformedTransaction,
+      TransactionStatus.Unknown,
+    ]
+
     // Iterate over different types of transaction status codes which represent failures.
     /* eslint-disable no-await-in-loop */
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
@@ -232,7 +240,10 @@ describe('Default XRP Client', function (): void {
       )
 
       // THEN the status is failed.
-      assert.deepEqual(transactionStatus, TransactionStatus.Failed)
+      assert.deepEqual(
+        transactionStatus,
+        expectedTransactionStatusFailureCodeResponses[i],
+      )
     }
     /* eslint-enable no-await-in-loop */
   })
