@@ -65,6 +65,7 @@ import {
 } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/transaction_pb'
 import IssuedCurrency from './shared/issued-currency'
 import XrpUtils from './shared/xrp-utils'
+import OfferCreateFlags from './shared/offer-create-flags'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -1229,6 +1230,10 @@ export default class IssuedCurrencyClient {
     takerPaysAmount: string | IssuedCurrency,
     offerSequence?: number,
     expiration?: number,
+    passive?: boolean,
+    immediateOrCancel?: boolean,
+    fillOrKill?: boolean,
+    sell?: boolean,
   ): Promise<TransactionResult> {
     const takerGetsCurrencyAmount = this.createCurrencyAmount(takerGetsAmount)
     const takerGets = new TakerGets()
@@ -1254,8 +1259,28 @@ export default class IssuedCurrencyClient {
       offerCreate.setExpiration(expirationProto)
     }
 
+    let flagsValue = 0
+    if (passive) {
+      flagsValue |= OfferCreateFlags.TF_PASSIVE
+    }
+    if (immediateOrCancel) {
+      flagsValue |= OfferCreateFlags.TF_IMMEDIATE_OR_CANCEL
+    }
+    if (fillOrKill) {
+      flagsValue |= OfferCreateFlags.TF_FILL_OR_KILL
+    }
+    if (sell) {
+      flagsValue |= OfferCreateFlags.TF_SELL
+    }
+
+    const flags = new Flags()
+    flags.setValue(flagsValue)
+
     const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
     transaction.setOfferCreate(offerCreate)
+    if (flagsValue != 0) {
+      transaction.setFlags(flags)
+    }
 
     const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
       transaction,
