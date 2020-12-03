@@ -243,7 +243,7 @@ describe('Default XRP Client', function (): void {
         transactionHash,
       )
 
-      // THEN the status is failed.
+      // THEN the status is as expected.
       assert.deepEqual(
         transactionStatus,
         expectedTransactionStatusFailureCodeResponses[i],
