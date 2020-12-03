@@ -12,6 +12,7 @@ import bigInt from 'big-integer'
 import XrpClient from '../../../src/XRP/xrp-client'
 import axios from 'axios'
 import { AccountRoot } from '../../../src/XRP/Generated/node/org/xrpl/rpc/v1/ledger_objects_pb'
+import { RIPPLED_URL } from '../../Common/constants'
 
 /**
  * Convenience class for utility functions used in test cases for XrpClient infrastructure.
@@ -65,8 +66,7 @@ export default class XRPTestUtils {
       )
     }
 
-    const rippledUrl = 'test.xrp.xpring.io:50051'
-    const xrpClient = new XrpClient(rippledUrl, XrplNetwork.Test)
+    const xrpClient = new XrpClient(RIPPLED_URL, XrplNetwork.Test)
 
     // Balance prior to asking for more funds
     let startingBalance

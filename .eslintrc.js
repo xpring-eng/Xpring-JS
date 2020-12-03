@@ -72,6 +72,8 @@ module.exports = {
         'no-shadow': 'off',
         // Some of our test files declare helper classes with errors
         'max-classes-per-file': 'off',
+        // This rule doesn't help us plan for good test files
+        'mocha/no-hooks-for-single-case': 'off',
       },
     },
     {

@@ -13,13 +13,9 @@ import IssuedCurrency from '../../src/XRP/shared/issued-currency'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
+import { RIPPLED_URL, TEST_TIMEOUT_MS } from '../Common/constants'
 import { RippledErrorMessages } from '../../src/XRP/shared/rippled-error-messages'
 
-// A timeout for these tests.
-// eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
-const timeoutMs = 60 * 1000
-
-const rippledGrpcUrl = 'test.xrp.xpring.io:50051'
 const rippledWebSocketUrl = 'wss://wss.test.xrp.xpring.io'
 
 const webSocketNetworkClient = new WebSocketNetworkClient(
@@ -49,7 +45,7 @@ describe('WebSocket Tests', function (): void {
   })
 
   it('subscribeToAccount/unsubscribeFromAccount - valid request', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     const xrpAmount = '100'
 
@@ -80,7 +76,7 @@ describe('WebSocket Tests', function (): void {
       }
     }
 
-    const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
+    const xrpClient = new XrpClient(RIPPLED_URL, XrplNetwork.Test)
 
     // GIVEN a valid test address
     const xAddress = wallet.getAddress()
@@ -122,7 +118,7 @@ describe('WebSocket Tests', function (): void {
   })
 
   it('subscribeToAccount - bad address', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     // GIVEN a test address that is malformed.
     const address = 'badAddress'
@@ -143,7 +139,7 @@ describe('WebSocket Tests', function (): void {
   })
 
   it('unsubscribeFromAccount - not-subscribed address', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     // GIVEN a test address that is not subscribed to.
     const xAddress = wallet2.getAddress()
@@ -162,7 +158,7 @@ describe('WebSocket Tests', function (): void {
   })
 
   it('unsubscribeFromAccount - bad address', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     // GIVEN a test address that is malformed.
     const address = 'badAddress'
@@ -179,10 +175,10 @@ describe('WebSocket Tests', function (): void {
   })
 
   it('getAccountOffers - valid requests', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
-      rippledGrpcUrl,
+      RIPPLED_URL,
       rippledWebSocketUrl,
       console.log,
       XrplNetwork.Test,
@@ -207,7 +203,7 @@ describe('WebSocket Tests', function (): void {
 
     assert.equal(result.account, address)
     assert.isEmpty(result.offers)
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     // GIVEN a valid test address with an offer
     const takerGetsIssuedCurrency: IssuedCurrency = {
@@ -247,7 +243,7 @@ describe('WebSocket Tests', function (): void {
   })
 
   it('getAccountOffers - bad address', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     // GIVEN a test address that is malformed.
     const address = 'badAddress'

@@ -9,6 +9,7 @@ import { assert } from 'chai'
 
 import { XrpUtils, XrplNetwork, XrpClient } from '../../../src'
 import XrpTestUtils from '../../XRP/helpers/xrp-test-utils'
+import { RIPPLED_URL } from '../../Common/constants'
 import bigInt from 'big-integer'
 
 describe('xrp-drops-conversion', function (): void {
@@ -22,10 +23,7 @@ describe('xrp-drops-conversion', function (): void {
     assert.isNotNull(wallet)
 
     // AND it has a non-zero balance
-    const xrpClient = new XrpClient(
-      'test.xrp.xpring.io:50051',
-      XrplNetwork.Test,
-    )
+    const xrpClient = new XrpClient(RIPPLED_URL, XrplNetwork.Test)
     const balance = await xrpClient.getBalance(wallet.getAddress())
     assert.isTrue(balance > bigInt('0'))
   })

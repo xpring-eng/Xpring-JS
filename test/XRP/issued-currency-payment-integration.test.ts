@@ -3,17 +3,13 @@ import { XrplNetwork } from 'xpring-common-js'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
+import { TEST_TIMEOUT_MS, RIPPLED_URL } from '../Common/constants'
 import { TransactionResult, TransactionStatus } from '../../src/XRP/shared'
 
-// A timeout for these tests.
-// eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
-const timeoutMs = 60 * 1000
-
 // An IssuedCurrencyClient that makes requests.
-const rippledGrpcUrl = 'test.xrp.xpring.io:50051'
 const rippledWebSocketUrl = 'wss://wss.test.xrp.xpring.io'
 const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
-  rippledGrpcUrl,
+  RIPPLED_URL,
   rippledWebSocketUrl,
   console.log,
   XrplNetwork.Test,
@@ -32,7 +28,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
   })
 
   it('createIssuedCurrency, combined cases', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN two existing, funded testnet accounts serving as an issuing address and operational address, respectively
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
     const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
@@ -104,7 +100,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
   })
 
   it('sendIssuedCurrencyPayment - failure to send from non-issuing account to customer account without rippling enabled on issuer', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an operational address with some issued currency, and an issuing address that has not enabled rippling
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
     const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
@@ -158,7 +154,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
   })
 
   it('sendIssuedCurrencyPayment - success sending issued currency from non-issuing account to another account', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an operational address with some issued currency, and an issuing address that has enabled rippling but set no transfer fees
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
     const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
@@ -214,7 +210,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
   })
 
   it('sendIssuedCurrencyPayment - failure sending unowned issued currency from non-issuing account to another account', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an operational address with some issued currency, and an issuing address that has enabled rippling
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
     const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
@@ -269,7 +265,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
   })
 
   it('sendIssuedCurrencyPayment - sending issued currency with applicable transfer fees, combined cases', async function (): Promise<void> {
-    this.timeout(timeoutMs * 2)
+    this.timeout(TEST_TIMEOUT_MS * 2)
     // GIVEN an operational address with some issued currency, and an issuing address that has enabled rippling and established a transfer fee
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
     const operationalWallet = await XRPTestUtils.randomWalletFromFaucet()
@@ -345,7 +341,7 @@ describe('Issued Currency Payment Integration Tests', function (): void {
   })
 
   it('redeemIssuedCurrency', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN a customer account with some issued currency, and an issuing address
     const issuerWallet = await XRPTestUtils.randomWalletFromFaucet()
     const customerWallet = await XRPTestUtils.randomWalletFromFaucet()

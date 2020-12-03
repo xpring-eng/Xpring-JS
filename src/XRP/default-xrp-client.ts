@@ -407,6 +407,17 @@ export default class DefaultXrpClient implements XrpClientDecorator {
     return await this.coreXrplClient.getTransactionResult(transactionHash)
   }
 
+  /**
+   * Retrieves the minimum transaction cost for a reference transaction to be queued for a later ledger,
+   * represented in drops of XRP.
+   * @see https://xrpl.org/rippleapi-reference.html#transaction-fees
+   * @see https://xrpl.org/fee.html#response-format
+   */
+  public async getMinimumFee(): Promise<BigInteger> {
+    const raw = await this.coreXrplClient.getMinimumFee()
+    return bigInt(raw.getDrops())
+  }
+
   private static valueToDrops(value: BigInteger | number | string) {
     const xrpDropsAmount = new XRPDropsAmount()
     xrpDropsAmount.setDrops(value.toString())

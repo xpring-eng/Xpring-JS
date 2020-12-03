@@ -10,22 +10,15 @@ import XRPTestUtils, {
   noFormatMemo,
   noTypeMemo,
 } from './helpers/xrp-test-utils'
+import { TEST_TIMEOUT_MS, RIPPLED_URL, RECIPIENT } from '../Common/constants'
 import { AccountRootFlag } from '../../src/XRP/shared'
-
-// A timeout for these tests.
-// eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
-const timeoutMs = 60 * 1000
-
-// An address on TestNet that has a balance.
-const recipientAddress = 'X7cBcY4bdTTzk3LHmrKAK6GyrirkXfLHGFxzke5zTmYMfw4'
 
 // An XrpClient that makes requests. Sends the requests to an HTTP envoy emulating how the browser would behave.
 const grpcWebUrl = 'https://envoy.test.xrp.xpring.io'
 const xrpWebClient = new XrpClient(grpcWebUrl, XrplNetwork.Test, true)
 
 // An XrpClient that makes requests. Uses rippled's gRPC implementation.
-const rippledUrl = 'test.xrp.xpring.io:50051'
-const xrpClient = new XrpClient(rippledUrl, XrplNetwork.Test)
+const xrpClient = new XrpClient(RIPPLED_URL, XrplNetwork.Test)
 
 // Some amount of XRP to send.
 const amount = bigInt('1')
@@ -41,36 +34,32 @@ describe('XrpClient Integration Tests', function (): void {
   })
 
   it('Get Transaction Status - Web Shim', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     const transactionResult = await xrpWebClient.sendXrp(
       amount,
-      recipientAddress,
+      RECIPIENT,
       wallet,
     )
     assert.deepEqual(transactionResult.status, TransactionStatus.Succeeded)
   })
 
   it('Get Transaction Status - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
-    const transactionResult = await xrpClient.sendXrp(
-      amount,
-      recipientAddress,
-      wallet,
-    )
+    const transactionResult = await xrpClient.sendXrp(amount, RECIPIENT, wallet)
     assert.deepEqual(transactionResult.status, TransactionStatus.Succeeded)
   })
 
   it('Send XRP - Web Shim', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
-    const result = await xrpWebClient.sendXrp(amount, recipientAddress, wallet)
+    const result = await xrpWebClient.sendXrp(amount, RECIPIENT, wallet)
     assert.exists(result)
   })
 
   it('Send XRP with memo - Web Shim', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     const memoList = [
       iForgotToPickUpCarlMemo,
@@ -80,7 +69,7 @@ describe('XrpClient Integration Tests', function (): void {
     ]
     const transactionResult = await xrpWebClient.sendXrpWithDetails({
       amount,
-      destination: recipientAddress,
+      destination: RECIPIENT,
       sender: wallet,
       memoList,
     })
@@ -97,14 +86,14 @@ describe('XrpClient Integration Tests', function (): void {
   })
 
   it('Send XRP - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
-    const result = await xrpClient.sendXrp(amount, recipientAddress, wallet)
+    const result = await xrpClient.sendXrp(amount, RECIPIENT, wallet)
     assert.exists(result)
   })
 
   it('Send XRP with memo - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     const memoList = [
       iForgotToPickUpCarlMemo,
       noDataMemo,
@@ -113,7 +102,7 @@ describe('XrpClient Integration Tests', function (): void {
     ]
     const transactionResult = await xrpClient.sendXrpWithDetails({
       amount,
-      destination: recipientAddress,
+      destination: RECIPIENT,
       sender: wallet,
       memoList,
     })
@@ -130,22 +119,22 @@ describe('XrpClient Integration Tests', function (): void {
   })
 
   it('Check if Account Exists - true - Web Shim', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
-    const doesExist = await xrpWebClient.accountExists(recipientAddress)
+    const doesExist = await xrpWebClient.accountExists(RECIPIENT)
     assert.equal(doesExist, true)
   })
 
   it('Check if Account Exists - true - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
-    const doesExist = await xrpClient.accountExists(recipientAddress)
+    const doesExist = await xrpClient.accountExists(RECIPIENT)
 
     assert.equal(doesExist, true)
   })
 
   it('Check if Account Exists - false - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     // This is a valid address, but it should NOT show up on Testnet, so should resolve to false
     const coinbaseMainnet = 'XVYUQ3SdUcVnaTNVanDYo1NamrUukPUPeoGMnmvkEExbtrj'
@@ -154,21 +143,17 @@ describe('XrpClient Integration Tests', function (): void {
   })
 
   it('Payment History - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
-    const payments = await xrpClient.paymentHistory(recipientAddress)
+    const payments = await xrpClient.paymentHistory(RECIPIENT)
 
     assert.isTrue(payments.length > 0)
   })
 
   it('Get Transaction - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
-    const transactionResult = await xrpClient.sendXrp(
-      amount,
-      recipientAddress,
-      wallet,
-    )
+    const transactionResult = await xrpClient.sendXrp(amount, RECIPIENT, wallet)
 
     const transaction = await xrpClient.getPayment(transactionResult.hash)
 
@@ -176,7 +161,7 @@ describe('XrpClient Integration Tests', function (): void {
   })
 
   it('Enable Deposit Auth - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account
     // WHEN enableDepositAuth is called
     const result = await xrpClient.enableDepositAuth(wallet)
@@ -184,14 +169,14 @@ describe('XrpClient Integration Tests', function (): void {
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     await XRPTestUtils.verifyFlagModification(
       wallet,
-      rippledUrl,
+      RIPPLED_URL,
       result,
       AccountRootFlag.LSF_DEPOSIT_AUTH,
     )
   })
 
   it('Enable Deposit Auth - sending by unauthorized account fails after enabled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account with DepositAuth enabled
     await xrpClient.enableDepositAuth(wallet)
 
@@ -211,7 +196,7 @@ describe('XrpClient Integration Tests', function (): void {
   })
 
   it('Authorize Sending Account - failure on authorizing self', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account
     // WHEN authorizeSendingAccount is called with the account's own address
     const result = await xrpClient.authorizeSendingAccount(
@@ -228,7 +213,7 @@ describe('XrpClient Integration Tests', function (): void {
   })
 
   it('Authorize Sending Account - failure on authorizing already authorized account', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account that has authorized another account to send funds to it
     const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
     await xrpClient.enableDepositAuth(wallet)
@@ -249,7 +234,7 @@ describe('XrpClient Integration Tests', function (): void {
   })
 
   it('Authorize Sending Account - can send funds after authorize', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account that has authorized another account to send XRP to it
     const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
 
@@ -269,7 +254,7 @@ describe('XrpClient Integration Tests', function (): void {
   })
 
   it('Unauthorize Sending Account - failure on unauthorizing self', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account
     // WHEN unauthorizeSendingAccount is called with the account's own address
     const result = await xrpClient.unauthorizeSendingAccount(
@@ -291,7 +276,7 @@ describe('XrpClient Integration Tests', function (): void {
   })
 
   it('Unauthorize Sending Account - failure on unauthorizing account that is not authorized', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account that has not authorized any accounts
     await xrpClient.enableDepositAuth(wallet)
 
@@ -311,7 +296,7 @@ describe('XrpClient Integration Tests', function (): void {
   })
 
   it('Unauthorize Sending Account - cannot send funds after an authorized account is unauthorized', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account that has authorized another account to send XRP to it
     const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
 

@@ -10,10 +10,7 @@ import XRPTestUtils, {
   noFormatMemo,
   noTypeMemo,
 } from '../XRP/helpers/xrp-test-utils'
-
-// A timeout for these tests.
-// eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
-const timeoutMs = 60 * 1000
+import { TEST_TIMEOUT_MS, RIPPLED_URL } from '../Common/constants'
 
 // The network to conduct tests on.
 const network = XrplNetwork.Test
@@ -22,8 +19,7 @@ const network = XrplNetwork.Test
 const payIdClient = new XrpPayIdClient(network)
 
 // An XrpClient under test.
-const rippledUrl = 'test.xrp.xpring.io:50051'
-const xrpClient = new XrpClient(rippledUrl, XrplNetwork.Test)
+const xrpClient = new XrpClient(RIPPLED_URL, XrplNetwork.Test)
 
 // A XpringClient under test.
 const xpringClient = new XpringClient(payIdClient, xrpClient)
@@ -36,7 +32,7 @@ describe('Xpring Integration Tests', function (): void {
   })
 
   it('Send XRP TestNet', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     // GIVEN an amount and a PayID that will resolve.
     const amount = 10
@@ -50,7 +46,7 @@ describe('Xpring Integration Tests', function (): void {
   })
 
   it('Send XRP TestNet with memos', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     // GIVEN an amount, a PayID that will resolve, and some memos.
     const amount = 10

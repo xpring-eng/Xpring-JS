@@ -4,6 +4,7 @@ import XrpError from '../../src/XRP/shared/xrp-error'
 import IssuedCurrencyClient from '../../src/XRP/issued-currency-client'
 
 import XRPTestUtils from './helpers/xrp-test-utils'
+import { TEST_TIMEOUT_MS, RIPPLED_URL } from '../Common/constants'
 import {
   AccountRootFlag,
   TransactionStatus,
@@ -13,15 +14,10 @@ import { TransactionResponse } from '../../src/XRP/shared/rippled-web-socket-sch
 import XrpClient from '../../src/XRP/xrp-client'
 import IssuedCurrency from '../../src/XRP/shared/issued-currency'
 
-// A timeout for these tests.
-// eslint-disable-next-line @typescript-eslint/no-magic-numbers -- 1 minute in milliseconds
-const timeoutMs = 60 * 1000
-
 // An IssuedCurrencyClient that makes requests.
-const rippledGrpcUrl = 'test.xrp.xpring.io:50051'
 const rippledWebSocketUrl = 'wss://wss.test.xrp.xpring.io'
 const issuedCurrencyClient = IssuedCurrencyClient.issuedCurrencyClientWithEndpoint(
-  rippledGrpcUrl,
+  RIPPLED_URL,
   rippledWebSocketUrl,
   console.log,
   XrplNetwork.Test,
@@ -42,7 +38,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   let issuerWalletAuthTrustLines: Wallet
 
   before(async function () {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     const walletPromise1 = XRPTestUtils.randomWalletFromFaucet().then(
       (wallet) => {
         walletMightHaveTrustLines = wallet
@@ -77,7 +73,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('getTrustLines - valid request', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN a testnet wallet that has created at least one trustline
     await issuedCurrencyClient.createTrustLine(
       issuerWallet.getAddress(),
@@ -100,7 +96,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   // specific trustlines.  Can't otherwise verify correctness.
 
   it('getTrustLines - account not found', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN a valid address that doesn't actually exist on the ledger
     const walletFactory = new WalletFactory(XrplNetwork.Test)
     const address = (await walletFactory.generateRandomWallet())!.wallet.getAddress()
@@ -113,7 +109,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('getTrustLines - account with no trust lines', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN a valid, funded address that doesn't have any trustlines
     // WHEN getTrustLines is called for that addres
     const trustLines = await issuedCurrencyClient.getTrustLines(
@@ -126,7 +122,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('requireAuthorizedTrustlines/allowUnauthorizedTrustlines - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account
     // WHEN requireAuthorizedTrustlines is called
     const result = await issuedCurrencyClient.requireAuthorizedTrustlines(
@@ -136,7 +132,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     await XRPTestUtils.verifyFlagModification(
       walletNeverAnyTrustLines,
-      rippledGrpcUrl,
+      RIPPLED_URL,
       result,
       AccountRootFlag.LSF_REQUIRE_AUTH,
     )
@@ -150,7 +146,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction was successfully submitted and the correct flag was unset on the account.
     await XRPTestUtils.verifyFlagModification(
       walletNeverAnyTrustLines,
-      rippledGrpcUrl,
+      RIPPLED_URL,
       result2,
       AccountRootFlag.LSF_REQUIRE_AUTH,
       false,
@@ -158,7 +154,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('enableRippling - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account
     // WHEN enableRippling is called
     const result = await issuedCurrencyClient.enableRippling(
@@ -168,14 +164,14 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     await XRPTestUtils.verifyFlagModification(
       walletNeverAnyTrustLines,
-      rippledGrpcUrl,
+      RIPPLED_URL,
       result,
       AccountRootFlag.LSF_DEFAULT_RIPPLE,
     )
   })
 
   it('disallowIncomingXrp/allowIncomingXrp - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account
     // WHEN disallowIncomingXrp is called
     const result = await issuedCurrencyClient.disallowIncomingXrp(
@@ -185,7 +181,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     await XRPTestUtils.verifyFlagModification(
       walletNeverAnyTrustLines,
-      rippledGrpcUrl,
+      RIPPLED_URL,
       result,
       AccountRootFlag.LSF_DISALLOW_XRP,
     )
@@ -199,7 +195,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction was successfully submitted and the flag should not be set on the account.
     await XRPTestUtils.verifyFlagModification(
       walletNeverAnyTrustLines,
-      rippledGrpcUrl,
+      RIPPLED_URL,
       result2,
       AccountRootFlag.LSF_DISALLOW_XRP,
       false,
@@ -209,7 +205,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   // TODO: Once required IOU functionality exists in SDK, add integration tests that successfully establish an unauthorized trustline to this account.
 
   it('requireDestinationTags/allowNoDestinationTag - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account
     // WHEN requireDestinationTags is called
     const result = await issuedCurrencyClient.requireDestinationTags(
@@ -219,7 +215,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     await XRPTestUtils.verifyFlagModification(
       walletNeverAnyTrustLines,
-      rippledGrpcUrl,
+      RIPPLED_URL,
       result,
       AccountRootFlag.LSF_REQUIRE_DEST_TAG,
     )
@@ -233,7 +229,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN both transactions were successfully submitted and there should be no flag set on the account.
     await XRPTestUtils.verifyFlagModification(
       walletNeverAnyTrustLines,
-      rippledGrpcUrl,
+      RIPPLED_URL,
       result2,
       AccountRootFlag.LSF_REQUIRE_DEST_TAG,
       false,
@@ -241,12 +237,12 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('requireDestinationTags/allowNoDestinationTag - transaction without destination tags', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account with requireDestinationTags set
     await issuedCurrencyClient.requireDestinationTags(walletNeverAnyTrustLines)
 
     // WHEN a transaction is sent to the account without a destination tag
-    const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
+    const xrpClient = new XrpClient(RIPPLED_URL, XrplNetwork.Test)
     const xrpAmount = '100'
     const transactionResult = await xrpClient.sendXrp(
       xrpAmount,
@@ -278,7 +274,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
   // TODO: Implement an integration test for an account with balances/assets/obligations once functionality exists for first creating things.
   it('getGatewayBalances - account not found', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN a valid address that doesn't actually exist on the ledger
     const walletFactory = new WalletFactory(XrplNetwork.Test)
     const address = (await walletFactory.generateRandomWallet())!.wallet.getAddress()
@@ -307,7 +303,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('getTransferFee/setTransferFee - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account
     // WHEN setTransferFee is called
     const expectedTransferFee = 1000000123
@@ -330,7 +326,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('setTransferFee - bad transferRate values', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     const lowTransferFee = 12345
     const highTransferFee = 3000001234
@@ -365,7 +361,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('enableGlobalFreeze/disableGlobalFreeze - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account
     // WHEN enableGlobalFreeze is called
     const result = await issuedCurrencyClient.enableGlobalFreeze(
@@ -375,7 +371,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     await XRPTestUtils.verifyFlagModification(
       walletMightHaveTrustLines,
-      rippledGrpcUrl,
+      RIPPLED_URL,
       result,
       AccountRootFlag.LSF_GLOBAL_FREEZE,
     )
@@ -389,7 +385,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN both transactions were successfully submitted and there should be no flag set on the account.
     await XRPTestUtils.verifyFlagModification(
       walletMightHaveTrustLines,
-      rippledGrpcUrl,
+      RIPPLED_URL,
       result2,
       AccountRootFlag.LSF_GLOBAL_FREEZE,
       false,
@@ -397,7 +393,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('enableNoFreeze - rippled', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account
     // WHEN enableNoFreeze is called
     const result = await issuedCurrencyClient.enableNoFreeze(
@@ -407,14 +403,14 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // THEN the transaction was successfully submitted and the correct flag was set on the account.
     await XRPTestUtils.verifyFlagModification(
       walletNeverAnyTrustLines,
-      rippledGrpcUrl,
+      RIPPLED_URL,
       result,
       AccountRootFlag.LSF_NO_FREEZE,
     )
   })
 
   it('createTrustLine - creating a trustline with XRP', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account and an issuer's wallet
     // WHEN a trust line is created with the issuer with a value of 0
     try {
@@ -431,7 +427,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('createTrustLine - adding a trustline with 0 value', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account and an issuer's wallet
     const freshWallet = await XRPTestUtils.randomWalletFromFaucet()
 
@@ -453,7 +449,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('createTrustLine - adding a trustline with non-zero value', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     const freshWallet = await XRPTestUtils.randomWalletFromFaucet()
     const trustLineLimit = '1'
     const trustLineCurrency = 'USD'
@@ -481,7 +477,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('createTrustLine - adding a trustline with non-zero value and qualityIn + qualityOut', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     const trustLineLimit = '1'
     const trustLineCurrency = 'USD'
     const qualityInAmount = 20
@@ -516,7 +512,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('authorizeTrustLine - valid account', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing testnet account requiring authorized trust lines
     // and another account
     const accountToTrust = await XRPTestUtils.randomWalletFromFaucet()
@@ -547,7 +543,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('freezeTrustLine', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing issuer account who has a trustline with a counter-party
     const trustLineCurrency = 'NEW'
     await issuedCurrencyClient.authorizeTrustLine(
@@ -577,7 +573,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('unfreezeTrustLine - unfreezes frozen account', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing issuer account who has a frozen trust line with a counter-party
     const trustLineCurrency = 'FRZ'
     await issuedCurrencyClient.authorizeTrustLine(
@@ -613,7 +609,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('disableRipplingForTrustLine/enableRipplingForTrustLine', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN an existing issuer account who has a trust line with a counter-party
     const trustLineCurrency = 'NRP'
     await issuedCurrencyClient.authorizeTrustLine(
@@ -666,7 +662,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('monitorAccountTransactions/stopMonitoringAccountTransactions - valid request', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     const xAddress = walletNeverAnyTrustLines.getAddress()
     const classicAddress = XrpUtils.decodeXAddress(xAddress)
@@ -701,7 +697,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       }
     }
 
-    const xrpClient = new XrpClient(rippledGrpcUrl, XrplNetwork.Test)
+    const xrpClient = new XrpClient(RIPPLED_URL, XrplNetwork.Test)
 
     // GIVEN a valid test address
     // WHEN subscribeToAccount is called for that address
@@ -737,7 +733,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('monitorAccountTransactions - bad address', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     const address = 'badAddress'
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -755,7 +751,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('stopMonitoringAccountTransactions - not-subscribed address', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     const xAddress = walletNeverAnyTrustLines.getAddress()
     const classicAddress = XrpUtils.decodeXAddress(xAddress)
@@ -774,7 +770,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('stopMonitoringAccountTransactions - bad address', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     // GIVEN a test address that is malformed.
     const address = 'badAddress'
@@ -791,7 +787,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('createOffer - success, taker gets issued currency taker pays xrp', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     // GIVEN a funded issuer wallet
     const issuerClassicAddress = XrpUtils.decodeXAddress(
@@ -833,7 +829,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('createOffer - success, taker gets xrp taker pays issued currency', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
     // GIVEN a wallet with XRP
     const issuerClassicAddress = XrpUtils.decodeXAddress(
       issuerWallet.getAddress(),
@@ -874,7 +870,7 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
   })
 
   it('cancelOffer - success', async function (): Promise<void> {
-    this.timeout(timeoutMs)
+    this.timeout(TEST_TIMEOUT_MS)
 
     const offerSequenceNumber = 1
 
