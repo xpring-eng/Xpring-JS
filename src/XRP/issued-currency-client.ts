@@ -785,12 +785,14 @@ export default class IssuedCurrencyClient {
    * @param destination The destination address (recipient) of the issued currency, encoded as an X-address (see https://xrpaddress.info/).
    * @param currency The three-letter currency code of the issued currency being created.
    * @param amount The amount of issued currency to create.
+   * @param sendMaxValue The max amount to send.
    */
   public async createIssuedCurrency(
     sender: Wallet,
     destination: string,
     currency: string,
     amount: string,
+    sendMaxValue?: string,
   ): Promise<TransactionResult> {
     const issuer = sender.getAddress()
     return await this.issuedCurrencyPayment(
@@ -799,6 +801,8 @@ export default class IssuedCurrencyClient {
       currency,
       issuer,
       amount,
+      undefined,
+      sendMaxValue,
     )
   }
 
