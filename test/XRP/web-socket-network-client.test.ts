@@ -373,6 +373,7 @@ describe('WebSocket Tests', function (): void {
     assert.equal(response.status, 'success')
     assert.equal(response.type, 'response')
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     const result = (response as RipplePathFindSuccessfulResponse).result
 
     assert.equal(result.destination_account, destinationAddress)

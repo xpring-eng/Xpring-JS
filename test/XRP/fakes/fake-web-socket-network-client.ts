@@ -9,6 +9,7 @@ import {
   StatusResponse,
   TransactionResponse,
 } from '../../../src/XRP/shared/rippled-web-socket-schema'
+import { WebSocketNetworkClientInterface } from '../../../src/XRP/network-clients/web-socket-network-client-interface'
 import IssuedCurrency from '../../../src/XRP/shared/issued-currency'
 
 /**
@@ -214,7 +215,8 @@ export class FakeWebSocketNetworkClientResponses {
 /**
  * A fake network client which stubs network interaction.
  */
-export class FakeWebSocketNetworkClient {
+export class FakeWebSocketNetworkClient
+  implements WebSocketNetworkClientInterface {
   public constructor(
     private readonly responses: FakeWebSocketNetworkClientResponses = FakeWebSocketNetworkClientResponses.defaultSuccessfulResponses,
   ) {}

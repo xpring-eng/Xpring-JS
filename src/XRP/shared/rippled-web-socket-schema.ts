@@ -388,5 +388,6 @@ export {
   RipplePathFindSuccessfulResponse,
   WebSocketTransaction,
   TrustLineResponse,
+  PathElement,
   SourceCurrency,
 }
