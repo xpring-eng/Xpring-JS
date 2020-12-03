@@ -39,6 +39,8 @@ const transactionStatusFailureCodes = [
   'telBAD_PUBLIC_KEY',
   'temBAD_FEE',
   'terRETRY',
+  'tecPATH_PARTIAL',
+  'tecPATH_DRY',
 ]
 
 const transactionHash = 'DEADBEEF'
@@ -209,6 +211,8 @@ describe('Default XRP Client', function (): void {
       TransactionStatus.Unknown,
       TransactionStatus.MalformedTransaction,
       TransactionStatus.Unknown,
+      TransactionStatus.ClaimedCostOnly_PathPartial,
+      TransactionStatus.ClaimedCostOnly_PathDry,
     ]
 
     // Iterate over different types of transaction status codes which represent failures.
