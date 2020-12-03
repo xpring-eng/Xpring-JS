@@ -887,9 +887,9 @@ export default class IssuedCurrencyClient {
    * @param maxSourceAmount Highest amount of source currency this transaction is allowed to cost, including transfer fees,
    *               exchange rates, and slippage. Does not include the XRP destroyed as a cost for submitting the transaction.
    *               For XRP, specify amount as a string of drops.
-   *               For issued currencies, specify an Issued Currency object with currency, issuer, and value fields.
+   *               For issued currencies, specify an IssuedCurrency object with currency, issuer, and value fields.
    * @param deliverAmount The amount of currency to deliver. For XRP, specify amount as a string of drops.  For issued currencies,
-   *               specify an Issued Currency object with currency, issuer, and value fields.
+   *               specify an IssuedCurrency object with currency, issuer, and value fields.
    */
   public async sendCrossCurrencyPayment(
     sender: Wallet,
@@ -982,7 +982,7 @@ export default class IssuedCurrencyClient {
     )
 
     // If failure response from websocket, throw
-    if (pathFindResponse.status != 'success') {
+    if (pathFindResponse.status !== 'success') {
       pathFindResponse = pathFindResponse as WebSocketFailureResponse
       throw new XrpError(XrpErrorType.Unknown, pathFindResponse.error_message)
     }
