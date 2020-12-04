@@ -814,12 +814,14 @@ export default class IssuedCurrencyClient {
    * @param issuer The original issuer of the issued currency, encoded as an X-address (see https://xrpaddress.info/).
    * @param currency The three-letter currency code of the issued currency being redeemed.
    * @param amount The amount of issued currency to redeem.
+   * @param sendMaxValue The max amount to send.
    */
   public async redeemIssuedCurrency(
     sender: Wallet,
     currency: string,
     issuer: string,
     amount: string,
+    sendMaxValue?: string,
   ): Promise<TransactionResult> {
     // Redemption of issued currency is achieved by sending issued currency directly to the original issuer.
     // However, the issuer field specified in the amount is treated as a special case in this circumstance, and should be
@@ -831,6 +833,8 @@ export default class IssuedCurrencyClient {
       currency,
       sender.getAddress(),
       amount,
+      undefined,
+      sendMaxValue,
     )
   }
 
