@@ -39,6 +39,8 @@ const transactionStatusFailureCodes = [
   'telBAD_PUBLIC_KEY',
   'temBAD_FEE',
   'terRETRY',
+  'tecPATH_PARTIAL',
+  'tecPATH_DRY',
 ]
 
 const transactionHash = 'DEADBEEF'
@@ -203,6 +205,16 @@ describe('Default XRP Client', function (): void {
   })
 
   it('Get Payment Status - Validated Transaction and Failure Code', async function (): Promise<void> {
+    const expectedTransactionStatusFailureCodeResponses: number[] = [
+      TransactionStatus.Failed,
+      TransactionStatus.ClaimedCostOnly,
+      TransactionStatus.Unknown,
+      TransactionStatus.MalformedTransaction,
+      TransactionStatus.Unknown,
+      TransactionStatus.ClaimedCostOnly_PathPartial,
+      TransactionStatus.ClaimedCostOnly_PathDry,
+    ]
+
     // Iterate over different types of transaction status codes which represent failures.
     /* eslint-disable no-await-in-loop */
     for (let i = 0; i < transactionStatusFailureCodes.length; i += 1) {
@@ -231,8 +243,11 @@ describe('Default XRP Client', function (): void {
         transactionHash,
       )
 
-      // THEN the status is failed.
-      assert.deepEqual(transactionStatus, TransactionStatus.Failed)
+      // THEN the status is as expected.
+      assert.deepEqual(
+        transactionStatus,
+        expectedTransactionStatusFailureCodeResponses[i],
+      )
     }
     /* eslint-enable no-await-in-loop */
   })
