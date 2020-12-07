@@ -945,7 +945,8 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
       currentTimeUnixEpochSeconds - rippleEpochStartTimeSeconds
     const expiration = currentTimeRippleEpochSeconds + 60 * 60 // roughly one hour in future
 
-    // WHEN the wallet creates an offer to exchange (receive) their own issued currency for their XRP (deliver)
+    // WHEN the wallet creates an offer to exchange (receive) their own issued currency for their XRP (deliver),
+    // with mutually exclusive `immediateOrCancel` and `fillOrKill` flags both set,
     const transactionResult = await issuedCurrencyClient.createOffer(
       issuerWallet,
       takerGetsXrp,

@@ -1223,19 +1223,19 @@ export default class IssuedCurrencyClient {
    *               It is not considered an error if the offer specified does not exist.
    * @param expiration (Optional) Time after which the offer is no longer active, in seconds since the Ripple Epoch.
    *               (See https://xrpl.org/basic-data-types.html#specifying-time)
-   * @param passive (Optional) If enabled, the offer does not consume offers that exactly match it, and instead becomes
+   * @param passive (Optional, defaults to false) If enabled, the offer does not consume offers that exactly match it, and instead becomes
    *               an Offer object in the ledger. It still consumes offers that cross it.
-   * @param immediateOrCancel (Optional) Treat the offer as an Immediate or Cancel order. If enabled, the offer never becomes
+   * @param immediateOrCancel (Optional, defaults to false) Treat the offer as an Immediate or Cancel order. If enabled, the offer never becomes
    *               a ledger object: it only tries to match existing offers in the ledger. If the offer cannot match any offers
    *               immediately, it executes "successfully" without trading any currency. In this case, the transaction has the
    *               result code tesSUCCESS, but creates no Offer objects in the ledger.
    *               (see https://en.wikipedia.org/wiki/Immediate_or_cancel)
-   * @param fillOrKill (Optional) Treat the offer as a Fill or Kill order. Only try to match existing offers in the ledger,
+   * @param fillOrKill (Optional, defaults to false) Treat the offer as a Fill or Kill order. Only try to match existing offers in the ledger,
    *               and only do so if the entire TakerPays quantity can be obtained. If the fix1578 amendment is enabled and
    *               the offer cannot be executed when placed, the transaction has the result code tecKILLED; otherwise, the
    *               transaction uses the result code tesSUCCESS even when it was killed without trading any currency.
    *               (see https://en.wikipedia.org/wiki/Fill_or_kill)
-   * @param sell (Optional) Exchange the entire TakerGets amount, even if it means obtaining more than the TakerPays amount in exchange.
+   * @param sell (Optional, defaults to false) Exchange the entire TakerGets amount, even if it means obtaining more than the TakerPays amount in exchange.
    */
   public async createOffer(
     sender: Wallet,
