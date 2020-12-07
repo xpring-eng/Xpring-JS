@@ -814,7 +814,6 @@ export {
   testInvalidPaymentProtoNoDestination,
   testInvalidPaymentProtoXrpPaths,
   testInvalidPaymentProtoXrpSendMax,
-  testInvalidPaymentProtoNoSendMax,
   testInvalidPaymentTransaction,
   testInvalidSignerProtoNoAccount,
   testInvalidSignerProtoBadAccount,
