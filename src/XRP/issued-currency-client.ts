@@ -65,7 +65,7 @@ import {
 } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/transaction_pb'
 import IssuedCurrency from './shared/issued-currency'
 import XrpUtils from './shared/xrp-utils'
-import OfferCreateFlags from './shared/offer-create-flags'
+import OfferCreateFlag from './shared/offer-create-flag'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -1274,16 +1274,16 @@ export default class IssuedCurrencyClient {
 
     let flagsValue = 0
     if (passive) {
-      flagsValue |= OfferCreateFlags.TF_PASSIVE
+      flagsValue |= OfferCreateFlag.TF_PASSIVE
     }
     if (immediateOrCancel) {
-      flagsValue |= OfferCreateFlags.TF_IMMEDIATE_OR_CANCEL
+      flagsValue |= OfferCreateFlag.TF_IMMEDIATE_OR_CANCEL
     }
     if (fillOrKill) {
-      flagsValue |= OfferCreateFlags.TF_FILL_OR_KILL
+      flagsValue |= OfferCreateFlag.TF_FILL_OR_KILL
     }
     if (sell) {
-      flagsValue |= OfferCreateFlags.TF_SELL
+      flagsValue |= OfferCreateFlag.TF_SELL
     }
 
     const flags = new Flags()
