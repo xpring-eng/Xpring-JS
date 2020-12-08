@@ -80,10 +80,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     this.timeout(timeoutMs)
     // GIVEN a testnet wallet that has created at least one trustline
     await issuedCurrencyClient.createTrustLine(
+      walletMightHaveTrustLines,
       issuerWallet.getAddress(),
       'FOO',
       '100',
-      walletMightHaveTrustLines,
     )
 
     // WHEN getTrustLines is called for that address
@@ -419,10 +419,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // WHEN a trust line is created with the issuer with a value of 0
     try {
       await issuedCurrencyClient.createTrustLine(
+        walletMightHaveTrustLines,
         issuerWallet.getAddress(),
         'XRP',
         '0',
-        walletMightHaveTrustLines,
       )
     } catch (error) {
       // THEN an error is thrown.
@@ -437,10 +437,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // WHEN a trust line is created with the issuer with a value of 0
     await issuedCurrencyClient.createTrustLine(
+      freshWallet,
       issuerWallet.getAddress(),
       'USD',
       '0',
-      freshWallet,
     )
 
     const trustLines = await issuedCurrencyClient.getTrustLines(
@@ -461,10 +461,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // GIVEN an existing testnet account and an issuer's wallet
     // WHEN a trustline is created with the issuer with a positive value
     await issuedCurrencyClient.createTrustLine(
+      freshWallet,
       issuerWallet.getAddress(),
       trustLineCurrency,
       trustLineLimit,
-      freshWallet,
     )
 
     const trustLines = await issuedCurrencyClient.getTrustLines(
@@ -492,10 +492,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // WHEN a trustline is created with the issuer with a positive value
     await issuedCurrencyClient.createTrustLine(
+      freshWallet,
       issuerWallet.getAddress(),
       trustLineCurrency,
       trustLineLimit,
-      freshWallet,
       qualityInAmount,
       qualityOutAmount,
     )

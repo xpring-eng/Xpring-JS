@@ -82,25 +82,25 @@ describe('Issued Currency Payment Integration Tests', function (): void {
 
     // both customers trust issuer of FOO
     await issuedCurrencyClient.createTrustLine(
+      customerWallet1,
       issuerWalletFOO.getAddress(),
       currencyNameFOO,
       trustLineLimit,
-      customerWallet1,
     )
 
     await issuedCurrencyClient.createTrustLine(
+      customerWallet2,
       issuerWalletFOO.getAddress(),
       currencyNameFOO,
       trustLineLimit,
-      customerWallet2,
     )
 
     // only customer2 trusts issuer of BAR
     await issuedCurrencyClient.createTrustLine(
+      customerWallet2,
       issuerWalletBAR.getAddress(),
       currencyNameBAR,
       trustLineLimit,
-      customerWallet2,
     )
   })
 
@@ -138,10 +138,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     const trustLineCurrency = 'USD'
 
     await issuedCurrencyClient.createTrustLine(
+      operationalWallet,
       issuerWallet.getAddress(),
       trustLineCurrency,
       trustLineLimit,
-      operationalWallet,
     )
 
     // WHEN the issuer attempts to create an amount of issued currency above the trust line limit
@@ -191,10 +191,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     const trustLineLimit = '1000'
     const trustLineCurrency = 'BAZ'
     await issuedCurrencyClient.createTrustLine(
+      operationalWallet,
       issuerWalletNoRippling.getAddress(),
       trustLineCurrency,
       trustLineLimit,
-      operationalWallet,
     )
 
     // fund operational with issued currency
@@ -208,10 +208,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     // Must create trust line from customer account to issuing account such that rippling *could* happen through issuing account
     // Even though it won't because the issuing account hasn't enabled rippling - just isolating what's being tested.
     await issuedCurrencyClient.createTrustLine(
+      customerWallet1,
       issuerWalletNoRippling.getAddress(),
       trustLineCurrency,
       trustLineLimit,
-      customerWallet1,
     )
 
     // WHEN an issued currency payment is made to another funded account
@@ -286,10 +286,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     // establish trust line from operational to issuing
     const trustLineLimit = '1000'
     await issuedCurrencyClient.createTrustLine(
+      customerWallet1,
       issuerWalletWithTransferFee.getAddress(),
       currencyNameFOO,
       trustLineLimit,
-      customerWallet1,
     )
 
     // fund operational with some FOO from this issuer
@@ -302,10 +302,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
 
     // Must create trust line from customer account to issuing account such that rippling can happen through issuing account
     await issuedCurrencyClient.createTrustLine(
+      customerWallet2,
       issuerWalletWithTransferFee.getAddress(),
       currencyNameFOO,
       trustLineLimit,
-      customerWallet2,
     )
 
     // WHEN an issued currency payment is made to another funded account, without the transferFee argument supplied
@@ -437,10 +437,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     const offererWallet = await XRPTestUtils.randomWalletFromFaucet()
 
     await issuedCurrencyClient.createTrustLine(
+      offererWallet,
       issuerWalletFOO.getAddress(),
       currencyNameFOO,
       trustLineLimit,
-      offererWallet,
     )
 
     const takerGetsXRP = '100000000' // 100 XRP
@@ -522,10 +522,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     const currencyNameBAZ = 'BAZ'
 
     await issuedCurrencyClient.createTrustLine(
+      customerWallet1,
       freshIssuerWallet.getAddress(),
       currencyNameBAZ,
       trustLineLimit,
-      customerWallet1,
     )
     await issuedCurrencyClient.createIssuedCurrency(
       freshIssuerWallet,
@@ -560,10 +560,10 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     // BUT THEN GIVEN a customer account with some issued BAZ, an issuing address that has enabled rippling, a recipient interested
     // in being paid in XRP, and a third party offer to exchange the two
     await issuedCurrencyClient.createTrustLine(
+      customerWallet2,
       freshIssuerWallet.getAddress(),
       currencyNameBAZ,
       trustLineLimit,
-      customerWallet2,
     )
 
     // create offer by third party to take BAZ in exchange for XRP

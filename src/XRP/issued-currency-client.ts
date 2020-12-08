@@ -510,10 +510,10 @@ export default class IssuedCurrencyClient {
    *                  A value of 0 is shorthand for treating balances at face value.
    */
   public async createTrustLine(
+    wallet: Wallet,
     issuerXAddress: string,
     currencyName: string,
     amount: string,
-    wallet: Wallet,
     qualityIn?: number,
     qualityOut?: number,
   ): Promise<TransactionResult> {

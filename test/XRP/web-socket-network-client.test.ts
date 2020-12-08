@@ -350,10 +350,10 @@ describe('WebSocket Tests', function (): void {
     const trustLineLimit = '200'
     const trustLineCurrency = 'FOO'
     await issuedCurrencyClient.createTrustLine(
+      wallet2,
       wallet.getAddress(),
       trustLineCurrency,
       trustLineLimit,
-      wallet2,
     )
 
     const destinationAmount: IssuedCurrency = {
@@ -405,10 +405,10 @@ describe('WebSocket Tests', function (): void {
     await issuedCurrencyClient.enableRippling(issuerWallet)
 
     await issuedCurrencyClient.createTrustLine(
+      wallet2,
       issuerWallet.getAddress(),
       trustLineCurrency,
       trustLineLimit,
-      wallet2,
     )
 
     // Create an offer to accept XRP in exchange for FOO
@@ -480,17 +480,17 @@ describe('WebSocket Tests', function (): void {
     await issuedCurrencyClient.enableRippling(issuerWallet)
 
     await issuedCurrencyClient.createTrustLine(
+      offerCreatorWallet,
       issuerWallet.getAddress(),
       trustLineCurrency,
       trustLineLimit,
-      offerCreatorWallet,
     )
 
     await issuedCurrencyClient.createTrustLine(
+      wallet2,
       issuerWallet.getAddress(),
       trustLineCurrency,
       trustLineLimit,
-      wallet2,
     )
 
     // Fund an address with some issued currency, who can then create an offer.
