@@ -1,6 +1,6 @@
 import { XrpError, XrpErrorType } from '..'
 import { CurrencyAmount } from '../Generated/web/org/xrpl/rpc/v1/amount_pb'
-import XrpIssuedCurrency from './xrp-issued-currency'
+import XrplIssuedCurrency from './xrpl-issued-currency'
 
 /**
  * An amount of currency on the XRP Ledger
@@ -20,7 +20,7 @@ export default class XrpCurrencyAmount {
     const issuedCurrencyAmount = currencyAmount.getIssuedCurrencyAmount()
     const xrpAmount = currencyAmount.getXrpAmount()
     if (issuedCurrencyAmount !== undefined && xrpAmount === undefined) {
-      const issuedCurrency = XrpIssuedCurrency.from(issuedCurrencyAmount)
+      const issuedCurrency = XrplIssuedCurrency.from(issuedCurrencyAmount)
       return new XrpCurrencyAmount(undefined, issuedCurrency)
     }
     if (xrpAmount !== undefined && issuedCurrencyAmount === undefined) {
@@ -42,6 +42,6 @@ export default class XrpCurrencyAmount {
    */
   private constructor(
     readonly drops?: string,
-    readonly issuedCurrency?: XrpIssuedCurrency,
+    readonly issuedCurrency?: XrplIssuedCurrency,
   ) {}
 }

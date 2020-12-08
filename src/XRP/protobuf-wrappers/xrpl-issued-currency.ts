@@ -14,7 +14,7 @@ import XrpCurrency from './xrp-currency'
  * @see: https://xrpl.org/basic-data-types.html#specifying-currency-amounts
  * @see: https://xrpl.org/currency-formats.html#issued-currency-amounts
  */
-export default class XrpIssuedCurrency {
+export default class XrplIssuedCurrency {
   /**
    * Constructs an XrpIssuedCurrency from an IssuedCurrencyAmount.
    *
@@ -23,7 +23,7 @@ export default class XrpIssuedCurrency {
    * @returns an XrpIssuedCurrency with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/amount.proto#L28
    */
-  public static from(issuedCurrency: IssuedCurrencyAmount): XrpIssuedCurrency {
+  public static from(issuedCurrency: IssuedCurrencyAmount): XrplIssuedCurrency {
     const currency = issuedCurrency.getCurrency()
     if (!currency) {
       throw new XrpError(
@@ -49,7 +49,7 @@ export default class XrpIssuedCurrency {
         'IssuedCurrency protobuf does not contain `issuer` field.',
       )
     }
-    return new XrpIssuedCurrency(XrpCurrency.from(currency), value, issuer)
+    return new XrplIssuedCurrency(XrpCurrency.from(currency), value, issuer)
   }
 
   /**
