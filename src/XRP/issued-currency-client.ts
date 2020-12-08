@@ -500,10 +500,10 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/trustset.html
    *
+   * @param wallet The wallet creating the trustline.
    * @param issuerXAddress The X-Address of the issuer to extend trust to.
    * @param currencyName The currency this trust line applies to, as a three-letter ISO 4217 Currency Code  or a 160-bit hex value according to currency format.
    * @param amount Decimal representation of the limit to set on this trust line.
-   * @param wallet The wallet creating the trustline.
    * @param qualityIn (Optional) Value incoming balances on this trust line at the ratio of this number per 1,000,000,000 units.
    *                  A value of 0 is shorthand for treating balances at face value.
    * @param qualityOut (Optional) Value outgoing balances on this trust line at the ratio of this number per 1,000,000,000 units.
