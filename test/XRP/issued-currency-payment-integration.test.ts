@@ -181,7 +181,9 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendIssuedCurrencyPayment - failure to send from non-issuing account to customer account without rippling enabled on issuer', async function (): Promise<void> {
+  it('sendIssuedCurrencyPayment - failure to send from non-issuing account to customer account without rippling enabled on issuer', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
     // GIVEN an operational address with some issued currency, and an issuing address that has not enabled rippling
     const issuerWalletNoRippling = await XRPTestUtils.randomWalletFromFaucet()
@@ -237,7 +239,9 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendIssuedCurrencyPayment - success sending issued currency from non-issuing account to another account', async function (): Promise<void> {
+  it('sendIssuedCurrencyPayment - success sending issued currency from non-issuing account to another account', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
     // GIVEN an operational address with some issued currency, and an issuing address that has enabled rippling but set no transfer fees,
     // and a customer account who also has a trust line to the issuer.
@@ -272,15 +276,17 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendIssuedCurrencyPayment - sending issued currency with applicable transfer fees, combined cases', async function (): Promise<void> {
+  it('sendIssuedCurrencyPayment - sending issued currency with applicable transfer fees, combined cases', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs * 2)
     // GIVEN an operational address with some issued currency, and an issuing address that has enabled rippling and established a transfer fee
     const issuerWalletWithTransferFee = await XRPTestUtils.randomWalletFromFaucet()
 
     await issuedCurrencyClient.enableRippling(issuerWalletWithTransferFee)
     await issuedCurrencyClient.setTransferFee(
-      1005000000,
       issuerWalletWithTransferFee,
+      1005000000,
     )
 
     // establish trust line from operational to issuing
@@ -383,7 +389,9 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendCrossCurrencyPayment - success, XRP -> Issued Currency with default path', async function (): Promise<void> {
+  it('sendCrossCurrencyPayment - success, XRP -> Issued Currency with default path', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
     // GIVEN a customer account with some issued currency, an issuing address that has enabled rippling, and an offer to exchange
     // XRP for FOO
@@ -428,7 +436,9 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendCrossCurrencyPayment - success, Issued Currency -> Issued Currency with no default path', async function (): Promise<void> {
+  it('sendCrossCurrencyPayment - success, Issued Currency -> Issued Currency with no default path', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs * 2)
     // GIVEN two different issued currencies by two different issuers, and order books for each currency to exchange with XRP,
     // a payer who wants to pay in FOO, and a payee who wants to receive BAR
@@ -508,7 +518,9 @@ describe('Issued Currency Payment Integration Tests', function (): void {
     )
   })
 
-  it('sendCrossCurrencyPayment - combined cases: failure then success, Issued Currency -> XRP', async function (): Promise<void> {
+  it('sendCrossCurrencyPayment - combined cases: failure then success, Issued Currency -> XRP', async function (): Promise<
+    void
+  > {
     this.timeout(timeoutMs)
     // GIVEN a customer account trying to spend BAZ, an issuing address for BAZ that has enabled rippling,
     // a recipient looking to be paid in XRP, but no offers for exchange.

@@ -424,8 +424,8 @@ export default class IssuedCurrencyClient {
    * @returns A promise which resolves to a TransactionResult object that represents the result of this transaction.
    */
   public async setTransferFee(
-    transferFee: number,
     wallet: Wallet,
+    transferFee: number,
   ): Promise<TransactionResult> {
     const transferRate = new TransferRate()
     transferRate.setValue(transferFee)
