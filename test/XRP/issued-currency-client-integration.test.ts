@@ -558,9 +558,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // WHEN the issuer freezes the trustline
     await issuedCurrencyClient.freezeTrustLine(
+      issuerWalletAuthTrustLines,
       walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
-      issuerWalletAuthTrustLines,
     )
 
     const trustLines = await issuedCurrencyClient.getTrustLines(
@@ -587,16 +587,16 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     )
 
     await issuedCurrencyClient.freezeTrustLine(
+      issuerWalletAuthTrustLines,
       walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
-      issuerWalletAuthTrustLines,
     )
 
     // WHEN the issuer unfreezes the trustline
     await issuedCurrencyClient.unfreezeTrustLine(
+      issuerWalletAuthTrustLines,
       walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
-      issuerWalletAuthTrustLines,
     )
 
     const trustLines = await issuedCurrencyClient.getTrustLines(
@@ -626,10 +626,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // WHEN the issuer sets no rippling on the trust line
     await issuedCurrencyClient.disableRipplingForTrustLine(
+      issuerWalletAuthTrustLines,
       walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
       trustLineAmount,
-      issuerWalletAuthTrustLines,
     )
 
     let trustLines = await issuedCurrencyClient.getTrustLines(

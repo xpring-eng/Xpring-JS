@@ -563,14 +563,14 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
    *
+   * @param wallet The wallet freezing the trust line.
    * @param trustLinePeerAccount The X-Address of the account involved in the trust line being frozen.
    * @param currencyName The currency of the trust line to freeze.
-   * @param wallet The wallet freezing the trust line.
    */
   public async freezeTrustLine(
+    wallet: Wallet,
     trustLinePeerAccount: string,
     currencyName: string,
-    wallet: Wallet,
   ): Promise<TransactionResult> {
     return this.sendTrustSetTransaction(
       wallet,
@@ -589,14 +589,14 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/freezes.html#enabling-or-disabling-individual-freeze
    *
+   * @param wallet The wallet unfreezing the trust line.
    * @param trustLinePeerAccount The X-Address of the account involved in the trust line being unfrozen.
    * @param currencyName The currency of the trust line to unfreeze.
-   * @param wallet The wallet unfreezing the trust line.
    */
   public async unfreezeTrustLine(
+    wallet: Wallet,
     trustLinePeerAccount: string,
     currencyName: string,
-    wallet: Wallet,
   ): Promise<TransactionResult> {
     return this.sendTrustSetTransaction(
       wallet,
@@ -614,16 +614,16 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/rippling.html#enabling-disabling-no-ripple
    *
+   * @param wallet The wallet disabling rippling on the trust line.
    * @param trustLinePeerAccount The X-Address of the account involved in the trust line being disabled to ripple.
    * @param currencyName The currency of the trust line being disbaled to ripple.
    * @param amount The maximum amount of debt to allow on this trust line.
-   * @param wallet The wallet disabling rippling on the trust line.
    */
   public async disableRipplingForTrustLine(
+    wallet: Wallet,
     trustLinePeerAccount: string,
     currencyName: string,
     amount: string,
-    wallet: Wallet,
   ): Promise<TransactionResult> {
     return this.sendTrustSetTransaction(
       wallet,
@@ -639,10 +639,10 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/rippling.html#enabling-disabling-no-ripple
    *
+   * @param wallet The wallet re-enabling rippling on the trust line.
    * @param trustLinePeerAccount trustLinePeerAccount The X-Address of the account involved in the trust line being re-enabled to ripple.
    * @param currencyName The currency of the trust line being re-enabled to ripple.
    * @param amount The maximum amount of debt to allow on this trust line.
-   * @param wallet The wallet re-enabling rippling on the trust line.
    */
   public async enableRipplingForTrustLine(
     wallet: Wallet,
