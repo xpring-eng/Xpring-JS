@@ -662,10 +662,10 @@ export default class IssuedCurrencyClient {
   /*
    * Creates and sends a TrustSet transaction to the XRPL.
    *
+   * @param wallet A wallet associated with the account extending trust.
    * @param accountToTrust The account to extend trust to with a trust line.
    * @param currencyName The name of the currency to create a trust line for.
    * @param amount The maximum amount of debt to allow on this trust line.
-   * @param wallet A wallet associated with the account extending trust.
    * @param qualityIn (Optional) Value incoming balances on this trust line at the ratio of this number per 1,000,000,000 units.
    *                  A value of 0 is shorthand for treating balances at face value.
    * @param qualityOut (Optional) Value outgoing balances on this trust line at the ratio of this number per 1,000,000,000 units.
@@ -704,10 +704,10 @@ export default class IssuedCurrencyClient {
   /**
    * Prepares a TrustSet transaction to be sent and executed on the XRPL.
    *
+   * @param wallet A wallet associated with the account extending trust.
    * @param accountToTrust The account to extend trust to with a trust line.
    * @param currencyName The name of the currency to create a trust line for.
    * @param amount The maximum amount of debt to allow on this trust line.
-   * @param wallet A wallet associated with the account extending trust.
    * @param qualityIn (Optional) Value incoming balances on this trust line at the ratio of this number per 1,000,000,000 units.
    *                  A value of 0 is shorthand for treating balances at face value.
    * @param qualityOut (Optional) Value outgoing balances on this trust line at the ratio of this number per 1,000,000,000 units.
