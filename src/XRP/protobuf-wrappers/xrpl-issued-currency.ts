@@ -1,9 +1,3 @@
-// TODO: friends - should we consider renaming this class as `XrplIssuedCurrency`?  (I mean... all of these wrapper classes should really
-// have been named as such because "Xrp" is inaccurate and confusing in most cases, but it seems like a particularly big deal WRT issued
-// currencies since they are distinctly NOT XRP...)
-// We could do the horrible thing we did when we decided to rename everything idiomatically i.e. `XRPClient` --> `XrpClient` and then deprecate
-// the old names and remove them after two release cycles AKA one month.
-
 import { XrpError, XrpErrorType } from '..'
 import bigInt, { BigInteger } from 'big-integer'
 import { IssuedCurrencyAmount } from '../Generated/web/org/xrpl/rpc/v1/amount_pb'
