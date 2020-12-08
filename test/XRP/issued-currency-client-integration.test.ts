@@ -873,6 +873,99 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     assert.equal(transactionResult.final, true)
   })
 
+  it('createOffer - flags, success', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN a wallet with XRP
+    const issuerClassicAddress = XrpUtils.decodeXAddress(
+      issuerWallet.getAddress(),
+    )
+    if (!issuerClassicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const takerPaysIssuedCurrency: IssuedCurrency = {
+      issuer: issuerClassicAddress.address,
+      currency: 'FAK',
+      value: '100',
+    }
+    const takerGetsXrp = '50'
+
+    const offerSequenceNumber = 1
+
+    const rippleEpochStartTimeSeconds = 946684800
+    const currentTimeUnixEpochSeconds = Date.now() / 1000 // 1000 ms/sec
+    const currentTimeRippleEpochSeconds =
+      currentTimeUnixEpochSeconds - rippleEpochStartTimeSeconds
+    const expiration = currentTimeRippleEpochSeconds + 60 * 60 // roughly one hour in future
+
+    // WHEN the wallet creates an offer to exchange (receive) their own issued currency for their XRP (deliver)
+    const transactionResult = await issuedCurrencyClient.createOffer(
+      issuerWallet,
+      takerGetsXrp,
+      takerPaysIssuedCurrency,
+      offerSequenceNumber,
+      expiration,
+      true,
+      true,
+      false,
+      true,
+    )
+
+    console.log(transactionResult)
+
+    // THEN the offer is successfully created.
+    // TODO: confirm success using book_offers or account_offers API when implemented?
+    assert.equal(transactionResult.status, TransactionStatus.Succeeded)
+    assert.equal(transactionResult.validated, true)
+    assert.equal(transactionResult.final, true)
+  })
+
+  it('createOffer - tfImmediateOrCancel and tfFillOrKill, failure', async function (): Promise<void> {
+    this.timeout(timeoutMs)
+    // GIVEN a wallet with XRP
+    const issuerClassicAddress = XrpUtils.decodeXAddress(
+      issuerWallet.getAddress(),
+    )
+    if (!issuerClassicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const takerPaysIssuedCurrency: IssuedCurrency = {
+      issuer: issuerClassicAddress.address,
+      currency: 'FAK',
+      value: '100',
+    }
+    const takerGetsXrp = '50'
+
+    const offerSequenceNumber = 1
+
+    const rippleEpochStartTimeSeconds = 946684800
+    const currentTimeUnixEpochSeconds = Date.now() / 1000 // 1000 ms/sec
+    const currentTimeRippleEpochSeconds =
+      currentTimeUnixEpochSeconds - rippleEpochStartTimeSeconds
+    const expiration = currentTimeRippleEpochSeconds + 60 * 60 // roughly one hour in future
+
+    // WHEN the wallet creates an offer to exchange (receive) their own issued currency for their XRP (deliver),
+    // with mutually exclusive `immediateOrCancel` and `fillOrKill` flags both set,
+    const transactionResult = await issuedCurrencyClient.createOffer(
+      issuerWallet,
+      takerGetsXrp,
+      takerPaysIssuedCurrency,
+      offerSequenceNumber,
+      expiration,
+      false,
+      true,
+      true,
+      false,
+    )
+
+    // THEN the offer is not successfully created.
+    assert.equal(
+      transactionResult.status,
+      TransactionStatus.MalformedTransaction,
+    )
+  })
+
   it('cancelOffer - success', async function (): Promise<void> {
     this.timeout(timeoutMs)
 

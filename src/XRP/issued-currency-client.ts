@@ -65,6 +65,7 @@ import {
 } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/transaction_pb'
 import IssuedCurrency from './shared/issued-currency'
 import XrpUtils from './shared/xrp-utils'
+import OfferCreateFlag from './shared/offer-create-flag'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -1222,6 +1223,19 @@ export default class IssuedCurrencyClient {
    *               It is not considered an error if the offer specified does not exist.
    * @param expiration (Optional) Time after which the offer is no longer active, in seconds since the Ripple Epoch.
    *               (See https://xrpl.org/basic-data-types.html#specifying-time)
+   * @param passive (Optional, defaults to false) If enabled, the offer does not consume offers that exactly match it, and instead becomes
+   *               an Offer object in the ledger. It still consumes offers that cross it.
+   * @param immediateOrCancel (Optional, defaults to false) Treat the offer as an Immediate or Cancel order. If enabled, the offer never becomes
+   *               a ledger object: it only tries to match existing offers in the ledger. If the offer cannot match any offers
+   *               immediately, it executes "successfully" without trading any currency. In this case, the transaction has the
+   *               result code tesSUCCESS, but creates no Offer objects in the ledger.
+   *               (see https://en.wikipedia.org/wiki/Immediate_or_cancel)
+   * @param fillOrKill (Optional, defaults to false) Treat the offer as a Fill or Kill order. Only try to match existing offers in the ledger,
+   *               and only do so if the entire TakerPays quantity can be obtained. If the fix1578 amendment is enabled and
+   *               the offer cannot be executed when placed, the transaction has the result code tecKILLED; otherwise, the
+   *               transaction uses the result code tesSUCCESS even when it was killed without trading any currency.
+   *               (see https://en.wikipedia.org/wiki/Fill_or_kill)
+   * @param sell (Optional, defaults to false) Exchange the entire TakerGets amount, even if it means obtaining more than the TakerPays amount in exchange.
    */
   public async createOffer(
     sender: Wallet,
@@ -1229,6 +1243,10 @@ export default class IssuedCurrencyClient {
     takerPaysAmount: string | IssuedCurrency,
     offerSequence?: number,
     expiration?: number,
+    passive?: boolean,
+    immediateOrCancel?: boolean,
+    fillOrKill?: boolean,
+    sell?: boolean,
   ): Promise<TransactionResult> {
     const takerGetsCurrencyAmount = this.createCurrencyAmount(takerGetsAmount)
     const takerGets = new TakerGets()
@@ -1254,8 +1272,28 @@ export default class IssuedCurrencyClient {
       offerCreate.setExpiration(expirationProto)
     }
 
+    let flagsValue = 0
+    if (passive) {
+      flagsValue |= OfferCreateFlag.TF_PASSIVE
+    }
+    if (immediateOrCancel) {
+      flagsValue |= OfferCreateFlag.TF_IMMEDIATE_OR_CANCEL
+    }
+    if (fillOrKill) {
+      flagsValue |= OfferCreateFlag.TF_FILL_OR_KILL
+    }
+    if (sell) {
+      flagsValue |= OfferCreateFlag.TF_SELL
+    }
+
+    const flags = new Flags()
+    flags.setValue(flagsValue)
+
     const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
     transaction.setOfferCreate(offerCreate)
+    if (flagsValue != 0) {
+      transaction.setFlags(flags)
+    }
 
     const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
       transaction,
