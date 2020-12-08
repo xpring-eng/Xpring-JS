@@ -312,8 +312,8 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // WHEN setTransferFee is called
     const expectedTransferFee = 1000000123
     const result = await issuedCurrencyClient.setTransferFee(
-      expectedTransferFee,
       walletMightHaveTrustLines,
+      expectedTransferFee,
     )
 
     const transactionHash = result.hash
@@ -338,8 +338,8 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // GIVEN an existing testnet account
     // WHEN setTransferFee is called on a too-low transfer fee
     const result = await issuedCurrencyClient.setTransferFee(
-      lowTransferFee,
       walletMightHaveTrustLines,
+      lowTransferFee,
     )
 
     const transactionHash = result.hash
@@ -352,8 +352,8 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // GIVEN an existing testnet account
     // WHEN setTransferFee is called on a too-high transfer fee
     const result2 = await issuedCurrencyClient.setTransferFee(
-      highTransferFee,
       walletMightHaveTrustLines,
+      highTransferFee,
     )
 
     const transactionHash2 = result2.hash

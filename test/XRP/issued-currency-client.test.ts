@@ -667,8 +667,8 @@ describe('Issued Currency Client', function (): void {
 
     // WHEN setTransferFee is called
     const result = await issuedCurrencyClient.setTransferFee(
-      transferFee,
       this.wallet,
+      transferFee,
     )
     const transactionHash = result.hash
 
@@ -699,7 +699,7 @@ describe('Issued Currency Client', function (): void {
 
     // WHEN setTransferFee is attempted THEN an error is propagated.
     issuedCurrencyClient
-      .setTransferFee(transferFee, this.wallet)
+      .setTransferFee(this.wallet, transferFee)
       .catch((error) => {
         assert.deepEqual(error, FakeXRPNetworkClientResponses.defaultError)
       })

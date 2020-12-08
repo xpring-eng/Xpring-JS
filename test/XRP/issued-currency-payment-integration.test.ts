@@ -279,8 +279,8 @@ describe('Issued Currency Payment Integration Tests', function (): void {
 
     await issuedCurrencyClient.enableRippling(issuerWalletWithTransferFee)
     await issuedCurrencyClient.setTransferFee(
-      1005000000,
       issuerWalletWithTransferFee,
+      1005000000,
     )
 
     // establish trust line from operational to issuing
