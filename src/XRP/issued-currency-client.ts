@@ -537,14 +537,14 @@ export default class IssuedCurrencyClient {
    *
    * @see https://xrpl.org/authorized-trust-lines.html
    *
+   * @param wallet The wallet creating the authorized trust line.
    * @param accountToAuthorize The X-Address of the address with which to authorize a trust line.
    * @param currencyName The currency to authorize a trust line for.
-   * @param wallet The wallet creating the authorized trust line.
    */
   public async authorizeTrustLine(
+    wallet: Wallet,
     accountToAuthorize: string,
     currencyName: string,
-    wallet: Wallet,
   ): Promise<TransactionResult> {
     // When authorizing a trust line, the value of the trust line is set to 0.
     // See https://xrpl.org/authorized-trust-lines.html#authorizing-trust-lines

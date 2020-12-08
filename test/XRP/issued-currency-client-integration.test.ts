@@ -527,9 +527,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     const trustLineCurrency = 'USD'
     // WHEN a trust line is authorized with another account
     await issuedCurrencyClient.authorizeTrustLine(
+      issuerWalletAuthTrustLines,
       accountToTrust.getAddress(),
       'USD',
-      issuerWalletAuthTrustLines,
     )
 
     const trustLines = await issuedCurrencyClient.getTrustLines(
@@ -551,9 +551,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // GIVEN an existing issuer account who has a trustline with a counter-party
     const trustLineCurrency = 'NEW'
     await issuedCurrencyClient.authorizeTrustLine(
+      issuerWalletAuthTrustLines,
       walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
-      issuerWalletAuthTrustLines,
     )
 
     // WHEN the issuer freezes the trustline
@@ -581,9 +581,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // GIVEN an existing issuer account who has a frozen trust line with a counter-party
     const trustLineCurrency = 'FRZ'
     await issuedCurrencyClient.authorizeTrustLine(
+      issuerWalletAuthTrustLines,
       walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
-      issuerWalletAuthTrustLines,
     )
 
     await issuedCurrencyClient.freezeTrustLine(
@@ -617,9 +617,9 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
     // GIVEN an existing issuer account who has a trust line with a counter-party
     const trustLineCurrency = 'NRP'
     await issuedCurrencyClient.authorizeTrustLine(
+      issuerWalletAuthTrustLines,
       walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
-      issuerWalletAuthTrustLines,
     )
 
     const trustLineAmount = '1'
