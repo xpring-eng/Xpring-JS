@@ -792,7 +792,6 @@ export default class IssuedCurrencyClient {
     destination: string,
     currency: string,
     amount: string,
-    sendMaxValue?: string,
   ): Promise<TransactionResult> {
     const issuer = sender.getAddress()
     return await this.issuedCurrencyPayment(
@@ -801,8 +800,6 @@ export default class IssuedCurrencyClient {
       currency,
       issuer,
       amount,
-      undefined,
-      sendMaxValue,
     )
   }
 
@@ -821,7 +818,6 @@ export default class IssuedCurrencyClient {
     currency: string,
     issuer: string,
     amount: string,
-    sendMaxValue?: string,
   ): Promise<TransactionResult> {
     // Redemption of issued currency is achieved by sending issued currency directly to the original issuer.
     // However, the issuer field specified in the amount is treated as a special case in this circumstance, and should be
@@ -833,8 +829,6 @@ export default class IssuedCurrencyClient {
       currency,
       sender.getAddress(),
       amount,
-      undefined,
-      sendMaxValue,
     )
   }
 

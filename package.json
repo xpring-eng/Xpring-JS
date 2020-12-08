@@ -80,7 +80,7 @@
     "util": "^0.12.3",
     "ws": "^7.4.0",
     "xhr2": "0.2.0",
-    "xpring-common-js": "xpring-eng/xpring-common-js#cbdc-demo"
+    "xpring-common-js": "6.2.9"
   },
   "nyc": {
     "extension": [
