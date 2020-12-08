@@ -646,10 +646,10 @@ describe('IssuedCurrencyClient Integration Tests', function (): void {
 
     // WHEN the issuer re-enables rippling on the trust line
     await issuedCurrencyClient.enableRipplingForTrustLine(
+      issuerWalletAuthTrustLines,
       walletMightHaveTrustLines.getAddress(),
       trustLineCurrency,
       trustLineAmount,
-      issuerWalletAuthTrustLines,
     )
 
     trustLines = await issuedCurrencyClient.getTrustLines(

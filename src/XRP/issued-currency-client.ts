@@ -645,10 +645,10 @@ export default class IssuedCurrencyClient {
    * @param wallet The wallet re-enabling rippling on the trust line.
    */
   public async enableRipplingForTrustLine(
+    wallet: Wallet,
     trustLinePeerAccount: string,
     currencyName: string,
     amount: string,
-    wallet: Wallet,
   ): Promise<TransactionResult> {
     return this.sendTrustSetTransaction(
       wallet,
