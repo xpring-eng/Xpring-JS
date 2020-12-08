@@ -518,11 +518,11 @@ export default class IssuedCurrencyClient {
     qualityOut?: number,
   ): Promise<TransactionResult> {
     return this.sendTrustSetTransaction(
+      wallet,
       issuerXAddress,
       currencyName,
       amount,
       undefined,
-      wallet,
       qualityIn,
       qualityOut,
     )
@@ -549,11 +549,11 @@ export default class IssuedCurrencyClient {
     // When authorizing a trust line, the value of the trust line is set to 0.
     // See https://xrpl.org/authorized-trust-lines.html#authorizing-trust-lines
     return this.sendTrustSetTransaction(
+      wallet,
       accountToAuthorize,
       currencyName,
       '0',
       TrustSetFlag.tfSetfAuth,
-      wallet,
     )
   }
 
@@ -573,13 +573,13 @@ export default class IssuedCurrencyClient {
     wallet: Wallet,
   ): Promise<TransactionResult> {
     return this.sendTrustSetTransaction(
+      wallet,
       trustLinePeerAccount,
       currencyName,
       // You can change the trust line when you freeze it, but an amount of 0
       // would be the most conservative amount.
       '0',
       TrustSetFlag.tfSetFreeze,
-      wallet,
     )
   }
 
@@ -599,13 +599,13 @@ export default class IssuedCurrencyClient {
     wallet: Wallet,
   ): Promise<TransactionResult> {
     return this.sendTrustSetTransaction(
+      wallet,
       trustLinePeerAccount,
       currencyName,
       // You can change the trust line amount when you unfreeze it, but this would typically
       // be used by gateways, who will maintain an amount of 0.
       '0',
       TrustSetFlag.tfClearFreeze,
-      wallet,
     )
   }
 
@@ -626,11 +626,11 @@ export default class IssuedCurrencyClient {
     wallet: Wallet,
   ): Promise<TransactionResult> {
     return this.sendTrustSetTransaction(
+      wallet,
       trustLinePeerAccount,
       currencyName,
       amount,
       TrustSetFlag.tfSetNoRipple,
-      wallet,
     )
   }
 
@@ -651,11 +651,11 @@ export default class IssuedCurrencyClient {
     wallet: Wallet,
   ): Promise<TransactionResult> {
     return this.sendTrustSetTransaction(
+      wallet,
       trustLinePeerAccount,
       currencyName,
       amount,
       TrustSetFlag.tfClearNoRipple,
-      wallet,
     )
   }
 
@@ -672,20 +672,20 @@ export default class IssuedCurrencyClient {
    *                  A value of 0 is shorthand for treating balances at face value.
    */
   private async sendTrustSetTransaction(
+    wallet: Wallet,
     accountToTrust: string,
     currencyName: string,
     amount: string,
     flags: number | undefined,
-    wallet: Wallet,
     qualityIn?: number,
     qualityOut?: number,
   ): Promise<TransactionResult> {
     const trustSetTransaction = await this.prepareTrustSetTransaction(
+      wallet,
       accountToTrust,
       currencyName,
       amount,
       flags,
-      wallet,
       qualityIn,
       qualityOut,
     )
@@ -714,11 +714,11 @@ export default class IssuedCurrencyClient {
    *                  A value of 0 is shorthand for treating balances at face value.
    */
   private async prepareTrustSetTransaction(
+    wallet: Wallet,
     accountToTrust: string,
     currencyName: string,
     amount: string,
     flags: number | undefined,
-    wallet: Wallet,
     qualityInAmount?: number,
     qualityOutAmount?: number,
   ): Promise<Transaction> {
