@@ -790,7 +790,6 @@ export default class IssuedCurrencyClient {
    * @param destination The destination address (recipient) of the issued currency, encoded as an X-address (see https://xrpaddress.info/).
    * @param currency The three-letter currency code of the issued currency being created.
    * @param amount The amount of issued currency to create.
-   * @param sendMaxValue The max amount to send.
    */
   public async createIssuedCurrency(
     sender: Wallet,
@@ -815,7 +814,6 @@ export default class IssuedCurrencyClient {
    * @param issuer The original issuer of the issued currency, encoded as an X-address (see https://xrpaddress.info/).
    * @param currency The three-letter currency code of the issued currency being redeemed.
    * @param amount The amount of issued currency to redeem.
-   * @param sendMaxValue The max amount to send.
    */
   public async redeemIssuedCurrency(
     sender: Wallet,
