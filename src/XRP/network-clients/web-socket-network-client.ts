@@ -1,4 +1,4 @@
-import WebSocket = require('isomorphic-ws')
+import WebSocket from 'isomorphic-ws'
 import { XrpError, XrpErrorType } from '../shared'
 import {
   WebSocketReadyState,
