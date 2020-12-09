@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const path = require('path')
-
 // webpack considers .web.ts and .ts to be different extensions
 // We use both for web vs node implementations of some clients.
 const moduleFileExtensions = ['js', 'web.ts', 'ts']

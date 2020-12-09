@@ -1,4 +1,4 @@
-import { XrplNetwork, XrpUtils, Wallet } from 'xpring-common-js'
+import { XrplNetwork, Wallet } from 'xpring-common-js'
 
 import {
   Flags,
@@ -43,7 +43,10 @@ import {
   TransactionResponse,
   GatewayBalancesResponse,
   GatewayBalancesSuccessfulResponse,
+  RipplePathFindSuccessfulResponse,
+  PathElement,
   ResponseStatus,
+  SourceCurrency,
 } from './shared/rippled-web-socket-schema'
 import { WebSocketNetworkClientInterface } from './network-clients/web-socket-network-client-interface'
 import WebSocketNetworkClient from './network-clients/web-socket-network-client'
@@ -61,6 +64,8 @@ import {
   OfferCreate,
 } from 'xpring-common-js/build/src/XRP/generated/org/xrpl/rpc/v1/transaction_pb'
 import IssuedCurrency from './shared/issued-currency'
+import XrpUtils from './shared/xrp-utils'
+import OfferCreateFlag from './shared/offer-create-flag'
 
 /**
  * IssuedCurrencyClient is a client for working with Issued Currencies on the XRPL.
@@ -436,7 +441,7 @@ export default class IssuedCurrencyClient {
       wallet,
     )
 
-    return await this.coreXrplClient.getFinalTransactionResultAsync(
+    return this.coreXrplClient.getFinalTransactionResultAsync(
       transactionHash,
       wallet,
     )
@@ -512,7 +517,7 @@ export default class IssuedCurrencyClient {
     qualityIn?: number,
     qualityOut?: number,
   ): Promise<TransactionResult> {
-    return await this.sendTrustSetTransaction(
+    return this.sendTrustSetTransaction(
       issuerXAddress,
       currencyName,
       amount,
@@ -543,7 +548,7 @@ export default class IssuedCurrencyClient {
   ): Promise<TransactionResult> {
     // When authorizing a trust line, the value of the trust line is set to 0.
     // See https://xrpl.org/authorized-trust-lines.html#authorizing-trust-lines
-    return await this.sendTrustSetTransaction(
+    return this.sendTrustSetTransaction(
       accountToAuthorize,
       currencyName,
       '0',
@@ -567,7 +572,7 @@ export default class IssuedCurrencyClient {
     currencyName: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    return await this.sendTrustSetTransaction(
+    return this.sendTrustSetTransaction(
       trustLinePeerAccount,
       currencyName,
       // You can change the trust line when you freeze it, but an amount of 0
@@ -593,7 +598,7 @@ export default class IssuedCurrencyClient {
     currencyName: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    return await this.sendTrustSetTransaction(
+    return this.sendTrustSetTransaction(
       trustLinePeerAccount,
       currencyName,
       // You can change the trust line amount when you unfreeze it, but this would typically
@@ -620,7 +625,7 @@ export default class IssuedCurrencyClient {
     amount: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    return await this.sendTrustSetTransaction(
+    return this.sendTrustSetTransaction(
       trustLinePeerAccount,
       currencyName,
       amount,
@@ -645,7 +650,7 @@ export default class IssuedCurrencyClient {
     amount: string,
     wallet: Wallet,
   ): Promise<TransactionResult> {
-    return await this.sendTrustSetTransaction(
+    return this.sendTrustSetTransaction(
       trustLinePeerAccount,
       currencyName,
       amount,
@@ -690,7 +695,7 @@ export default class IssuedCurrencyClient {
       wallet,
     )
 
-    return await this.coreXrplClient.getFinalTransactionResultAsync(
+    return this.coreXrplClient.getFinalTransactionResultAsync(
       transactionHash,
       wallet,
     )
@@ -794,13 +799,12 @@ export default class IssuedCurrencyClient {
     amount: string,
   ): Promise<TransactionResult> {
     const issuer = sender.getAddress()
-    return await this.issuedCurrencyPayment(
-      sender,
-      destination,
+    const issuedCurrency = {
       currency,
       issuer,
-      amount,
-    )
+      value: amount,
+    }
+    return this.issuedCurrencyPayment(sender, destination, issuedCurrency)
   }
 
   /**
@@ -815,20 +819,20 @@ export default class IssuedCurrencyClient {
    */
   public async redeemIssuedCurrency(
     sender: Wallet,
-    currency: string,
-    issuer: string,
-    amount: string,
+    issuedCurrency: IssuedCurrency,
   ): Promise<TransactionResult> {
     // Redemption of issued currency is achieved by sending issued currency directly to the original issuer.
     // However, the issuer field specified in the amount is treated as a special case in this circumstance, and should be
     // set to the address of the account initiating the redemption.
     // See: https://xrpl.org/payment.html#special-issuer-values-for-sendmax-and-amount
-    return await this.issuedCurrencyPayment(
+    const specialIssuedCurrency: IssuedCurrency = {
+      ...issuedCurrency,
+      issuer: sender.getAddress(),
+    }
+    return this.issuedCurrencyPayment(
       sender,
-      issuer,
-      currency,
-      sender.getAddress(),
-      amount,
+      issuedCurrency.issuer,
+      specialIssuedCurrency,
     )
   }
 
@@ -837,9 +841,7 @@ export default class IssuedCurrencyClient {
    *
    * @param sender The Wallet from which issued currency will be sent, and that will sign the transaction.
    * @param destination The destination address for the payment, encoded as an X-address (see https://xrpaddress.info/).
-   * @param currency The three-letter currency code of the issued currency being sent.
-   * @param issuer The issuing address of the issued currency being sent, encoded as an X-address.
-   * @param amount The amount of issued currency to pay to the destination.
+   * @param issuedCurrency The issued currency being sent.
    * @param transferFee (Optional) The transfer fee associated with the issuing account, expressed as a percentage. (i.e. a value of .5 indicates
    *               a 0.5% transfer fee).  Supply this field for automatic calculation of the sendMax value for this payment.
    *               Either this or sendMaxvalue may be specified, but not both.
@@ -850,33 +852,207 @@ export default class IssuedCurrencyClient {
   public async sendIssuedCurrencyPayment(
     sender: Wallet,
     destination: string,
-    currency: string,
-    issuer: string,
-    amount: string,
+    issuedCurrency: IssuedCurrency,
     transferFee?: number,
     sendMaxValue?: string,
   ): Promise<TransactionResult> {
-    if (sender.getAddress() === issuer) {
+    if (sender.getAddress() === issuedCurrency.issuer) {
       throw new XrpError(
         XrpErrorType.InvalidInput,
         'The sending address cannot be the same as the issuing address. To create issued currency, use `createIssuedCurrency`.',
       )
     }
-    if (destination === issuer) {
+    if (destination === issuedCurrency.issuer) {
       throw new XrpError(
         XrpErrorType.InvalidInput,
         'The destination address cannot be the same as the issuer. To redeem issued currency, use `redeemIssuedCurrency`.',
       )
     }
 
-    return await this.issuedCurrencyPayment(
+    return this.issuedCurrencyPayment(
       sender,
       destination,
-      currency,
-      issuer,
-      amount,
+      issuedCurrency,
       transferFee,
       sendMaxValue,
+    )
+  }
+
+  /**
+   * Send a cross-currency payment. Note that the source and destination currencies cannot both be XRP.
+   * The XRPL is queried for viable paths as part of transaction construction.  If no paths are found,
+   * an error is thrown and no transaction is submitted.
+   *
+   * @see https://xrpl.org/cross-currency-payments.html
+   *
+   * @param sender The wallet from which currency will be sent, and that will sign the transaction.
+   * @param destination The address of the payment's recipient, encoded as an X-Address.
+   * @param maxSourceAmount Highest amount of source currency this transaction is allowed to cost, including transfer fees,
+   *               exchange rates, and slippage. Does not include the XRP destroyed as a cost for submitting the transaction.
+   *               For XRP, specify amount as a string of drops.
+   *               For issued currencies, specify an IssuedCurrency object with currency, issuer, and value fields.
+   * @param deliverAmount The amount of currency to deliver. For XRP, specify amount as a string of drops.  For issued currencies,
+   *               specify an IssuedCurrency object with currency, issuer, and value fields.
+   */
+  public async sendCrossCurrencyPayment(
+    sender: Wallet,
+    destination: string,
+    maxSourceAmount: string | IssuedCurrency,
+    deliverAmount: string | IssuedCurrency,
+  ): Promise<TransactionResult> {
+    if (!XrpUtils.isValidXAddress(destination)) {
+      throw new XrpError(
+        XrpErrorType.XAddressRequired,
+        'Destination address must be in X-address format.  See https://xrpaddress.info/.',
+      )
+    }
+
+    // Both source amount and deliver amount can't both be XRP:
+    if (
+      XrpUtils.isString(deliverAmount) &&
+      XrpUtils.isString(maxSourceAmount)
+    ) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'A cross-currency payment should involve at least one issued currency.',
+      )
+    }
+    if (
+      XrpUtils.isIssuedCurrency(deliverAmount) &&
+      XrpUtils.isIssuedCurrency(maxSourceAmount) &&
+      (deliverAmount as IssuedCurrency).currency ===
+        (maxSourceAmount as IssuedCurrency).currency &&
+      (deliverAmount as IssuedCurrency).issuer ===
+        (maxSourceAmount as IssuedCurrency).issuer
+    ) {
+      throw new XrpError(
+        XrpErrorType.InvalidInput,
+        'A Cross Currency payment must specify different currencies for deliverAmount and maxSourceAmount.',
+      )
+    }
+
+    // Create representation of the currency to SOURCE
+    const sourceAmountProto = this.createCurrencyAmount(maxSourceAmount)
+
+    // Create representation of the currency to DELIVER
+    const deliverAmountProto = this.createAmount(deliverAmount)
+
+    // Create destination proto
+    const destinationAccountAddress = new AccountAddress()
+    destinationAccountAddress.setAddress(destination)
+
+    const destinationProto = new Destination()
+    destinationProto.setValue(destinationAccountAddress)
+
+    // Construct Payment fields
+    const payment = new Payment()
+    payment.setDestination(destinationProto)
+    // Note that the destinationTag doesn't need to be explicitly set here, because the ripple-binary-codec will decode this X-Address and
+    // assign the decoded destinationTag before signing.
+
+    payment.setAmount(deliverAmountProto)
+
+    // Assign sourceCurrencyAmount as sendMax for Payment
+    const sendMax = new SendMax()
+    sendMax.setValue(sourceAmountProto)
+    payment.setSendMax(sendMax)
+
+    // Determine if there is a viable path
+    const sourceCurrencyName = XrpUtils.isString(maxSourceAmount)
+      ? 'XRP'
+      : (maxSourceAmount as IssuedCurrency).currency
+    const sourceCurrency: SourceCurrency = {
+      currency: sourceCurrencyName,
+    }
+    const sourceCurrencies = [sourceCurrency]
+
+    const sourceClassicAddress = XrpUtils.decodeXAddress(sender.getAddress())
+    if (!sourceClassicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    const destinationClassicAddress = XrpUtils.decodeXAddress(destination)
+    if (!destinationClassicAddress) {
+      throw XrpError.xAddressRequired
+    }
+
+    let pathFindResponse = await this.webSocketNetworkClient.findRipplePath(
+      sourceClassicAddress.address,
+      destinationClassicAddress.address,
+      deliverAmount,
+      undefined,
+      sourceCurrencies,
+    )
+
+    // If failure response from websocket, throw
+    if (pathFindResponse.status !== 'success') {
+      pathFindResponse = pathFindResponse as WebSocketFailureResponse
+      throw new XrpError(XrpErrorType.Unknown, pathFindResponse.error_message)
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+    pathFindResponse = pathFindResponse as RipplePathFindSuccessfulResponse
+    const pathAlternatives = pathFindResponse.result.alternatives
+
+    // If no viable paths exist, throw
+    if (pathAlternatives.length === 0) {
+      throw new XrpError(
+        XrpErrorType.NoViablePaths,
+        'No paths exist to execute cross-currency payment.',
+      )
+    }
+
+    // Otherwise, find the cheapest path
+    let currentBestPathset = pathAlternatives[0].paths_computed
+    let currentCheapestSourceAmount = new BigNumber(
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+      (pathAlternatives[0].source_amount as IssuedCurrency).value,
+    )
+    pathAlternatives.forEach((possiblePath) => {
+      const numericSourceAmount = new BigNumber(
+        (possiblePath.source_amount as IssuedCurrency).value,
+      )
+      if (numericSourceAmount < currentCheapestSourceAmount) {
+        currentBestPathset = possiblePath.paths_computed
+        currentCheapestSourceAmount = numericSourceAmount
+      }
+    })
+
+    // Assign best pathset to Payment protobuf
+    currentBestPathset.forEach((path: PathElement[]) => {
+      const pathProto = new Payment.Path()
+      path.forEach((pathElement: PathElement) => {
+        const pathElementProto = new Payment.PathElement()
+        if (pathElement.account) {
+          const accountAddressProto = new AccountAddress()
+          accountAddressProto.setAddress(pathElement.account)
+          pathElementProto.setAccount(accountAddressProto)
+        }
+        if (pathElement.currency) {
+          const currencyProto = new Currency()
+          currencyProto.setName(pathElement.currency)
+          pathElementProto.setCurrency(currencyProto)
+        }
+        if (pathElement.issuer) {
+          const issuerAccountAddressProto = new AccountAddress()
+          issuerAccountAddressProto.setAddress(pathElement.issuer)
+          pathElementProto.setIssuer(issuerAccountAddressProto)
+        }
+        pathProto.addElements(pathElementProto)
+      })
+      payment.addPaths(pathProto)
+    })
+
+    const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
+    transaction.setPayment(payment)
+
+    const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
+      transaction,
+      sender,
+    )
+    return this.coreXrplClient.getFinalTransactionResultAsync(
+      transactionHash,
+      sender,
     )
   }
 
@@ -894,10 +1070,7 @@ export default class IssuedCurrencyClient {
    *
    * @param sender The Wallet from which issued currency will be sent, and that will sign the transaction.
    * @param destination The destination address (recipient) for the payment, encoded as an X-address (see https://xrpaddress.info/).
-   * @param currency The three-letter currency code of the issued currency being sent.
-   * @param issuer The issuer to specify in the destination amount field of the payment, encoded as an X-address.
-   *               Typically (but not always) the original issuer of the currency.  See https://xrpl.org/payment.html#special-issuer-values-for-sendmax-and-amount.
-   * @param amount The amount of issued currency to pay to the destination.
+   * @param issuedCurrency The issued currency being sent.
    * @param transferFee (Optional) The transfer fee associated with the issuing account, expressed as a percentage. (i.e. a value of .5 indicates
    *               a 0.5% transfer fee).  Supply this field for automatic calculation of the sendMax value for this payment.
    *               Either this or sendMaxvalue may be specified, but not both.
@@ -908,9 +1081,7 @@ export default class IssuedCurrencyClient {
   public async issuedCurrencyPayment(
     sender: Wallet,
     destination: string,
-    currency: string,
-    issuer: string,
-    amount: string,
+    issuedCurrency: IssuedCurrency,
     transferFee?: number,
     sendMaxValue?: string,
   ): Promise<TransactionResult> {
@@ -928,7 +1099,7 @@ export default class IssuedCurrencyClient {
     }
 
     // TODO: (acorso) we don't need to convert back to a classic address once the ripple-binary-codec supports X-addresses for issued currencies.
-    const issuerClassicAddress = XrpUtils.decodeXAddress(issuer)
+    const issuerClassicAddress = XrpUtils.decodeXAddress(issuedCurrency.issuer)
     if (!issuerClassicAddress) {
       throw new XrpError(
         XrpErrorType.XAddressRequired,
@@ -944,18 +1115,18 @@ export default class IssuedCurrencyClient {
     }
 
     const currencyProto = new Currency()
-    currencyProto.setName(currency)
+    currencyProto.setName(issuedCurrency.currency)
 
     const issuerAccountAddress = new AccountAddress()
     issuerAccountAddress.setAddress(issuerClassicAddress.address)
 
-    const issuedCurrency = new IssuedCurrencyAmount()
-    issuedCurrency.setCurrency(currencyProto)
-    issuedCurrency.setIssuer(issuerAccountAddress)
-    issuedCurrency.setValue(amount)
+    const issuedCurrencyAmount = new IssuedCurrencyAmount()
+    issuedCurrencyAmount.setCurrency(currencyProto)
+    issuedCurrencyAmount.setIssuer(issuerAccountAddress)
+    issuedCurrencyAmount.setValue(issuedCurrency.value)
 
     const currencyAmount = new CurrencyAmount()
-    currencyAmount.setIssuedCurrencyAmount(issuedCurrency)
+    currencyAmount.setIssuedCurrencyAmount(issuedCurrencyAmount)
 
     const amountProto = new Amount()
     amountProto.setValue(currencyAmount)
@@ -976,7 +1147,7 @@ export default class IssuedCurrencyClient {
     // If transferFee was supplied, calculate the sendMax value, otherwise use the manual override sendMaxValue.
     // Either or both may be undefined.
     const calculatedSendMaxValue = transferFee
-      ? this.calculateSendMaxValue(amount, transferFee)
+      ? this.calculateSendMaxValue(issuedCurrency.value, transferFee)
       : sendMaxValue
 
     if (calculatedSendMaxValue) {
@@ -1054,6 +1225,19 @@ export default class IssuedCurrencyClient {
    *               It is not considered an error if the offer specified does not exist.
    * @param expiration (Optional) Time after which the offer is no longer active, in seconds since the Ripple Epoch.
    *               (See https://xrpl.org/basic-data-types.html#specifying-time)
+   * @param passive (Optional, defaults to false) If enabled, the offer does not consume offers that exactly match it, and instead becomes
+   *               an Offer object in the ledger. It still consumes offers that cross it.
+   * @param immediateOrCancel (Optional, defaults to false) Treat the offer as an Immediate or Cancel order. If enabled, the offer never becomes
+   *               a ledger object: it only tries to match existing offers in the ledger. If the offer cannot match any offers
+   *               immediately, it executes "successfully" without trading any currency. In this case, the transaction has the
+   *               result code tesSUCCESS, but creates no Offer objects in the ledger.
+   *               (see https://en.wikipedia.org/wiki/Immediate_or_cancel)
+   * @param fillOrKill (Optional, defaults to false) Treat the offer as a Fill or Kill order. Only try to match existing offers in the ledger,
+   *               and only do so if the entire TakerPays quantity can be obtained. If the fix1578 amendment is enabled and
+   *               the offer cannot be executed when placed, the transaction has the result code tecKILLED; otherwise, the
+   *               transaction uses the result code tesSUCCESS even when it was killed without trading any currency.
+   *               (see https://en.wikipedia.org/wiki/Fill_or_kill)
+   * @param sell (Optional, defaults to false) Exchange the entire TakerGets amount, even if it means obtaining more than the TakerPays amount in exchange.
    */
   public async createOffer(
     sender: Wallet,
@@ -1061,6 +1245,10 @@ export default class IssuedCurrencyClient {
     takerPaysAmount: string | IssuedCurrency,
     offerSequence?: number,
     expiration?: number,
+    passive?: boolean,
+    immediateOrCancel?: boolean,
+    fillOrKill?: boolean,
+    sell?: boolean,
   ): Promise<TransactionResult> {
     const takerGetsCurrencyAmount = this.createCurrencyAmount(takerGetsAmount)
     const takerGets = new TakerGets()
@@ -1086,8 +1274,28 @@ export default class IssuedCurrencyClient {
       offerCreate.setExpiration(expirationProto)
     }
 
+    let flagsValue = 0
+    if (passive) {
+      flagsValue |= OfferCreateFlag.TF_PASSIVE
+    }
+    if (immediateOrCancel) {
+      flagsValue |= OfferCreateFlag.TF_IMMEDIATE_OR_CANCEL
+    }
+    if (fillOrKill) {
+      flagsValue |= OfferCreateFlag.TF_FILL_OR_KILL
+    }
+    if (sell) {
+      flagsValue |= OfferCreateFlag.TF_SELL
+    }
+
+    const flags = new Flags()
+    flags.setValue(flagsValue)
+
     const transaction = await this.coreXrplClient.prepareBaseTransaction(sender)
     transaction.setOfferCreate(offerCreate)
+    if (flagsValue != 0) {
+      transaction.setFlags(flags)
+    }
 
     const transactionHash = await this.coreXrplClient.signAndSubmitTransaction(
       transaction,
@@ -1135,7 +1343,7 @@ export default class IssuedCurrencyClient {
   }
 
   /**
-   * Constructs and returns a CurrencyAmount protobuf that represents either and XRP drops amount or Issued Currency amount, which can then be
+   * Constructs and returns a CurrencyAmount protobuf that represents either an XRP drops amount or Issued Currency amount, which can then be
    * assigned to a higher order protobuf that requires a CurrencyAmount.
    *
    * @param amount The string (for XRP amounts) or IssuedCurrency object (for issued currencies) from which to construct a CurrencyAmount protobuf.
@@ -1144,24 +1352,36 @@ export default class IssuedCurrencyClient {
     amount: string | IssuedCurrency,
   ): CurrencyAmount {
     const currencyAmount = new CurrencyAmount()
-    if (typeof amount == 'string') {
+    if (XrpUtils.isString(amount)) {
       const xrpDropsAmount = new XRPDropsAmount()
-      xrpDropsAmount.setDrops(amount)
+      xrpDropsAmount.setDrops(amount as string)
       currencyAmount.setXrpAmount(xrpDropsAmount)
     } else {
       const currency = new Currency()
-      currency.setName(amount.currency)
+      currency.setName((amount as IssuedCurrency).currency)
 
       const accountAddress = new AccountAddress()
-      accountAddress.setAddress(amount.issuer)
+      accountAddress.setAddress((amount as IssuedCurrency).issuer)
 
       const issuedCurrencyAmount = new IssuedCurrencyAmount()
       issuedCurrencyAmount.setIssuer(accountAddress)
       issuedCurrencyAmount.setCurrency(currency)
-      issuedCurrencyAmount.setValue(amount.value)
+      issuedCurrencyAmount.setValue((amount as IssuedCurrency).value)
 
       currencyAmount.setIssuedCurrencyAmount(issuedCurrencyAmount)
     }
     return currencyAmount
+  }
+
+  /**
+   * Constructs and returns an Amount protocol buffer object with all sub-objects such as an XRPDropsAmount or IssuedCurrencyAmount.
+   *
+   * @param amount The string (for XRP amounts) or IssuedCurrency object (for issued currencies) from which to construct a Amount protobuf.
+   */
+  private createAmount(amount: string | IssuedCurrency): Amount {
+    const currencyAmount = this.createCurrencyAmount(amount)
+    const amountProto = new Amount()
+    amountProto.setValue(currencyAmount)
+    return amountProto
   }
 }

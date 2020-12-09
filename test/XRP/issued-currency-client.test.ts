@@ -104,9 +104,7 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('getTrustLines - account not found error response', async function (): Promise<
-    void
-  > {
+  it('getTrustLines - account not found error response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
     const accountNotFoundResponse: AccountLinesResponse = {
       error: 'actNotFound',
@@ -142,9 +140,7 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('getTrustLines - invalid params error response', async function (): Promise<
-    void
-  > {
+  it('getTrustLines - invalid params error response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getAccountLines
     const invalidParamsResponse: AccountLinesResponse = {
       error: 'invalidParams',
@@ -180,9 +176,7 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('requireAuthorizedTrustlines - successful response', async function (): Promise<
-    void
-  > {
+  it('requireAuthorizedTrustlines - successful response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -227,9 +221,7 @@ describe('Issued Currency Client', function (): void {
       })
   })
 
-  it('allowUnauthorizedTrustlines - successful response', async function (): Promise<
-    void
-  > {
+  it('allowUnauthorizedTrustlines - successful response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -315,9 +307,7 @@ describe('Issued Currency Client', function (): void {
     })
   })
 
-  it('disallowIncomingXrp - successful response', async function (): Promise<
-    void
-  > {
+  it('disallowIncomingXrp - successful response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -358,9 +348,7 @@ describe('Issued Currency Client', function (): void {
     })
   })
 
-  it('allowIncomingXrp - successful response', async function (): Promise<
-    void
-  > {
+  it('allowIncomingXrp - successful response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -401,9 +389,7 @@ describe('Issued Currency Client', function (): void {
     })
   })
 
-  it('getGatewayBalances - successful response', async function (): Promise<
-    void
-  > {
+  it('getGatewayBalances - successful response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with faked networking that will return successful responses.
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -443,9 +429,7 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('getGatewayBalances - invalid addressToExclude, single address', async function (): Promise<
-    void
-  > {
+  it('getGatewayBalances - invalid addressToExclude, single address', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -465,9 +449,7 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('getGatewayBalances - invalid addressToExclude, multiple addresses', async function (): Promise<
-    void
-  > {
+  it('getGatewayBalances - invalid addressToExclude, multiple addresses', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -489,9 +471,7 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('getGatewayBalances - account not found error response', async function (): Promise<
-    void
-  > {
+  it('getGatewayBalances - account not found error response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with faked networking that will return an error response for getGatewayBalances
     const accountNotFoundResponse: GatewayBalancesResponse = {
       error: 'actNotFound',
@@ -534,9 +514,7 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('requireDestinationTags - successful response', async function (): Promise<
-    void
-  > {
+  it('requireDestinationTags - successful response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -578,9 +556,7 @@ describe('Issued Currency Client', function (): void {
     })
   })
 
-  it('allowNoDestinationTag - successful response', async function (): Promise<
-    void
-  > {
+  it('allowNoDestinationTag - successful response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -729,9 +705,7 @@ describe('Issued Currency Client', function (): void {
       })
   })
 
-  it('enableGlobalFreeze - successful response', async function (): Promise<
-    void
-  > {
+  it('enableGlobalFreeze - successful response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -772,9 +746,7 @@ describe('Issued Currency Client', function (): void {
     })
   })
 
-  it('disableGlobalFreeze - successful response', async function (): Promise<
-    void
-  > {
+  it('disableGlobalFreeze - successful response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -864,13 +836,17 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'FOO',
+      issuer: testAddress,
+      value: '100',
+    }
+
     // WHEN issuedCurrencyPayment is called
     const transactionResult = await issuedCurrencyClient.issuedCurrencyPayment(
       this.wallet,
       testAddress,
-      'FOO',
-      testAddress,
-      '100',
+      issuedCurrency,
       0.5,
     )
 
@@ -883,9 +859,7 @@ describe('Issued Currency Client', function (): void {
     assert.equal(transactionResult.hash, expectedTransactionHash)
   })
 
-  it('issuedCurrencyPayment - submission failure', async function (): Promise<
-    void
-  > {
+  it('issuedCurrencyPayment - submission failure', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient which will fail to submit a transaction.
     const failureResponses = new FakeXRPNetworkClientResponses(
       FakeXRPNetworkClientResponses.defaultAccountInfoResponse(),
@@ -899,14 +873,18 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'FOO',
+      issuer: testAddress,
+      value: '100',
+    }
+
     // WHEN issuedCurrencyPayment is called THEN an error is propagated.
     try {
       await issuedCurrencyClient.issuedCurrencyPayment(
         this.wallet,
         testAddress,
-        'FOO',
-        testAddress,
-        '100',
+        issuedCurrency,
         0.5,
       )
     } catch (error) {
@@ -914,24 +892,26 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('issuedCurrencyPayment - classic destination address', async function (): Promise<
-    void
-  > {
+  it('issuedCurrencyPayment - classic destination address', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
+
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'FOO',
+      issuer: testAddress,
+      value: '100',
+    }
 
     // WHEN issuedCurrencyPayment is called with a classic address argument for destination THEN an error is thrown.
     try {
       await issuedCurrencyClient.issuedCurrencyPayment(
         this.wallet,
         testClassicAddress,
-        'FOO',
-        testAddress,
-        '100',
+        issuedCurrency,
         0.5,
       )
     } catch (error) {
@@ -939,24 +919,26 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('issuedCurrencyPayment - classic issuer address', async function (): Promise<
-    void
-  > {
+  it('issuedCurrencyPayment - classic issuer address', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
       fakeSucceedingWebSocketClient,
       XrplNetwork.Test,
     )
+
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'FOO',
+      issuer: testClassicAddress,
+      value: '100',
+    }
 
     // WHEN issuedCurrencyPayment is called with a classic address argument for issuer THEN an error is thrown.
     try {
       await issuedCurrencyClient.issuedCurrencyPayment(
         this.wallet,
         testAddress,
-        'FOO',
-        testClassicAddress,
-        '100',
+        issuedCurrency,
         0.5,
       )
     } catch (error) {
@@ -964,9 +946,7 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('sendIssuedCurrencyPayment - errors with matching sender and issuer', async function (): Promise<
-    void
-  > {
+  it('sendIssuedCurrencyPayment - errors with matching sender and issuer', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -974,14 +954,18 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'FOO',
+      issuer: this.wallet.getAddress(),
+      value: '100',
+    }
+
     // WHEN sendIssuedCurrencyPayment is called with matching sender and issuer addresses, THEN an error is thrown.
     try {
       await issuedCurrencyClient.sendIssuedCurrencyPayment(
         this.wallet,
         testAddress,
-        'FOO',
-        this.wallet.getAddress(),
-        '100',
+        issuedCurrency,
         0.5,
       )
     } catch (error) {
@@ -989,9 +973,7 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('sendIssuedCurrencyPayment - errors with matching destination and issuer', async function (): Promise<
-    void
-  > {
+  it('sendIssuedCurrencyPayment - errors with matching destination and issuer', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient with mocked networking that will return a successful hash for submitTransaction
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -999,14 +981,18 @@ describe('Issued Currency Client', function (): void {
       XrplNetwork.Test,
     )
 
+    const issuedCurrency: IssuedCurrency = {
+      currency: 'FOO',
+      issuer: testAddress,
+      value: '100',
+    }
+
     // WHEN sendIssuedCurrencyPayment is called with matching sender and issuer addresses, THEN an error is thrown.
     try {
       await issuedCurrencyClient.sendIssuedCurrencyPayment(
         this.wallet,
         testAddress,
-        'FOO',
-        testAddress,
-        '100',
+        issuedCurrency,
         0.5,
       )
     } catch (error) {
@@ -1014,9 +1000,7 @@ describe('Issued Currency Client', function (): void {
     }
   })
 
-  it('monitorAccountTransactions - successful response', async function (): Promise<
-    void
-  > {
+  it('monitorAccountTransactions - successful response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient.
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,
@@ -1068,9 +1052,7 @@ describe('Issued Currency Client', function (): void {
       })
   })
 
-  it('stopMonitoringAccountTransactions - successful response', async function (): Promise<
-    void
-  > {
+  it('stopMonitoringAccountTransactions - successful response', async function (): Promise<void> {
     // GIVEN an IssuedCurrencyClient.
     const issuedCurrencyClient = new IssuedCurrencyClient(
       fakeSucceedingGrpcClient,

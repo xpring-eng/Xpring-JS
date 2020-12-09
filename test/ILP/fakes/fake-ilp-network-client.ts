@@ -67,12 +67,8 @@ export class FakeIlpNetworkClientResponses {
    * Defaults to the default send response.
    */
   public constructor(
-    public readonly getBalanceResponse: Response<
-      GetBalanceResponse
-    > = FakeIlpNetworkClientResponses.defaultGetBalanceResponse(),
-    public readonly sendResponse: Response<
-      SendPaymentResponse
-    > = FakeIlpNetworkClientResponses.defaultSendResponse(),
+    public readonly getBalanceResponse: Response<GetBalanceResponse> = FakeIlpNetworkClientResponses.defaultGetBalanceResponse(),
+    public readonly sendResponse: Response<SendPaymentResponse> = FakeIlpNetworkClientResponses.defaultSendResponse(),
   ) {}
 
   /**

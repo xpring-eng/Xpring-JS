@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BigNumber } from 'bignumber.js'
 import XrpError, { XrpErrorType } from './xrp-error'
 import { XrpUtils } from 'xpring-common-js'
@@ -111,4 +112,27 @@ function xrpToDrops(xrp: BigNumber.Value): string {
     .toString(10)
 }
 
-export default { dropsToXrp, xrpToDrops, ...XrpUtils }
+function isString(value: unknown): boolean {
+  return typeof value === 'string'
+}
+
+/**
+ * A type guard for the IssuedCurrency interface.
+ *
+ * @param object The object to check for conformance to the IssuedCurrency interface.
+ */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function isIssuedCurrency(object: any): boolean {
+  if (!isString(object)) {
+    return 'currency' in object && 'issuer' in object && 'value' in object
+  }
+  return false
+}
+
+export default {
+  dropsToXrp,
+  xrpToDrops,
+  isString,
+  isIssuedCurrency,
+  ...XrpUtils,
+}

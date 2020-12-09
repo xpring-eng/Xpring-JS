@@ -129,18 +129,14 @@ describe('XrpClient Integration Tests', function (): void {
     ])
   })
 
-  it('Check if Account Exists - true - Web Shim', async function (): Promise<
-    void
-  > {
+  it('Check if Account Exists - true - Web Shim', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const doesExist = await xrpWebClient.accountExists(recipientAddress)
     assert.equal(doesExist, true)
   })
 
-  it('Check if Account Exists - true - rippled', async function (): Promise<
-    void
-  > {
+  it('Check if Account Exists - true - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     const doesExist = await xrpClient.accountExists(recipientAddress)
@@ -148,9 +144,7 @@ describe('XrpClient Integration Tests', function (): void {
     assert.equal(doesExist, true)
   })
 
-  it('Check if Account Exists - false - rippled', async function (): Promise<
-    void
-  > {
+  it('Check if Account Exists - false - rippled', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // This is a valid address, but it should NOT show up on Testnet, so should resolve to false
@@ -196,9 +190,7 @@ describe('XrpClient Integration Tests', function (): void {
     )
   })
 
-  it('Enable Deposit Auth - sending by unauthorized account fails after enabled', async function (): Promise<
-    void
-  > {
+  it('Enable Deposit Auth - sending by unauthorized account fails after enabled', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account with DepositAuth enabled
     await xrpClient.enableDepositAuth(wallet)
@@ -218,9 +210,7 @@ describe('XrpClient Integration Tests', function (): void {
     )
   })
 
-  it('Authorize Sending Account - failure on authorizing self', async function (): Promise<
-    void
-  > {
+  it('Authorize Sending Account - failure on authorizing self', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN authorizeSendingAccount is called with the account's own address
@@ -237,9 +227,7 @@ describe('XrpClient Integration Tests', function (): void {
     assert.deepEqual(transactionStatus, TransactionStatus.MalformedTransaction)
   })
 
-  it('Authorize Sending Account - failure on authorizing already authorized account', async function (): Promise<
-    void
-  > {
+  it('Authorize Sending Account - failure on authorizing already authorized account', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account that has authorized another account to send funds to it
     const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
@@ -260,9 +248,7 @@ describe('XrpClient Integration Tests', function (): void {
     assert.deepEqual(transactionStatus, TransactionStatus.ClaimedCostOnly)
   })
 
-  it('Authorize Sending Account - can send funds after authorize', async function (): Promise<
-    void
-  > {
+  it('Authorize Sending Account - can send funds after authorize', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account that has authorized another account to send XRP to it
     const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()
@@ -282,9 +268,7 @@ describe('XrpClient Integration Tests', function (): void {
     assert.deepEqual(transactionResult.status, TransactionStatus.Succeeded)
   })
 
-  it('Unauthorize Sending Account - failure on unauthorizing self', async function (): Promise<
-    void
-  > {
+  it('Unauthorize Sending Account - failure on unauthorizing self', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account
     // WHEN unauthorizeSendingAccount is called with the account's own address
@@ -306,9 +290,7 @@ describe('XrpClient Integration Tests', function (): void {
     assert.equal(transactionStatus, TransactionStatus.ClaimedCostOnly)
   })
 
-  it('Unauthorize Sending Account - failure on unauthorizing account that is not authorized', async function (): Promise<
-    void
-  > {
+  it('Unauthorize Sending Account - failure on unauthorizing account that is not authorized', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account that has not authorized any accounts
     await xrpClient.enableDepositAuth(wallet)
@@ -328,9 +310,7 @@ describe('XrpClient Integration Tests', function (): void {
     assert.equal(transactionStatus, TransactionStatus.ClaimedCostOnly)
   })
 
-  it('Unauthorize Sending Account - cannot send funds after an authorized account is unauthorized', async function (): Promise<
-    void
-  > {
+  it('Unauthorize Sending Account - cannot send funds after an authorized account is unauthorized', async function (): Promise<void> {
     this.timeout(timeoutMs)
     // GIVEN an existing testnet account that has authorized another account to send XRP to it
     const sendingWallet = await XRPTestUtils.randomWalletFromFaucet()

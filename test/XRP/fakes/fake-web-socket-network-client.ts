@@ -4,9 +4,13 @@ import {
   AccountLinesResponse,
   GatewayBalancesResponse,
   ResponseStatus,
+  RipplePathFindResponse,
+  SourceCurrency,
   StatusResponse,
   TransactionResponse,
 } from '../../../src/XRP/shared/rippled-web-socket-schema'
+import { WebSocketNetworkClientInterface } from '../../../src/XRP/network-clients/web-socket-network-client-interface'
+import IssuedCurrency from '../../../src/XRP/shared/issued-currency'
 
 /**
  * A list of responses the fake network client will give.
@@ -36,18 +40,11 @@ export class FakeWebSocketNetworkClientResponses {
    * @param subscribeResponse The response or error that will be returned from the subscribe request.
    */
   public constructor(
-    public readonly subscribeResponse: Result<
-      StatusResponse
-    > = FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
-    public readonly unsubscribeResponse: Result<
-      StatusResponse
-    > = FakeWebSocketNetworkClientResponses.defaultUnsubscribeResponse(),
-    public readonly getAccountLinesResponse: Result<
-      AccountLinesResponse
-    > = FakeWebSocketNetworkClientResponses.defaultGetAccountLinesResponse(),
-    public readonly getGatewayBalancesResponse: Result<
-      GatewayBalancesResponse
-    > = FakeWebSocketNetworkClientResponses.defaultGetGatewayBalancesResponse(),
+    public readonly subscribeResponse: Result<StatusResponse> = FakeWebSocketNetworkClientResponses.defaultSubscribeResponse(),
+    public readonly unsubscribeResponse: Result<StatusResponse> = FakeWebSocketNetworkClientResponses.defaultUnsubscribeResponse(),
+    public readonly getAccountLinesResponse: Result<AccountLinesResponse> = FakeWebSocketNetworkClientResponses.defaultGetAccountLinesResponse(),
+    public readonly getGatewayBalancesResponse: Result<GatewayBalancesResponse> = FakeWebSocketNetworkClientResponses.defaultGetGatewayBalancesResponse(),
+    public readonly findRipplePathResponse: Result<RipplePathFindResponse> = FakeWebSocketNetworkClientResponses.defaultFindRipplePathResponse(),
   ) {}
 
   /**
@@ -195,12 +192,31 @@ export class FakeWebSocketNetworkClientResponses {
       },
     }
   }
+
+  /**
+   * Construct a default response for an unsubscribe request.
+   */
+  public static defaultFindRipplePathResponse(): RipplePathFindResponse {
+    return {
+      id: 'ripple_path_find_X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
+      result: {
+        alternatives: [],
+        destination_account: 'rMwjYedjc7qqtKYVLiAccJSmCwih4LnE2q',
+        destination_amount: '100',
+        destination_currencies: ['XRP'],
+        source_account: 'X76YZJgkFzdSLZQTa7UzVSs34tFgyV2P16S3bvC8AWpmwdH',
+      },
+      status: ResponseStatus.success,
+      type: 'response',
+    }
+  }
 }
 
 /**
  * A fake network client which stubs network interaction.
  */
-export class FakeWebSocketNetworkClient {
+export class FakeWebSocketNetworkClient
+  implements WebSocketNetworkClientInterface {
   public constructor(
     private readonly responses: FakeWebSocketNetworkClientResponses = FakeWebSocketNetworkClientResponses.defaultSuccessfulResponses,
   ) {}
@@ -243,8 +259,21 @@ export class FakeWebSocketNetworkClient {
     if (gatewayBalancesResponse instanceof Error) {
       return Promise.reject(gatewayBalancesResponse)
     }
-
     return Promise.resolve(gatewayBalancesResponse)
+  }
+
+  findRipplePath(
+    _sourceAccount: string,
+    _destinationAccount: string,
+    _destinationAmount: string | IssuedCurrency,
+    _sendMax?: string | IssuedCurrency,
+    _sourceCurrencies?: SourceCurrency[],
+  ): Promise<RipplePathFindResponse> {
+    const findRipplePathResponse = this.responses.findRipplePathResponse
+    if (findRipplePathResponse instanceof Error) {
+      return Promise.reject(findRipplePathResponse)
+    }
+    return Promise.resolve(findRipplePathResponse)
   }
 
   close(): void {
