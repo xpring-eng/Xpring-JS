@@ -74,13 +74,6 @@ export default class XrpPayment {
         'Payment protobuf `sendMax` field should be omitted for XRP-to-XRP interactions.',
       )
     }
-    // For non-XRP amounts, the nested field names in `sendMax` MUST be lower-case.
-    if (sendMax === undefined && amount.issuedCurrency !== undefined) {
-      throw new XrpError(
-        XrpErrorType.MalformedProtobuf,
-        'Payment protobuf `sendMax` field must be present for non-XRP-to-XRP interactions.',
-      )
-    }
 
     const paymentDeliverMinValue = payment.getDeliverMin()?.getValue()
     const deliverMin =

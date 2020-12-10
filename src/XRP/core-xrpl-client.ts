@@ -25,6 +25,7 @@ import { LedgerSpecifier } from './Generated/web/org/xrpl/rpc/v1/ledger_pb'
 import TransactionResult from './shared/transaction-result'
 import isNode from '../Common/utils'
 import CoreXrplClientInterface from './core-xrpl-client-interface'
+import TransactionPrefix from './shared/transaction-prefix'
 
 async function sleep(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds))
@@ -307,9 +308,28 @@ export default class CoreXrplClient implements CoreXrplClientInterface {
       return TransactionStatus.Pending
     }
 
-    return transactionStatus.transactionStatusCode?.startsWith('tes')
-      ? TransactionStatus.Succeeded
-      : TransactionStatus.Failed
+    const statusCode = transactionStatus.transactionStatusCode
+    const statusPrefix = statusCode.substr(0, 3)
+
+    switch (statusPrefix) {
+      case TransactionPrefix.Success:
+        return TransactionStatus.Succeeded
+      case TransactionPrefix.MalformedTransaction:
+        return TransactionStatus.MalformedTransaction
+      case TransactionPrefix.Failure:
+        return TransactionStatus.Failed
+      case TransactionPrefix.ClaimedCostOnly:
+        switch (statusCode) {
+          case 'tecPATH_PARTIAL':
+            return TransactionStatus.ClaimedCostOnly_PathPartial
+          case 'tecPATH_DRY':
+            return TransactionStatus.ClaimedCostOnly_PathDry
+          default:
+            return TransactionStatus.ClaimedCostOnly
+        }
+      default:
+        return TransactionStatus.Unknown
+    }
   }
 
   /**

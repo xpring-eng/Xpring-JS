@@ -8,9 +8,7 @@ import { XrplNetwork } from 'xpring-common-js'
 const timeoutMs = 60 * 1000 // 1 minute
 
 describe('PayID Integration Tests', function (): void {
-  it('Resolve PayID to XRP - known PayID - mainnet', async function (): Promise<
-    void
-  > {
+  it('Resolve PayID to XRP - known PayID - mainnet', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // GIVEN a PayID that will resolve on Mainnet.
@@ -24,9 +22,7 @@ describe('PayID Integration Tests', function (): void {
     assert.equal(xrpAddress, 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn')
   })
 
-  it('Resolve PayID to XRP - known PayID - testnet', async function (): Promise<
-    void
-  > {
+  it('Resolve PayID to XRP - known PayID - testnet', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // GIVEN a PayID that will resolve on Testnet.
@@ -64,9 +60,7 @@ describe('PayID Integration Tests', function (): void {
     })
   })
 
-  it('Resolve PayID to BTC - known PayID - testnet', async function (): Promise<
-    void
-  > {
+  it('Resolve PayID to BTC - known PayID - testnet', async function (): Promise<void> {
     this.timeout(timeoutMs)
 
     // GIVEN a PayID that will resolve on BTC testnet.

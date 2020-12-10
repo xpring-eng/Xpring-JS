@@ -125,10 +125,11 @@ Xpring-JS can generate a new and random HD Wallet. The result of a wallet genera
 - A reference to the new wallet
 
 ```javascript
-const { Wallet } = require('xpring-js')
+const { WalletFactory, XrplNetwork } = require('xpring-js')
 
 // Generate a random wallet.
-const generationResult = Wallet.generateRandomWallet()
+const walletFactory = new WalletFactory(XrplNetwork.Test)
+const generationResult = await walletFactory.generateRandomWallet()!
 const newWallet = generationResult.wallet
 
 // Wallet can be recreated with the artifacts of the initial generation.
@@ -143,12 +144,13 @@ const copyOfNewWallet = Wallet.generateWalletFromMnemonic(
 A generated wallet can provide its public key, private key, and address on the XRP ledger.
 
 ```javascript
-const { Wallet } = require('xpring-js')
+const { WalletFactory, XrplNetwork } = require('xpring-js')
 
 const mnemonic =
   'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'
 
-const wallet = Wallet.generateWalletFromMnemonic(mnemonic)
+const walletFactory = new WalletFactory(XrplNetwork.Test)
+const wallet = await walletFactory.generateRandomHdWallet(mnemonic)!
 
 console.log(wallet.getAddress()) // XVMFQQBMhdouRqhPMuawgBMN1AVFTofPAdRsXG5RkPtUPNQ
 console.log(wallet.getPublicKey()) // 031D68BC1A142E6766B2BDFB006CCFE135EF2E0E2E94ABB5CF5C9AB6104776FBAE
@@ -160,13 +162,14 @@ console.log(wallet.getPrivateKey()) // 0090802A50AA84EFB6CDB225F17C27616EA94048C
 A wallet can also sign and verify arbitrary hex messages. Generally, users should use the functions on `XrpClient` to perform cryptographic functions rather than using these low level APIs.
 
 ```javascript
-const { Wallet } = require('xpring-js')
+const { WalletFactory, XrplNetwork } = require('xpring-js')
 
 const mnemonic =
   'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about'
 const message = 'deadbeef'
 
-const wallet = Wallet.generateWalletFromMnemonic(mnemonic)
+const walletFactory = new WalletFactory(XrplNetwork.Test)
+const wallet = await walletFactory.generateRandomHdWallet(mnemonic)!
 
 const signature = wallet.sign(message)
 wallet.verify(message, signature) // true
@@ -267,7 +270,7 @@ An `XrpClient` can send XRP to other accounts on the XRP Ledger.
 **Note:** The payment operation will block the calling thread until the operation reaches a definitive and irreversible success or failure state.
 
 ```javascript
-const { Wallet, XrpClient, XrplNetwork } = require("xpring-js");
+const { WalletFactory, XrpClient, XrplNetwork } = require("xpring-js");
 
 const remoteURL = test.xrp.xpring.io:50051; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XrpClient(remoteURL, XrplNetwork.Test);
@@ -279,7 +282,8 @@ const amount = BigInt("10");
 const destinationAddress = "X7u4MQVhU2YxS4P9fWzQjnNuDRUkP3GM6kiVjTjcQgUU3Jr";
 
 // Wallet which will send XRP
-const generationResult = Wallet.generateRandomWallet();
+const walletFactory = new WalletFactory(XrplNetwork.Test)
+const generationResult = await walletFactory.generateRandomWallet()!
 const senderWallet = generationResult.wallet;
 
 const transactionResult = await xrpClient.sendXrp(amount, destinationAddress, senderWallet);
@@ -291,15 +295,16 @@ the randomly generated wallet contains no XRP.
 ### Enabling Deposit Authorization
 
 ```javascript
-const { Wallet, XrpClient, XrplNetwork } = require("xpring-js");
+const { WalletFactory, XrpClient, XrplNetwork } = require("xpring-js");
 
 const remoteURL = test.xrp.xpring.io:50051; // Testnet URL, use main.xrp.xpring.io:50051 for Mainnet
 const xrpClient = new XrpClient(remoteURL, XrplNetwork.Test);
 
 // Wallet for which to enable Deposit Authorization
-const seedWallet = Wallet.generateWalletFromSeed(
+const walletFactory = new WalletFactory(XrplNetwork.Test)
+const seedWallet = await walletFactory.generateRandomWallet(
   'snRiAJGeKCkPVddbjB3zRwiYDBm1M',
-)
+)!
 
 const transactionResult = await xrpClient.enableDepositAuth(seedWallet);
 const transactionHash = transactionResult.hash;
@@ -474,7 +479,7 @@ PaymentResponse payment = ilpClient.sendPayment(paymentRequest, "2S1PZh3fEKnKg")
 Xpring components compose PayID and XRP components to make complex interactions easy.
 
 ```javascript
-import { XpringClient, XrpClient, XrpPayIdClient, XrplNetwork } from 'xpring-js'
+import { WalletFactory, XpringClient, XrpClient, XrpPayIdClient, XrplNetwork } from 'xpring-js'
 
 const network = XrplNetwork.Test
 
@@ -489,7 +494,9 @@ const payIdClient = new XrpPayIdClient(network)
 const xpringClient = new XpringClient(payIdClient, xrpClient)
 
 // A wallet with some balance on TestNet.
-const wallet = Wallet.generateWalletFromSeed('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
+const walletFactory = new WalletFactory(XrplNetwork.Test)
+const generationResult =
+const wallet = await walletFactory.generateRandomWallet('snYP7oArxKepd3GPDcrjMsJYiJeJB')!
 
 // A PayID which will receive the payment.
 const payId = 'alice$dev.payid.xpring.money'

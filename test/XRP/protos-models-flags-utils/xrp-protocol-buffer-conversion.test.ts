@@ -65,7 +65,6 @@ import {
   testInvalidPaymentProtoNoDestination,
   testInvalidPaymentProtoXrpPaths,
   testInvalidPaymentProtoXrpSendMax,
-  testInvalidPaymentProtoNoSendMax,
   testInvalidSignerProtoNoAccount,
   testInvalidSignerProtoBadAccount,
   testInvalidSignerProtoNoPublicKey,
@@ -427,14 +426,6 @@ describe('Protocol Buffer Conversion', function (): void {
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown
     assert.throws(() => {
       XrpPayment.from(testInvalidPaymentProtoXrpSendMax, XrplNetwork.Test)
-    }, XrpError)
-  })
-
-  it('Convert Payment with no sendMax field in non-XRP transaction', function (): void {
-    // GIVEN a payment protocol buffer with no sendMax field in a non-XRP transaction
-    // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown
-    assert.throws(() => {
-      XrpPayment.from(testInvalidPaymentProtoNoSendMax, XrplNetwork.Test)
     }, XrpError)
   })
 

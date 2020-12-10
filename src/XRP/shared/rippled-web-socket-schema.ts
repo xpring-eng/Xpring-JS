@@ -1,5 +1,7 @@
 /* Schema for adding type information to WebSocket objects. */
 
+import IssuedCurrency from './issued-currency'
+
 /**
  * The options for the `readyState` of a websocket.
  */
@@ -21,6 +23,8 @@ enum RippledMethod {
   unsubscribe = 'unsubscribe',
   accountLines = 'account_lines',
   gatewayBalances = 'gateway_balances',
+  accountOffers = 'account_offers',
+  ripplePathFind = 'ripple_path_find',
 }
 
 enum ResponseStatus {
@@ -36,6 +40,8 @@ type WebSocketRequest =
   | SubscribeRequest
   | AccountLinesRequest
   | GatewayBalancesRequest
+  | AccountOffersRequest
+  | RipplePathFindRequest
 
 interface BaseRequest {
   id: number | string
@@ -73,6 +79,26 @@ interface GatewayBalancesRequest extends BaseRequest {
 }
 
 /**
+ * The standard format for an `account_offers` request to the Web Socket API.
+ * @see https://xrpl.org/account_offers.html
+ */
+interface AccountOffersRequest extends BaseRequest {
+  account: string
+}
+
+/**
+ * The standard format for a `ripple_path_find` request to the Web Socket API.
+ * @see https://xrpl.org/ripple_path_find.html
+ */
+interface RipplePathFindRequest extends BaseRequest {
+  source_account: string
+  destination_account: string
+  destination_amount: string | IssuedCurrency
+  send_max?: string | IssuedCurrency
+  source_currencies?: SourceCurrency[]
+}
+
+/**
  * The common elements in a response from the WebSocket API exposed by a rippled node.
  * @see https://xrpl.org/response-formatting.html
  */
@@ -87,6 +113,8 @@ type WebSocketResponse =
   | TransactionResponse
   | AccountLinesResponse
   | GatewayBalancesResponse
+  | AccountOffersResponse
+  | RipplePathFindResponse
 
 type StatusResponse = StatusSuccessfulResponse | WebSocketFailureResponse
 
@@ -170,6 +198,42 @@ interface GatewayBalancesSuccessfulResponse extends BaseResponse {
 }
 
 /**
+ * The standard format(s) for a response from the WebSocket API for an `account_offers` request.
+ * @see https://xrpl.org/account_offers.html
+ */
+type AccountOffersResponse =
+  | AccountOffersSuccessfulResponse
+  | WebSocketFailureResponse
+
+interface AccountOffersSuccessfulResponse extends BaseResponse {
+  result: {
+    account: string
+    offers: AccountOffer[]
+    ledger_current_index?: number
+    ledger_index?: number
+    ledger_hash?: string
+  }
+}
+
+/**
+ * The standard format(s) for a response from the WebSocket API for a `ripple_path_find` request.
+ * @see https://xrpl.org/ripple_path_find.html
+ */
+type RipplePathFindResponse =
+  | RipplePathFindSuccessfulResponse
+  | WebSocketFailureResponse
+
+interface RipplePathFindSuccessfulResponse extends BaseResponse {
+  result: {
+    alternatives: PossiblePath[]
+    destination_account: string
+    destination_amount?: string | IssuedCurrency
+    destination_currencies: string[]
+    source_account: string
+  }
+}
+
+/**
  * The standard format for a response from the WebSocket API about a transaction.
  * @see https://xrpl.org/subscribe.html#transaction-streams
  */
@@ -186,6 +250,15 @@ interface WebSocketTransaction {
   TxnSignature: string
   date: number
   hash: string
+}
+
+interface AccountOffer {
+  flags: number
+  quality: string
+  seq: number
+  taker_gets: string | IssuedCurrency
+  taker_pays: string | IssuedCurrency
+  expiration?: number
 }
 
 /**
@@ -206,6 +279,17 @@ interface TrustLineResponse {
   peer_authorized?: boolean
   freeze?: boolean
   freeze_peer?: boolean
+}
+
+interface PossiblePath {
+  paths_computed: PathElement[][]
+  source_amount: string | IssuedCurrency
+}
+
+interface PathElement {
+  account?: string
+  currency?: string
+  issuer?: string
 }
 
 type ChangedNode = CreatedNode | ModifiedNode | DeletedNode
@@ -256,9 +340,9 @@ interface DeletedNode {
     ExchangeRate: string
     Flags: number
     RootIndex: string
-    TakerGetsCurrency: string
+    TakerGetsCurrency: string | IssuedCurrency
     TakerGetsIssuer: string
-    TakerPaysCurrency: string
+    TakerPaysCurrency: string | IssuedCurrency
     TakerPaysIssuer: string
   }
   LedgerEntryType: string
@@ -270,14 +354,27 @@ interface CurrencyValuePair {
   value: string
 }
 
+interface SourceCurrency {
+  currency: string
+  issuer?: string
+}
+
 /**
  * Helper type to signify {} (an empty type).
  */
 type EmptyObject = Record<never, never>
 
 export {
+  WebSocketReadyState,
+  RippledMethod,
   WebSocketRequest,
+  SubscribeRequest,
+  AccountLinesRequest,
+  GatewayBalancesRequest,
+  AccountOffersRequest,
+  RipplePathFindRequest,
   WebSocketResponse,
+  ResponseStatus,
   WebSocketFailureResponse,
   StatusResponse,
   TransactionResponse,
@@ -285,12 +382,12 @@ export {
   AccountLinesSuccessfulResponse,
   GatewayBalancesResponse,
   GatewayBalancesSuccessfulResponse,
-  WebSocketReadyState,
-  RippledMethod,
-  ResponseStatus,
-  SubscribeRequest,
-  AccountLinesRequest,
-  GatewayBalancesRequest,
+  AccountOffersResponse,
+  AccountOffersSuccessfulResponse,
+  RipplePathFindResponse,
+  RipplePathFindSuccessfulResponse,
   WebSocketTransaction,
   TrustLineResponse,
+  PathElement,
+  SourceCurrency,
 }
