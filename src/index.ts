@@ -13,7 +13,7 @@ export { XrpClient } from './XRP'
 export {
   XrpCurrencyAmount,
   XrpCurrency,
-  XrpIssuedCurrency,
+  XrplIssuedCurrency,
   XrpMemo,
   XrpPathElement,
   XrpPath,
