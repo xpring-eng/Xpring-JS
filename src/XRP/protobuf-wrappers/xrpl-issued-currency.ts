@@ -10,11 +10,11 @@ import XrpCurrency from './xrp-currency'
  */
 export default class XrplIssuedCurrency {
   /**
-   * Constructs an XrpIssuedCurrency from an IssuedCurrencyAmount.
+   * Constructs an XrplIssuedCurrency from an IssuedCurrencyAmount.
    *
    * @param issuedCurrency an IssuedCurrencyAmount (protobuf object) whose field values will be used
-   *                       to construct an XrpIssuedCurrency
-   * @returns an XrpIssuedCurrency with its fields set via the analogous protobuf fields.
+   *                       to construct an XrplIssuedCurrency
+   * @returns an XrplIssuedCurrency with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/amount.proto#L28
    */
   public static from(issuedCurrency: IssuedCurrencyAmount): XrplIssuedCurrency {

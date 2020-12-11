@@ -207,7 +207,7 @@ describe('Protocol Buffer Conversion', function (): void {
 
   // IssuedCurrency
 
-  it('Convert IssuedCurrency to XrpIssuedCurrency', function (): void {
+  it('Convert IssuedCurrency to XrplIssuedCurrency', function (): void {
     // GIVEN an IssuedCurrency protocol buffer,
     // WHEN the protocol buffer is converted to a native TypeScript type.
     const issuedCurrency = XrplIssuedCurrency.from(testIssuedCurrencyProto)
