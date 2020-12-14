@@ -1,9 +1,3 @@
-// TODO: friends - should we consider renaming this class as `XrplIssuedCurrency`?  (I mean... all of these wrapper classes should really
-// have been named as such because "Xrp" is inaccurate and confusing in most cases, but it seems like a particularly big deal WRT issued
-// currencies since they are distinctly NOT XRP...)
-// We could do the horrible thing we did when we decided to rename everything idiomatically i.e. `XRPClient` --> `XrpClient` and then deprecate
-// the old names and remove them after two release cycles AKA one month.
-
 import { XrpError, XrpErrorType } from '..'
 import bigInt, { BigInteger } from 'big-integer'
 import { IssuedCurrencyAmount } from '../Generated/web/org/xrpl/rpc/v1/amount_pb'
@@ -14,16 +8,16 @@ import XrpCurrency from './xrp-currency'
  * @see: https://xrpl.org/basic-data-types.html#specifying-currency-amounts
  * @see: https://xrpl.org/currency-formats.html#issued-currency-amounts
  */
-export default class XrpIssuedCurrency {
+export default class XrplIssuedCurrency {
   /**
-   * Constructs an XrpIssuedCurrency from an IssuedCurrencyAmount.
+   * Constructs an XrplIssuedCurrency from an IssuedCurrencyAmount.
    *
    * @param issuedCurrency an IssuedCurrencyAmount (protobuf object) whose field values will be used
-   *                       to construct an XrpIssuedCurrency
-   * @returns an XrpIssuedCurrency with its fields set via the analogous protobuf fields.
+   *                       to construct an XrplIssuedCurrency
+   * @returns an XrplIssuedCurrency with its fields set via the analogous protobuf fields.
    * @see https://github.com/ripple/rippled/blob/develop/src/ripple/proto/org/xrpl/rpc/v1/amount.proto#L28
    */
-  public static from(issuedCurrency: IssuedCurrencyAmount): XrpIssuedCurrency {
+  public static from(issuedCurrency: IssuedCurrencyAmount): XrplIssuedCurrency {
     const currency = issuedCurrency.getCurrency()
     if (!currency) {
       throw new XrpError(
@@ -49,7 +43,7 @@ export default class XrpIssuedCurrency {
         'IssuedCurrency protobuf does not contain `issuer` field.',
       )
     }
-    return new XrpIssuedCurrency(XrpCurrency.from(currency), value, issuer)
+    return new XrplIssuedCurrency(XrpCurrency.from(currency), value, issuer)
   }
 
   /**

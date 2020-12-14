@@ -10,7 +10,7 @@ import { Utils, XrplNetwork } from 'xpring-common-js'
 import { XrpError, XrpUtils } from '../../../src'
 import XrpCurrency from '../../../src/XRP/protobuf-wrappers/xrp-currency'
 import XrpCurrencyAmount from '../../../src/XRP/protobuf-wrappers/xrp-currency-amount'
-import XrpIssuedCurrency from '../../../src/XRP/protobuf-wrappers/xrp-issued-currency'
+import XrplIssuedCurrency from '../../../src/XRP/protobuf-wrappers/xrpl-issued-currency'
 import XrpMemo from '../../../src/XRP/protobuf-wrappers/xrp-memo'
 import XrpPath from '../../../src/XRP/protobuf-wrappers/xrp-path'
 import XrpPathElement from '../../../src/XRP/protobuf-wrappers/xrp-path-element'
@@ -207,10 +207,10 @@ describe('Protocol Buffer Conversion', function (): void {
 
   // IssuedCurrency
 
-  it('Convert IssuedCurrency to XrpIssuedCurrency', function (): void {
+  it('Convert IssuedCurrency to XrplIssuedCurrency', function (): void {
     // GIVEN an IssuedCurrency protocol buffer,
     // WHEN the protocol buffer is converted to a native TypeScript type.
-    const issuedCurrency = XrpIssuedCurrency.from(testIssuedCurrencyProto)
+    const issuedCurrency = XrplIssuedCurrency.from(testIssuedCurrencyProto)
 
     // THEN the IssuedCurrency converted as expected.
     assert.deepEqual(
@@ -231,7 +231,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // GIVEN an IssuedCurrency protocol buffer with an invalid value field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
-      XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadValue)
+      XrplIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadValue)
     }, XrpError)
   })
 
@@ -239,7 +239,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // GIVEN an IssuedCurrency protocol buffer with a missing issuer field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
-      XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadIssuer)
+      XrplIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadIssuer)
     }, XrpError)
   })
 
@@ -247,7 +247,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // GIVEN an IssuedCurrency protocol buffer with a missing currency field
     // WHEN the protocol buffer is converted to a native TypeScript type THEN an error is thrown.
     assert.throws(() => {
-      XrpIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadCurrency)
+      XrplIssuedCurrency.from(testInvalidIssuedCurrencyProtoBadCurrency)
     }, XrpError)
   })
 
@@ -276,7 +276,7 @@ describe('Protocol Buffer Conversion', function (): void {
     // THEN the result has an issued currency set and no drops amount.
     assert.deepEqual(
       currencyAmount?.issuedCurrency,
-      XrpIssuedCurrency.from(testIssuedCurrencyProto),
+      XrplIssuedCurrency.from(testIssuedCurrencyProto),
     )
     assert.isUndefined(currencyAmount?.drops)
   })

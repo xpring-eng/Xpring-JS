@@ -19,7 +19,7 @@ export {
 export {
   XrpCurrencyAmount,
   XrpCurrency,
-  XrpIssuedCurrency,
+  XrplIssuedCurrency,
   XrpMemo,
   XrpPathElement,
   XrpPath,
