@@ -64,7 +64,7 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.1.1",
     "assert": "^2.0.0",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "big-integer": "^1.6.48",
     "bignumber.js": "^9.0.0",
     "browserify-zlib": "^0.2.0",
