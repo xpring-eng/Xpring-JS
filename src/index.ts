@@ -3,6 +3,7 @@ export {
   ClassicAddress,
   PayIdUtils,
   Wallet,
+  WalletFactory,
   WalletGenerationResult,
   Utils,
   XrplNetwork,
@@ -50,3 +51,8 @@ export { default as IlpError, IlpErrorType } from './ILP/ilp-error'
 
 /** Xpring Functionality. */
 export { default as XpringClient } from './Xpring/xpring-client'
+
+/** IOU Functionality. */
+export { default as IssuedCurrencyClient } from './XRP/issued-currency-client'
+
+export { default as XRPTestUtils } from '../test/XRP/helpers/xrp-test-utils'
