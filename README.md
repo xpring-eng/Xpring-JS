@@ -1,10 +1,13 @@
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](https://github.com/xpring-eng/Xpring-JS)
 [![CircleCI](https://img.shields.io/circleci/build/github/xpring-eng/Xpring-JS?style=flat-square)](https://circleci.com/gh/xpring-eng/xpring-js/tree/master)
 [![CodeCov](https://img.shields.io/codecov/c/github/xpring-eng/xpring-js?style=flat-square)](<(https://codecov.io/gh/xpring-eng/xpring-js)>)
 [![Dependabot Status](https://img.shields.io/static/v1?label=Dependabot&message=enabled&color=success&style=flat-square&logo=dependabot)](https://dependabot.com)
 
 _Read this in other languages: [日本語](README-ja.md)._
 
-# Xpring-JS
+# **\*DEPRECATED\*** Xpring-JS
+
+**DEPRECATION NOTICE:** This library is no longer actively maintained. Please use ripple-lib (https://github.com/ripple/ripple-lib/) instead, which is actively maintained.
 
 Xpring-JS is the JavaScript client side library of the Xpring SDK.
 
