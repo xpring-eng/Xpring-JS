@@ -6,6 +6,8 @@ _Read this in other languages: [日本語](README-ja.md)._
 
 # Xpring-JS
 
+**DEPRECATION NOTICE:** This library is no longer actively maintained. Please use ripple-lib (https://github.com/ripple/ripple-lib/) instead, which is actively maintained.
+
 Xpring-JS is the JavaScript client side library of the Xpring SDK.
 
 ## Features
