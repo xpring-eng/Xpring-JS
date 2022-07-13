@@ -1,15 +1,6 @@
-[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](https://github.com/xpring-eng/Xpring-JS)
-[![CircleCI](https://img.shields.io/circleci/build/github/xpring-eng/Xpring-JS?style=flat-square)](https://circleci.com/gh/xpring-eng/xpring-js/tree/master)
-[![CodeCov](https://img.shields.io/codecov/c/github/xpring-eng/xpring-js?style=flat-square)](<(https://codecov.io/gh/xpring-eng/xpring-js)>)
-[![Dependabot Status](https://img.shields.io/static/v1?label=Dependabot&message=enabled&color=success&style=flat-square&logo=dependabot)](https://dependabot.com)
+# This project has been deprecated; instead, use: [xrpl.js](https://github.com/XRPLF/xrpl.js)
 
-_Read this in other languages: [日本語](README-ja.md)._
-
-# **\*DEPRECATED\*** Xpring-JS
-
-**DEPRECATION NOTICE:** This library is no longer actively maintained. Please use ripple-lib (https://github.com/ripple/ripple-lib/) instead, which is actively maintained.
-
-Xpring-JS is the JavaScript client side library of the Xpring SDK.
+Xpring-JS was the JavaScript client side library of the Xpring SDK.
 
 ## Features
 
@@ -507,17 +498,3 @@ const payId = 'alice$dev.payid.xpring.money'
 // Send XRP to the given PayID.
 const transactionHash = await xpringClient.send(amount, payId, wallet)
 ```
-
-# Contributing
-
-Pull requests are welcome! To get started with building this library and opening pull requests, please see [contributing.md](CONTRIBUTING.md).
-
-Thank you to all the users who have contributed to this library!
-
-<a href="https://github.com/xpring-eng/xpring-js/graphs/contributors">
-  <img src="https://contributors-img.firebaseapp.com/image?repo=xpring-eng/xpring-js" />
-</a>
-
-# License
-
-Xpring SDK is available under the MIT license. See the [LICENSE](LICENSE) file for more info.
